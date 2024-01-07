@@ -28,7 +28,7 @@ sudo python3 /home/pi/openpibo-os/system/booting.py &
 
 # run server
 cd /home/pi/openpibo-os/ide;sudo node main.js &
-cd /home/pi/openpibo-os/tools;sudo python3 main.py &
+#cd /home/pi/openpibo-os/tools;sudo python3 main.py &
 
 # motor init
 #servo init

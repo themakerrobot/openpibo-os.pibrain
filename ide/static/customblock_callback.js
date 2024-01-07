@@ -197,14 +197,14 @@ Blockly.Python['motion_set_acceleration'] = function(block) {
 
 // oled
 Blockly.Python['oled_set_font'] = function(block) {
-  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import Oled';
+  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledRGB as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
 
   const size = Blockly.Python.valueToCode(block, 'size', Blockly.Python.ORDER_ATOMIC);
   return `oled.set_font(size=${size})\n`;
 }
 Blockly.Python['oled_draw_text'] = function(block) {
-  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import Oled';
+  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledRGB as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
 
   const x = Blockly.Python.valueToCode(block, 'x', Blockly.Python.ORDER_ATOMIC);
@@ -214,7 +214,7 @@ Blockly.Python['oled_draw_text'] = function(block) {
   return `oled.draw_text((${x}, ${y}), ${text})\n`;
 }
 Blockly.Python['oled_draw_image_dynamic'] = function(block) {
-  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import Oled';
+  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledRGB as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
 
   const dir = block.getFieldValue("dir");
@@ -222,7 +222,7 @@ Blockly.Python['oled_draw_image_dynamic'] = function(block) {
   return `oled.draw_image('${dir}'+'${filename}')\n`;
 }
 Blockly.Python['oled_draw_image'] = function(block) {
-  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import Oled';
+  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledRGB as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
 
   const dir = block.getFieldValue("dir");
@@ -231,7 +231,7 @@ Blockly.Python['oled_draw_image'] = function(block) {
 }
 
 Blockly.Python['oled_draw_data'] = function(block) {
-  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import Oled';
+  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledRGB as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
@@ -239,7 +239,7 @@ Blockly.Python['oled_draw_data'] = function(block) {
 }
 
 Blockly.Python['oled_draw_rectangle'] = function(block) {
-  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import Oled';
+  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledRGB as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
 
   const x1 = Blockly.Python.valueToCode(block, 'x1', Blockly.Python.ORDER_ATOMIC);
@@ -251,7 +251,7 @@ Blockly.Python['oled_draw_rectangle'] = function(block) {
   return `oled.draw_rectangle((${x1}, ${y1}, ${x2}, ${y2}), ${fill})\n`;
 }
 Blockly.Python['oled_draw_ellipse'] = function(block) {
-  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import Oled';
+  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledRGB as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
 
   const x1 = Blockly.Python.valueToCode(block, 'x1', Blockly.Python.ORDER_ATOMIC);
@@ -263,7 +263,7 @@ Blockly.Python['oled_draw_ellipse'] = function(block) {
   return `oled.draw_ellipse((${x1}, ${y1}, ${x2}, ${y2}), ${fill})\n`;
 }
 Blockly.Python['oled_draw_line'] = function(block) {
-  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import Oled';
+  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledRGB as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
 
   const x1 = Blockly.Python.valueToCode(block, 'x1', Blockly.Python.ORDER_ATOMIC);
@@ -273,17 +273,17 @@ Blockly.Python['oled_draw_line'] = function(block) {
   return `oled.draw_line((${x1}, ${y1}, ${x2}, ${y2}))\n`;
 }
 Blockly.Python['oled_invert'] = function(block) {
-  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import Oled';
+  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledRGB as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
   return "oled.invert()\n";
 }
 Blockly.Python['oled_show'] = function(block) {
-  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import Oled';
+  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledRGB as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
   return "oled.show()\n";
 }
 Blockly.Python['oled_clear'] = function(block) {
-  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import Oled';
+  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledRGB as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
   return "oled.clear()\n";
 }

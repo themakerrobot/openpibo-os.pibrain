@@ -884,6 +884,7 @@ let toolbox = (lang) => {
       { // Device
         "kind": "category",
         "name": translations['device'][lang],
+        "hidden": "true",
         "contents": [
           {
             "kind": "block",
@@ -962,6 +963,7 @@ let toolbox = (lang) => {
       { // Motion
         "kind": "category",
         "name": translations['motion'][lang],
+        "hidden": "true",
         "contents": [
           {
             "kind": "block",
