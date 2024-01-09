@@ -64,9 +64,7 @@ socket.on("update", (data) => {
           Blockly.serialization.workspaces.load(JSON.parse(data["code"]), workspace);
           if(data["code"] != "{}") {
             for(jdata of JSON.parse(data["code"])["blocks"]["blocks"]) {
-              if(jdata['type'].includes('_dynamic')) {
-                updateSecondDropdown.call(workspace.getBlockById(jdata['id']), jdata['fields']['dir'], jdata['fields']['filename'])
-              }
+              findBlocks({block:jdata})
             }
           }
           saveBlock = data["code"];
@@ -121,6 +119,19 @@ socket.on("update", (data) => {
   }
 });
 
+function findBlocks(data) {
+  if (data && typeof data === 'object') {
+    if ('block' in data) {
+      jdata = data['block'];
+      if(jdata['type'].includes('_dynamic')) {
+        updateSecondDropdown.call(workspace.getBlockById(jdata['id']), jdata['fields']['dir'], jdata['fields']['filename'])
+      }
+    }
+    for (const key in data) {
+      findBlocks(data[key]);
+    }
+  }
+}
 socket.emit("init");
 socket.on("init", (d) => {
   let filepath = d["codepath"];
@@ -149,9 +160,7 @@ socket.on("init", (d) => {
       Blockly.serialization.workspaces.load(JSON.parse(d["codetext"]), workspace);
       if(d["codetext"] != "{}") {
         for(jdata of JSON.parse(d["codetext"])["blocks"]["blocks"]) {
-          if(jdata['type'].includes('_dynamic')) {
-            updateSecondDropdown.call(workspace.getBlockById(jdata['id']), jdata['fields']['dir'], jdata['fields']['filename'])
-          }
+          findBlocks({block:jdata})
         }
       }
       saveBlock = d["codetext"];
@@ -382,6 +391,21 @@ socket.on("update_file_manager", (d) => {
               //let type = $(`#fm_table tr:eq(${idx}) td:eq(0)`).html();
               let name = $(`#fm_table tr:eq(${idx}) td:eq(1)`).html();
               let newname = prompt(translations['check_newfile_name'][lang]);
+
+              if (newname != null) {
+                if(newname == "") {
+                  alert(translations['check_newfile_name'][lang]);
+                  return;
+                }
+                newname = newname.trim()//.replace(/ /g, "_");
+                if(newname.length > MAX_FILENAME_LENGTH) {
+                  alert(translations['name_size_limit'][lang](MAX_FILENAME_LENGTH));
+                  return;
+                }
+              }
+              else {
+                return;
+              }
 
               if (!confirm(translations['confirm_rename'][lang](name, newname))) return;
 
