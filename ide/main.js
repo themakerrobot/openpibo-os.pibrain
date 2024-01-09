@@ -15,6 +15,11 @@ const codeExec = {
   shell: 'sh',
 };
 
+http.createServer(function (req, res) {
+  res.writeHead(301, { 'Location': `http://${req.headers.host}:50000${req.url}` });
+  res.end();
+}).listen(80);
+
 const protectList = [
   '/home/pi/openpibo-os',
   '/home/pi/openpibo-files',
