@@ -884,8 +884,16 @@ let toolbox = (lang) => {
       { // Device
         "kind": "category",
         "name": translations['device'][lang],
-        "hidden": "true",
         "contents": [
+          {
+            "kind": "block",
+            "type": "device_hat_pir",
+          },
+          {
+            "kind": "block",
+            "type": "device_hat_button",
+          },
+          /*
           {
             "kind": "block",
             "type": "device_eye_on",
@@ -1008,6 +1016,7 @@ let toolbox = (lang) => {
             "kind": "block",
             "type": "device_get_button",
           },
+          */
         ],
         "colour": color_type["device"],
         "cssConfig": {

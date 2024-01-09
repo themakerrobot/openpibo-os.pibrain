@@ -500,6 +500,11 @@ Blockly.Msg["COLLECT_TOPIC"] = "제목";
 Blockly.Msg["COLLECT_CONTENT"] = "내용";
 Blockly.Msg["COLLECT_LINK"] = "링크";
 
+Blockly.Msg["DEVICE_HAT_PIR"] = "%1 %2 사람 체크하기";
+Blockly.Msg["DEVICE_HAT_PIR_TOOLTIP"] = "사람 감지 여부를 확인합니다";
+Blockly.Msg["DEVICE_HAT_BUTTON"] = "%1 %2 버튼 체크하기";
+Blockly.Msg["DEVICE_HAT_BUTTON_TOOLTIP"] = "버튼 상태를 확인합니다";
+
 Blockly.Msg["DEVICE_EYE_ON"] = "%1 %2 눈 LED %3 %4 %5 %6 %7 %8 켜기";
 Blockly.Msg["DEVICE_EYE_ON_TOOLTIP"] = "눈 LED 색상 값을 설정하여 켭니다";
 Blockly.Msg["DEVICE_EYE_COLOUR_ON"] = "%1 %2 색상 변수로 눈 LED %3 %4 켜기";

@@ -292,6 +292,47 @@ Blockly.defineBlocksWithJsonArray(
       tooltip: '%{BKY_COLLECT_NEWS_TOOLTIP}',
       helpUrl: ''
     },
+
+    {
+      type: 'device_hat_pir',
+      message0: '%{BKY_DEVICE_HAT_PIR}',
+      args0:
+        [
+          {
+            "type": "field_image",
+            "src": "svg/person-circle-check-solid.svg",
+            "width": 27,
+            "height": 27
+          },
+          {"type":"input_dummy"}
+        ],
+      output: 'String',
+      inputsInline: true,
+      colour: color_type["device"],
+      tooltip: '%{BKY_DEVICE_HAT_PIR_TOOLTIP}',
+      helpUrl: ''
+    },
+    {
+      type: 'device_hat_button',
+      message0: '%{BKY_DEVICE_HAT_BUTTON}',
+      args0:
+        [
+          {
+            "type": "field_image",
+            "src": "svg/toggle-on-solid.svg",
+            "width": 27,
+            "height": 27
+          },
+          {"type":"input_dummy"}
+        ],
+      output: 'String',
+      inputsInline: true,
+      colour: color_type["device"],
+      tooltip: '%{BKY_DEVICE_HAT_BUTTON_TOOLTIP}',
+      helpUrl: ''
+    },  
+
+    /*
     {
       type: 'device_eye_on',
       message0: '%{BKY_DEVICE_EYE_ON}',
@@ -497,6 +538,7 @@ Blockly.defineBlocksWithJsonArray(
       tooltip: '%{BKY_DEVICE_GET_BUTTON_TOOLTIP}',
       helpUrl: ''
     },    
+    */
     // motion
     {
       type: 'motion_get_motion',

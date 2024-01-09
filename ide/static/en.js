@@ -500,6 +500,11 @@ Blockly.Msg["COLLECT_TOPIC"] = "topic";
 Blockly.Msg["COLLECT_CONTENT"] = "content";
 Blockly.Msg["COLLECT_LINK"] = "link";
 
+Blockly.Msg["DEVICE_HAT_PIR"] = "%1 %2 Check for human presence";
+Blockly.Msg["DEVICE_HAT_PIR_TOOLTIP"] = "Detect presence of people.";
+Blockly.Msg["DEVICE_HAT_BUTTON"] = "%1 %2 Check button";
+Blockly.Msg["DEVICE_HAT_BUTTON_TOOLTIP"] = "Check button status.";
+
 Blockly.Msg["DEVICE_EYE_ON"] = "%1 %2 Turn on eye LEDs %3 %4 %5 %6 %7 %8";
 Blockly.Msg["DEVICE_EYE_ON_TOOLTIP"] = "Turn on eye LED";
 Blockly.Msg["DEVICE_EYE_COLOUR_ON"] = "%1 %2 Turn on eye LEDs with color variable %3 %4";

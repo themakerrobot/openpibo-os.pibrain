@@ -72,6 +72,19 @@ Blockly.Python['news_search'] = function(block) {
 }
 
 // device
+Blockly.Python['device_hat_pir'] = function(block) {
+  Blockly.Python.definitions_['import_RPi_GPIO_as_GPIO'] = 'import RPi.GPIO as GPIO';
+  Blockly.Python.definitions_['setmode_gpio_bcm'] = 'GPIO.setmode(GPIO.BCM)';
+  Blockly.Python.definitions_['setup_27_gpio_in'] = 'GPIO.setup(27, GPIO.IN)';
+  return ["'person' if GPIO.input(27) else 'none'", Blockly.Python.ORDER_ATOMIC];
+}
+Blockly.Python['device_hat_button'] = function(block) {
+  Blockly.Python.definitions_['import_RPi_GPIO_as_GPIO'] = 'import RPi.GPIO as GPIO';
+  Blockly.Python.definitions_['setmode_gpio_bcm'] = 'GPIO.setmode(GPIO.BCM)';
+  Blockly.Python.definitions_['setup_17_gpio_in_pud_up'] = 'GPIO.setup(17 ,GPIO.IN, pull_up_down=GPIO.PUD_UP)';
+  return ["'off' if GPIO.input(17) else 'on'", Blockly.Python.ORDER_ATOMIC];
+}
+
 Blockly.Python['device_eye_on'] = function(block) {
   Blockly.Python.definitions_['from_device_import_Device'] = 'from openpibo.device import Device';
   Blockly.Python.definitions_['assign_device'] = 'device = Device()';
