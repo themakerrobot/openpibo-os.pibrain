@@ -816,7 +816,7 @@ let toolbox = (lang) => {
             "kind": "block",
             "type": "audio_stop",
           },
-          {
+          /*{
             "kind": "block",
             "type": "audio_record",
             "inputs":{
@@ -839,6 +839,7 @@ let toolbox = (lang) => {
               }
             }
           }
+      */
         ],
         "colour": color_type["audio"],
         "cssConfig": {
@@ -1337,11 +1338,11 @@ let toolbox = (lang) => {
                 }
               },
             }
-          },
+          },/*
           {
             "kind": "block",
             "type": "oled_invert",
-          },
+          },*/
           {
             "kind": "block",
             "type": "oled_show",
@@ -1360,7 +1361,7 @@ let toolbox = (lang) => {
         "kind": "category",
         "name": translations['speech'][lang],
         "contents": [
-          {
+          /*{
             "kind": "block",
             "type": "speech_stt",
             "inputs":{
@@ -1373,7 +1374,7 @@ let toolbox = (lang) => {
                 }
               }
             }
-          },
+          },*/
           {
             "kind": "block",
             "type": "speech_tts",

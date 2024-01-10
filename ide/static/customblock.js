@@ -102,6 +102,7 @@ Blockly.defineBlocksWithJsonArray(
       tooltip: '%{BKY_AUDIO_STOP_TOOLTIP}',
       helpUrl: ''
     },
+    /*
     {
       type: 'audio_record',
       message0: '%{BKY_AUDIO_RECORD}',
@@ -131,6 +132,7 @@ Blockly.defineBlocksWithJsonArray(
       tooltip: '%{BKY_AUDIO_RECORD_TOOLTIP}',
       helpUrl: ''
     },
+    */
     {
       type: 'wikipedia_search',
       message0: '%{BKY_COLLECT_WIKIPEDIA}',
@@ -1030,6 +1032,7 @@ Blockly.defineBlocksWithJsonArray(
       tooltip: '%{BKY_OLED_DRAW_LINE_TOOLTIP}',
       helpUrl: ''
     },
+    /*
     {
       type: 'oled_invert',
       message0: '%{BKY_OLED_INVERT}',
@@ -1050,6 +1053,7 @@ Blockly.defineBlocksWithJsonArray(
       tooltip: '%{BKY_OLED_INVERT_TOOLTIP}',
       helpUrl: ''
     },
+    */
     {
       type: 'oled_show',
       message0: '%{BKY_OLED_SHOW}',
@@ -1090,7 +1094,7 @@ Blockly.defineBlocksWithJsonArray(
       tooltip: '%{BKY_OLED_CLEAR_TOOLTIP}',
       helpUrl: ''
     },
-    {
+    /*{
       type: 'speech_stt',
       message0: '%{BKY_SPEECH_STT}',
       args0:
@@ -1115,7 +1119,7 @@ Blockly.defineBlocksWithJsonArray(
       colour: color_type["speech"],
       tooltip: '%{BKY_SPEECH_STT_TOOLTIP}',
       helpUrl: ''
-    },
+    },*/
     {
       type: 'speech_tts',
       message0: '%{BKY_SPEECH_TTS}',
