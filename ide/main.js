@@ -23,6 +23,7 @@ http.createServer(function (req, res) {
 const protectList = [
   '/home/pi/openpibo-os',
   '/home/pi/openpibo-files',
+  '/home/pi/openpibo-python',
   '/home/pi/node_modules',
   '/home/pi/package.json',
   '/home/pi/package-lock.json',
@@ -209,6 +210,10 @@ app.post('/show', upload_for_home.single('data'), (req, res) => {
 });
 
 io.on('connection', (socket) => {
+  socket.on('poweroff', () => {
+    exec('shutdown -h now &', ()=>{});
+  });
+
   socket.on('init', () => {
     try {
       io.emit('system', execSync('/home/pi/openpibo-os/system/system.sh').toString().replaceAll('\n','').split(','));

@@ -38,6 +38,10 @@ const translations = {
     ko: "\n\n로봇의 Wifi 정보를 변경하시겠습니까?\nWifi 정보를 한번 더 확인하시기 바랍니다.\n(잘못된 정보 입력 시, 심각한 오류가 발생할 수 있습니다.)",
     en: "\n\nAre you sure you want to change the wifi information of the robot?\nPlease check the wifi information once more.\n(Serious errors may occur if you enter incorrect information.)"
   },
+  confirm_poweroff: {
+    ko: "정말 종료하시겠습니까?",
+    en: "Are you sure you want to quit?"
+  },
   move_to_tool: {
     ko: "Tools로 이동하시겠습니까?",
     en: "Are you sure you want to go to Tools?"

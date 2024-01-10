@@ -40,6 +40,10 @@ let BLOCK_PATH = '';
 let saveCode = "";
 let saveBlock = "{}";
 
+$("#poweroff_bt").on("click", function () {
+  if (confirm(translations["confirm_poweroff"][lang])) socket.emit("poweroff");
+});
+
 $("#logo_bt").on("click", () => {
   location.href = `http://${location.hostname}`;
 });

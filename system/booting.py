@@ -76,6 +76,7 @@ async def f(key="tools", data: dict = Body(...)):
 
 @app.get('/wifi_scan')
 async def f():
+  network_disp.run()
   return JSONResponse(content=wifi.wifi_scan(), status_code=200)
 
 @app.get('/wifi')

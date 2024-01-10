@@ -311,9 +311,8 @@ Blockly.Python['oled_show'] = function(block) {
 Blockly.Python['oled_clear'] = function(block) {
   Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledRGB as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
-  return "oled.clear()\n";
+  return "oled.clear(fill=False, show=False)\n";
 }
-
 // speech
 Blockly.Python['speech_stt'] = function(block) {
   Blockly.Python.definitions_['from_speech_import_Speech'] = 'from openpibo.speech import Speech';
