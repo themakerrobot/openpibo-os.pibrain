@@ -66,7 +66,7 @@ socket.on("update", (data) => {
       if (codetype == "block") {
         try {
           Blockly.serialization.workspaces.load(JSON.parse(data["code"]), workspace);
-          if(data["code"] != "{}") {
+          if(data["code"] != "{}" && 'blocks' in JSON.parse(data["code"])) {
             for(jdata of JSON.parse(data["code"])["blocks"]["blocks"]) {
               findBlocks({block:jdata})
             }
@@ -162,7 +162,7 @@ socket.on("init", (d) => {
       });
 
       Blockly.serialization.workspaces.load(JSON.parse(d["codetext"]), workspace);
-      if(d["codetext"] != "{}") {
+      if(d["codetext"] != "{}" && 'blocks' in JSON.parse(d["codetext"])) {
         for(jdata of JSON.parse(d["codetext"])["blocks"]["blocks"]) {
           findBlocks({block:jdata})
         }
