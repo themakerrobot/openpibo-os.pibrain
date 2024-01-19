@@ -51,6 +51,7 @@ $("#logo_bt").on("click", () => {
 $("#fontsize").on("change", () => {
   document.querySelector("div.CodeMirror").style.fontSize = `${$("#fontsize").val()}px`;
   codeEditor.refresh();
+  document.getElementById("result").style.fontSize = `${$("#fontsize").val()}px`;
 });
 
 socket.on("update", (data) => {
