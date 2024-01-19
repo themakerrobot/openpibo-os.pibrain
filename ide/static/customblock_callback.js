@@ -478,7 +478,7 @@ Blockly.Python['vision_face_age'] = function(block) {
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
   const v = Blockly.Python.valueToCode(block, 'v', Blockly.Python.ORDER_ATOMIC);
   
-  return [`_face.get_age(${img}[${v}[1]:${v}[1]+${v}[3], ${v}[0]:${v}[0]+${v}[2]])[0]`, Blockly.Python.ORDER_ATOMIC];
+  return [`_face.get_age(${img}, ${v})[0]`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python['vision_face_gender'] = function(block) {
   Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision import Face';
@@ -487,7 +487,7 @@ Blockly.Python['vision_face_gender'] = function(block) {
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
   const v = Blockly.Python.valueToCode(block, 'v', Blockly.Python.ORDER_ATOMIC);
   
-  return [`_face.get_gender(${img}[${v}[1]:${v}[1]+${v}[3], ${v}[0]:${v}[0]+${v}[2]])[0]`, Blockly.Python.ORDER_ATOMIC];
+  return [`_face.get_gender(${img}, ${v})[0]`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python['vision_object'] = function(block) {
   Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision import Detect';
