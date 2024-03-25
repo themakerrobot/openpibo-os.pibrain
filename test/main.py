@@ -17,7 +17,7 @@ dc
 battery
 '''
 
-from openpibo.oled import Oled
+from openpibo.oled import OledbyILI9341 as Oled
 from openpibo.audio import Audio
 from openpibo.motion import Motion
 from openpibo.device import Device

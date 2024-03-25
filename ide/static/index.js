@@ -1,3 +1,28 @@
+let fullscreen = false;
+$('#fullscreen_txt').html(
+  fullscreen?
+  '<i class="fa-solid fa-minimize fa-xl"></i>':
+  '<i class="fa-solid fa-maximize fa-xl"></i>'
+);
+
+$('#fullscreen_bt').on('click', ()=>{
+  if (!fullscreen && document.documentElement.requestFullscreen) {
+    document.documentElement.requestFullscreen();
+    fullscreen=true;
+    $('#fullscreen_txt').html('<i class="fa-solid fa-minimize fa-xl"></i>');
+  }
+  else if (fullscreen && document.exitFullscreen) {
+    document.exitFullscreen();
+    fullscreen=false;
+    $('#fullscreen_txt').html('<i class="fa-solid fa-maximize fa-xl"></i>');
+  }
+  else {}
+});
+
+$('#guide_bt').on('click', () => {
+  window.open('https://themakerrobot.github.io/openpibo-python/build/html/index.html');
+});
+
 const init_usedata = {
   staytime:0,
   block:{click:0, keydown:0, execute:0, staytime:0},
@@ -24,6 +49,7 @@ const codeEditor = CodeMirror.fromTextArea(
         CodeMirror.signal(codeEditor, "change");
         socket.emit("save", { codepath: $("#codepath").html(), codetext: saveCode });
       },
+      "Ctrl-/": "toggleComment"
     },
   }
 );
@@ -39,10 +65,6 @@ let CODE_PATH = '';
 let BLOCK_PATH = '';
 let saveCode = "";
 let saveBlock = "{}";
-
-$("#poweroff_bt").on("click", function () {
-  if (confirm(translations["confirm_poweroff"][lang])) socket.emit("poweroff");
-});
 
 $("#logo_bt").on("click", () => {
   location.href = `http://${location.hostname}`;
@@ -555,6 +577,7 @@ $("#eraser").on("click", () => {
     result.value = "";
     $("#respath").text("");
     $("#prompt").val("");
+    socket.emit('reset_log');
   // }
 });
 window.dispatchEvent(new Event('onresize'));
@@ -705,7 +728,7 @@ const workspace = Blockly.inject("blocklyDiv", {
   zoom: {
     controls: true,
     wheel: false,
-    startScale: 0.8,
+    startScale: 0.7,
     maxScale: 3,
     minScale: 0.3,
     scaleSpeed: 1.05,
@@ -1097,6 +1120,14 @@ socket.on("update_dc", function (data) {
   );
 });
 
+$("#poweroff_bt").on("click", function () {
+  if (confirm(translations["confirm_poweroff"][lang])) socket.emit("poweroff");
+});
+
+$("#restart_bt").on("click", function () {
+  if (confirm(translations["confirm_restart"][lang])) socket.emit("restart");
+});
+
 const setLanguage = (langCode) => {
   const elements = document.querySelectorAll('[data-key]');
   elements.forEach(element => {
@@ -1106,7 +1137,7 @@ const setLanguage = (langCode) => {
       }
   });
 
-  const langFileVersion = '231108v1';
+  const langFileVersion = '240110v1';
   const langFile = `../static/${langCode}.js?ver=${langFileVersion}`;
   const prevKoScript = document.querySelector(`script[src*="../static/ko.js?ver=${langFileVersion}"]`);
   if (prevKoScript) {

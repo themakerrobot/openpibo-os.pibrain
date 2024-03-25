@@ -1,7 +1,7 @@
 def run():
   try:
     import os
-    from openpibo.oled import OledRGB as Oled
+    from openpibo.oled import OledbyILI9341 as Oled
 
     v = os.popen('/home/pi/openpibo-os/system/system.sh').read().strip('\n').split(',')
     o = Oled()

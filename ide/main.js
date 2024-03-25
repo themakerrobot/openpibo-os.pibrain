@@ -15,15 +15,9 @@ const codeExec = {
   shell: 'sh',
 };
 
-http.createServer(function (req, res) {
-  res.writeHead(301, { 'Location': `http://${req.headers.host}:50000${req.url}` });
-  res.end();
-}).listen(80);
-
 const protectList = [
   '/home/pi/openpibo-os',
   '/home/pi/openpibo-files',
-  '/home/pi/openpibo-python',
   '/home/pi/node_modules',
   '/home/pi/package.json',
   '/home/pi/package-lock.json',
@@ -210,10 +204,6 @@ app.post('/show', upload_for_home.single('data'), (req, res) => {
 });
 
 io.on('connection', (socket) => {
-  socket.on('poweroff', () => {
-    exec('shutdown -h now &', ()=>{});
-  });
-
   socket.on('init', () => {
     try {
       io.emit('system', execSync('/home/pi/openpibo-os/system/system.sh').toString().replaceAll('\n','').split(','));
@@ -227,6 +217,17 @@ io.on('connection', (socket) => {
       else codeText = '';
       io.emit('init', {codepath: codePath, codetext:codeText, path:PATH});
     });
+  });
+  socket.on('reset_log', () => {
+    record = '[' + new Date().toString() + ']: \n\n';
+  });
+  socket.on('poweroff', () => {
+    exec('shutdown -h now &');
+    exec('echo "#11:!" > /dev/ttyS0');
+  });
+
+  socket.on('restart', () => {
+    exec('shutdown -r now');
   });
 
   socket.on('load_directory', function(p) {
@@ -243,6 +244,7 @@ io.on('connection', (socket) => {
 
   socket.on('stop', () => {
     exec('pkill play');
+    exec('servo init');
     if(ps) ps.kill('SIGKILL');
   });
 
@@ -426,5 +428,19 @@ setInterval(() => {
   }
   catch (err) {
     io.emit('update', {dialog:'초기화: 시스템 파일 오류입니다.'});
+  }
+
+  try {
+    io.emit('update_battery', execSync('curl -s "http://0.0.0.0/device/%2315%3A%21"').toString().replaceAll('"', '').split(':')[1]);
+  }
+  catch (err) {
+    //io.emit('update', {dialog:'초기화: 배터리체크 오류입니다.'});
+  }
+
+  try {
+    io.emit('update_dc', execSync('curl -s "http://0.0.0.0/device/%2314%3A%21"').toString().replaceAll('"', '').split(':')[1]);
+  }
+  catch (err) {
+    //io.emit('update', {dialog:'초기화: DC 체크 오류입니다.'});
   }
 }, 10000);
