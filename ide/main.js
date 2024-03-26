@@ -15,6 +15,13 @@ const codeExec = {
   shell: 'sh',
 };
 
+http.createServer((req, res) => {
+  res.writeHead(302, { 'Location': `http://${req.headers.host.replace(/:\d+$/, '')}:50000${req.url}` });
+  res.end();
+}).listen(80, () => {
+  console.log('Server running on port 80');
+});
+
 const protectList = [
   '/home/pi/openpibo-os',
   '/home/pi/openpibo-files',
