@@ -1021,6 +1021,7 @@ let toolbox = (lang) => {
           {
             "kind": "block",
             "type": "device_hat_button",
+            // "disabled":"true",
           },
         ],
         "colour": color_type["device"],
@@ -1860,6 +1861,92 @@ let toolbox = (lang) => {
           },
           {
             "kind": "block",
+            "type": "vision_facedb_train",
+            "inputs":{
+              "img":{
+                "shadow": {
+                  "type": "variables_get",
+                }
+              },
+              "v":{
+                "shadow": {
+                  "type": "variables_get",
+                }
+              },
+              "name":{
+                "shadow": {
+                  "type": "text",
+                  "fields": {
+                    "TEXT": "pibo"
+                    // "TEXT": translations["image_filename"][lang]
+                  }
+                }
+              },
+            }
+          },
+          {
+            "kind": "block",
+            "type": "vision_facedb_delete",
+            "inputs":{
+              "name":{
+                "shadow": {
+                  "type": "text",
+                  "fields": {
+                    "TEXT": "pibo"
+                    // "TEXT": translations["image_filename"][lang]
+                  }
+                }
+              },
+            }
+          },
+          {
+            "kind": "block",
+            "type": "vision_facedb_recognize",
+            "inputs":{
+              "img":{
+                "shadow": {
+                  "type": "variables_get",
+                }
+              },
+              "v":{
+                "shadow": {
+                  "type": "variables_get",
+                }
+              },
+            }
+          },
+          {
+            "kind": "block",
+            "type": "vision_facedb_save",
+            "inputs":{
+              "filename":{
+                "shadow": {
+                  "type": "text",
+                  "fields": {
+                    "TEXT": "facedb"
+                    // "TEXT": translations["image_filename"][lang]
+                  }
+                }
+              },
+            }
+          },
+          {
+            "kind": "block",
+            "type": "vision_facedb_load",
+            "inputs":{
+              "filename":{
+                "shadow": {
+                  "type": "text",
+                  "fields": {
+                    "TEXT": "facedb"
+                    // "TEXT": translations["image_filename"][lang]
+                  }
+                }
+              },
+            }
+          },
+          {
+            "kind": "block",
             "type": "vision_object",
             "inputs":{
               "img":{
@@ -2049,6 +2136,26 @@ let toolbox = (lang) => {
                   "type":"variables_get",
                 }
               }
+            }
+          },
+          {
+            "kind": "block",
+            "type": "vision_call_ai_img_ext",
+            "inputs":{
+              "img":{
+                "shadow":{
+                  "type":"variables_get",
+                }
+              },
+              "type":{
+                "shadow": {
+                  "type": "text",
+                  "fields": {
+                    "TEXT": "object/object_e"
+                    // "TEXT": translations["image_filename"][lang]
+                  }
+                }
+              },
             }
           },
         ],

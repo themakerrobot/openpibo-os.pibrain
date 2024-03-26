@@ -506,7 +506,6 @@ Blockly.Python.forBlock['vision_transfer'] = function(block) {
   }
   return [res, Blockly.Python.ORDER_ATOMIC];
 }
-
 Blockly.Python.forBlock['vision_flip'] = function(block) {
   Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision import Camera';
   Blockly.Python.definitions_['assign_camera'] = 'camera = Camera()';
@@ -516,7 +515,6 @@ Blockly.Python.forBlock['vision_flip'] = function(block) {
 
   return [`camera.flip(${img}, ${flags})`, Blockly.Python.ORDER_ATOMIC];
 }
-
 Blockly.Python.forBlock['vision_face'] = function(block) {
   Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision import Face';
   Blockly.Python.definitions_['assign_face'] = '_face = Face()';
@@ -548,6 +546,50 @@ Blockly.Python.forBlock['vision_face_gender'] = function(block) {
   const v = Blockly.Python.valueToCode(block, 'v', Blockly.Python.ORDER_ATOMIC);
   
   return [`_face.get_gender(${img}, ${v})[0]`, Blockly.Python.ORDER_ATOMIC];
+}
+Blockly.Python.forBlock['vision_facedb_train'] = function(block) {
+  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision import Face';
+  Blockly.Python.definitions_['assign_face'] = '_face = Face()';
+
+  const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
+  const v = Blockly.Python.valueToCode(block, 'v', Blockly.Python.ORDER_ATOMIC);
+  const name = Blockly.Python.valueToCode(block, 'name', Blockly.Python.ORDER_ATOMIC);
+
+  return `_face.train_face(${img}, ${v}, ${name})\n`;
+}
+Blockly.Python.forBlock['vision_facedb_delete'] = function(block) {
+  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision import Face';
+  Blockly.Python.definitions_['assign_face'] = '_face = Face()';
+
+  const name = Blockly.Python.valueToCode(block, 'filename', Blockly.Python.ORDER_ATOMIC);
+  return `_face.delete_face(${name})\n`;
+}
+Blockly.Python.forBlock['vision_facedb_recognize'] = function(block) {
+  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision import Face';
+  Blockly.Python.definitions_['assign_face'] = '_face = Face()';
+
+  const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
+  const v = Blockly.Python.valueToCode(block, 'v', Blockly.Python.ORDER_ATOMIC);
+  
+  return [`_face.recognize(${img}, ${v})`, Blockly.Python.ORDER_ATOMIC];
+}
+Blockly.Python.forBlock['vision_facedb_save'] = function(block) {
+  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision import Face';
+  Blockly.Python.definitions_['assign_face'] = '_face = Face()';
+
+  const dir = block.getFieldValue("dir");
+  const filename = Blockly.Python.valueToCode(block, 'filename', Blockly.Python.ORDER_ATOMIC);
+
+  return `_face.save_db('${dir}'+${filename})\n`;
+}
+Blockly.Python.forBlock['vision_facedb_load'] = function(block) {
+  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision import Face';
+  Blockly.Python.definitions_['assign_face'] = '_face = Face()';
+
+  const dir = block.getFieldValue("dir");
+  const filename = Blockly.Python.valueToCode(block, 'filename', Blockly.Python.ORDER_ATOMIC);
+
+  return `_face.load_db('${dir}'+${filename})\n`;
 }
 Blockly.Python.forBlock['vision_object'] = function(block) {
   Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision import Detect';
@@ -660,6 +702,13 @@ Blockly.Python.forBlock['vision_call_ai_img'] = function(block) {
   const type = block.getFieldValue("type");
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
   return [`vision_api('${type}', ${img})['data']`, Blockly.Python.ORDER_ATOMIC];
+}
+Blockly.Python.forBlock['vision_call_ai_img_ext'] = function(block) {
+  Blockly.Python.definitions_['from_vision_import_vision_api'] = 'from openpibo.vision import vision_api';
+
+  const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
+  const type = Blockly.Python.valueToCode(block, 'type', Blockly.Python.ORDER_ATOMIC);
+  return [`vision_api(${type}, ${img})['data']`, Blockly.Python.ORDER_ATOMIC];
 }
 
 // Utils
