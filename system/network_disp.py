@@ -1,6 +1,6 @@
 def run():
   try:
-    import os
+    import os, random
     from openpibo.oled import OledbyILI9341 as Oled
 
     v = os.popen('/home/pi/openpibo-os/system/system.sh').read().strip('\n').split(',')
@@ -12,10 +12,11 @@ def run():
     else:
       wip, ssid, sn = "", "", v[0][-8:]
 
-    o.set_font(size=13)
-    o.draw_text((0, 5), f'SN: {sn}')
-    o.draw_text((0,25), f'I P: {wip.strip()}')
-    o.draw_text((0,45), f'AP: {ssid}')
+    o.set_font(size=25)
+    o.draw_text((0,50), f'# WIFI')
+    o.draw_text((0,100), f'SN: {sn}')
+    o.draw_text((0,150), f'I P: {wip.strip()}')
+    o.draw_text((0,200), f'AP: {ssid}')
     o.show()
     ret = True, ""
   except Exception as ex:

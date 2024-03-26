@@ -135,7 +135,7 @@ def boot():
 
   aud.play("/home/pi/openpibo-os/system/opening.mp3", 70, True)
   ole.clear()
-  ole.draw_image("/home/pi/openpibo-os/system/themaker.jpg")
+  ole.draw_image("/home/pi/openpibo-os/system/themaker320.jpg")
   ole.set_font(size=15)
   ole.draw_text((5,40), os_version)
   ole.show()
@@ -145,7 +145,7 @@ def boot():
     if (tmp[6] != '' and tmp[6][0:3] != '169') or (tmp[8] != '' and tmp[8][0:3] != '169'):
       os.system("systemctl stop hostapd;wpa_cli -i wlan0 reconfigure")
       break
-    ole.draw_image("/home/pi/openpibo-os/system/pibo.jpg")
+    ole.draw_image("/home/pi/openpibo-os/system/pibrain320.jpg")
     ole.draw_text((5,5), "˚".join(["" for _ in range(i+1)]))
     ole.show()
     time.sleep(3)

@@ -220,6 +220,7 @@ io.on('connection', (socket) => {
   });
   socket.on('reset_log', () => {
     record = '[' + new Date().toString() + ']: \n\n';
+    exec('python3 /home/pi/openpibo-os/system/network_disp.py');
   });
   socket.on('poweroff', () => {
     exec('shutdown -h now &');
@@ -428,19 +429,5 @@ setInterval(() => {
   }
   catch (err) {
     io.emit('update', {dialog:'초기화: 시스템 파일 오류입니다.'});
-  }
-
-  try {
-    io.emit('update_battery', execSync('curl -s "http://0.0.0.0/device/%2315%3A%21"').toString().replaceAll('"', '').split(':')[1]);
-  }
-  catch (err) {
-    //io.emit('update', {dialog:'초기화: 배터리체크 오류입니다.'});
-  }
-
-  try {
-    io.emit('update_dc', execSync('curl -s "http://0.0.0.0/device/%2314%3A%21"').toString().replaceAll('"', '').split(':')[1]);
-  }
-  catch (err) {
-    //io.emit('update', {dialog:'초기화: DC 체크 오류입니다.'});
   }
 }, 10000);
