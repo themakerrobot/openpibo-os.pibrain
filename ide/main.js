@@ -231,11 +231,52 @@ io.on('connection', (socket) => {
   });
   socket.on('poweroff', () => {
     exec('shutdown -h now &');
-    exec('echo "#11:!" > /dev/ttyS0');
   });
 
   socket.on('restart', () => {
     exec('shutdown -r now');
+  });
+
+  socket.on('restore', () => {
+    fs.readdirSync('/home/pi/', {withFileTypes:true}).forEach(p => {
+      try {
+        //console.log(p.name);
+        if (['.tools.json', '.ide.json'].includes(p.name)) {
+          exec(`rm -rf /home/pi/${p.name}`);
+          return;
+        }
+        if (['code', 'myimage', 'myaudio', 'mymodel'].includes(p.name)) {
+          exec(`rm -rf /home/pi/${p.name}/*`);
+          return;
+        }
+        if (p.name[0] == '.' || ['node_modules', 'package.json', 'package-lock.json', 'openpibo-os', 'openpibo-os.hat', 'openpibo-files'].includes(p.name)) {
+          return;
+        }
+        else {
+          exec(`rm -rf /home/pi/${p.name}`);
+        }
+      }
+      catch (err) {
+        io.emit('update', {dialog:'초기화 오류: ' + err.toString()});
+        return;
+      }
+    });
+
+    try {
+      tmp='country=KR\n'
+      tmp+='ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\n'
+      tmp+='update_config=1\n'
+      tmp+='network={\n'
+      tmp+='\tssid="pibo"\n'
+      tmp+='\tpsk="!pibo0314"\n'
+      tmp+='\tkey_mgmt=WPA-PSK\n'
+      tmp+='}\n'
+      fs.writeFileSync('/etc/wpa_supplicant/wpa_supplicant.conf', tmp);
+    } catch (err) {
+      io.emit('update', {dialog:'wpa_supplicant.conf 오류: ' + err.toString()});
+    }
+
+    exec('shutdown -h now &');
   });
 
   socket.on('load_directory', function(p) {

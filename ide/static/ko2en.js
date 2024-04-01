@@ -78,6 +78,10 @@ const translations = {
     ko: ( oldname, newname ) => { return `${oldname} 파일 또는 폴더의 이름을 ${newname}으로 변경하시겠습니까?` },
     en: ( oldname, newname ) => { return `Are you sure you want to rename the file or folder ${oldname} to ${newname}?` },
   },
+  confirm_restore: {
+    ko: "초기화하시겠습니까?",
+    en: "Are you sure you want to reset?"
+  },
   confirm_poweroff: {
     ko: "정말 종료하시겠습니까?",
     en: "Are you sure you want to quit?"

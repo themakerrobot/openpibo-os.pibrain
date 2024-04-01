@@ -1120,6 +1120,13 @@ socket.on("update_dc", function (data) {
   );
 });
 
+$("#restore_bt").on("click", function () {
+  if (confirm(translations["confirm_restore"][lang])){
+    usedata = init_usedata;
+    socket.emit("restore");
+  }
+});
+
 $("#poweroff_bt").on("click", function () {
   if (confirm(translations["confirm_poweroff"][lang])) socket.emit("poweroff");
 });
