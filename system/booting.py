@@ -148,7 +148,7 @@ def boot():
     ole.draw_image("/home/pi/openpibo-os/system/pibrain320.jpg")
     ole.draw_text((5,5), "˚".join(["" for _ in range(i+1)]))
     ole.show()
-    time.sleep(3)
+    time.sleep(3.5)
   network_disp.run()
   _ = Timer(10, wifi_update)
   _.daemon = True
