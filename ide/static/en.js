@@ -629,6 +629,8 @@ Blockly.Msg["VISION_TRANSFER"] = "%1 %2 Convert image %3 to %4";
 Blockly.Msg["VISION_TRANSFER_TOOLTIP"] = "Transform image style.";
 Blockly.Msg["VISION_FLIP"] = "%1 %2 Convert image %3 to %4 flip";
 Blockly.Msg["VISION_FLIP_TOOLTIP"] = "flip the image.";
+Blockly.Msg["VISION_RESIZE"] = "%1 %2 Resize image %3 to width %4, height %5 ";
+Blockly.Msg["VISION_RESIZE_TOOLTIP"] = "Resize the image.";
 
 Blockly.Msg["VISION_FACE"] = "%1 %2 Find faces in image %3";
 Blockly.Msg["VISION_FACE_TOOLTIP"] = "Detect and identify faces in the specified image.";
@@ -645,7 +647,7 @@ Blockly.Msg["VISION_FACEDB_DELETE"] = "%1 %2 Delete face name %3 from face train
 Blockly.Msg["VISION_FACEDB_DELETE_TOOLTIP"] = "Delete a specific face from training faces.";
 Blockly.Msg["VISION_FACEDB_RECOGNIZE"] = "%1 %2 Recognize who is image %3 face %4";
 Blockly.Msg["VISION_FACEDB_RECOGNIZE_TOOLTIP"] = "Recognize who faces are in an image.";
-Blockly.Msg["VISION_FACEDB_SAVE"] = "%1 %2 Save face training data to file %3 %$";
+Blockly.Msg["VISION_FACEDB_SAVE"] = "%1 %2 Save face training data to file %3 %4";
 Blockly.Msg["VISION_FACEDB_SAVE_TOOLTIP"] = "Save face training data to file.";
 Blockly.Msg["VISION_FACEDB_LOAD"] = "%1 %2 Load face training data from file %3 %4";
 Blockly.Msg["VISION_FACEDB_LOAD_TOOLTIP"] = "Load face training data from file.";
@@ -712,6 +714,8 @@ Blockly.Msg["UTILS_DICT_SET"] = "%1 %2 Append { %4 : %5 } to dictionary %3";
 Blockly.Msg["UTILS_DICT_SET_TOOLTIP"] = "Add a new key-value pair to an existing dictionary.";
 Blockly.Msg["UTILS_DICT_CREATE"] = "%1 %2 Create empty dictionary";
 Blockly.Msg["UTILS_DICT_CREATE_TOOLTIP"] = "Generate a new empty dictionary.";
+Blockly.Msg["UTILS_ARRAY_SLICE_SET"] = "%1 %2 Setting %8 in list %3 [%4:%5, %6:%7]";
+Blockly.Msg["UTILS_ARRAY_SLICE_SET_TOOLTIP"] = "Sets a specific range of values in the list.";
 
 Blockly.Msg["UTILS_CHECK_PATH"] = "%1 %2 Check if %3 %4 exists";
 Blockly.Msg["UTILS_CHECK_PATH_TOOLTIP"] = "Confirm the existence of a file or directory.";

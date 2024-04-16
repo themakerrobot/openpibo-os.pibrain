@@ -629,6 +629,8 @@ Blockly.Msg["VISION_TRANSFER"] = "%1 %2 이미지 %3 %4로 바꾸기";
 Blockly.Msg["VISION_TRANSFER_TOOLTIP"] = "이미지의 스타일을 변환합니다.";
 Blockly.Msg["VISION_FLIP"] = "%1 %2 이미지 %3 %4로 대칭하기";
 Blockly.Msg["VISION_FLIP_TOOLTIP"] = "이미지를 상하/좌우로 대칭합니다.";
+Blockly.Msg["VISION_RESIZE"] = "%1 %2 이미지 %3 을  %4, %5 크기로 변환하기";
+Blockly.Msg["VISION_RESIZE_TOOLTIP"] = "이미지 크기를 변환합니다.";
 
 Blockly.Msg["VISION_FACE"] = "%1 %2 이미지 %3 얼굴 찾기";
 Blockly.Msg["VISION_FACE_TOOLTIP"] = "이미지에서 얼굴을 찾습니다.";
@@ -712,6 +714,8 @@ Blockly.Msg["UTILS_DICT_SET"] = "%1 %2 딕셔너리 %3 에 { %4 : %5 } 추가하
 Blockly.Msg["UTILS_DICT_SET_TOOLTIP"] = "딕셔너리의 해당하는 키의 값을 설정합니다.";
 Blockly.Msg["UTILS_DICT_CREATE"] = "%1 %2 빈 딕셔너리 생성";
 Blockly.Msg["UTILS_DICT_CREATE_TOOLTIP"] = "빈 딕셔너리를 생성합니다.";
+Blockly.Msg["UTILS_ARRAY_SLICE_SET"] = "%1 %2 리스트 %3 [ %4:%5, %6:%7 ] 에 %8 설정하기";
+Blockly.Msg["UTILS_ARRAY_SLICE_SET_TOOLTIP"] = "리스트의 특정 범위 값을 설정합니다.";
 
 Blockly.Msg["UTILS_CHECK_PATH"] = "%1 %2 %3 %4 존재하는지 확인하기";
 Blockly.Msg["UTILS_CHECK_PATH_TOOLTIP"] = "파일 또는 폴더가 존재하는지 확인합니다.";

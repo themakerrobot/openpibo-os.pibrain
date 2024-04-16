@@ -515,6 +515,16 @@ Blockly.Python.forBlock['vision_flip'] = function(block) {
 
   return [`camera.flip(${img}, ${flags})`, Blockly.Python.ORDER_ATOMIC];
 }
+Blockly.Python.forBlock['vision_resize'] = function(block) {
+  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision import Camera';
+  Blockly.Python.definitions_['assign_camera'] = 'camera = Camera()';
+
+  const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
+  const w = Blockly.Python.valueToCode(block, 'w', Blockly.Python.ORDER_ATOMIC);
+  const h = Blockly.Python.valueToCode(block, 'h', Blockly.Python.ORDER_ATOMIC);
+
+  return [`camera.resize(${img}, ${w}, ${h})`, Blockly.Python.ORDER_ATOMIC];
+}
 Blockly.Python.forBlock['vision_face'] = function(block) {
   Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision import Face';
   Blockly.Python.definitions_['assign_face'] = '_face = Face()';
@@ -749,6 +759,16 @@ Blockly.Python.forBlock['utils_dict_set'] = function(block) {
 }
 Blockly.Python.forBlock['utils_dict_create'] = function(block) {
   return [`dict()\n`, Blockly.Python.ORDER_ATOMIC];
+}
+Blockly.Python.forBlock['utils_array_slice_set'] = function(block) {
+  const arr = Blockly.Python.valueToCode(block, 'arr', Blockly.Python.ORDER_ATOMIC);
+  const y1 = Blockly.Python.valueToCode(block, 'y1', Blockly.Python.ORDER_ATOMIC);
+  const y2 = Blockly.Python.valueToCode(block, 'y2', Blockly.Python.ORDER_ATOMIC);
+  const x1 = Blockly.Python.valueToCode(block, 'x1', Blockly.Python.ORDER_ATOMIC);
+  const x2 = Blockly.Python.valueToCode(block, 'x2', Blockly.Python.ORDER_ATOMIC);
+  const value = Blockly.Python.valueToCode(block, 'value', Blockly.Python.ORDER_ATOMIC);
+
+  return `${arr}[${y1}:${y2}, ${x1}:${x2}] = ${value}\n`;
 }
 Blockly.Python.forBlock['utils_check_path'] = function(block) {
   Blockly.Python.definitions_['import_os'] = 'import os';

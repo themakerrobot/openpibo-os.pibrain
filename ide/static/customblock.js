@@ -1726,6 +1726,27 @@ Blockly.defineBlocksWithJsonArray(
       helpUrl: ''
     },
     {
+      type: 'vision_resize',
+      message0: '%{BKY_VISION_RESIZE}',
+      "args0": [
+        {
+          "type": "field_image",
+          "src": "svg/wand-magic-sparkles-solid.svg",
+          "width": 27,
+          "height": 27
+        },
+        {"type":"input_dummy"},
+        {"type": "input_value", "name": "img", "check":"Array"},
+        {"type": "input_value", "name": "w", "check":"Number"},
+        {"type": "input_value", "name": "h", "check":"Number"},
+      ],
+      output: null,
+      inputsInline: true,
+      colour: color_type["vision"],
+      tooltip: '%{BKY_VISION_RESIZE_TOOLTIP}',
+      helpUrl: ''
+    },
+    {
       type: 'vision_face',
       message0: '%{BKY_VISION_FACE}',
       "args0": [
@@ -2380,6 +2401,32 @@ Blockly.defineBlocksWithJsonArray(
         inputsInline: true,
         colour: color_type["utils"],
         tooltip: '%{BKY_UTILS_DICT_CREATE_TOOLTIP}',
+        helpUrl: ''
+    },
+    {
+      type: 'utils_array_slice_set',
+      message0: '%{BKY_UTILS_ARRAY_SLICE_SET}',
+      args0:
+        [
+          {
+            "type": "field_image",
+            "src": "svg/list-check-solid.svg",
+            "width": 27,
+            "height": 27
+          },
+          {"type":"input_dummy"},
+          {"type": "input_value", "name": "arr", "check":"Array"},
+          {"type": "input_value", "name": "y1",  "check":"Number"},
+          {"type": "input_value", "name": "y2",  "check":"Number"},
+          {"type": "input_value", "name": "x1",  "check":"Number"},
+          {"type": "input_value", "name": "x2",  "check":"Number"},
+          {"type": "input_value", "name": "value", "check":"Array"}
+        ],
+        nextStatement: true,
+        previousStatement: true,
+        inputsInline: true,
+        colour: color_type["utils"],
+        tooltip: '%{BKY_UTILS_ARRAY_SLICE_SET_TOOLTIP}',
         helpUrl: ''
     },
     {
