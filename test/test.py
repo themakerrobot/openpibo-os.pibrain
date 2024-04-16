@@ -12,3 +12,4 @@ os.system('raspistill -t 2 -o /home/pi/.tmp.jpg')
 
 while True:
   print('on' if GPIO.input(4) else 'off', 'on' if GPIO.input(17) else 'off', 'on' if GPIO.input(27) else 'off')
+  time.sleep(1)
