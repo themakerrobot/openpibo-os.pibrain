@@ -3,7 +3,16 @@ import time
 import serial
 import os
 
-ser = serial.Serial('/dev/ttyS0', 115200, timeout=1)
+'''
+# /boot/config.txt
+dtoverlay=dwc2
+
+# /etc/modules
+dwc
+g_serial
+'''
+
+ser = serial.Serial('/dev/ttyGS0', 1000000, timeout=1)
 filename = '/home/pi/tmp.py'
 current_process = None
 record = ''
@@ -50,7 +59,7 @@ async def read_serial():
   while True:
     if ser.in_waiting:
       lines = ser.readlines()
-      print(lines)
+      print('recv:', lines)
       
       if len(lines) > 0:
         if any('###END###' in line.decode('utf-8') for line in lines):
