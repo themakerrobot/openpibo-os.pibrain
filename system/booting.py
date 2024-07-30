@@ -129,7 +129,7 @@ def boot():
   try:
     with open('/home/pi/config.json', 'r') as f:
       tmp = json.load(f)
-      os.system('echo "#23:{}!" >/dev/ttyS0'.format(tmp['eye']))
+      #os.system('echo "#23:{}!" >/dev/ttyS0'.format(tmp['eye']))
   except Exception as ex:
     pass
 

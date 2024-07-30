@@ -25,6 +25,8 @@ mkdir -p /home/pi/myimage
 mkdir -p /home/pi/myaudio
 mkdir -p /home/pi/mymodel
 
+#cd /home/pi/openpibo-os/system;sudo python3 uart_ctrl.py &
+
 # ap start
 sudo /home/pi/openpibo-os/system/wifi-ap-sta run
 
