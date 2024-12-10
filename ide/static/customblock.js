@@ -533,7 +533,71 @@ Blockly.defineBlocksWithJsonArray(
       tooltip: '%{BKY_DEVICE_HAT_BUTTON_TOOLTIP}',
       helpUrl: ''
     },
+    {
+      type: 'device_hat_led_on',
+      message0: '%{BKY_DEVICE_HAT_LED_ON}',
+      args0:
+        [
+          {
+            "type": "field_image",
+            "src": "svg/eye-solid.svg",
+            "width": 27,
+            "height": 27
+          },
+          {"type":"input_dummy"},
+          {"type": "input_value", "name": "val0", "check":"Number"},
+          {"type": "input_value", "name": "val1", "check":"Number"},
+          {"type": "input_value", "name": "val2", "check":"Number"},
+        ],
+      nextStatement: true,
+      previousStatement: true,
+      inputsInline: true,
+      colour: color_type["device"],
+      tooltip: '%{BKY_DEVICE_HAT_LED_ON_TOOLTIP}',
+      helpUrl: ''
+    },
+    {
+      type: 'device_hat_led_colour_on',
+      message0: '%{BKY_DEVICE_HAT_LED_COLOUR_ON}',
+      args0:
+        [
+          {
+            "type": "field_image",
+            "src": "svg/eye-solid.svg",
+            "width": 27,
+            "height": 27
+          },
+          {"type":"input_dummy"},
+          {"type": "input_value", "name": "color", "check":"Colour"},
+        ],
+      nextStatement: true,
+      previousStatement: true,
+      inputsInline: true,
+      colour: color_type["device"],
+      tooltip: '%{BKY_DEVICE_HAT_LED_COLOUR_ON_TOOLTIP}',
+      helpUrl: ''
+    },
 
+    {
+      type: 'device_hat_led_off',
+      message0: '%{BKY_DEVICE_HAT_LED_OFF}',
+      args0:
+        [
+          {
+            "type": "field_image",
+            "src": "svg/eye-slash-solid.svg",
+            "width": 27,
+            "height": 27
+          },
+          {"type":"input_dummy"}
+        ],
+      nextStatement: true,
+      previousStatement: true,
+      inputsInline: true,
+      colour: color_type["device"],
+      tooltip: '%{BKY_DEVICE_HAT_LED_OFF_TOOLTIP}',
+      helpUrl: ''
+    },
     // motion
     {
       type: 'motion_get_motion',
@@ -1229,7 +1293,8 @@ Blockly.defineBlocksWithJsonArray(
               ['%{BKY_LANG_RU}','ru'],
               ['%{BKY_LANG_AR}','ar'],
               ['%{BKY_LANG_HI}','hi'],
-              ['%{BKY_LANG_LA}','la']
+              ['%{BKY_LANG_LA}','la'],
+              ['%{BKY_LANG_MS}','ms']
             ]
           },
         ],
@@ -1272,7 +1337,8 @@ Blockly.defineBlocksWithJsonArray(
               ['%{BKY_LANG_RU}','ru'],
               ['%{BKY_LANG_AR}','ar'],
               ['%{BKY_LANG_HI}','hi'],
-              ['%{BKY_LANG_LA}','la']
+              ['%{BKY_LANG_LA}','la'],
+              ['%{BKY_LANG_MS}','ms']
             ]
          },
         ],
@@ -1723,27 +1789,6 @@ Blockly.defineBlocksWithJsonArray(
       inputsInline: true,
       colour: color_type["vision"],
       tooltip: '%{BKY_VISION_FLIP_TOOLTIP}',
-      helpUrl: ''
-    },
-    {
-      type: 'vision_resize',
-      message0: '%{BKY_VISION_RESIZE}',
-      "args0": [
-        {
-          "type": "field_image",
-          "src": "svg/wand-magic-sparkles-solid.svg",
-          "width": 27,
-          "height": 27
-        },
-        {"type":"input_dummy"},
-        {"type": "input_value", "name": "img", "check":"Array"},
-        {"type": "input_value", "name": "w", "check":"Number"},
-        {"type": "input_value", "name": "h", "check":"Number"},
-      ],
-      output: null,
-      inputsInline: true,
-      colour: color_type["vision"],
-      tooltip: '%{BKY_VISION_RESIZE_TOOLTIP}',
       helpUrl: ''
     },
     {
@@ -2401,32 +2446,6 @@ Blockly.defineBlocksWithJsonArray(
         inputsInline: true,
         colour: color_type["utils"],
         tooltip: '%{BKY_UTILS_DICT_CREATE_TOOLTIP}',
-        helpUrl: ''
-    },
-    {
-      type: 'utils_array_slice_set',
-      message0: '%{BKY_UTILS_ARRAY_SLICE_SET}',
-      args0:
-        [
-          {
-            "type": "field_image",
-            "src": "svg/list-check-solid.svg",
-            "width": 27,
-            "height": 27
-          },
-          {"type":"input_dummy"},
-          {"type": "input_value", "name": "arr", "check":"Array"},
-          {"type": "input_value", "name": "y1",  "check":"Number"},
-          {"type": "input_value", "name": "y2",  "check":"Number"},
-          {"type": "input_value", "name": "x1",  "check":"Number"},
-          {"type": "input_value", "name": "x2",  "check":"Number"},
-          {"type": "input_value", "name": "value", "check":"Array"}
-        ],
-        nextStatement: true,
-        previousStatement: true,
-        inputsInline: true,
-        colour: color_type["utils"],
-        tooltip: '%{BKY_UTILS_ARRAY_SLICE_SET_TOOLTIP}',
         helpUrl: ''
     },
     {

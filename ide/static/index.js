@@ -24,9 +24,15 @@ $('#guide_bt').on('click', () => {
 });
 
 const init_usedata = {
-  staytime:0,
+  staytime:0, 
+  home:{click:0, keydown:0, staytime:0},
+  device:{click:0, keydown:0, staytime:0},
+  motion:{click:0, keydown:0, staytime:0},
+  vision:{click:0, keydown:0, staytime:0},
+  speech:{click:0, keydown:0, staytime:0},
+  simulator:{click:0, keydown:0, staytime:0},
   block:{click:0, keydown:0, execute:0, staytime:0},
-  python:{click:0, keydown:0, execute:0, staytime:0},
+  python:{click:0, keydown:0, execute:0, staytime:0}
 };
 const system_port = 8080;
 let usedata = init_usedata; // from server
@@ -223,8 +229,8 @@ socket.on("system", (data) => {
   $("#s_runtime").text(`${Math.floor(data[2] / 3600)} hours`);
   $("#s_cpu_temp").text(data[3]);
   $("#s_memory").text(`${Math.floor(data[5]/data[4]/4*100)} %`);
-  $("#s_network").html(`<i class="fa-solid fa-wifi"></i> ${data[6]}/${data[7]}, <i class="fas fa-network-wired"></i> ${data[8]}`);
-  $("#network_info").html(`<i class="fa-solid fa-wifi"></i> ${data[6]}/${data[7]}, <i class="fas fa-network-wired"></i> ${data[8]}`);
+  $("#s_network").html(`<i class="fas fa-network-wired"></i> ${data[7]}, <i class="fa-solid fa-wifi"></i> ${data[6]}/${data[8]}`);
+  $("#network_info").html(`<i class="fas fa-network-wired"></i> ${data[7]}, <i class="fa-solid fa-wifi"></i> ${data[6]}/${data[8]}`);
 });
 
 let startTime_item = new Date().getTime();
@@ -400,7 +406,8 @@ socket.on("update_file_manager", (d) => {
               }
             })
             ,
-            $("<td style='width:15px;text-align:center'>").append(["", "folder"].includes(data[i].type) || data[i].protect==true?"":`<a href='/download?filename=${data[i].name}'><i class='fa-solid fa-circle-down'></i></a>`)
+            $("<td style='width:15px;text-align:center'>").append(data[i].type == "" || data[i].protect==true?"":`<a href='/download?filename=${data[i].name}'><i class='fa-solid fa-circle-down'></i></a>`)
+            //$("<td style='width:15px;text-align:center'>").append(["", "folder"].includes(data[i].type) || data[i].protect==true?"":`<a href='/download?filename=${data[i].name}'><i class='fa-solid fa-circle-down'></i></a>`)
               .hover(
                 function () { $(this).animate({ opacity: "0.3" }, 100); },
                 function () { $(this).animate({ opacity: "1" }, 100); }
@@ -549,7 +556,8 @@ $("#upload").on("change", (e) => {
 
   let formData = new FormData();
   for (item of upload_files) {
-    formData.append('data', item);
+    //formData.append('data', item);
+    formData.append('files', item);
   }
   $("#upload").val("");
   $.ajax({
@@ -560,6 +568,7 @@ $("#upload").on("change", (e) => {
     processData: false
   })
   .always((xhr, status) => {
+    console.log(status)
     if (status == "success") {
       alert(translations['file_ok'][lang]);
     } else {
@@ -705,7 +714,7 @@ let update_block = () => {
 }
 
 const workspace = Blockly.inject("blocklyDiv", {
-  toolbox: lang=="en"?toolbox_en:toolbox_ko,
+  toolbox:toolbox_dict[lang],
   collapse: true,
   comments: true,
   disable: true,
@@ -731,7 +740,7 @@ const workspace = Blockly.inject("blocklyDiv", {
     startScale: 0.7,
     maxScale: 3,
     minScale: 0.3,
-    scaleSpeed: 1.05,
+    scaleSpeed: 1.2,
     pinch: true
   },
   move:{
@@ -747,9 +756,9 @@ const workspace = Blockly.inject("blocklyDiv", {
     'base': Blockly.Themes.Classic,
     startHats: true,
     fontStyle: {
-      'family': null,
-      'weight': null,
-      'size': 16,
+      family: null,
+      weight: 'bold',
+      size: 16,
     },
     blockStyles: {
       logic_blocks: {
@@ -838,6 +847,26 @@ const workspace = Blockly.inject("blocklyDiv", {
     }
   }),
 });
+
+Blockly.Python.init(workspace);
+Blockly.Python.nameDB_.getName = function(name, type) {
+  const enc_name = Blockly.Names.prototype.getName.call(this, name, type);
+
+  // 인코딩된 한글 문자 디코딩
+  const decodedName = enc_name.replace(/(_[A-Z0-9]{2})+/g, (match) => {
+    try {
+      const uriEncoded = match.replace(/_/g, "%");
+      return decodeURIComponent(uriEncoded);
+    } catch (error) {
+      return match; // 디코딩 실패 시 그대로 반환
+    }
+  });
+
+  // Python 변수명에 맞지 않는 문자 중 한글, 알파벳, 숫자, 밑줄만 허용하고 나머지를 언더스코어로 변환
+  const pythonCompatibleName = decodedName.replace(/[^a-zA-Z0-9가-힣_]/g, "_");
+  return pythonCompatibleName;
+};
+
 workspace.addChangeListener ((event)=>{
   update_block();
   if (event.type == Blockly.Events.CREATE) {
@@ -916,7 +945,7 @@ $("#showNetwork").on("click", ()=>{
           $("<tr>")
             .append(
               $("<td>").append(data[i].essid),
-              $("<td>").append(`${data[i].quality} / ${data[i].dBm}dBm`),
+              $("<td>").append(`${data[i].signal_quality} %`),
               $("<td>").append(data[i].encryption)
             )
             .hover(
@@ -930,13 +959,22 @@ $("#showNetwork").on("click", ()=>{
             .click(function () {
               let lst = $(this).children();
               $("#ssid").val(lst.eq(0).text());
+              $("#identity").val("");
               $("#psk").val("");
-              if(lst.eq(2).text() == "off") {
-                $("#enctype_open").prop("checked", true);
+              $(`input[name='wifi_type_sel'][value='${lst.eq(2).text()}']`).prop("checked", true).trigger("change");
+              if(lst.eq(2).text() == "none") { // open
+                $("#ssid").prop("disabled", false);
+                $("#identity").prop("disabled", true);
                 $("#psk").prop("disabled", true);
               }
-              else {
-                $("#enctype_open").prop("checked", false);
+              else if(lst.eq(2).text() == "wpa-psk") { // wpa-psk
+                $("#ssid").prop("disabled", false);
+                $("#identity").prop("disabled", true);
+                $("#psk").prop("disabled", false);
+              }
+              else if(lst.eq(2).text() == "wpa-eap") { // wpa-enterprise
+                $("#ssid").prop("disabled", false);
+                $("#identity").prop("disabled", false);
                 $("#psk").prop("disabled", false);
               }
             })
@@ -959,38 +997,35 @@ $.ajax({
   if (status == "success") {
     $("#ssid").val(xhr["ssid"]);
     $("#psk").val(xhr["psk"]);
-    if(xhr["psk"] == "") {
-      $("#enctype_open").prop("checked", true);
+    if(xhr["key-mgmt"] == "none") { // open
+      $("#ssid").prop("disabled", false);
+      $("#identity").prop("disabled", true);
+      $("#identity").val("");
       $("#psk").prop("disabled", true);
+      $("#psk").val("");
+      $(`input[name='wifi_type_sel'][value='${xhr["key-mgmt"]}']`).prop("checked", true).trigger("change");
     }
-    else {
-      $("#enctype_open").prop("checked", false);
+    else if(xhr["key-mgmt"] == "wpa-psk") { // wpa-psk
+      $("#ssid").prop("disabled", false);
+      $("#ssid").val(xhr["ssid"]);
+      $("#identity").prop("disabled", true);
+      $("#identity").val("");
       $("#psk").prop("disabled", false);
+      $("#psk").val(xhr["psk"]);
+      $(`input[name='wifi_type_sel'][value='${xhr["key-mgmt"]}']`).prop("checked", true).trigger("change");
+    }
+    else if(xhr["key-mgmt"] == "wpa-eap") { // wpa-enterprise
+      $("#ssid").prop("disabled", false);
+      $("#ssid").val(xhr["ssid"]);
+      $("#identity").prop("disabled", false);
+      $("#identity").val(xhr["identity"]);
+      $("#psk").prop("disabled", false);
+      $("#psk").val(xhr["psk"]);
+      $(`input[name='wifi_type_sel'][value='${xhr["key-mgmt"]}']`).prop("checked", true).trigger("change");
     }
   } else {
     //
   }
-});
-
-$("#current_wifi").on("click", ()=> {
-  $.ajax({
-    url: `http://${location.hostname}:${system_port}/wifi`,
-  }).always((xhr, status) => {
-    if (status == "success") {
-      $("#ssid").val(xhr["ssid"]);
-      $("#psk").val(xhr["psk"]);
-      if(xhr["psk"] == "") {
-        $("#enctype_open").prop("checked", true);
-        $("#psk").prop("disabled", true);
-      }
-      else {
-        $("#enctype_open").prop("checked", false);
-        $("#psk").prop("disabled", false);
-      }
-    } else {
-      //
-    }
-  });
 });
 
 $("#wifi_bt").on("click", function () {
@@ -1002,7 +1037,7 @@ $("#wifi_bt").on("click", function () {
     $.ajax({
       url: `http://${location.hostname}:${system_port}/wifi`,
       type: "post",
-      data: JSON.stringify({ssid:$("#ssid").val().trim(), psk:$("#psk").val().trim()}),
+      data: JSON.stringify({ssid:$("#ssid").val().trim(), psk:$("#psk").val().trim(), identity:$("#identity").val().trim()}),
       contentType: "application/json",
     }).always((xhr, status) => {
       if (status == "success") {
@@ -1033,7 +1068,7 @@ window.addEventListener('beforeunload', (evt) => {
   });
   usedata[codetype]["staytime"] += parseInt((new Date().getTime() - startTime_item) / 1000);
   $.ajax({
-    url: `http://${location.hostname}:${system_port}/usedata/ide`,
+    url: `http://${location.hostname}:${system_port}/usedata`,
     type: "post",
     data: JSON.stringify(usedata),
     contentType: "application/json",
@@ -1051,7 +1086,7 @@ $("#usedata_bt").on("click", ()=> {
   document.getElementById("wifiPopup").style.display = "none";
 
   $.ajax({
-    url: `http://${location.hostname}:${system_port}/usedata/ide`,
+    url: `http://${location.hostname}:${system_port}/usedata`,
     type: "post",
     data: JSON.stringify(usedata),
     contentType: "application/json",
@@ -1070,29 +1105,39 @@ $("#hideUsedata").on("click", ()=>{
   document.getElementById("usedataPopup").style.display = "none";
 });
 
-$('#password_check').on('click',function(){
-  $('#password_check').toggleClass('active');
-  $('#password').prop('type', $('#password_check').hasClass('active')?"text":"password");
+$('#psk_visible').on('click',function(){
+  $('#psk_visible').toggleClass('active');
+  $('#psk').prop('type', $('#psk_visible').hasClass('active')?"text":"password");
 });
 
-$('#psk_check').on('click',function(){
-  $('#psk_check').toggleClass('active');
-  $('#psk').prop('type', $('#psk_check').hasClass('active')?"text":"password");
-});
-
-$('#ssid_en').on('click', function(){
-  $("#ssid").prop("disabled", $("#ssid_en").is(":checked")?false:true);
-});
-
-$("#enctype_open").on('click', function(){
-  if($("#enctype_open").is(":checked")){
-    $("#psk").val("");
-    $("#psk").prop("disabled", true);
+$('input[name="wifi_type_sel"]').on('click', function () {
+  // 선택된 라디오 버튼의 값을 가져오기
+  const selectedValue = $(this).val();
+  if (selectedValue === 'wpa-psk') {
+      console.log("WPA 설정을 선택했습니다.");
+      $("#ssid").prop("disabled", false);
+      $("#identity").prop("disabled", true);
+      $("#identity").val("");
+      $("#psk").prop("disabled", false);
+  } else if (selectedValue === 'none') {
+      console.log("Open 설정을 선택했습니다.");
+      $("#ssid").prop("disabled", false);
+      $("#identity").prop("disabled", true);
+      $("#identity").val("");
+      $("#psk").prop("disabled", true);
+      $("#psk").val("");
+  } else if (selectedValue === 'wpa-eap') {
+      console.log("WPA-EAP 설정을 선택했습니다.");
+      $("#ssid").prop("disabled", false);
+      $("#identity").prop("disabled", false);
+      $("#psk").prop("disabled", false);        
+  } else if (selectedValue === 'custom') {
+      console.log("Custom 설정을 선택했습니다.");
+      $("#ssid").prop("disabled", false);
+      $("#identity").prop("disabled", false);
+      $("#psk").prop("disabled", false);        
   }
-  else{
-    $("#psk").prop("disabled", false);
-  }
-});
+}); 
 
 $("#prompt").on("keypress", function (evt) {
   if (evt.keyCode == 13) {
@@ -1120,13 +1165,6 @@ socket.on("update_dc", function (data) {
   );
 });
 
-$("#restore_bt").on("click", function () {
-  if (confirm(translations["confirm_restore"][lang])){
-    usedata = init_usedata;
-    socket.emit("restore");
-  }
-});
-
 $("#poweroff_bt").on("click", function () {
   if (confirm(translations["confirm_poweroff"][lang])) socket.emit("poweroff");
 });
@@ -1144,7 +1182,7 @@ const setLanguage = (langCode) => {
       }
   });
 
-  const langFileVersion = '240416v1';
+  const langFileVersion = '240110v3';
   const langFile = `../static/${langCode}.js?ver=${langFileVersion}`;
   const prevKoScript = document.querySelector(`script[src*="../static/ko.js?ver=${langFileVersion}"]`);
   if (prevKoScript) {
@@ -1154,12 +1192,17 @@ const setLanguage = (langCode) => {
   if (prevEnScript) {
     prevEnScript.remove();
   }
+  const prevCnScript = document.querySelector(`script[src*="../static/cn.js?ver=${langFileVersion}"]`);
+  if (prevCnScript) {
+    prevCnScript.remove();
+  }
   const script = document.createElement('script');
   script.setAttribute('src', langFile);
   document.head.appendChild(script);
-  workspace.updateToolbox(langCode=="en"?toolbox_en:toolbox_ko);
-
-  if (langCode == "en") {
+  //workspace.updateToolbox(langCode=="en"?toolbox_en:toolbox_ko);
+  workspace.updateToolbox(toolbox_dict[langCode]);
+  
+  if (langCode == "en" || langCode == "cn") {
     document.getElementById('add_directory').style.width = '105px';
     document.getElementById('add_file').style.width = '100px';
   }

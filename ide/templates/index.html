@@ -8,7 +8,7 @@
     <meta name="mobile-web-app-capable" content="yes" />
 
     <link rel="stylesheet" href="../static/fontello.css" type="text/css" />
-    <link rel="stylesheet" href="../static/index.css?ver=240319v1" />
+    <link rel="stylesheet" href="../static/index.css?ver=240701v4" />
     <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
     <link rel="stylesheet" href="../static/codemirror.css" />
     <link rel="stylesheet" href="../static/cobalt.css" />
@@ -16,13 +16,13 @@
     <link rel="stylesheet" href="../static/jquery.jsonview.min.css" />
     <link rel="shortcut icon" href="../static/icon.png?ver=240319v1" type="image/x-icon" />
 
-    <script src="../static/ko2en.js?ver=240319v1"></script>
+    <script src="../static/ko2en.js?ver=240319v2"></script>
     <script src="../static/blockly_compressed.js?ver=240319v1"></script>
     <script src="../static/blocks_compressed.js?ver=240319v1"></script>
     <script src="../static/python_compressed.js?ver=240319v1"></script>
-    <script src="../static/customblock.js?ver=240416v1"></script>
-    <script src="../static/customblock_callback.js?ver=240416v1"></script>
-    <script src="../static/customblock_toolbox.js?ver=240416v1"></script>
+    <script src="../static/customblock.js?ver=240319v1"></script>
+    <script src="../static/customblock_callback.js?ver=240319v2"></script>
+    <script src="../static/customblock_toolbox.js?ver=240319v3"></script>
     <script src="../static/jquery-3.1.1.min.js"></script>
     <script src="../static/jquery.jsonview.min.js"></script>
     <script src="../static/codemirror.min.js"></script>
@@ -35,13 +35,14 @@
       <div style="float:left">
         <h2>
           <i class="fa-solid fa-code">IDE</i>&nbsp;
+          <i class="fa-solid fa-left-right" style="opacity:30%"></i>&nbsp;
+          <a id="home_bt">
+            <i class="fa-solid fa-microchip" style="opacity:30%">Tools</i>
+          </a>
         </h2>
       </div>
       <div style="float:right">
         <h2 style="display: flex; align-items: center; justify-content: center;">
-          <a id="restore_bt">
-            <i class="fa-solid fa-eraser"></i>
-          </a>&nbsp;&nbsp;
           <a id="poweroff_bt">
             <i class="fa-solid fa-power-off"></i>
           </a>&nbsp;&nbsp;
@@ -54,10 +55,11 @@
           <select id="language">
             <option value="ko">한국어</option>
             <option value="en">English</option>
+            <option value="cn">中文</option>
           </select>&nbsp;
-          <!-- <a id='logo_bt'> -->
+          <a id='logo_bt'>
             <img src="../static/themaker.png" style="height:22px"/>
-          <!-- </a> -->
+          </a>
         </h2>
       </div>
     </header>
@@ -72,18 +74,35 @@
           <h3>&nbsp;</h3>
           <span id="network_info"></span>
           <br>
-
           <table style="width:100%">
+            <tr>
+              <td>
+                <span data-key="wifi_type"></span>
+              </td>
+              <td colspan="2">
+                <input type="radio" name="wifi_type_sel" value="wpa-psk" checked />wpa-psk
+                <input type="radio" name="wifi_type_sel" value="none" />none
+                <input type="radio" name="wifi_type_sel" value="wpa-eap" />wpa-eap
+                <input type="radio" name="wifi_type_sel" value="custom" />cutsom
+              </td>
+            </tr>
             <tr>
               <td>
                 <span data-key="wifi_name"></span>
               </td>
               <td>
-                <input type="text" name="ssid" id="ssid" disabled /><input type="checkbox" id="ssid_en" name="ssid_en" /> / 
-                <i class="fa-solid fa-lock-open"></i>&nbsp;<input type="checkbox" id="enctype_open" name="enctype_open" />
+                <input type="text" name="ssid" id="ssid" disabled />
+              </td>
+              <td rowspan="3">
+                <button type="button" class="confirm" id="wifi_bt"><i class="fa-solid fa-check-double"></i>&nbsp;<span data-key="confirm"></span></button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-key="wifi_identity"></span>
               </td>
               <td>
-                <button type="button" class="confirm" id="wifi_bt" style="width:120px;"><i class="fa-solid fa-check-double"></i>&nbsp;<span data-key="confirm"></span></button>
+                <input type="text" name="identity" id="identity" disabled />
               </td>
             </tr>
             <tr>
@@ -91,10 +110,7 @@
                 <span data-key="password"></span>
               </td>
               <td>
-                <input type="password" id="psk" name="psk" /><input type="checkbox" id="psk_check" name="psk_check" />
-              </td>
-              <td>
-                <button type="button" class="cancel" id="current_wifi" style="width:120px;"><i class="fa-solid fa-rotate-left"></i>&nbsp;<span data-key="reset"></span></button>
+                <input type="password" id="psk" name="psk" /><input type="checkbox" id="psk_visible" name="psk_visible" />
               </td>
             </tr>
           </table>
@@ -262,8 +278,7 @@
       <div style="float:left;padding:0.7rem 0 0.7rem 0">
         <i class="fa-solid fa-robot fa-flip"></i>
         <span id="s_os_version"></span>,
-        <i class="fa-solid fa-tags"></i>
-        <a id="usedata_bt"><span id="s_serial"></span></a>
+        <a id="usedata_bt"><i class="fa-solid fa-tags"></i><span id="s_serial"></span></a>
         &nbsp;&nbsp;<a id="fullscreen_bt"><span id='fullscreen_txt'></span></a>
       </div>
       <div style="float:right;padding:0.7rem 0 0.7rem 0">
@@ -279,6 +294,6 @@
         <span id="d_dc_val"></span>
       </div>
     </footer>
-    <script src="../static/index.js?ver=240416v2"></script>
+    <script src="../static/index.js?ver=240707v22"></script>
   </body>
 </html>

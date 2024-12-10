@@ -1021,7 +1021,55 @@ let toolbox = (lang) => {
           {
             "kind": "block",
             "type": "device_hat_button",
-            // "disabled":"true",
+            //"disabled":"true",
+          },
+          {
+            "kind": "block",
+            "type": "device_hat_led_on",
+            //"disabled":"true",
+            "inputs":{
+              "val0": {
+                "shadow": {
+                  "type": "math_number",
+                  "fields": {
+                    "NUM": "0"
+                  }
+                }
+              },
+              "val1": {
+                "shadow": {
+                  "type": "math_number",
+                  "fields": {
+                    "NUM": "0"
+                  }
+                }
+              },
+              "val2": {
+                "shadow": {
+                  "type": "math_number",
+                  "fields": {
+                    "NUM": "0"
+                  }
+                }
+              },
+            }
+          },
+          {
+            "kind": "block",
+            "type": "device_hat_led_colour_on",
+            //"disabled":"true",
+            "inputs":{
+              "color":{
+                "shadow": {
+                  "type": "variables_get",
+                }
+              }
+            }
+          },
+          {
+            "kind": "block",
+            "type": "device_hat_led_off",
+            //"disabled":"true",
           },
         ],
         "colour": color_type["device"],
@@ -1449,6 +1497,7 @@ let toolbox = (lang) => {
               },
             }
           },
+
           {
             "kind": "block",
             "type": "speech_translate",
@@ -1807,33 +1856,6 @@ let toolbox = (lang) => {
           },
           {
             "kind": "block",
-            "type": "vision_resize",
-            "inputs":{
-              "img":{
-                "shadow": {
-                  "type": "variables_get",
-                }
-              },
-              "w": {
-                "shadow": {
-                  "type": "math_number",
-                  "fields": {
-                    "NUM": "320"
-                  }
-                }
-              },
-              "h": {
-                "shadow": {
-                  "type": "math_number",
-                  "fields": {
-                    "NUM": "240"
-                  }
-                }
-              },
-            }
-          },
-          {
-            "kind": "block",
             "type": "vision_face",
             "inputs":{
               "img":{
@@ -2079,6 +2101,7 @@ let toolbox = (lang) => {
                   "type":"variables_get",
                 }
               },
+
               "img":{
                 "shadow":{
                   "type":"variables_get",
@@ -2264,54 +2287,6 @@ let toolbox = (lang) => {
           },
           {
             "kind": "block",
-            "type": "utils_array_slice_set",
-            "inputs":{
-              "arr":{
-                "shadow":{
-                  "type":"variables_get",
-                }
-              },
-              "y1": {
-                "shadow": {
-                  "type": "math_number",
-                  "fields": {
-                    "NUM": "0"
-                  }
-                }
-              },
-              "y2": {
-                "shadow": {
-                  "type": "math_number",
-                  "fields": {
-                    "NUM": "0"
-                  }
-                }
-              },
-              "x1": {
-                "shadow": {
-                  "type": "math_number",
-                  "fields": {
-                    "NUM": "0"
-                  }
-                }
-              },
-              "x2": {
-                "shadow": {
-                  "type": "math_number",
-                  "fields": {
-                    "NUM": "0"
-                  }
-                }
-              },
-              "value":{
-                "shadow":{
-                  "type":"variables_get",
-                }
-              }
-            }
-          },
-          {
-            "kind": "block",
             "type": "utils_check_path",
             "inputs":{
               "path":{
@@ -2363,7 +2338,13 @@ let toolbox = (lang) => {
 }
 const toolbox_en = toolbox('en');
 const toolbox_ko = toolbox('ko');
+const toolbox_cn = toolbox('cn');
 
+const toolbox_dict = {
+  "en": toolbox_en,
+  "ko": toolbox_ko,
+  "cn": toolbox_cn
+}
 // /**
 //  * @license
 //  * Copyright 2020 Google LLC

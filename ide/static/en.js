@@ -451,6 +451,7 @@ Blockly.Msg['LANG_RU'] = "russian";
 Blockly.Msg['LANG_AR'] = "arabic";
 Blockly.Msg['LANG_HI'] = "hindi";
 Blockly.Msg['LANG_LA'] = "latin";
+Blockly.Msg['LANG_MS'] = "malay";
 
 Blockly.Msg["AUDIO_PLAY_DYNAMIC"] = "%1 %2 Play %3 %4 audio with %5 volume";
 Blockly.Msg["AUDIO_PLAY_DYNAMIC_TOOLTIP"] = "Select and play audio at set volume.";
@@ -531,6 +532,12 @@ Blockly.Msg["DEVICE_GET_BUTTON"] = "%1 %2 Check button";
 Blockly.Msg["DEVICE_GET_BUTTON_TOOLTIP"] = "Check button status.";
 Blockly.Msg["DEVICE_HAT_BUTTON"] = "%1 %2 Check button %3";
 Blockly.Msg["DEVICE_HAT_BUTTON_TOOLTIP"] = "Check button status.";
+Blockly.Msg["DEVICE_HAT_LED_ON"] = "%1 %2 Turn on LEDs %3 %4 %5";
+Blockly.Msg["DEVICE_HAT_LED_ON_TOOLTIP"] = "Turn on LED";
+Blockly.Msg["DEVICE_HAT_LED_COLOUR_ON"] = "%1 %2 Turn on LEDs with color variable %3";
+Blockly.Msg["DEVICE_HAT_LED_COLOUR_ON_TOOLTIP"] = "Turn on LED with a color variable.";
+Blockly.Msg["DEVICE_HAT_LED_OFF"] = "%1 %2 Turn off LED";
+Blockly.Msg["DEVICE_HAT_LED_OFF_TOOLTIP"] = "Turn off the LED.";
 
 Blockly.Msg["MOTION_GET_MOTION"] = "%1 %2 Get motion list";
 Blockly.Msg["MOTION_GET_MOTION_TOOLTIP"] = "Retrieve list of available motions.";
@@ -629,8 +636,6 @@ Blockly.Msg["VISION_TRANSFER"] = "%1 %2 Convert image %3 to %4";
 Blockly.Msg["VISION_TRANSFER_TOOLTIP"] = "Transform image style.";
 Blockly.Msg["VISION_FLIP"] = "%1 %2 Convert image %3 to %4 flip";
 Blockly.Msg["VISION_FLIP_TOOLTIP"] = "flip the image.";
-Blockly.Msg["VISION_RESIZE"] = "%1 %2 Resize image %3 to width %4, height %5 ";
-Blockly.Msg["VISION_RESIZE_TOOLTIP"] = "Resize the image.";
 
 Blockly.Msg["VISION_FACE"] = "%1 %2 Find faces in image %3";
 Blockly.Msg["VISION_FACE_TOOLTIP"] = "Detect and identify faces in the specified image.";
@@ -714,8 +719,6 @@ Blockly.Msg["UTILS_DICT_SET"] = "%1 %2 Append { %4 : %5 } to dictionary %3";
 Blockly.Msg["UTILS_DICT_SET_TOOLTIP"] = "Add a new key-value pair to an existing dictionary.";
 Blockly.Msg["UTILS_DICT_CREATE"] = "%1 %2 Create empty dictionary";
 Blockly.Msg["UTILS_DICT_CREATE_TOOLTIP"] = "Generate a new empty dictionary.";
-Blockly.Msg["UTILS_ARRAY_SLICE_SET"] = "%1 %2 Setting %8 in list %3 [%4:%5, %6:%7]";
-Blockly.Msg["UTILS_ARRAY_SLICE_SET_TOOLTIP"] = "Sets a specific range of values in the list.";
 
 Blockly.Msg["UTILS_CHECK_PATH"] = "%1 %2 Check if %3 %4 exists";
 Blockly.Msg["UTILS_CHECK_PATH_TOOLTIP"] = "Confirm the existence of a file or directory.";

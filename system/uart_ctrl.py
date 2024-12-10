@@ -23,7 +23,7 @@ async def run_code(filename):
     print('run_code')
     start_time = time.time()
     process = await asyncio.create_subprocess_exec(
-      'python3', '-u', filename,
+      '/home/pi/.pyenv/bin/python3', '-u', filename,
       stdout=asyncio.subprocess.PIPE,
       stderr=asyncio.subprocess.STDOUT,
       env={'PYTHONUNBUFFERED': '1'}
@@ -63,7 +63,7 @@ async def read_serial():
       
       if len(lines) > 0:
         if any('###END###' in line.decode('utf-8') for line in lines):
-          os.system('python3 /home/pi/openpibo-os/system/network_disp.py')
+          os.system('/home/pi/.pyenv/bin/python3 /home/pi/openpibo-os/system/network_disp.py')
           if current_process is not None:
             print('정지버튼-start')
             current_process.terminate()
@@ -76,6 +76,8 @@ async def read_serial():
           continue
         with open(filename, 'w') as file:
           file.write('# -*- coding: utf-8 -*-\n')
+          file.write('import logging\n')
+          file.write('logging.basicConfig(level=logging.ERROR, format="%(asctime)s [%(levelname)s] %(message)s")\n')            
           for line in lines:
             decoded_line = line.decode('utf-8')
             file.write(decoded_line)

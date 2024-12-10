@@ -141,14 +141,34 @@ Blockly.Python.forBlock['device_get_button'] = function(block) {
   return ["device.get_button()", Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['device_hat_button'] = function(block) {
-  const num = block.getFieldValue("num");
-  Blockly.Python.definitions_['import_RPi_GPIO_as_GPIO'] = 'import RPi.GPIO as GPIO';
-  Blockly.Python.definitions_['GPIO_setwarnings_False'] = 'GPIO.setwarnings(False)';
-  // Blockly.Python.definitions_['GPIO_cleanup'] = 'GPIO.cleanup()';
-  Blockly.Python.definitions_['setmode_gpio_bcm'] = 'GPIO.setmode(GPIO.BCM)';
-  Blockly.Python.definitions_[`setup_${num}_gpio_in_pud_down`] = `GPIO.setup(${num} ,GPIO.IN, pull_up_down=GPIO.PUD_DOWN)`;
+  Blockly.Python.definitions_['from_device_import_DeviceHat'] = 'from openpibo.device import DeviceHat';
+  Blockly.Python.definitions_['assign_devicehat'] = 'devicehat = DeviceHat()';
 
-  return [`'on' if GPIO.input(${num}) else 'off'`, Blockly.Python.ORDER_ATOMIC];
+  const num = block.getFieldValue("num");
+  return [`devicehat.get_button(${num})`, Blockly.Python.ORDER_ATOMIC];
+}
+Blockly.Python.forBlock['device_hat_led_on'] = function(block) {
+  Blockly.Python.definitions_['from_device_import_DeviceHat'] = 'from openpibo.device import DeviceHat';
+  Blockly.Python.definitions_['assign_devicehat'] = 'devicehat = DeviceHat()';
+  
+  const val0 = Blockly.Python.valueToCode(block, 'val0', Blockly.Python.ORDER_ATOMIC);
+  const val1 = Blockly.Python.valueToCode(block, 'val1', Blockly.Python.ORDER_ATOMIC);
+  const val2 = Blockly.Python.valueToCode(block, 'val2', Blockly.Python.ORDER_ATOMIC);
+
+  return `devicehat.led_on(${val0}, ${val1}, ${val2})\n`
+}
+Blockly.Python.forBlock['device_hat_led_colour_on'] = function(block) {
+  Blockly.Python.definitions_['from_device_import_DeviceHat'] = 'from openpibo.device import DeviceHat';
+  Blockly.Python.definitions_['assign_devicehat'] = 'devicehat = DeviceHat()';
+
+  const c = Blockly.Python.valueToCode(block, 'color', Blockly.Python.ORDER_ATOMIC);
+
+  return `devicehat.led_on_s(${c})\n`
+}
+Blockly.Python.forBlock['device_hat_led_off'] = function(block) {
+  Blockly.Python.definitions_['from_device_import_DeviceHat'] = 'from openpibo.device import DeviceHat';
+  Blockly.Python.definitions_['assign_devicehat'] = 'devicehat = DeviceHat()';
+  return 'devicehat.led_off()\n'
 }
 
 // motion
