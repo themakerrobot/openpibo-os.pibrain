@@ -222,6 +222,11 @@ const translations = {
     en: "Functions",
     cn: "函数"
   },
+  event: {
+    ko: "소리",
+    en: "Audio",
+    cn: "音频"
+  },
   audio: {
     ko: "소리",
     en: "Audio",
@@ -351,6 +356,10 @@ const translations = {
     ko: "입력",
     en: "Enter",
     cn: "输入"
+  },
+  auto: {
+    ko: "자동",
+    en: "Auto",
+    cn: "自动的"
   }
 };
-

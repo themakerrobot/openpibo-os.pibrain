@@ -8,7 +8,7 @@
     <meta name="mobile-web-app-capable" content="yes" />
 
     <link rel="stylesheet" href="../static/fontello.css" type="text/css" />
-    <link rel="stylesheet" href="../static/index.css?ver=240701v4" />
+    <link rel="stylesheet" href="../static/index.css?ver=240701v5" />
     <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
     <link rel="stylesheet" href="../static/codemirror.css" />
     <link rel="stylesheet" href="../static/cobalt.css" />
@@ -16,33 +16,37 @@
     <link rel="stylesheet" href="../static/jquery.jsonview.min.css" />
     <link rel="shortcut icon" href="../static/icon.png?ver=240319v1" type="image/x-icon" />
 
-    <script src="../static/ko2en.js?ver=240319v2"></script>
+    <script src="../static/ko2en.js?ver=240319v4"></script>
     <script src="../static/blockly_compressed.js?ver=240319v1"></script>
     <script src="../static/blocks_compressed.js?ver=240319v1"></script>
     <script src="../static/python_compressed.js?ver=240319v1"></script>
-    <script src="../static/customblock.js?ver=240319v1"></script>
-    <script src="../static/customblock_callback.js?ver=240319v2"></script>
-    <script src="../static/customblock_toolbox.js?ver=240319v3"></script>
+    <script src="../static/customblock.js?ver=240319v34"></script>
+    <script src="../static/customblock_callback.js?ver=240319v34"></script>
+    <script src="../static/customblock_toolbox.js?ver=240319v34"></script>
     <script src="../static/jquery-3.1.1.min.js"></script>
     <script src="../static/jquery.jsonview.min.js"></script>
     <script src="../static/codemirror.min.js"></script>
     <script src="../static/comment.js"></script>
     <script src="../static/python.js"></script>
-    <script src="../static/socket.io.min.js?ver=240319v1"></script>
+    <script src="../static/disable-top-blocks.js?ver=240319v1"></script>
+    <script src="../static/socket.io.min.js?ver=240319v3"></script>
   </head>
   <body>
     <header class="title">
       <div style="float:left">
         <h2>
           <i class="fa-solid fa-code">IDE</i>&nbsp;
-          <i class="fa-solid fa-left-right" style="opacity:30%"></i>&nbsp;
+          <!-- <i class="fa-solid fa-left-right" style="opacity:30%"></i>&nbsp;
           <a id="home_bt">
             <i class="fa-solid fa-microchip" style="opacity:30%">Tools</i>
-          </a>
+          </a> -->
         </h2>
       </div>
       <div style="float:right">
         <h2 style="display: flex; align-items: center; justify-content: center;">
+          <a id="restore_bt">
+            <i class="fa-solid fa-eraser"></i>
+          </a>&nbsp;&nbsp;
           <a id="poweroff_bt">
             <i class="fa-solid fa-power-off"></i>
           </a>&nbsp;&nbsp;
@@ -294,6 +298,6 @@
         <span id="d_dc_val"></span>
       </div>
     </footer>
-    <script src="../static/index.js?ver=240707v22"></script>
+    <script src="../static/index.js?ver=240707v35"></script>
   </body>
 </html>

@@ -13,7 +13,7 @@ g_serial
 '''
 
 ser = serial.Serial('/dev/ttyGS0', 1000000, timeout=1)
-filename = '/home/pi/tmp.py'
+filename = '/home/pi/.tmp.py'
 current_process = None
 record = ''
 

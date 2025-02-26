@@ -125,7 +125,7 @@ def wifi_update():
 def boot():
   try:
     with open('/home/pi/.OS_VERSION', 'r') as f:
-      os_version = str(f.readlines()[0].split('\n')[0].split('OPENPIBO_')[1])
+      os_version = str(f.readlines()[0].split('\n')[0])
   except Exception as ex:
     os_version = "OS (None)"
     pass

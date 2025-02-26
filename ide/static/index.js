@@ -95,6 +95,7 @@ socket.on("update", (data) => {
       if (codetype == "block") {
         try {
           Blockly.serialization.workspaces.load(JSON.parse(data["code"]), workspace);
+          workspace.scrollCenter();
           if(data["code"] != "{}" && 'blocks' in JSON.parse(data["code"])) {
             for(jdata of JSON.parse(data["code"])["blocks"]["blocks"]) {
               findBlocks({block:jdata})
@@ -107,6 +108,7 @@ socket.on("update", (data) => {
           if(data["code"] == "") {
             saveBlock = "{}";
             Blockly.serialization.workspaces.load(JSON.parse("{}"), workspace);
+            workspace.scrollCenter();
             update_block();
           }
           else {
@@ -191,6 +193,7 @@ socket.on("init", (d) => {
       });
 
       Blockly.serialization.workspaces.load(JSON.parse(d["codetext"]), workspace);
+      workspace.scrollCenter();
       if(d["codetext"] != "{}" && 'blocks' in JSON.parse(d["codetext"])) {
         for(jdata of JSON.parse(d["codetext"])["blocks"]["blocks"]) {
           findBlocks({block:jdata})
@@ -204,6 +207,7 @@ socket.on("init", (d) => {
       if(d["codetext"] == "") {
         saveBlock = "{}";
         Blockly.serialization.workspaces.load(JSON.parse("{}"), workspace);
+        workspace.scrollCenter();
         update_block();
         $("#codepath").text(d["codepath"]);
       }
@@ -406,8 +410,8 @@ socket.on("update_file_manager", (d) => {
               }
             })
             ,
-            $("<td style='width:15px;text-align:center'>").append(data[i].type == "" || data[i].protect==true?"":`<a href='/download?filename=${data[i].name}'><i class='fa-solid fa-circle-down'></i></a>`)
-            //$("<td style='width:15px;text-align:center'>").append(["", "folder"].includes(data[i].type) || data[i].protect==true?"":`<a href='/download?filename=${data[i].name}'><i class='fa-solid fa-circle-down'></i></a>`)
+            //$("<td style='width:15px;text-align:center'>").append(data[i].type == "" || data[i].protect==true?"":`<a href='/download?filename=${data[i].name}'><i class='fa-solid fa-circle-down'></i></a>`)
+            $("<td style='width:15px;text-align:center'>").append(["", "folder"].includes(data[i].type) || data[i].protect==true?"":`<a href='/download?filename=${data[i].name}'><i class='fa-solid fa-circle-down'></i></a>`)
               .hover(
                 function () { $(this).animate({ opacity: "0.3" }, 100); },
                 function () { $(this).animate({ opacity: "1" }, 100); }
@@ -455,6 +459,7 @@ socket.on("update_file_manager", (d) => {
                 BLOCK_PATH = "";
                 saveBlock = "{}";
                 Blockly.serialization.workspaces.load(JSON.parse(saveBlock), workspace);
+                workspace.scrollCenter();
               }
               socket.emit('rename', {oldpath:CURRENT_DIR.join("/") + "/" + name, newpath: CURRENT_DIR.join("/") + "/" + newname});
             })
@@ -484,6 +489,7 @@ socket.on("update_file_manager", (d) => {
                     BLOCK_PATH = "";
                     saveBlock = "{}";
                     Blockly.serialization.workspaces.load(JSON.parse(saveBlock), workspace);
+                    workspace.scrollCenter();
                   }
                   socket.emit('delete', CURRENT_DIR.join("/") + "/" + name);
                 }
@@ -866,11 +872,26 @@ Blockly.Python.nameDB_.getName = function(name, type) {
   const pythonCompatibleName = decodedName.replace(/[^a-zA-Z0-9가-힣_]/g, "_");
   return pythonCompatibleName;
 };
+const disableTopBlocks = new DisableTopBlocks(workspace);
+disableTopBlocks.init();
 
 workspace.addChangeListener ((event)=>{
   update_block();
   if (event.type == Blockly.Events.CREATE) {
     if($("#codepath").html() == '') setTimeout(()=>{alert(translations["confirm_block_file"][lang])},500);
+
+    const allBlocks = workspace.getAllBlocks();
+    const matchingBlocks = allBlocks.filter(block => block.type === 'flag_event');
+
+    // 동일한 블록이 1개를 초과하면 새로 생성된 블록 삭제
+    if (matchingBlocks.length > 1) {
+      const newBlockId = event.ids[0]; // 새로 생성된 블록의 ID
+      const newBlock = workspace.getBlockById(newBlockId);
+
+      if (newBlock) {
+        newBlock.dispose(); // 새로 추가된 블록 삭제
+      }
+    }
   }
 
   if (event.type == Blockly.Events.BLOCK_CHANGE) {
@@ -1058,6 +1079,15 @@ $(document).on("click keydown", (evt) => {
   }
 });
 
+$("#restore_bt").on("click", function () {
+  alert('not support')
+  return
+  if (confirm(translations["confirm_restore"][lang])){
+    usedata = init_usedata;
+    socket.emit("restore");
+  }
+});
+
 let startTime = new Date().getTime();
 
 window.addEventListener('beforeunload', (evt) => {
@@ -1182,7 +1212,7 @@ const setLanguage = (langCode) => {
       }
   });
 
-  const langFileVersion = '240110v3';
+  const langFileVersion = '240110v11';
   const langFile = `../static/${langCode}.js?ver=${langFileVersion}`;
   const prevKoScript = document.querySelector(`script[src*="../static/ko.js?ver=${langFileVersion}"]`);
   if (prevKoScript) {

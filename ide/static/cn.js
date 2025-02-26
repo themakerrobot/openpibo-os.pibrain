@@ -453,6 +453,16 @@ Blockly.Msg['LANG_HI'] = "印地语";
 Blockly.Msg['LANG_LA'] = "拉丁语";
 Blockly.Msg['LANG_MS'] = "马来语";
 
+Blockly.Msg["FLAG_EVENT"] = "当 [%1运行] 被点击时";
+Blockly.Msg["FLAG_EVENT_TOOLTIP"] = "运行代码";
+
+Blockly.Msg["AUDIO_MYAUDIO"] = "내오디오";
+Blockly.Msg["AUDIO_ANIMAL"] = "动物";
+Blockly.Msg["AUDIO_EFFECT"] = "音效";
+Blockly.Msg["AUDIO_MUSIC"] = "音乐";
+Blockly.Msg["AUDIO_VOICE"] = "语音(韩语)";
+Blockly.Msg["AUDIO_PIANO"] = "钢琴";
+
 Blockly.Msg["AUDIO_PLAY_DYNAMIC"] = "%1 %2 播放 %3 %4 音频，音量为 %5";
 Blockly.Msg["AUDIO_PLAY_DYNAMIC_TOOLTIP"] = "选择并播放设定音量的音频。";
 Blockly.Msg["AUDIO_PLAY"] = "%1 %2 播放 %3 %4.%5 音频，音量为 %6";
@@ -612,6 +622,22 @@ Blockly.Msg["SPEECH_LOAD_DIALOG_TOOLTIP"] = "设置对话文件。";
 Blockly.Msg["SPEECH_RESET_DIALOG"] = "%1 %2 重置对话文件";
 Blockly.Msg["SPEECH_RESET_DIALOG_TOOLTIP"] = "重置对话文件。";
 
+Blockly.Msg["IMAEG_ANIMAL"] = "动物";
+Blockly.Msg["IMAEG_EXPRESSION"] = "表情";
+Blockly.Msg["IMAEG_FAMILY"] = "家庭";
+Blockly.Msg["IMAEG_FOOD"] = "食物";
+Blockly.Msg["IMAEG_FURNITURE"] = "家具";
+Blockly.Msg["IMAEG_GAME"] = "游戏";
+Blockly.Msg["IMAEG_GOODS"] = "商品";
+Blockly.Msg["IMAEG_KITCHEN"] = "厨房";
+Blockly.Msg["IMAEG_MACHINE"] = "机器";
+Blockly.Msg["IMAEG_RECYCLE"] = "回收";
+Blockly.Msg["IMAEG_SPORT"] = "运动";
+Blockly.Msg["IMAEG_TRANSPORT"] = "交通";
+Blockly.Msg["IMAEG_WEATHER"] = "天气";
+Blockly.Msg["IMAEG_ETC"] = "等等";
+Blockly.Msg["IMAEG_SAMPLE"] = "样本";
+
 Blockly.Msg["VISION_READ"] = "%1 %2 拍摄照片";
 Blockly.Msg["VISION_READ_TOOLTIP"] = "捕捉图像。";
 Blockly.Msg["VISION_IMREAD_DYNAMIC"] = "%1 %2 加载图像文件 %3 %4";
@@ -626,6 +652,8 @@ Blockly.Msg["VISION_IMSHOW_TO_IDE_IMG"] = "%1 %2 在 IDE 上显示图像变量 %
 Blockly.Msg["VISION_IMSHOW_TO_IDE_IMG_TOOLTIP"] = "在 IDE 上显示图像变量。";
 Blockly.Msg["VISION_RECTANGLE"] = "%1 %2 在图像 %3 的坐标 %4 %5 %6 %7 处显示颜色为 %8 厚度为 %9 的矩形";
 Blockly.Msg["VISION_RECTANGLE_TOOLTIP"] = "在图像上显示矩形。";
+Blockly.Msg["VISION_RECTANGLE_POINT"] = "%1 %2 图像 %3 的坐标 %4 颜色 %5 粗细 %6 画矩形";
+Blockly.Msg["VISION_RECTANGLE_POINT_TOOLTIP"] = "在图像上绘制矩形。";
 Blockly.Msg["VISION_CIRCLE"] = "%1 %2 在图像 %3 的坐标 %4 %5 处显示半径为 %6 颜色为 %7 厚度为 %8 的圆";
 Blockly.Msg["VISION_CIRCLE_TOOLTIP"] = "在图像上显示圆形。";
 Blockly.Msg["VISION_LINE"] = "%1 %2 在图像 %3 的坐标从 %4 %5 到 %6 %7 处显示颜色为 %8 厚度为 %9 的线";
@@ -647,6 +675,8 @@ Blockly.Msg["VISION_FACE_AGE"] = "%1 %2 分析图像 %3 的人脸 %4 年龄";
 Blockly.Msg["VISION_FACE_AGE_TOOLTIP"] = "分析图像中人脸的年龄。";
 Blockly.Msg["VISION_FACE_GENDER"] = "%1 %2 分析图像 %3 的人脸 %4 性别";
 Blockly.Msg["VISION_FACE_GENDER_TOOLTIP"] = "分析图像中人脸的性别。";
+Blockly.Msg["VISION_FACE_EMOTION"] = "%1 %2 图像 %3 检测脸部 %4 表情";
+Blockly.Msg["VISION_FACE_EMOTION_TOOLTIP"] = "分析图像中脸部的表情。";
 
 Blockly.Msg["VISION_FACEDB_TRAIN"] = "%1 %2 将图像 %3 的人脸 %4 训练为名字 %5";
 Blockly.Msg["VISION_FACEDB_TRAIN_TOOLTIP"] = "从图像中训练人脸。";
@@ -661,8 +691,14 @@ Blockly.Msg["VISION_FACEDB_LOAD_TOOLTIP"] = "从文件中加载人脸训练数�
 
 Blockly.Msg["VISION_OBJECT"] = "%1 %2 在图像 %3 中检测物体";
 Blockly.Msg["VISION_OBJECT_TOOLTIP"] = "在指定图像中识别并分类物体。";
+Blockly.Msg["VISION_OBJECT_DETAIL"] = "%1 %2 图像 %3 找到物体（详细）";
+Blockly.Msg["VISION_OBJECT_DETAIL_TOOLTIP"] = "在图像中找到物体（80种类型的物体） - 详细。";
+Blockly.Msg["VISION_ANALYZE_OBJECT"] = "%1 %2 物体数据 %3 获取 %4";
+Blockly.Msg["VISION_ANALYZE_OBJECT_TOOLTIP"] = "从物体数据中获取选定的信息。";
 Blockly.Msg["VISION_QR"] = "%1 %2 在图像 %3 中检测 QR 码";
 Blockly.Msg["VISION_QR_TOOLTIP"] = "在指定图像中扫描并解码 QR 码。";
+Blockly.Msg["VISION_QR_DETAIL"] = "%1 %2 图像 %3 找到二维码（详细）";
+Blockly.Msg["VISION_QR_DETAIL_TOOLTIP"] = "在图像中找到二维码（详细）。";
 Blockly.Msg["VISION_POSE"] = "%1 %2 在图像 %3 中检测姿势";
 Blockly.Msg["VISION_POSE_TOOLTIP"] = "在指定图像中识别并分析人体姿势。";
 Blockly.Msg["VISION_ANALYZE_POSE"] = "%1 %2 分析姿势结果 %3 并保存至 %4";
@@ -695,7 +731,12 @@ Blockly.Msg["VISION_SKETCH_C"] = "素描（彩色）";
 Blockly.Msg["VISION_POSE_MOTION"] = "运动";
 Blockly.Msg["VISION_POSE_POSITION"] = "姿势";
 Blockly.Msg["VISION_POSE_PERSON"] = "人物";
-Blockly.Msg["VISION_POSE_ACC"] = "准确性";
+
+Blockly.Msg["VISION_NAME"] = '名称';
+Blockly.Msg["VISION_POSITION"] = '坐标';
+Blockly.Msg["VISION_ACC"] = '准确性';
+Blockly.Msg["VISION_DATA"] = '数据';
+Blockly.Msg["VISION_TYPE"] = '类型';
 
 Blockly.Msg["VISION_CAPTION"] = "图像说明";
 Blockly.Msg["VISION_CAPTION_TAG"] = "图像标签";

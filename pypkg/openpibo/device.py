@@ -465,14 +465,17 @@ Functions:
 
 class DeviceHat:
   def __init__(self):
+    self.SW1 = 4
+    self.SW2 = 17
+    self.SW3 = 27
+    self.SW4 = 26
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup( 4, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup(27, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup(26, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    self.PIN = [0, 4, 17, 27, 26]  # 0 pass
-
+    GPIO.setup( self.SW1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup( self.SW2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup( self.SW3, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup( self.SW4, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    
     LED_COUNT = 1        # Number of LED pixels.
     LED_PIN = 12          # GPIO pin connected to the pixels (18 uses PWM!).
     LED_FREQ_HZ = 800000  # LED signal frequency in hertz (usually 800khz)
@@ -484,7 +487,7 @@ class DeviceHat:
     self.strip.begin()
  
   def get_button(self, n):
-    return "on" if GPIO.input(self.PIN[n]) == GPIO.LOW else "off"
+    return "on" if GPIO.input(n) == GPIO.LOW else "off"
 
   def led_on(self, *color):
     if len(color) == 0:

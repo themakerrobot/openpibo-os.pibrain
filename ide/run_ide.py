@@ -110,7 +110,7 @@ def read_directory(d):
   except Exception as err:
     print(err)
     return False
-  return dlst + flst
+  return sorted(dlst, key=lambda x:x['name'])  + sorted(flst, key=lambda x:x['name'])
 
 
 def file_extension_check(filename):
@@ -316,6 +316,54 @@ async def handle_rename(sid, d):
     except Exception as err:
       await app.sio.emit('update', {'dialog': f'파일 불러오기 오류: {str(err)}'})
 
+@app.sio.on('restore')
+async def handle_restore(sid):
+    base_path = Path("/home/pi/")
+    protected_files = {
+        ".tools.json", 
+        ".ide.json",
+        "openpibo-python",
+        "test.json",
+        "node_modules",
+        "package.json",
+        "package-lock.json",
+        "openpibo-os",
+        "openpibo-os.hat",
+        "openpibo-files"
+    }
+    protected_dirs = {"code", "myimage", "myaudio", "mymodel"}
+    
+    try:
+        # Loop through the directory and handle files/directories
+        for item in base_path.iterdir():
+            try:
+                if item.name in protected_files or item.name.startswith('.'):
+                    continue
+
+                if item.name in protected_dirs:
+                    for sub_item in item.iterdir():
+                        if sub_item.is_file():
+                            sub_item.unlink()
+                        elif sub_item.is_dir():
+                            shutil.rmtree(sub_item)
+                    continue
+
+                if item.is_file() or item.is_dir():
+                    if item.is_file():
+                        item.unlink()
+                    elif item.is_dir():
+                        shutil.rmtree(item)
+
+            except Exception as e:
+                await sio.emit('update', {'dialog': f'초기화 오류: {str(e)}'}, room=sid)
+                return
+        
+        # Shutdown the system
+        subprocess.Popen(['shutdown', '-h', 'now'])
+
+    except Exception as e:
+        await sio.emit('update', {'dialog': f'초기화 오류: {str(e)}'}, room=sid)
+
 
 @app.sio.on('add_file')
 async def handle_add_file(sid, p):
@@ -478,22 +526,7 @@ async def periodic_system_update():
     except Exception as err:
       await app.sio.emit('update', {'dialog': '초기화: 시스템 파일 오류입니다.'})
 
-    try:
-      battery_status = subprocess.check_output(['curl', '-s', 'http://0.0.0.0:8080/device/%2315%3A%21']).decode()
-      battery_value = battery_status.replace('"', '').split(':')[1]
-      await app.sio.emit('update_battery', battery_value)
-    except Exception as err:
-      pass
-
-    try:
-      dc_status = subprocess.check_output(['curl', '-s', 'http://0.0.0.0:8080/device/%2314%3A%21']).decode()
-      dc_value = dc_status.replace('"', '').split(':')[1]
-      await app.sio.emit('update_dc', dc_value)
-    except Exception as err:
-      pass
-
     await asyncio.sleep(10)
-
 
 #@app.on_event('startup')
 #async def on_startup():

@@ -59,7 +59,7 @@ COLOR_LIST = [
 ]
 
 
-def visualize(
+def visualize_pose(
     image: np.ndarray,
     list_persons: List[Person],
     keypoint_color: Tuple[int, ...] = None,

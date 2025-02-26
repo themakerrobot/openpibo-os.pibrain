@@ -16,7 +16,7 @@ from PIL import Image,ImageDraw,ImageFont
 from tflite_runtime.interpreter import Interpreter
 from pyzbar import pyzbar
 from .modules.pose.movenet import Movenet
-from .modules.pose.utils import visualize
+from .modules.pose.utils import visualize_pose
 from .modules.card.decode_card import get_card
 from picamera2 import Picamera2
 from libcamera import Transform
@@ -24,6 +24,8 @@ import openpibo_models
 import openpibo_face_models
 import openpibo_dlib_models
 import openpibo_detect_models
+
+from openvino.runtime import Core
 
 def vision_api(mode, image, params={}):
   """
@@ -637,20 +639,22 @@ Functions:
   def __init__(self):
     self.facedb = [[],[]]
     self.threshold = 0.4
-    self.age_class = ['(0, 2)','(4, 6)','(8, 12)','(15, 20)','(25, 32)','(38, 43)','(48, 53)','(60, 100)']
-    self.gender_class = ['Male', 'Female']
-    self.agenet = cv2.dnn.readNetFromCaffe(
-                    openpibo_face_models.filepath("deploy_age.prototxt"),
-                    openpibo_face_models.filepath("age_net.caffemodel")
-                )
-    self.gendernet = cv2.dnn.readNetFromCaffe(
-                    openpibo_face_models.filepath("deploy_gender.prototxt"),
-                    openpibo_face_models.filepath("gender_net.caffemodel")
-                )
-    #self.face_detector = cv2.CascadeClassifier(openpibo_face_models.filepath("haarcascade_frontalface_default.xml"))
     self.face_detector = dlib.get_frontal_face_detector()
     self.predictor = dlib.shape_predictor(openpibo_dlib_models.filepath("shape_predictor_68_face_landmarks.dat"))
     self.face_encoder = dlib.face_recognition_model_v1(openpibo_dlib_models.filepath("dlib_face_recognition_resnet_model_v1.dat"))
+
+    # Load OpenVINO models
+    ie = Core()
+    self.face_detection_compiled = ie.compile_model(ie.read_model("/home/pi/.model/face-detection/face-detection-retail-0004.xml"), "CPU")
+    self.age_gender_compiled = ie.compile_model(ie.read_model("/home/pi/.model/face-age-gender/age-gender-recognition-retail-0013.xml"), "CPU")
+    self.emotion_compiled = ie.compile_model(ie.read_model("/home/pi/.model/face-emotion/emotions-recognition-retail-0003.xml"), "CPU")
+
+    # Get input and output names for models
+    self.face_output_name = self.face_detection_compiled.output(0).any_name
+    self.gender_output_name = list(self.age_gender_compiled.outputs)[0].any_name
+    self.age_output_name = list(self.age_gender_compiled.outputs)[1].any_name
+    self.emotion_output_name = self.emotion_compiled.output(0).any_name
+    self.emotions = ['neutral', 'happy', 'sad', 'surprise', 'anger']
 
   def detect_face(self, img):
     """
@@ -675,10 +679,47 @@ Functions:
     if not type(img) is np.ndarray:
       raise Exception('"img" must be image data from opencv') 
 
-    return [(d.left(), d.top(), d.right()-d.left(), d.bottom()-d.top()) for d in self.face_detector(img)]
+    h, w = img.shape[:2]
+    input_frame = cv2.resize(img, (300, 300))
+    input_frame = input_frame.transpose(2, 0, 1)[np.newaxis, :]
+    input_frame = input_frame.astype(np.float32)
+
+    detections = self.face_detection_compiled([input_frame])[self.face_output_name]
+
+    res = []
+    for detection in detections[0][0]:
+      confidence = detection[2]
+      if confidence > 0.5:  # Threshold
+        xmin = int(detection[3] * w)
+        ymin = int(detection[4] * h)
+        xmax = int(detection[5] * w)
+        ymax = int(detection[6] * h)
+
+        if img[ymin:ymax, xmin:xmax].size == 0:
+          continue
+        res.append([xmin, ymin, xmax, ymax])
+    return res
+    #return [(d.left(), d.top(), d.right()-d.left(), d.bottom()-d.top()) for d in self.face_detector(img)]
     #return self.face_detector.detectMultiScale(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), 1.1, 5) # [(x,y,w,h), ...]
 
-  def landmark_face(self, img):
+  def detect_face_vis(self, img, item):
+    """
+    얼굴 box 표시합니다.
+
+    :param numpy.ndarray img: 이미지 객체
+    :param array item: 얼굴 좌표 (x1,y1,x2,y2)
+    """
+
+    if not type(img) is np.ndarray:
+      raise Exception('"img" must be image data from opencv')
+
+    if len(item) != 4:
+      raise Exception(f'len({item}) must be 2')
+
+    x1, y1, x2, y2 = item
+    cv2.rectangle(img, (x1,y1), (x2,y2), (50,255,50), 2)
+
+  def landmark_face(self, img, item):
     """
     얼굴의 랜드마크를 탐색합니다.
 
@@ -688,164 +729,108 @@ Functions:
       face.landmark_face(img)
 
     :param numpy.ndarray img: 이미지 객체
-
-    :returns: ``{"data": 인식한 결과, "img": landmark를 반영한 이미지 }``
+    :param array item: 얼굴 좌표 (x1,y1,x2,y2)
+    :returns: 좌표 리스트
     """
 
     if not type(img) is np.ndarray:
       raise Exception('"img" must be image data from opencv')
 
-    res = []
-    rects = self.face_detector(img)
+    if len(item) != 4:
+      raise Exception('"item" must be [x1,y1,x2,y2]')
+
+    x1, y1, x2, y2 = item
+    face_img = img[y1:y2, x1:x2].copy()
+    rect = dlib.rectangle(int(x1), int(y1), int(x2), int(y2))
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    shape = self.predictor(gray, rect)
+    coords = np.zeros((shape.num_parts, 2), dtype="int")
+    for i in range(0, shape.num_parts):
+      coords[i] = (shape.part(i).x, shape.part(i).y)
+    return coords
 
-    for rect in rects:
-      #rect = dlib.rectangle(int(d.left()), int(d.top()), int(d.right()), int(d.bottom()))
-      shape = self.predictor(gray, rect)
-
-      coords = np.zeros((shape.num_parts, 2), dtype="int")
-      for i in range(0, shape.num_parts):
-        coords[i] = (shape.part(i).x, shape.part(i).y)
-        cv2.circle(img, (coords[i][0], coords[i][1]), 2, (50, 200, 50), -1)
-        cv2.putText(img, str(i+1), (coords[i][0]-10, coords[i][1]-10), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (50, 200, 50), 1)
-
-      res.append(coords)
-
-    return {"data":res, "img":img}
-
-  def get_ageGender(self, img, item):
+  def landmark_face_vis(self, img, coords):
     """
-    얼굴의 나이, 성별을 추정합니다.
+    얼굴의 랜드마크를 탐색합니다.
+
+    example::
+
+      img = camera.read()
+      face.landmark_face(img)
+
+    :param numpy.ndarray img: 이미지 객체
+    :param array item: 얼굴 좌표 (x1,y1,x2,y2)
+    :returns: 좌표 리스트
+    """
+
+    if not type(img) is np.ndarray:
+      raise Exception('"img" must be image data from opencv')
+
+    for i, coord in enumerate(coords):
+      x, y = coord
+      cv2.circle(img, (x, y), 2, (50, 200, 50), -1)
+      cv2.putText(img, str(i+1), (x-10, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1)
+
+  def analyze_face(self, img, item):
+    """
+    얼굴의 나이, 성별, 감정을 추정합니다.
 
     example::
 
       img = camera.read()
       items = face.detect_face(img)
       item = items[0] # item은 items 중 하나
-      face.get_ageGender(img, item)
+      face.analyze_face(img, item)
 
     :param numpy.ndarray img: 이미지 객체
-
     :param numpy.ndarray item: 얼굴의 좌표 (x, y, w, h)
-
-    :returns: ``{"age": 나이, "gender": 성별}``
-
-      * age: 나이의 범위를 tuple() 형태로 출력한다.
-
-        ex) (15, 20) # 15살에서 20살 정도
-
-      * gender: ``male`` / ``female``
-
-    참고: https://github.com/kairess/age_gender_estimation
+    :returns: {age: 0~100, gender: Male 또는 Female, emotions: ``neutral``, ``happy``, ``sad``, ``surprise``, ``anger``, box:좌표}
     """
 
     if not type(img) is np.ndarray:
       raise Exception('"img" must be image data from opencv')
 
     if len(item) != 4:
-      raise Exception('"item" must be [x,y,w,h]')
+      raise Exception('"item" must be [x1,y1,x2,y2]')
 
-    x, y, w, h = item
-    face_img = img[y:y+h, x:x+w].copy()
-    blob = cv2.dnn.blobFromImage(face_img, scalefactor=1, size=(227, 227),
-      mean=(78.4263377603, 87.7689143744, 114.895847746),
-      swapRB=False, crop=False)
+    x1, y1, x2, y2 = item
+    face_img = img[y1:y2, x1:x2].copy()
 
-    # predict gender
-    self.gendernet.setInput(blob)
-    gender_preds = self.gendernet.forward()
-    gender = self.gender_class[gender_preds[0].argmax()]
+    # Preprocess face for age/gender
+    face_resized_age_gender = cv2.resize(face_img, (62, 62))  # 62x62 크기로 조정
+    face_input_age_gender = face_resized_age_gender.transpose(2, 0, 1)[np.newaxis, :]
+    face_input_age_gender = face_input_age_gender.astype(np.float32)
 
-    # predict age
-    self.agenet.setInput(blob)
-    age_preds = self.agenet.forward()
-    age = self.age_class[age_preds[0].argmax()]
+    # Age and gender prediction
+    age_gender_result = self.age_gender_compiled([face_input_age_gender])
+    age = age_gender_result[self.age_output_name].squeeze() * 100
+    gender = "Male" if age_gender_result[self.gender_output_name].squeeze()[1] > 0.5 else "Female"
 
-    return {"age":age, "gender":gender}
+    # Preprocess face for emotion
+    face_resized_emotion = cv2.resize(face_img, (64, 64))  # 64x64 크기로 조정
+    face_input_emotion = face_resized_emotion.transpose(2, 0, 1)[np.newaxis, :]
+    face_input_emotion = face_input_emotion.astype(np.float32)
+    
+    # Emotion prediction
+    emotion_result = self.emotion_compiled([face_input_emotion])[self.emotion_output_name]
+    emotion = self.emotions[np.argmax(emotion_result)]
+    return {"age":int(age), "gender":gender, "emotion":emotion, "box": (x1, y1, x2, y2)}
 
-  def get_age(self, img, item):
+
+  def analyze_face_vis(self, img, res):
     """
-    얼굴의 나이를 추정합니다.
-
-    example::
-
-      img = camera.read()
-      items = face.detect_face(img)
-      item = items[0] # item는 items중 하나
-      face.get_age(img, item)
+    얼굴의 나이, 성별, 감정을 추정합니다.
 
     :param numpy.ndarray img: 이미지 객체
-
-    :param numpy.ndarray item: 얼굴의 좌표 (x, y, w, h)
-
-    :returns: ``나이 범위`` ``Raw데이터``
-
-      * age: 나이의 범위를 tuple() 형태로 출력한다.
-
-        ex) (15, 20) # 15살에서 20살 정도
-
-    참고: https://github.com/kairess/age_gender_estimation
+    :param numpy.ndarray item: 얼굴 분석 결과
     """
 
     if not type(img) is np.ndarray:
       raise Exception('"img" must be image data from opencv')
 
-    if len(item) != 4:
-      raise Exception('"item" must be [x,y,w,h]')
+    x1, y1, x2, y2 = res['box']
+    cv2.putText(img, f'{res["age"]}/{res["gender"]}/{res["emotion"]}', (x1-10, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
-    x, y, w, h = item
-    face_img = img[y:y+h, x:x+w].copy()
-    blob = cv2.dnn.blobFromImage(face_img, scalefactor=1, size=(227, 227),
-      mean=(78.4263377603, 87.7689143744, 114.895847746),
-      swapRB=False, crop=False)
-
-    # predict age
-    self.agenet.setInput(blob)
-    age_preds = self.agenet.forward()
-    age = self.age_class[age_preds[0].argmax()]
-
-    return age, age_preds[0]
-
-  def get_gender(self, img, item):
-    """
-    얼굴의 성별을 추정합니다.
-
-    example::
-
-      img = camera.read()
-      items = face.detect_face(img)
-      item = items[0] # item는 items중 하나
-      face.get_gender(img, item)
-
-    :param numpy.ndarray img: 이미지 객체
-
-    :param numpy.ndarray item: 얼굴의 좌표 (x, y, w, h)
-
-    :returns: ``성별`` ``Raw데이터``
-
-      * gender: ``male`` / ``female``
-
-    참고: https://github.com/kairess/age_gender_estimation
-    """
-
-    if not type(img) is np.ndarray:
-      raise Exception('"img" must be image data from opencv')
-
-    if len(item) != 4:
-      raise Exception('"item" must be [x,y,w,h]')
-
-    x, y, w, h = item
-    face_img = img[y:y+h, x:x+w].copy()
-    blob = cv2.dnn.blobFromImage(face_img, scalefactor=1, size=(227, 227),
-      mean=(78.4263377603, 87.7689143744, 114.895847746),
-      swapRB=False, crop=False)
-
-    # predict gender
-    self.gendernet.setInput(blob)
-    gender_preds = self.gendernet.forward()
-    gender = self.gender_class[gender_preds[0].argmax()]
-
-    return gender, gender_preds[0]
 
   def init_db(self):
     """
@@ -884,8 +869,9 @@ Functions:
     if len(item) != 4:
       raise Exception('"item" must be [x,y,w,h]')
 
-    x,y,w,h = item
-    rect = dlib.rectangle(int(x), int(y), int(x + w), int(y + h))
+    x1, y1, x2, y2 = item
+    face_img = img[y1:y2, x1:x2].copy()
+    rect = dlib.rectangle(int(x1), int(y1), int(x2), int(y2))
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     shape = self.predictor(gray, rect)
     face_encoding = np.array(self.face_encoder.compute_face_descriptor(img, shape, 1))
@@ -948,9 +934,9 @@ Functions:
       return {"name":"Guest", "score":0}
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    data={"name":"Guest", "score":0}
-    (x,y,w,h) = item
-    rect = dlib.rectangle(int(x), int(y), int(x+w), int(y+h))
+    data={"name":"Guest", "score":0, "max":""}
+    x1, y1, x2, y2 = item
+    rect = dlib.rectangle(int(x1), int(y1), int(x2), int(y2))
     shape = self.predictor(gray, rect)
     face_encoding = np.array(self.face_encoder.compute_face_descriptor(img, shape, 1))
     matches = []
@@ -959,6 +945,8 @@ Functions:
 
     if min(matches) < self.threshold:
       data["name"] = self.facedb[0][matches.index(min(matches))]
+    
+    data["max"] = self.facedb[0][matches.index(min(matches))]
     return data
 
   def get_db(self):
@@ -1080,6 +1068,7 @@ Functions:
     #self.dictionary = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_50)
     self.dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
     self.parameters = cv2.aruco.DetectorParameters()
+    self.tracker = dlib.correlation_tracker()
 
   def detect_object(self, img):
     """
@@ -1139,8 +1128,25 @@ Functions:
     idxs = cv2.dnn.NMSBoxes(boxes_nms, scores, .5, .4)
     if len(idxs) > 0:
       for i in idxs.flatten():
-        data.append({"name":self.object_class[class_ids[i]], "score":int(scores[i]*100), "position":boxes[i]})
+        data.append({"name":self.object_class[class_ids[i]], "score":int(scores[i]*100), "box":boxes[i]})
     return data
+
+  def detect_object_vis(self, img, items):
+    """
+    사물 인식 결과를 표시합니다.
+
+    :param numpy.ndarray img: 이미지 객체
+    :param array items: 사물 인식 결과
+    """
+
+    if not type(img) is np.ndarray:
+      raise Exception('"img" must be image data from opencv')
+
+    for item in items:
+      x1,y1,x2,y2 = item['box']
+      name = item['name']
+      cv2.rectangle(img, (x1,y1), (x2,y2), (50,255,255), 2)
+      cv2.putText(img, name, (x1-10, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (50,255,255), 1)
 
   def detect_qr(self, img):
     """
@@ -1152,25 +1158,43 @@ Functions:
       detect.detect_qr(img)
 
     :param numpy.ndarray img: 이미지 객체
-
     :returns: ``{"data": 내용, "type": 바코드 / QR코드, "position":(startX,startY,endX,endY)}``
     """
 
     if not type(img) is np.ndarray:
       raise Exception('"img" must be image data from opencv')
 
+    results = []
     barcodes = pyzbar.decode(img)
-    if len(barcodes) > 0:
-      x,y,w,h = barcodes[0].rect
-      _type = barcodes[0].type
-      _data = barcodes[0].data.decode("utf-8")
+
+    for barcode in barcodes:
+      x,y,w,h = barcode.rect
+      _type = barcode.type
+      _data = barcode.data.decode("utf-8")
 
       res = get_card(_data)
       if res != None:
         _type, _data = "CARD", res
-      return {"data":_data, "type":_type, "position":(x,y,x+w,y+h)}
-    else:
-      return {"data":"", "type":"", "position":None}
+      results.append({"data":_data, "type":_type, "position":(x,y,x+w,y+h)})
+
+    return results
+
+  def detect_qr_vis(self, img, items):
+    """
+    QR/바코드 결과를 표시합니다.
+
+    :param numpy.ndarray img: 이미지 객체
+    :param array items: QR 인식 결과
+    """
+
+    if not type(img) is np.ndarray:
+      raise Exception('"img" must be image data from opencv')
+
+    for item in items:
+      x1,y1,x2,y2 = item['box']
+      data = item['data']
+      cv2.rectangle(img, (x1,y1), (x2,y2), (255,50,255), 2)
+      cv2.putText(img, str(data), (x1-10, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (5255,50,255), 1)
 
   def detect_pose(self, img):
     """
@@ -1190,8 +1214,20 @@ Functions:
       raise Exception('"img" must be image data from opencv')
 
     list_persons = [self.pose_detector.detect(img)]
-    img = visualize(img, list_persons)
-    return {"data":list_persons, "img":img}
+    return list_persons
+
+  def detect_pose_vis(self, img, items):
+    """
+    포즈를 표시 합니다.
+
+    :param numpy.ndarray img: 이미지 객체
+    :param array items: 포즈 데이터
+    """
+
+    if not type(img) is np.ndarray:
+      raise Exception('"img" must be image data from opencv')
+
+    visualize_pose(img, items)
 
   def analyze_pose(self, data):
     """
@@ -1216,11 +1252,11 @@ Functions:
     LEFT_HIP, RIGHT_HIP, LEFT_KNEE, RIGHT_KNEE, LEFT_ANKLE, RIGHT_ANKLE = 11,12,13,14,15,16
 
     res = []
-    data = data['data'][0].keypoints
+    data = data[0].keypoints
 
-    if data[LEFT_WRIST].coordinate.y < data[LEFT_ELBOW].coordinate.y:
+    if data[LEFT_WRIST].coordinate.y < data[LEFT_SHOULDER].coordinate.y:
       res.append("left_hand_up")
-    if data[RIGHT_WRIST].coordinate.y < data[RIGHT_ELBOW].coordinate.y:
+    if data[RIGHT_WRIST].coordinate.y < data[RIGHT_SHOULDER].coordinate.y:
       res.append("right_hand_up")
     if distance(data[LEFT_WRIST].coordinate, data[RIGHT_WRIST].coordinate) <  75:
       res.append("clap")
@@ -1279,11 +1315,9 @@ Functions:
       raise Exception('"img" must be image data from opencv')
 
     x1,y1,x2,y2 = p
-    tracker = dlib.correlation_tracker()
-    tracker.start_track(cv2.cvtColor(img, cv2.COLOR_BGR2RGB), dlib.rectangle(x1,y1,x2,y2))
-    return tracker
+    self.tracker.start_track(cv2.cvtColor(img, cv2.COLOR_BGR2RGB), dlib.rectangle(x1,y1,x2,y2))
 
-  def track_object(self, tracker, img):
+  def track_object(self, img):
     """
     이미지 안의 사물 트래커를 설정합니다.
 
@@ -1295,20 +1329,20 @@ Functions:
 
     :param numpy.ndarray img: 이미지 객체
 
-    :returns: ``{"tracker": 업데이트된 tracker, "position": 업데이트된 사물 위치 }``
+    :returns: x1,y1,x2,y2 업데이트 된 사물 위치
     """
 
     if not type(img) is np.ndarray:
       raise Exception('"img" must be image data from opencv')
 
-    tracker.update(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-    pos = tracker.get_position()
+    self.tracker.update(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    box = self.tracker.get_position()
 
-    x1 = int(pos.left())
-    y1 = int(pos.top())
-    x2 = int(pos.right())
-    y2 = int(pos.bottom())
-    return {'tracker':tracker, 'position':(x1, y1, x2, y2)}
+    x1 = int(box.left())
+    y1 = int(box.top())
+    x2 = int(box.right())
+    y2 = int(box.bottom())
+    return x1, y1, x2, y2
 
   def detect_marker(self, img, marker_length=2):
     """
@@ -1331,7 +1365,7 @@ Functions:
     corners, ids, _ = cv2.aruco.detectMarkers(img, self.dictionary, parameters=self.parameters)
     res = []
     if len(corners) > 0:
-      img = cv2.aruco.drawDetectedMarkers(img, corners, ids)
+      # img = cv2.aruco.drawDetectedMarkers(img, corners, ids)
       ids = ids.flatten()
 
       for (corner, markerID) in zip(corners, ids):
@@ -1355,7 +1389,31 @@ Functions:
         # cv2.putText(img, str(markerID), (topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
         res.append({"id":markerID, "center": (cX, cY), "box": [topLeft, topRight, bottomRight, bottomLeft], "distance":distance})
 
-    return {"data":res, "img":img}
+    return res
+
+  def detect_marker_vis(self, img, items):
+    """
+    마커 결과를 표시합니다.
+
+    :param numpy.ndarray img: 이미지 객체
+    :param array items: 마커 결과과
+    """
+
+    if not type(img) is np.ndarray:
+      raise Exception('"img" must be image data from opencv')
+
+    for item in items:
+      cX, cY = item['center']
+      topLeft, topRight, bottomRight, bottomLeft = item['box']
+      markerID = item['id']
+      distance = item['distance']
+
+      cv2.line(img, topLeft, topRight, (255, 0, 0), 4)
+      cv2.line(img, topRight, bottomRight, (255, 0, 0), 4)
+      cv2.line(img, bottomRight, bottomLeft, (255, 0, 0), 4)
+      cv2.line(img, bottomLeft, topLeft, (255, 0, 0), 4)
+      cv2.circle(img, (cX, cY), 4, (0, 0, 255), -1)
+      cv2.putText(img, f'{markerID}/{distance}cm', (topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2)
 
 class TeachableMachine:
   """
