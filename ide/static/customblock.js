@@ -2040,6 +2040,47 @@ Blockly.defineBlocksWithJsonArray(
       helpUrl: ''
     },
     {
+      type: 'vision_face_mesh',
+      message0: '%{BKY_VISION_FACE_MESH}',
+      "args0": [
+        {
+          "type": "field_image",
+          "src": "svg/face-smile-solid.svg",
+          "width": 27,
+          "height": 27
+        },
+        {"type":"input_dummy"},
+        {"type": "input_value", "name": "img", "check":"Array"}
+      ],
+      output: null,
+      inputsInline: true,
+      colour: color_type["recognition"],
+      tooltip: '%{BKY_VISION_FACE_MESH_TOOLTIP}',
+      helpUrl: ''
+    },
+
+    {
+      type: 'vision_face_mesh_vis',
+      message0: '%{BKY_VISION_FACE_MESH_VIS}',
+      "args0": [
+        {
+          "type": "field_image",
+          "src": "svg/face-smile-solid.svg",
+          "width": 27,
+          "height": 27
+        },
+        {"type":"input_dummy"},
+        {"type": "input_value", "name": "img", "check":"Array"},
+        {"type": "input_value", "name": "v", "check":"Array"}
+      ],
+      nextStatement: true,
+      previousStatement: true,
+      inputsInline: true,
+      colour: color_type["recognition"],
+      tooltip: '%{BKY_VISION_FACE_MESH_VIS_TOOLTIP}',
+      helpUrl: ''
+    },
+    {
       type: 'vision_object',
       message0: '%{BKY_VISION_OBJECT}',
       "args0": [
@@ -2347,7 +2388,98 @@ Blockly.defineBlocksWithJsonArray(
       colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_MARKER_DETECT_VIS_TOOLTIP}',
       helpUrl: ''
-    },    
+    },
+    {
+      type: 'vision_hand_gesture_load',
+      message0: '%{BKY_VISION_HAND_GESTURE_LOAD}',
+      "args0": [
+        {
+          "type": "field_image",
+          "src": "svg/hand-solid.svg",
+          "width": 27,
+          "height": 27
+        },
+        {"type":"input_dummy"},
+        {"type": "field_dropdown", "name":"type",
+          "options":[
+            [ 'gesture_recognizer', '/home/pi/.model/hand/gesture_recognizer.task'],
+            [ 'rps_recognizer', '/home/pi/.model/hand/rps_recognizer.task' ] 
+          ]
+        },
+      ],
+      nextStatement: true,
+      previousStatement: true,
+      inputsInline: true,
+      colour: color_type["recognition"],
+      tooltip: '%{BKY_VISION_HAND_GESTURE_LOAD_TOOLTIP}',
+      helpUrl: ''
+    },
+    {
+      type: 'vision_hand_gesture_load_ext',
+      message0: '%{BKY_VISION_HAND_GESTURE_LOAD_EXT}',
+      "args0": [
+        {
+          "type": "field_image",
+          "src": "svg/hand-solid.svg",
+          "width": 27,
+          "height": 27
+        },
+        {"type":"input_dummy"},
+        {"type": "field_dropdown", "name":"dir",
+          "options":[
+            [ '%{BKY_FOLDER_SELECT}', ''],
+            [ 'code', '/home/pi/code/' ],
+          ]
+        },
+        {"type": "input_value", "name": "filename", "check":"String"},
+      ],
+      nextStatement: true,
+      previousStatement: true,
+      inputsInline: true,
+      colour: color_type["recognition"],
+      tooltip: '%{BKY_VISION_HAND_GESTURE_LOAD_EXT_TOOLTIP}',
+      helpUrl: ''
+    },
+    {
+      type: 'vision_hand_gesture',
+      message0: '%{BKY_VISION_HAND_GESTURE}',
+      "args0": [
+        {
+          "type": "field_image",
+          "src": "svg/hand-solid.svg",
+          "width": 27,
+          "height": 27
+        },
+        {"type":"input_dummy"},
+        {"type": "input_value", "name": "img", "check":"Array"}
+      ],
+      output: null,
+      inputsInline: true,
+      colour: color_type["recognition"],
+      tooltip: '%{BKY_VISION_HAND_GESTURE_TOOLTIP}',
+      helpUrl: ''
+    },
+    {
+      type: 'vision_hand_gesture_vis',
+      message0: '%{BKY_VISION_HAND_GESTURE_VIS}',
+      "args0": [
+        {
+          "type": "field_image",
+          "src": "svg/hand-solid.svg",
+          "width": 27,
+          "height": 27
+        },
+        {"type":"input_dummy"},
+        {"type": "input_value", "name": "img", "check":"Array"},
+        {"type": "input_value", "name": "v", "check":"Array"}
+      ],
+      nextStatement: true,
+      previousStatement: true,
+      inputsInline: true,
+      colour: color_type["recognition"],
+      tooltip: '%{BKY_VISION_HAND_GESTURE_VIS_TOOLTIP}',
+      helpUrl: ''
+    },
     {
       type: 'vision_load_tm',
       message0: '%{BKY_VISION_LOAD_TM}',

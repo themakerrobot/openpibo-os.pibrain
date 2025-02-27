@@ -3,6 +3,36 @@ let toolbox = (lang) => {
     "kind": "categoryToolbox",
     // "kind": "flyoutToolbox",
     "contents": [
+
+      {
+        "kind": "category",
+        "name": translations['execute'][lang],
+        "contents": [
+          {
+            "kind": "block",
+            "type": "flag_event",
+          },
+          {
+            "kind": "block",
+            "type": "make_bitmap_6x8",
+          },
+          {
+            "kind": "block",
+            "type": "make_bitmap_8x4",
+          },
+          {
+            "kind": "block",
+            "type": "make_bitmap_8x8",
+          },
+        ],
+        "colour": color_type['event'],
+        "cssConfig": {
+          "icon": "customIcon fa-solid fa-flag"
+        }
+      },     
+      {
+        "kind": "sep",
+      },
       { // Logic
         "kind": "category",
         "colour": '#B098CB',
@@ -769,32 +799,32 @@ let toolbox = (lang) => {
           "icon": "customIcon fa fa-florin-sign"
         }
       },
-      {
-        "kind": "category",
-        "name": translations['execute'][lang],
-        "contents": [
-          {
-            "kind": "block",
-            "type": "flag_event",
-          },
-          {
-            "kind": "block",
-            "type": "make_bitmap_6x8",
-          },
-          {
-            "kind": "block",
-            "type": "make_bitmap_8x4",
-          },
-          {
-            "kind": "block",
-            "type": "make_bitmap_8x8",
-          },
-        ],
-        "colour": color_type['event'],
-        "cssConfig": {
-          "icon": "customIcon fa-solid fa-flag"
-        }
-      },     
+      // {
+      //   "kind": "category",
+      //   "name": translations['execute'][lang],
+      //   "contents": [
+      //     {
+      //       "kind": "block",
+      //       "type": "flag_event",
+      //     },
+      //     {
+      //       "kind": "block",
+      //       "type": "make_bitmap_6x8",
+      //     },
+      //     {
+      //       "kind": "block",
+      //       "type": "make_bitmap_8x4",
+      //     },
+      //     {
+      //       "kind": "block",
+      //       "type": "make_bitmap_8x8",
+      //     },
+      //   ],
+      //   "colour": color_type['event'],
+      //   "cssConfig": {
+      //     "icon": "customIcon fa-solid fa-flag"
+      //   }
+      // },     
       {
         "kind": "sep",
       },
@@ -2062,6 +2092,33 @@ let toolbox = (lang) => {
           },
           {
             "kind": "block",
+            "type": "vision_face_mesh",
+            "inputs":{
+              "img":{
+                "shadow": {
+                  "type": "variables_get",
+                }
+              }
+            }
+          },
+          {
+            "kind": "block",
+            "type": "vision_face_mesh_vis",
+            "inputs":{
+              "img":{
+                "shadow": {
+                  "type": "variables_get",
+                }
+              },
+              "v":{
+                "shadow": {
+                  "type": "variables_get",
+                }
+              }
+            }
+          },  
+          {
+            "kind": "block",
             "type": "vision_object",
             "inputs":{
               "img":{
@@ -2255,6 +2312,51 @@ let toolbox = (lang) => {
               }
             }
           },
+          {
+            "kind": "block",
+            "type": "vision_hand_gesture_load",
+          },
+          {
+            "kind": "block",
+            "type": "vision_hand_gesture_load_ext",
+            "inputs":{
+              "filename":{
+                "shadow": {
+                  "type": "text",
+                  "fields": {
+                    "TEXT": "gesture_recognizer.task"
+                  }
+                }
+              },
+            }
+          },
+          {
+            "kind": "block",
+            "type": "vision_hand_gesture",
+            "inputs":{
+              "img":{
+                "shadow": {
+                  "type": "variables_get",
+                }
+              }
+            }
+          },
+          {
+            "kind": "block",
+            "type": "vision_hand_gesture_vis",
+            "inputs":{
+              "img":{
+                "shadow": {
+                  "type": "variables_get",
+                }
+              },
+              "v":{
+                "shadow": {
+                  "type": "variables_get",
+                }
+              }
+            }
+          },  
           {
             "kind": "block",
             "type": "vision_marker_detect",

@@ -684,6 +684,10 @@ Blockly.Msg["VISION_FACEDB_SAVE"] = "%1 %2 Save face training data to file %3 %4
 Blockly.Msg["VISION_FACEDB_SAVE_TOOLTIP"] = "Save face training data to file.";
 Blockly.Msg["VISION_FACEDB_LOAD"] = "%1 %2 Load face training data from file %3 %4";
 Blockly.Msg["VISION_FACEDB_LOAD_TOOLTIP"] = "Load face training data from file.";
+Blockly.Msg["VISION_FACE_MESH"] = "%1 %2 이미지 %3 얼굴 방향/거리 분석하기";
+Blockly.Msg["VISION_FACE_MESH_TOOLTIP"] = "인식된 얼굴의 방향과 거리를 분석합니다.";
+Blockly.Msg["VISION_FACE_MESH_VIS"] = "%1 %2 이미지 %3 얼굴 방향/거리 %4 표시하기";
+Blockly.Msg["VISION_FACE_MESH_VIS_TOOLTIP"] = "인식된 얼굴의 방향과 거리를 표시합니다.";
 
 Blockly.Msg["VISION_OBJECT"] = "%1 %2 이미지 %3 사물 찾기";
 Blockly.Msg["VISION_OBJECT_TOOLTIP"] = "이미지에서 사물을 찾아냅니다. (80개 종류의 사물)";
@@ -715,6 +719,14 @@ Blockly.Msg["VISION_MARKER_DETECT"] = "%1 %2 Detect Marker length %4 in image %3
 Blockly.Msg["VISION_MARKER_DETECT_TOOLTIP"] = "Detect Marker in the specified image.";
 Blockly.Msg["VISION_MARKER_DETECT_VIS"] = "%1 %2 이미지 %3 마커 %4 표시하기";
 Blockly.Msg["VISION_MARKER_DETECT_VIS_TOOLTIP"] = "이미지에서 마커를 표시합니다.";
+Blockly.Msg["VISION_HAND_GESTURE_LOAD"] = "%1 %2 손 동작 모델 %3을 불러오기";
+Blockly.Msg["VISION_HAND_GESTURE_LOAD_TOOLTIP"] = "내장된 손 동작 모델을 불러옵니다.";
+Blockly.Msg["VISION_HAND_GESTURE_LOAD_EXT"] = "%1 %2 손 동작 모델 %3 %4.task 불러오기";
+Blockly.Msg["VISION_HAND_GESTURE_LOAD_EXT_TOOLTIP"] = "손 동작 모델을 불러옵니다.";
+Blockly.Msg["VISION_HAND_GESTURE"] = "%1 %2 이미지 %3 손 동작 인식하기";
+Blockly.Msg["VISION_HAND_GESTURE_TOOLTIP"] = "이미지에서 손 동작을 인식합니다.";
+Blockly.Msg["VISION_HAND_GESTURE_VIS"] = "%1 %2 이미지 %3 손 동작 %4 표시하기";
+Blockly.Msg["VISION_HAND_GESTURE_VIS_TOOLTIP"] = "이미지에서 손 동작을 표시합니다.";
 
 Blockly.Msg["VISION_LOAD_TM"] = "%1 %2 Set Teachable Machine model for %3 %4 %5";
 Blockly.Msg["VISION_LOAD_TM_TOOLTIP"] = "Configure a Teachable Machine model for image classification.";

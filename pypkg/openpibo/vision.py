@@ -278,6 +278,44 @@ Functions:
 
     return cv2.imwrite(filename, img)
 
+
+  def draw_bitmap(self, w, h, val, background=(255,255,255), pixel=(0,0,0)):
+    # 1. 문자열을 정수 리스트로 변환
+    try:
+      values = [int(v.strip()) for v in val.split(',')]
+    except ValueError:
+      raise ValueError("val 인자는 쉼표로 구분된 정수 문자열이어야 합니다.")
+    
+    # 2. w*h 크기에 맞는 값인지 확인
+    if len(values) != w * h:
+      raise ValueError(f"val의 길이가 w*h와 일치하지 않습니다: {len(values)} != {w * h}")
+    
+    # 3. 1차원 리스트를 2차원 배열로 변환 (행: h, 열: w)
+    bitmap = np.array(values).reshape((h, w))
+    
+    # 4. 작은 크기의 이미지 생성 (배경색으로 채움)
+    small_img = np.full((h, w, 3), background, dtype=np.uint8)
+    small_img[bitmap == 1] = pixel  # bitmap 값이 1인 부분에 pixel 색상 적용
+    
+    # 5. 각 픽셀을 복제할 배수 계산 (정수 배수)
+    scale_y = 480 // h  # 세로 복제 횟수
+    scale_x = 640 // w  # 가로 복제 횟수
+    
+    # 6. np.repeat를 이용하여 픽셀 복제 (각 픽셀을 scale_y x scale_x 블록으로 확장)
+    replicated_img = np.repeat(np.repeat(small_img, scale_y, axis=0), scale_x, axis=1)
+    
+    # 7. 복제 결과가 정확히 480x640이 아닐 수 있으므로, 부족한 부분은 배경색으로 채우고
+    #    넘치는 부분은 자른다.
+    rep_h, rep_w = replicated_img.shape[:2]
+    if rep_h < 480 or rep_w < 640:
+      pad_bottom = 480 - rep_h
+      pad_right = 640 - rep_w
+      final_img = cv2.copyMakeBorder(replicated_img, 0, pad_bottom, 0, pad_right, cv2.BORDER_CONSTANT, value=background)
+    else:
+      final_img = replicated_img[:480, :640]
+    
+    return final_img
+
   def rectangle(self, img, p1, p2, colors=(255,255,255), tickness=1):
     """
     이미지에 직사각형을 그립니다.
@@ -718,7 +756,7 @@ Functions:
 
     detections = self.face_detection_compiled([input_frame])[self.face_output_name]
 
-    res = []
+    items = []
     for detection in detections[0][0]:
       confidence = detection[2]
       if confidence > 0.5:  # Threshold
@@ -729,27 +767,25 @@ Functions:
 
         if img[ymin:ymax, xmin:xmax].size == 0:
           continue
-        res.append([xmin, ymin, xmax, ymax])
-    return res
+        items.append([xmin, ymin, xmax, ymax])
+    return items
     #return [(d.left(), d.top(), d.right()-d.left(), d.bottom()-d.top()) for d in self.face_detector(img)]
     #return self.face_detector.detectMultiScale(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), 1.1, 5) # [(x,y,w,h), ...]
 
-  def detect_face_vis(self, img, item):
+  def detect_face_vis(self, img, items):
     """
     얼굴 box 표시합니다.
 
     :param numpy.ndarray img: 이미지 객체
-    :param array item: 얼굴 좌표 (x1,y1,x2,y2)
+    :param array item: 얼굴 좌표 (x1,y1,x2,y2) 리스트
     """
 
     if not type(img) is np.ndarray:
       raise Exception('"img" must be image data from opencv')
 
-    if len(item) != 4:
-      raise Exception(f'len({item}) must be 2')
-
-    x1, y1, x2, y2 = item
-    cv2.rectangle(img, (x1,y1), (x2,y2), (50,255,50), 2)
+    for item in items:
+      x1, y1, x2, y2 = item
+      cv2.rectangle(img, (x1,y1), (x2,y2), (50,255,50), 2)
 
   def landmark_face(self, img, item):
     """
@@ -849,7 +885,7 @@ Functions:
     return {"age":int(age), "gender":gender, "emotion":emotion, "box": (x1, y1, x2, y2)}
 
 
-  def analyze_face_vis(self, img, res):
+  def analyze_face_vis(self, img, item):
     """
     얼굴의 나이, 성별, 감정을 추정합니다.
 
@@ -860,8 +896,9 @@ Functions:
     if not type(img) is np.ndarray:
       raise Exception('"img" must be image data from opencv')
 
-    x1, y1, x2, y2 = res['box']
-    cv2.putText(img, f'{res["age"]}/{res["gender"]}/{res["emotion"]}', (x1-10, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+    x1, y1, x2, y2 = item['box']
+    age, gender, emotion = item['age'], item['gender'], item['emotion']
+    cv2.putText(img, f'{age}/{gender}/{emotion}', (x1-10, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
 
   def init_db(self):
@@ -1041,54 +1078,50 @@ Functions:
   # face mesh
   def calculate_head_orientation(self, keypoints):
     """Calculate yaw and turn angles."""
-    try:
-      # Keypoints for calculations
-      nose_tip = keypoints[1]
-      left_nose = keypoints[279]
-      right_nose = keypoints[49]
-        
-      # Calculate midpoint
-      midpoint = {
-        "x": (left_nose["x"] + right_nose["x"]) / 2,
-        "y": (left_nose["y"] + right_nose["y"]) / 2,
-        "z": (left_nose["z"] + right_nose["z"]) / 2,
-      }
 
-      # Perpendicular point above midpoint
-      perpendicular_up = {
-        "x": midpoint["x"],
-        "y": midpoint["y"]-50,  # Offset
-        "z": midpoint["z"],
-      }
+    # Keypoints for calculations
+    nose_tip = keypoints[1]
+    left_nose = keypoints[279]
+    right_nose = keypoints[49]
+      
+    # Calculate midpoint
+    midpoint = {
+      "x": (left_nose["x"] + right_nose["x"]) / 2,
+      "y": (left_nose["y"] + right_nose["y"]) / 2,
+      "z": (left_nose["z"] + right_nose["z"]) / 2,
+    }
 
-      # Calculate yaw and turn
-      yaw = self.get_angle_between_lines(midpoint, nose_tip, perpendicular_up)
-      turn = self.get_angle_between_lines(midpoint, right_nose, nose_tip)
+    # Perpendicular point above midpoint
+    perpendicular_up = {
+      "x": midpoint["x"],
+      "y": midpoint["y"]-50,  # Offset
+      "z": midpoint["z"],
+    }
 
-      # Debug yaw and turn
-      # print(f"[DEBUG] Yaw: {yaw:.2f}, Turn: {turn:.2f}")
+    # Calculate yaw and turn
+    yaw = self.get_angle_between_lines(midpoint, nose_tip, perpendicular_up)
+    turn = self.get_angle_between_lines(midpoint, right_nose, nose_tip)
 
-      # Determine direction based on angles
-      direction = ""
-      if yaw > 105:  # Adjusted threshold
-        direction += "B"  # Bottom
-      elif yaw < 75:  # Adjusted threshold
-        direction += "T"  # Top
-      else:
-        direction += "C"  # Center (vertical)
+    # Debug yaw and turn
+    # print(f"[DEBUG] Yaw: {yaw:.2f}, Turn: {turn:.2f}")
 
-      if turn > 93:  # Adjusted threshold
-        direction += "R"  # Right
-      elif turn < 87:  # Adjusted threshold
-        direction += "L"  # Left
-      else:
-        direction += "C"  # Center (horizontal)
+    # Determine direction based on angles
+    direction = ""
+    if yaw > 105:  # Adjusted threshold
+      direction += "B"  # Bottom
+    elif yaw < 75:  # Adjusted threshold
+      direction += "T"  # Top
+    else:
+      direction += "C"  # Center (vertical)
 
-      return direction
+    if turn > 93:  # Adjusted threshold
+      direction += "R"  # Right
+    elif turn < 87:  # Adjusted threshold
+      direction += "L"  # Left
+    else:
+      direction += "C"  # Center (horizontal)
 
-    except Exception as e:
-      print(f"[ERROR] Failed to calculate head orientation: {e}")
-      return "CC"  # Default direction
+    return direction
 
   def get_angle_between_lines(self, start, point1, point2):
     """Calculate angle between two lines defined by three points."""
@@ -1106,27 +1139,25 @@ Functions:
     angle = degrees(math.acos(dot_product / (magnitude1 * magnitude2 + 1e-8)))
     return angle
 
-  def detect_mesh_vis(self, image, item):
+  def detect_mesh_vis(self, image, items):
     """Draw connections between landmarks based on Mediapipe's face mesh."""
-    if item == None:
-      return
+    for item in items:
+      face_landmarks = item['landmark']
+      distance = item['distance']
+      direction = item['direction']
 
-    face_landmarks = item['landmarks']
-    distance = item['distance']
-    direction = item['direction']
+      if len(face_landmarks) > 0:
+        connections = mp.solutions.face_mesh.FACEMESH_TESSELATION
+        image_height, image_width, _ = image.shape
+        for start, end in connections:
+          x1, y1 = int(face_landmarks[start].x * image_width), int(face_landmarks[start].y * image_height)
+          x2, y2 = int(face_landmarks[end].x * image_width), int(face_landmarks[end].y * image_height)
+          cv2.line(image, (x1, y1), (x2, y2), (255, 255, 255), 1)
 
-    if len(face_landmarks) > 0:
-      connections = mp.solutions.face_mesh.FACEMESH_TESSELATION
-      image_height, image_width, _ = image.shape
-      for start, end in connections:
-        x1, y1 = int(face_landmarks[start].x * image_width), int(face_landmarks[start].y * image_height)
-        x2, y2 = int(face_landmarks[end].x * image_width), int(face_landmarks[end].y * image_height)
-        cv2.line(image, (x1, y1), (x2, y2), (255, 255, 255), 1)
+        x, y = int(face_landmarks[103].x * image_width), int(face_landmarks[103].y * image_height)
+        cv2.putText(image, f'{distance}cm/{direction}' , (x-10, y-20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2)
 
-      x, y = int(face_landmarks[103].x * image_width), int(face_landmarks[103].y * image_height)
-      cv2.putText(image, f'{distance}cm/{direction}' , (x-10, y-20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2)
-
-  def detect_mesh(self, image, raw=True):
+  def detect_mesh(self, image):
     """Detect mesh and return distance, direction, and image with landmarks."""
     # Convert the image from BGR to RGB
     rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -1156,12 +1187,8 @@ Functions:
           distance_mm = (self.FOCAL_LENGTH_MM * self.IRIS_REAL_DIAMETER_MM) / (iris_diameter_px * self.PIXEL_PITCH_MM)
           distance_cm = int(distance_mm / 10.0)
 
-        mesh_data.append({"distance":distance_cm, "direction":direction, "landmarks": face_landmarks})
-    
-    if raw:
-      return mesh_data
-    else:
-      return mesh_data[0] if len(mesh_data) > 0 else None
+        mesh_data.append({"distance":distance_cm, "direction":direction, "landmark": face_landmarks})
+    return mesh_data
 
 class Detect:
   """
@@ -1227,73 +1254,11 @@ Functions:
     #self.dictionary = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_50)
     self.dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
     self.parameters = cv2.aruco.DetectorParameters()
-    
     self.tracker = dlib.correlation_tracker()
+    self.hand_gesture_recognizer =  None
 
-    # hand landmark and gesture
-    self.hand_landmark_detector = mp_vision.HandLandmarker.create_from_options(
-        mp_vision.HandLandmarkerOptions(
-            base_options= mp_python.BaseOptions(model_asset_path='/home/pi/.model/hand/hand_landmarker.task'),
-            running_mode= mp_vision.RunningMode.IMAGE,  # 1장씩 이미지 처리
-            num_hands= 2,
-            min_hand_detection_confidence= 0.5,
-            min_hand_presence_confidence= 0.5,
-            min_tracking_confidence= 0.5
-        )
-    )
-
-    self.hand_gesture_recognizer =  mp_vision.GestureRecognizer.create_from_options(
-        mp_vision.GestureRecognizerOptions(
-            base_options=mp_python.BaseOptions(model_asset_path='/home/pi/.model/hand/gesture_recognizer.task'),
-            running_mode=mp_vision.RunningMode.IMAGE,
-            num_hands= 2,
-            min_hand_detection_confidence= 0.5,
-            min_hand_presence_confidence= 0.5,
-            min_tracking_confidence= 0.5,
-        )
-    )
-
-  def detect_hand(self, image, raw=True):
-    # Mediapipe용 이미지 변환
-    rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_image)
-    detection_result = self.hand_landmark_detector.detect(mp_image)
-
-    hands_data = []  # 손 정보를 담을 리스트
-    if detection_result and detection_result.hand_landmarks:
-      height, width, _ = image.shape
-      for hand_idx, hand_landmarks in enumerate(detection_result.hand_landmarks):
-            # 21개 랜드마크 픽셀 좌표 추출
-        hpoints = []
-        for landmark in hand_landmarks:
-          px = int(landmark.x * width)
-          py = int(landmark.y * height)
-          hpoints.append((px, py))
-
-        # Right or Left
-        handedness_label = detection_result.handedness[hand_idx][0].category_name
-        hands_data.append({"points": hpoints, "label": handedness_label})
-
-    if raw:
-      return hands_data
-    else:
-      return mesh_data[0] if len(mesh_data) > 0 else None
-
-  def detect_hand_vis(self, img, item):
-    if item == None:
-      return    
-    # hands 시각화
-    hpoints = item["points"]
-    label = item["label"]
-
-    # 21개 포인트 빨간색 원으로 그리기
-    for px, py in hpoints:
-      cv2.circle(img, (px, py), 3, (255, 255, 255), -1)
-
-    # 첫 번째 랜드마크 근처에 손 라벨(Right or Left / Gesture) 표시
-    cv2.putText(img, f'{label}', (hpoints[0][0], hpoints[0][1] - 50), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 0, 0), 2)
-
-  def hand_gesture_model_load(self, modelpath):
+  def load_hand_gesture_model(self, modelpath='/home/pi/.model/hand/gesture_recognizer.task'):
+    #'/home/pi/.model/hand/gesture_recognizer.task', /home/pi/.model/hand/rps_recognizer.task'
     self.hand_gesture_recognizer =  mp_vision.GestureRecognizer.create_from_options(
       mp_vision.GestureRecognizerOptions(
         base_options=mp_python.BaseOptions(model_asset_path=modelpath),
@@ -1305,7 +1270,9 @@ Functions:
       )
     )
 
-  def recognize_hand_gesture(self, image, raw=True):
+  def recognize_hand_gesture(self, image):
+    if self.hand_gesture_recognizer == None:
+      raise Exception('"load_hand_gesture_model" must be called')
     rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_image)
     recognition_result = self.hand_gesture_recognizer.recognize(mp_image)
@@ -1321,33 +1288,29 @@ Functions:
           py = int(landmark.y * height)
           hpoints.append((px, py))
         
-        label = ""
+        name = ""
         score = 0
         if recognition_result.gestures:
           gesture = recognition_result.gestures[hand_index]
-          label = gesture[0].category_name
+          name = gesture[0].category_name
           score = round(gesture[0].score, 2)
-        hands_data.append({"points": hpoints, "label": label, "score": score})
+        hands_data.append({"point": hpoints, "name": name, "score": score})
 
-    if raw:
-      return hands_data
-    else:
-      return mesh_data[0] if len(mesh_data) > 0 else None
+    return hands_data
 
-  def recognize_hand_gesture_vis(self, img, item):
-    if item == None:
-      return    
-    # hands 시각화
-    hpoints = item["points"]
-    label = item["label"]
-    score = item["score"]
+  def recognize_hand_gesture_vis(self, img, items):
+    for item in items:
+      # hands 시각화
+      hpoints = item["point"]
+      name = item["name"]
+      score = item["score"]
 
-    # 21개 포인트 빨간색 원으로 그리기
-    for px, py in hpoints:
-      cv2.circle(img, (px, py), 3, (255, 255, 255), -1)
+      # 21개 포인트 빨간색 원으로 그리기
+      for px, py in hpoints:
+        cv2.circle(img, (px, py), 3, (255, 255, 255), -1)
 
-    # 첫 번째 랜드마크 근처에 손 라벨(Right or Left / Gesture) 표시
-    cv2.putText(img, f'{label}/{score}', (hpoints[0][0], hpoints[0][1] - 50), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 0, 0), 2)
+      # 첫 번째 랜드마크 근처에 손 라벨(Right or Left / Gesture) 표시
+      cv2.putText(img, f'{name}/{score}', (hpoints[0][0], hpoints[0][1] - 50), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 0, 0), 2)
 
   def detect_object(self, img):
     """
@@ -1454,7 +1417,7 @@ Functions:
       res = get_card(_data)
       if res != None:
         _type, _data = "CARD", res
-      results.append({"data":_data, "type":_type, "position":(x,y,x+w,y+h)})
+      results.append({"data":_data, "type":_type, "box":(x,y,x+w,y+h)})
 
     return results
 
