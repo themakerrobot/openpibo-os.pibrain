@@ -777,12 +777,24 @@ let toolbox = (lang) => {
             "kind": "block",
             "type": "flag_event",
           },
+          {
+            "kind": "block",
+            "type": "make_bitmap_6x8",
+          },
+          {
+            "kind": "block",
+            "type": "make_bitmap_8x4",
+          },
+          {
+            "kind": "block",
+            "type": "make_bitmap_8x8",
+          },
         ],
-        "colour": "#f4d85a",
+        "colour": color_type['event'],
         "cssConfig": {
           "icon": "customIcon fa-solid fa-flag"
         }
-      },      
+      },     
       {
         "kind": "sep",
       },
@@ -1560,6 +1572,17 @@ let toolbox = (lang) => {
           },
           {
             "kind": "block",
+            "type": "vision_create_matte",
+            "inputs":{
+              "color":{
+                "shadow":{
+                  "type":"variables_get",
+                }
+              },
+            }
+          },
+          {
+            "kind": "block",
             "type": "vision_imwrite",
             "inputs":{
               "filename":{
@@ -1845,7 +1868,17 @@ let toolbox = (lang) => {
                 }
               },              
             }
-          },          
+          },
+        ],
+        "colour": color_type["vision"],
+        "cssConfig": {
+          "icon": "customIcon fa-solid fa-camera-retro"
+        }
+      },
+      { // recognition
+        "kind": "category",
+        "name": translations['recognition'][lang],
+        "contents": [
           {
             "kind": "block",
             "type": "vision_face_detect",
@@ -2337,9 +2370,9 @@ let toolbox = (lang) => {
             }
           },
         ],
-        "colour": color_type["vision"],
+        "colour": color_type["recognition"],
         "cssConfig": {
-          "icon": "customIcon fa-solid fa-camera-retro"
+          "icon": "customIcon fa-solid fa-magnifying-glass"
         }
       },
       { // Utils
@@ -2517,12 +2550,12 @@ let toolbox = (lang) => {
 }
 const toolbox_en = toolbox('en');
 const toolbox_ko = toolbox('ko');
-const toolbox_cn = toolbox('cn');
+// const toolbox_cn = toolbox('cn');
 
 const toolbox_dict = {
   "en": toolbox_en,
   "ko": toolbox_ko,
-  "cn": toolbox_cn
+  // "cn": toolbox_cn
 }
 // /**
 //  * @license

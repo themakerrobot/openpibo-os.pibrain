@@ -1,5 +1,5 @@
 const color_type={
-  "event":    "#F4D85A",
+  "event":    "#E5B900",
   "audio":    "#7dc37D",
   "collect":  "#7d7db3",
   "device":   "#d3b28d",
@@ -7,6 +7,7 @@ const color_type={
   "oled":     "#8da2c3",
   "speech":   "#8dc3d2",
   "vision":   "#a39c7D",
+  "recognition": "#6E92B7",
   "utils":    "#CC9988"
 };
 
@@ -31,6 +32,48 @@ Blockly.defineBlocksWithJsonArray(
       colour: color_type["event"],
       tooltip: '%{BKY_FLAG_EVENT_TOOLTIP}',
       helpUrl: ""   
+    },
+    {
+      type: "make_bitmap_6x8",
+      message0: "6x8 %1",
+      args0: [
+        {
+          "type": "field_bitmap",
+          "name": "MATRIX",
+          "width": 6,
+          "height": 8,
+        }
+      ],
+      output: "Array",
+      colour: color_type["event"],
+    },
+    {
+      type: "make_bitmap_8x4",
+      message0: "8x4 %1",
+      args0: [
+        {
+          "type": "field_bitmap",
+          "name": "MATRIX",
+          "width": 8,
+          "height": 4,
+        }
+      ],
+      output: "Array",
+      colour: color_type["event"],
+    },
+    {
+      type: "make_bitmap_8x8",
+      message0: "8x8 %1",
+      args0: [
+        {
+          "type": "field_bitmap",
+          "name": "MATRIX",
+          "width": 8,
+          "height": 8,
+        }
+      ],
+      output: "Array",
+      colour: color_type["event"],
     },
     {
       type: 'audio_play_dynamic',
@@ -1754,7 +1797,7 @@ Blockly.defineBlocksWithJsonArray(
       ],
       output: null,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_FACE_DETECT_TOOLTIP}',
       helpUrl: ''
     },
@@ -1775,7 +1818,7 @@ Blockly.defineBlocksWithJsonArray(
       nextStatement: true,
       previousStatement: true,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_FACE_DETECT_VIS_TOOLTIP}',
       helpUrl: ''
     },
@@ -1795,7 +1838,7 @@ Blockly.defineBlocksWithJsonArray(
       ],
       output: null,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_FACE_ANALYZE_TOOLTIP}',
       helpUrl: ''
     },
@@ -1816,7 +1859,7 @@ Blockly.defineBlocksWithJsonArray(
       nextStatement: true,
       previousStatement: true,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_FACE_ANALYZE_VIS_TOOLTIP}',
       helpUrl: ''
     },
@@ -1836,7 +1879,7 @@ Blockly.defineBlocksWithJsonArray(
       ],
       output: null,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_FACE_LANDMARK_TOOLTIP}',
       helpUrl: ''
     },
@@ -1857,7 +1900,7 @@ Blockly.defineBlocksWithJsonArray(
       nextStatement: true,
       previousStatement: true,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_FACE_LANDMARK_VIS_TOOLTIP}',
       helpUrl: ''
     },
@@ -1876,7 +1919,7 @@ Blockly.defineBlocksWithJsonArray(
         ],
       output: null,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_FACEDB_TOOLTIP}',
       helpUrl: ''
     },    
@@ -1898,7 +1941,7 @@ Blockly.defineBlocksWithJsonArray(
       nextStatement: true,
       previousStatement: true,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_FACEDB_TRAIN_TOOLTIP}',
       helpUrl: ''
     },
@@ -1918,7 +1961,7 @@ Blockly.defineBlocksWithJsonArray(
       nextStatement: true,
       previousStatement: true,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_FACEDB_DELETE_TOOLTIP}',
       helpUrl: ''
     },
@@ -1938,7 +1981,7 @@ Blockly.defineBlocksWithJsonArray(
       ],
       output: null,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_FACEDB_RECOGNIZE_TOOLTIP}',
       helpUrl: ''
     },
@@ -1965,7 +2008,7 @@ Blockly.defineBlocksWithJsonArray(
       nextStatement: true,
       previousStatement: true,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_FACEDB_SAVE_TOOLTIP}',
       helpUrl: ''
     },
@@ -1992,7 +2035,7 @@ Blockly.defineBlocksWithJsonArray(
       nextStatement: true,
       previousStatement: true,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_FACEDB_LOAD_TOOLTIP}',
       helpUrl: ''
     },
@@ -2011,7 +2054,7 @@ Blockly.defineBlocksWithJsonArray(
       ],
       output: null,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_OBJECT_TOOLTIP}',
       helpUrl: ''
     },
@@ -2030,7 +2073,7 @@ Blockly.defineBlocksWithJsonArray(
       ],
       output: null,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_OBJECT_RAW_TOOLTIP}',
       helpUrl: ''
     },    
@@ -2051,7 +2094,7 @@ Blockly.defineBlocksWithJsonArray(
       nextStatement: true,
       previousStatement: true,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_OBJECT_VIS_TOOLTIP}',
       helpUrl: ''
     },
@@ -2070,7 +2113,7 @@ Blockly.defineBlocksWithJsonArray(
       ],
       output: null,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_QR_TOOLTIP}',
       helpUrl: ''
     },
@@ -2089,7 +2132,7 @@ Blockly.defineBlocksWithJsonArray(
       ],
       output: null,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_QR_RAW_TOOLTIP}',
       helpUrl: ''
     },
@@ -2110,7 +2153,7 @@ Blockly.defineBlocksWithJsonArray(
       nextStatement: true,
       previousStatement: true,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_QR_VIS_TOOLTIP}',
       helpUrl: ''
     },
@@ -2129,7 +2172,7 @@ Blockly.defineBlocksWithJsonArray(
       ],
       output: null,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_POSE_TOOLTIP}',
       helpUrl: ''
     },
@@ -2150,7 +2193,7 @@ Blockly.defineBlocksWithJsonArray(
       nextStatement: true,
       previousStatement: true,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_POSE_VIS_TOOLTIP}',
       helpUrl: ''
     },    
@@ -2177,7 +2220,7 @@ Blockly.defineBlocksWithJsonArray(
       ],
       output: null,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_ANALYZE_POSE_TOOLTIP}',
       helpUrl: ''
     },
@@ -2196,7 +2239,7 @@ Blockly.defineBlocksWithJsonArray(
       ],
       output: null,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_CLASSIFICATION_TOOLTIP}',
       helpUrl: ''
     },
@@ -2220,7 +2263,7 @@ Blockly.defineBlocksWithJsonArray(
       ],
       output: null,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_OBJECT_TRACKER_INIT_TOOLTIP}',
       helpUrl: ''
     },
@@ -2239,7 +2282,7 @@ Blockly.defineBlocksWithJsonArray(
       ],
       output: null,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_OBJECT_TRACK_TOOLTIP}',
       helpUrl: ''
     },
@@ -2260,7 +2303,7 @@ Blockly.defineBlocksWithJsonArray(
       nextStatement: true,
       previousStatement: true,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_OBJECT_TRACK_VIS_TOOLTIP}',
       helpUrl: ''
     },
@@ -2280,7 +2323,7 @@ Blockly.defineBlocksWithJsonArray(
       ],
       output: null,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_MARKER_DETECT_TOOLTIP}',
       helpUrl: ''
     },
@@ -2301,7 +2344,7 @@ Blockly.defineBlocksWithJsonArray(
       nextStatement: true,
       previousStatement: true,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_MARKER_DETECT_VIS_TOOLTIP}',
       helpUrl: ''
     },    
@@ -2330,7 +2373,7 @@ Blockly.defineBlocksWithJsonArray(
       nextStatement: true,
       previousStatement: true,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_LOAD_TM_TOOLTIP}',
       helpUrl: ''
     },
@@ -2349,7 +2392,7 @@ Blockly.defineBlocksWithJsonArray(
       ],
       output: null,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_PREDICT_TM_TOOLTIP}',
       helpUrl: ''
     },
@@ -2395,7 +2438,7 @@ Blockly.defineBlocksWithJsonArray(
       ],
       output: null,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_CALL_AI_TOOLTIP}',
       helpUrl: ''
     },
@@ -2429,7 +2472,7 @@ Blockly.defineBlocksWithJsonArray(
       ],
       output: null,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_CALL_AI_IMG_TOOLTIP}',
       helpUrl: ''
     },
@@ -2455,7 +2498,7 @@ Blockly.defineBlocksWithJsonArray(
       ],
       output: null,
       inputsInline: true,
-      colour: color_type["vision"],
+      colour: color_type["recognition"],
       tooltip: '%{BKY_VISION_CALL_AI_IMG_EXT_TOOLTIP}',
       helpUrl: ''
     },

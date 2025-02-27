@@ -262,6 +262,11 @@ const translations = {
     en: "Vision",
     cn: "视觉"
   },
+  recognition: {
+    ko: "인식",
+    en: "Rec",
+    cn: "感知"
+  },
   utils: {
     ko: "도구",
     en: "Utils",

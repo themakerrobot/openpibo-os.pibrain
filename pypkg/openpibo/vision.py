@@ -8,13 +8,17 @@ Class:
 :obj:`~openpibo.vision.Detect`
 :obj:`~openpibo.vision.TeachableMachine`
 """
-
 import cv2,dlib,requests
 import os,pickle,math
 import numpy as np
 from PIL import Image,ImageDraw,ImageFont
 from tflite_runtime.interpreter import Interpreter
 from pyzbar import pyzbar
+from math import cos, sin, atan2, degrees
+import mediapipe as mp
+from mediapipe.tasks import python as mp_python
+from mediapipe.tasks.python import vision as mp_vision
+from sklearn.linear_model import LogisticRegression
 from .modules.pose.movenet import Movenet
 from .modules.pose.utils import visualize_pose
 from .modules.card.decode_card import get_card
@@ -24,7 +28,6 @@ import openpibo_models
 import openpibo_face_models
 import openpibo_dlib_models
 import openpibo_detect_models
-
 from openvino.runtime import Core
 
 def vision_api(mode, image, params={}):
@@ -172,6 +175,18 @@ Functions:
 
     return cv2.rotate(self.cap.capture_array(),cv2.ROTATE_90_COUNTERCLOCKWISE)
     #return self.cap.capture_array()
+
+  def create_matte(self, colors=(255,255,255), w=480, h=640):
+    if type(colors) is str:
+      colors = (int(colors[5:7], 16), int(colors[3:5], 16), int(colors[1:3], 16))
+
+    if type(colors) is not tuple:
+      raise Exception(f'"{colors}" must be tuple type')
+
+    if len(colors) != 3:
+      raise Exception(f'len({colors}) must be 3')
+
+    return np.full((h, w, 3), colors, dtype=np.uint8)
 
   def imshow_to_ide(self, img, ratio=0.25):
     """
@@ -645,9 +660,9 @@ Functions:
 
     # Load OpenVINO models
     ie = Core()
-    self.face_detection_compiled = ie.compile_model(ie.read_model("/home/pi/.model/face-detection/face-detection-retail-0004.xml"), "CPU")
-    self.age_gender_compiled = ie.compile_model(ie.read_model("/home/pi/.model/face-age-gender/age-gender-recognition-retail-0013.xml"), "CPU")
-    self.emotion_compiled = ie.compile_model(ie.read_model("/home/pi/.model/face-emotion/emotions-recognition-retail-0003.xml"), "CPU")
+    self.face_detection_compiled = ie.compile_model(ie.read_model("/home/pi/.model/face/detection/face-detection-retail-0004.xml"), "CPU")
+    self.age_gender_compiled = ie.compile_model(ie.read_model("/home/pi/.model/face/age-gender/age-gender-recognition-retail-0013.xml"), "CPU")
+    self.emotion_compiled = ie.compile_model(ie.read_model("/home/pi/.model/face/emotion/emotions-recognition-retail-0003.xml"), "CPU")
 
     # Get input and output names for models
     self.face_output_name = self.face_detection_compiled.output(0).any_name
@@ -655,6 +670,23 @@ Functions:
     self.age_output_name = list(self.age_gender_compiled.outputs)[1].any_name
     self.emotion_output_name = self.emotion_compiled.output(0).any_name
     self.emotions = ['neutral', 'happy', 'sad', 'surprise', 'anger']
+
+    # mediapipe model
+    self.mesh_detector = mp_vision.FaceLandmarker.create_from_options(
+      mp_vision.FaceLandmarkerOptions(
+        base_options=mp_python.BaseOptions(model_asset_path='/home/pi/.model/face/landmark/face_landmarker.task'),
+        running_mode=mp_vision.RunningMode.IMAGE,
+        num_faces=2,
+        min_face_detection_confidence=0.5,
+        min_face_presence_confidence=0.5,
+        min_tracking_confidence=0.5,
+        output_face_blendshapes=True,
+        )
+    )
+    self.IRIS_REAL_DIAMETER_MM = 11.7
+    self.FOCAL_LENGTH_MM = 3.6
+    self.PIXEL_PITCH_MM = 0.0014 * 2592 / 640
+
 
   def detect_face(self, img):
     """
@@ -1006,6 +1038,131 @@ Functions:
     with open(filename, "rb") as f :
       self.facedb = pickle.load(f)
 
+  # face mesh
+  def calculate_head_orientation(self, keypoints):
+    """Calculate yaw and turn angles."""
+    try:
+      # Keypoints for calculations
+      nose_tip = keypoints[1]
+      left_nose = keypoints[279]
+      right_nose = keypoints[49]
+        
+      # Calculate midpoint
+      midpoint = {
+        "x": (left_nose["x"] + right_nose["x"]) / 2,
+        "y": (left_nose["y"] + right_nose["y"]) / 2,
+        "z": (left_nose["z"] + right_nose["z"]) / 2,
+      }
+
+      # Perpendicular point above midpoint
+      perpendicular_up = {
+        "x": midpoint["x"],
+        "y": midpoint["y"]-50,  # Offset
+        "z": midpoint["z"],
+      }
+
+      # Calculate yaw and turn
+      yaw = self.get_angle_between_lines(midpoint, nose_tip, perpendicular_up)
+      turn = self.get_angle_between_lines(midpoint, right_nose, nose_tip)
+
+      # Debug yaw and turn
+      # print(f"[DEBUG] Yaw: {yaw:.2f}, Turn: {turn:.2f}")
+
+      # Determine direction based on angles
+      direction = ""
+      if yaw > 105:  # Adjusted threshold
+        direction += "B"  # Bottom
+      elif yaw < 75:  # Adjusted threshold
+        direction += "T"  # Top
+      else:
+        direction += "C"  # Center (vertical)
+
+      if turn > 93:  # Adjusted threshold
+        direction += "R"  # Right
+      elif turn < 87:  # Adjusted threshold
+        direction += "L"  # Left
+      else:
+        direction += "C"  # Center (horizontal)
+
+      return direction
+
+    except Exception as e:
+      print(f"[ERROR] Failed to calculate head orientation: {e}")
+      return "CC"  # Default direction
+
+  def get_angle_between_lines(self, start, point1, point2):
+    """Calculate angle between two lines defined by three points."""
+    # Vector 1: start -> point1
+    vector1 = (point1["x"] - start["x"], point1["y"] - start["y"], point1["z"] - start["z"])
+    # Vector 2: start -> point2
+    vector2 = (point2["x"] - start["x"], point2["y"] - start["y"], point2["z"] - start["z"])
+
+    # Dot product and magnitude
+    dot_product = sum(v1 * v2 for v1, v2 in zip(vector1, vector2))
+    magnitude1 = math.sqrt(sum(v**2 for v in vector1))
+    magnitude2 = math.sqrt(sum(v**2 for v in vector2))
+
+    # Calculate angle in degrees
+    angle = degrees(math.acos(dot_product / (magnitude1 * magnitude2 + 1e-8)))
+    return angle
+
+  def detect_mesh_vis(self, image, item):
+    """Draw connections between landmarks based on Mediapipe's face mesh."""
+    if item == None:
+      return
+
+    face_landmarks = item['landmarks']
+    distance = item['distance']
+    direction = item['direction']
+
+    if len(face_landmarks) > 0:
+      connections = mp.solutions.face_mesh.FACEMESH_TESSELATION
+      image_height, image_width, _ = image.shape
+      for start, end in connections:
+        x1, y1 = int(face_landmarks[start].x * image_width), int(face_landmarks[start].y * image_height)
+        x2, y2 = int(face_landmarks[end].x * image_width), int(face_landmarks[end].y * image_height)
+        cv2.line(image, (x1, y1), (x2, y2), (255, 255, 255), 1)
+
+      x, y = int(face_landmarks[103].x * image_width), int(face_landmarks[103].y * image_height)
+      cv2.putText(image, f'{distance}cm/{direction}' , (x-10, y-20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2)
+
+  def detect_mesh(self, image, raw=True):
+    """Detect mesh and return distance, direction, and image with landmarks."""
+    # Convert the image from BGR to RGB
+    rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_image)
+
+    mesh_data = []
+    # Perform inference
+    mesh_result = self.mesh_detector.detect(mp_image)
+    if mesh_result and mesh_result.face_landmarks:
+      h, w, _ = image.shape
+      for _, face_landmarks in enumerate(mesh_result.face_landmarks):
+        # Convert landmarks to a dictionary-like structure
+        keypoints = [{"x": lm.x * w, "y": lm.y * h, "z": lm.z * w} for lm in face_landmarks]
+
+        # Calculate head orientation
+        direction = self.calculate_head_orientation(keypoints)
+
+        # Calculate iris-based distance
+        left_iris_idx = [474, 475, 476, 477]
+        x_vals, y_vals = [], []
+        for idx in left_iris_idx:
+          x_vals.append(face_landmarks[idx].x * w)
+          y_vals.append(face_landmarks[idx].y * h)
+
+        iris_diameter_px = max(max(x_vals) - min(x_vals), max(y_vals) - min(y_vals))
+        if iris_diameter_px > 0:
+          distance_mm = (self.FOCAL_LENGTH_MM * self.IRIS_REAL_DIAMETER_MM) / (iris_diameter_px * self.PIXEL_PITCH_MM)
+          distance_cm = int(distance_mm / 10.0)
+
+        mesh_data.append({"distance":distance_cm, "direction":direction, "landmarks": face_landmarks})
+    
+    if raw:
+      return mesh_data
+    else:
+      return mesh_data[0] if len(mesh_data) > 0 else None
+
 class Detect:
   """
 Functions:
@@ -1056,10 +1213,12 @@ Functions:
 
     with open(openpibo_detect_models.filepath("efficientnet_labels.txt"), 'r') as f:
       self.cls_class_names = [item.strip() for item in f.readlines()]
+    
     self.cls_interpreter = Interpreter(model_path=openpibo_detect_models.filepath("efficientnet_lite3.tflite"))
     self.cls_interpreter.allocate_tensors()
     self.cls_input_details = self.cls_interpreter.get_input_details()
     self.cls_output_details = self.cls_interpreter.get_output_details()
+    # marker
     self.camera_matrix = np.array([
       [1.42068235e+03,0.00000000e+00,9.49208512e+02],
       [0.00000000e+00,1.37416685e+03,5.39622051e+02],
@@ -1068,7 +1227,127 @@ Functions:
     #self.dictionary = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_50)
     self.dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
     self.parameters = cv2.aruco.DetectorParameters()
+    
     self.tracker = dlib.correlation_tracker()
+
+    # hand landmark and gesture
+    self.hand_landmark_detector = mp_vision.HandLandmarker.create_from_options(
+        mp_vision.HandLandmarkerOptions(
+            base_options= mp_python.BaseOptions(model_asset_path='/home/pi/.model/hand/hand_landmarker.task'),
+            running_mode= mp_vision.RunningMode.IMAGE,  # 1장씩 이미지 처리
+            num_hands= 2,
+            min_hand_detection_confidence= 0.5,
+            min_hand_presence_confidence= 0.5,
+            min_tracking_confidence= 0.5
+        )
+    )
+
+    self.hand_gesture_recognizer =  mp_vision.GestureRecognizer.create_from_options(
+        mp_vision.GestureRecognizerOptions(
+            base_options=mp_python.BaseOptions(model_asset_path='/home/pi/.model/hand/gesture_recognizer.task'),
+            running_mode=mp_vision.RunningMode.IMAGE,
+            num_hands= 2,
+            min_hand_detection_confidence= 0.5,
+            min_hand_presence_confidence= 0.5,
+            min_tracking_confidence= 0.5,
+        )
+    )
+
+  def detect_hand(self, image, raw=True):
+    # Mediapipe용 이미지 변환
+    rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_image)
+    detection_result = self.hand_landmark_detector.detect(mp_image)
+
+    hands_data = []  # 손 정보를 담을 리스트
+    if detection_result and detection_result.hand_landmarks:
+      height, width, _ = image.shape
+      for hand_idx, hand_landmarks in enumerate(detection_result.hand_landmarks):
+            # 21개 랜드마크 픽셀 좌표 추출
+        hpoints = []
+        for landmark in hand_landmarks:
+          px = int(landmark.x * width)
+          py = int(landmark.y * height)
+          hpoints.append((px, py))
+
+        # Right or Left
+        handedness_label = detection_result.handedness[hand_idx][0].category_name
+        hands_data.append({"points": hpoints, "label": handedness_label})
+
+    if raw:
+      return hands_data
+    else:
+      return mesh_data[0] if len(mesh_data) > 0 else None
+
+  def detect_hand_vis(self, img, item):
+    if item == None:
+      return    
+    # hands 시각화
+    hpoints = item["points"]
+    label = item["label"]
+
+    # 21개 포인트 빨간색 원으로 그리기
+    for px, py in hpoints:
+      cv2.circle(img, (px, py), 3, (255, 255, 255), -1)
+
+    # 첫 번째 랜드마크 근처에 손 라벨(Right or Left / Gesture) 표시
+    cv2.putText(img, f'{label}', (hpoints[0][0], hpoints[0][1] - 50), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 0, 0), 2)
+
+  def hand_gesture_model_load(self, modelpath):
+    self.hand_gesture_recognizer =  mp_vision.GestureRecognizer.create_from_options(
+      mp_vision.GestureRecognizerOptions(
+        base_options=mp_python.BaseOptions(model_asset_path=modelpath),
+        running_mode=mp_vision.RunningMode.IMAGE,
+        num_hands= 2,
+        min_hand_detection_confidence= 0.5,
+        min_hand_presence_confidence= 0.5,
+        min_tracking_confidence= 0.5,
+      )
+    )
+
+  def recognize_hand_gesture(self, image, raw=True):
+    rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_image)
+    recognition_result = self.hand_gesture_recognizer.recognize(mp_image)
+
+    hands_data = []  # 손 정보를 담을 리스트      
+    if recognition_result and recognition_result.hand_landmarks:
+      height, width, _ = image.shape
+      for hand_index, hand_landmarks in enumerate(recognition_result.hand_landmarks):
+        # 21개 랜드마크 픽셀 좌표 추출
+        hpoints = []
+        for landmark in hand_landmarks:
+          px = int(landmark.x * width)
+          py = int(landmark.y * height)
+          hpoints.append((px, py))
+        
+        label = ""
+        score = 0
+        if recognition_result.gestures:
+          gesture = recognition_result.gestures[hand_index]
+          label = gesture[0].category_name
+          score = round(gesture[0].score, 2)
+        hands_data.append({"points": hpoints, "label": label, "score": score})
+
+    if raw:
+      return hands_data
+    else:
+      return mesh_data[0] if len(mesh_data) > 0 else None
+
+  def recognize_hand_gesture_vis(self, img, item):
+    if item == None:
+      return    
+    # hands 시각화
+    hpoints = item["points"]
+    label = item["label"]
+    score = item["score"]
+
+    # 21개 포인트 빨간색 원으로 그리기
+    for px, py in hpoints:
+      cv2.circle(img, (px, py), 3, (255, 255, 255), -1)
+
+    # 첫 번째 랜드마크 근처에 손 라벨(Right or Left / Gesture) 표시
+    cv2.putText(img, f'{label}/{score}', (hpoints[0][0], hpoints[0][1] - 50), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 0, 0), 2)
 
   def detect_object(self, img):
     """
@@ -1444,7 +1723,6 @@ Functions:
       tm.load_tflite('model_unquant.tflite', 'labels.txt')
 
     :param str model_path: Teachable Machine의 모델파일
-
     :param str label_path: Teachable Machine의 라벨파일
     """
 
@@ -1504,3 +1782,85 @@ Functions:
       return self.class_names[np.argmax(preds)], preds
     except Exception as ex:
       raise Exception('Teachable Machine Model did not load properly.')
+
+class Classifier:
+    """
+    간단한 이미지 분류 기능입니다.
+    
+    Functions:
+      - add_training_sample: 학습 데이터를 내부 리스트에 저장합니다.
+      - batch_train: 저장된 학습 데이터를 사용하여 모델을 학습합니다.
+      - predict: 학습된 모델로 예측합니다.
+      - load_model: 저장된 모델을 pickle로 불러옵니다.
+      - export_model: 현재 학습된 모델을 pickle로 저장합니다.
+    
+    example::
+      from openpibo.vision import Classifier
+      classifier = Classifier()
+      # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.
+    """
+    def __init__(self):
+        self.clf = None
+        self.train_samples = []
+        self.train_labels = []
+        self.width = 128
+        self.height = 128
+
+    def preprocess(self, cv2_image):
+        """
+        이미지를 전처리하여 flatten된 배열로 반환합니다.
+        """
+        proc = cv2.resize(cv2_image, (self.width, self.height), interpolation=cv2.INTER_AREA)
+        proc = proc.astype(np.float32) / 255.0
+        return proc.flatten()
+
+    def add_training_sample(self, cv2_image, label):
+        """
+        학습 데이터를 내부 리스트에 저장합니다.
+        """
+        x = self.preprocess(cv2_image)
+        self.train_samples.append(x)
+        self.train_labels.append(label)
+        print(f"샘플 저장됨: label '{label}'")
+
+    def batch_train(self):
+        """
+        저장된 모든 학습 데이터를 사용하여 모델을 한 번에 학습합니다.
+        """
+        if len(self.train_samples) == 0:
+            print("학습 데이터가 없습니다.")
+            return
+        X = np.array(self.train_samples)
+        y = np.array(self.train_labels)
+        self.clf = LogisticRegression(max_iter=1000)
+        self.clf.fit(X, y)
+        print("배치 학습 완료. 모델이 업데이트되었습니다.")
+
+    def predict(self, cv2_image):
+        """
+        학습된 모델로 예측합니다.
+        """
+        if self.clf is None:
+            return "No trained model."
+
+        proc = cv2.resize(cv2_image, (self.width, self.height), interpolation=cv2.INTER_AREA)
+        proc = proc.astype(np.float32) / 255.0
+        x = proc.flatten()
+        pred = self.clf.predict([x])[0]
+        return pred
+
+    def load_model(self, model_file_path):
+        """
+        저장된 모델을 pickle로 불러옵니다.
+        """
+        with open(model_file_path, 'rb') as f:
+            self.clf = pickle.load(f)
+        print(f"모델을 {model_file_path}에서 불러왔습니다.")
+
+    def export_model(self, model_file_path):
+        """
+        현재 학습된 모델을 pickle로 저장합니다.
+        """
+        with open(model_file_path, 'wb') as f:
+            pickle.dump(self.clf, f)
+        print(f"모델이 {model_file_path}로 저장되었습니다.")

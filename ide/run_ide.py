@@ -451,7 +451,7 @@ async def execute(EXEC, codepath):
 
     err = await ps.stderr.read()
     if err:
-      record += err.decode()
+      record += f'\n{err.decode()}'
       await app.sio.emit('update', {'record': record})
 
     await ps.wait()
