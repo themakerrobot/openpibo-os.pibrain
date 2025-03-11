@@ -732,8 +732,6 @@ Blockly.Msg["VISION_LOAD_TM"] = "%1 %2 Set Teachable Machine model for %3 %4 %5"
 Blockly.Msg["VISION_LOAD_TM_TOOLTIP"] = "Configure a Teachable Machine model for image classification.";
 Blockly.Msg["VISION_PREDICT_TM"] = "%1 %2 Classify image %3 using Teachable Machine";
 Blockly.Msg["VISION_PREDICT_TM_TOOLTIP"] = "Use a Teachable Machine model to classify the image.";
-Blockly.Msg["VISION_CALL_AI"] = "%1 %2 %3 Analyze image file %5 %6.%7 using AI %4";
-Blockly.Msg["VISION_CALL_AI_TOOLTIP"] = "(Internet!) Leverage AI technology to analyze and interpret the specified image file.";
 Blockly.Msg["VISION_CALL_AI_IMG"] = "%1 %2 %3 Analyze image variable %5 using AI %4";
 Blockly.Msg["VISION_CALL_AI_IMG_TOOLTIP"] = "(Internet!) Leverage AI technology to analyze and interpret the specified image file.";
 Blockly.Msg["VISION_CALL_AI_IMG_EXT"] = "%1 %2 %3 Analyze image variable %5 using AI %4";
@@ -787,6 +785,8 @@ Blockly.Msg["UTILS_TYPECAST_STRING"] = "%1 %2 Convert %3 to String type";
 Blockly.Msg["UTILS_TYPECAST_STRING_TOOLTIP"] = "Change a variable's type to String.";
 Blockly.Msg["UTILS_TYPECAST_NUMBER"] = "%1 %2 Convert %4 to %3 type";
 Blockly.Msg["UTILS_TYPECAST_NUMBER_TOOLTIP"] = "Convert a variable to a specific numeric type. (Integer or Float)";
+Blockly.Msg["UTILS_CALCULATE_ANGLE"] = "%1 %2 %3 - %4 - %5 각도 구하기";
+Blockly.Msg["UTILS_CALCULATE_ANGLE_TOOLTIP"] = "세 점 사이의 각도 구하기";
 
 Blockly.Msg["UTILS_FILE"] = "File";
 Blockly.Msg["UTILS_DIRECTORY"] = "Directory";

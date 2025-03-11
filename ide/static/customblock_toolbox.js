@@ -4,30 +4,18 @@ let toolbox = (lang) => {
     // "kind": "flyoutToolbox",
     "contents": [
 
-      {
+      { // start
         "kind": "category",
-        "name": translations['execute'][lang],
+        "name": translations['start'][lang],
         "contents": [
           {
             "kind": "block",
             "type": "flag_event",
           },
-          {
-            "kind": "block",
-            "type": "make_bitmap_6x8",
-          },
-          {
-            "kind": "block",
-            "type": "make_bitmap_8x4",
-          },
-          {
-            "kind": "block",
-            "type": "make_bitmap_8x8",
-          },
         ],
-        "colour": color_type['event'],
+        "colour": color_type['start'],
         "cssConfig": {
-          "icon": "customIcon fa-solid fa-flag"
+          "icon": "customIcon fa-solid fa-circle-play"
         }
       },     
       {
@@ -799,32 +787,6 @@ let toolbox = (lang) => {
           "icon": "customIcon fa fa-florin-sign"
         }
       },
-      // {
-      //   "kind": "category",
-      //   "name": translations['execute'][lang],
-      //   "contents": [
-      //     {
-      //       "kind": "block",
-      //       "type": "flag_event",
-      //     },
-      //     {
-      //       "kind": "block",
-      //       "type": "make_bitmap_6x8",
-      //     },
-      //     {
-      //       "kind": "block",
-      //       "type": "make_bitmap_8x4",
-      //     },
-      //     {
-      //       "kind": "block",
-      //       "type": "make_bitmap_8x8",
-      //     },
-      //   ],
-      //   "colour": color_type['event'],
-      //   "cssConfig": {
-      //     "icon": "customIcon fa-solid fa-flag"
-      //   }
-      // },     
       {
         "kind": "sep",
       },
@@ -1899,6 +1861,19 @@ let toolbox = (lang) => {
               },              
             }
           },
+          {
+            "kind": "block",
+            "type": "make_bitmap_6x8",
+          },
+          {
+            "kind": "block",
+            "type": "make_bitmap_8x4",
+          },
+          {
+            "kind": "block",
+            "type": "make_bitmap_8x8",
+          },
+
         ],
         "colour": color_type["vision"],
         "cssConfig": {
@@ -2324,7 +2299,7 @@ let toolbox = (lang) => {
                 "shadow": {
                   "type": "text",
                   "fields": {
-                    "TEXT": "gesture_recognizer.task"
+                    "TEXT": "gesture_recognizer"
                   }
                 }
               },
@@ -2423,21 +2398,6 @@ let toolbox = (lang) => {
                   "type": "variables_get",
                 }
               }
-            }
-          },
-          {
-            "kind": "block",
-            "type": "vision_call_ai",
-            "inputs":{
-              "filename":{
-                "shadow": {
-                  "type": "text",
-                  "fields": {
-                    "TEXT": "image"
-                    // "TEXT": translations["image_filename"][lang]
-                  }
-                }
-              },
             }
           },
           {
@@ -2639,6 +2599,27 @@ let toolbox = (lang) => {
                   }
                 }
               }
+            }
+          },
+          {
+            "kind": "block",
+            "type": "utils_calculate_angle",
+            "inputs":{
+              "p1":{
+                "shadow":{
+                  "type":"variables_get",
+                }
+              },
+              "p2":{
+                "shadow":{
+                  "type":"variables_get",
+                }
+              },
+              "p3":{
+                "shadow":{
+                  "type":"variables_get",
+                }
+              }                            
             }
           }
         ],

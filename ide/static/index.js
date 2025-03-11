@@ -1144,25 +1144,25 @@ $('input[name="wifi_type_sel"]').on('click', function () {
   // 선택된 라디오 버튼의 값을 가져오기
   const selectedValue = $(this).val();
   if (selectedValue === 'wpa-psk') {
-      console.log("WPA 설정을 선택했습니다.");
+      // console.log("WPA 설정을 선택했습니다.");
       $("#ssid").prop("disabled", false);
       $("#identity").prop("disabled", true);
       $("#identity").val("");
       $("#psk").prop("disabled", false);
   } else if (selectedValue === 'none') {
-      console.log("Open 설정을 선택했습니다.");
+      // console.log("Open 설정을 선택했습니다.");
       $("#ssid").prop("disabled", false);
       $("#identity").prop("disabled", true);
       $("#identity").val("");
       $("#psk").prop("disabled", true);
       $("#psk").val("");
   } else if (selectedValue === 'wpa-eap') {
-      console.log("WPA-EAP 설정을 선택했습니다.");
+      // console.log("WPA-EAP 설정을 선택했습니다.");
       $("#ssid").prop("disabled", false);
       $("#identity").prop("disabled", false);
       $("#psk").prop("disabled", false);        
   } else if (selectedValue === 'custom') {
-      console.log("Custom 설정을 선택했습니다.");
+      // console.log("Custom 설정을 선택했습니다.");
       $("#ssid").prop("disabled", false);
       $("#identity").prop("disabled", false);
       $("#psk").prop("disabled", false);        
@@ -1222,17 +1222,14 @@ const setLanguage = (langCode) => {
   if (prevEnScript) {
     prevEnScript.remove();
   }
-  const prevCnScript = document.querySelector(`script[src*="../static/cn.js?ver=${langFileVersion}"]`);
-  if (prevCnScript) {
-    prevCnScript.remove();
-  }
+
   const script = document.createElement('script');
   script.setAttribute('src', langFile);
   document.head.appendChild(script);
   //workspace.updateToolbox(langCode=="en"?toolbox_en:toolbox_ko);
   workspace.updateToolbox(toolbox_dict[langCode]);
   
-  if (langCode == "en" || langCode == "cn") {
+  if (langCode == "en") {
     document.getElementById('add_directory').style.width = '105px';
     document.getElementById('add_file').style.width = '100px';
   }

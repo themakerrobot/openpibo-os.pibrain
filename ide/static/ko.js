@@ -732,8 +732,6 @@ Blockly.Msg["VISION_LOAD_TM"] = "%1 %2 티처블머신 %3 %4 %5 모델 설정하
 Blockly.Msg["VISION_LOAD_TM_TOOLTIP"] = "티처블머신 모델을 설정합니다.";
 Blockly.Msg["VISION_PREDICT_TM"] = "%1 %2 티처블머신으로 이미지 %3 분류하기";
 Blockly.Msg["VISION_PREDICT_TM_TOOLTIP"] = "설정된 티처블머신 모델로 이미지를 분류합니다.";
-Blockly.Msg["VISION_CALL_AI"] = "%1 %2 %3 이미지 파일 %5 %6.%7 의 인공지능 %4 사용하기";
-Blockly.Msg["VISION_CALL_AI_TOOLTIP"] = "(인터넷 필요!) 인공지능을 사용해 이미지 파일을 분석합니다.";
 Blockly.Msg["VISION_CALL_AI_IMG"] = "%1 %2 %3 이미지 변수 %5 의 인공지능 %4 사용하기";
 Blockly.Msg["VISION_CALL_AI_IMG_TOOLTIP"] = "(인터넷 필요!) 인공지능을 사용해 이미지 데이터를 분석합니다.";
 Blockly.Msg["VISION_CALL_AI_IMG_EXT"] = "%1 %2 %3 이미지 변수 %5 의 인공지능 %4 사용하기";
@@ -787,6 +785,8 @@ Blockly.Msg["UTILS_TYPECAST_STRING"] = "%1 %2 %3 글자형으로 바꾸기";
 Blockly.Msg["UTILS_TYPECAST_STRING_TOOLTIP"] = "변수의 타입을 글자형으로 바꿉니다.";
 Blockly.Msg["UTILS_TYPECAST_NUMBER"] = "%1 %2 %4 %3 숫자형으로 바꾸기";
 Blockly.Msg["UTILS_TYPECAST_NUMBER_TOOLTIP"] = "변수의 타입을 숫자형(정수 또는 소수)으로 바꿉니다.";
+Blockly.Msg["UTILS_CALCULATE_ANGLE"] = "%1 %2 %3 <- %4 -> %5 각도 구하기";
+Blockly.Msg["UTILS_CALCULATE_ANGLE_TOOLTIP"] = "세 점 사이의 각도 구하기";
 
 Blockly.Msg["UTILS_FILE"] = "파일";
 Blockly.Msg["UTILS_DIRECTORY"] = "디렉토리";

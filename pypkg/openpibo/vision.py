@@ -1,5 +1,5 @@
 """
-`OpenCV` 라이브러리를 활용한 영상처리, 인공지능 비전 기술을 사용합니다.
+영상처리, 인공지능 비전 기술을 사용합니다.
 
 Class:
 :meth:`~openpibo.vision.vision_api`
@@ -7,18 +7,19 @@ Class:
 :obj:`~openpibo.vision.Face`
 :obj:`~openpibo.vision.Detect`
 :obj:`~openpibo.vision.TeachableMachine`
+:obj:`~openpibo.vision.Classifier`
 """
 import cv2,dlib,requests
 import os,pickle,math
 import numpy as np
 from PIL import Image,ImageDraw,ImageFont
+import tensorflow as tf
 from tflite_runtime.interpreter import Interpreter
 from pyzbar import pyzbar
 from math import cos, sin, atan2, degrees
 import mediapipe as mp
 from mediapipe.tasks import python as mp_python
 from mediapipe.tasks.python import vision as mp_vision
-from sklearn.linear_model import LogisticRegression
 from .modules.pose.movenet import Movenet
 from .modules.pose.utils import visualize_pose
 from .modules.card.decode_card import get_card
@@ -29,27 +30,25 @@ import openpibo_face_models
 import openpibo_dlib_models
 import openpibo_detect_models
 from openvino.runtime import Core
+import logging
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # TensorFlow C++ 로그 제거
+os.environ['LIBCAMERA_LOG_LEVELS'] = '3'
+tf.get_logger().setLevel(logging.ERROR)   # Python 기반 TensorFlow 로그 제거
+tf.autograph.set_verbosity(0)             # AutoGraph 관련 메시지 비활성화
+
+# ✅ 추가: TensorFlow 내부 디버그 메시지 완전 차단
+logging.getLogger("tensorflow").setLevel(logging.ERROR)
 
 def vision_api(mode, image, params={}):
   """
   인공지능 비전 API를 호출합니다.
 
-  example::
-
-    from openpibo.vision import vision_api, Camera
-
-    camera = Camera()
-
-    res = vision_api('caption/caption', camera.read(), {})
-
-  :param str mode: 호출할 비전 API
-
-  :param str/numpy.ndarray image: 표시할 이미지 파일 경로 / 데이터(cv2)
-
+  :param str mode: 호출할 비전 API (https://o-vapi.circul.us/guide)
+  :param str/numpy.ndarray image: 표시할 이미지 (파일 경로 or cv 이미지)
   :returns: ``Json`` 타입 결과의 데이터
 
     example::
-    
       { 'type': 'caption', 'result': 'ok', 
         'data': {
           caption:  "사람에게 로봇을 과시하는 사람", 
@@ -73,17 +72,22 @@ class Camera:
 Functions:
 :meth:`~openpibo.vision.Camera.imread`
 :meth:`~openpibo.vision.Camera.read`
+:meth:`~openpibo.vision.Camera.create_matte`
 :meth:`~openpibo.vision.Camera.imshow_to_ide`
 :meth:`~openpibo.vision.Camera.resize`
 :meth:`~openpibo.vision.Camera.rotate`
 :meth:`~openpibo.vision.Camera.imwrite`
+:meth:`~openpibo.vision.Camera.draw_bitmap`
 :meth:`~openpibo.vision.Camera.rectangle`
 :meth:`~openpibo.vision.Camera.circle`
 :meth:`~openpibo.vision.Camera.line`
+:meth:`~openpibo.vision.Camera.putTextPIL`
 :meth:`~openpibo.vision.Camera.putText`
 :meth:`~openpibo.vision.Camera.stylization`
 :meth:`~openpibo.vision.Camera.detailEnhance`
 :meth:`~openpibo.vision.Camera.pencilSketch`
+:meth:`~openpibo.vision.Camera.edgePreservingFilter`
+
 :meth:`~openpibo.vision.Camera.flip`
 
   파이보의 카메라를 제어합니다.
@@ -105,13 +109,13 @@ Functions:
     Camera 클래스를 초기화합니다.
     """
 
+    self.width, self.height = 480, 640
     cv2.setUseOptimized(True)
     cv2.setNumThreads(cv2.getNumberOfCPUs())
-    os.environ['LIBCAMERA_LOG_LEVELS'] = '3'
     cap = Picamera2()
     config = cap.create_still_configuration(
               main={
-                'size': (640, 480),
+                'size': (1280, 960),
                 'format': 'RGB888'
               },
               transform=Transform(hflip=False, vflip=False),
@@ -123,39 +127,19 @@ Functions:
     cap.start()
     self.cap = cap
 
+
+  def release(self):
+    if self.cap is not None:
+      self.cap.stop()
+      self.cap.close()
+      self.cap = None
+
   def imread(self, filename):
     """
     이미지 파일을 읽습니다.
 
-    example::
-
-      camera.imread('/home/pi/openpibo-files/data/image/clear.png')
-
     :param str filename: 사용할 이미지 파일
-
     :returns: ``numpy.ndarray`` 타입 이미지 객체
-
-      example::
-
-        array([[[0, 0, 0],
-                [0, 0, 0],
-                ...,
-                [0, 0, 0],
-                [0, 0, 0]],
-
-              [[0, 0, 0],
-                [0, 0, 0],
-                ...,
-                [0, 0, 0],
-                [0, 0, 0]],
-
-              ...,
-
-              [[0, 0, 0],
-                [0, 0, 0],
-                ...,
-                [0, 0, 0],
-                [0, 0, 0]]], dtype=uint8)
     """
 
     return cv2.imread(filename)
@@ -163,17 +147,13 @@ Functions:
   def read(self):
     """
     카메라를 통해 이미지를 촬영합니다.
-
     해상도 변경 시 이미지가 깨질 수 있으므로, 기본 해상도를 권장합니다.
-
-    example::
-
-      camera.read()
 
     :returns: ``numpy.ndarray`` 타입 이미지 객체
     """
 
-    return cv2.rotate(self.cap.capture_array(),cv2.ROTATE_90_COUNTERCLOCKWISE)
+    return cv2.rotate(cv2.resize(self.cap.capture_array(), (self.height, self.width)),cv2.ROTATE_90_COUNTERCLOCKWISE)
+    # return cv2.rotate(self.cap.capture_array(),cv2.ROTATE_90_COUNTERCLOCKWISE)
     #return self.cap.capture_array()
 
   def create_matte(self, colors=(255,255,255), w=480, h=640):
@@ -192,13 +172,7 @@ Functions:
     """
     이미지 파일을 Web IDE에 출력합니다.
 
-    example::
-
-      img = camera.read()
-      camera.imshow_to_ide(img)
-
     :param numpy.ndarray img: 이미지 객체
-
     :param float ratio: 이미지 사이즈 변환 비율 (다수 동시 사용시, 네트워크 부하)
     """
 
@@ -213,18 +187,10 @@ Functions:
     """
     Opencv 이미지의 크기를 변환합니다.
 
-    example::
-
-      img = camera.read()
-      camera.resize(img, 128, 64)
-
     :param numpy.ndarray img: 이미지 객체
-
     :param int w: 변환될 이미지의 가로 크기입니다. (픽셀 단위)
-
     :param int h: 변환될 이미지의 세로 크기입니다. (픽셀 단위)
-
-    :returns: 크기 변환 후의 이미지 객체
+    :returns: 크기 변환 후의 ``numpy.ndarray`` 이미지 객체
     """
 
     return cv2.resize(img, (w, h))
@@ -233,17 +199,9 @@ Functions:
     """
     이미지를 회전시킵니다.
 
-    example::
-
-      img = camera.read()
-      camera.rotate(img, 10, 0.9)
-
     :param numpy.ndarray img: 이미지 객체
-
     :param int degree: 회전할 각도
-
     :param float ratio: 축소 또는 확대할 비율
-
     :returns: 회전한 ``numpy.ndarray`` 이미지 객체
     """
 
@@ -264,22 +222,22 @@ Functions:
     """
     이미지를 파일로 저장합니다.
 
-    example::
-
-      img = camera.read()
-      camera.imwrite('/home/pi/image.jpg', img)
-
-    :param str filename: 저장할 파일 경로
-
-      확장자는 jpg 또는 png를 사용할 수 있습니다.
-
+    :param str filename: 저장할 파일 경로(jpg, png)
     :param numpy.ndarray img: 저장할 이미지 객체
     """
 
     return cv2.imwrite(filename, img)
 
-
   def draw_bitmap(self, w, h, val, background=(255,255,255), pixel=(0,0,0)):
+    """
+    비트맨 데이터를 이미지로 생성성합니다.
+
+    :param int w: bitmap 가로 길이
+    :param int h: bitmap 세로 길이
+    :param tuple background: 배경 색상
+    :param tuple pixel: 비트 색상
+    :returns: ``numpy.ndarray`` 이미지 객체
+    """
     # 1. 문자열을 정수 리스트로 변환
     try:
       values = [int(v.strip()) for v in val.split(',')]
@@ -298,8 +256,8 @@ Functions:
     small_img[bitmap == 1] = pixel  # bitmap 값이 1인 부분에 pixel 색상 적용
     
     # 5. 각 픽셀을 복제할 배수 계산 (정수 배수)
-    scale_y = 480 // h  # 세로 복제 횟수
-    scale_x = 640 // w  # 가로 복제 횟수
+    scale_y = self.width // h  # 세로 복제 횟수
+    scale_x = self.height // w  # 가로 복제 횟수
     
     # 6. np.repeat를 이용하여 픽셀 복제 (각 픽셀을 scale_y x scale_x 블록으로 확장)
     replicated_img = np.repeat(np.repeat(small_img, scale_y, axis=0), scale_x, axis=1)
@@ -307,12 +265,12 @@ Functions:
     # 7. 복제 결과가 정확히 480x640이 아닐 수 있으므로, 부족한 부분은 배경색으로 채우고
     #    넘치는 부분은 자른다.
     rep_h, rep_w = replicated_img.shape[:2]
-    if rep_h < 480 or rep_w < 640:
-      pad_bottom = 480 - rep_h
-      pad_right = 640 - rep_w
+    if rep_h < self.width or rep_w < self.height:
+      pad_bottom = self.width - rep_h
+      pad_right = self.height - rep_w
       final_img = cv2.copyMakeBorder(replicated_img, 0, pad_bottom, 0, pad_right, cv2.BORDER_CONSTANT, value=background)
     else:
-      final_img = replicated_img[:480, :640]
+      final_img = replicated_img[:self.width, :self.height]
     
     return final_img
 
@@ -320,20 +278,11 @@ Functions:
     """
     이미지에 직사각형을 그립니다.
 
-    example::
-
-      img = camera.read()
-      camera.rectangle(img, (10, 10), (300, 200), (255, 255, 255), 1)
-
     :param numpy.ndarray img: 이미지 객체
-
     :param tuple(int, int) p1: 좌측상단 좌표 (x, y)
-
     :param tuple(int, int) p2: 우측하단 좌표 (x, y)
-
     :param tuple(int, int, int) colors: RGB 값 (r, g, b) or 16진수 값 '#ffffff'
-
-    :param int tickness: 사각형 모서리의 두께 (픽셀 단위)
+    :param int tickness: 사각형 모서리의 두께 (픽셀 단위) -1 은 채움
     """
 
     if not type(img) is np.ndarray:
@@ -364,22 +313,13 @@ Functions:
 
   def circle(self, img, p, r, colors=(255,255,255), tickness=1):
     """
-    이미지에 직사각형을 그립니다.
-
-    example::
-
-      img = camera.read()
-      camera.circle(img, (10, 10), (255, 255, 255), 1)
+    이미지에 원을을 그립니다.
 
     :param numpy.ndarray img: 이미지 객체
-
     :param tuple(int, int) p: 좌측상단 좌표 (x, y)
-
     :param int r: 반지름
-
     :param tuple(int, int, int) colors: RGB 값 (r, g, b) or 16진수 값 '#ffffff'
-
-    :param int tickness: 사각형 모서리의 두께 (픽셀 단위)
+    :param int tickness: 사각형 모서리의 두께 (픽셀 단위) -1은 채움
     """
 
     if not type(img) is np.ndarray:
@@ -409,19 +349,10 @@ Functions:
     """
     이미지에 직선을 그립니다.
 
-    example::
-
-      img = camera.read()
-      camera.line(img, (10, 10), (300, 200), (255, 255, 255), 1)
-
     :param numpy.ndarray img: 이미지 객체
-
     :param tuple(int, int) p1: 시작 좌표 (x, y)
-
     :param tuple(int, int) p2: 끝 좌표 (x, y)
-
     :param tuple(int, int, int) colors: RGB 값 (r, g, b) or 16진수 값 '#ffffff'
-
     :param int tickness: 선의 두께 (픽셀 단위)
     """
 
@@ -455,21 +386,11 @@ Functions:
     """
     이미지에 문자를 입력합니다. (한/영 가능 - pillow 이용)
 
-    example::
-
-      img = camera.read()
-      new_img = camera.putTextPIL(img, '안녕하세요.', (15, 10), 30, (255, 255, 255))
-
     :param numpy.ndarray img: 이미지 객체
-
     :param str text: 표시할 문자열
-
     :param tuple(int, int) points: 텍스트 블록 좌측상단 좌표 (x, y)
-
     :param int size: 표시할 글자의 크기
-
     :param tuple(int, int, int) colors: 글자 색깔 RGB 값 (b, g, r) or 16진수 값 '#ffffff'
-
     """
     if not type(img) is np.ndarray:
       raise Exception('"img" must be image data from opencv')
@@ -492,27 +413,18 @@ Functions:
     font = ImageFont.truetype(openpibo_models.filepath("KDL.ttf"), size)
     pil = Image.fromarray(img)  # CV to PIL
     ImageDraw.Draw(pil).text(points, text, font=font, fill=colors)  # putText
-    return np.array(pil)  # PIL to CV
+    img[:] = np.array(pil)  # PIL to CV
+    return img
 
   def putText(self, img, text, points, size=1, colors=(255,255,255), tickness=1):
     """
     이미지에 문자를 입력합니다. (영어만 가능)
 
-    example::
-
-      img = camera.read()
-      new_img = camera.putText(img, 'hello', (15, 10), 10, (255, 255, 255), 1)
-
     :param numpy.ndarray img: 이미지 객체
-
     :param str text: 표시할 문자열
-
     :param tuple(int, int) points: 텍스트 블록 좌측하단 좌표 (x, y)
-
     :param int size: 표시할 글자의 크기
-
     :param tuple(int, int, int) colors: 글자 색깔 RGB 값 (r, g, b) or 16진수 값 '#ffffff'
-
     :param int tickness: 글자 두께
     """
 
@@ -540,18 +452,10 @@ Functions:
     """
     만화 이미지로 변환합니다. (opencv api) low speed
 
-    example::
-
-      img = camera.read()
-      camera.stylization(img)
-
     :param numpy.ndarray img: 이미지 객체
-
     :param float sigma_s: 이미지의 blur 보존 정도 (1-200)
-
     :param float sigma_r: 이미지의 Edge 적용 정도 (0-1)
-
-    :returns: 변환 후의 이미지 객체
+    :returns: ``numpy.ndarray`` 이미지 객체
     """
 
     if not type(img) is np.ndarray:
@@ -563,18 +467,10 @@ Functions:
     """
     만화 이미지로 변환합니다. (opencv api)
 
-    example::
-
-      img = camera.read()
-      camera.stylization(img)
-
     :param numpy.ndarray img: 이미지 객체
-
     :param float sigma_s: 이미지의 blur 보존 정도 (1-200)
-
     :param float sigma_r: 이미지의 Edge 적용 정도 (0-1)
-
-    :returns: 변환 후의 이미지 객체
+    :returns: ``numpy.ndarray`` 이미지 객체
     """
 
     if not type(img) is np.ndarray:
@@ -599,7 +495,7 @@ Functions:
 
     :param float shade_factor: 이미지의 밝기 정도 (0-0.1)
 
-    :returns: 변환 후의 이미지 객체(grayscale), 변환 후의 이미지 객체(bgr)
+    :returns: ``numpy.ndarray`` 이미지 객체 / grayscale, bgr
     """
 
     if not type(img) is np.ndarray:
@@ -611,20 +507,11 @@ Functions:
     """
     흐림 이미지로 변환합니다.
 
-    example::
-
-      img = camera.read()
-      camera.edgePreservingFilter(img)
-
     :param numpy.ndarray img: 이미지 객체
-
     :param int flags: 필터 종류 1 (RECURS_FILTER) or 2 (NORMCONV_FILTER)
-
     :param float sigma_s: 이미지의 blur 보존 정도 (1-200)
-
     :param float sigma_r: 이미지의 Edge 적용 정도 (0-1)
-
-    :returns: 변환 후의 이미지 객체(grayscale), 변환 후의 이미지 객체(bgr)
+    :returns: ``numpy.ndarray`` 이미지 객체
     """
 
     if not type(img) is np.ndarray:
@@ -636,16 +523,9 @@ Functions:
     """
     상하/좌우 대칭 이미지로 변환합니다
 
-    example::
-
-      img = camera.read()
-      camera.flip(img, 1)
-
     :param numpy.ndarray img: 이미지 객체
-
     :param int flags: 0: 상하 대칭, 1: 좌우 대칭, -1: 상하/좌우 대칭
-
-    :returns: 변환 후, 이미지 객체
+    :returns: ``numpy.ndarray`` 이미지 객체
     """
 
     if not type(img) is np.ndarray:
@@ -692,7 +572,7 @@ Functions:
   def __init__(self):
     self.facedb = [[],[]]
     self.threshold = 0.4
-    self.face_detector = dlib.get_frontal_face_detector()
+    # self.face_detector = dlib.get_frontal_face_detector()
     self.predictor = dlib.shape_predictor(openpibo_dlib_models.filepath("shape_predictor_68_face_landmarks.dat"))
     self.face_encoder = dlib.face_recognition_model_v1(openpibo_dlib_models.filepath("dlib_face_recognition_resnet_model_v1.dat"))
 
@@ -1449,7 +1329,7 @@ Functions:
 
     :param numpy.ndarray img: 이미지 객체
 
-    :returns: ``{"data": 인식한 결과, "img": Pose를 반영한 이미지 }``
+    :returns: ``인식한 결과``
     """
 
     if not type(img) is np.ndarray:
@@ -1496,9 +1376,9 @@ Functions:
     res = []
     data = data[0].keypoints
 
-    if data[LEFT_WRIST].coordinate.y < data[LEFT_SHOULDER].coordinate.y:
+    if data[LEFT_WRIST].coordinate.y < data[LEFT_ELBOW].coordinate.y:
       res.append("left_hand_up")
-    if data[RIGHT_WRIST].coordinate.y < data[RIGHT_SHOULDER].coordinate.y:
+    if data[RIGHT_WRIST].coordinate.y < data[RIGHT_ELBOW].coordinate.y:
       res.append("right_hand_up")
     if distance(data[LEFT_WRIST].coordinate, data[RIGHT_WRIST].coordinate) <  75:
       res.append("clap")
@@ -1711,7 +1591,7 @@ Functions:
 
   def predict(self, img):
     """
-    (내부 함수) Tflite 모델로 추론합니다.
+    Tflite 모델로 추론합니다.
 
     example::
 
@@ -1725,8 +1605,7 @@ Functions:
     """
 
     try:
-      img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-      img = cv2.resize(img, (self.width, self.height))
+      img = cv2.cvtColor(cv2.resize(img, (self.width, self.height)), cv2.COLOR_BGR2RGB)
       image = Image.fromarray(img)
 
       # Add a batch dimension
@@ -1746,84 +1625,79 @@ Functions:
     except Exception as ex:
       raise Exception('Teachable Machine Model did not load properly.')
 
+
 class Classifier:
+  """
+Functions:
+:meth:`~openpibo.vision.Classifier.load`
+:meth:`~openpibo.vision.Classifier.predict`
+
+  파이보의 카메라 Classifier 기능을 사용합니다.
+
+  * ``이미지 프로젝트`` 의 ``표준 이미지 모델`` 을 사용합니다.
+  * ``Custom tools`` 에서 학습한 모델을 적용하여 추론할 수 있습니다.
+
+  example::
+
+    from openpibo.vision import Classifier
+
+    cf = Classifier()
+    # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.
+  """
+
+  def load(self, model_path, label_path):
     """
-    간단한 이미지 분류 기능입니다.
-    
-    Functions:
-      - add_training_sample: 학습 데이터를 내부 리스트에 저장합니다.
-      - batch_train: 저장된 학습 데이터를 사용하여 모델을 학습합니다.
-      - predict: 학습된 모델로 예측합니다.
-      - load_model: 저장된 모델을 pickle로 불러옵니다.
-      - export_model: 현재 학습된 모델을 pickle로 저장합니다.
-    
+    H5 모델로 불러옵니다.
+
     example::
-      from openpibo.vision import Classifier
-      classifier = Classifier()
-      # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.
+
+      cf.load('model_unquant.tflite', 'labels.txt')
+
+    :param str model_path: Classifier의 모델파일
+    :param str label_path: Classifier의 라벨파일
     """
-    def __init__(self):
-        self.clf = None
-        self.train_samples = []
-        self.train_labels = []
-        self.width = 128
-        self.height = 128
+    # ✅ 모델 로드
+    self.model = tf.keras.models.load_model(model_path)
 
-    def preprocess(self, cv2_image):
-        """
-        이미지를 전처리하여 flatten된 배열로 반환합니다.
-        """
-        proc = cv2.resize(cv2_image, (self.width, self.height), interpolation=cv2.INTER_AREA)
-        proc = proc.astype(np.float32) / 255.0
-        return proc.flatten()
+    # ✅ 레이블 로드
+    with open(label_path, "r", encoding="utf-8") as f:
+      self.class_names = [line.strip() for line in f.readlines()]
 
-    def add_training_sample(self, cv2_image, label):
-        """
-        학습 데이터를 내부 리스트에 저장합니다.
-        """
-        x = self.preprocess(cv2_image)
-        self.train_samples.append(x)
-        self.train_labels.append(label)
-        print(f"샘플 저장됨: label '{label}'")
+    base_model = tf.keras.applications.MobileNetV2(input_shape=(224, 224, 3), include_top=False, pooling="avg")
+    self.feature_extractor = tf.keras.Model(inputs=base_model.input, outputs=base_model.output)
 
-    def batch_train(self):
-        """
-        저장된 모든 학습 데이터를 사용하여 모델을 한 번에 학습합니다.
-        """
-        if len(self.train_samples) == 0:
-            print("학습 데이터가 없습니다.")
-            return
-        X = np.array(self.train_samples)
-        y = np.array(self.train_labels)
-        self.clf = LogisticRegression(max_iter=1000)
-        self.clf.fit(X, y)
-        print("배치 학습 완료. 모델이 업데이트되었습니다.")
+    print(f"✅ 모델 로드 완료: {model_path}")
+    print(f"✅ 레이블 로드 완료: {self.class_names}")
 
-    def predict(self, cv2_image):
-        """
-        학습된 모델로 예측합니다.
-        """
-        if self.clf is None:
-            return "No trained model."
+  def predict(self, img):
+    """
+    Tflite 모델로 추론합니다.
 
-        proc = cv2.resize(cv2_image, (self.width, self.height), interpolation=cv2.INTER_AREA)
-        proc = proc.astype(np.float32) / 255.0
-        x = proc.flatten()
-        pred = self.clf.predict([x])[0]
-        return pred
+    example::
 
-    def load_model(self, model_file_path):
-        """
-        저장된 모델을 pickle로 불러옵니다.
-        """
-        with open(model_file_path, 'rb') as f:
-            self.clf = pickle.load(f)
-        print(f"모델을 {model_file_path}에서 불러왔습니다.")
+      cm = Camera()
+      img = cm.read()
+      cf.predict(img)
 
-    def export_model(self, model_file_path):
-        """
-        현재 학습된 모델을 pickle로 저장합니다.
-        """
-        with open(model_file_path, 'wb') as f:
-            pickle.dump(self.clf, f)
-        print(f"모델이 {model_file_path}로 저장되었습니다.")
+    :param numpy.ndarray img: 이미지 객체
+
+    :returns: 가장 높은 확률을 가진 클래스 명, 결과(raw 데이터)
+    """
+    try:
+      # ✅ 이미지 전처리 (224x224 크기로 조정 후 정규화)
+      img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # RGB 변환
+      img = cv2.resize(img, (224, 224))  # 크기 조정
+      img = img.astype("float32") / 255.0  # 정규화
+      img = np.expand_dims(img, axis=0)  # 배치 차원 추가
+
+      features = self.feature_extractor.predict(img,  verbose=None)  # (1, 1280) 벡터 추출
+
+      # ✅ 예측 수행
+      preds = self.model.predict(features, verbose=None)  
+      pred_index = np.argmax(preds)  # 가장 높은 확률을 가진 클래스 인덱스
+      confidence = preds[0][pred_index]  # 확률 값
+      name = self.class_names[pred_index]  # 클래스 이름
+
+      return name, preds[0]  # (예측 클래스명, raw 결과)
+    except Exception as ex:
+      raise Exception('Classifier Model did not load properly.')

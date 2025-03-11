@@ -3,7 +3,7 @@ LCD 화면에 문자나 이미지를 출력합니다.
 
 Class:
 :obj:`~openpibo.oled.Oled`
-:obj:`~openpibo.oled.OledbyILI9341`
+:obj:`~openpibo.oled.OledByPiBrain`
 """
 
 from .modules.oled import ili9341, ssd1306, board, busio, digitalio
@@ -209,19 +209,19 @@ Functions:
     self.show()
 
 
-class OledbyILI9341:
+class OledByPiBrain:
   """
 Functions:
-:meth:`~openpibo.oled.OledbyILI9341.show`
-:meth:`~openpibo.oled.OledbyILI9341.clear`
-:meth:`~openpibo.oled.OledbyILI9341.set_font`
-:meth:`~openpibo.oled.OledbyILI9341.draw_text`
-:meth:`~openpibo.oled.OledbyILI9341.draw_image`
-:meth:`~openpibo.oled.OledbyILI9341.draw_data`
-:meth:`~openpibo.oled.OledbyILI9341.draw_rectangle`
-:meth:`~openpibo.oled.OledbyILI9341.draw_ellipse`
-:meth:`~openpibo.oled.OledbyILI9341.draw_line`
-:meth:`~openpibo.oled.OledbyILI9341.imshow`
+:meth:`~openpibo.oled.OledByPiBrain.show`
+:meth:`~openpibo.oled.OledByPiBrain.clear`
+:meth:`~openpibo.oled.OledByPiBrain.set_font`
+:meth:`~openpibo.oled.OledByPiBrain.draw_text`
+:meth:`~openpibo.oled.OledByPiBrain.draw_image`
+:meth:`~openpibo.oled.OledByPiBrain.draw_data`
+:meth:`~openpibo.oled.OledByPiBrain.draw_rectangle`
+:meth:`~openpibo.oled.OledByPiBrain.draw_ellipse`
+:meth:`~openpibo.oled.OledByPiBrain.draw_line`
+:meth:`~openpibo.oled.OledByPiBrain.imshow`
 
   OLED or LCD를 사용합니다.
   """
@@ -233,16 +233,16 @@ Functions:
 
     self.width = w
     self.height = h
-    #self.font_path = openpibo_models.filepath("KDL.ttf") # KoPub Dotum Light
+    # self.font_path = openpibo_models.filepath("KDL.ttf") # KoPub Dotum Light
     self.font_path = openpibo_models.filepath("NS_CJK_R.otf") # Noto Sans CJK Regular
     self.font_size = 10
 
-    cs_pin = digitalio.DigitalInOut(board.D8)
-    dc_pin = digitalio.DigitalInOut(board.D23)
-    reset_pin = digitalio.DigitalInOut(board.D24)
-
-    spi = busio.SPI(11,10,9)
-    self.oled = ili9341.ILI9341(spi, rotation=0, rst=reset_pin, cs=cs_pin, dc=dc_pin, baudrate=36000000)
+    spi = busio.SPI(11, 10, 9)
+    rst_pin = digitalio.DigitalInOut(board.D24) # any pin!
+    cs_pin = digitalio.DigitalInOut(board.D8)    # any pin!
+    dc_pin = digitalio.DigitalInOut(board.D23)    # any pin!
+  
+    self.oled = ili9341.ILI9341(spi, rotation=0, rst=rst_pin, cs=cs_pin, dc=dc_pin, baudrate=36000000)
     self.font = ImageFont.truetype(self.font_path, self.font_size)
     self.image = Image.new("RGB", (self.width, self.height), (0,0,0))
     self.oled.fill(0)

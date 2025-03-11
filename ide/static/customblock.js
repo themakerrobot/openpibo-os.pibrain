@@ -1,5 +1,5 @@
 const color_type={
-  "event":    "#E5B900",
+  "start":    "#E5B900",
   "audio":    "#7dc37D",
   "collect":  "#7d7db3",
   "device":   "#d3b28d",
@@ -29,51 +29,9 @@ Blockly.defineBlocksWithJsonArray(
       ],
       "inputsInline": true,
       "nextStatement": null,
-      colour: color_type["event"],
+      colour: color_type["start"],
       tooltip: '%{BKY_FLAG_EVENT_TOOLTIP}',
       helpUrl: ""   
-    },
-    {
-      type: "make_bitmap_6x8",
-      message0: "6x8 %1",
-      args0: [
-        {
-          "type": "field_bitmap",
-          "name": "MATRIX",
-          "width": 6,
-          "height": 8,
-        }
-      ],
-      output: "Array",
-      colour: color_type["event"],
-    },
-    {
-      type: "make_bitmap_8x4",
-      message0: "8x4 %1",
-      args0: [
-        {
-          "type": "field_bitmap",
-          "name": "MATRIX",
-          "width": 8,
-          "height": 4,
-        }
-      ],
-      output: "Array",
-      colour: color_type["event"],
-    },
-    {
-      type: "make_bitmap_8x8",
-      message0: "8x8 %1",
-      args0: [
-        {
-          "type": "field_bitmap",
-          "name": "MATRIX",
-          "width": 8,
-          "height": 8,
-        }
-      ],
-      output: "Array",
-      colour: color_type["event"],
     },
     {
       type: 'audio_play_dynamic',
@@ -1781,7 +1739,49 @@ Blockly.defineBlocksWithJsonArray(
       colour: color_type["vision"],
       tooltip: '%{BKY_VISION_FLIP_TOOLTIP}',
       helpUrl: ''
-    },    
+    },
+    {
+      type: "make_bitmap_6x8",
+      message0: "%1 6x8",
+      args0: [
+        {
+          "type": "field_bitmap",
+          "name": "MATRIX",
+          "width": 6,
+          "height": 8,
+        }
+      ],
+      output: "Array",
+      colour: color_type["vision"],
+    },
+    {
+      type: "make_bitmap_8x4",
+      message0: "%1 8x4",
+      args0: [
+        {
+          "type": "field_bitmap",
+          "name": "MATRIX",
+          "width": 8,
+          "height": 4,
+        }
+      ],
+      output: "Array",
+      colour: color_type["vision"],
+    },
+    {
+      type: "make_bitmap_8x8",
+      message0: "%1 8x8",
+      args0: [
+        {
+          "type": "field_bitmap",
+          "name": "MATRIX",
+          "width": 8,
+          "height": 8,
+        }
+      ],
+      output: "Array",
+      colour: color_type["vision"],
+    },
     {
       type: 'vision_face_detect',
       message0: '%{BKY_VISION_FACE_DETECT}',
@@ -2529,52 +2529,6 @@ Blockly.defineBlocksWithJsonArray(
       helpUrl: ''
     },
     {
-      type: 'vision_call_ai',
-      message0: '%{BKY_VISION_CALL_AI}',
-      "args0": [
-        {
-          "type": "field_image",
-          "src": "svg/bolt-solid.svg",
-          "width": 15,
-          "height": 20
-        },
-        {
-          "type": "field_image",
-          "src": "svg/brain-solid.svg",
-          "width": 27,
-          "height": 27
-        },
-        {"type":"input_dummy"},
-        {"type": "field_dropdown", "name":"type",
-          "options":[
-            [ '%{BKY_VISION_CAPTION}', 'caption/caption' ],
-            [ '%{BKY_VISION_CAPTION_TAG}', 'caption/caption_tag_e' ],
-            [ '%{BKY_VISION_CAPTION_PLACE}', 'caption/caption_place_e' ],
-            [ '%{BKY_VISION_CAPTION_TIME}', 'caption/caption_time_e' ],
-            [ '%{BKY_VISION_CAPTION_WEATHER}', 'caption/caption_weather_e' ]
-          ]
-        },
-        {"type": "field_dropdown", "name":"dir",
-          "options":[
-            [ '%{BKY_FOLDER_SELECT}', ''],
-            [ 'code', '/home/pi/code/' ],
-            [ 'myimage', '/home/pi/myimage/' ],
-          ]
-        },
-        {"type": "input_value", "name": "filename", "check":"String"},
-        {
-          "type": "field_dropdown",
-          "name": "extension",
-          "options": [['jpg', '.jpg'], ['png', ".png"], ['-', '']]
-        },
-      ],
-      output: null,
-      inputsInline: true,
-      colour: color_type["recognition"],
-      tooltip: '%{BKY_VISION_CALL_AI_TOOLTIP}',
-      helpUrl: ''
-    },
-    {
       type: 'vision_call_ai_img',
       message0: '%{BKY_VISION_CALL_AI_IMG}',
       "args0": [
@@ -2873,6 +2827,28 @@ Blockly.defineBlocksWithJsonArray(
         tooltip: '%{BKY_UTILS_TYPECAST_NUMBER_TOOLTIP}',
         helpUrl: ''
     },
+    {
+      type: 'utils_calculate_angle',
+      message0: '%{BKY_UTILS_CALCULATE_ANGLE}',
+      args0:
+        [
+          {
+            "type": "field_image",
+            "src": "svg/circle-nodes-solid.svg",
+            "width": 27,
+            "height": 27
+          },
+          {"type":"input_dummy"},
+          {"type": "input_value", "name": "p1", "check":"Array"},
+          {"type": "input_value", "name": "p2", "check":"Array"},
+          {"type": "input_value", "name": "p3", "check":"Array"},
+        ],
+        output: null,
+        inputsInline: true,
+        colour: color_type["utils"],
+        tooltip: '%{BKY_UTILS_CALCULATE_ANGLE_TOOLTIP}',
+        helpUrl: ''
+    }
   ]
 );
 

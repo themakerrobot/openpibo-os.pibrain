@@ -30,10 +30,6 @@
             return Array.from({ length: this.imgHeight }, () => Array(this.imgWidth).fill(0));
         }
   
-        getText_() {
-            return ''; 
-        }
-  
         initView() {
             this.updateSize_();
             if (!this.matrixPreview) {
@@ -113,7 +109,7 @@
         }
   
         updateMatrixPreview() {
-            const padding = 5;
+            const padding = 7;
             const borderOffset = 2;
             this.matrixPreview.setAttribute('width', this.imgWidth * 10 + padding * 2 + borderOffset);
             this.matrixPreview.setAttribute('height', this.imgHeight * 10 + padding * 2 + borderOffset);

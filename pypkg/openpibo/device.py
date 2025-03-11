@@ -3,6 +3,7 @@ MCU를 제어하여, 부품을 제어합니다.
 
 Class:
 :obj:`~openpibo.device.Device`
+:obj:`~openpibo.device.DeviceByPiBrain`
 """
 
 import serial
@@ -463,7 +464,7 @@ Functions:
 
     return self.send_raw('#40:!').split(':')[1].split('-')[3]
 
-class DeviceHat:
+class DeviceByPiBrain:
   def __init__(self):
     self.SW1 = 4
     self.SW2 = 17

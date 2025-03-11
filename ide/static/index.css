@@ -34,7 +34,7 @@ body {
   font-family: Helvetica, "맑은 고딕", "malgun gothic", "Apple SD Gothic Neo",
     "Apple SD 산돌고딕 Neo", "Microsoft NeoGothic", "Droid sans", sans-serif;
   color: black;
-  background-color: white;
+  /* background-color: white; */
   box-sizing: border-box;
   font-size: 1.6rem;
   position: relative;

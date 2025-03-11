@@ -150,29 +150,29 @@ Blockly.Python.forBlock['device_get_button'] = function(block) {
   return ["device.get_button()", Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['device_hat_button'] = function(block) {
-  Blockly.Python.definitions_['from_device_import_DeviceHat'] = 'from openpibo.device import DeviceHat';
-  Blockly.Python.definitions_['assign_devicehat'] = 'devicehat = DeviceHat()';
+  Blockly.Python.definitions_['from_device_import_DeviceByPiBrain'] = 'from openpibo.device import DeviceByPiBrain as Device';
+  Blockly.Python.definitions_['assign_device'] = 'device = Device()';
 
   const num = block.getFieldValue("num");
-  return [`devicehat.get_button(${num})`, Blockly.Python.ORDER_ATOMIC];
+  return [`device.get_button(${num})`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['device_hat_led_on'] = function(block) {
-  Blockly.Python.definitions_['from_device_import_DeviceHat'] = 'from openpibo.device import DeviceHat';
-  Blockly.Python.definitions_['assign_devicehat'] = 'devicehat = DeviceHat()';
+  Blockly.Python.definitions_['from_device_import_DeviceByPiBrain'] = 'from openpibo.device import DeviceByPiBrain as Device';
+  Blockly.Python.definitions_['assign_device'] = 'device = Device()';
   
   const val0 = Blockly.Python.valueToCode(block, 'val0', Blockly.Python.ORDER_ATOMIC);
   const val1 = Blockly.Python.valueToCode(block, 'val1', Blockly.Python.ORDER_ATOMIC);
   const val2 = Blockly.Python.valueToCode(block, 'val2', Blockly.Python.ORDER_ATOMIC);
 
-  return `devicehat.led_on(${val0}, ${val1}, ${val2})\n`
+  return `device.led_on(${val0}, ${val1}, ${val2})\n`
 }
 Blockly.Python.forBlock['device_hat_led_colour_on'] = function(block) {
-  Blockly.Python.definitions_['from_device_import_DeviceHat'] = 'from openpibo.device import DeviceHat';
-  Blockly.Python.definitions_['assign_devicehat'] = 'devicehat = DeviceHat()';
+  Blockly.Python.definitions_['from_device_import_DeviceByPiBrain'] = 'from openpibo.device import DeviceByPiBrain as Device';
+  Blockly.Python.definitions_['assign_device'] = 'device = Device()';
 
   const c = Blockly.Python.valueToCode(block, 'color', Blockly.Python.ORDER_ATOMIC);
 
-  return `devicehat.led_on_s(${c})\n`
+  return `device.led_on_s(${c})\n`
 }
 
 // motion
@@ -253,14 +253,14 @@ Blockly.Python.forBlock['motion_set_motors'] = function(block) {
 
 // oled
 Blockly.Python.forBlock['oled_set_font'] = function(block) {
-  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledbyILI9341 as Oled';
+  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledByPiBrain as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
 
   const size = Blockly.Python.valueToCode(block, 'size', Blockly.Python.ORDER_ATOMIC);
   return `oled.set_font(size=${size})\n`;
 }
 Blockly.Python.forBlock['oled_draw_text'] = function(block) {
-  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledbyILI9341 as Oled';
+  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledByPiBrain as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
 
   const x = Blockly.Python.valueToCode(block, 'x', Blockly.Python.ORDER_ATOMIC);
@@ -270,7 +270,7 @@ Blockly.Python.forBlock['oled_draw_text'] = function(block) {
   return `oled.draw_text((${x}, ${y}), ${text})\n`;
 }
 Blockly.Python.forBlock['oled_draw_image_dynamic'] = function(block) {
-  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledbyILI9341 as Oled';
+  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledByPiBrain as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
 
   const dir = block.getFieldValue("dir");
@@ -278,7 +278,7 @@ Blockly.Python.forBlock['oled_draw_image_dynamic'] = function(block) {
   return `oled.draw_image('${dir}'+'${filename}')\n`;
 }
 Blockly.Python.forBlock['oled_draw_image'] = function(block) {
-  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledbyILI9341 as Oled';
+  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledByPiBrain as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
 
   const dir = block.getFieldValue("dir");
@@ -287,14 +287,14 @@ Blockly.Python.forBlock['oled_draw_image'] = function(block) {
   return `oled.draw_image('${dir}'+${filename}+'${extension}')\n`;
 }
 Blockly.Python.forBlock['oled_draw_data'] = function(block) {
-  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledbyILI9341 as Oled';
+  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledByPiBrain as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
   return `oled.draw_data(${img})\n`;
 }
 Blockly.Python.forBlock['oled_draw_rectangle'] = function(block) {
-  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledbyILI9341 as Oled';
+  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledByPiBrain as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
 
   const x1 = Blockly.Python.valueToCode(block, 'x1', Blockly.Python.ORDER_ATOMIC);
@@ -306,7 +306,7 @@ Blockly.Python.forBlock['oled_draw_rectangle'] = function(block) {
   return `oled.draw_rectangle((${x1}, ${y1}, ${x2}, ${y2}), ${fill})\n`;
 }
 Blockly.Python.forBlock['oled_draw_ellipse'] = function(block) {
-  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledbyILI9341 as Oled';
+  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledByPiBrain as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
 
   const x1 = Blockly.Python.valueToCode(block, 'x1', Blockly.Python.ORDER_ATOMIC);
@@ -318,7 +318,7 @@ Blockly.Python.forBlock['oled_draw_ellipse'] = function(block) {
   return `oled.draw_ellipse((${x1}, ${y1}, ${x2}, ${y2}), ${fill})\n`;
 }
 Blockly.Python.forBlock['oled_draw_line'] = function(block) {
-  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledbyILI9341 as Oled';
+  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledByPiBrain as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
 
   const x1 = Blockly.Python.valueToCode(block, 'x1', Blockly.Python.ORDER_ATOMIC);
@@ -328,17 +328,17 @@ Blockly.Python.forBlock['oled_draw_line'] = function(block) {
   return `oled.draw_line((${x1}, ${y1}, ${x2}, ${y2}))\n`;
 }
 Blockly.Python.forBlock['oled_invert'] = function(block) {
-  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledbyILI9341 as Oled';
+  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledByPiBrain as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
   return "oled.invert()\n";
 }
 Blockly.Python.forBlock['oled_show'] = function(block) {
-  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledbyILI9341 as Oled';
+  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledByPiBrain as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
   return "oled.show()\n";
 }
 Blockly.Python.forBlock['oled_clear'] = function(block) {
-  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledbyILI9341 as Oled';
+  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledByPiBrain as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
   return "oled.clear()\n";
 }
@@ -452,7 +452,7 @@ Blockly.Python.forBlock['vision_imshow_to_ide'] = function(block) {
   return `camera.imshow_to_ide(${img}, 0.5)\n`;
 }
 Blockly.Python.forBlock['vision_imshow_to_oled'] = function(block) {
-  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledbyILI9341 as Oled';
+  Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledByPiBrain as Oled';
   Blockly.Python.definitions_['assign_oled'] = 'oled = Oled()';
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
   return `oled.imshow(${img})\n`;
@@ -812,8 +812,8 @@ Blockly.Python.forBlock['vision_hand_gesture_load_ext'] = function(block) {
   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
 
   const dir = block.getFieldValue("dir");
-  const filename = block.getFieldValue("filename");
-  return `detect.load_hand_gesture_model('${dir}'+'${filename}')\n`
+  const filename = Blockly.Python.valueToCode(block, 'filename', Blockly.Python.ORDER_ATOMIC);
+  return `detect.load_hand_gesture_model('${dir}'+${filename}+ '.task')\n`
 }
 Blockly.Python.forBlock['vision_hand_gesture'] = function(block) {
   Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision import Detect';
@@ -845,16 +845,6 @@ Blockly.Python.forBlock['vision_predict_tm'] = function(block) {
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
   return [`tm.predict(${img})[0]`, Blockly.Python.ORDER_ATOMIC];
-}
-Blockly.Python.forBlock['vision_call_ai'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_vision_api'] = 'from openpibo.vision import vision_api';
-
-  const type = block.getFieldValue("type");
-  const dir = block.getFieldValue("dir");
-  const filename = Blockly.Python.valueToCode(block, 'filename', Blockly.Python.ORDER_ATOMIC);
-  const extension = block.getFieldValue("extension");
-
-  return [`vision_api('${type}', '${dir}'+${filename}+'${extension}')['data']`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_call_ai_img'] = function(block) {
   Blockly.Python.definitions_['from_vision_import_vision_api'] = 'from openpibo.vision import vision_api';
@@ -939,4 +929,12 @@ Blockly.Python.forBlock['utils_typecast_number'] = function(block) {
   const value = Blockly.Python.valueToCode(block, 'value', Blockly.Python.ORDER_ATOMIC);
 
   return [`${type}(${value})`, Blockly.Python.ORDER_ATOMIC];
+}
+Blockly.Python.forBlock['utils_calculate_angle'] = function(block) {
+  Blockly.Python.definitions_['import_openpibo_utils_as_utils'] = 'import openpibo.utils as utils';
+  const p1 = Blockly.Python.valueToCode(block, 'p1', Blockly.Python.ORDER_ATOMIC);
+  const p2 = Blockly.Python.valueToCode(block, 'p2', Blockly.Python.ORDER_ATOMIC);
+  const p3 = Blockly.Python.valueToCode(block, 'p3', Blockly.Python.ORDER_ATOMIC);
+
+  return [`utils.calculate_angle(${p1}, ${p2}, ${p3})`, Blockly.Python.ORDER_ATOMIC];
 }

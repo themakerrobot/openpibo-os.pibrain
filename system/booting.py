@@ -1,4 +1,4 @@
-from openpibo.oled import OledbyILI9341 as Oled
+from openpibo.oled import OledByPiBrain as Oled
 from openpibo.audio import Audio
 from fastapi import FastAPI, Body
 from fastapi.responses import JSONResponse

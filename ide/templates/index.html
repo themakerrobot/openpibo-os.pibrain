@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+<html lang="ko">
   <head>
     <title>Pibo Maker</title>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes" />
 
     <link rel="stylesheet" href="../static/fontello.css" type="text/css" />
@@ -29,7 +30,7 @@
     <script src="../static/codemirror.min.js"></script>
     <script src="../static/comment.js"></script>
     <script src="../static/python.js"></script>
-    <script src="../static/disable-top-blocks.js?ver=240319v1"></script>
+    <script src="../static/disable-top-blocks.js"></script>
     <script src="../static/socket.io.min.js?ver=240319v3"></script>
   </head>
   <body>
@@ -57,13 +58,12 @@
           <a id='guide_bt'>
             <i class="fa-solid fa-circle-question"></i>
           </a>&nbsp;&nbsp;
-          <select id="language">
+          <select id="language" aria-label="language">
             <option value="ko">한국어</option>
             <option value="en">English</option>
-            <!-- <option value="cn">中文</option> -->
           </select>&nbsp;
           <a id='logo_bt'>
-            <img src="../static/themaker.png" style="height:22px"/>
+            <img src="../static/themaker.png" style="height:22px" alt="" />
           </a>
         </h2>
       </div>
@@ -85,10 +85,10 @@
                 <span data-key="wifi_type"></span>
               </td>
               <td colspan="2">
-                <input type="radio" name="wifi_type_sel" value="wpa-psk" checked />wpa-psk
-                <input type="radio" name="wifi_type_sel" value="none" />none
-                <input type="radio" name="wifi_type_sel" value="wpa-eap" />wpa-eap
-                <input type="radio" name="wifi_type_sel" value="custom" />cutsom
+                <label><input type="radio" name="wifi_type_sel" value="wpa-psk" checked />wpa-psk</label>
+                <label><input type="radio" name="wifi_type_sel" value="none" />none</label>
+                <label><input type="radio" name="wifi_type_sel" value="wpa-eap" />wpa-eap</label>
+                <label><input type="radio" name="wifi_type_sel" value="custom" />cutsom</label>
               </td>
             </tr>
             <tr>
@@ -96,7 +96,7 @@
                 <span data-key="wifi_name"></span>
               </td>
               <td>
-                <input type="text" name="ssid" id="ssid" disabled />
+                <input type="text" name="ssid" id="ssid" disabled aria-label="ssid" />
               </td>
               <td rowspan="3">
                 <button type="button" class="confirm" id="wifi_bt"><i class="fa-solid fa-check-double"></i>&nbsp;<span data-key="confirm"></span></button>
@@ -107,7 +107,7 @@
                 <span data-key="wifi_identity"></span>
               </td>
               <td>
-                <input type="text" name="identity" id="identity" disabled />
+                <input type="text" name="identity" id="identity" disabled aria-label="identity"/>
               </td>
             </tr>
             <tr>
@@ -115,7 +115,7 @@
                 <span data-key="password"></span>
               </td>
               <td>
-                <input type="password" id="psk" name="psk" /><input type="checkbox" id="psk_visible" name="psk_visible" />
+                <input type="password" id="psk" name="psk" aria-label="psk" /><input type="checkbox" id="psk_visible" name="psk_visible"  aria-label="psk_visible"/>
               </td>
             </tr>
           </table>
@@ -185,7 +185,7 @@
 
           <div class="editor-row">
             <div class="editor-col">
-              <img id="image" class="preview-img" />
+              <img id="image" class="preview-img" alt="" />
             </div>
           </div>
 
@@ -215,8 +215,8 @@
 
             <div class="editor-col">
               <i class="fa-solid fa-text-height" style="margin-top:3px;margin-bottom:-3px;">
-                  <input type="number" id="fontsize" min="5" max="50" value="14" step="1" pattern="\d*" />
-                </i>
+                <input type="number" id="fontsize" min="5" max="50" value="14" step="1" pattern="\d*" aria-label="fontsize" />
+              </i>
               <button id="execute" class="btn-teal">
                 <i class="fa-solid fa-flag fa-lg"></i>&nbsp;<span data-key="execute"></span>
               </button>
@@ -227,10 +227,10 @@
                 <i class="fa-solid fa-save fa-lg"></i>&nbsp;<span data-key="save"></span>
               </button>
               <i class="fa-solid fa-circle-half-stroke fa-lg" style="margin-top:3px;margin-bottom:-3px;">
-                <input type="checkbox" id="theme_check" name="theme_check" checked /> 
+                <input type="checkbox" id="theme_check" name="theme_check" checked aria-label="theme_check" /> 
               </i>
               <i class="fa-solid fa-arrows-left-right-to-line fa-lg" style="margin-top:3px;margin-bottom:-3px;">
-                <input type="checkbox" id="result_check" name="result_check" />
+                <input type="checkbox" id="result_check" name="result_check" aria-label="result_check" />
               </i>
             </div>
           </div>
@@ -243,7 +243,7 @@
             <div id="blocklyDiv" class="blocklyDiv"></div>
             <div id="codeDiv">
               <form id="code_form">
-                <textarea id="codemirror-code" name="source_code"></textarea>
+                <textarea id="codemirror-code" name="source_code" aria-label="source_code"></textarea>
               </form>
             </div>
           </div>
@@ -257,7 +257,7 @@
                 <i class="fa-solid fa-eraser fa-lg"></i>&nbsp;<span data-key="reset"></span>
               </button>
               <i class="fas fa-keyboard" style="margin-top:3px;margin-bottom:-3px;">
-                <input type="text" id="prompt" name="prompt" style="border-radius: 5px;"/>
+                <input type="text" id="prompt" name="prompt" style="border-radius: 5px;" aria-label="prompt" />
               </i>
               <button id="prompt_bt">
                 <i class="fa-solid fa-arrow-left fa-lg"></i>&nbsp;<span data-key="enter"></span>
@@ -272,7 +272,7 @@
 
           <div class="editor-row">
             <div class="editor-col">
-              <textarea id="result" class="result" disabled></textarea>
+              <textarea id="result" class="result" disabled aria-label="result"></textarea>
               <!-- <iframe id="terminal" class="result" loading="lazy" style="display:none"></iframe> -->
             </div>
           </div>
