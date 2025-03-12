@@ -1,0 +1,589 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ko" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>openpibo.oled &mdash; OPENPIBO 0.9.2.74 문서</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/mycss.css?v=5d8bc77e" />
+
+  
+    <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python/_modules/openpibo/oled.html" />
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=bfa84c45"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+      <script src="../../_static/translations.js?v=afa94a99"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="색인" href="../../genindex.html" />
+    <link rel="search" title="검색" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            OPENPIBO
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notes/piboMaker.html">파이보 메이커</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notes/software.html">소프트웨어</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notes/hardware.html">하드웨어</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Block</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../blocks/guide.html">블록코딩</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/audio.html">audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/collect.html">collect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/device.html">device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/motion.html">motion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/oled.html">oled</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/speech.html">speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision.html">vision</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/utils.html">utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">OPENPIBO</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">모듈 코드</a></li>
+      <li class="breadcrumb-item active">openpibo.oled</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>openpibo.oled의 소스 코드</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">LCD 화면에 문자나 이미지를 출력합니다.</span>
+
+<span class="sd">Class:</span>
+<span class="sd">:obj:`~openpibo.oled.Oled`</span>
+<span class="sd">:obj:`~openpibo.oled.OledByPiBrain`</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">.modules.oled</span> <span class="kn">import</span> <span class="n">ili9341</span><span class="p">,</span> <span class="n">ssd1306</span><span class="p">,</span> <span class="n">board</span><span class="p">,</span> <span class="n">busio</span><span class="p">,</span> <span class="n">digitalio</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">ImageDraw</span><span class="p">,</span> <span class="n">ImageFont</span><span class="p">,</span> <span class="n">ImageOps</span>
+<span class="kn">import</span> <span class="nn">cv2</span><span class="o">,</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">openpibo_models</span>
+
+<div class="viewcode-block" id="Oled">
+<a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled">[문서]</a>
+<span class="k">class</span> <span class="nc">Oled</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions:</span>
+<span class="sd">:meth:`~openpibo.oled.Oled.show`</span>
+<span class="sd">:meth:`~openpibo.oled.Oled.clear`</span>
+<span class="sd">:meth:`~openpibo.oled.Oled.set_font`</span>
+<span class="sd">:meth:`~openpibo.oled.Oled.draw_text`</span>
+<span class="sd">:meth:`~openpibo.oled.Oled.draw_image`</span>
+<span class="sd">:meth:`~openpibo.oled.Oled.draw_data`</span>
+<span class="sd">:meth:`~openpibo.oled.Oled.draw_rectangle`</span>
+<span class="sd">:meth:`~openpibo.oled.Oled.draw_ellipse`</span>
+<span class="sd">:meth:`~openpibo.oled.Oled.draw_line`</span>
+<span class="sd">:meth:`~openpibo.oled.Oled.invert`</span>
+<span class="sd">:meth:`~openpibo.oled.Oled.imshow`</span>
+
+<span class="sd">  OLED or LCD를 사용합니다.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">64</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Oled 클래스 초기화</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">w</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">h</span>
+    <span class="c1">#self.font_path = openpibo_models.filepath(&quot;KDL.ttf&quot;) # KoPub Dotum Light</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">font_path</span> <span class="o">=</span> <span class="s1">&#39;/home/pi/openpibo-os/openpibo-python/NotoSans-CJK-Regular.otf&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">font_size</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="n">spi</span> <span class="o">=</span> <span class="n">busio</span><span class="o">.</span><span class="n">SPI</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+    <span class="n">rst_pin</span> <span class="o">=</span> <span class="n">digitalio</span><span class="o">.</span><span class="n">DigitalInOut</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">D24</span><span class="p">)</span> <span class="c1"># any pin!</span>
+    <span class="n">cs_pin</span> <span class="o">=</span> <span class="n">digitalio</span><span class="o">.</span><span class="n">DigitalInOut</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">D8</span><span class="p">)</span>    <span class="c1"># any pin!</span>
+    <span class="n">dc_pin</span> <span class="o">=</span> <span class="n">digitalio</span><span class="o">.</span><span class="n">DigitalInOut</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">D23</span><span class="p">)</span>    <span class="c1"># any pin!</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">oled</span> <span class="o">=</span> <span class="n">ssd1306</span><span class="o">.</span><span class="n">SSD1306_SPI</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">spi</span><span class="p">,</span> <span class="n">dc_pin</span><span class="p">,</span> <span class="n">rst_pin</span><span class="p">,</span> <span class="n">cs_pin</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">font</span> <span class="o">=</span> <span class="n">ImageFont</span><span class="o">.</span><span class="n">truetype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">font_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">font_size</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Oled.show">
+<a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled.show">[문서]</a>
+  <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    oled 화면 표시 </span>
+
+<span class="sd">    **이 메소드를 사용하지 않으면 그림을 그려도 oled 화면에 아무것도 출력되지 않습니다.**</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Oled.clear">
+<a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled.clear">[문서]</a>
+  <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    oled 화면 지움</span>
+
+<span class="sd">    :param bool image: image 초기화 여부</span>
+<span class="sd">    :param bool fill: oled 초기화 여부</span>
+<span class="sd">    :param bool show: 화면 표시 여부</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">image</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">fill</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">show</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Oled.set_font">
+<a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled.set_font">[문서]</a>
+  <span class="k">def</span> <span class="nf">set_font</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ``draw_text`` 폰트 설정</span>
+
+<span class="sd">    :param str filename: 폰트 파일 경로 (ttf, otf)</span>
+<span class="sd">    :param int size: 폰트 사이즈</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">filename</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">font_path</span>
+
+    <span class="k">if</span> <span class="n">size</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">font_size</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">&quot; does not exist&#39;</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">font</span> <span class="o">=</span> <span class="n">ImageFont</span><span class="o">.</span><span class="n">truetype</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Oled.draw_text">
+<a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled.draw_text">[문서]</a>
+  <span class="k">def</span> <span class="nf">draw_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    문자 (기본 폰트 - 한/영/중/일 지원)</span>
+
+<span class="sd">    :param tuple(int, int) points: 문자열 좌측상단 좌표 (x, y)</span>
+<span class="sd">    :param str text: 문자열 내용</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">tuple</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">points</span><span class="si">}</span><span class="s1">&quot; must be tuple type&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;len(</span><span class="si">{</span><span class="n">points</span><span class="si">}</span><span class="s1">) must be 2&#39;</span><span class="p">)</span>
+
+    <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Oled.draw_image">
+<a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled.draw_image">[문서]</a>
+  <span class="k">def</span> <span class="nf">draw_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    이미지 파일 로드</span>
+<span class="sd">    **128x64** 크기의 **png** 확장자만 허용됩니다.</span>
+
+<span class="sd">    :param str filename: 그림파일 경로</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">&quot; does not exist&#39;</span><span class="p">)</span> 
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">))</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Oled.draw_data">
+<a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled.draw_data">[문서]</a>
+  <span class="k">def</span> <span class="nf">draw_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    numpy 이미지 로드드 (cv image)</span>
+
+<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;&quot;img&quot; must be image data from opencv.&#39;</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">img</span><span class="p">)</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">))</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Oled.draw_rectangle">
+<a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled.draw_rectangle">[문서]</a>
+  <span class="k">def</span> <span class="nf">draw_rectangle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    직사각형</span>
+
+<span class="sd">    :param tuple points: 사각형의 좌측상단 좌표, 사각형의 우측하단 좌표 (x1, y1, x2, y2)</span>
+<span class="sd">    :param bool fill: 채움 여부</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">tuple</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">points</span><span class="si">}</span><span class="s1">&quot; must be tuple type&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;len(</span><span class="si">{</span><span class="n">points</span><span class="si">}</span><span class="s1">) must be 4&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">fill</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">fill</span><span class="si">}</span><span class="s1">&quot; must be (None|True|False)&#39;</span><span class="p">)</span>
+
+    <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">)</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">outline</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">fill</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Oled.draw_ellipse">
+<a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled.draw_ellipse">[문서]</a>
+  <span class="k">def</span> <span class="nf">draw_ellipse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    타원</span>
+
+<span class="sd">    :param tuple points: 타원에 외접하는 직사각형의 좌측상단 좌표, 우측하단 좌표 (x1, y1, x2, y2)</span>
+<span class="sd">    :param bool fill: 채움 여부</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">tuple</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">points</span><span class="si">}</span><span class="s1">&quot; must be tuple type&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;len(</span><span class="si">{</span><span class="n">points</span><span class="si">}</span><span class="s1">) must be 4&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">fill</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">fill</span><span class="si">}</span><span class="s1">&quot; must be (None|True|False)&#39;</span><span class="p">)</span>
+
+    <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">)</span><span class="o">.</span><span class="n">ellipse</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">outline</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">fill</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Oled.draw_line">
+<a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled.draw_line">[문서]</a>
+  <span class="k">def</span> <span class="nf">draw_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    직선</span>
+
+<span class="sd">    :param tuple points: 선의 시작 좌표, 선의 끝 좌표 (x1, y1, x2, y2)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">tuple</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">points</span><span class="si">}</span><span class="s1">&quot; must be tuple type&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;len(</span><span class="si">{</span><span class="n">points</span><span class="si">}</span><span class="s1">) must be 4&#39;</span><span class="p">)</span>
+
+    <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">)</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Oled.invert">
+<a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled.invert">[문서]</a>
+  <span class="k">def</span> <span class="nf">invert</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    반전</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">ImageOps</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Oled.imshow">
+<a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled.imshow">[문서]</a>
+  <span class="k">def</span> <span class="nf">imshow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    draw_data + show</span>
+
+<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">draw_data</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="OledByPiBrain">
+<a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.OledByPiBrain">[문서]</a>
+<span class="k">class</span> <span class="nc">OledByPiBrain</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions:</span>
+<span class="sd">:meth:`~openpibo.oled.OledByPiBrain.show`</span>
+<span class="sd">:meth:`~openpibo.oled.OledByPiBrain.clear`</span>
+<span class="sd">:meth:`~openpibo.oled.OledByPiBrain.set_font`</span>
+<span class="sd">:meth:`~openpibo.oled.OledByPiBrain.draw_text`</span>
+<span class="sd">:meth:`~openpibo.oled.OledByPiBrain.draw_image`</span>
+<span class="sd">:meth:`~openpibo.oled.OledByPiBrain.draw_data`</span>
+<span class="sd">:meth:`~openpibo.oled.OledByPiBrain.draw_rectangle`</span>
+<span class="sd">:meth:`~openpibo.oled.OledByPiBrain.draw_ellipse`</span>
+<span class="sd">:meth:`~openpibo.oled.OledByPiBrain.draw_line`</span>
+<span class="sd">:meth:`~openpibo.oled.OledByPiBrain.imshow`</span>
+
+<span class="sd">  OLED or LCD를 사용합니다.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="mi">240</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">320</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Oled 클래스 초기화</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">w</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">h</span>
+    <span class="c1"># self.font_path = openpibo_models.filepath(&quot;KDL.ttf&quot;) # KoPub Dotum Light</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">font_path</span> <span class="o">=</span> <span class="n">openpibo_models</span><span class="o">.</span><span class="n">filepath</span><span class="p">(</span><span class="s2">&quot;NS_CJK_R.otf&quot;</span><span class="p">)</span> <span class="c1"># Noto Sans CJK Regular</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">font_size</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="n">spi</span> <span class="o">=</span> <span class="n">busio</span><span class="o">.</span><span class="n">SPI</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+    <span class="n">rst_pin</span> <span class="o">=</span> <span class="n">digitalio</span><span class="o">.</span><span class="n">DigitalInOut</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">D24</span><span class="p">)</span> <span class="c1"># any pin!</span>
+    <span class="n">cs_pin</span> <span class="o">=</span> <span class="n">digitalio</span><span class="o">.</span><span class="n">DigitalInOut</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">D8</span><span class="p">)</span>    <span class="c1"># any pin!</span>
+    <span class="n">dc_pin</span> <span class="o">=</span> <span class="n">digitalio</span><span class="o">.</span><span class="n">DigitalInOut</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">D23</span><span class="p">)</span>    <span class="c1"># any pin!</span>
+  
+    <span class="bp">self</span><span class="o">.</span><span class="n">oled</span> <span class="o">=</span> <span class="n">ili9341</span><span class="o">.</span><span class="n">ILI9341</span><span class="p">(</span><span class="n">spi</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">rst</span><span class="o">=</span><span class="n">rst_pin</span><span class="p">,</span> <span class="n">cs</span><span class="o">=</span><span class="n">cs_pin</span><span class="p">,</span> <span class="n">dc</span><span class="o">=</span><span class="n">dc_pin</span><span class="p">,</span> <span class="n">baudrate</span><span class="o">=</span><span class="mi">36000000</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">font</span> <span class="o">=</span> <span class="n">ImageFont</span><span class="o">.</span><span class="n">truetype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">font_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">font_size</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<div class="viewcode-block" id="OledByPiBrain.show">
+<a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.OledByPiBrain.show">[문서]</a>
+  <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    oled 화면 표시 </span>
+
+<span class="sd">    **이 메소드를 사용하지 않으면 그림을 그려도 oled 화면에 아무것도 출력되지 않습니다.**</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OledByPiBrain.clear">
+<a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.OledByPiBrain.clear">[문서]</a>
+  <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    oled 화면 지움</span>
+
+<span class="sd">    :param bool image: image 초기화 여부</span>
+<span class="sd">    :param bool fill: oled 초기화 여부</span>
+<span class="sd">    :param bool show: 화면 표시 여부</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">image</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">fill</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">show</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OledByPiBrain.set_font">
+<a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.OledByPiBrain.set_font">[문서]</a>
+  <span class="k">def</span> <span class="nf">set_font</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ``draw_text`` 폰트 설정</span>
+
+<span class="sd">    :param str filename: 폰트 파일 경로 (ttf, otf)</span>
+<span class="sd">    :param int size: 폰트 사이즈</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">filename</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">font_path</span>
+
+    <span class="k">if</span> <span class="n">size</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">font_size</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">&quot; does not exist&#39;</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">font</span> <span class="o">=</span> <span class="n">ImageFont</span><span class="o">.</span><span class="n">truetype</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OledByPiBrain.draw_text">
+<a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.OledByPiBrain.draw_text">[문서]</a>
+  <span class="k">def</span> <span class="nf">draw_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">)):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    문자 (기본 폰트 - 한/영/중/일 지원)</span>
+
+<span class="sd">    :param tuple(int, int) points: 문자열 좌측상단 좌표 (x, y)</span>
+<span class="sd">    :param str text: 문자열 내용</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">tuple</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">points</span><span class="si">}</span><span class="s1">&quot; must be tuple type&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;len(</span><span class="si">{</span><span class="n">points</span><span class="si">}</span><span class="s1">) must be 2&#39;</span><span class="p">)</span>
+
+    <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">colors</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OledByPiBrain.draw_image">
+<a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.OledByPiBrain.draw_image">[문서]</a>
+  <span class="k">def</span> <span class="nf">draw_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    이미지 파일 로드(png, jpg)</span>
+
+<span class="sd">    :param str filename: 그림파일 경로</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">&quot; does not exist&#39;</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">))</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;RGB&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OledByPiBrain.draw_data">
+<a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.OledByPiBrain.draw_data">[문서]</a>
+  <span class="k">def</span> <span class="nf">draw_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    numpy 이미지 로드드 (cv image)</span>
+
+<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;&quot;img&quot; must be image data from opencv.&#39;</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">))</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="OledByPiBrain.draw_rectangle">
+<a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.OledByPiBrain.draw_rectangle">[문서]</a>
+  <span class="k">def</span> <span class="nf">draw_rectangle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    직사각형</span>
+
+<span class="sd">    :param tuple points: 사각형의 좌측상단 좌표, 사각형의 우측하단 좌표 (x1, y1, x2, y2)</span>
+<span class="sd">    :param bool fill: 채움 여부</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">tuple</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">points</span><span class="si">}</span><span class="s1">&quot; must be tuple type&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;len(</span><span class="si">{</span><span class="n">points</span><span class="si">}</span><span class="s1">) must be 4&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">fill</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">fill</span><span class="si">}</span><span class="s1">&quot; must be (None|True|False)&#39;</span><span class="p">)</span>
+
+    <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">)</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">outline</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="n">fill</span><span class="o">=</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">)</span> <span class="k">if</span> <span class="n">fill</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OledByPiBrain.draw_ellipse">
+<a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.OledByPiBrain.draw_ellipse">[문서]</a>
+  <span class="k">def</span> <span class="nf">draw_ellipse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    타원</span>
+
+<span class="sd">    :param tuple points: 타원에 외접하는 직사각형의 좌측상단 좌표, 우측하단 좌표 (x1, y1, x2, y2)</span>
+<span class="sd">    :param bool fill: 채움 여부</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">tuple</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">points</span><span class="si">}</span><span class="s1">&quot; must be tuple type&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;len(</span><span class="si">{</span><span class="n">points</span><span class="si">}</span><span class="s1">) must be 4&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">fill</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">fill</span><span class="si">}</span><span class="s1">&quot; must be (None|True|False)&#39;</span><span class="p">)</span>
+
+    <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">)</span><span class="o">.</span><span class="n">ellipse</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">outline</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">)</span> <span class="k">if</span> <span class="n">fill</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OledByPiBrain.draw_line">
+<a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.OledByPiBrain.draw_line">[문서]</a>
+  <span class="k">def</span> <span class="nf">draw_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    직선</span>
+
+<span class="sd">    :param tuple points: 선의 시작 좌표, 선의 끝 좌표 (x1, y1, x2, y2)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">tuple</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">points</span><span class="si">}</span><span class="s1">&quot; must be tuple type&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;len(</span><span class="si">{</span><span class="n">points</span><span class="si">}</span><span class="s1">) must be 4&#39;</span><span class="p">)</span>
+
+    <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">)</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="OledByPiBrain.imshow">
+<a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.OledByPiBrain.imshow">[문서]</a>
+  <span class="k">def</span> <span class="nf">imshow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    draw_data + show</span>
+
+<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">draw_data</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024 THEMAKER. All rights reserved. openpibo-python-0.9.2.74.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

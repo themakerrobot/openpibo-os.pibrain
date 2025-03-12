@@ -1,0 +1,457 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ko" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>oled &mdash; OPENPIBO 0.9.2.74 문서</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=5d8bc77e" />
+
+  
+    <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python/libraries/oled.html" />
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=bfa84c45"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/translations.js?v=afa94a99"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="색인" href="../genindex.html" />
+    <link rel="search" title="검색" href="../search.html" />
+    <link rel="next" title="speech" href="speech.html" />
+    <link rel="prev" title="motion" href="motion.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            OPENPIBO
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../notes/piboMaker.html">파이보 메이커</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/software.html">소프트웨어</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/hardware.html">하드웨어</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Block</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../blocks/guide.html">블록코딩</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="audio.html">audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="collect.html">collect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="device.html">device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="motion.html">motion</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">oled</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#openpibo.oled.Oled"><code class="docutils literal notranslate"><span class="pre">Oled</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.oled.Oled.show"><code class="docutils literal notranslate"><span class="pre">Oled.show()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.oled.Oled.clear"><code class="docutils literal notranslate"><span class="pre">Oled.clear()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.oled.Oled.set_font"><code class="docutils literal notranslate"><span class="pre">Oled.set_font()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.oled.Oled.draw_text"><code class="docutils literal notranslate"><span class="pre">Oled.draw_text()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.oled.Oled.draw_image"><code class="docutils literal notranslate"><span class="pre">Oled.draw_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.oled.Oled.draw_data"><code class="docutils literal notranslate"><span class="pre">Oled.draw_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.oled.Oled.draw_rectangle"><code class="docutils literal notranslate"><span class="pre">Oled.draw_rectangle()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.oled.Oled.draw_ellipse"><code class="docutils literal notranslate"><span class="pre">Oled.draw_ellipse()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.oled.Oled.draw_line"><code class="docutils literal notranslate"><span class="pre">Oled.draw_line()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.oled.Oled.invert"><code class="docutils literal notranslate"><span class="pre">Oled.invert()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.oled.Oled.imshow"><code class="docutils literal notranslate"><span class="pre">Oled.imshow()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#openpibo.oled.OledByPiBrain"><code class="docutils literal notranslate"><span class="pre">OledByPiBrain</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.oled.OledByPiBrain.show"><code class="docutils literal notranslate"><span class="pre">OledByPiBrain.show()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.oled.OledByPiBrain.clear"><code class="docutils literal notranslate"><span class="pre">OledByPiBrain.clear()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.oled.OledByPiBrain.set_font"><code class="docutils literal notranslate"><span class="pre">OledByPiBrain.set_font()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.oled.OledByPiBrain.draw_text"><code class="docutils literal notranslate"><span class="pre">OledByPiBrain.draw_text()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.oled.OledByPiBrain.draw_image"><code class="docutils literal notranslate"><span class="pre">OledByPiBrain.draw_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.oled.OledByPiBrain.draw_data"><code class="docutils literal notranslate"><span class="pre">OledByPiBrain.draw_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.oled.OledByPiBrain.draw_rectangle"><code class="docutils literal notranslate"><span class="pre">OledByPiBrain.draw_rectangle()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.oled.OledByPiBrain.draw_ellipse"><code class="docutils literal notranslate"><span class="pre">OledByPiBrain.draw_ellipse()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.oled.OledByPiBrain.draw_line"><code class="docutils literal notranslate"><span class="pre">OledByPiBrain.draw_line()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.oled.OledByPiBrain.imshow"><code class="docutils literal notranslate"><span class="pre">OledByPiBrain.imshow()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="speech.html">speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vision.html">vision</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">OPENPIBO</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">oled</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/libraries/oled.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-openpibo.oled">
+<span id="oled"></span><h1>oled<a class="headerlink" href="#module-openpibo.oled" title="Link to this heading"></a></h1>
+<p>LCD 화면에 문자나 이미지를 출력합니다.</p>
+<p>Class:
+<a class="reference internal" href="#openpibo.oled.Oled" title="openpibo.oled.Oled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Oled</span></code></a>
+<a class="reference internal" href="#openpibo.oled.OledByPiBrain" title="openpibo.oled.OledByPiBrain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OledByPiBrain</span></code></a></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="openpibo.oled.Oled">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openpibo.oled.</span></span><span class="sig-name descname"><span class="pre">Oled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/oled.html#Oled"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.oled.Oled" title="Link to this definition"></a></dt>
+<dd><p>기반 클래스: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Functions:
+<a class="reference internal" href="#openpibo.oled.Oled.show" title="openpibo.oled.Oled.show"><code class="xref py py-meth docutils literal notranslate"><span class="pre">show()</span></code></a>
+<a class="reference internal" href="#openpibo.oled.Oled.clear" title="openpibo.oled.Oled.clear"><code class="xref py py-meth docutils literal notranslate"><span class="pre">clear()</span></code></a>
+<a class="reference internal" href="#openpibo.oled.Oled.set_font" title="openpibo.oled.Oled.set_font"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_font()</span></code></a>
+<a class="reference internal" href="#openpibo.oled.Oled.draw_text" title="openpibo.oled.Oled.draw_text"><code class="xref py py-meth docutils literal notranslate"><span class="pre">draw_text()</span></code></a>
+<a class="reference internal" href="#openpibo.oled.Oled.draw_image" title="openpibo.oled.Oled.draw_image"><code class="xref py py-meth docutils literal notranslate"><span class="pre">draw_image()</span></code></a>
+<a class="reference internal" href="#openpibo.oled.Oled.draw_data" title="openpibo.oled.Oled.draw_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">draw_data()</span></code></a>
+<a class="reference internal" href="#openpibo.oled.Oled.draw_rectangle" title="openpibo.oled.Oled.draw_rectangle"><code class="xref py py-meth docutils literal notranslate"><span class="pre">draw_rectangle()</span></code></a>
+<a class="reference internal" href="#openpibo.oled.Oled.draw_ellipse" title="openpibo.oled.Oled.draw_ellipse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">draw_ellipse()</span></code></a>
+<a class="reference internal" href="#openpibo.oled.Oled.draw_line" title="openpibo.oled.Oled.draw_line"><code class="xref py py-meth docutils literal notranslate"><span class="pre">draw_line()</span></code></a>
+<a class="reference internal" href="#openpibo.oled.Oled.invert" title="openpibo.oled.Oled.invert"><code class="xref py py-meth docutils literal notranslate"><span class="pre">invert()</span></code></a>
+<a class="reference internal" href="#openpibo.oled.Oled.imshow" title="openpibo.oled.Oled.imshow"><code class="xref py py-meth docutils literal notranslate"><span class="pre">imshow()</span></code></a></p>
+<blockquote>
+<div><p>OLED or LCD를 사용합니다.</p>
+</div></blockquote>
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.oled.Oled.show">
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/oled.html#Oled.show"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.oled.Oled.show" title="Link to this definition"></a></dt>
+<dd><p>oled 화면 표시</p>
+<p><strong>이 메소드를 사용하지 않으면 그림을 그려도 oled 화면에 아무것도 출력되지 않습니다.</strong></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.oled.Oled.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/oled.html#Oled.clear"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.oled.Oled.clear" title="Link to this definition"></a></dt>
+<dd><p>oled 화면 지움</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>bool</em>) – image 초기화 여부</p></li>
+<li><p><strong>fill</strong> (<em>bool</em>) – oled 초기화 여부</p></li>
+<li><p><strong>show</strong> (<em>bool</em>) – 화면 표시 여부</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.oled.Oled.set_font">
+<span class="sig-name descname"><span class="pre">set_font</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/oled.html#Oled.set_font"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.oled.Oled.set_font" title="Link to this definition"></a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">draw_text</span></code> 폰트 설정</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – 폰트 파일 경로 (ttf, otf)</p></li>
+<li><p><strong>size</strong> (<em>int</em>) – 폰트 사이즈</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.oled.Oled.draw_text">
+<span class="sig-name descname"><span class="pre">draw_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/oled.html#Oled.draw_text"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.oled.Oled.draw_text" title="Link to this definition"></a></dt>
+<dd><p>문자 (기본 폰트 - 한/영/중/일 지원)</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>points</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – 문자열 좌측상단 좌표 (x, y)</p></li>
+<li><p><strong>text</strong> (<em>str</em>) – 문자열 내용</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.oled.Oled.draw_image">
+<span class="sig-name descname"><span class="pre">draw_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/oled.html#Oled.draw_image"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.oled.Oled.draw_image" title="Link to this definition"></a></dt>
+<dd><p>이미지 파일 로드
+<strong>128x64</strong> 크기의 <strong>png</strong> 확장자만 허용됩니다.</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – 그림파일 경로</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.oled.Oled.draw_data">
+<span class="sig-name descname"><span class="pre">draw_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/oled.html#Oled.draw_data"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.oled.Oled.draw_data" title="Link to this definition"></a></dt>
+<dd><p>numpy 이미지 로드드 (cv image)</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>img</strong> (<em>numpy.ndarray</em>) – 이미지 객체</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.oled.Oled.draw_rectangle">
+<span class="sig-name descname"><span class="pre">draw_rectangle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/oled.html#Oled.draw_rectangle"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.oled.Oled.draw_rectangle" title="Link to this definition"></a></dt>
+<dd><p>직사각형</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>points</strong> (<em>tuple</em>) – 사각형의 좌측상단 좌표, 사각형의 우측하단 좌표 (x1, y1, x2, y2)</p></li>
+<li><p><strong>fill</strong> (<em>bool</em>) – 채움 여부</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.oled.Oled.draw_ellipse">
+<span class="sig-name descname"><span class="pre">draw_ellipse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/oled.html#Oled.draw_ellipse"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.oled.Oled.draw_ellipse" title="Link to this definition"></a></dt>
+<dd><p>타원</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>points</strong> (<em>tuple</em>) – 타원에 외접하는 직사각형의 좌측상단 좌표, 우측하단 좌표 (x1, y1, x2, y2)</p></li>
+<li><p><strong>fill</strong> (<em>bool</em>) – 채움 여부</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.oled.Oled.draw_line">
+<span class="sig-name descname"><span class="pre">draw_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/oled.html#Oled.draw_line"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.oled.Oled.draw_line" title="Link to this definition"></a></dt>
+<dd><p>직선</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>points</strong> (<em>tuple</em>) – 선의 시작 좌표, 선의 끝 좌표 (x1, y1, x2, y2)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.oled.Oled.invert">
+<span class="sig-name descname"><span class="pre">invert</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/oled.html#Oled.invert"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.oled.Oled.invert" title="Link to this definition"></a></dt>
+<dd><p>반전</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.oled.Oled.imshow">
+<span class="sig-name descname"><span class="pre">imshow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/oled.html#Oled.imshow"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.oled.Oled.imshow" title="Link to this definition"></a></dt>
+<dd><p>draw_data + show</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>img</strong> (<em>numpy.ndarray</em>) – 이미지 객체</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="openpibo.oled.OledByPiBrain">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openpibo.oled.</span></span><span class="sig-name descname"><span class="pre">OledByPiBrain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">240</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">320</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/oled.html#OledByPiBrain"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.oled.OledByPiBrain" title="Link to this definition"></a></dt>
+<dd><p>기반 클래스: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Functions:
+<a class="reference internal" href="#openpibo.oled.OledByPiBrain.show" title="openpibo.oled.OledByPiBrain.show"><code class="xref py py-meth docutils literal notranslate"><span class="pre">show()</span></code></a>
+<a class="reference internal" href="#openpibo.oled.OledByPiBrain.clear" title="openpibo.oled.OledByPiBrain.clear"><code class="xref py py-meth docutils literal notranslate"><span class="pre">clear()</span></code></a>
+<a class="reference internal" href="#openpibo.oled.OledByPiBrain.set_font" title="openpibo.oled.OledByPiBrain.set_font"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_font()</span></code></a>
+<a class="reference internal" href="#openpibo.oled.OledByPiBrain.draw_text" title="openpibo.oled.OledByPiBrain.draw_text"><code class="xref py py-meth docutils literal notranslate"><span class="pre">draw_text()</span></code></a>
+<a class="reference internal" href="#openpibo.oled.OledByPiBrain.draw_image" title="openpibo.oled.OledByPiBrain.draw_image"><code class="xref py py-meth docutils literal notranslate"><span class="pre">draw_image()</span></code></a>
+<a class="reference internal" href="#openpibo.oled.OledByPiBrain.draw_data" title="openpibo.oled.OledByPiBrain.draw_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">draw_data()</span></code></a>
+<a class="reference internal" href="#openpibo.oled.OledByPiBrain.draw_rectangle" title="openpibo.oled.OledByPiBrain.draw_rectangle"><code class="xref py py-meth docutils literal notranslate"><span class="pre">draw_rectangle()</span></code></a>
+<a class="reference internal" href="#openpibo.oled.OledByPiBrain.draw_ellipse" title="openpibo.oled.OledByPiBrain.draw_ellipse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">draw_ellipse()</span></code></a>
+<a class="reference internal" href="#openpibo.oled.OledByPiBrain.draw_line" title="openpibo.oled.OledByPiBrain.draw_line"><code class="xref py py-meth docutils literal notranslate"><span class="pre">draw_line()</span></code></a>
+<a class="reference internal" href="#openpibo.oled.OledByPiBrain.imshow" title="openpibo.oled.OledByPiBrain.imshow"><code class="xref py py-meth docutils literal notranslate"><span class="pre">imshow()</span></code></a></p>
+<blockquote>
+<div><p>OLED or LCD를 사용합니다.</p>
+</div></blockquote>
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.oled.OledByPiBrain.show">
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/oled.html#OledByPiBrain.show"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.oled.OledByPiBrain.show" title="Link to this definition"></a></dt>
+<dd><p>oled 화면 표시</p>
+<p><strong>이 메소드를 사용하지 않으면 그림을 그려도 oled 화면에 아무것도 출력되지 않습니다.</strong></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.oled.OledByPiBrain.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/oled.html#OledByPiBrain.clear"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.oled.OledByPiBrain.clear" title="Link to this definition"></a></dt>
+<dd><p>oled 화면 지움</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>bool</em>) – image 초기화 여부</p></li>
+<li><p><strong>fill</strong> (<em>bool</em>) – oled 초기화 여부</p></li>
+<li><p><strong>show</strong> (<em>bool</em>) – 화면 표시 여부</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.oled.OledByPiBrain.set_font">
+<span class="sig-name descname"><span class="pre">set_font</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/oled.html#OledByPiBrain.set_font"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.oled.OledByPiBrain.set_font" title="Link to this definition"></a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">draw_text</span></code> 폰트 설정</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – 폰트 파일 경로 (ttf, otf)</p></li>
+<li><p><strong>size</strong> (<em>int</em>) – 폰트 사이즈</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.oled.OledByPiBrain.draw_text">
+<span class="sig-name descname"><span class="pre">draw_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(255,</span> <span class="pre">255,</span> <span class="pre">255)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/oled.html#OledByPiBrain.draw_text"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.oled.OledByPiBrain.draw_text" title="Link to this definition"></a></dt>
+<dd><p>문자 (기본 폰트 - 한/영/중/일 지원)</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>points</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – 문자열 좌측상단 좌표 (x, y)</p></li>
+<li><p><strong>text</strong> (<em>str</em>) – 문자열 내용</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.oled.OledByPiBrain.draw_image">
+<span class="sig-name descname"><span class="pre">draw_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/oled.html#OledByPiBrain.draw_image"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.oled.OledByPiBrain.draw_image" title="Link to this definition"></a></dt>
+<dd><p>이미지 파일 로드(png, jpg)</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – 그림파일 경로</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.oled.OledByPiBrain.draw_data">
+<span class="sig-name descname"><span class="pre">draw_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/oled.html#OledByPiBrain.draw_data"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.oled.OledByPiBrain.draw_data" title="Link to this definition"></a></dt>
+<dd><p>numpy 이미지 로드드 (cv image)</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>img</strong> (<em>numpy.ndarray</em>) – 이미지 객체</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.oled.OledByPiBrain.draw_rectangle">
+<span class="sig-name descname"><span class="pre">draw_rectangle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/oled.html#OledByPiBrain.draw_rectangle"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.oled.OledByPiBrain.draw_rectangle" title="Link to this definition"></a></dt>
+<dd><p>직사각형</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>points</strong> (<em>tuple</em>) – 사각형의 좌측상단 좌표, 사각형의 우측하단 좌표 (x1, y1, x2, y2)</p></li>
+<li><p><strong>fill</strong> (<em>bool</em>) – 채움 여부</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.oled.OledByPiBrain.draw_ellipse">
+<span class="sig-name descname"><span class="pre">draw_ellipse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/oled.html#OledByPiBrain.draw_ellipse"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.oled.OledByPiBrain.draw_ellipse" title="Link to this definition"></a></dt>
+<dd><p>타원</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>points</strong> (<em>tuple</em>) – 타원에 외접하는 직사각형의 좌측상단 좌표, 우측하단 좌표 (x1, y1, x2, y2)</p></li>
+<li><p><strong>fill</strong> (<em>bool</em>) – 채움 여부</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.oled.OledByPiBrain.draw_line">
+<span class="sig-name descname"><span class="pre">draw_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/oled.html#OledByPiBrain.draw_line"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.oled.OledByPiBrain.draw_line" title="Link to this definition"></a></dt>
+<dd><p>직선</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>points</strong> (<em>tuple</em>) – 선의 시작 좌표, 선의 끝 좌표 (x1, y1, x2, y2)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.oled.OledByPiBrain.imshow">
+<span class="sig-name descname"><span class="pre">imshow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/oled.html#OledByPiBrain.imshow"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.oled.OledByPiBrain.imshow" title="Link to this definition"></a></dt>
+<dd><p>draw_data + show</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>img</strong> (<em>numpy.ndarray</em>) – 이미지 객체</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="motion.html" class="btn btn-neutral float-left" title="motion" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="speech.html" class="btn btn-neutral float-right" title="speech" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024 THEMAKER. All rights reserved. openpibo-python-0.9.2.74.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
