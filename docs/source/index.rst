@@ -31,6 +31,7 @@ OPENPIBO PACKAGE
    libraries/oled
    libraries/speech
    libraries/vision
+   libraries/utils
 
 Indices and tables
 ==================

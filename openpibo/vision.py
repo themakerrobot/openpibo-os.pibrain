@@ -48,18 +48,20 @@ def vision_api(mode, image, params={}):
   :param str/numpy.ndarray image: 표시할 이미지 (파일 경로 or cv 이미지)
   :returns: ``Json`` 타입 결과의 데이터
 
-    example::
-      { 'type': 'caption', 'result': 'ok', 
-        'data': {
-          caption:  "사람에게 로봇을 과시하는 사람", 
-          caption_en:  "a person showing off a robot to a person",
-          raw:  [
-            "a person showing off a robot to a person",
-            "a robot that is sitting on top of a table",
-            "a very cute white robot that is sitting in front of a table"
-          ]
-        }
+  example::
+
+    { 'type': 'caption', 'result': 'ok', 
+      'data': {
+        caption:  "사람에게 로봇을 과시하는 사람", 
+        caption_en:  "a person showing off a robot to a person",
+        raw:  [
+          "a person showing off a robot to a person",
+          "a robot that is sitting on top of a table",
+          "a very cute white robot that is sitting in front of a table"
+        ]
       }
+    }
+
   """
 
   if type(image) is np.ndarray:
@@ -87,7 +89,6 @@ Functions:
 :meth:`~openpibo.vision.Camera.detailEnhance`
 :meth:`~openpibo.vision.Camera.pencilSketch`
 :meth:`~openpibo.vision.Camera.edgePreservingFilter`
-
 :meth:`~openpibo.vision.Camera.flip`
 
   파이보의 카메라를 제어합니다.

@@ -3,6 +3,7 @@ import math
 def calculate_angle(p1, p2, p3):
   """
   세 점 p1-p2-p3의 각도를 구합니다. (p2 중심)
+  
   :param tuple: p1, p2, p3: 각 점을 (x, y)
   :returns: p1-p2-p3 각의 크기 (도 단위)
   """
