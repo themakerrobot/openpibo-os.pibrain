@@ -20,8 +20,13 @@ $('#fullscreen_bt').on('click', ()=>{
 });
 
 $('#guide_bt').on('click', () => {
-  window.open('https://themakerrobot.github.io/openpibo-python/build/html/index.html');
+  window.open('https://themakerrobot.github.io/openpibo-os.pibrain/build/html/index.html');
 });
+
+$('#classifier_bt').on('click', () => {
+  window.open(`http://${location.hostname}:50010`);
+});
+
 
 const init_usedata = {
   staytime:0, 

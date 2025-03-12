@@ -40,6 +40,9 @@ cd /home/pi/openpibo-os/system;sudo /home/pi/.pyenv/bin/python3 booting.py &
 cd /home/pi/openpibo-os/ide;sudo /home/pi/.pyenv/bin/python3 run_ide.py &
 #cd /home/pi/openpibo-os/tools;sudo /home/pi/.pyenv/bin/python3 run_tools.py &
 
+# classifier server
+cd /home/pi/openpibo-os/classifier;sudo  /home/pi/.pyenv/bin/python3 main.py &
+
 # Amp init
 #sudo gpio mode 7 out
 #sudo gpio write 7 1

@@ -788,7 +788,10 @@
           event.target.value = '';
         }
       });
+
+      window.addEventListener('beforeunload', (evt) => {
+        socket.emit('control_cam', false);
+      });
   </script>
-  <input type="file" id="model-convert-upload" style="display:none" accept=".zip">
 </body>
 </html>

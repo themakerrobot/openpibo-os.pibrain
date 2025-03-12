@@ -75,12 +75,12 @@ def TimerStart(interval, func, daemon=True):
 # ---------------------------------
 def vision_loop():
     # FPS 설정 (예: 10)
-    print(' [vision_loop]: START')
+    # print(' [vision_loop]: START')
     while vision_en:
         img = camera.read()
         # Socket.IO로 'image' 이벤트 전송 (Base64)
         asyncio.run(emit('camera_image', to_base64(img)))
-    print(' [vision_loop]: EXIT')
+    # print(' [vision_loop]: EXIT')
 
 # ---------------------------------
 # Socket.IO에서 메시지 보낼 때 사용
@@ -97,6 +97,22 @@ async def emit(key, data, callback=None):
 @app.get('/', response_class=HTMLResponse)
 async def f(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
+
+@app.get('/control_cam')
+async def control_cam_f(d: str):
+    global vision_en, camera  
+    # 락을 사용하여 동시에 한 작업만 수행되도록 함
+    with camera_lock:
+        if d == "on":  # 카메라 활성화
+            if camera is None:
+                camera = Camera()
+            vision_en = True
+            TimerStart(1, vision_loop, True)
+        else:  # 카메라 비활성화
+            vision_en = False
+            if camera is not None:
+                camera.release()
+                camera = None
 
 # ---------------------------------
 # Socket.IO 이벤트: 카메라 ON/OFF
@@ -122,9 +138,9 @@ async def control_cam(sid, d=None):
 # ---------------------------------
 def cleanup_work_dir(work_dir):
     """ZIP 파일 반환 후 작업 디렉토리 삭제"""
-    print(f"🧹 작업 디렉토리 삭제 시작: {work_dir}")
+    # print(f"🧹 작업 디렉토리 삭제 시작: {work_dir}")
     shutil.rmtree(work_dir, ignore_errors=True)
-    print(f"✅ 작업 디렉토리 삭제 완료: {work_dir}")
+    # print(f"✅ 작업 디렉토리 삭제 완료: {work_dir}")
 
 @app.post("/convert")
 async def convert_tfjs_to_keras_api(tfjs_zip: UploadFile = File(...), background_tasks: BackgroundTasks = BackgroundTasks()):
@@ -138,7 +154,7 @@ async def convert_tfjs_to_keras_api(tfjs_zip: UploadFile = File(...), background
     # ✅ 임시 작업 디렉토리 생성
     work_dir = f"tmp_{uuid.uuid4()}"
     os.makedirs(work_dir, exist_ok=True)
-    print(f"📂 작업 디렉토리 생성: {work_dir}")
+    # print(f"📂 작업 디렉토리 생성: {work_dir}")
 
     try:
         # ✅ 업로드된 ZIP 파일 저장
@@ -149,7 +165,7 @@ async def convert_tfjs_to_keras_api(tfjs_zip: UploadFile = File(...), background
         # ✅ ZIP 해제
         with zipfile.ZipFile(zip_path, 'r') as zip_ref:
             zip_ref.extractall(work_dir)
-        print(f"✅ ZIP 파일 해제 완료: {zip_path}")
+        # print(f"✅ ZIP 파일 해제 완료: {zip_path}")
 
         # ✅ labels.txt 확인
         label_path = os.path.join(work_dir, "labels.txt")
@@ -169,7 +185,7 @@ async def convert_tfjs_to_keras_api(tfjs_zip: UploadFile = File(...), background
         h5_path = os.path.join(work_dir, "model.keras")
         try:
             convert_tfjs_to_keras(tfjs_model_dir, h5_path)
-            print(f"✅ TFJS → keras 변환 완료: {h5_path}")
+            # print(f"✅ TFJS → keras 변환 완료: {h5_path}")
         except Exception as e:
             return JSONResponse({"error": f"❌ H5 변환 중 오류 발생: {str(e)}"}, status_code=500)
 
@@ -180,11 +196,11 @@ async def convert_tfjs_to_keras_api(tfjs_zip: UploadFile = File(...), background
         # ✅ ZIP 파일 생성
         output_zip_path = os.path.join(work_dir, "converted_keras.zip")
         try:
-            print(f"📦 ZIP 파일 생성 시작: {output_zip_path}")
+            # print(f"📦 ZIP 파일 생성 시작: {output_zip_path}")
             with zipfile.ZipFile(output_zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
                 zipf.write(h5_path, arcname="model.keras")
                 zipf.write(label_path, arcname="labels.txt")
-            print(f"✅ ZIP 파일 생성 완료: {output_zip_path}")
+            # print(f"✅ ZIP 파일 생성 완료: {output_zip_path}")
         except Exception as e:
             return JSONResponse({"error": f"❌ ZIP 파일 생성 중 오류 발생: {str(e)}"}, status_code=500)
 
@@ -194,15 +210,14 @@ async def convert_tfjs_to_keras_api(tfjs_zip: UploadFile = File(...), background
 
         # ✅ ZIP 파일 반환 후 작업 디렉토리 삭제 (비동기 처리)
         background_tasks.add_task(cleanup_work_dir, work_dir)
-        print(f"📤 변환된 ZIP 파일 반환: {output_zip_path}")
+        # print(f"📤 변환된 ZIP 파일 반환: {output_zip_path}")
         return FileResponse(
             path=output_zip_path,
             filename="converted_keras.zip",
             media_type="application/octet-stream"
         )
-
     except Exception as e:
-        print(f"❌ 변환 중 오류: {e}")
+        # print(f"❌ 변환 중 오류: {e}")
         return JSONResponse({"error": f"서버 내부 오류: {str(e)}"}, status_code=500)
 
 # ---------------------------------
@@ -210,7 +225,7 @@ async def convert_tfjs_to_keras_api(tfjs_zip: UploadFile = File(...), background
 # ---------------------------------
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--port', help='set port number', default=8000)
+    parser.add_argument('--port', help='set port number', default=50010)
     args = parser.parse_args()
 
     import uvicorn

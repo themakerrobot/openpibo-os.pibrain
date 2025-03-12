@@ -1667,8 +1667,8 @@ Functions:
     base_model = tf.keras.applications.MobileNetV2(input_shape=(224, 224, 3), include_top=False, pooling="avg")
     self.feature_extractor = tf.keras.Model(inputs=base_model.input, outputs=base_model.output)
 
-    print(f"✅ 모델 로드 완료: {model_path}")
-    print(f"✅ 레이블 로드 완료: {self.class_names}")
+    # print(f"✅ 모델 로드 완료: {model_path}")
+    # print(f"✅ 레이블 로드 완료: {self.class_names}")
 
   def predict(self, img):
     """
