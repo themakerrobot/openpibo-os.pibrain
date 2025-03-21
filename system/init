@@ -27,20 +27,25 @@ mkdir -p /home/pi/mymodel
 
 # motor init
 #servo init
+echo "START - uart_ctrl.py"
 cd /home/pi/openpibo-os/system;sudo /home/pi/.pyenv/bin/python3 uart_ctrl.py &
 
 # ap start
+echo "START - ap-start"
 sudo /home/pi/openpibo-os/system/hotspot.sh start
 
 # network init
+echo "START - booting.py"
 cd /home/pi/openpibo-os/system;sudo /home/pi/.pyenv/bin/python3 booting.py &
 
 # run server
+echo "START - run_ide.py"
 #cd /home/pi/openpibo-os/ide;sudo node main.js &
 cd /home/pi/openpibo-os/ide;sudo /home/pi/.pyenv/bin/python3 run_ide.py &
 #cd /home/pi/openpibo-os/tools;sudo /home/pi/.pyenv/bin/python3 run_tools.py &
 
 # classifier server
+echo "START - classifier.py"
 cd /home/pi/openpibo-os/classifier;sudo  /home/pi/.pyenv/bin/python3 main.py &
 
 # Amp init

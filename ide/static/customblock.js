@@ -1196,8 +1196,7 @@ Blockly.defineBlocksWithJsonArray(
           },
           {"type": "field_dropdown", "name":"voice",
            "options":[
-              ['main','main'],['man','man1'],['woman','woman1'],['boy','boy'],['girl','girl'],
-              ['gtts', 'gtts'],['espeak','espeak'],['ondevice', 'ondevice']
+              ['main','main'],['man','man1'],['woman','woman1'],['boy','boy'],['girl','girl']
             ]
           },
         ],
@@ -1208,7 +1207,39 @@ Blockly.defineBlocksWithJsonArray(
       tooltip: '%{BKY_SPEECH_TTS_TOOLTIP}',
       helpUrl: ''
     },
-
+    {
+      type: 'speech_tts_play',
+      message0: '%{BKY_SPEECH_TTS_PLAY}',
+      args0:
+        [
+          {
+            "type": "field_image",
+            "src": "svg/bolt-solid.svg",
+            "width": 15,
+            "height": 20
+          },
+          {
+            "type": "field_image",
+            "src": "svg/file-audio-solid.svg",
+            "width": 27,
+            "height": 27
+          },
+          {"type":"input_dummy"},
+          {"type": "input_value", "name": "text", "check":"String"},
+          {"type": "field_dropdown", "name":"voice",
+           "options":[
+              ['main','main'],['man','man1'],['woman','woman1'],['boy','boy'],['girl','girl']
+            ]
+          },
+          {"type": "input_value", "name": "volume", "check":"Number"}
+        ],
+      nextStatement: true,
+      previousStatement: true,
+      inputsInline: true,
+      colour: color_type["speech"],
+      tooltip: '%{BKY_SPEECH_TTS_PLAY_TOOLTIP}',
+      helpUrl: ''
+    },
     {
       type: 'speech_gtts',
       message0: '%{BKY_SPEECH_GTTS}',
@@ -1265,7 +1296,116 @@ Blockly.defineBlocksWithJsonArray(
       tooltip: '%{BKY_SPEECH_GTTS_TOOLTIP}',
       helpUrl: ''
     },
-
+    {
+      type: 'speech_gtts_play',
+      message0: '%{BKY_SPEECH_GTTS_PLAY}',
+      args0:
+        [
+          {
+            "type": "field_image",
+            "src": "svg/bolt-solid.svg",
+            "width": 15,
+            "height": 20
+          },
+          {
+            "type": "field_image",
+            "src": "svg/file-audio-solid.svg",
+            "width": 27,
+            "height": 27
+          },
+          {"type":"input_dummy"},
+          {"type": "input_value", "name": "text", "check":"String"},
+          {"type": "field_dropdown", "name":"lang",
+           "options":[
+              ['%{BKY_LANG_KO}','ko'],
+              ['%{BKY_LANG_EN}','en'],
+              ['%{BKY_LANG_ES}','es'],
+              ['%{BKY_LANG_FR}','fr'],
+              ['%{BKY_LANG_DE}','de'],
+              ['%{BKY_LANG_ZHCN}','zh-CN'],
+              ['%{BKY_LANG_JA}','ja'],
+              ['%{BKY_LANG_RU}','ru'],
+              ['%{BKY_LANG_AR}','ar'],
+              ['%{BKY_LANG_HI}','hi'],
+              ['%{BKY_LANG_LA}','la'],
+              ['%{BKY_LANG_MS}','ms']
+            ]
+          },
+          {"type": "input_value", "name": "volume", "check":"Number"}
+        ],
+      nextStatement: true,
+      previousStatement: true,
+      inputsInline: true,
+      colour: color_type["speech"],
+      tooltip: '%{BKY_SPEECH_GTTS_TOOLTIP}',
+      helpUrl: ''
+    },
+    {
+      type: 'speech_otts',
+      message0: '%{BKY_SPEECH_OTTS}',
+      args0:
+        [
+          {
+            "type": "field_image",
+            "src": "svg/file-audio-solid.svg",
+            "width": 27,
+            "height": 27
+          },
+          {"type":"input_dummy"},
+          {"type": "input_value", "name": "text", "check":"String"},
+          {"type": "field_dropdown", "name":"dir",
+            "options":[
+              [ '%{BKY_FOLDER_SELECT}', ''],
+              [ 'code', '/home/pi/code/' ],
+              [ 'myaudio', '/home/pi/myaudio/' ],
+            ]
+          },
+          {"type": "input_value", "name": "filename", "check":"String"},
+          {
+            "type": "field_dropdown",
+            "name": "extension",
+            "options": [['mp3', '.mp3'], ['wav', '.wav'],['-', '']]
+          },
+          {"type": "field_dropdown", "name":"voice",
+           "options":[
+              ['espeak','espeak'],['ondevice', 'ondevice']
+            ]
+          },
+        ],
+      nextStatement: true,
+      previousStatement: true,
+      inputsInline: true,
+      colour: color_type["speech"],
+      tooltip: '%{BKY_SPEECH_OTTS_TOOLTIP}',
+      helpUrl: ''
+    },
+    {
+      type: 'speech_otts_play',
+      message0: '%{BKY_SPEECH_OTTS_PLAY}',
+      args0:
+        [
+          {
+            "type": "field_image",
+            "src": "svg/file-audio-solid.svg",
+            "width": 27,
+            "height": 27
+          },
+          {"type":"input_dummy"},
+          {"type": "input_value", "name": "text", "check":"String"},
+          {"type": "field_dropdown", "name":"voice",
+           "options":[
+              ['espeak','espeak'],['ondevice', 'ondevice']
+            ]
+          },
+          {"type": "input_value", "name": "volume", "check":"Number"}
+        ],
+      nextStatement: true,
+      previousStatement: true,
+      inputsInline: true,
+      colour: color_type["speech"],
+      tooltip: '%{BKY_SPEECH_OTTS_PLAY_TOOLTIP}',
+      helpUrl: ''
+    },
     {
       type: 'speech_translate',
       message0: '%{BKY_SPEECH_TRANSLATE}',

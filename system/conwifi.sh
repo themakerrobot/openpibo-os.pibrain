@@ -88,7 +88,7 @@ case $1 in
 
   wpa-psk)
     if [ $# -ne 3 ]; then
-      echo "Usage: sudo $0 wpa <SSID> <PSK>"
+      echo "Usage: sudo $0 wpa-psk <SSID> <PSK>"
       exit 1
     fi
     SSID="$2"
