@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>색인 &mdash; OPENPIBO 0.9.2.75 문서</title>
+  <title>색인 &mdash; OPENPIBO 0.9.2.76 문서</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
     <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python/genindex.html" />
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=1bd0c85c"></script>
+      <script src="_static/documentation_options.js?v=2c284236"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -63,7 +63,9 @@
 <li class="toctree-l1"><a class="reference internal" href="libraries/motion.html">motion</a></li>
 <li class="toctree-l1"><a class="reference internal" href="libraries/oled.html">oled</a></li>
 <li class="toctree-l1"><a class="reference internal" href="libraries/speech.html">speech</a></li>
-<li class="toctree-l1"><a class="reference internal" href="libraries/vision.html">vision</a></li>
+<li class="toctree-l1"><a class="reference internal" href="libraries/vision_camera.html">vision_camera</a></li>
+<li class="toctree-l1"><a class="reference internal" href="libraries/vision_recognize.html">vision_recognize</a></li>
+<li class="toctree-l1"><a class="reference internal" href="libraries/vision_classify.html">vision_classify</a></li>
 <li class="toctree-l1"><a class="reference internal" href="libraries/utils.html">utils</a></li>
 </ul>
 
@@ -116,13 +118,13 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="libraries/vision.html#openpibo.vision.Face.analyze_face">analyze_face() (openpibo.vision.Face 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Face.analyze_face">analyze_face() (openpibo.vision_recognize.Face 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Face.analyze_face_vis">analyze_face_vis() (openpibo.vision.Face 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Face.analyze_face_vis">analyze_face_vis() (openpibo.vision_recognize.Face 메서드)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="libraries/vision.html#openpibo.vision.Detect.analyze_pose">analyze_pose() (openpibo.vision.Detect 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Detect.analyze_pose">analyze_pose() (openpibo.vision_recognize.Detect 메서드)</a>
 </li>
       <li><a href="libraries/audio.html#openpibo.audio.Audio">Audio (openpibo.audio 클래스)</a>
 </li>
@@ -134,18 +136,14 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="libraries/utils.html#openpibo.utils.calculate_angle">calculate_angle() (openpibo.utils 모듈)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Face.calculate_head_orientation">calculate_head_orientation() (openpibo.vision.Face 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Face.calculate_head_orientation">calculate_head_orientation() (openpibo.vision_recognize.Face 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Camera">Camera (openpibo.vision 클래스)</a>
+      <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera">Camera (openpibo.vision_camera 클래스)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Camera.circle">circle() (openpibo.vision.Camera 메서드)</a>
-</li>
-      <li><a href="libraries/vision.html#openpibo.vision.Classifier">Classifier (openpibo.vision 클래스)</a>
+      <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera.circle">circle() (openpibo.vision_camera.Camera 메서드)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="libraries/vision.html#openpibo.vision.Detect.classify_image">classify_image() (openpibo.vision.Detect 메서드)</a>
-</li>
       <li><a href="libraries/oled.html#openpibo.oled.Oled.clear">clear() (openpibo.oled.Oled 메서드)</a>
 
       <ul>
@@ -154,7 +152,9 @@
       </ul></li>
       <li><a href="libraries/device.html#openpibo.device.Device.code_list">code_list (openpibo.device.Device의 속성)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Camera.create_matte">create_matte() (openpibo.vision.Camera 메서드)</a>
+      <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera.create_matte">create_matte() (openpibo.vision_camera.Camera 메서드)</a>
+</li>
+      <li><a href="libraries/vision_classify.html#openpibo.vision_classify.CustomClassifier">CustomClassifier (openpibo.vision_classify 클래스)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -162,35 +162,35 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="libraries/vision.html#openpibo.vision.Face.delete_face">delete_face() (openpibo.vision.Face 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Face.delete_face">delete_face() (openpibo.vision_recognize.Face 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Camera.detailEnhance">detailEnhance() (openpibo.vision.Camera 메서드)</a>
+      <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera.detailEnhance">detailEnhance() (openpibo.vision_camera.Camera 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Detect">Detect (openpibo.vision 클래스)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Detect">Detect (openpibo.vision_recognize 클래스)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Face.detect_face">detect_face() (openpibo.vision.Face 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Face.detect_face">detect_face() (openpibo.vision_recognize.Face 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Face.detect_face_vis">detect_face_vis() (openpibo.vision.Face 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Face.detect_face_vis">detect_face_vis() (openpibo.vision_recognize.Face 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Detect.detect_marker">detect_marker() (openpibo.vision.Detect 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Detect.detect_marker">detect_marker() (openpibo.vision_recognize.Detect 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Detect.detect_marker_vis">detect_marker_vis() (openpibo.vision.Detect 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Detect.detect_marker_vis">detect_marker_vis() (openpibo.vision_recognize.Detect 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Face.detect_mesh">detect_mesh() (openpibo.vision.Face 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Face.detect_mesh">detect_mesh() (openpibo.vision_recognize.Face 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Face.detect_mesh_vis">detect_mesh_vis() (openpibo.vision.Face 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Face.detect_mesh_vis">detect_mesh_vis() (openpibo.vision_recognize.Face 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Detect.detect_object">detect_object() (openpibo.vision.Detect 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Detect.detect_object">detect_object() (openpibo.vision_recognize.Detect 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Detect.detect_object_vis">detect_object_vis() (openpibo.vision.Detect 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Detect.detect_object_vis">detect_object_vis() (openpibo.vision_recognize.Detect 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Detect.detect_pose">detect_pose() (openpibo.vision.Detect 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Detect.detect_pose">detect_pose() (openpibo.vision_recognize.Detect 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Detect.detect_pose_vis">detect_pose_vis() (openpibo.vision.Detect 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Detect.detect_pose_vis">detect_pose_vis() (openpibo.vision_recognize.Detect 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Detect.detect_qr">detect_qr() (openpibo.vision.Detect 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Detect.detect_qr">detect_qr() (openpibo.vision_recognize.Detect 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Detect.detect_qr_vis">detect_qr_vis() (openpibo.vision.Detect 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Detect.detect_qr_vis">detect_qr_vis() (openpibo.vision_recognize.Detect 메서드)</a>
 </li>
       <li><a href="libraries/device.html#openpibo.device.Device">Device (openpibo.device 클래스)</a>
 </li>
@@ -202,7 +202,7 @@
 </li>
       <li><a href="libraries/speech.html#openpibo.speech.Dialog.diff_ngram">diff_ngram() (openpibo.speech.Dialog 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Camera.draw_bitmap">draw_bitmap() (openpibo.vision.Camera 메서드)</a>
+      <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera.draw_bitmap">draw_bitmap() (openpibo.vision_camera.Camera 메서드)</a>
 </li>
       <li><a href="libraries/oled.html#openpibo.oled.Oled.draw_data">draw_data() (openpibo.oled.Oled 메서드)</a>
 
@@ -246,7 +246,7 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="libraries/vision.html#openpibo.vision.Camera.edgePreservingFilter">edgePreservingFilter() (openpibo.vision.Camera 메서드)</a>
+      <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera.edgePreservingFilter">edgePreservingFilter() (openpibo.vision_camera.Camera 메서드)</a>
 </li>
       <li><a href="libraries/device.html#openpibo.device.Device.eye_off">eye_off() (openpibo.device.Device 메서드)</a>
 </li>
@@ -262,11 +262,11 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="libraries/vision.html#openpibo.vision.Face">Face (openpibo.vision 클래스)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Face">Face (openpibo.vision_recognize 클래스)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="libraries/vision.html#openpibo.vision.Camera.flip">flip() (openpibo.vision.Camera 메서드)</a>
+      <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera.flip">flip() (openpibo.vision_camera.Camera 메서드)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -274,7 +274,7 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="libraries/vision.html#openpibo.vision.Face.get_angle_between_lines">get_angle_between_lines() (openpibo.vision.Face 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Face.get_angle_between_lines">get_angle_between_lines() (openpibo.vision_recognize.Face 메서드)</a>
 </li>
       <li><a href="libraries/device.html#openpibo.device.Device.get_battery">get_battery() (openpibo.device.Device 메서드)</a>
 </li>
@@ -284,7 +284,7 @@
         <li><a href="libraries/device.html#openpibo.device.DeviceByPiBrain.get_button">(openpibo.device.DeviceByPiBrain 메서드)</a>
 </li>
       </ul></li>
-      <li><a href="libraries/vision.html#openpibo.vision.Face.get_db">get_db() (openpibo.vision.Face 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Face.get_db">get_db() (openpibo.vision_recognize.Face 메서드)</a>
 </li>
       <li><a href="libraries/device.html#openpibo.device.Device.get_dc">get_dc() (openpibo.device.Device 메서드)</a>
 </li>
@@ -308,7 +308,7 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="libraries/vision.html#openpibo.vision.Camera.imread">imread() (openpibo.vision.Camera 메서드)</a>
+      <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera.imread">imread() (openpibo.vision_camera.Camera 메서드)</a>
 </li>
       <li><a href="libraries/oled.html#openpibo.oled.Oled.imshow">imshow() (openpibo.oled.Oled 메서드)</a>
 
@@ -318,11 +318,11 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="libraries/vision.html#openpibo.vision.Camera.imshow_to_ide">imshow_to_ide() (openpibo.vision.Camera 메서드)</a>
+      <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera.imshow_to_ide">imshow_to_ide() (openpibo.vision_camera.Camera 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Camera.imwrite">imwrite() (openpibo.vision.Camera 메서드)</a>
+      <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera.imwrite">imwrite() (openpibo.vision_camera.Camera 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Face.init_db">init_db() (openpibo.vision.Face 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Face.init_db">init_db() (openpibo.vision_recognize.Face 메서드)</a>
 </li>
       <li><a href="libraries/oled.html#openpibo.oled.Oled.invert">invert() (openpibo.oled.Oled 메서드)</a>
 </li>
@@ -332,9 +332,9 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="libraries/vision.html#openpibo.vision.Face.landmark_face">landmark_face() (openpibo.vision.Face 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Face.landmark_face">landmark_face() (openpibo.vision_recognize.Face 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Face.landmark_face_vis">landmark_face_vis() (openpibo.vision.Face 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Face.landmark_face_vis">landmark_face_vis() (openpibo.vision_recognize.Face 메서드)</a>
 </li>
       <li><a href="libraries/device.html#openpibo.device.DeviceByPiBrain.led_off">led_off() (openpibo.device.DeviceByPiBrain 메서드)</a>
 </li>
@@ -344,19 +344,19 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="libraries/vision.html#openpibo.vision.Camera.line">line() (openpibo.vision.Camera 메서드)</a>
+      <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera.line">line() (openpibo.vision_camera.Camera 메서드)</a>
 </li>
       <li><a href="libraries/speech.html#openpibo.speech.Dialog.load">load() (openpibo.speech.Dialog 메서드)</a>
 
       <ul>
-        <li><a href="libraries/vision.html#openpibo.vision.Classifier.load">(openpibo.vision.Classifier 메서드)</a>
+        <li><a href="libraries/vision_classify.html#openpibo.vision_classify.CustomClassifier.load">(openpibo.vision_classify.CustomClassifier 메서드)</a>
 </li>
-        <li><a href="libraries/vision.html#openpibo.vision.TeachableMachine.load">(openpibo.vision.TeachableMachine 메서드)</a>
+        <li><a href="libraries/vision_classify.html#openpibo.vision_classify.TeachableMachine.load">(openpibo.vision_classify.TeachableMachine 메서드)</a>
 </li>
       </ul></li>
-      <li><a href="libraries/vision.html#openpibo.vision.Face.load_db">load_db() (openpibo.vision.Face 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Face.load_db">load_db() (openpibo.vision_recognize.Face 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Detect.load_hand_gesture_model">load_hand_gesture_model() (openpibo.vision.Detect 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Detect.load_hand_gesture_model">load_hand_gesture_model() (openpibo.vision_recognize.Detect 메서드)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -382,7 +382,11 @@
 </li>
         <li><a href="libraries/utils.html#module-openpibo.utils">openpibo.utils</a>
 </li>
-        <li><a href="libraries/vision.html#module-openpibo.vision">openpibo.vision</a>
+        <li><a href="libraries/vision_camera.html#module-openpibo.vision_camera">openpibo.vision_camera</a>
+</li>
+        <li><a href="libraries/vision_classify.html#module-openpibo.vision_classify">openpibo.vision_classify</a>
+</li>
+        <li><a href="libraries/vision_recognize.html#module-openpibo.vision_recognize">openpibo.vision_recognize</a>
 </li>
       </ul></li>
   </ul></td>
@@ -409,7 +413,7 @@
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="libraries/vision.html#openpibo.vision.Detect.object_tracker_init">object_tracker_init() (openpibo.vision.Detect 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Detect.object_tracker_init">object_tracker_init() (openpibo.vision_recognize.Detect 메서드)</a>
 </li>
       <li><a href="libraries/oled.html#openpibo.oled.Oled">Oled (openpibo.oled 클래스)</a>
 </li>
@@ -436,8 +440,6 @@
         <li><a href="libraries/device.html#module-openpibo.device">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     openpibo.motion
 
@@ -445,6 +447,8 @@
         <li><a href="libraries/motion.html#module-openpibo.motion">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     openpibo.oled
 
@@ -467,10 +471,24 @@
 </li>
       </ul></li>
       <li>
-    openpibo.vision
+    openpibo.vision_camera
 
       <ul>
-        <li><a href="libraries/vision.html#module-openpibo.vision">module</a>
+        <li><a href="libraries/vision_camera.html#module-openpibo.vision_camera">module</a>
+</li>
+      </ul></li>
+      <li>
+    openpibo.vision_classify
+
+      <ul>
+        <li><a href="libraries/vision_classify.html#module-openpibo.vision_classify">module</a>
+</li>
+      </ul></li>
+      <li>
+    openpibo.vision_recognize
+
+      <ul>
+        <li><a href="libraries/vision_recognize.html#module-openpibo.vision_recognize">module</a>
 </li>
       </ul></li>
   </ul></td>
@@ -479,21 +497,21 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="libraries/vision.html#openpibo.vision.Camera.pencilSketch">pencilSketch() (openpibo.vision.Camera 메서드)</a>
+      <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera.pencilSketch">pencilSketch() (openpibo.vision_camera.Camera 메서드)</a>
 </li>
       <li><a href="libraries/audio.html#openpibo.audio.Audio.play">play() (openpibo.audio.Audio 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Classifier.predict">predict() (openpibo.vision.Classifier 메서드)</a>
+      <li><a href="libraries/vision_classify.html#openpibo.vision_classify.CustomClassifier.predict">predict() (openpibo.vision_classify.CustomClassifier 메서드)</a>
 
       <ul>
-        <li><a href="libraries/vision.html#openpibo.vision.TeachableMachine.predict">(openpibo.vision.TeachableMachine 메서드)</a>
+        <li><a href="libraries/vision_classify.html#openpibo.vision_classify.TeachableMachine.predict">(openpibo.vision_classify.TeachableMachine 메서드)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="libraries/vision.html#openpibo.vision.Camera.putText">putText() (openpibo.vision.Camera 메서드)</a>
+      <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera.putText">putText() (openpibo.vision_camera.Camera 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Camera.putTextPIL">putTextPIL() (openpibo.vision.Camera 메서드)</a>
+      <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera.putTextPIL">putTextPIL() (openpibo.vision_camera.Camera 메서드)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -501,29 +519,29 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="libraries/vision.html#openpibo.vision.Camera.read">read() (openpibo.vision.Camera 메서드)</a>
+      <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera.read">read() (openpibo.vision_camera.Camera 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Face.recognize">recognize() (openpibo.vision.Face 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Face.recognize">recognize() (openpibo.vision_recognize.Face 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Detect.recognize_hand_gesture">recognize_hand_gesture() (openpibo.vision.Detect 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Detect.recognize_hand_gesture">recognize_hand_gesture() (openpibo.vision_recognize.Detect 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Detect.recognize_hand_gesture_vis">recognize_hand_gesture_vis() (openpibo.vision.Detect 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Detect.recognize_hand_gesture_vis">recognize_hand_gesture_vis() (openpibo.vision_recognize.Detect 메서드)</a>
 </li>
       <li><a href="libraries/audio.html#openpibo.audio.Audio.record">record() (openpibo.audio.Audio 메서드)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="libraries/vision.html#openpibo.vision.Camera.rectangle">rectangle() (openpibo.vision.Camera 메서드)</a>
+      <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera.rectangle">rectangle() (openpibo.vision_camera.Camera 메서드)</a>
 </li>
       <li><a href="libraries/collect.html#openpibo.collect.Weather.region_list">region_list (openpibo.collect.Weather의 속성)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Camera.release">release() (openpibo.vision.Camera 메서드)</a>
+      <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera.release">release() (openpibo.vision_camera.Camera 메서드)</a>
 </li>
       <li><a href="libraries/speech.html#openpibo.speech.Dialog.reset">reset() (openpibo.speech.Dialog 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Camera.resize">resize() (openpibo.vision.Camera 메서드)</a>
+      <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera.resize">resize() (openpibo.vision_camera.Camera 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Camera.rotate">rotate() (openpibo.vision.Camera 메서드)</a>
+      <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera.rotate">rotate() (openpibo.vision_camera.Camera 메서드)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -531,7 +549,7 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="libraries/vision.html#openpibo.vision.Face.save_db">save_db() (openpibo.vision.Face 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Face.save_db">save_db() (openpibo.vision_recognize.Face 메서드)</a>
 </li>
       <li><a href="libraries/collect.html#openpibo.collect.News.search">search() (openpibo.collect.News 메서드)</a>
 
@@ -597,7 +615,7 @@
       </ul></li>
       <li><a href="libraries/speech.html#openpibo.speech.Speech.stt">stt() (openpibo.speech.Speech 메서드)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Camera.stylization">stylization() (openpibo.vision.Camera 메서드)</a>
+      <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera.stylization">stylization() (openpibo.vision_camera.Camera 메서드)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -605,15 +623,15 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="libraries/vision.html#openpibo.vision.TeachableMachine">TeachableMachine (openpibo.vision 클래스)</a>
+      <li><a href="libraries/vision_classify.html#openpibo.vision_classify.TeachableMachine">TeachableMachine (openpibo.vision_classify 클래스)</a>
 </li>
       <li><a href="libraries/collect.html#openpibo.collect.News.topic_list">topic_list (openpibo.collect.News의 속성)</a>
 </li>
-      <li><a href="libraries/vision.html#openpibo.vision.Detect.track_object">track_object() (openpibo.vision.Detect 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Detect.track_object">track_object() (openpibo.vision_recognize.Detect 메서드)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="libraries/vision.html#openpibo.vision.Face.train_face">train_face() (openpibo.vision.Face 메서드)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Face.train_face">train_face() (openpibo.vision_recognize.Face 메서드)</a>
 </li>
       <li><a href="libraries/speech.html#openpibo.speech.Dialog.translate">translate() (openpibo.speech.Dialog 메서드)</a>
 </li>
@@ -625,7 +643,7 @@
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="libraries/vision.html#openpibo.vision.vision_api">vision_api() (openpibo.vision 모듈)</a>
+      <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.vision_api">vision_api() (openpibo.vision_recognize 모듈)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -651,7 +669,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024 THEMAKER. All rights reserved. openpibo-python-0.9.2.75.</p>
+    <p>&#169; Copyright 2025 THEMAKER. All rights reserved. openpibo-python-0.9.2.76.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

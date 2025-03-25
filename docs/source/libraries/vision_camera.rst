@@ -1,7 +1,7 @@
-vision
+vision_camera
 =====================================================
 
-.. automodule:: openpibo.vision
+.. automodule:: openpibo.vision_camera
     :members:
     :undoc-members:
     :show-inheritance:

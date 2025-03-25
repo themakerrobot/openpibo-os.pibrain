@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>openpibo.speech &mdash; OPENPIBO 0.9.2.75 문서</title>
+  <title>openpibo.speech &mdash; OPENPIBO 0.9.2.76 문서</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
     <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python/_modules/openpibo/speech.html" />
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=1bd0c85c"></script>
+      <script src="../../_static/documentation_options.js?v=2c284236"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -63,7 +63,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/motion.html">motion</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/oled.html">oled</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/speech.html">speech</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision.html">vision</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_camera.html">vision_camera</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_recognize.html">vision_recognize</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_classify.html">vision_classify</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/utils.html">utils</a></li>
 </ul>
 
@@ -109,7 +111,7 @@
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">napi_host</span><span class="p">,</span> <span class="n">sapi_host</span>
 <span class="kn">from</span> <span class="nn">.modules.speech.mtranslate</span> <span class="kn">import</span> <span class="n">translate</span>
-<span class="kn">from</span> <span class="nn">.modules.speech.mtts</span> <span class="kn">import</span> <span class="n">OndeviceTTS</span>
+<span class="c1"># from .modules.speech.mtts import OndeviceTTS</span>
 <span class="kn">import</span> <span class="nn">openpibo_models</span>
 <span class="c1">#current_path = os.path.dirname(os.path.realpath(__file__))</span>
 
@@ -152,7 +154,7 @@
 
   <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">SAPI_HOST</span> <span class="o">=</span> <span class="n">sapi_host</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">ondevice_tts</span> <span class="o">=</span> <span class="n">OndeviceTTS</span><span class="p">()</span>
+    <span class="c1"># self.ondevice_tts = OndeviceTTS()</span>
 
 <div class="viewcode-block" id="Speech.tts">
 <a class="viewcode-back" href="../../libraries/speech.html#openpibo.speech.Speech.tts">[문서]</a>
@@ -184,10 +186,10 @@
     <span class="c1">#if type(lang) is not str or lang not in (&#39;en&#39;, &#39;ko&#39;):</span>
     <span class="c1">#  raise Exception(f&#39;&quot;{lang}&quot; must be (en|ko)&#39;)</span>
 
-    <span class="k">if</span> <span class="n">voice</span> <span class="o">==</span> <span class="s2">&quot;ondevice&quot;</span><span class="p">:</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">ondevice_tts</span><span class="o">.</span><span class="n">tts</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">string</span><span class="p">,</span> <span class="n">voice</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
-      <span class="k">return</span>
-    <span class="k">elif</span> <span class="n">voice</span> <span class="o">==</span> <span class="s2">&quot;espeak&quot;</span><span class="p">:</span>
+    <span class="c1"># if voice == &quot;ondevice&quot;:</span>
+    <span class="c1">#   self.ondevice_tts.tts(text=string, voice=5, filename=filename)</span>
+    <span class="c1">#   return</span>
+    <span class="k">if</span> <span class="n">voice</span> <span class="o">==</span> <span class="s2">&quot;espeak&quot;</span><span class="p">:</span>
       <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;espeak-ng &quot;</span><span class="si">{</span><span class="n">string</span><span class="si">}</span><span class="s1">&quot; -w </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
       <span class="k">return</span>
     <span class="k">elif</span> <span class="n">voice</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;gtts&quot;</span><span class="p">,</span> <span class="s2">&quot;e_gtts&quot;</span><span class="p">]:</span>
@@ -519,7 +521,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024 THEMAKER. All rights reserved. openpibo-python-0.9.2.75.</p>
+    <p>&#169; Copyright 2025 THEMAKER. All rights reserved. openpibo-python-0.9.2.76.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -15,7 +15,7 @@ import os
 import requests
 from . import napi_host, sapi_host
 from .modules.speech.mtranslate import translate
-from .modules.speech.mtts import OndeviceTTS
+# from .modules.speech.mtts import OndeviceTTS
 import openpibo_models
 #current_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -53,7 +53,7 @@ Functions:
 
   def __init__(self):
     self.SAPI_HOST = sapi_host
-    self.ondevice_tts = OndeviceTTS()
+    # self.ondevice_tts = OndeviceTTS()
 
   def tts(self, string, filename="tts.mp3", voice="main", lang="ko"):
     """
@@ -83,10 +83,10 @@ Functions:
     #if type(lang) is not str or lang not in ('en', 'ko'):
     #  raise Exception(f'"{lang}" must be (en|ko)')
 
-    if voice == "ondevice":
-      self.ondevice_tts.tts(text=string, voice=5, filename=filename)
-      return
-    elif voice == "espeak":
+    # if voice == "ondevice":
+    #   self.ondevice_tts.tts(text=string, voice=5, filename=filename)
+    #   return
+    if voice == "espeak":
       os.system(f'espeak-ng "{string}" -w {filename}')
       return
     elif voice in ["gtts", "e_gtts"]:

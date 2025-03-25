@@ -2455,39 +2455,41 @@ let toolbox = (lang) => {
               }
             }
           },
-          // {
-          //   "kind": "block",
-          //   "type": "vision_load_tm",
-          //   "inputs":{
-          //     "modelpath":{
-          //       "shadow": {
-          //         "type": "text",
-          //         "fields": {
-          //           "TEXT": "model_unquant.tflite"
-          //         }
-          //       }
-          //     },
-          //     "labelpath":{
-          //       "shadow": {
-          //         "type": "text",
-          //         "fields": {
-          //           "TEXT": "labels.txt"
-          //         }
-          //       }
-          //     },
-          //   }
-          // },
-          // {
-          //   "kind": "block",
-          //   "type": "vision_predict_tm",
-          //   "inputs":{
-          //     "img":{
-          //       "shadow": {
-          //         "type": "variables_get",
-          //       }
-          //     }
-          //   }
-          // },
+          /*
+          {
+            "kind": "block",
+            "type": "vision_load_tm",
+            "inputs":{
+              "modelpath":{
+                "shadow": {
+                  "type": "text",
+                  "fields": {
+                    "TEXT": "model_unquant.tflite"
+                  }
+                }
+              },
+              "labelpath":{
+                "shadow": {
+                  "type": "text",
+                  "fields": {
+                    "TEXT": "labels.txt"
+                  }
+                }
+              },
+            }
+          },
+          {
+            "kind": "block",
+            "type": "vision_predict_tm",
+            "inputs":{
+              "img":{
+                "shadow": {
+                  "type": "variables_get",
+                }
+              }
+            }
+          },
+          */
           {
             "kind": "block",
             "type": "vision_load_cf",

@@ -1368,7 +1368,8 @@ Blockly.defineBlocksWithJsonArray(
           },
           {"type": "field_dropdown", "name":"voice",
            "options":[
-              ['espeak','espeak'],['ondevice', 'ondevice']
+              ['espeak','espeak'],
+              // ['ondevice', 'ondevice']
             ]
           },
         ],
@@ -1394,7 +1395,8 @@ Blockly.defineBlocksWithJsonArray(
           {"type": "input_value", "name": "text", "check":"String"},
           {"type": "field_dropdown", "name":"voice",
            "options":[
-              ['espeak','espeak'],['ondevice', 'ondevice']
+              ['espeak','espeak'],
+              // ['ondevice', 'ondevice']
             ]
           },
           {"type": "input_value", "name": "volume", "check":"Number"}
@@ -2619,54 +2621,56 @@ Blockly.defineBlocksWithJsonArray(
       tooltip: '%{BKY_VISION_HAND_GESTURE_VIS_TOOLTIP}',
       helpUrl: ''
     },
-    // {
-    //   type: 'vision_load_tm',
-    //   message0: '%{BKY_VISION_LOAD_TM}',
-    //   args0:
-    //     [
-    //       {
-    //         "type": "field_image",
-    //         "src": "svg/database-solid.svg",
-    //         "width": 27,
-    //         "height": 27
-    //       },
-    //       {"type":"input_dummy"},
-    //       {"type": "field_dropdown", "name":"dir",
-    //         "options":[
-    //           [ '%{BKY_FOLDER_SELECT}', ''],
-    //           [ 'code', '/home/pi/code/' ],
-    //           [ 'mymodel', '/home/pi/mymodel/' ],
-    //         ]
-    //       },
-    //       {"type": "input_value", "name": "modelpath", "check":"String"},
-    //       {"type": "input_value", "name": "labelpath", "check":"String"}
-    //     ],
-    //   nextStatement: true,
-    //   previousStatement: true,
-    //   inputsInline: true,
-    //   colour: color_type["recognition"],
-    //   tooltip: '%{BKY_VISION_LOAD_TM_TOOLTIP}',
-    //   helpUrl: ''
-    // },
-    // {
-    //   type: 'vision_predict_tm',
-    //   message0: '%{BKY_VISION_PREDICT_TM}',
-    //   "args0": [
-    //     {
-    //       "type": "field_image",
-    //       "src": "svg/object-group-solid.svg",
-    //       "width": 27,
-    //       "height": 27
-    //     },
-    //     {"type":"input_dummy"},
-    //     {"type": "input_value", "name": "img", "check":"Array"}
-    //   ],
-    //   output: null,
-    //   inputsInline: true,
-    //   colour: color_type["recognition"],
-    //   tooltip: '%{BKY_VISION_PREDICT_TM_TOOLTIP}',
-    //   helpUrl: ''
-    // },
+/*
+    {
+      type: 'vision_load_tm',
+      message0: '%{BKY_VISION_LOAD_TM}',
+      args0:
+        [
+          {
+            "type": "field_image",
+            "src": "svg/database-solid.svg",
+            "width": 27,
+            "height": 27
+          },
+          {"type":"input_dummy"},
+          {"type": "field_dropdown", "name":"dir",
+            "options":[
+              [ '%{BKY_FOLDER_SELECT}', ''],
+              [ 'code', '/home/pi/code/' ],
+              [ 'mymodel', '/home/pi/mymodel/' ],
+            ]
+          },
+          {"type": "input_value", "name": "modelpath", "check":"String"},
+          {"type": "input_value", "name": "labelpath", "check":"String"}
+        ],
+      nextStatement: true,
+      previousStatement: true,
+      inputsInline: true,
+      colour: color_type["recognition"],
+      tooltip: '%{BKY_VISION_LOAD_TM_TOOLTIP}',
+      helpUrl: ''
+    },
+    {
+      type: 'vision_predict_tm',
+      message0: '%{BKY_VISION_PREDICT_TM}',
+      "args0": [
+        {
+          "type": "field_image",
+          "src": "svg/object-group-solid.svg",
+          "width": 27,
+          "height": 27
+        },
+        {"type":"input_dummy"},
+        {"type": "input_value", "name": "img", "check":"Array"}
+      ],
+      output: null,
+      inputsInline: true,
+      colour: color_type["recognition"],
+      tooltip: '%{BKY_VISION_PREDICT_TM_TOOLTIP}',
+      helpUrl: ''
+    },
+*/
     {
       type: 'vision_load_cf',
       message0: '%{BKY_VISION_LOAD_CF}',

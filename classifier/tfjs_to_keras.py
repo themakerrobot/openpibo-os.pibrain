@@ -1,7 +1,7 @@
-import tensorflow as tf
 import json
 import numpy as np
 import os
+import argparse
 from tensorflow.keras.models import model_from_json
 
 def convert_tfjs_to_keras(model_path, output_path):
@@ -70,9 +70,15 @@ def convert_tfjs_to_keras(model_path, output_path):
 
 # ✅ 실행 예시
 if __name__ == "__main__":
-    model_path = "경로/tfjs_model"
-    output_path = "경로/model.keras"
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--model', help='set model file path', required=True)
+    parser.add_argument('--output', help='set output file path', required=True)
+    args = parser.parse_args()
+    
+    model_path = args.model
+    output_path = args.output
+
     try:
-        convert_tfjs_to_keras(tfjs_model_path, output_h5)
+        convert_tfjs_to_keras(model_path, output_path)
     except Exception as e:
         print(f"❌ 변환 실패: {e}")

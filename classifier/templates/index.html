@@ -751,6 +751,7 @@
         alert("모델을 불러오는 중 오류가 발생했습니다.");
       }
     }
+/*
     function convertToH5() {
       document.getElementById('model-convert-upload').click();
     }
@@ -788,6 +789,72 @@
           event.target.value = '';
         }
       });
+*/
+
+// 파일 업로드 대신 변환 버튼 클릭 시 실행되는 함수
+function convertToH5() {
+  // 기존 파일 업로드 요소를 클릭하는 코드 대신 바로 변환 함수를 호출합니다.
+  exportConvertedModelAsZipAndConvert();
+}
+
+async function exportConvertedModelAsZipAndConvert() {
+  if (!model) {
+    alert('먼저 모델을 학습하세요');
+    return;
+  }
+  try {
+    // model.save를 사용하여 모델 아티팩트(export)
+    const modelArtifacts = await model.save(tf.io.withSaveHandler(async (artifacts) => artifacts));
+
+    // JSZip으로 trained-model.zip 생성
+    const zip = new JSZip();
+    zip.file('model.json', JSON.stringify(modelArtifacts.modelTopology));
+    if (modelArtifacts.weightSpecs) {
+      zip.file('weightsSpecs.json', JSON.stringify(modelArtifacts.weightSpecs));
+    }
+    if (modelArtifacts.weightData) {
+      zip.file('weights.bin', new Uint8Array(modelArtifacts.weightData));
+    }
+    // CLASS_NAMES가 존재하면 라벨 파일로 추가
+    zip.file('labels.txt', CLASS_NAMES.join('\n'));
+
+    // zip 파일을 blob으로 생성
+    const trainedModelBlob = await zip.generateAsync({ type: 'blob' });
+
+    // 생성된 zip(blob)을 REST API 전송을 위한 FormData에 추가
+    const formData = new FormData();
+    formData.append("tfjs_zip", trainedModelBlob, "trained-model.zip");
+
+    // REST API를 호출하여 H5 모델로 변환 요청
+    const response = await fetch(`http://${location.host}/convert`, {
+      method: 'POST',
+      body: formData
+    });
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      console.error("모델 변환 요청 실패:", errorMessage);
+      alert(`모델 변환 요청 실패: ${errorMessage}`);
+      return;
+    }
+    // 변환된 H5 모델 파일(blob)을 받아서 다운로드 처리
+    const resultBlob = await response.blob();
+    const downloadUrl = URL.createObjectURL(resultBlob);
+    const a = document.createElement('a');
+    a.href = downloadUrl;
+    a.download = 'converted_h5.zip';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(downloadUrl);
+    alert('H5 변환 성공! converted_h5.zip이 다운로드 되었습니다.');
+  } catch (err) {
+    console.error('변환 중 오류:', err);
+    alert('모델 변환 중 오류가 발생했습니다.');
+  }
+}
+
+
+
 
       window.addEventListener('beforeunload', (evt) => {
         socket.emit('control_cam', false);

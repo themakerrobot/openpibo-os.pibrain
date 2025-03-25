@@ -2,21 +2,21 @@ Blockly.Python.forBlock['flag_event'] = function (block) {
   return '';
 };
 Blockly.Python.forBlock['make_bitmap_6x8'] = function (block) {
-  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision import Camera';
+  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision_camera import Camera';
   Blockly.Python.definitions_['assign_camera'] = 'camera = Camera()';
 
   const val = block.getFieldValue("MATRIX");
   return [`camera.draw_bitmap(w=6, h=8, val='${val}')`, Blockly.Python.ORDER_ATOMIC];
 };
 Blockly.Python.forBlock['make_bitmap_8x4'] = function (block) {
-  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision import Camera';
+  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision_camera import Camera';
   Blockly.Python.definitions_['assign_camera'] = 'camera = Camera()';
   
   const val = block.getFieldValue("MATRIX");
   return [`camera.draw_bitmap(w=8, h=4, val='${val}')`, Blockly.Python.ORDER_ATOMIC];
 };
 Blockly.Python.forBlock['make_bitmap_8x8'] = function (block) {
-  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision import Camera';
+  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision_camera import Camera';
   Blockly.Python.definitions_['assign_camera'] = 'camera = Camera()';
 
   const val = block.getFieldValue("MATRIX");
@@ -452,12 +452,12 @@ Blockly.Python.forBlock['speech_reset_dialog'] = function(block) {
 
 // vision
 Blockly.Python.forBlock['vision_read'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision import Camera';
+  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision_camera import Camera';
   Blockly.Python.definitions_['assign_camera'] = 'camera = Camera()';
   return ["camera.read()", Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_imread_dynamic'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision import Camera';
+  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision_camera import Camera';
   Blockly.Python.definitions_['assign_camera'] = 'camera = Camera()';
 
   const dir = block.getFieldValue("dir");
@@ -465,7 +465,7 @@ Blockly.Python.forBlock['vision_imread_dynamic'] = function(block) {
   return [`camera.imread('${dir}'+'${filename}')`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_imread'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision import Camera';
+  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision_camera import Camera';
   Blockly.Python.definitions_['assign_camera'] = 'camera = Camera()';
 
   const dir = block.getFieldValue("dir");
@@ -474,14 +474,14 @@ Blockly.Python.forBlock['vision_imread'] = function(block) {
   return [`camera.imread('${dir}'+${filename}+'${extension}')`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_create_matte'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision import Camera';
+  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision_camera import Camera';
   Blockly.Python.definitions_['assign_camera'] = 'camera = Camera()';
 
   const color = Blockly.Python.valueToCode(block, 'color', Blockly.Python.ORDER_ATOMIC);
   return [`camera.create_matte(${color})`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_imwrite'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision import Camera';
+  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision_camera import Camera';
   Blockly.Python.definitions_['assign_camera'] = 'camera = Camera()';
 
   const dir = block.getFieldValue("dir");
@@ -491,7 +491,7 @@ Blockly.Python.forBlock['vision_imwrite'] = function(block) {
   return `camera.imwrite('${dir}'+${filename}+'${extension}', ${img})\n`;
 }
 Blockly.Python.forBlock['vision_imshow_to_ide'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision import Camera';
+  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision_camera import Camera';
   Blockly.Python.definitions_['assign_camera'] = 'camera = Camera()';
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
   return `camera.imshow_to_ide(${img}, 0.5)\n`;
@@ -503,7 +503,7 @@ Blockly.Python.forBlock['vision_imshow_to_oled'] = function(block) {
   return `oled.imshow(${img})\n`;
 }
 Blockly.Python.forBlock['vision_rectangle'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision import Camera';
+  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision_camera import Camera';
   Blockly.Python.definitions_['assign_camera'] = 'camera = Camera()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
@@ -517,7 +517,7 @@ Blockly.Python.forBlock['vision_rectangle'] = function(block) {
   return `${img} = camera.rectangle(${img}, (${x1},${y1}), (${x2},${y2}), ${color}, ${tickness})\n`;
 }
 Blockly.Python.forBlock['vision_circle'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision import Camera';
+  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision_camera import Camera';
   Blockly.Python.definitions_['assign_camera'] = 'camera = Camera()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
@@ -530,7 +530,7 @@ Blockly.Python.forBlock['vision_circle'] = function(block) {
   return `${img} = camera.circle(${img}, (${x},${y}), ${r}, ${color}, ${tickness})\n`;
 }
 Blockly.Python.forBlock['vision_line'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision import Camera';
+  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision_camera import Camera';
   Blockly.Python.definitions_['assign_camera'] = 'camera = Camera()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
@@ -544,7 +544,7 @@ Blockly.Python.forBlock['vision_line'] = function(block) {
   return `${img} = camera.line(${img}, (${x1},${y1}), (${x2},${y2}), ${color}, ${tickness})\n`;
 }
 Blockly.Python.forBlock['vision_text'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision import Camera';
+  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision_camera import Camera';
   Blockly.Python.definitions_['assign_camera'] = 'camera = Camera()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
@@ -556,7 +556,7 @@ Blockly.Python.forBlock['vision_text'] = function(block) {
   return `${img} = camera.putTextPIL(${img}, ${text}, (${x},${y}), ${size}, ${color})\n`;
 }
 Blockly.Python.forBlock['vision_transfer'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision import Camera';
+  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision_camera import Camera';
   Blockly.Python.definitions_['assign_camera'] = 'camera = Camera()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
@@ -589,7 +589,7 @@ Blockly.Python.forBlock['vision_transfer'] = function(block) {
   return [res, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_resize'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision import Camera';
+  Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision_camera import Camera';
   Blockly.Python.definitions_['assign_camera'] = 'camera = Camera()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
@@ -599,14 +599,14 @@ Blockly.Python.forBlock['vision_resize'] = function(block) {
   return [`camera.resize(${img}, ${w}, ${h})`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_face_detect'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision import Face';
+  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision_recognize import Face';
   Blockly.Python.definitions_['assign_face'] = '_face = Face()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
   return [`_face.detect_face(${img})`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_face_detect_vis'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision import Face';
+  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision_recognize import Face';
   Blockly.Python.definitions_['assign_face'] = '_face = Face()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
@@ -614,7 +614,7 @@ Blockly.Python.forBlock['vision_face_detect_vis'] = function(block) {
   return `_face.detect_face_vis(${img}, ${v})\n`;
 }
 Blockly.Python.forBlock['vision_face_analyze'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision import Face';
+  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision_recognize import Face';
   Blockly.Python.definitions_['assign_face'] = '_face = Face()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
@@ -623,7 +623,7 @@ Blockly.Python.forBlock['vision_face_analyze'] = function(block) {
   return [`_face.analyze_face(${img}, ${v})`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_face_analyze_vis'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision import Face';
+  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision_recognize import Face';
   Blockly.Python.definitions_['assign_face'] = '_face = Face()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
@@ -632,7 +632,7 @@ Blockly.Python.forBlock['vision_face_analyze_vis'] = function(block) {
   return `_face.analyze_face_vis(${img}, ${v})\n`;
 }
 Blockly.Python.forBlock['vision_face_landmark'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision import Face';
+  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision_recognize import Face';
   Blockly.Python.definitions_['assign_face'] = '_face = Face()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
@@ -640,7 +640,7 @@ Blockly.Python.forBlock['vision_face_landmark'] = function(block) {
   return [`_face.landmark_face(${img}, ${v})`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_face_landmark_vis'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision import Face';
+  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision_recognize import Face';
   Blockly.Python.definitions_['assign_face'] = '_face = Face()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
@@ -648,13 +648,13 @@ Blockly.Python.forBlock['vision_face_landmark_vis'] = function(block) {
   return `_face.landmark_face_vis(${img}, ${v})\n`;
 }
 Blockly.Python.forBlock['vision_facedb'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision import Face';
+  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision_recognize import Face';
   Blockly.Python.definitions_['assign_face'] = '_face = Face()';
 
   return [`_face.facedb[0]`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_facedb_train'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision import Face';
+  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision_recognize import Face';
   Blockly.Python.definitions_['assign_face'] = '_face = Face()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
@@ -664,14 +664,14 @@ Blockly.Python.forBlock['vision_facedb_train'] = function(block) {
   return `_face.train_face(${img}, ${v}, ${name})\n`;
 }
 Blockly.Python.forBlock['vision_facedb_delete'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision import Face';
+  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision_recognize import Face';
   Blockly.Python.definitions_['assign_face'] = '_face = Face()';
 
   const name = Blockly.Python.valueToCode(block, 'filename', Blockly.Python.ORDER_ATOMIC);
   return `_face.delete_face(${name})\n`;
 }
 Blockly.Python.forBlock['vision_facedb_recognize'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision import Face';
+  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision_recognize import Face';
   Blockly.Python.definitions_['assign_face'] = '_face = Face()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
@@ -680,7 +680,7 @@ Blockly.Python.forBlock['vision_facedb_recognize'] = function(block) {
   return [`_face.recognize(${img}, ${v})`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_facedb_save'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision import Face';
+  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision_recognize import Face';
   Blockly.Python.definitions_['assign_face'] = '_face = Face()';
 
   const dir = block.getFieldValue("dir");
@@ -689,7 +689,7 @@ Blockly.Python.forBlock['vision_facedb_save'] = function(block) {
   return `_face.save_db('${dir}'+${filename})\n`;
 }
 Blockly.Python.forBlock['vision_facedb_load'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision import Face';
+  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision_recognize import Face';
   Blockly.Python.definitions_['assign_face'] = '_face = Face()';
 
   const dir = block.getFieldValue("dir");
@@ -698,14 +698,14 @@ Blockly.Python.forBlock['vision_facedb_load'] = function(block) {
   return `_face.load_db('${dir}'+${filename})\n`;
 }
 Blockly.Python.forBlock['vision_face_mesh'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision import Face';
+  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision_recognize import Face';
   Blockly.Python.definitions_['assign_face'] = '_face = Face()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
   return [`_face.detect_mesh(${img})`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_face_mesh_vis'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision import Face';
+  Blockly.Python.definitions_['from_vision_import_Face'] = 'from openpibo.vision_recognize import Face';
   Blockly.Python.definitions_['assign_face'] = '_face = Face()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
@@ -713,21 +713,21 @@ Blockly.Python.forBlock['vision_face_mesh_vis'] = function(block) {
   return `_face.detect_mesh_vis(${img}, ${v})\n`;
 }
 Blockly.Python.forBlock['vision_object'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision import Detect';
+  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_recognize import Detect';
   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
   return [`[ item['name'] for item in detect.detect_object(${img})]`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_object_raw'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision import Detect';
+  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_recognize import Detect';
   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
   return [`detect.detect_object(${img})`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_object_vis'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision import Detect';
+  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_recognize import Detect';
   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
@@ -735,21 +735,21 @@ Blockly.Python.forBlock['vision_object_vis'] = function(block) {
   return `detect.detect_object_vis(${img}, ${v})\n`;
 }
 Blockly.Python.forBlock['vision_qr'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision import Detect';
+  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_recognize import Detect';
   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
   return [`detect.detect_qr(${img})[0]['data']`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_qr_raw'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision import Detect';
+  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_recognize import Detect';
   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
   return [`detect.detect_qr(${img})`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_qr_vis'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision import Detect';
+  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_recognize import Detect';
   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
@@ -757,14 +757,14 @@ Blockly.Python.forBlock['vision_qr_vis'] = function(block) {
   return `detect.detect_qr_vis(${img}, ${v})\n`;
 }
 Blockly.Python.forBlock['vision_pose'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision import Detect';
+  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_recognize import Detect';
   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
   return [`detect.detect_pose(${img})`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_pose_vis'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision import Detect';
+  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_recognize import Detect';
   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
@@ -772,7 +772,7 @@ Blockly.Python.forBlock['vision_pose_vis'] = function(block) {
   return `detect.detect_pose_vis(${img}, ${v})\n`;
 }
 Blockly.Python.forBlock['vision_analyze_pose'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision import Detect';
+  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_recognize import Detect';
   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
 
   const v = Blockly.Python.valueToCode(block, 'v', Blockly.Python.ORDER_ATOMIC);
@@ -796,14 +796,14 @@ Blockly.Python.forBlock['vision_analyze_pose'] = function(block) {
   return [res, Blockly.Python.ORDER_ATOMIC];
 }
 // Blockly.Python.forBlock['vision_classification'] = function(block) {
-//   Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision import Detect';
+//   Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_recognize import Detect';
 //   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
 
 //   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
 //   return [`[ item['name'] for item in detect.classify_image(${img})]`, Blockly.Python.ORDER_ATOMIC];
 // }
 Blockly.Python.forBlock['vision_object_tracker_init'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision import Detect';
+  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_recognize import Detect';
   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
@@ -815,14 +815,14 @@ Blockly.Python.forBlock['vision_object_tracker_init'] = function(block) {
   return [`detect.object_tracker_init(${img}, (${x1},${y1},${x2},${y2}))`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_object_track'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision import Detect';
+  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_recognize import Detect';
   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
   return [`detect.track_object(${img})`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_object_track_vis'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision import Detect';
+  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_recognize import Detect';
   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
@@ -830,7 +830,7 @@ Blockly.Python.forBlock['vision_object_track_vis'] = function(block) {
   return `detect.track_object_vis(${img}, ${v})\n`;
 }
 Blockly.Python.forBlock['vision_marker_detect'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision import Detect';
+  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_recognize import Detect';
   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
@@ -838,7 +838,7 @@ Blockly.Python.forBlock['vision_marker_detect'] = function(block) {
   return [`detect.detect_marker(${img}, ${length})`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_marker_detect_vis'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision import Detect';
+  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_recognize import Detect';
   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
@@ -846,14 +846,14 @@ Blockly.Python.forBlock['vision_marker_detect_vis'] = function(block) {
   return `detect.detect_marker_vis(${img}, ${v})\n`;
 }
 Blockly.Python.forBlock['vision_hand_gesture_load'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision import Detect';
+  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_recognize import Detect';
   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
 
   const type = block.getFieldValue("type");
   return `detect.load_hand_gesture_model('${type}')\n`
 }
 Blockly.Python.forBlock['vision_hand_gesture_load_ext'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision import Detect';
+  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_recognize import Detect';
   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
 
   const dir = block.getFieldValue("dir");
@@ -861,14 +861,14 @@ Blockly.Python.forBlock['vision_hand_gesture_load_ext'] = function(block) {
   return `detect.load_hand_gesture_model('${dir}'+${filename}+ '.task')\n`
 }
 Blockly.Python.forBlock['vision_hand_gesture'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision import Detect';
+  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_recognize import Detect';
   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
   return [`detect.recognize_hand_gesture(${img})`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_hand_gesture_vis'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision import Detect';
+  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_recognize import Detect';
   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
@@ -876,7 +876,7 @@ Blockly.Python.forBlock['vision_hand_gesture_vis'] = function(block) {
   return `detect.recognize_hand_gesture_vis(${img}, ${v})\n`;
 }
 // Blockly.Python.forBlock['vision_load_tm'] = function(block) {
-//   Blockly.Python.definitions_['from_vision_import_TeachableMachine'] = 'from openpibo.vision import TeachableMachine';
+//   Blockly.Python.definitions_['from_vision_import_TeachableMachine'] = 'from openpibo.vision_classify import TeachableMachine';
 //   Blockly.Python.definitions_['assign_tm'] = 'tm = TeachableMachine()';
 
 //   const dir = block.getFieldValue("dir");
@@ -885,15 +885,15 @@ Blockly.Python.forBlock['vision_hand_gesture_vis'] = function(block) {
 //   return `tm.load('${dir}'+${modelpath}, '${dir}'+${labelpath})\n`;
 // }
 // Blockly.Python.forBlock['vision_predict_tm'] = function(block) {
-//   Blockly.Python.definitions_['from_vision_import_TeachableMachine'] = 'from openpibo.vision import TeachableMachine';
+//   Blockly.Python.definitions_['from_vision_import_TeachableMachine'] = 'from openpibo.vision_classify import TeachableMachine';
 //   Blockly.Python.definitions_['assign_tm'] = 'tm = TeachableMachine()';
 
 //   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
 //   return [`tm.predict(${img})[0]`, Blockly.Python.ORDER_ATOMIC];
 // }
 Blockly.Python.forBlock['vision_load_cf'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Classifier'] = 'from openpibo.vision import Classifier';
-  Blockly.Python.definitions_['assign_cf'] = 'cf = Classifier()';
+  Blockly.Python.definitions_['from_vision_import_CustomClassifier'] = 'from openpibo.vision_classify import CustomClassifier';
+  Blockly.Python.definitions_['assign_cf'] = 'cf = CustomClassifier()';
 
   const dir = block.getFieldValue("dir");
   const modelpath = Blockly.Python.valueToCode(block, 'modelpath', Blockly.Python.ORDER_ATOMIC);
@@ -901,8 +901,8 @@ Blockly.Python.forBlock['vision_load_cf'] = function(block) {
   return `cf.load('${dir}'+${modelpath}, '${dir}'+${labelpath})\n`;
 }
 Blockly.Python.forBlock['vision_predict_cf'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Classifier'] = 'from openpibo.vision import Classifier';
-  Blockly.Python.definitions_['assign_cf'] = 'cf = Classifier()';
+  Blockly.Python.definitions_['from_vision_import_CustomClassifier'] = 'from openpibo.vision_classify import CustomClassifier';
+  Blockly.Python.definitions_['assign_cf'] = 'cf = CustomClassifier()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
   return [`cf.predict(${img})[0]`, Blockly.Python.ORDER_ATOMIC];

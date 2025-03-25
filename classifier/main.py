@@ -12,9 +12,8 @@ import asyncio
 import threading
 from threading import Timer
 
-import tensorflow as tf
-from tfjs_to_keras import convert_tfjs_to_keras
-from openpibo.vision import Camera
+#from tfjs_to_keras import convert_tfjs_to_keras
+from openpibo.vision_camera import Camera
 
 from fastapi import FastAPI, Request, UploadFile, File, BackgroundTasks
 from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
@@ -28,7 +27,7 @@ from contextlib import asynccontextmanager
 async def lifespan(app: FastAPI):
     global camera, vision_en
     vision_en = False
-    camera = Camera()
+    #camera = Camera()
     # TimerStart(1, vision_loop, True)
     yield
 
@@ -138,9 +137,9 @@ async def control_cam(sid, d=None):
 # ---------------------------------
 def cleanup_work_dir(work_dir):
     """ZIP 파일 반환 후 작업 디렉토리 삭제"""
-    # print(f"🧹 작업 디렉토리 삭제 시작: {work_dir}")
+    print(f"🧹 작업 디렉토리 삭제 시작: {work_dir}")
     shutil.rmtree(work_dir, ignore_errors=True)
-    # print(f"✅ 작업 디렉토리 삭제 완료: {work_dir}")
+    print(f"✅ 작업 디렉토리 삭제 완료: {work_dir}")
 
 @app.post("/convert")
 async def convert_tfjs_to_keras_api(tfjs_zip: UploadFile = File(...), background_tasks: BackgroundTasks = BackgroundTasks()):
@@ -154,7 +153,7 @@ async def convert_tfjs_to_keras_api(tfjs_zip: UploadFile = File(...), background
     # ✅ 임시 작업 디렉토리 생성
     work_dir = f"tmp_{uuid.uuid4()}"
     os.makedirs(work_dir, exist_ok=True)
-    # print(f"📂 작업 디렉토리 생성: {work_dir}")
+    print(f"📂 작업 디렉토리 생성: {work_dir}")
 
     try:
         # ✅ 업로드된 ZIP 파일 저장
@@ -184,7 +183,8 @@ async def convert_tfjs_to_keras_api(tfjs_zip: UploadFile = File(...), background
         # ✅ TFJS → H5 변환 수행
         h5_path = os.path.join(work_dir, "model.keras")
         try:
-            convert_tfjs_to_keras(tfjs_model_dir, h5_path)
+            #convert_tfjs_to_keras(tfjs_model_dir, h5_path)
+            os.system(f'sudo /home/pi/.pyenv/bin/python3 /home/pi/openpibo-os/classifier/tfjs_to_keras.py --model {tfjs_model_dir} --output {h5_path}')
             # print(f"✅ TFJS → keras 변환 완료: {h5_path}")
         except Exception as e:
             return JSONResponse({"error": f"❌ H5 변환 중 오류 발생: {str(e)}"}, status_code=500)
@@ -210,7 +210,7 @@ async def convert_tfjs_to_keras_api(tfjs_zip: UploadFile = File(...), background
 
         # ✅ ZIP 파일 반환 후 작업 디렉토리 삭제 (비동기 처리)
         background_tasks.add_task(cleanup_work_dir, work_dir)
-        # print(f"📤 변환된 ZIP 파일 반환: {output_zip_path}")
+        print(f"📤 변환된 ZIP 파일 반환: {output_zip_path}")
         return FileResponse(
             path=output_zip_path,
             filename="converted_keras.zip",

@@ -30,7 +30,9 @@ OPENPIBO PACKAGE for piBrain
    libraries/motion
    libraries/oled
    libraries/speech
-   libraries/vision
+   libraries/vision_camera
+   libraries/vision_recognize
+   libraries/vision_classify
    libraries/utils
 
 Indices and tables
