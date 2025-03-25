@@ -1,0 +1,502 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ko" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vision_camera &mdash; OPENPIBO 0.9.2.76 문서</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=5d8bc77e" />
+
+  
+    <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python/libraries/vision_camera.html" />
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2c284236"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/translations.js?v=afa94a99"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="색인" href="../genindex.html" />
+    <link rel="search" title="검색" href="../search.html" />
+    <link rel="next" title="vision_recognize" href="vision_recognize.html" />
+    <link rel="prev" title="speech" href="speech.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            OPENPIBO
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../notes/piboMaker.html">파이보 메이커</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/software.html">소프트웨어</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/hardware.html">하드웨어</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Block</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../blocks/guide.html">블록코딩</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="audio.html">audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="collect.html">collect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="device.html">device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="motion.html">motion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oled.html">oled</a></li>
+<li class="toctree-l1"><a class="reference internal" href="speech.html">speech</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">vision_camera</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#openpibo.vision_camera.Camera"><code class="docutils literal notranslate"><span class="pre">Camera</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.release"><code class="docutils literal notranslate"><span class="pre">Camera.release()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.imread"><code class="docutils literal notranslate"><span class="pre">Camera.imread()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.read"><code class="docutils literal notranslate"><span class="pre">Camera.read()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.create_matte"><code class="docutils literal notranslate"><span class="pre">Camera.create_matte()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.imshow_to_ide"><code class="docutils literal notranslate"><span class="pre">Camera.imshow_to_ide()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.resize"><code class="docutils literal notranslate"><span class="pre">Camera.resize()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.rotate"><code class="docutils literal notranslate"><span class="pre">Camera.rotate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.imwrite"><code class="docutils literal notranslate"><span class="pre">Camera.imwrite()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.draw_bitmap"><code class="docutils literal notranslate"><span class="pre">Camera.draw_bitmap()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.rectangle"><code class="docutils literal notranslate"><span class="pre">Camera.rectangle()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.circle"><code class="docutils literal notranslate"><span class="pre">Camera.circle()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.line"><code class="docutils literal notranslate"><span class="pre">Camera.line()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.putTextPIL"><code class="docutils literal notranslate"><span class="pre">Camera.putTextPIL()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.putText"><code class="docutils literal notranslate"><span class="pre">Camera.putText()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.stylization"><code class="docutils literal notranslate"><span class="pre">Camera.stylization()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.detailEnhance"><code class="docutils literal notranslate"><span class="pre">Camera.detailEnhance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.pencilSketch"><code class="docutils literal notranslate"><span class="pre">Camera.pencilSketch()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.edgePreservingFilter"><code class="docutils literal notranslate"><span class="pre">Camera.edgePreservingFilter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.flip"><code class="docutils literal notranslate"><span class="pre">Camera.flip()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="vision_recognize.html">vision_recognize</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vision_classify.html">vision_classify</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">OPENPIBO</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">vision_camera</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/libraries/vision_camera.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-openpibo.vision_camera">
+<span id="vision-camera"></span><h1>vision_camera<a class="headerlink" href="#module-openpibo.vision_camera" title="Link to this heading"></a></h1>
+<p>영상처리, 인공지능 비전 기술을 사용합니다.</p>
+<p>Class:
+<a class="reference internal" href="#openpibo.vision_camera.Camera" title="openpibo.vision_camera.Camera"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Camera</span></code></a></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openpibo.vision_camera.</span></span><span class="sig-name descname"><span class="pre">Camera</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cam</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera" title="Link to this definition"></a></dt>
+<dd><p>기반 클래스: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Functions:
+<a class="reference internal" href="#openpibo.vision_camera.Camera.imread" title="openpibo.vision_camera.Camera.imread"><code class="xref py py-meth docutils literal notranslate"><span class="pre">imread()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.read" title="openpibo.vision_camera.Camera.read"><code class="xref py py-meth docutils literal notranslate"><span class="pre">read()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.create_matte" title="openpibo.vision_camera.Camera.create_matte"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create_matte()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.imshow_to_ide" title="openpibo.vision_camera.Camera.imshow_to_ide"><code class="xref py py-meth docutils literal notranslate"><span class="pre">imshow_to_ide()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.resize" title="openpibo.vision_camera.Camera.resize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">resize()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.rotate" title="openpibo.vision_camera.Camera.rotate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">rotate()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.imwrite" title="openpibo.vision_camera.Camera.imwrite"><code class="xref py py-meth docutils literal notranslate"><span class="pre">imwrite()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.draw_bitmap" title="openpibo.vision_camera.Camera.draw_bitmap"><code class="xref py py-meth docutils literal notranslate"><span class="pre">draw_bitmap()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.rectangle" title="openpibo.vision_camera.Camera.rectangle"><code class="xref py py-meth docutils literal notranslate"><span class="pre">rectangle()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.circle" title="openpibo.vision_camera.Camera.circle"><code class="xref py py-meth docutils literal notranslate"><span class="pre">circle()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.line" title="openpibo.vision_camera.Camera.line"><code class="xref py py-meth docutils literal notranslate"><span class="pre">line()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.putTextPIL" title="openpibo.vision_camera.Camera.putTextPIL"><code class="xref py py-meth docutils literal notranslate"><span class="pre">putTextPIL()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.putText" title="openpibo.vision_camera.Camera.putText"><code class="xref py py-meth docutils literal notranslate"><span class="pre">putText()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.stylization" title="openpibo.vision_camera.Camera.stylization"><code class="xref py py-meth docutils literal notranslate"><span class="pre">stylization()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.detailEnhance" title="openpibo.vision_camera.Camera.detailEnhance"><code class="xref py py-meth docutils literal notranslate"><span class="pre">detailEnhance()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.pencilSketch" title="openpibo.vision_camera.Camera.pencilSketch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pencilSketch()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.edgePreservingFilter" title="openpibo.vision_camera.Camera.edgePreservingFilter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">edgePreservingFilter()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.flip" title="openpibo.vision_camera.Camera.flip"><code class="xref py py-meth docutils literal notranslate"><span class="pre">flip()</span></code></a></p>
+<blockquote>
+<div><p>파이보의 카메라를 제어합니다.</p>
+<ul class="simple">
+<li><p>사진 촬영, 읽기, 쓰기 등 카메라 기본 기능을 사용할 수 있습니다.</p></li>
+<li><p>이미지에 도형/글자를 추가할 수 있습니다.</p></li>
+<li><p>이미지를 변환할 수 있습니다.</p></li>
+</ul>
+<p>example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">openpibo.vision_camera</span> <span class="kn">import</span> <span class="n">Camera</span>
+
+<span class="n">camera</span> <span class="o">=</span> <span class="n">Camera</span><span class="p">()</span>
+<span class="c1"># 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
+</pre></div>
+</div>
+</div></blockquote>
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.release">
+<span class="sig-name descname"><span class="pre">release</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.release"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.release" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.imread">
+<span class="sig-name descname"><span class="pre">imread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.imread"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.imread" title="Link to this definition"></a></dt>
+<dd><p>이미지 파일을 읽습니다.</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – 사용할 이미지 파일</p>
+</dd>
+<dt class="field-even">반환<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> 타입 이미지 객체</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.read"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.read" title="Link to this definition"></a></dt>
+<dd><p>카메라를 통해 이미지를 촬영합니다.
+해상도 변경 시 이미지가 깨질 수 있으므로, 기본 해상도를 권장합니다.</p>
+<dl class="field-list simple">
+<dt class="field-odd">반환<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> 타입 이미지 객체</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.create_matte">
+<span class="sig-name descname"><span class="pre">create_matte</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(255,</span> <span class="pre">255,</span> <span class="pre">255)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">480</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">640</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.create_matte"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.create_matte" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.imshow_to_ide">
+<span class="sig-name descname"><span class="pre">imshow_to_ide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.imshow_to_ide"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.imshow_to_ide" title="Link to this definition"></a></dt>
+<dd><p>이미지 파일을 Web IDE에 출력합니다.</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – 이미지 객체</p></li>
+<li><p><strong>ratio</strong> (<em>float</em>) – 이미지 사이즈 변환 비율 (다수 동시 사용시, 네트워크 부하)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.resize">
+<span class="sig-name descname"><span class="pre">resize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.resize"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.resize" title="Link to this definition"></a></dt>
+<dd><p>Opencv 이미지의 크기를 변환합니다.</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – 이미지 객체</p></li>
+<li><p><strong>w</strong> (<em>int</em>) – 변환될 이미지의 가로 크기입니다. (픽셀 단위)</p></li>
+<li><p><strong>h</strong> (<em>int</em>) – 변환될 이미지의 세로 크기입니다. (픽셀 단위)</p></li>
+</ul>
+</dd>
+<dt class="field-even">반환<span class="colon">:</span></dt>
+<dd class="field-even"><p>크기 변환 후의 <code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> 이미지 객체</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.rotate">
+<span class="sig-name descname"><span class="pre">rotate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.rotate"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.rotate" title="Link to this definition"></a></dt>
+<dd><p>이미지를 회전시킵니다.</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – 이미지 객체</p></li>
+<li><p><strong>degree</strong> (<em>int</em>) – 회전할 각도</p></li>
+<li><p><strong>ratio</strong> (<em>float</em>) – 축소 또는 확대할 비율</p></li>
+</ul>
+</dd>
+<dt class="field-even">반환<span class="colon">:</span></dt>
+<dd class="field-even"><p>회전한 <code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> 이미지 객체</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.imwrite">
+<span class="sig-name descname"><span class="pre">imwrite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.imwrite"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.imwrite" title="Link to this definition"></a></dt>
+<dd><p>이미지를 파일로 저장합니다.</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – 저장할 파일 경로(jpg, png)</p></li>
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – 저장할 이미지 객체</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.draw_bitmap">
+<span class="sig-name descname"><span class="pre">draw_bitmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(255,</span> <span class="pre">255,</span> <span class="pre">255)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.draw_bitmap"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.draw_bitmap" title="Link to this definition"></a></dt>
+<dd><p>비트맨 데이터를 이미지로 생성성합니다.</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>w</strong> (<em>int</em>) – bitmap 가로 길이</p></li>
+<li><p><strong>h</strong> (<em>int</em>) – bitmap 세로 길이</p></li>
+<li><p><strong>background</strong> (<em>tuple</em>) – 배경 색상</p></li>
+<li><p><strong>pixel</strong> (<em>tuple</em>) – 비트 색상</p></li>
+</ul>
+</dd>
+<dt class="field-even">반환<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> 이미지 객체</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.rectangle">
+<span class="sig-name descname"><span class="pre">rectangle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(255,</span> <span class="pre">255,</span> <span class="pre">255)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tickness</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.rectangle"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.rectangle" title="Link to this definition"></a></dt>
+<dd><p>이미지에 직사각형을 그립니다.</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – 이미지 객체</p></li>
+<li><p><strong>p1</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – 좌측상단 좌표 (x, y)</p></li>
+<li><p><strong>p2</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – 우측하단 좌표 (x, y)</p></li>
+<li><p><strong>colors</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>)</em>) – RGB 값 (r, g, b) or 16진수 값 ‘#ffffff’</p></li>
+<li><p><strong>tickness</strong> (<em>int</em>) – 사각형 모서리의 두께 (픽셀 단위) -1 은 채움</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.circle">
+<span class="sig-name descname"><span class="pre">circle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(255,</span> <span class="pre">255,</span> <span class="pre">255)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tickness</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.circle"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.circle" title="Link to this definition"></a></dt>
+<dd><p>이미지에 원을을 그립니다.</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – 이미지 객체</p></li>
+<li><p><strong>p</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – 좌측상단 좌표 (x, y)</p></li>
+<li><p><strong>r</strong> (<em>int</em>) – 반지름</p></li>
+<li><p><strong>colors</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>)</em>) – RGB 값 (r, g, b) or 16진수 값 ‘#ffffff’</p></li>
+<li><p><strong>tickness</strong> (<em>int</em>) – 사각형 모서리의 두께 (픽셀 단위) -1은 채움</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.line">
+<span class="sig-name descname"><span class="pre">line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(255,</span> <span class="pre">255,</span> <span class="pre">255)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tickness</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.line"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.line" title="Link to this definition"></a></dt>
+<dd><p>이미지에 직선을 그립니다.</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – 이미지 객체</p></li>
+<li><p><strong>p1</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – 시작 좌표 (x, y)</p></li>
+<li><p><strong>p2</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – 끝 좌표 (x, y)</p></li>
+<li><p><strong>colors</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>)</em>) – RGB 값 (r, g, b) or 16진수 값 ‘#ffffff’</p></li>
+<li><p><strong>tickness</strong> (<em>int</em>) – 선의 두께 (픽셀 단위)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.putTextPIL">
+<span class="sig-name descname"><span class="pre">putTextPIL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(255,</span> <span class="pre">255,</span> <span class="pre">255)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.putTextPIL"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.putTextPIL" title="Link to this definition"></a></dt>
+<dd><p>이미지에 문자를 입력합니다. (한/영 가능 - pillow 이용)</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – 이미지 객체</p></li>
+<li><p><strong>text</strong> (<em>str</em>) – 표시할 문자열</p></li>
+<li><p><strong>points</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – 텍스트 블록 좌측상단 좌표 (x, y)</p></li>
+<li><p><strong>size</strong> (<em>int</em>) – 표시할 글자의 크기</p></li>
+<li><p><strong>colors</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>)</em>) – 글자 색깔 RGB 값 (b, g, r) or 16진수 값 ‘#ffffff’</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.putText">
+<span class="sig-name descname"><span class="pre">putText</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(255,</span> <span class="pre">255,</span> <span class="pre">255)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tickness</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.putText"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.putText" title="Link to this definition"></a></dt>
+<dd><p>이미지에 문자를 입력합니다. (영어만 가능)</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – 이미지 객체</p></li>
+<li><p><strong>text</strong> (<em>str</em>) – 표시할 문자열</p></li>
+<li><p><strong>points</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – 텍스트 블록 좌측하단 좌표 (x, y)</p></li>
+<li><p><strong>size</strong> (<em>int</em>) – 표시할 글자의 크기</p></li>
+<li><p><strong>colors</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>)</em>) – 글자 색깔 RGB 값 (r, g, b) or 16진수 값 ‘#ffffff’</p></li>
+<li><p><strong>tickness</strong> (<em>int</em>) – 글자 두께</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.stylization">
+<span class="sig-name descname"><span class="pre">stylization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.stylization"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.stylization" title="Link to this definition"></a></dt>
+<dd><p>만화 이미지로 변환합니다. (opencv api) low speed</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – 이미지 객체</p></li>
+<li><p><strong>sigma_s</strong> (<em>float</em>) – 이미지의 blur 보존 정도 (1-200)</p></li>
+<li><p><strong>sigma_r</strong> (<em>float</em>) – 이미지의 Edge 적용 정도 (0-1)</p></li>
+</ul>
+</dd>
+<dt class="field-even">반환<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> 이미지 객체</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.detailEnhance">
+<span class="sig-name descname"><span class="pre">detailEnhance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.detailEnhance"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.detailEnhance" title="Link to this definition"></a></dt>
+<dd><p>만화 이미지로 변환합니다. (opencv api)</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – 이미지 객체</p></li>
+<li><p><strong>sigma_s</strong> (<em>float</em>) – 이미지의 blur 보존 정도 (1-200)</p></li>
+<li><p><strong>sigma_r</strong> (<em>float</em>) – 이미지의 Edge 적용 정도 (0-1)</p></li>
+</ul>
+</dd>
+<dt class="field-even">반환<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> 이미지 객체</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.pencilSketch">
+<span class="sig-name descname"><span class="pre">pencilSketch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shade_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.018</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.pencilSketch"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.pencilSketch" title="Link to this definition"></a></dt>
+<dd><p>스케치 이미지로 변환합니다.</p>
+<p>example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">img</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">camera</span><span class="o">.</span><span class="n">sketchize</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – 이미지 객체</p></li>
+<li><p><strong>sigma_s</strong> (<em>float</em>) – 이미지의 blur 보존 정도 (1-200)</p></li>
+<li><p><strong>sigma_r</strong> (<em>float</em>) – 이미지의 Edge 적용 정도 (0-1)</p></li>
+<li><p><strong>shade_factor</strong> (<em>float</em>) – 이미지의 밝기 정도 (0-0.1)</p></li>
+</ul>
+</dd>
+<dt class="field-even">반환<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> 이미지 객체 / grayscale, bgr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.edgePreservingFilter">
+<span class="sig-name descname"><span class="pre">edgePreservingFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.edgePreservingFilter"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.edgePreservingFilter" title="Link to this definition"></a></dt>
+<dd><p>흐림 이미지로 변환합니다.</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – 이미지 객체</p></li>
+<li><p><strong>flags</strong> (<em>int</em>) – 필터 종류 1 (RECURS_FILTER) or 2 (NORMCONV_FILTER)</p></li>
+<li><p><strong>sigma_s</strong> (<em>float</em>) – 이미지의 blur 보존 정도 (1-200)</p></li>
+<li><p><strong>sigma_r</strong> (<em>float</em>) – 이미지의 Edge 적용 정도 (0-1)</p></li>
+</ul>
+</dd>
+<dt class="field-even">반환<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> 이미지 객체</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.flip">
+<span class="sig-name descname"><span class="pre">flip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.flip"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.flip" title="Link to this definition"></a></dt>
+<dd><p>상하/좌우 대칭 이미지로 변환합니다</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – 이미지 객체</p></li>
+<li><p><strong>flags</strong> (<em>int</em>) – 0: 상하 대칭, 1: 좌우 대칭, -1: 상하/좌우 대칭</p></li>
+</ul>
+</dd>
+<dt class="field-even">반환<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> 이미지 객체</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="speech.html" class="btn btn-neutral float-left" title="speech" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="vision_recognize.html" class="btn btn-neutral float-right" title="vision_recognize" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025 THEMAKER. All rights reserved. openpibo-python-0.9.2.76.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
