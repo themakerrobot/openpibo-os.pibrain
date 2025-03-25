@@ -599,11 +599,27 @@
 <div class="viewcode-block" id="DeviceByPiBrain">
 <a class="viewcode-back" href="../../libraries/device.html#openpibo.device.DeviceByPiBrain">[문서]</a>
 <span class="k">class</span> <span class="nc">DeviceByPiBrain</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions:</span>
+<span class="sd">:meth:`~openpibo.device.DeviceByPiBrain.get_button`</span>
+<span class="sd">:meth:`~openpibo.device.DeviceByPiBrain.led_on`</span>
+<span class="sd">:meth:`~openpibo.device.DeviceByPiBrain.led_on_s`</span>
+<span class="sd">:meth:`~openpibo.device.DeviceByPiBrain.led_off`</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
   <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">SW1</span> <span class="o">=</span> <span class="mi">4</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">SW2</span> <span class="o">=</span> <span class="mi">17</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">SW3</span> <span class="o">=</span> <span class="mi">27</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">SW4</span> <span class="o">=</span> <span class="mi">26</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    DeviceByPiBrain 클래스를 초기화합니다.</span>
+
+<span class="sd">    example::</span>
+
+<span class="sd">        from openpibo.device import DeviceByPiBrain</span>
+
+<span class="sd">        device = DeviceByPiBrain()</span>
+<span class="sd">        # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">buttons</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">26</span><span class="p">]</span>
     <span class="n">GPIO</span><span class="o">.</span><span class="n">setwarnings</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">GPIO</span><span class="o">.</span><span class="n">setmode</span><span class="p">(</span><span class="n">GPIO</span><span class="o">.</span><span class="n">BCM</span><span class="p">)</span>
     <span class="n">GPIO</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">SW1</span><span class="p">,</span> <span class="n">GPIO</span><span class="o">.</span><span class="n">IN</span><span class="p">,</span> <span class="n">pull_up_down</span><span class="o">=</span><span class="n">GPIO</span><span class="o">.</span><span class="n">PUD_UP</span><span class="p">)</span>
@@ -624,12 +640,26 @@
 <div class="viewcode-block" id="DeviceByPiBrain.get_button">
 <a class="viewcode-back" href="../../libraries/device.html#openpibo.device.DeviceByPiBrain.get_button">[문서]</a>
   <span class="k">def</span> <span class="nf">get_button</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-    <span class="k">return</span> <span class="s2">&quot;on&quot;</span> <span class="k">if</span> <span class="n">GPIO</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">==</span> <span class="n">GPIO</span><span class="o">.</span><span class="n">LOW</span> <span class="k">else</span> <span class="s2">&quot;off&quot;</span></div>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    버튼 눌림을 체크 합니다.</span>
+
+<span class="sd">    :param n: 버튼 번호 (1 ~ 4)</span>
+<span class="sd">    :returns: ``on`` 또는 ``off`` </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">button</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">buttons</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="s2">&quot;on&quot;</span> <span class="k">if</span> <span class="n">GPIO</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="n">button</span><span class="p">)</span> <span class="o">==</span> <span class="n">GPIO</span><span class="o">.</span><span class="n">LOW</span> <span class="k">else</span> <span class="s2">&quot;off&quot;</span></div>
 
 
 <div class="viewcode-block" id="DeviceByPiBrain.led_on">
 <a class="viewcode-back" href="../../libraries/device.html#openpibo.device.DeviceByPiBrain.led_on">[문서]</a>
   <span class="k">def</span> <span class="nf">led_on</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">color</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    LED를 켭니다.</span>
+
+<span class="sd">    :param color: R, G, B (0~255 숫자)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">color</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;color is required&quot;</span><span class="p">)</span>
 
@@ -647,6 +677,11 @@
 <div class="viewcode-block" id="DeviceByPiBrain.led_on_s">
 <a class="viewcode-back" href="../../libraries/device.html#openpibo.device.DeviceByPiBrain.led_on_s">[문서]</a>
   <span class="k">def</span> <span class="nf">led_on_s</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    LED를 켭니다.</span>
+
+<span class="sd">    :param color: RGB 16진수 문자 #ffffff</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">strip</span><span class="o">.</span><span class="n">setPixelColor</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Color</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span><span class="mi">16</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">],</span><span class="mi">16</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">7</span><span class="p">],</span><span class="mi">16</span><span class="p">)))</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">strip</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
@@ -654,28 +689,15 @@
 <div class="viewcode-block" id="DeviceByPiBrain.led_off">
 <a class="viewcode-back" href="../../libraries/device.html#openpibo.device.DeviceByPiBrain.led_off">[문서]</a>
   <span class="k">def</span> <span class="nf">led_off</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    LED를 끕니다.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
     <span class="bp">self</span><span class="o">.</span><span class="n">strip</span><span class="o">.</span><span class="n">setPixelColor</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Color</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">strip</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 </div>
 
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-  <span class="n">dev</span> <span class="o">=</span> <span class="n">DeviceHat</span><span class="p">()</span>
-  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">PIN</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">dev</span><span class="o">.</span><span class="n">get_button</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
-
-  <span class="n">dev</span><span class="o">.</span><span class="n">led_on</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">  device = Device()</span>
-
-<span class="sd">  print(1, device.eye_on(255,0,0))</span>
-<span class="sd">  print(2, device.send_raw(&#39;#21:0,0,255,10&#39;))</span>
-<span class="sd">  print(3, device.get_battery())</span>
-<span class="sd">  print(4, device.get_dc())</span>
-<span class="sd">  print(5, device.get_system())</span>
-<span class="sd">  print(6, device.send_raw(&#39;#40:!&#39;))</span>
-<span class="sd">&quot;&quot;&quot;</span>
 </pre></div>
 
            </div>
