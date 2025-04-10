@@ -20,12 +20,14 @@ import openpibo_dlib_models
 import openpibo_detect_models
 from openvino.runtime import Core
 import logging
+from ultralytics import YOLO
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # TensorFlow C++ 로그 제거
 os.environ['LIBCAMERA_LOG_LEVELS'] = '3'
 
 # ✅ 추가: TensorFlow 내부 디버그 메시지 완전 차단
 logging.getLogger("tensorflow").setLevel(logging.ERROR)
+logging.getLogger("ultralytics").setLevel(logging.ERROR)
 
 def vision_api(mode, image, params={}):
   """
@@ -621,24 +623,25 @@ Functions:
   """
 
   def __init__(self):
-    self.object_class = ['background', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',
-                         'bus', 'train', 'truck', 'boat', 'traffic light', 'fire hydrant',
-                         'None', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog',
-                         'horse', 'sheep', 'cow', 'elephant', 'bear', 'zebra', 'giraffe', 'None',
-                         'backpack', 'umbrella', 'None', 'None', 'handbag', 'tie', 'suitcase', 'frisbee',
-                         'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove',
-                         'skateboard', 'surfboard', 'tennis racket', 'bottle', 'None', 'wine glass', 'cup',
-                         'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple', 'sandwich', 'orange',
-                         'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch',
-                         'potted plant', 'bed', 'None', 'dining table', 'None', 'None', 'toilet', 'None', 'tv',
-                         'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave', 'oven',
-                         'toaster', 'sink', 'refrigerator', 'None', 'book', 'clock', 'vase', 'scissors',
-                         'teddy bear', 'hair drier'] 
+    #self.object_class = ['background', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',
+    #                     'bus', 'train', 'truck', 'boat', 'traffic light', 'fire hydrant',
+    #                     'None', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog',
+    #                     'horse', 'sheep', 'cow', 'elephant', 'bear', 'zebra', 'giraffe', 'None',
+    #                     'backpack', 'umbrella', 'None', 'None', 'handbag', 'tie', 'suitcase', 'frisbee',
+    #                     'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove',
+    #                     'skateboard', 'surfboard', 'tennis racket', 'bottle', 'None', 'wine glass', 'cup',
+    #                     'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple', 'sandwich', 'orange',
+    #                     'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch',
+    #                     'potted plant', 'bed', 'None', 'dining table', 'None', 'None', 'toilet', 'None', 'tv',
+    #                     'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave', 'oven',
+    #                     'toaster', 'sink', 'refrigerator', 'None', 'book', 'clock', 'vase', 'scissors',
+    #                     'teddy bear', 'hair drier'] 
 
-    self.mobilenet = cv2.dnn.readNet(
-                        openpibo_detect_models.filepath("frozen_inference_graph.pb"),
-                        openpibo_detect_models.filepath("ssd_mobilenet_v2_coco_2018_03_29.pbtxt")
-                    )
+    #self.mobilenet = cv2.dnn.readNet(
+    #                    openpibo_detect_models.filepath("frozen_inference_graph.pb"),
+    #                    openpibo_detect_models.filepath("ssd_mobilenet_v2_coco_2018_03_29.pbtxt")
+    #                )
+    self.object_detector = YOLO("/home/pi/.model/object/yolo11s.onnx", task="detect")
     self.pose_detector = Movenet(openpibo_detect_models.filepath("movenet_lightning.tflite"))
 
     # marker
@@ -709,64 +712,29 @@ Functions:
       cv2.putText(img, f'{name}/{score}', (hpoints[0][0], hpoints[0][1] - 50), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 0, 0), 2)
 
   def detect_object(self, img):
-    """
-    이미지 안의 객체를 인식합니다. (아래 class의 사물 인식 가능)
+    if not isinstance(img, np.ndarray):
+      raise ValueError('"img" must be a valid OpenCV image (np.ndarray).')
 
-    인식 가능한 사물은 다음과 같습니다::
+    # Run inference. You can adjust conf=0.5, iou=0.4, imgsz=320 to mirror your old code
+    results = self.object_detector.predict(img, conf=0.5, iou=0.4, imgsz=320, verbose=False, device='cpu')
 
-      'background', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',
-      'bus', 'train', 'truck', 'boat', 'traffic light', 'fire hydrant', 
-      'None', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog',
-      'horse', 'sheep', 'cow', 'elephant', 'bear', 'zebra', 'giraffe', 'None',
-      'backpack', 'umbrella', 'None', 'None', 'handbag', 'tie', 'suitcase', 'frisbee',
-      'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove',
-      'skateboard', 'surfboard', 'tennis racket', 'bottle', 'None', 'wine glass', 'cup',
-      'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple', 'sandwich', 'orange', 
-      'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch',
-      'potted plant', 'bed', 'None', 'dining table', 'None', 'None', 'toilet', 'None', 'tv',
-      'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave', 'oven',
-      'toaster', 'sink', 'refrigerator', 'None', 'book', 'clock', 'vase', 'scissors',
-      'teddy bear', 'hair drier' 
-
-    example::
-
-      img = camera.read()
-      detect.detect_object(img)
-
-    :param numpy.ndarray img: 이미지 객체
-
-    :returns: ``{"name":이름, "score":정확도, "position":사물좌표(startX, startY, endX, endY)}``
-
-      * score는 0~100 사이의 float 값 입니다.
-    """
-
-    if not type(img) is np.ndarray:
-      raise Exception('"img" must be image data from opencv')
-
+    # YOLO returns a list of Results objects; we’ll just process the first
     data = []
-    class_ids = []
-    scores = []
-    boxes = []
-    boxes_nms = []    
-    img_h, img_w = img.shape[:2]
-    self.mobilenet.setInput(cv2.dnn.blobFromImage(img, size=(300,300), swapRB=True))
-    output = self.mobilenet.forward()
+    if len(results) > 0:
+      # Each `results[0]` has .boxes attribute containing all detections
+      for box in results[0].boxes:
+        cls_id = int(box.cls[0])   # class index
+        score = float(box.conf[0]) # confidence score
+        # box.xyxy gives (x1, y1, x2, y2)
+        x1, y1, x2, y2 = map(int, box.xyxy[0])
+        if isinstance(self.object_detector.names, dict):
+          obj_name = self.object_detector.names.get(cls_id, "Unknown")
+        else:
+          obj_name = self.object_detector.names[cls_id]
 
-    for detection in output[0, 0, :, :]:
-      if detection[2] > .5:
-        x1 = max(10, int(detection[3] * img_w))
-        y1 = max(10, int(detection[4] * img_h))
-        x2 = min(img_w + 10, int(detection[5] * img_w))
-        y2 = min(img_h + 10, int(detection[6] * img_h))
-        class_ids.append(int(detection[1]))
-        scores.append(float(detection[2]))
-        boxes_nms.append((x1, y1, x2-x1, y2-y1)) # NMSBoxes box: x,y,w,h
-        boxes.append((x1, y1, x2, y2))
-
-    idxs = cv2.dnn.NMSBoxes(boxes_nms, scores, .5, .4)
-    if len(idxs) > 0:
-      for i in idxs.flatten():
-        data.append({"name":self.object_class[class_ids[i]], "score":int(scores[i]*100), "box":boxes[i]})
+        # Only add detections above 50% confidence if you want to mirror your old filter
+        if score >= 0.5:
+          data.append({ "name": obj_name, "score": int(score * 100), "box": (x1, y1, x2, y2) })
     return data
 
   def detect_object_vis(self, img, items):
@@ -783,8 +751,8 @@ Functions:
     for item in items:
       x1,y1,x2,y2 = item['box']
       name = item['name']
-      cv2.rectangle(img, (x1,y1), (x2,y2), (50,255,255), 2)
-      cv2.putText(img, name, (x1-10, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (50,255,255), 1)
+      cv2.rectangle(img, (x1,y1), (x2,y2), (0,255,0), 2)
+      cv2.putText(img, name, (x1-10, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 2)
 
   def detect_qr(self, img):
     """

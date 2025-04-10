@@ -18,9 +18,6 @@ Functions:
   mp3, wav 오디오 파일을 재생 및 정지합니다.
   """
 
-  def __init__(self):
-    pass
-
   def play(self, filename, volume=80, background=True, volume2=1.0):
     """
     mp3 또는 wav 파일을 재생

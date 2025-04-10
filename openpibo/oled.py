@@ -6,7 +6,14 @@ Class:
 :obj:`~openpibo.oled.OledByPiBrain`
 """
 
-from .modules.oled import ili9341, ssd1306, board, busio, digitalio
+#from .modules.oled import ili9341, ssd1306, board, busio, digitalio
+
+import board
+import busio
+import digitalio
+import adafruit_ssd1306 as ssd1306
+import adafruit_rgb_display.ili9341 as ili9341
+
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 import cv2, os
 import numpy as np
@@ -32,13 +39,13 @@ Functions:
 
   def __init__(self, w=128, h=64):
     """
-    Oled 클래스 초기화
+    Oled 클래스 초기화합니다.
     """
 
     self.width = w
     self.height = h
     #self.font_path = openpibo_models.filepath("KDL.ttf") # KoPub Dotum Light
-    self.font_path = '/home/pi/openpibo-os/openpibo-python/NotoSans-CJK-Regular.otf'
+    self.font_path = openpibo_models.filepath("NS_CJK_R.otf") # Noto Sans CJK Regular
     self.font_size = 10
 
     spi = busio.SPI(11, 10, 9)
@@ -54,7 +61,7 @@ Functions:
 
   def show(self):
     """
-    oled 화면 표시 
+    oled 화면 표시합니다.
 
     **이 메소드를 사용하지 않으면 그림을 그려도 oled 화면에 아무것도 출력되지 않습니다.**
     """
@@ -64,7 +71,7 @@ Functions:
 
   def clear(self, image=True, fill=True, show=True):
     """
-    oled 화면 지움
+    oled 화면 지웁니다.
 
     :param bool image: image 초기화 여부
     :param bool fill: oled 초기화 여부
@@ -80,7 +87,7 @@ Functions:
 
   def set_font(self, filename=None, size=None):
     """
-    ``draw_text`` 폰트 설정
+    ``draw_text`` 폰트와 글자 크기를 설정합니다.
 
     :param str filename: 폰트 파일 경로 (ttf, otf)
     :param int size: 폰트 사이즈
@@ -99,7 +106,7 @@ Functions:
 
   def draw_text(self, points, text:str):
     """
-    문자 (기본 폰트 - 한/영/중/일 지원)
+    문자 (기본 폰트 - 한/영/중/일 지원) 를 표시합니다.
 
     :param tuple(int, int) points: 문자열 좌측상단 좌표 (x, y)
     :param str text: 문자열 내용
@@ -115,7 +122,7 @@ Functions:
 
   def draw_image(self, filename):
     """
-    이미지 파일 로드
+    이미지 파일을 그립니다.
     **128x64** 크기의 **png** 확장자만 허용됩니다.
 
     :param str filename: 그림파일 경로
@@ -128,7 +135,7 @@ Functions:
 
   def draw_data(self, img):
     """
-    numpy 이미지 로드드 (cv image)
+    이미지 데이터 (cv2)를 그립니다.
 
     :param numpy.ndarray img: 이미지 객체
     """
@@ -140,7 +147,7 @@ Functions:
 
   def draw_rectangle(self, points, fill=None):
     """
-    직사각형
+    직사각형을 그립니다.
 
     :param tuple points: 사각형의 좌측상단 좌표, 사각형의 우측하단 좌표 (x1, y1, x2, y2)
     :param bool fill: 채움 여부
@@ -159,7 +166,7 @@ Functions:
 
   def draw_ellipse(self, points, fill=None):
     """
-    타원
+    타원을 그립니다.
 
     :param tuple points: 타원에 외접하는 직사각형의 좌측상단 좌표, 우측하단 좌표 (x1, y1, x2, y2)
     :param bool fill: 채움 여부
@@ -178,7 +185,7 @@ Functions:
 
   def draw_line(self, points):
     """
-    직선
+    직선을 그립니다.
 
     :param tuple points: 선의 시작 좌표, 선의 끝 좌표 (x1, y1, x2, y2)
     """
@@ -193,14 +200,14 @@ Functions:
 
   def invert(self):
     """
-    반전
+    화면을 반전합니다.
     """
 
     self.image = ImageOps.invert(self.image.convert("L")).convert("1")
 
   def imshow(self, img):
     """
-    draw_data + show
+    이미지 데이터(cv2)를 바로 OLED에 표시합니다.
 
     :param numpy.ndarray img: 이미지 객체
     """
@@ -228,7 +235,7 @@ Functions:
 
   def __init__(self, w=240, h=320):
     """
-    Oled 클래스 초기화
+    Oled 클래스 초기화합니다.
     """
 
     self.width = w
@@ -238,8 +245,9 @@ Functions:
     self.font_size = 10
 
     spi = busio.SPI(11, 10, 9)
-    rst_pin = digitalio.DigitalInOut(board.D24) # any pin!
+    rst_pin = None #digitalio.DigitalInOut(board.D24) # any pin!
     cs_pin = digitalio.DigitalInOut(board.D8)    # any pin!
+    cs_pin.switch_to_output(value=0)
     dc_pin = digitalio.DigitalInOut(board.D23)    # any pin!
   
     self.oled = ili9341.ILI9341(spi, rotation=0, rst=rst_pin, cs=cs_pin, dc=dc_pin, baudrate=36000000)
@@ -249,7 +257,7 @@ Functions:
 
   def show(self):
     """
-    oled 화면 표시 
+    oled 화면 표시합니다.
 
     **이 메소드를 사용하지 않으면 그림을 그려도 oled 화면에 아무것도 출력되지 않습니다.**
     """
@@ -258,7 +266,7 @@ Functions:
 
   def clear(self, image=True, fill=True, show=True):
     """
-    oled 화면 지움
+    oled 화면 지웁니다.
 
     :param bool image: image 초기화 여부
     :param bool fill: oled 초기화 여부
@@ -274,7 +282,7 @@ Functions:
 
   def set_font(self, filename=None, size=None):
     """
-    ``draw_text`` 폰트 설정
+    ``draw_text`` 폰트와 글자 크기를 설정합니다.
 
     :param str filename: 폰트 파일 경로 (ttf, otf)
     :param int size: 폰트 사이즈
@@ -293,7 +301,7 @@ Functions:
 
   def draw_text(self, points, text:str, colors=(255,255,255)):
     """
-    문자 (기본 폰트 - 한/영/중/일 지원)
+    문자 (기본 폰트 - 한/영/중/일 지원)를 표시합니다.
 
     :param tuple(int, int) points: 문자열 좌측상단 좌표 (x, y)
     :param str text: 문자열 내용
@@ -309,7 +317,7 @@ Functions:
 
   def draw_image(self, filename):
     """
-    이미지 파일 로드(png, jpg)
+    이미지 파일를 그립니다.
 
     :param str filename: 그림파일 경로
     """
@@ -321,7 +329,7 @@ Functions:
 
   def draw_data(self, img):
     """
-    numpy 이미지 로드드 (cv image)
+    이미지 데이터(cv2)를 그립니다.
 
     :param numpy.ndarray img: 이미지 객체
     """
@@ -333,7 +341,7 @@ Functions:
 
   def draw_rectangle(self, points, fill=None):
     """
-    직사각형
+    직사각형을 그립니다.
 
     :param tuple points: 사각형의 좌측상단 좌표, 사각형의 우측하단 좌표 (x1, y1, x2, y2)
     :param bool fill: 채움 여부
@@ -352,7 +360,7 @@ Functions:
 
   def draw_ellipse(self, points, fill=None):
     """
-    타원
+    타원을 그립니다.
 
     :param tuple points: 타원에 외접하는 직사각형의 좌측상단 좌표, 우측하단 좌표 (x1, y1, x2, y2)
     :param bool fill: 채움 여부
@@ -371,7 +379,7 @@ Functions:
 
   def draw_line(self, points):
     """
-    직선
+    직선을 그립니다.
 
     :param tuple points: 선의 시작 좌표, 선의 끝 좌표 (x1, y1, x2, y2)
     """
@@ -387,7 +395,7 @@ Functions:
 
   def imshow(self, img):
     """
-    draw_data + show
+    이미지 데이터(cv2)를 바로 OLED에 표시합니다.
 
     :param numpy.ndarray img: 이미지 객체
     """

@@ -27,8 +27,6 @@ mkdir -p /home/pi/mymodel
 
 # motor init
 #servo init
-echo "START - uart_ctrl.py"
-cd /home/pi/openpibo-os/system;sudo /home/pi/.pyenv/bin/python3 uart_ctrl.py &
 
 # ap start
 echo "START - ap-start"
@@ -46,7 +44,7 @@ cd /home/pi/openpibo-os/ide;sudo /home/pi/.pyenv/bin/python3 run_ide.py &
 
 # classifier server
 echo "START - classifier.py"
-cd /home/pi/openpibo-os/classifier;sudo  /home/pi/.pyenv/bin/python3 main.py &
+cd /home/pi/openpibo-os/classifier;sudo  /home/pi/.pyenv/bin/python3 run_classify.py &
 
 # Amp init
 #sudo gpio mode 7 out

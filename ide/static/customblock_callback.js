@@ -174,6 +174,33 @@ Blockly.Python.forBlock['device_pibrain_led_colour_on'] = function(block) {
 
   return `device.led_on_s(${c})\n`
 }
+Blockly.Python.forBlock['device_pibrain_led_off'] = function(block) {
+  Blockly.Python.definitions_['from_device_import_DeviceByPiBrain'] = 'from openpibo.device import DeviceByPiBrain as Device';
+  Blockly.Python.definitions_['assign_device'] = 'device = Device()';
+
+  return 'device.led_off()\n'
+}
+
+Blockly.Python.forBlock['device_pibrain_uart_init'] = function(block) {
+  Blockly.Python.definitions_['import serial'] = 'from openpibo.usb_uart import UsbUart';
+  Blockly.Python.definitions_['assign_serial'] = 'uu = UsbUart();';
+  const devname = block.getFieldValue("devname");
+
+  return `uu.connect(devname='${devname}', baudrate=9600, timeout=1)\n`
+}
+Blockly.Python.forBlock['device_pibrain_uart_send'] = function(block) {
+  Blockly.Python.definitions_['import serial'] = 'from openpibo.usb_uart import UsbUart';
+  Blockly.Python.definitions_['assign_serial'] = 'uu = UsbUart();';
+
+  const command = Blockly.Python.valueToCode(block, 'command', Blockly.Python.ORDER_ATOMIC);
+  return `uu.write("#"+${command}+"!")\n`
+}
+Blockly.Python.forBlock['device_pibrain_uart_close'] = function(block) {
+  Blockly.Python.definitions_['import serial'] = 'from openpibo.usb_uart import UsbUart';
+  Blockly.Python.definitions_['assign_serial'] = 'uu = UsbUart();';
+
+  return 'uu.close()\n'
+}
 
 // motion
 // Blockly.Python.forBlock['motion_get_motion'] = function(block) {

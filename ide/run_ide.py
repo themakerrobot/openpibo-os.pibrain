@@ -50,6 +50,7 @@ codeExec = {
 
 protectList = [
   '/home/pi/openpibo-',
+  '/home/pi/llama.cpp',
   '/home/pi/node_modules',
   '/home/pi/package.json',
   '/home/pi/package-lock.json',
@@ -136,14 +137,39 @@ async def get_directory(folderName: str):
 async def read_root(request: Request):
   return templates.TemplateResponse("index.html", {"request": request})
 
+@app.get("/download")
+async def download_item(filename: str):
+  full_path = os.path.join(PATH, filename)
 
-@app.get('/download')
-async def download_file(filename: str):
-  if is_protect(os.path.join(PATH, filename)):
+  # 보호 디렉토리 체크
+  if is_protect(full_path):
     await socket_manager.emit('update', {'dialog': '파일 다운로드 오류: 보호 디렉토리입니다.'})
     return JSONResponse(content={'error': '파일 다운로드 오류: 보호 디렉토리입니다.'}, status_code=403)
-  return FileResponse(os.path.join(PATH, filename), filename=filename)
 
+  # 존재 여부 체크
+  if not os.path.exists(full_path):
+    raise JSONResponse(content={'error':"파일 또는 폴더를 찾을 수 없습니다."}, status_code=404)
+
+  # 파일인 경우: 그대로 다운로드
+  if os.path.isfile(full_path):
+    return FileResponse(full_path, filename=filename)
+
+  # 폴더인 경우: /tmp/download.zip 로 압축 후 다운로드 (매번 새로 생성)
+  elif os.path.isdir(full_path):
+    zip_path = "/tmp/download.zip"
+
+    # 기존 압축 파일이 있다면 삭제
+    if os.path.exists(zip_path):
+      os.remove(zip_path)
+
+    # shutil.make_archive는 base_name 인자로 확장자 없는 경로를 요구함
+    base_name = "/tmp/download"  # 결과적으로 /tmp/download.zip 생성됨
+    shutil.make_archive(base_name, 'zip', root_dir=full_path)
+
+    return FileResponse(zip_path, media_type="application/zip", filename="download.zip")
+    
+  else:
+    raise JSONResponse(content={'error':"올바른 파일 또는 폴더가 아닙니다."}, status_code=403)
 
 @app.post('/upload')
 async def upload_file(files: List[UploadFile] = File(...)):

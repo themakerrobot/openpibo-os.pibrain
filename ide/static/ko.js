@@ -542,6 +542,15 @@ Blockly.Msg["DEVICE_PIBRAIN_LED_ON"] = "%1 %2 RGB %3%4%5 불빛 바꾸기";
 Blockly.Msg["DEVICE_PIBRAIN_LED_ON_TOOLTIP"] = "불빛의 색을 변경합니다.";
 Blockly.Msg["DEVICE_PIBRAIN_LED_COLOUR_ON"] = "%1 %2 색상 %3 불빛 바꾸기";
 Blockly.Msg["DEVICE_PIBRAIN_LED_COLOUR_ON_TOOLTIP"] = "색상 변수를 사용해 불빛의 색을 변경합니다.";
+Blockly.Msg["DEVICE_PIBRAIN_LED_OFF"] = "%1 %2 불빛 끄기";
+Blockly.Msg["DEVICE_PIBRAIN_LED_OFF_TOOLTIP"] = "불빛을 끕니다.";
+
+Blockly.Msg["DEVICE_PIBRAIN_UART_INIT"] = "%1 %2 %3 연결하기";
+Blockly.Msg["DEVICE_PIBRAIN_UART_INIT_TOOLTIP"] = "USB 장치 연결합니다.";
+Blockly.Msg["DEVICE_PIBRAIN_UART_SEND"] = "%1 %2 USB 장치에 %3 보내기";
+Blockly.Msg["DEVICE_PIBRAIN_UART_SEND_TOOLTIP"] = "USB 장치에 메시지를 보냅니다";
+Blockly.Msg["DEVICE_PIBRAIN_UART_CLOSE"] = "%1 %2 USB 연결을 끊기";
+Blockly.Msg["DEVICE_PIBRAIN_UART_CLOSE_TOOLTIP"] = "USB 연결 해제합니다.";
 
 Blockly.Msg["MOTION_GET_MOTION"] = "%1 %2 동작 목록 가져오기";
 Blockly.Msg["MOTION_GET_MOTION_TOOLTIP"] = "사용할 수 있는 동작 목록을 가져옵니다.";

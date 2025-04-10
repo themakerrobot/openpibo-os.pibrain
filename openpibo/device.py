@@ -465,17 +465,31 @@ Functions:
     return self.send_raw('#40:!').split(':')[1].split('-')[3]
 
 class DeviceByPiBrain:
+  """
+Functions:
+:meth:`~openpibo.device.DeviceByPiBrain.get_button`
+:meth:`~openpibo.device.DeviceByPiBrain.led_on`
+:meth:`~openpibo.device.DeviceByPiBrain.led_on_s`
+:meth:`~openpibo.device.DeviceByPiBrain.led_off`
+  """
+
   def __init__(self):
-    self.SW1 = 4
-    self.SW2 = 17
-    self.SW3 = 27
-    self.SW4 = 26
+    """
+    DeviceByPiBrain 클래스를 초기화합니다.
+
+    example::
+
+        from openpibo.device import DeviceByPiBrain
+
+        device = DeviceByPiBrain()
+        # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.
+    """
+
+    self.buttons = [4, 17, 27, 26]
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup( self.SW1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup( self.SW2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup( self.SW3, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup( self.SW4, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    for n in self.buttons:
+      GPIO.setup( n, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     
     LED_COUNT = 1        # Number of LED pixels.
     LED_PIN = 12          # GPIO pin connected to the pixels (18 uses PWM!).
@@ -488,9 +502,23 @@ class DeviceByPiBrain:
     self.strip.begin()
  
   def get_button(self, n):
-    return "on" if GPIO.input(n) == GPIO.LOW else "off"
+    """
+    버튼 눌림을 체크 합니다.
+
+    :param n: 버튼 번호 (1 ~ 4)
+    :returns: ``on`` 또는 ``off`` 
+    """
+    
+    button = self.buttons[n-1]
+    return "on" if GPIO.input(button) == GPIO.LOW else "off"
 
   def led_on(self, *color):
+    """
+    LED를 켭니다.
+
+    :param color: R, G, B (0~255 숫자)
+    """
+
     if len(color) == 0:
       raise Exception("color is required")
 
@@ -505,27 +533,19 @@ class DeviceByPiBrain:
     self.strip.show()
  
   def led_on_s(self, colors):
+    """
+    LED를 켭니다.
+
+    :param color: RGB 16진수 문자 #ffffff
+    """
     self.strip.setPixelColor(0, Color(int(colors[1:3],16), int(colors[3:5],16), int(colors[5:7],16)))
     self.strip.show()
   
   def led_off(self): 
+    """
+    LED를 끕니다.
+
+    """
+    
     self.strip.setPixelColor(0, Color(0,0,0))
     self.strip.show()
-
-if __name__ == "__main__":
-  dev = DeviceHat()
-  for i in [1,2,3,4]:
-    print(i, dev.PIN[i], dev.get_button(i))
-
-  dev.led_on(255,0,0)
-
-"""
-  device = Device()
-
-  print(1, device.eye_on(255,0,0))
-  print(2, device.send_raw('#21:0,0,255,10'))
-  print(3, device.get_battery())
-  print(4, device.get_dc())
-  print(5, device.get_system())
-  print(6, device.send_raw('#40:!'))
-"""

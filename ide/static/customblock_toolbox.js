@@ -1055,6 +1055,33 @@ let toolbox = (lang) => {
               }
             }
           },
+          {
+            "kind": "block",
+            "type": "device_pibrain_led_off",
+          },
+          {
+            "kind": "block",
+            "type": "device_pibrain_uart_init",
+          },
+          {
+            "kind": "block",
+            "type": "device_pibrain_uart_send",
+            "inputs":{
+              "command":{
+                "shadow": {
+                  "type": "text",
+                  "fields": {
+                    "TEXT": ""
+                    // "TEXT": translations['image_filename'][lang]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "kind": "block",
+            "type": "device_pibrain_uart_close",
+          },
         ],
         "colour": color_type["device"],
         "cssConfig": {

@@ -60,6 +60,7 @@
 <li class="toctree-l1"><a class="reference internal" href="libraries/audio.html">audio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="libraries/collect.html">collect</a></li>
 <li class="toctree-l1"><a class="reference internal" href="libraries/device.html">device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="libraries/usb_uart.html">usb_uart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="libraries/motion.html">motion</a></li>
 <li class="toctree-l1"><a class="reference internal" href="libraries/oled.html">oled</a></li>
 <li class="toctree-l1"><a class="reference internal" href="libraries/speech.html">speech</a></li>
@@ -111,6 +112,7 @@
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
  | <a href="#V"><strong>V</strong></a>
  | <a href="#W"><strong>W</strong></a>
  
@@ -142,15 +144,19 @@
 </li>
       <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera.circle">circle() (openpibo.vision_camera.Camera 메서드)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="libraries/oled.html#openpibo.oled.Oled.clear">clear() (openpibo.oled.Oled 메서드)</a>
 
       <ul>
         <li><a href="libraries/oled.html#openpibo.oled.OledByPiBrain.clear">(openpibo.oled.OledByPiBrain 메서드)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="libraries/usb_uart.html#openpibo.usb_uart.UsbUart.close">close() (openpibo.usb_uart.UsbUart 메서드)</a>
+</li>
       <li><a href="libraries/device.html#openpibo.device.Device.code_list">code_list (openpibo.device.Device의 속성)</a>
+</li>
+      <li><a href="libraries/usb_uart.html#openpibo.usb_uart.UsbUart.connect">connect() (openpibo.usb_uart.UsbUart 메서드)</a>
 </li>
       <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera.create_matte">create_matte() (openpibo.vision_camera.Camera 메서드)</a>
 </li>
@@ -380,6 +386,8 @@
 </li>
         <li><a href="libraries/speech.html#module-openpibo.speech">openpibo.speech</a>
 </li>
+        <li><a href="libraries/usb_uart.html#module-openpibo.usb_uart">openpibo.usb_uart</a>
+</li>
         <li><a href="libraries/utils.html#module-openpibo.utils">openpibo.utils</a>
 </li>
         <li><a href="libraries/vision_camera.html#module-openpibo.vision_camera">openpibo.vision_camera</a>
@@ -447,8 +455,6 @@
         <li><a href="libraries/motion.html#module-openpibo.motion">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     openpibo.oled
 
@@ -456,11 +462,20 @@
         <li><a href="libraries/oled.html#module-openpibo.oled">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     openpibo.speech
 
       <ul>
         <li><a href="libraries/speech.html#module-openpibo.speech">module</a>
+</li>
+      </ul></li>
+      <li>
+    openpibo.usb_uart
+
+      <ul>
+        <li><a href="libraries/usb_uart.html#module-openpibo.usb_uart">module</a>
 </li>
       </ul></li>
       <li>
@@ -519,8 +534,12 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera.read">read() (openpibo.vision_camera.Camera 메서드)</a>
+      <li><a href="libraries/usb_uart.html#openpibo.usb_uart.UsbUart.read">read() (openpibo.usb_uart.UsbUart 메서드)</a>
+
+      <ul>
+        <li><a href="libraries/vision_camera.html#openpibo.vision_camera.Camera.read">(openpibo.vision_camera.Camera 메서드)</a>
 </li>
+      </ul></li>
       <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Face.recognize">recognize() (openpibo.vision_recognize.Face 메서드)</a>
 </li>
       <li><a href="libraries/vision_recognize.html#openpibo.vision_recognize.Detect.recognize_hand_gesture">recognize_hand_gesture() (openpibo.vision_recognize.Detect 메서드)</a>
@@ -640,6 +659,14 @@
   </ul></td>
 </tr></table>
 
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="libraries/usb_uart.html#openpibo.usb_uart.UsbUart">UsbUart (openpibo.usb_uart 클래스)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -656,6 +683,8 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="libraries/collect.html#openpibo.collect.Wikipedia">Wikipedia (openpibo.collect 클래스)</a>
+</li>
+      <li><a href="libraries/usb_uart.html#openpibo.usb_uart.UsbUart.write">write() (openpibo.usb_uart.UsbUart 메서드)</a>
 </li>
   </ul></td>
 </tr></table>

@@ -500,10 +500,10 @@ Blockly.defineBlocksWithJsonArray(
           {"type":"input_dummy"},
           {"type": "field_dropdown", "name":"num",
             "options":[
-            [ 'SW1', '4' ],
-            [ 'SW2', '17' ],
-            [ 'SW3', '27' ],
-            [ 'SW4', '26' ],
+            [ 'SW1', '1' ],
+            [ 'SW2', '2' ],
+            [ 'SW3', '3' ],
+            [ 'SW4', '4' ],
           ]
           }
         ],
@@ -555,6 +555,92 @@ Blockly.defineBlocksWithJsonArray(
       inputsInline: true,
       colour: color_type["device"],
       tooltip: '%{BKY_DEVICE_PIBRAIN_LED_COLOUR_ON_TOOLTIP}',
+      helpUrl: ''
+    },
+    {
+      type: 'device_pibrain_led_off',
+      message0: '%{BKY_DEVICE_PIBRAIN_LED_OFF}',
+      args0: [
+        {
+          "type": "field_image",
+          "src": "svg/eye-solid.svg",
+          "width": 27,
+          "height": 27
+        },
+        {"type":"input_dummy"},
+      ],
+      nextStatement: true,
+      previousStatement: true,
+      inputsInline: true,
+      colour: color_type["device"],
+      tooltip: '%{BKY_DEVICE_PIBRAIN_LED_OFF_TOOLTIP}',
+      helpUrl: ''
+    },
+    {
+      type: 'device_pibrain_uart_init',
+      message0: '%{BKY_DEVICE_PIBRAIN_UART_INIT}',
+      args0: 
+        [
+          {
+            "type": "field_image",
+            "src": "svg/microchip-solid.svg",
+            "width": 27,
+            "height": 27
+          },
+          {"type":"input_dummy"},
+          {"type": "field_dropdown", "name":"devname",
+            "options":[
+              [ 'USB0',  '/dev/ttyUSB0' ],
+              [ 'USB1',  '/dev/ttyUSB1' ],
+            ]
+          },
+        ],
+      nextStatement: true,
+      previousStatement: true,
+      inputsInline: true,
+      colour: color_type["device"],
+      tooltip: '%{BKY_DEVICE_PIBRAIN_UART_INIT_TOOLTIP}',
+      helpUrl: ''
+    },
+    {
+      type: 'device_pibrain_uart_send',
+      message0: '%{BKY_DEVICE_PIBRAIN_UART_SEND}',
+      args0: 
+        [
+          {
+            "type": "field_image",
+            "src": "svg/microchip-solid.svg",
+            "width": 27,
+            "height": 27
+          },
+          {"type":"input_dummy"},
+          {"type": "input_value", "name": "command", "check":"String"}
+        ],
+      nextStatement: true,
+      previousStatement: true,
+      inputsInline: true,
+      colour: color_type["device"],
+      tooltip: '%{BKY_DEVICE_PIBRAIN_UART_SEND_TOOLTIP}',
+      helpUrl: ''
+    },
+    {
+      type: 'device_pibrain_uart_close',
+      message0: '%{BKY_DEVICE_PIBRAIN_UART_CLOSE}',
+      args0: 
+        [
+          {
+            "type": "field_image",
+            "src": "svg/microchip-solid.svg",
+            "width": 27,
+            "height": 27
+          },
+          {"type":"input_dummy"},
+        ],
+      nextStatement: true,
+      previousStatement: true,
+      inputsInline: true,
+      colour: color_type["device"],
+      tooltip: '%{BKY_DEVICE_PIBRAIN_UART_CLOSE_TOOLTIP}',
       helpUrl: ''
     },
 

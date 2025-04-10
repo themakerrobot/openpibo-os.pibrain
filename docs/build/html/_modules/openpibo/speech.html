@@ -180,17 +180,8 @@
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">string</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">string</span><span class="si">}</span><span class="s1">&quot; must be str type&#39;</span><span class="p">)</span>
 
-    <span class="c1">#if type(voice) is not str or voice not in (&#39;espeak&#39;, &#39;main&#39;, &#39;boy&#39;, &#39;girl&#39;, &#39;man1&#39;, &#39;woman1&#39;):</span>
-    <span class="c1">#  raise Exception(f&#39;&quot;{voice}&quot; must be (espeak|main|boy|girl|man1|woman1)&#39;)</span>
-
-    <span class="c1">#if type(lang) is not str or lang not in (&#39;en&#39;, &#39;ko&#39;):</span>
-    <span class="c1">#  raise Exception(f&#39;&quot;{lang}&quot; must be (en|ko)&#39;)</span>
-
-    <span class="c1"># if voice == &quot;ondevice&quot;:</span>
-    <span class="c1">#   self.ondevice_tts.tts(text=string, voice=5, filename=filename)</span>
-    <span class="c1">#   return</span>
     <span class="k">if</span> <span class="n">voice</span> <span class="o">==</span> <span class="s2">&quot;espeak&quot;</span><span class="p">:</span>
-      <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;espeak-ng &quot;</span><span class="si">{</span><span class="n">string</span><span class="si">}</span><span class="s1">&quot; -w </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+      <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;espeak &quot;</span><span class="si">{</span><span class="n">string</span><span class="si">}</span><span class="s1">&quot; -w </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
       <span class="k">return</span>
     <span class="k">elif</span> <span class="n">voice</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;gtts&quot;</span><span class="p">,</span> <span class="s2">&quot;e_gtts&quot;</span><span class="p">]:</span>
       <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>

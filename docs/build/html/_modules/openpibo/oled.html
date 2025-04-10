@@ -102,7 +102,14 @@
 <span class="sd">:obj:`~openpibo.oled.OledByPiBrain`</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">.modules.oled</span> <span class="kn">import</span> <span class="n">ili9341</span><span class="p">,</span> <span class="n">ssd1306</span><span class="p">,</span> <span class="n">board</span><span class="p">,</span> <span class="n">busio</span><span class="p">,</span> <span class="n">digitalio</span>
+<span class="c1">#from .modules.oled import ili9341, ssd1306, board, busio, digitalio</span>
+
+<span class="kn">import</span> <span class="nn">board</span>
+<span class="kn">import</span> <span class="nn">busio</span>
+<span class="kn">import</span> <span class="nn">digitalio</span>
+<span class="kn">import</span> <span class="nn">adafruit_ssd1306</span> <span class="k">as</span> <span class="nn">ssd1306</span>
+<span class="kn">import</span> <span class="nn">adafruit_rgb_display.ili9341</span> <span class="k">as</span> <span class="nn">ili9341</span>
+
 <span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">ImageDraw</span><span class="p">,</span> <span class="n">ImageFont</span><span class="p">,</span> <span class="n">ImageOps</span>
 <span class="kn">import</span> <span class="nn">cv2</span><span class="o">,</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -130,13 +137,13 @@
 
   <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">64</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Oled 클래스 초기화</span>
+<span class="sd">    Oled 클래스 초기화합니다.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">w</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">h</span>
     <span class="c1">#self.font_path = openpibo_models.filepath(&quot;KDL.ttf&quot;) # KoPub Dotum Light</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">font_path</span> <span class="o">=</span> <span class="s1">&#39;/home/pi/openpibo-os/openpibo-python/NotoSans-CJK-Regular.otf&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">font_path</span> <span class="o">=</span> <span class="n">openpibo_models</span><span class="o">.</span><span class="n">filepath</span><span class="p">(</span><span class="s2">&quot;NS_CJK_R.otf&quot;</span><span class="p">)</span> <span class="c1"># Noto Sans CJK Regular</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">font_size</span> <span class="o">=</span> <span class="mi">10</span>
 
     <span class="n">spi</span> <span class="o">=</span> <span class="n">busio</span><span class="o">.</span><span class="n">SPI</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
@@ -154,7 +161,7 @@
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled.show">[문서]</a>
   <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    oled 화면 표시 </span>
+<span class="sd">    oled 화면 표시합니다.</span>
 
 <span class="sd">    **이 메소드를 사용하지 않으면 그림을 그려도 oled 화면에 아무것도 출력되지 않습니다.**</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -167,7 +174,7 @@
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled.clear">[문서]</a>
   <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    oled 화면 지움</span>
+<span class="sd">    oled 화면 지웁니다.</span>
 
 <span class="sd">    :param bool image: image 초기화 여부</span>
 <span class="sd">    :param bool fill: oled 초기화 여부</span>
@@ -186,7 +193,7 @@
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled.set_font">[문서]</a>
   <span class="k">def</span> <span class="nf">set_font</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    ``draw_text`` 폰트 설정</span>
+<span class="sd">    ``draw_text`` 폰트와 글자 크기를 설정합니다.</span>
 
 <span class="sd">    :param str filename: 폰트 파일 경로 (ttf, otf)</span>
 <span class="sd">    :param int size: 폰트 사이즈</span>
@@ -208,7 +215,7 @@
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled.draw_text">[문서]</a>
   <span class="k">def</span> <span class="nf">draw_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    문자 (기본 폰트 - 한/영/중/일 지원)</span>
+<span class="sd">    문자 (기본 폰트 - 한/영/중/일 지원) 를 표시합니다.</span>
 
 <span class="sd">    :param tuple(int, int) points: 문자열 좌측상단 좌표 (x, y)</span>
 <span class="sd">    :param str text: 문자열 내용</span>
@@ -227,7 +234,7 @@
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled.draw_image">[문서]</a>
   <span class="k">def</span> <span class="nf">draw_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    이미지 파일 로드</span>
+<span class="sd">    이미지 파일을 그립니다.</span>
 <span class="sd">    **128x64** 크기의 **png** 확장자만 허용됩니다.</span>
 
 <span class="sd">    :param str filename: 그림파일 경로</span>
@@ -243,7 +250,7 @@
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled.draw_data">[문서]</a>
   <span class="k">def</span> <span class="nf">draw_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    numpy 이미지 로드드 (cv image)</span>
+<span class="sd">    이미지 데이터 (cv2)를 그립니다.</span>
 
 <span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -258,7 +265,7 @@
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled.draw_rectangle">[문서]</a>
   <span class="k">def</span> <span class="nf">draw_rectangle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    직사각형</span>
+<span class="sd">    직사각형을 그립니다.</span>
 
 <span class="sd">    :param tuple points: 사각형의 좌측상단 좌표, 사각형의 우측하단 좌표 (x1, y1, x2, y2)</span>
 <span class="sd">    :param bool fill: 채움 여부</span>
@@ -280,7 +287,7 @@
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled.draw_ellipse">[문서]</a>
   <span class="k">def</span> <span class="nf">draw_ellipse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    타원</span>
+<span class="sd">    타원을 그립니다.</span>
 
 <span class="sd">    :param tuple points: 타원에 외접하는 직사각형의 좌측상단 좌표, 우측하단 좌표 (x1, y1, x2, y2)</span>
 <span class="sd">    :param bool fill: 채움 여부</span>
@@ -302,7 +309,7 @@
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled.draw_line">[문서]</a>
   <span class="k">def</span> <span class="nf">draw_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    직선</span>
+<span class="sd">    직선을 그립니다.</span>
 
 <span class="sd">    :param tuple points: 선의 시작 좌표, 선의 끝 좌표 (x1, y1, x2, y2)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -320,7 +327,7 @@
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled.invert">[문서]</a>
   <span class="k">def</span> <span class="nf">invert</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    반전</span>
+<span class="sd">    화면을 반전합니다.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">ImageOps</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">)</span></div>
@@ -330,7 +337,7 @@
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled.imshow">[문서]</a>
   <span class="k">def</span> <span class="nf">imshow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    draw_data + show</span>
+<span class="sd">    이미지 데이터(cv2)를 바로 OLED에 표시합니다.</span>
 
 <span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -362,7 +369,7 @@
 
   <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="mi">240</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">320</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Oled 클래스 초기화</span>
+<span class="sd">    Oled 클래스 초기화합니다.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">w</span>
@@ -372,8 +379,9 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">font_size</span> <span class="o">=</span> <span class="mi">10</span>
 
     <span class="n">spi</span> <span class="o">=</span> <span class="n">busio</span><span class="o">.</span><span class="n">SPI</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
-    <span class="n">rst_pin</span> <span class="o">=</span> <span class="n">digitalio</span><span class="o">.</span><span class="n">DigitalInOut</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">D24</span><span class="p">)</span> <span class="c1"># any pin!</span>
+    <span class="n">rst_pin</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1">#digitalio.DigitalInOut(board.D24) # any pin!</span>
     <span class="n">cs_pin</span> <span class="o">=</span> <span class="n">digitalio</span><span class="o">.</span><span class="n">DigitalInOut</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">D8</span><span class="p">)</span>    <span class="c1"># any pin!</span>
+    <span class="n">cs_pin</span><span class="o">.</span><span class="n">switch_to_output</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">dc_pin</span> <span class="o">=</span> <span class="n">digitalio</span><span class="o">.</span><span class="n">DigitalInOut</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">D23</span><span class="p">)</span>    <span class="c1"># any pin!</span>
   
     <span class="bp">self</span><span class="o">.</span><span class="n">oled</span> <span class="o">=</span> <span class="n">ili9341</span><span class="o">.</span><span class="n">ILI9341</span><span class="p">(</span><span class="n">spi</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">rst</span><span class="o">=</span><span class="n">rst_pin</span><span class="p">,</span> <span class="n">cs</span><span class="o">=</span><span class="n">cs_pin</span><span class="p">,</span> <span class="n">dc</span><span class="o">=</span><span class="n">dc_pin</span><span class="p">,</span> <span class="n">baudrate</span><span class="o">=</span><span class="mi">36000000</span><span class="p">)</span>
@@ -385,7 +393,7 @@
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.OledByPiBrain.show">[문서]</a>
   <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    oled 화면 표시 </span>
+<span class="sd">    oled 화면 표시합니다.</span>
 
 <span class="sd">    **이 메소드를 사용하지 않으면 그림을 그려도 oled 화면에 아무것도 출력되지 않습니다.**</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -397,7 +405,7 @@
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.OledByPiBrain.clear">[문서]</a>
   <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    oled 화면 지움</span>
+<span class="sd">    oled 화면 지웁니다.</span>
 
 <span class="sd">    :param bool image: image 초기화 여부</span>
 <span class="sd">    :param bool fill: oled 초기화 여부</span>
@@ -416,7 +424,7 @@
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.OledByPiBrain.set_font">[문서]</a>
   <span class="k">def</span> <span class="nf">set_font</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    ``draw_text`` 폰트 설정</span>
+<span class="sd">    ``draw_text`` 폰트와 글자 크기를 설정합니다.</span>
 
 <span class="sd">    :param str filename: 폰트 파일 경로 (ttf, otf)</span>
 <span class="sd">    :param int size: 폰트 사이즈</span>
@@ -438,7 +446,7 @@
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.OledByPiBrain.draw_text">[문서]</a>
   <span class="k">def</span> <span class="nf">draw_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">)):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    문자 (기본 폰트 - 한/영/중/일 지원)</span>
+<span class="sd">    문자 (기본 폰트 - 한/영/중/일 지원)를 표시합니다.</span>
 
 <span class="sd">    :param tuple(int, int) points: 문자열 좌측상단 좌표 (x, y)</span>
 <span class="sd">    :param str text: 문자열 내용</span>
@@ -457,7 +465,7 @@
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.OledByPiBrain.draw_image">[문서]</a>
   <span class="k">def</span> <span class="nf">draw_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    이미지 파일 로드(png, jpg)</span>
+<span class="sd">    이미지 파일를 그립니다.</span>
 
 <span class="sd">    :param str filename: 그림파일 경로</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -472,7 +480,7 @@
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.OledByPiBrain.draw_data">[문서]</a>
   <span class="k">def</span> <span class="nf">draw_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    numpy 이미지 로드드 (cv image)</span>
+<span class="sd">    이미지 데이터(cv2)를 그립니다.</span>
 
 <span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -487,7 +495,7 @@
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.OledByPiBrain.draw_rectangle">[문서]</a>
   <span class="k">def</span> <span class="nf">draw_rectangle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    직사각형</span>
+<span class="sd">    직사각형을 그립니다.</span>
 
 <span class="sd">    :param tuple points: 사각형의 좌측상단 좌표, 사각형의 우측하단 좌표 (x1, y1, x2, y2)</span>
 <span class="sd">    :param bool fill: 채움 여부</span>
@@ -509,7 +517,7 @@
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.OledByPiBrain.draw_ellipse">[문서]</a>
   <span class="k">def</span> <span class="nf">draw_ellipse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    타원</span>
+<span class="sd">    타원을 그립니다.</span>
 
 <span class="sd">    :param tuple points: 타원에 외접하는 직사각형의 좌측상단 좌표, 우측하단 좌표 (x1, y1, x2, y2)</span>
 <span class="sd">    :param bool fill: 채움 여부</span>
@@ -531,7 +539,7 @@
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.OledByPiBrain.draw_line">[문서]</a>
   <span class="k">def</span> <span class="nf">draw_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    직선</span>
+<span class="sd">    직선을 그립니다.</span>
 
 <span class="sd">    :param tuple points: 선의 시작 좌표, 선의 끝 좌표 (x1, y1, x2, y2)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -550,7 +558,7 @@
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.OledByPiBrain.imshow">[문서]</a>
   <span class="k">def</span> <span class="nf">imshow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    draw_data + show</span>
+<span class="sd">    이미지 데이터(cv2)를 바로 OLED에 표시합니다.</span>
 
 <span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
 <span class="sd">    &quot;&quot;&quot;</span>

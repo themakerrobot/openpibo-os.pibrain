@@ -10,6 +10,7 @@ from collections import Counter
 import json,time,os,shutil
 import wifi
 import network_disp
+import uart_ctrl
 import argparse
 
 @asynccontextmanager
@@ -18,15 +19,17 @@ async def lifespan(app: FastAPI):
   ole = Oled()
   aud = Audio()
   winfo = ['','','','','','']
+  uart_ctrl.start()
   boot()
   yield
 
 app = FastAPI(lifespan=lifespan)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 apmode = True
-@app.get("/device/{pkt}")
-async def device_command(pkt: str):
-  return JSONResponse(content=f"not support", status_code=500)
+
+#@app.get("/device/{pkt}")
+#async def device_command(pkt: str):
+#  return JSONResponse(content=f"not support", status_code=500)
 
 @app.get('/usedata')
 async def f():
@@ -138,9 +141,7 @@ def boot():
 
   aud.play("/home/pi/openpibo-os/system/opening.mp3", 70)
   ole.clear()
-  ole.draw_image("/home/pi/openpibo-os/system/themaker320.jpg")
-  ole.set_font(size=15)
-  ole.draw_text((5,40), os_version)
+  ole.draw_image("/home/pi/openpibo-os/system/pibrain320.jpg")
   ole.show()
   time.sleep(5)
   for i in range(1,10):

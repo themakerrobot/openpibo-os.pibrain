@@ -542,6 +542,14 @@ Blockly.Msg["DEVICE_PIBRAIN_LED_ON"] = "%1 %2 Turn on LEDs %3 %4 %5";
 Blockly.Msg["DEVICE_PIBRAIN_LED_ON_TOOLTIP"] = "Turn on LED";
 Blockly.Msg["DEVICE_PIBRAIN_LED_COLOUR_ON"] = "%1 %2 Turn on LEDs with color variable %3";
 Blockly.Msg["DEVICE_PIBRAIN_LED_COLOUR_ON_TOOLTIP"] = "Turn on LED with a color variable.";
+Blockly.Msg["DEVICE_PIBRAIN_LED_OFF"] = "%1 %2 Turn off LEDs";
+Blockly.Msg["DEVICE_PIBRAIN_LED_OFF_TOOLTIP"] = "Turn off LED";
+Blockly.Msg["DEVICE_PIBRAIN_UART_INIT"] = "%1 %2 %3 연결하기";
+Blockly.Msg["DEVICE_PIBRAIN_UART_INIT_TOOLTIP"] = "USB 장치 연결합니다.";
+Blockly.Msg["DEVICE_PIBRAIN_UART_SEND"] = "%1 %2 USB 장치에 %3 보내기";
+Blockly.Msg["DEVICE_PIBRAIN_UART_SEND_TOOLTIP"] = "USB 장치에 메시지를 보냅니다";
+Blockly.Msg["DEVICE_PIBRAIN_UART_CLOSE"] = "%1 %2 USB 연결을 끊기";
+Blockly.Msg["DEVICE_PIBRAIN_UART_CLOSE_TOOLTIP"] = "USB 연결 해제합니다.";
 
 Blockly.Msg["MOTION_GET_MOTION"] = "%1 %2 Get motion list";
 Blockly.Msg["MOTION_GET_MOTION_TOOLTIP"] = "Retrieve list of available motions.";
