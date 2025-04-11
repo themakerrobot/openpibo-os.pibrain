@@ -1,0 +1,11 @@
+tensorboard==2.15.2
+tensorboard-data-server==0.7.2
+tensorflow==2.15.0
+tensorflow-cpu-aws==2.15.0
+tensorflow-estimator==2.15.0
+tensorflow-hub==0.16.1
+tensorflow-io-gcs-filesystem==0.37.1
+#tensorstore==0.1.68
+tf-keras==2.14.1
+tflite-runtime==2.14.0
+ml-dtypes==0.2.0

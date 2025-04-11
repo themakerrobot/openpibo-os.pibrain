@@ -60,6 +60,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/audio.html">audio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/collect.html">collect</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/device.html">device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/usb_uart.html">usb_uart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/motion.html">motion</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/oled.html">oled</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/speech.html">speech</a></li>
@@ -99,6 +100,7 @@
 
 <span class="sd">Class:</span>
 <span class="sd">:obj:`~openpibo.speech.Speech`</span>
+<span class="sd">:obj:`~openpibo.speech.SpeechOnDevice`</span>
 <span class="sd">:obj:`~openpibo.speech.Dialog`</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -111,7 +113,7 @@
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">napi_host</span><span class="p">,</span> <span class="n">sapi_host</span>
 <span class="kn">from</span> <span class="nn">.modules.speech.mtranslate</span> <span class="kn">import</span> <span class="n">translate</span>
-<span class="c1"># from .modules.speech.mtts import OndeviceTTS</span>
+<span class="kn">from</span> <span class="nn">.modules.speech.mtts</span> <span class="kn">import</span> <span class="n">OnDeviceTTS</span>
 <span class="kn">import</span> <span class="nn">openpibo_models</span>
 <span class="c1">#current_path = os.path.dirname(os.path.realpath(__file__))</span>
 
@@ -154,11 +156,10 @@
 
   <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">SAPI_HOST</span> <span class="o">=</span> <span class="n">sapi_host</span>
-    <span class="c1"># self.ondevice_tts = OndeviceTTS()</span>
 
 <div class="viewcode-block" id="Speech.tts">
 <a class="viewcode-back" href="../../libraries/speech.html#openpibo.speech.Speech.tts">[문서]</a>
-  <span class="k">def</span> <span class="nf">tts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;tts.mp3&quot;</span><span class="p">,</span> <span class="n">voice</span><span class="o">=</span><span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s2">&quot;ko&quot;</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">tts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;tts.mp3&quot;</span><span class="p">,</span> <span class="n">voice</span><span class="o">=</span><span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s2">&quot;ko&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    TTS(Text to Speech)</span>
 
@@ -168,7 +169,7 @@
 
 <span class="sd">      speech.tts(&#39;안녕하세요! 만나서 반가워요!&#39;, &#39;main&#39;, &#39;ko&#39;, &#39;/home/pi/tts.mp3&#39;)</span>
 
-<span class="sd">    :param str string: 변환할 문장구</span>
+<span class="sd">    :param str text: 변환할 문장구</span>
 
 <span class="sd">    :param str voice: 목소리 타입(espeak | gtts | main | boy | girl | man1 | woman1)</span>
 
@@ -177,22 +178,22 @@
 <span class="sd">    :param str filename: 변환된 음성파일의 경로 (mp3)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">string</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">string</span><span class="si">}</span><span class="s1">&quot; must be str type&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s1">&quot; must be str type&#39;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">voice</span> <span class="o">==</span> <span class="s2">&quot;espeak&quot;</span><span class="p">:</span>
-      <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;espeak &quot;</span><span class="si">{</span><span class="n">string</span><span class="si">}</span><span class="s1">&quot; -w </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+      <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;espeak &quot;</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s1">&quot; -w </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
       <span class="k">return</span>
     <span class="k">elif</span> <span class="n">voice</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;gtts&quot;</span><span class="p">,</span> <span class="s2">&quot;e_gtts&quot;</span><span class="p">]:</span>
       <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;client&quot;</span><span class="p">:</span><span class="s2">&quot;tw-ob&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;q&quot;</span><span class="p">:</span><span class="n">string</span><span class="p">,</span>
+        <span class="s2">&quot;q&quot;</span><span class="p">:</span><span class="n">text</span><span class="p">,</span>
         <span class="s2">&quot;tl&quot;</span><span class="p">:</span><span class="n">lang</span>
       <span class="p">}</span>
       <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://translate.google.com/translate_tts&#39;</span>
     <span class="k">else</span><span class="p">:</span>
       <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;text&quot;</span><span class="p">:</span><span class="n">string</span><span class="p">,</span>
+        <span class="s2">&quot;text&quot;</span><span class="p">:</span><span class="n">text</span><span class="p">,</span>
         <span class="s2">&quot;hash&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="s2">&quot;voice&quot;</span><span class="p">:</span><span class="n">voice</span><span class="p">,</span> <span class="c1"># [&#39;main&#39;, &#39;boy&#39;, &#39;girl&#39;, &#39;man1&#39;, &#39;woman1&#39;]</span>
         <span class="s2">&quot;lang&quot;</span><span class="p">:</span><span class="n">lang</span><span class="p">,</span> <span class="c1"># [&#39;ko&#39;, &#39;en&#39;]</span>
@@ -246,6 +247,54 @@
 </div>
 
 
+<div class="viewcode-block" id="SpeechOnDevice">
+<a class="viewcode-back" href="../../libraries/speech.html#openpibo.speech.SpeechOnDevice">[문서]</a>
+<span class="k">class</span> <span class="nc">SpeechOnDevice</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions:</span>
+<span class="sd">:meth:`~openpibo.speech.SpeechOnDevice.tts`</span>
+
+<span class="sd">  * TTS (Text to Speech)</span>
+
+<span class="sd">  example::</span>
+
+<span class="sd">    from openpibo.speech import SpeechOnDevice</span>
+
+<span class="sd">    speech_od = SpeechOnDevice()</span>
+<span class="sd">    # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">otts</span> <span class="o">=</span> <span class="n">OnDeviceTTS</span><span class="p">()</span>
+  
+<div class="viewcode-block" id="SpeechOnDevice.tts">
+<a class="viewcode-back" href="../../libraries/speech.html#openpibo.speech.SpeechOnDevice.tts">[문서]</a>
+  <span class="k">def</span> <span class="nf">tts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;tts.mp3&quot;</span><span class="p">,</span> <span class="n">voice</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s2">&quot;ko&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TTS(Text to Speech)</span>
+
+<span class="sd">    Text(문자)를 Speech(말)로 변환하여 파일로 저장합니다.</span>
+
+<span class="sd">    example::</span>
+
+<span class="sd">      speech_od.tts(text=&#39;안녕하세요! 만나서 반가워요!&#39;, &#39;ko&#39;, &#39;/home/pi/tts.mp3&#39;)</span>
+
+<span class="sd">    :param str text: 변환할 문장구</span>
+
+<span class="sd">    :param int voice: 목소리 번호 0 - 5</span>
+
+<span class="sd">    :param str lang: 사용할 언어(ko)</span>
+
+<span class="sd">    :param str filename: 변환된 음성파일의 경로 (mp3)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s1">&quot; must be str type&#39;</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">otts</span><span class="o">.</span><span class="n">text_to_speech</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">voice</span><span class="o">=</span><span class="n">voice</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="n">lang</span><span class="p">,</span> <span class="n">static</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+</div>
+
+
 
 <div class="viewcode-block" id="Dialog">
 <a class="viewcode-back" href="../../libraries/speech.html#openpibo.speech.Dialog">[문서]</a>
@@ -260,6 +309,9 @@
 <span class="sd">:meth:`~openpibo.speech.Dialog.translate`</span>
 <span class="sd">:meth:`~openpibo.speech.Dialog.get_dialog_dl`</span>
 <span class="sd">:meth:`~openpibo.speech.Dialog.nlp_dl`</span>
+<span class="sd">:meth:`~openpibo.speech.Dialog.start_llm`</span>
+<span class="sd">:meth:`~openpibo.speech.Dialog.call_llm`</span>
+<span class="sd">:meth:`~openpibo.speech.Dialog.stop_llm`</span>
 
 <span class="sd">  파이보에서 대화와 관련된 자연어처리 기능을 하는 클래스입니다. 다음 기능을 수행할 수 있습니다.</span>
 
@@ -501,6 +553,85 @@
       <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;result error: </span><span class="si">{</span><span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Dialog.start_llm">
+<a class="viewcode-back" href="../../libraries/speech.html#openpibo.speech.Dialog.start_llm">[문서]</a>
+  <span class="k">def</span> <span class="nf">start_llm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">50020</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    LLM 서비스를 시작합니다. (Chat 모드)</span>
+
+<span class="sd">    example::</span>
+
+<span class="sd">      dialog.start_llm()</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;pkill llama-server;/home/pi/llama.cpp/build/bin/llama-server -m /home/pi/.model/llm/gemma-3-1b-it-Q2_K.gguf --log-disable --host 0.0.0.0 --port </span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2"> &amp;&quot;</span><span class="p">)</span>    
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Connect to http:{Device IP}:50020 for LLM Web-UI&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Dialog.call_llm">
+<a class="viewcode-back" href="../../libraries/speech.html#openpibo.speech.Dialog.call_llm">[문서]</a>
+  <span class="k">def</span> <span class="nf">call_llm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">system_prompt</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    LLM 서버(OpenAI 호환 Chat Completions API)를 호출합니다.</span>
+<span class="sd">    </span>
+<span class="sd">    예시:</span>
+<span class="sd">        dialog.call_llm(prompt=&quot;안녕하세요&quot;, system_prompt=&quot;너는 내 스마트한 비서야&quot;)</span>
+<span class="sd">    </span>
+<span class="sd">    :param str prompt: 사용자의 입력 메시지.</span>
+<span class="sd">    :param str system_prompt: 시스템 프롬프트. (없으면 기본값 유지)</span>
+<span class="sd">    :return: 생성된 텍스트 또는 API 응답 전체 JSON.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://0.0.0.0:50020/v1/chat/completions&quot;</span>
+    
+    <span class="c1"># Chat API 메시지 배열 구성</span>
+    <span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">system_prompt</span><span class="p">:</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">system_prompt</span><span class="p">})</span>
+    <span class="k">if</span> <span class="n">prompt</span><span class="p">:</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">})</span>
+    
+    <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;gemma-3-1b-it-Q2_K&quot;</span><span class="p">,</span>  <span class="c1"># 모델명 (환경에 맞게 수정)</span>
+      <span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="n">messages</span><span class="p">,</span>
+      <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>   <span class="c1"># 생성 텍스트의 무작위성 조절</span>
+      <span class="s2">&quot;top_p&quot;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">,</span>        <span class="c1"># 누적 확률 임계값</span>
+      <span class="s2">&quot;max_tokens&quot;</span><span class="p">:</span> <span class="mi">256</span>     <span class="c1"># 생성 최대 토큰 수 (필요에 따라 조정)</span>
+    <span class="p">}</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
+      <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>  <span class="c1"># 4xx, 5xx 에러 발생 시 예외 처리</span>
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;LLM 서버 호출 실패: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    
+    <span class="c1"># OpenAI Chat API 표준 응답 형식에 따른 처리</span>
+    <span class="k">if</span> <span class="s2">&quot;choices&quot;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;message&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="c1"># 예상하는 키가 없으면 전체 응답 데이터를 반환합니다.</span>
+      <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="Dialog.stop_llm">
+<a class="viewcode-back" href="../../libraries/speech.html#openpibo.speech.Dialog.stop_llm">[문서]</a>
+  <span class="k">def</span> <span class="nf">stop_llm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    LLM 서비스를 중지합니다.</span>
+
+<span class="sd">    example::</span>
+
+<span class="sd">      dialog.stop_llm()</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;pkill llama-server&quot;</span><span class="p">)</span>    </div>
 </div>
 
 </pre></div>

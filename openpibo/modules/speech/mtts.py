@@ -6,7 +6,7 @@ import onnxruntime as rt
 import json
 import epitran
 import os
-
+import eng_to_ipa as ipa_en
 class HParams:
     def __init__(self, **kwargs):
         for k, v in kwargs.items():
@@ -38,8 +38,8 @@ class HParams:
     def __repr__(self):
         return self.__dict__.__repr__()
 
-class OndeviceTTS:
-  def __init__(self, modelpath='/home/pi/.model/tts/ko_base.onnx', configpath='/home/pi/.model/tts/ko_base.json'):
+class OnDeviceTTS:
+  def __init__(self, modelpath='/home/pi/.model/tts/ko_base_f16.onnx', configpath='/home/pi/.model/tts/ko_base.json'):
     self.eng_to_kor = {
         'a': '에이', 'b': '비', 'c': '씨', 'd': '디', 'e': '이', 'f': '에프',
         'g': '쥐', 'h': '에이치', 'i': '아이', 'j': '제이', 'k': '케이',
@@ -69,7 +69,7 @@ class OndeviceTTS:
     symbols = [_pad] + list(_punctuation) + list(_letters) + list(_letters_ipa) # !
     self._symbol_to_id = {s: i for i, s in enumerate(symbols)} 
 
-  def tts(self, text, filename="tts.wav", voice=2, lang='ko', static=0):
+  def text_to_speech(self, text, filename="tts.wav", voice=2, lang='ko', static=0):
     def text_to_sequence(text):
       sequence = []
       text = text.lower()
@@ -79,7 +79,7 @@ class OndeviceTTS:
       nums = re.findall(r'[0-9]+[.]?[0-9]*', text)  # 숫자 추출
       for num in nums:
         val = float(num) if ("." in num) else int(num)
-        text = text.replace(num, num2words(val, lang='ko'))
+        text = text.replace(num, num2words(val, lang=lang))
 
       result = [] # en2ko
       tokens = re.findall(r'[a-zA-Z]+|[^a-zA-Z]+', text)
@@ -90,7 +90,7 @@ class OndeviceTTS:
           result.append(token)
       text = ",".join(result)
 
-      phonemes = self.ipa_ko.transliterate(text) 
+      phonemes = self.ipa_ko.transliterate(text) if lang == "ko" else ipa_en.convert(text) 
       clean_text = re.sub(self._whitespace_re,' ', phonemes)  # precompiled regex 사용
       for symbol in clean_text:
         if symbol in self._symbol_to_id.keys():
@@ -110,7 +110,7 @@ class OndeviceTTS:
     phoneme_ids = np.array(phoneme_ids, dtype=np.int64)
     text = np.expand_dims(np.array(phoneme_ids, dtype=np.int64), 0)
     text_lengths = np.array([text.shape[1]], dtype=np.int64)
-    scales = np.array([0.667, 1.0, 0.8], dtype=np.float32)#dtype=np.float16) 16
+    scales = np.array([0.667, 1.0, 0.8], dtype=np.float16)#dtype=np.float16) 16
     sid = np.array([int(voice)], dtype=np.int64) if voice is not None else None
     audio = self.pipe_tts.run(None, {"input": text,"input_lengths": text_lengths,"scales": scales,"sid": sid})[0].squeeze((0, 1))
     write(data=audio.astype(np.float32), rate=self.conf_tts.data.sampling_rate, filename=filename)
@@ -125,6 +125,6 @@ if __name__ == "__main__":
     print(2, time.time()-s)
     os.system(f'play voice.wav')
     s = time.time()
-    ot.tts(text="안녕하세요. 좋은 아침입니다.", voice=1, filename="voice.wav")
+    ot.tts(text="Good morning, How are you today?", lang="en", voice=1, filename="voice.wav")
     print(2, time.time()-s)
     os.system(f'play voice.wav')

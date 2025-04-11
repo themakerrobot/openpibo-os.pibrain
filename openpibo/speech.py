@@ -3,6 +3,7 @@
 
 Class:
 :obj:`~openpibo.speech.Speech`
+:obj:`~openpibo.speech.SpeechOnDevice`
 :obj:`~openpibo.speech.Dialog`
 """
 
@@ -15,7 +16,7 @@ import os
 import requests
 from . import napi_host, sapi_host
 from .modules.speech.mtranslate import translate
-# from .modules.speech.mtts import OndeviceTTS
+from .modules.speech.mtts import OnDeviceTTS
 import openpibo_models
 #current_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -53,9 +54,8 @@ Functions:
 
   def __init__(self):
     self.SAPI_HOST = sapi_host
-    # self.ondevice_tts = OndeviceTTS()
 
-  def tts(self, string, filename="tts.mp3", voice="main", lang="ko"):
+  def tts(self, text, filename="tts.mp3", voice="main", lang="ko"):
     """
     TTS(Text to Speech)
 
@@ -65,7 +65,7 @@ Functions:
 
       speech.tts('안녕하세요! 만나서 반가워요!', 'main', 'ko', '/home/pi/tts.mp3')
 
-    :param str string: 변환할 문장구
+    :param str text: 변환할 문장구
 
     :param str voice: 목소리 타입(espeak | gtts | main | boy | girl | man1 | woman1)
 
@@ -74,22 +74,22 @@ Functions:
     :param str filename: 변환된 음성파일의 경로 (mp3)
     """
 
-    if type(string) is not str:
-      raise Exception(f'"{string}" must be str type')
+    if type(text) is not str:
+      raise Exception(f'"{text}" must be str type')
 
     if voice == "espeak":
-      os.system(f'espeak "{string}" -w {filename}')
+      os.system(f'espeak "{text}" -w {filename}')
       return
     elif voice in ["gtts", "e_gtts"]:
       data = {
         "client":"tw-ob",
-        "q":string,
+        "q":text,
         "tl":lang
       }
       url = 'https://translate.google.com/translate_tts'
     else:
       data = {
-        "text":string,
+        "text":text,
         "hash":"",
         "voice":voice, # ['main', 'boy', 'girl', 'man1', 'woman1']
         "lang":lang, # ['ko', 'en']
@@ -138,6 +138,48 @@ Functions:
 
     return res.json()['data']
 
+class SpeechOnDevice:
+  """
+Functions:
+:meth:`~openpibo.speech.SpeechOnDevice.tts`
+
+  * TTS (Text to Speech)
+
+  example::
+
+    from openpibo.speech import SpeechOnDevice
+
+    speech_od = SpeechOnDevice()
+    # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.
+  """
+
+  def __init__(self):
+    self.otts = OnDeviceTTS()
+  
+  def tts(self, text, filename="tts.mp3", voice=2, lang="ko"):
+    """
+    TTS(Text to Speech)
+
+    Text(문자)를 Speech(말)로 변환하여 파일로 저장합니다.
+
+    example::
+
+      speech_od.tts(text='안녕하세요! 만나서 반가워요!', 'ko', '/home/pi/tts.mp3')
+
+    :param str text: 변환할 문장구
+
+    :param int voice: 목소리 번호 0 - 5
+
+    :param str lang: 사용할 언어(ko)
+
+    :param str filename: 변환된 음성파일의 경로 (mp3)
+    """
+
+    if type(text) is not str:
+      raise Exception(f'"{text}" must be str type')
+
+    self.otts.text_to_speech(text=text, filename=filename, voice=voice, lang=lang, static=0)
+
 
 class Dialog:
   """
@@ -150,6 +192,9 @@ Functions:
 :meth:`~openpibo.speech.Dialog.translate`
 :meth:`~openpibo.speech.Dialog.get_dialog_dl`
 :meth:`~openpibo.speech.Dialog.nlp_dl`
+:meth:`~openpibo.speech.Dialog.start_llm`
+:meth:`~openpibo.speech.Dialog.call_llm`
+:meth:`~openpibo.speech.Dialog.stop_llm`
 
   파이보에서 대화와 관련된 자연어처리 기능을 하는 클래스입니다. 다음 기능을 수행할 수 있습니다.
 
@@ -368,3 +413,73 @@ Functions:
       raise Exception(f'result error: {res.json()}')
 
     return res.json()['data']
+
+  def start_llm(self, port=50020):
+    """
+    LLM 서비스를 시작합니다. (Chat 모드)
+
+    example::
+
+      dialog.start_llm()
+
+    """
+
+    os.system(f"pkill llama-server;/home/pi/llama.cpp/build/bin/llama-server -m /home/pi/.model/llm/gemma-3-1b-it-Q2_K.gguf --log-disable --host 0.0.0.0 --port {port} &")    
+    print("Connect to http:{Device IP}:50020 for LLM Web-UI")
+
+
+  def call_llm(self, prompt=None, system_prompt=None):
+    """
+    LLM 서버(OpenAI 호환 Chat Completions API)를 호출합니다.
+    
+    예시:
+        dialog.call_llm(prompt="안녕하세요", system_prompt="너는 내 스마트한 비서야")
+    
+    :param str prompt: 사용자의 입력 메시지.
+    :param str system_prompt: 시스템 프롬프트. (없으면 기본값 유지)
+    :return: 생성된 텍스트 또는 API 응답 전체 JSON.
+    """
+
+    url = "http://0.0.0.0:50020/v1/chat/completions"
+    
+    # Chat API 메시지 배열 구성
+    messages = []
+    if system_prompt:
+        messages.append({"role": "system", "content": system_prompt})
+    if prompt:
+        messages.append({"role": "user", "content": prompt})
+    
+    payload = {
+      "model": "gemma-3-1b-it-Q2_K",  # 모델명 (환경에 맞게 수정)
+      "messages": messages,
+      "temperature": 0.8,   # 생성 텍스트의 무작위성 조절
+      "top_p": 0.95,        # 누적 확률 임계값
+      "max_tokens": 256     # 생성 최대 토큰 수 (필요에 따라 조정)
+    }
+    
+    try:
+      response = requests.post(url, json=payload)
+      response.raise_for_status()  # 4xx, 5xx 에러 발생 시 예외 처리
+    except requests.RequestException as e:
+      raise Exception(f"LLM 서버 호출 실패: {e}")
+    
+    data = response.json()
+    
+    # OpenAI Chat API 표준 응답 형식에 따른 처리
+    if "choices" in data and isinstance(data["choices"], list) and len(data["choices"]) > 0:
+      return data["choices"][0]["message"]["content"]
+    else:
+      # 예상하는 키가 없으면 전체 응답 데이터를 반환합니다.
+      return data
+
+  def stop_llm(self):
+    """
+    LLM 서비스를 중지합니다.
+
+    example::
+
+      dialog.stop_llm()
+
+    """
+
+    os.system("pkill llama-server")    

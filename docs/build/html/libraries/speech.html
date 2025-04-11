@@ -63,6 +63,7 @@
 <li class="toctree-l1"><a class="reference internal" href="audio.html">audio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="collect.html">collect</a></li>
 <li class="toctree-l1"><a class="reference internal" href="device.html">device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usb_uart.html">usb_uart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="motion.html">motion</a></li>
 <li class="toctree-l1"><a class="reference internal" href="oled.html">oled</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">speech</a><ul>
@@ -70,6 +71,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#openpibo.speech.Speech"><code class="docutils literal notranslate"><span class="pre">Speech</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#openpibo.speech.Speech.tts"><code class="docutils literal notranslate"><span class="pre">Speech.tts()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#openpibo.speech.Speech.stt"><code class="docutils literal notranslate"><span class="pre">Speech.stt()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#openpibo.speech.SpeechOnDevice"><code class="docutils literal notranslate"><span class="pre">SpeechOnDevice</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.speech.SpeechOnDevice.tts"><code class="docutils literal notranslate"><span class="pre">SpeechOnDevice.tts()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#openpibo.speech.Dialog"><code class="docutils literal notranslate"><span class="pre">Dialog</span></code></a><ul>
@@ -81,6 +86,9 @@
 <li class="toctree-l3"><a class="reference internal" href="#openpibo.speech.Dialog.translate"><code class="docutils literal notranslate"><span class="pre">Dialog.translate()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#openpibo.speech.Dialog.get_dialog_dl"><code class="docutils literal notranslate"><span class="pre">Dialog.get_dialog_dl()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#openpibo.speech.Dialog.nlp_dl"><code class="docutils literal notranslate"><span class="pre">Dialog.nlp_dl()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.speech.Dialog.start_llm"><code class="docutils literal notranslate"><span class="pre">Dialog.start_llm()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.speech.Dialog.call_llm"><code class="docutils literal notranslate"><span class="pre">Dialog.call_llm()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.speech.Dialog.stop_llm"><code class="docutils literal notranslate"><span class="pre">Dialog.stop_llm()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -120,6 +128,7 @@
 <p>번역, 형태소 분석, 자연어 인식 및 합성, 챗봇 등 다양한 자연어 처리를 합니다.</p>
 <p>Class:
 <a class="reference internal" href="#openpibo.speech.Speech" title="openpibo.speech.Speech"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Speech</span></code></a>
+<a class="reference internal" href="#openpibo.speech.SpeechOnDevice" title="openpibo.speech.SpeechOnDevice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SpeechOnDevice</span></code></a>
 <a class="reference internal" href="#openpibo.speech.Dialog" title="openpibo.speech.Dialog"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Dialog</span></code></a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="openpibo.speech.speech_api">
@@ -155,7 +164,7 @@
 </div></blockquote>
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.speech.Speech.tts">
-<span class="sig-name descname"><span class="pre">tts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tts.mp3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voice</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'main'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ko'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Speech.tts"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.Speech.tts" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">tts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tts.mp3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voice</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'main'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ko'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Speech.tts"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.Speech.tts" title="Link to this definition"></a></dt>
 <dd><p>TTS(Text to Speech)</p>
 <p>Text(문자)를 Speech(말)로 변환하여 파일로 저장합니다.</p>
 <p>example:</p>
@@ -165,7 +174,7 @@
 <dl class="field-list simple">
 <dt class="field-odd">매개변수<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>string</strong> (<em>str</em>) – 변환할 문장구</p></li>
+<li><p><strong>text</strong> (<em>str</em>) – 변환할 문장구</p></li>
 <li><p><strong>voice</strong> (<em>str</em>) – 목소리 타입(espeak | gtts | main | boy | girl | man1 | woman1)</p></li>
 <li><p><strong>lang</strong> (<em>str</em>) – 사용할 언어(ko | en)</p></li>
 <li><p><strong>filename</strong> (<em>str</em>) – 변환된 음성파일의 경로 (mp3)</p></li>
@@ -200,6 +209,47 @@
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="openpibo.speech.SpeechOnDevice">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openpibo.speech.</span></span><span class="sig-name descname"><span class="pre">SpeechOnDevice</span></span><a class="reference internal" href="../_modules/openpibo/speech.html#SpeechOnDevice"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.SpeechOnDevice" title="Link to this definition"></a></dt>
+<dd><p>기반 클래스: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Functions:
+<a class="reference internal" href="#openpibo.speech.SpeechOnDevice.tts" title="openpibo.speech.SpeechOnDevice.tts"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tts()</span></code></a></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>TTS (Text to Speech)</p></li>
+</ul>
+<p>example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">openpibo.speech</span> <span class="kn">import</span> <span class="n">SpeechOnDevice</span>
+
+<span class="n">speech_od</span> <span class="o">=</span> <span class="n">SpeechOnDevice</span><span class="p">()</span>
+<span class="c1"># 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
+</pre></div>
+</div>
+</div></blockquote>
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.speech.SpeechOnDevice.tts">
+<span class="sig-name descname"><span class="pre">tts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tts.mp3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voice</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ko'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#SpeechOnDevice.tts"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.SpeechOnDevice.tts" title="Link to this definition"></a></dt>
+<dd><p>TTS(Text to Speech)</p>
+<p>Text(문자)를 Speech(말)로 변환하여 파일로 저장합니다.</p>
+<p>example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">speech_od</span><span class="o">.</span><span class="n">tts</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s1">&#39;안녕하세요! 만나서 반가워요!&#39;</span><span class="p">,</span> <span class="s1">&#39;ko&#39;</span><span class="p">,</span> <span class="s1">&#39;/home/pi/tts.mp3&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<em>str</em>) – 변환할 문장구</p></li>
+<li><p><strong>voice</strong> (<em>int</em>) – 목소리 번호 0 - 5</p></li>
+<li><p><strong>lang</strong> (<em>str</em>) – 사용할 언어(ko)</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – 변환된 음성파일의 경로 (mp3)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="openpibo.speech.Dialog">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openpibo.speech.</span></span><span class="sig-name descname"><span class="pre">Dialog</span></span><a class="reference internal" href="../_modules/openpibo/speech.html#Dialog"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.Dialog" title="Link to this definition"></a></dt>
 <dd><p>기반 클래스: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -211,7 +261,10 @@
 <a class="reference internal" href="#openpibo.speech.Dialog.get_dialog" title="openpibo.speech.Dialog.get_dialog"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_dialog()</span></code></a>
 <a class="reference internal" href="#openpibo.speech.Dialog.translate" title="openpibo.speech.Dialog.translate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">translate()</span></code></a>
 <a class="reference internal" href="#openpibo.speech.Dialog.get_dialog_dl" title="openpibo.speech.Dialog.get_dialog_dl"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_dialog_dl()</span></code></a>
-<a class="reference internal" href="#openpibo.speech.Dialog.nlp_dl" title="openpibo.speech.Dialog.nlp_dl"><code class="xref py py-meth docutils literal notranslate"><span class="pre">nlp_dl()</span></code></a></p>
+<a class="reference internal" href="#openpibo.speech.Dialog.nlp_dl" title="openpibo.speech.Dialog.nlp_dl"><code class="xref py py-meth docutils literal notranslate"><span class="pre">nlp_dl()</span></code></a>
+<a class="reference internal" href="#openpibo.speech.Dialog.start_llm" title="openpibo.speech.Dialog.start_llm"><code class="xref py py-meth docutils literal notranslate"><span class="pre">start_llm()</span></code></a>
+<a class="reference internal" href="#openpibo.speech.Dialog.call_llm" title="openpibo.speech.Dialog.call_llm"><code class="xref py py-meth docutils literal notranslate"><span class="pre">call_llm()</span></code></a>
+<a class="reference internal" href="#openpibo.speech.Dialog.stop_llm" title="openpibo.speech.Dialog.stop_llm"><code class="xref py py-meth docutils literal notranslate"><span class="pre">stop_llm()</span></code></a></p>
 <blockquote>
 <div><p>파이보에서 대화와 관련된 자연어처리 기능을 하는 클래스입니다. 다음 기능을 수행할 수 있습니다.</p>
 <ul class="simple">
@@ -393,6 +446,47 @@
 <dd class="field-even"><p>분석 결과</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.speech.Dialog.start_llm">
+<span class="sig-name descname"><span class="pre">start_llm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50020</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Dialog.start_llm"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.Dialog.start_llm" title="Link to this definition"></a></dt>
+<dd><p>LLM 서비스를 시작합니다. (Chat 모드)</p>
+<p>example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dialog</span><span class="o">.</span><span class="n">start_llm</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.speech.Dialog.call_llm">
+<span class="sig-name descname"><span class="pre">call_llm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Dialog.call_llm"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.Dialog.call_llm" title="Link to this definition"></a></dt>
+<dd><p>LLM 서버(OpenAI 호환 Chat Completions API)를 호출합니다.</p>
+<dl class="simple">
+<dt>예시:</dt><dd><p>dialog.call_llm(prompt=”안녕하세요”, system_prompt=”너는 내 스마트한 비서야”)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prompt</strong> (<em>str</em>) – 사용자의 입력 메시지.</p></li>
+<li><p><strong>system_prompt</strong> (<em>str</em>) – 시스템 프롬프트. (없으면 기본값 유지)</p></li>
+</ul>
+</dd>
+<dt class="field-even">반환<span class="colon">:</span></dt>
+<dd class="field-even"><p>생성된 텍스트 또는 API 응답 전체 JSON.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.speech.Dialog.stop_llm">
+<span class="sig-name descname"><span class="pre">stop_llm</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Dialog.stop_llm"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.Dialog.stop_llm" title="Link to this definition"></a></dt>
+<dd><p>LLM 서비스를 중지합니다.</p>
+<p>example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dialog</span><span class="o">.</span><span class="n">stop_llm</span><span class="p">()</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </dd></dl>

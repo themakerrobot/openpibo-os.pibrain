@@ -1599,6 +1599,51 @@ let toolbox = (lang) => {
           },
           {
             "kind": "block",
+            "type": "speech_etts",
+            "inputs":{
+              "text":{
+                "shadow": {
+                  "type": "text",
+                  "fields": {
+                    "TEXT": translations['sample_text'][lang]
+                  }
+                }
+              },
+              "filename":{
+                "shadow": {
+                  "type": "text",
+                  "fields": {
+                    "TEXT": "tts"
+                    // "TEXT": translations['audio_filename'][lang]
+                  }
+                }
+              },
+            }
+          },
+          {
+            "kind": "block",
+            "type": "speech_etts_play",
+            "inputs":{
+              "text":{
+                "shadow": {
+                  "type": "text",
+                  "fields": {
+                    "TEXT": translations['sample_text'][lang]
+                  }
+                }
+              },
+              "volume": {
+                "shadow": {
+                  "type": "math_number",
+                  "fields": {
+                    "NUM": "80"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "kind": "block",
             "type": "speech_translate",
             "inputs":{
               "text":{
@@ -1643,6 +1688,36 @@ let toolbox = (lang) => {
           {
             "kind": "block",
             "type": "speech_reset_dialog",
+          },
+          {
+            "kind": "block",
+            "type": "speech_start_llm",
+          },
+          {
+            "kind": "block",
+            "type": "speech_call_llm",
+            "inputs":{
+              "text":{
+                "shadow": {
+                  "type": "text",
+                  "fields": {
+                    "TEXT": translations['sample_text'][lang]
+                  }
+                }
+              },
+              "system_prompt":{
+                "shadow": {
+                  "type": "text",
+                  "fields": {
+                    "TEXT": ""
+                  }
+                }
+              }
+            }
+          },
+          {
+            "kind": "block",
+            "type": "speech_stop_llm",
           },
         ],
         "colour": color_type["speech"],
