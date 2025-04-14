@@ -16,7 +16,9 @@ from mediapipe.tasks.python import vision as mp_vision
 from .modules.pose.movenet import Movenet
 from .modules.pose.utils import visualize_pose
 from .modules.card.decode_card import get_card
+from PIL import Image,ImageDraw,ImageFont
 import openpibo_dlib_models
+import openpibo_models
 import openpibo_detect_models
 from openvino.runtime import Core
 import logging
@@ -28,6 +30,42 @@ os.environ['LIBCAMERA_LOG_LEVELS'] = '3'
 # ✅ 추가: TensorFlow 내부 디버그 메시지 완전 차단
 logging.getLogger("tensorflow").setLevel(logging.ERROR)
 logging.getLogger("ultralytics").setLevel(logging.ERROR)
+
+
+
+def putTextPIL(img, text, points, size=30, colors=(255,255,255)):
+  """
+  이미지에 문자를 입력합니다. (한/영 가능 - pillow 이용)- COPY
+
+  :param numpy.ndarray img: 이미지 객체
+  :param str text: 표시할 문자열
+  :param tuple(int, int) points: 텍스트 블록 좌측상단 좌표 (x, y)
+  :param int size: 표시할 글자의 크기
+  :param tuple(int, int, int) colors: 글자 색깔 RGB 값 (b, g, r) or 16진수 값 '#ffffff'
+  """
+  if not type(img) is np.ndarray:
+    raise Exception('"img" must be image data from opencv')
+
+  if type(points) is not tuple:
+    raise Exception(f'"{points}" must be tuple type')
+
+  if len(points) != 2:
+    raise Exception(f'len({points}) must be 2')
+
+  if type(colors) is str:
+    colors = (int(colors[5:7], 16), int(colors[3:5], 16), int(colors[1:3], 16))
+
+  if type(colors) is not tuple:
+    raise Exception(f'"{colors}" must be tuple type')
+
+  if len(colors) != 3:
+    raise Exception(f'len({colors}) must be 3')
+
+  font = ImageFont.truetype(openpibo_models.filepath("KDL.ttf"), size)
+  pil = Image.fromarray(img)  # CV to PIL
+  ImageDraw.Draw(pil).text(points, text, font=font, fill=colors)  # putText
+  img[:] = np.array(pil)  # PIL to CV
+  return img
 
 def vision_api(mode, image, params={}):
   """
@@ -242,7 +280,7 @@ Functions:
     for i, coord in enumerate(coords):
       x, y = coord
       cv2.circle(img, (x, y), 2, (50, 200, 50), -1)
-      cv2.putText(img, str(i+1), (x-10, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1)
+      putTextPIL(img, str(i+1), (x, y-15), 15, (255, 255, 255))
 
   def analyze_face(self, img, item):
     """
@@ -303,7 +341,7 @@ Functions:
 
     x1, y1, x2, y2 = item['box']
     age, gender, emotion = item['age'], item['gender'], item['emotion']
-    cv2.putText(img, f'{age}/{gender}/{emotion}', (x1-10, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+    putTextPIL(img, f'{age}/{gender}/{emotion}', (x1, y1-30), 30, (255, 255, 255))
 
 
   def init_db(self):
@@ -560,7 +598,7 @@ Functions:
           cv2.line(image, (x1, y1), (x2, y2), (255, 255, 255), 1)
 
         x, y = int(face_landmarks[103].x * image_width), int(face_landmarks[103].y * image_height)
-        cv2.putText(image, f'{distance}cm/{direction}' , (x-10, y-20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2)
+        putTextPIL(image, f'{distance}cm/{direction}' , (x, y-30), 30, (255,255,255))
 
   def detect_mesh(self, image):
     """Detect mesh and return distance, direction, and image with landmarks."""
@@ -657,6 +695,11 @@ Functions:
     self.hand_gesture_recognizer =  None
 
   def load_hand_gesture_model(self, modelpath='/home/pi/.model/hand/gesture_recognizer.task'):
+    """
+    손동작 인식 모델을 불러옵니다.
+
+    :param str modelpath: 손동작 인식 모델 경로
+    """
     #'/home/pi/.model/hand/gesture_recognizer.task', /home/pi/.model/hand/rps_recognizer.task'
     self.hand_gesture_recognizer =  mp_vision.GestureRecognizer.create_from_options(
       mp_vision.GestureRecognizerOptions(
@@ -670,6 +713,13 @@ Functions:
     )
 
   def recognize_hand_gesture(self, image):
+    """
+    손동작을 인식합니다.
+
+    :param numpy.ndarray img: 이미지 객체
+    
+    :returns: 모델에 따른 손동작 인식 결과
+    """
     if self.hand_gesture_recognizer == None:
       raise Exception('"load_hand_gesture_model" must be called')
     rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -698,6 +748,12 @@ Functions:
     return hands_data
 
   def recognize_hand_gesture_vis(self, img, items):
+    """
+    손동작 인식 결과를 표시합니다.
+
+    :param numpy.ndarray img: 이미지 객체
+    :param array items: 손동작 인식 결과
+    """
     for item in items:
       # hands 시각화
       hpoints = item["point"]
@@ -709,9 +765,15 @@ Functions:
         cv2.circle(img, (px, py), 3, (255, 255, 255), -1)
 
       # 첫 번째 랜드마크 근처에 손 라벨(Right or Left / Gesture) 표시
-      cv2.putText(img, f'{name}/{score}', (hpoints[0][0], hpoints[0][1] - 50), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 0, 0), 2)
+      putTextPIL(img, f'{name}/{score}', (hpoints[0][0], hpoints[0][1] - 50), 30, (255, 0, 0))
 
   def detect_object(self, img):
+    """
+    사물 인식 결과를 표시합니다.
+
+    :param numpy.ndarray img: 이미지 객체
+    :param array items: 사물 인식 결과
+    """
     if not isinstance(img, np.ndarray):
       raise ValueError('"img" must be a valid OpenCV image (np.ndarray).')
 
@@ -752,7 +814,7 @@ Functions:
       x1,y1,x2,y2 = item['box']
       name = item['name']
       cv2.rectangle(img, (x1,y1), (x2,y2), (0,255,0), 2)
-      cv2.putText(img, name, (x1-10, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 2)
+      putTextPIL(img, name, (x1, y1-30), 30, (0,255,0))
 
   def detect_qr(self, img):
     """
@@ -800,7 +862,7 @@ Functions:
       x1,y1,x2,y2 = item['box']
       data = item['data']
       cv2.rectangle(img, (x1,y1), (x2,y2), (255,50,255), 2)
-      cv2.putText(img, str(data), (x1-10, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (5255,50,255), 1)
+      putTextPIL(img, str(data), (x1, y1-30), 30, (255,50,255))
 
   def detect_pose(self, img):
     """
@@ -956,7 +1018,7 @@ Functions:
         # cv2.line(img, bottomRight, bottomLeft, (255, 0, 0), 4)
         # cv2.line(img, bottomLeft, topLeft, (255, 0, 0), 4)
         # cv2.circle(img, (cX, cY), 4, (0, 0, 255), -1)
-        # cv2.putText(img, str(markerID), (topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        # putTextPIL(img, str(markerID), (topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
         res.append({"id":markerID, "center": (cX, cY), "box": [topLeft, topRight, bottomRight, bottomLeft], "distance":distance})
 
     return res
@@ -983,5 +1045,5 @@ Functions:
       cv2.line(img, bottomRight, bottomLeft, (255, 0, 0), 4)
       cv2.line(img, bottomLeft, topLeft, (255, 0, 0), 4)
       cv2.circle(img, (cX, cY), 4, (0, 0, 255), -1)
-      cv2.putText(img, f'{markerID}/{distance}cm', (topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2)
+      putTextPIL(img, f'{markerID}/{distance}cm', (topLeft[0], topLeft[1] - 15), 15, (0, 255, 0))
 
