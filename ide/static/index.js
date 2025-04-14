@@ -23,6 +23,9 @@ $('#guide_bt').on('click', () => {
   window.open('https://themakerrobot.github.io/openpibo-os.pibrain/build/html/index.html');
 });
 
+$('#llm_bt').on('click', () => {
+  window.open(`http://${location.hostname}:50020`);
+});
 $('#classifier_bt').on('click', () => {
   window.open(`http://${location.hostname}:50010`);
 });

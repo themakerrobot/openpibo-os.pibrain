@@ -273,7 +273,7 @@ Blockly.defineBlocksWithJsonArray(
          ]
         }
       ],
-      output: 'String',
+      output: null,
       inputsInline: true,
       colour: color_type["collect"],
       tooltip: '%{BKY_COLLECT_WEATHER_TOOLTIP}',
@@ -318,7 +318,7 @@ Blockly.defineBlocksWithJsonArray(
           ]
           }
         ],
-      output: 'String',
+      output: null,
       inputsInline: true,
       colour: color_type["collect"],
       tooltip: '%{BKY_COLLECT_NEWS_TOOLTIP}',

@@ -529,6 +529,7 @@ async def handle_executeb(sid, d):
 async def handle_stop(sid):
   global ps
   subprocess.Popen(['pkill', 'play'])
+  subprocess.Popen(['pkill', 'llama-server'])
   #subprocess.Popen(['servo', 'init'])
   if ps and ps.returncode is None:
     ps.kill()

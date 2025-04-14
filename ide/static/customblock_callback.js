@@ -506,7 +506,7 @@ Blockly.Python.forBlock['speech_start_llm'] = function(block) {
 
   return `dialog.start_llm()\n`;
 }
-Blockly.Python.forBlock['speech_get_dialog'] = function(block) {
+Blockly.Python.forBlock['speech_call_llm'] = function(block) {
   Blockly.Python.definitions_['from_speech_import_Dialog'] = 'from openpibo.speech import Dialog';
   Blockly.Python.definitions_['assign_dialog'] = 'dialog = Dialog()';
 
