@@ -2,9 +2,6 @@ import os
 import uuid
 import zipfile
 import shutil
-import subprocess
-import time
-import json
 import argparse
 import cv2
 import base64
@@ -12,9 +9,7 @@ import asyncio
 import threading
 from threading import Timer
 
-#from tfjs_to_keras import convert_tfjs_to_keras
 from openpibo.vision_camera import Camera
-
 from fastapi import FastAPI, Request, UploadFile, File, BackgroundTasks
 from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -25,10 +20,8 @@ from fastapi_socketio import SocketManager
 from contextlib import asynccontextmanager
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global camera, vision_en
+    global vision_en
     vision_en = False
-    #camera = Camera()
-    # TimerStart(1, vision_loop, True)
     yield
 
 # ---------------------------------

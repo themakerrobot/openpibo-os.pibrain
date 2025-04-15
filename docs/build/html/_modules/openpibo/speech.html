@@ -65,7 +65,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/oled.html">oled</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/speech.html">speech</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_camera.html">vision_camera</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_recognize.html">vision_recognize</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_classify.html">vision_classify</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/utils.html">utils</a></li>
 </ul>
@@ -574,7 +573,7 @@
 
 <div class="viewcode-block" id="Dialog.call_llm">
 <a class="viewcode-back" href="../../libraries/speech.html#openpibo.speech.Dialog.call_llm">[문서]</a>
-  <span class="k">def</span> <span class="nf">call_llm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">system_prompt</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">call_llm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">system_prompt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_tokens</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    LLM 서버(OpenAI 호환 Chat Completions API)를 호출합니다.</span>
 <span class="sd">    </span>
@@ -600,7 +599,7 @@
       <span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="n">messages</span><span class="p">,</span>
       <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>   <span class="c1"># 생성 텍스트의 무작위성 조절</span>
       <span class="s2">&quot;top_p&quot;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">,</span>        <span class="c1"># 누적 확률 임계값</span>
-      <span class="s2">&quot;max_tokens&quot;</span><span class="p">:</span> <span class="mi">256</span>     <span class="c1"># 생성 최대 토큰 수 (필요에 따라 조정)</span>
+      <span class="s2">&quot;max_tokens&quot;</span><span class="p">:</span> <span class="n">max_tokens</span>     <span class="c1"># 생성 최대 토큰 수 (필요에 따라 조정)</span>
     <span class="p">}</span>
     
     <span class="k">try</span><span class="p">:</span>

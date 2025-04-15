@@ -1,7 +1,7 @@
-vision_recognize
+vision_face
 =====================================================
 
-.. automodule:: openpibo.vision_recognize
+.. automodule:: openpibo.vision_face
     :members:
     :undoc-members:
     :show-inheritance:
