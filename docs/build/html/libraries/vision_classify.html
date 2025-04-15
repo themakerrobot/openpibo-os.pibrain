@@ -115,15 +115,15 @@
 <span id="vision-classify"></span><h1>vision_classify<a class="headerlink" href="#module-openpibo.vision_classify" title="Link to this heading"></a></h1>
 <p>영상처리, 인공지능 비전 기술을 사용합니다.</p>
 <p>Class:
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">TeachableMachine</span></code>
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">CustomClassifier</span></code></p>
+<a class="reference internal" href="#openpibo.vision_classify.TeachableMachine" title="openpibo.vision_classify.TeachableMachine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TeachableMachine</span></code></a>
+<a class="reference internal" href="#openpibo.vision_classify.CustomClassifier" title="openpibo.vision_classify.CustomClassifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CustomClassifier</span></code></a></p>
 <dl class="py class">
 <dt class="sig sig-object py" id="openpibo.vision_classify.TeachableMachine">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openpibo.vision_classify.</span></span><span class="sig-name descname"><span class="pre">TeachableMachine</span></span><a class="reference internal" href="../_modules/openpibo/vision_classify.html#TeachableMachine"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_classify.TeachableMachine" title="Link to this definition"></a></dt>
 <dd><p>기반 클래스: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Functions:
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">load()</span></code>
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">predict()</span></code></p>
+<a class="reference internal" href="#openpibo.vision_classify.TeachableMachine.load" title="openpibo.vision_classify.TeachableMachine.load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_classify.TeachableMachine.predict" title="openpibo.vision_classify.TeachableMachine.predict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">predict()</span></code></a></p>
 <blockquote>
 <div><p>파이보의 카메라 Teachable Machine 기능을 사용합니다.</p>
 <ul class="simple">
@@ -132,7 +132,7 @@
 <li><p>학습한 모델은 <code class="docutils literal notranslate"><span class="pre">Tensorflow</span> <span class="pre">Lite</span></code> 형태로 다운로드 해주세요.</p></li>
 </ul>
 <p>example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">openpibo.vision_classifier</span> <span class="kn">import</span> <span class="n">TeachableMachine</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">openpibo.vision_classify</span> <span class="kn">import</span> <span class="n">TeachableMachine</span>
 
 <span class="n">tm</span> <span class="o">=</span> <span class="n">TeachableMachine</span><span class="p">()</span>
 <span class="c1"># 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
@@ -184,8 +184,8 @@
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openpibo.vision_classify.</span></span><span class="sig-name descname"><span class="pre">CustomClassifier</span></span><a class="reference internal" href="../_modules/openpibo/vision_classify.html#CustomClassifier"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_classify.CustomClassifier" title="Link to this definition"></a></dt>
 <dd><p>기반 클래스: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Functions:
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">load()</span></code>
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">predict()</span></code></p>
+<a class="reference internal" href="#openpibo.vision_classify.CustomClassifier.load" title="openpibo.vision_classify.CustomClassifier.load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_classify.CustomClassifier.predict" title="openpibo.vision_classify.CustomClassifier.predict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">predict()</span></code></a></p>
 <blockquote>
 <div><p>파이보의 카메라 Classifier 기능을 사용합니다.</p>
 <ul class="simple">
@@ -193,7 +193,7 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">Custom</span> <span class="pre">tools</span></code> 에서 학습한 모델을 적용하여 추론할 수 있습니다.</p></li>
 </ul>
 <p>example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">openpibo.vision_classifier</span> <span class="kn">import</span> <span class="n">CustomClassifier</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">openpibo.vision_classify</span> <span class="kn">import</span> <span class="n">CustomClassifier</span>
 
 <span class="n">cf</span> <span class="o">=</span> <span class="n">CustomClassifier</span><span class="p">()</span>
 <span class="c1"># 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>

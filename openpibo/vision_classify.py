@@ -2,8 +2,8 @@
 영상처리, 인공지능 비전 기술을 사용합니다.
 
 Class:
-:obj:`~openpibo.vision_classifier.TeachableMachine`
-:obj:`~openpibo.vision_classifier.CustomClassifier`
+:obj:`~openpibo.vision_classify.TeachableMachine`
+:obj:`~openpibo.vision_classify.CustomClassifier`
 """
 import cv2
 import os
@@ -22,8 +22,8 @@ logging.getLogger("tensorflow").setLevel(logging.ERROR)
 class TeachableMachine:
   """
 Functions:
-:meth:`~openpibo.vision_classifier.TeachableMachine.load`
-:meth:`~openpibo.vision_classifier.TeachableMachine.predict`
+:meth:`~openpibo.vision_classify.TeachableMachine.load`
+:meth:`~openpibo.vision_classify.TeachableMachine.predict`
 
   파이보의 카메라 Teachable Machine 기능을 사용합니다.
 
@@ -33,7 +33,7 @@ Functions:
 
   example::
 
-    from openpibo.vision_classifier import TeachableMachine
+    from openpibo.vision_classify import TeachableMachine
 
     tm = TeachableMachine()
     # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.
@@ -111,8 +111,8 @@ Functions:
 class CustomClassifier:
   """
 Functions:
-:meth:`~openpibo.vision_classifier.CustomClassifier.load`
-:meth:`~openpibo.vision_classifier.CustomClassifier.predict`
+:meth:`~openpibo.vision_classify.CustomClassifier.load`
+:meth:`~openpibo.vision_classify.CustomClassifier.predict`
 
   파이보의 카메라 Classifier 기능을 사용합니다.
 
@@ -121,7 +121,7 @@ Functions:
 
   example::
 
-    from openpibo.vision_classifier import CustomClassifier
+    from openpibo.vision_classify import CustomClassifier
 
     cf = CustomClassifier()
     # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.

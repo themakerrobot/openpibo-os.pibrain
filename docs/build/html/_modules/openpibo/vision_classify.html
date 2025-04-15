@@ -12,6 +12,7 @@
       <link rel="stylesheet" type="text/css" href="../../_static/mycss.css?v=5d8bc77e" />
 
   
+    <link rel="shortcut icon" href="../../_static/icon.png"/>
     <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python/_modules/openpibo/vision_classify.html" />
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
@@ -100,8 +101,8 @@
 <span class="sd">영상처리, 인공지능 비전 기술을 사용합니다.</span>
 
 <span class="sd">Class:</span>
-<span class="sd">:obj:`~openpibo.vision_classifier.TeachableMachine`</span>
-<span class="sd">:obj:`~openpibo.vision_classifier.CustomClassifier`</span>
+<span class="sd">:obj:`~openpibo.vision_classify.TeachableMachine`</span>
+<span class="sd">:obj:`~openpibo.vision_classify.CustomClassifier`</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">cv2</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -122,8 +123,8 @@
 <span class="k">class</span> <span class="nc">TeachableMachine</span><span class="p">:</span>
 <span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Functions:</span>
-<span class="sd">:meth:`~openpibo.vision_classifier.TeachableMachine.load`</span>
-<span class="sd">:meth:`~openpibo.vision_classifier.TeachableMachine.predict`</span>
+<span class="sd">:meth:`~openpibo.vision_classify.TeachableMachine.load`</span>
+<span class="sd">:meth:`~openpibo.vision_classify.TeachableMachine.predict`</span>
 
 <span class="sd">  파이보의 카메라 Teachable Machine 기능을 사용합니다.</span>
 
@@ -133,7 +134,7 @@
 
 <span class="sd">  example::</span>
 
-<span class="sd">    from openpibo.vision_classifier import TeachableMachine</span>
+<span class="sd">    from openpibo.vision_classify import TeachableMachine</span>
 
 <span class="sd">    tm = TeachableMachine()</span>
 <span class="sd">    # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
@@ -220,8 +221,8 @@
 <span class="k">class</span> <span class="nc">CustomClassifier</span><span class="p">:</span>
 <span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Functions:</span>
-<span class="sd">:meth:`~openpibo.vision_classifier.CustomClassifier.load`</span>
-<span class="sd">:meth:`~openpibo.vision_classifier.CustomClassifier.predict`</span>
+<span class="sd">:meth:`~openpibo.vision_classify.CustomClassifier.load`</span>
+<span class="sd">:meth:`~openpibo.vision_classify.CustomClassifier.predict`</span>
 
 <span class="sd">  파이보의 카메라 Classifier 기능을 사용합니다.</span>
 
@@ -230,7 +231,7 @@
 
 <span class="sd">  example::</span>
 
-<span class="sd">    from openpibo.vision_classifier import CustomClassifier</span>
+<span class="sd">    from openpibo.vision_classify import CustomClassifier</span>
 
 <span class="sd">    cf = CustomClassifier()</span>
 <span class="sd">    # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
