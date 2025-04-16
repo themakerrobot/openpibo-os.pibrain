@@ -15,10 +15,13 @@ openpibo
 ├── motion.py
 ├── oled.py
 ├── speech.py
-└── vision.py
+├── vision_camera.py
+├── vision_face.py
+├── vision_detect.py
+└── vision_classify.py
 ```
 
-세부 가이드는 아래 **BLOCK** **PYTHON** 카테고리를 참조하세요.
+세부 가이드는 좌측 **BLOCK** **PYTHON** 카테고리를 참조하세요.
 
 ## python 코드 작성
 
@@ -50,4 +53,4 @@ pibo_audio.mute(True)
 # pibo_audio 는 Audio 클래스의 인스턴스
 ```
 
-**PYTHON** 탭을 참고하시기 바랍니다.
+좌측 **PYTHON** 탭을 참고하시기 바랍니다.
