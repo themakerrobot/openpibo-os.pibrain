@@ -18,15 +18,7 @@ openpibo
 └── vision.py
 ```
 
-세부 가이드는 아래의 링크를 참조해주세요.
-
-- [audio.py](https://themakerrobot.github.io/openpibo-python/build/html/libraries/audio.html)
-- [collect.py](https://themakerrobot.github.io/openpibo-python/build/html/libraries/collect.html)
-- [device.py](https://themakerrobot.github.io/openpibo-python/build/html/libraries/device.html)
-- [motion.py](https://themakerrobot.github.io/openpibo-python/build/html/libraries/motion.html)
-- [oled.py](https://themakerrobot.github.io/openpibo-python/build/html/libraries/oled.html)
-- [speech.py](https://themakerrobot.github.io/openpibo-python/build/html/libraries/speech.html)
-- [vision.py](https://themakerrobot.github.io/openpibo-python/build/html/libraries/vision.html)
+세부 가이드는 아래 **BLOCK** **PYTHON** 카테고리를 참조하세요.
 
 ## python 코드 작성
 
@@ -58,5 +50,4 @@ pibo_audio.mute(True)
 # pibo_audio 는 Audio 클래스의 인스턴스
 ```
 
-좌측의 LIBRARIES 탭을 참고하시기 바랍니다.
-
+**PYTHON** 탭을 참고하시기 바랍니다.
