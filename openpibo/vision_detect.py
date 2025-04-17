@@ -233,9 +233,9 @@ Functions:
 
   def load_object_model(self, modelpath='/home/pi/.model/object/yolo11s.onnx'):
     """
-     o인식 모델을 불러옵니다.
+     인식 모델을 불러옵니다.
 
-    :param str modelpath: 손동작 인식 모델 경로
+    :param str modelpath: 사물인식 모델 경로
     """
 
     del self.object_detector
