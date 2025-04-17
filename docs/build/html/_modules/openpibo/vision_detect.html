@@ -205,6 +205,7 @@
 <span class="k">class</span> <span class="nc">Detect</span><span class="p">:</span>
 <span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Functions:</span>
+<span class="sd">:meth:`~openpibo.vision_detect.Detect.load_hand_gesture_model`</span>
 <span class="sd">:meth:`~openpibo.vision_detect.Detect.detect_object`</span>
 <span class="sd">:meth:`~openpibo.vision_detect.Detect.detect_qr`</span>
 <span class="sd">:meth:`~openpibo.vision_detect.Detect.detect_pose`</span>
@@ -213,6 +214,7 @@
 <span class="sd">:meth:`~openpibo.vision_detect.Detect.object_tracker_init`</span>
 <span class="sd">:meth:`~openpibo.vision_detect.Detect.track_object`</span>
 <span class="sd">:meth:`~openpibo.vision_detect.Detect.detect_marker`</span>
+<span class="sd">:meth:`~openpibo.vision_detect.Detect.detect_marker_vis`</span>
 
 <span class="sd">  인식과 관련된 다양한 기능을 사용할 수 있는 클래스입니다.</span>
 
@@ -343,6 +345,19 @@
 
       <span class="c1"># 첫 번째 랜드마크 근처에 손 라벨(Right or Left / Gesture) 표시</span>
       <span class="n">putTextPIL</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">score</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">hpoints</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">hpoints</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">50</span><span class="p">),</span> <span class="mi">30</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Detect.load_object_model">
+<a class="viewcode-back" href="../../libraries/vision_detect.html#openpibo.vision_detect.Detect.load_object_model">[문서]</a>
+  <span class="k">def</span> <span class="nf">load_object_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelpath</span><span class="o">=</span><span class="s1">&#39;/home/pi/.model/object/yolo11s.onnx&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">     o인식 모델을 불러옵니다.</span>
+
+<span class="sd">    :param str modelpath: 손동작 인식 모델 경로</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">object_detector</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">object_detector</span> <span class="o">=</span> <span class="n">YOLO</span><span class="p">(</span><span class="n">modelpath</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">&quot;detect&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Detect.detect_object">

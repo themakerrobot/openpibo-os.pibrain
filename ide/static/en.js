@@ -715,6 +715,8 @@ Blockly.Msg["VISION_FACE_MESH_TOOLTIP"] = "Analyze face direction/distance in th
 Blockly.Msg["VISION_FACE_MESH_VIS"] = "%1 %2 Show face direction/distance %4 in the image %3";
 Blockly.Msg["VISION_FACE_MESH_VIS_TOOLTIP"] = "Show face direction/distance in the image";
 
+Blockly.Msg["VISION_OBJECT_LOAD_EXT"] = "%1 %2 Load Object detection model %3 %4.onnx" ;
+Blockly.Msg["VISION_OBJECT_LOAD_EXT_TOOLTIP"] = "Load Object detection model";
 Blockly.Msg["VISION_OBJECT"] = "%1 %2 Find objects in the image %3";
 Blockly.Msg["VISION_OBJECT_TOOLTIP"] = "Find objects in the image.";
 Blockly.Msg["VISION_OBJECT_RAW"] = "%1 %2 Find objects in the image %3 (Raw)";

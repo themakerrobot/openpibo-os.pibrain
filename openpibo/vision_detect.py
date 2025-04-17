@@ -98,6 +98,7 @@ def vision_api(mode, image, params={}):
 class Detect:
   """
 Functions:
+:meth:`~openpibo.vision_detect.Detect.load_hand_gesture_model`
 :meth:`~openpibo.vision_detect.Detect.detect_object`
 :meth:`~openpibo.vision_detect.Detect.detect_qr`
 :meth:`~openpibo.vision_detect.Detect.detect_pose`
@@ -106,6 +107,7 @@ Functions:
 :meth:`~openpibo.vision_detect.Detect.object_tracker_init`
 :meth:`~openpibo.vision_detect.Detect.track_object`
 :meth:`~openpibo.vision_detect.Detect.detect_marker`
+:meth:`~openpibo.vision_detect.Detect.detect_marker_vis`
 
   인식과 관련된 다양한 기능을 사용할 수 있는 클래스입니다.
 
@@ -228,6 +230,16 @@ Functions:
 
       # 첫 번째 랜드마크 근처에 손 라벨(Right or Left / Gesture) 표시
       putTextPIL(img, f'{name}/{score}', (hpoints[0][0], hpoints[0][1] - 50), 30, (255, 0, 0))
+
+  def load_object_model(self, modelpath='/home/pi/.model/object/yolo11s.onnx'):
+    """
+     o인식 모델을 불러옵니다.
+
+    :param str modelpath: 손동작 인식 모델 경로
+    """
+
+    del self.object_detector
+    self.object_detector = YOLO(modelpath, task="detect")
 
   def detect_object(self, img):
     """

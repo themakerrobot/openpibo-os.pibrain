@@ -784,6 +784,14 @@ Blockly.Python.forBlock['vision_face_mesh_vis'] = function(block) {
   const v = Blockly.Python.valueToCode(block, 'v', Blockly.Python.ORDER_ATOMIC);
   return `_face.detect_mesh_vis(${img}, ${v})\n`;
 }
+Blockly.Python.forBlock['vision_object_load_ext'] = function(block) {
+  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_detect import Detect';
+  Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
+
+  const dir = block.getFieldValue("dir");
+  const filename = Blockly.Python.valueToCode(block, 'filename', Blockly.Python.ORDER_ATOMIC);
+  return `detect.load_object_model('${dir}'+${filename}+ '.onnx')\n`
+}
 Blockly.Python.forBlock['vision_object'] = function(block) {
   Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_detect import Detect';
   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';

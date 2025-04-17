@@ -2436,6 +2436,32 @@ Blockly.defineBlocksWithJsonArray(
       helpUrl: ''
     },
     {
+      type: 'vision_object_load_ext',
+      message0: '%{BKY_VISION_OBJECT_LOAD_EXT}',
+      "args0": [
+        {
+          "type": "field_image",
+          "src": "svg/object-group-solid.svg",
+          "width": 27,
+          "height": 27
+        },
+        {"type":"input_dummy"},
+        {"type": "field_dropdown", "name":"dir",
+          "options":[
+            [ '%{BKY_FOLDER_SELECT}', ''],
+            [ 'code', '/home/pi/code/' ],
+          ]
+        },
+        {"type": "input_value", "name": "filename", "check":"String"},
+      ],
+      nextStatement: true,
+      previousStatement: true,
+      inputsInline: true,
+      colour: color_type["recognition"],
+      tooltip: '%{BKY_VISION_OBJECT_LOAD_EXT_TOOLTIP}',
+      helpUrl: ''
+    },
+    {
       type: 'vision_object',
       message0: '%{BKY_VISION_OBJECT}',
       "args0": [
