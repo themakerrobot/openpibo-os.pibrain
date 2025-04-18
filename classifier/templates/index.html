@@ -269,8 +269,12 @@
           <button id="enable-camera-btn" onclick="if(!cameraEnabled){toggleCamera();}"><i class="fas fa-video"></i> 카메라 켜기</button>
           <button id="disable-camera-btn" onclick="if(cameraEnabled){toggleCamera();}"><i class="fas fa-video-slash"></i> 카메라 끄기</button>
           <button id="capture-button" 
-            onmousedown="startCapturingImages()" 
-            onmouseup="stopCapturingImages()" 
+            ontouchstart="startCapturingImages(); event.preventDefault();"
+            ontouchend="stopCapturingImages()"
+            ontouchcancel="stopCapturingImages()"
+
+            onmousedown="startCapturingImages(); event.preventDefault();"
+            onmouseup="stopCapturingImages()"
             onmouseleave="stopCapturingImages()">
             <i class="fa-solid fa-plus"></i> 샘플 추가
           </button>
