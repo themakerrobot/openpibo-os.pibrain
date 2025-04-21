@@ -87,6 +87,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_detect.Detect.analyze_pose"><code class="docutils literal notranslate"><span class="pre">Detect.analyze_pose()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_detect.Detect.object_tracker_init"><code class="docutils literal notranslate"><span class="pre">Detect.object_tracker_init()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_detect.Detect.track_object"><code class="docutils literal notranslate"><span class="pre">Detect.track_object()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_detect.Detect.track_object_vis"><code class="docutils literal notranslate"><span class="pre">Detect.track_object_vis()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_detect.Detect.detect_marker"><code class="docutils literal notranslate"><span class="pre">Detect.detect_marker()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_detect.Detect.detect_marker_vis"><code class="docutils literal notranslate"><span class="pre">Detect.detect_marker_vis()</span></code></a></li>
 </ul>
@@ -391,11 +392,11 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.vision_detect.Detect.track_object">
 <span class="sig-name descname"><span class="pre">track_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_detect.html#Detect.track_object"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_detect.Detect.track_object" title="Link to this definition"></a></dt>
-<dd><p>이미지 안의 사물 트래커를 설정합니다.</p>
+<dd><p>이미지 안의 사물 트래커를 갱신합니다.</p>
 <p>example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">img</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="n">tracker</span> <span class="o">=</span> <span class="n">detect</span><span class="o">.</span><span class="n">object_tracker_init</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
-<span class="n">tracker</span><span class="p">,</span> <span class="n">position</span> <span class="o">=</span> <span class="n">detect</span><span class="o">.</span><span class="n">track_object</span><span class="p">(</span><span class="n">tracker</span><span class="p">,</span> <span class="n">img</span><span class="p">)</span>
+<span class="n">detect</span><span class="o">.</span><span class="n">object_tracker_init</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
+<span class="n">position</span> <span class="o">=</span> <span class="n">detect</span><span class="o">.</span><span class="n">track_object</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
@@ -404,6 +405,20 @@
 </dd>
 <dt class="field-even">반환<span class="colon">:</span></dt>
 <dd class="field-even"><p>x1,y1,x2,y2 업데이트 된 사물 위치</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_detect.Detect.track_object_vis">
+<span class="sig-name descname"><span class="pre">track_object_vis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_detect.html#Detect.track_object_vis"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_detect.Detect.track_object_vis" title="Link to this definition"></a></dt>
+<dd><p>마커 결과를 표시합니다.</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – 이미지 객체</p></li>
+<li><p><strong>items</strong> (<em>array</em>) – 마커 결과</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

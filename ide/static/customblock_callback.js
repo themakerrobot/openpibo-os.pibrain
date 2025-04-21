@@ -892,7 +892,7 @@ Blockly.Python.forBlock['vision_object_tracker_init'] = function(block) {
   const x2 = Blockly.Python.valueToCode(block, 'x2', Blockly.Python.ORDER_ATOMIC);
   const y2 = Blockly.Python.valueToCode(block, 'y2', Blockly.Python.ORDER_ATOMIC);
 
-  return [`detect.object_tracker_init(${img}, (${x1},${y1},${x2},${y2}))`, Blockly.Python.ORDER_ATOMIC];
+  return `detect.object_tracker_init(${img}, (${x1},${y1},${x2},${y2}))\n`;
 }
 Blockly.Python.forBlock['vision_object_track'] = function(block) {
   Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_detect import Detect';
