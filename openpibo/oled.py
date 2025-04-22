@@ -15,7 +15,7 @@ import adafruit_ssd1306 as ssd1306
 import adafruit_rgb_display.ili9341 as ili9341
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps
-import cv2, os
+import os
 import numpy as np
 import openpibo_models
 
@@ -337,7 +337,7 @@ Functions:
     if type(img) is not np.ndarray:
       raise Exception('"img" must be image data from opencv.')
 
-    self.image = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB)).resize((self.width, self.height))
+    self.image = Image.fromarray(img[:, :, ::-1]).resize((self.width, self.height))
 
   def draw_rectangle(self, points, fill=None):
     """
