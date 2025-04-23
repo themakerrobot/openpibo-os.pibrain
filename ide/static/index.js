@@ -593,15 +593,10 @@ $("#upload").on("change", (e) => {
 });
 
 $("#eraser").on("click", () => {
-  // if ($("#terminal_check").is(":checked")) {
-  //   $("#terminal").prop("src", `http://${location.hostname}:50001`);
-  // }
-  // else {
     result.value = "";
     $("#respath").text("");
     $("#prompt").val("");
     socket.emit('reset_log');
-  // }
 });
 window.dispatchEvent(new Event('onresize'));
 window.onresize = () => {
@@ -654,18 +649,6 @@ $("#result_check").on("change", ()=> {
   codeEditor.refresh();
   Blockly.svgResize(workspace);
 });
-
-// $("#terminal").prop("src", `http://${location.hostname}:50001`);
-// $("#terminal_check").on("change", ()=> {
-//   if ($("#terminal_check").is(":checked")) {
-//     $("#result").hide();
-//     $("#terminal").show();
-//   }
-//   else {
-//     $("#result").show();
-//     $("#terminal").hide();
-//   }
-// });
 
 $("#home_bt").on("click", () => {
   if (confirm(translations["move_to_tool"][lang])) {

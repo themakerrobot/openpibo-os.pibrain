@@ -33,6 +33,7 @@ OPENPIBO PACKAGE for piBrain
    libraries/speech
    libraries/vision_camera
    libraries/vision_detect
+   libraries/vision_face
    libraries/vision_classify
    libraries/utils
 

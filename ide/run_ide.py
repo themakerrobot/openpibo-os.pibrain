@@ -16,8 +16,6 @@ from fastapi_socketio import SocketManager
 from starlette.websockets import WebSocketDisconnect
 from fastapi.templating import Jinja2Templates
 from contextlib import asynccontextmanager
-import threading
-from http.server import BaseHTTPRequestHandler, HTTPServer
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -66,30 +64,11 @@ codePath = ''
 
 mutex = asyncio.Lock()
 
-# 리디렉션 서버 핸들러
-class RedirectHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        # 50000번 포트로 리디렉션
-        new_url = f"http://{self.headers['Host'].split(':')[0]}:50000{self.path}"
-        self.send_response(302)
-        self.send_header("Location", new_url)
-        self.end_headers()
-
-    def do_POST(self):
-        self.do_GET()  # POST 요청도 동일하게 처리
-
-# 리디렉션 서버 실행 함수
-def run_redirect_server():
-    server = HTTPServer(("0.0.0.0", 80), RedirectHandler)
-    print("Redirect server running on port 80...")
-    server.serve_forever()
-
 def is_protect(p):
   for protected_path in protectList:
     if protected_path in p:
       return True
   return False
-
 
 def read_directory(d):
   dlst = []
@@ -565,10 +544,7 @@ if __name__ == '__main__':
   import uvicorn
 
   parser = argparse.ArgumentParser()
-  parser.add_argument('--port', help='set port number', default=50000)
+  parser.add_argument('--port', help='set port number', default=80)
   args = parser.parse_args()
-  # 리디렉션 서버를 별도 스레드에서 실행
-  threading.Thread(target=run_redirect_server, daemon=True).start()
 
   uvicorn.run('run_ide:app', host='0.0.0.0', port=int(args.port), access_log=False)
-

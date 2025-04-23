@@ -509,7 +509,7 @@ audio.preview-audio {
 .usedata-popup {
   display: none;
   position: fixed;
-  z-index: 59;
+  z-index: 79;
   left: 0;
   top: 0;
   width: 100%;

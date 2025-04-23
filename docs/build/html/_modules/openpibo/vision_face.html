@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>openpibo.vision_face &mdash; OPENPIBO 0.9.2.76 문서</title>
+  <title>openpibo.vision_face &mdash; OPENPIBO 0.9.3.1 문서</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -16,7 +16,7 @@
     <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python/_modules/openpibo/vision_face.html" />
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=2c284236"></script>
+      <script src="../../_static/documentation_options.js?v=a094e606"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -66,8 +66,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/oled.html">oled</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/speech.html">speech</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_camera.html">vision_camera</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_face.html">vision_face</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_detect.html">vision_detect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_face.html">vision_face</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_classify.html">vision_classify</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/utils.html">utils</a></li>
 </ul>
@@ -101,7 +101,8 @@
 <span class="sd">영상처리, 인공지능 비전 기술을 사용합니다.</span>
 
 <span class="sd">Class:</span>
-<span class="sd">:obj:`~openpibo.vision_face.Face`</span>
+<span class="sd">:meth:`~openpibo.vision_detect.putTextPIL`</span>
+<span class="sd">:obj:`~openpibo.vision_detect.Face`</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">cv2</span><span class="o">,</span><span class="nn">dlib</span>
 <span class="kn">import</span> <span class="nn">os</span><span class="o">,</span><span class="nn">pickle</span><span class="o">,</span><span class="nn">math</span>
@@ -109,10 +110,10 @@
 <span class="kn">import</span> <span class="nn">mediapipe</span> <span class="k">as</span> <span class="nn">mp</span>
 <span class="kn">from</span> <span class="nn">mediapipe.tasks</span> <span class="kn">import</span> <span class="n">python</span> <span class="k">as</span> <span class="n">mp_python</span>
 <span class="kn">from</span> <span class="nn">mediapipe.tasks.python</span> <span class="kn">import</span> <span class="n">vision</span> <span class="k">as</span> <span class="n">mp_vision</span>
+<span class="kn">from</span> <span class="nn">openvino.runtime</span> <span class="kn">import</span> <span class="n">Core</span>
 <span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span><span class="n">ImageDraw</span><span class="p">,</span><span class="n">ImageFont</span>
 <span class="kn">import</span> <span class="nn">openpibo_dlib_models</span>
 <span class="kn">import</span> <span class="nn">openpibo_models</span>
-<span class="kn">from</span> <span class="nn">openvino.runtime</span> <span class="kn">import</span> <span class="n">Core</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;TF_CPP_MIN_LOG_LEVEL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;3&#39;</span>  <span class="c1"># TensorFlow C++ 로그 제거</span>
@@ -121,8 +122,6 @@
 <span class="c1"># ✅ 추가: TensorFlow 내부 디버그 메시지 완전 차단</span>
 <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;tensorflow&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
 <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;ultralytics&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
-
-
 
 <div class="viewcode-block" id="putTextPIL">
 <a class="viewcode-back" href="../../libraries/vision_face.html#openpibo.vision_face.putTextPIL">[문서]</a>
@@ -166,17 +165,17 @@
 <span class="k">class</span> <span class="nc">Face</span><span class="p">:</span>
 <span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Functions:</span>
-<span class="sd">:meth:`~openpibo.vision_face.Face.detect`</span>
-<span class="sd">:meth:`~openpibo.vision_face.Face.get_ageGender`</span>
-<span class="sd">:meth:`~openpibo.vision_face.Face.get_age`</span>
-<span class="sd">:meth:`~openpibo.vision_face.Face.get_gender`</span>
-<span class="sd">:meth:`~openpibo.vision_face.Face.init_db`</span>
-<span class="sd">:meth:`~openpibo.vision_face.Face.train_face`</span>
-<span class="sd">:meth:`~openpibo.vision_face.Face.delete_face`</span>
-<span class="sd">:meth:`~openpibo.vision_face.Face.recognize`</span>
-<span class="sd">:meth:`~openpibo.vision_face.Face.get_db`</span>
-<span class="sd">:meth:`~openpibo.vision_face.Face.save_db`</span>
-<span class="sd">:meth:`~openpibo.vision_face.Face.load_db`</span>
+<span class="sd">:meth:`~openpibo.vision_detect.Face.detect`</span>
+<span class="sd">:meth:`~openpibo.vision_detect.Face.get_ageGender`</span>
+<span class="sd">:meth:`~openpibo.vision_detect.Face.get_age`</span>
+<span class="sd">:meth:`~openpibo.vision_detect.Face.get_gender`</span>
+<span class="sd">:meth:`~openpibo.vision_detect.Face.init_db`</span>
+<span class="sd">:meth:`~openpibo.vision_detect.Face.train_face`</span>
+<span class="sd">:meth:`~openpibo.vision_detect.Face.delete_face`</span>
+<span class="sd">:meth:`~openpibo.vision_detect.Face.recognize`</span>
+<span class="sd">:meth:`~openpibo.vision_detect.Face.get_db`</span>
+<span class="sd">:meth:`~openpibo.vision_detect.Face.save_db`</span>
+<span class="sd">:meth:`~openpibo.vision_detect.Face.load_db`</span>
 
 <span class="sd">  얼굴과 관련된 다양한 기능을 수행하는 클래스입니다. 다음 기능을 수행할 수 있습니다.</span>
 
@@ -193,7 +192,7 @@
 
 <span class="sd">  example::</span>
 
-<span class="sd">    from openpibo.vision_face import Face</span>
+<span class="sd">    from openpibo.vision_detect import Face</span>
 
 <span class="sd">    face = Face()</span>
 <span class="sd">    # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
@@ -769,7 +768,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025 THEMAKER. All rights reserved. openpibo-python-0.9.2.76.</p>
+    <p>&#169; Copyright 2025 THEMAKER. All rights reserved. openpibo-python-0.9.3.1.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
