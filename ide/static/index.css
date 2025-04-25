@@ -3,6 +3,7 @@
   font-style: normal;
   src: local("Malgun Gothic"), local("Dotum"), local("Gulim");
 }
+
 *,
 *::before,
 *::after {
@@ -25,6 +26,7 @@ body {
   --red: #f16449;
   --dark-red: #d85a41;
 }
+
 html:lang(ko) {
   font-family: Helvetica, "맑은 고딕", "malgun gothic", "Apple SD Gothic Neo",
     "Apple SD 산돌고딕 Neo", "Microsoft NeoGothic", "Droid sans", sans-serif;
@@ -49,37 +51,54 @@ header {
 }
 
 @media (max-width: 1129px) {
-  .result, .terminal {
+
+  .result,
+  .terminal {
     min-width: 700px;
     width: calc(100vw - 35px);
   }
+
   #prompt {
     width: calc(100vw - 230px);
   }
-  .CodeMirror, .blocklyDiv {
-    /* min-width: 700px; */
+
+  .CodeMirror,
+  .blocklyDiv {
+    min-width: 330px;
     width: calc(100vw - 370px);
   }
 }
+
 @media (min-width: 1130px) {
-  .result, .terminal {
+
+  .result,
+  .terminal {
     width: calc(100vw - 35px);
   }
+
   #prompt {
     width: calc(100vw - 230px);
   }
-  .CodeMirror, .blocklyDiv {
+
+  .CodeMirror,
+  .blocklyDiv {
     width: calc(100vw - 370px);
   }
 }
+
 @media (min-width: 1530px) {
-  .result, .terminal {
+
+  .result,
+  .terminal {
     width: calc(40vw - 190px);
   }
+
   #prompt {
     width: calc(40vw - 385px);
   }
-  .CodeMirror, .blocklyDiv  {
+
+  .CodeMirror,
+  .blocklyDiv {
     width: calc(60vw - 190px);
   }
 }
@@ -94,6 +113,7 @@ h6 {
   font-family: Helvetica, "맑은 고딕", "malgun gothic", "Apple SD Gothic Neo",
     "Apple SD 산돌고딕 Neo", "Microsoft NeoGothic", "Droid sans", sans-serif;
 }
+
 textarea,
 select,
 input {
@@ -165,15 +185,18 @@ body::-webkit-scrollbar {
   height: 6px;
   background-color: rgba(0, 0, 0, 0.1);
 }
+
 body::-webkit-scrollbar-track {
   border-radius: 3px;
   margin: 3px;
   background-color: rgba(0, 0, 0, 0.1);
 }
+
 body::-webkit-scrollbar-thumb {
   border-radius: 3px;
   background-color: rgba(0, 0, 0, 0.2);
 }
+
 body::-webkit-scrollbar-thumb:hover {
   border-radius: 3px;
   background-color: rgba(0, 0, 0, 0.3);
@@ -191,8 +214,8 @@ main {
 
 button {
   font-family: "Noto Sans Regular", sans-serif;
-  font-size:1.15rem;
-  width:80px;
+  font-size: 1.15rem;
+  width: 80px;
   padding: 0.5rem 1rem;
   outline: none;
   background-color: var(--yellow);
@@ -200,10 +223,12 @@ button {
   border-radius: 15px;
   box-shadow: 0 4px var(--mid-gray);
 }
+
 button:hover {
   font-weight: bold;
   background-color: var(--dark-yellow);
 }
+
 button:active {
   background-color: var(--dark-yellow);
   box-shadow: 0 2px var(--mid-gray);
@@ -212,7 +237,7 @@ button:active {
 
 button.btn-teal {
   font-family: "Noto Sans Regular", sans-serif;
-  font-size:1.2rem;
+  font-size: 1.2rem;
   padding: 0.5rem 1rem;
   outline: none;
   background-color: var(--teal);
@@ -220,15 +245,18 @@ button.btn-teal {
   border-radius: 15px;
   box-shadow: 0 4px #074c55;
 }
+
 button.btn-teal:hover {
   font-weight: bold;
   background-color: var(--dark-teal);
 }
+
 button.btn-teal:active {
   background-color: var(--dark-teal);
   box-shadow: 0 2px #074c55;
   transform: translateY(2px);
 }
+
 button.disabled {
   opacity: 0.5;
   filter: grayscale(0.5);
@@ -244,10 +272,12 @@ button.btn-red {
   border-radius: 15px;
   box-shadow: 0 4px #903c2b;
 }
+
 button.btn-red:hover {
   font-weight: bold;
   background-color: var(--dark-red);
 }
+
 button.btn-red:active {
   background-color: var(--dark-red);
   box-shadow: 0 2px #903c2b;
@@ -279,20 +309,21 @@ header.title {
   z-index: 99;
   box-shadow: 0 3px 3px -3px #333;
 }
+
 .title h2 {
   margin: 0.1em auto;
   font-family: Tahoma, sans-serif;
-  font-size:2rem;
-  padding:0.3rem 0.3rem 0.3rem 0.3rem;
+  font-size: 2rem;
+  padding: 0.3rem 0.3rem 0.3rem 0.3rem;
 }
 
-main > div.content {
+main>div.content {
   margin: 0 auto;
   align-items: flex-start;
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
-  justify-content:center;
+  justify-content: center;
   padding-left: 10px;
   padding-right: 10px;
 }
@@ -310,6 +341,7 @@ main div.wrapper.ide {
   display: flex;
   flex-flow: column;
 }
+
 .gap-8 {
   gap: 0.1em;
 }
@@ -341,7 +373,7 @@ div[name="codetype"] {
   overflow: hidden;
 }
 
-div[name="codetype"] > button {
+div[name="codetype"]>button {
   background: transparent;
   box-shadow: none;
   color: rgba(0, 0, 0, 0.5);
@@ -349,14 +381,14 @@ div[name="codetype"] > button {
   width: 85px;
 }
 
-i.fa > span {
+i.fa>span {
   font-family: Helvetica, "맑은 고딕", "malgun gothic", "Apple SD Gothic Neo",
     "Apple SD 산돌고딕 Neo", "Microsoft NeoGothic", "Droid sans", sans-serif;
   /* font-weight: 600; */
   /* padding-left: 0.25em; */
 }
 
-div[name="codetype"] > button.checked {
+div[name="codetype"]>button.checked {
   background: var(--yellow);
   color: rgba(0, 0, 0);
   font-weight: bold;
@@ -369,9 +401,11 @@ div[name="codetype"] > button.checked {
   gap: 1em;
   min-height: 28.5px;
 }
+
 .fullWidth {
   width: 100%;
 }
+
 .editor-col {
   display: flex;
   align-items: center;
@@ -413,7 +447,7 @@ label[for=upload]:active {
   overflow: hidden;
   margin: -1px;
   border: 0;
-  position:absolute;
+  position: absolute;
 }
 
 img.preview-img {
@@ -437,7 +471,7 @@ audio.preview-audio {
 .result,
 .terminal {
   border-radius: 5px;
-  height:calc(100vh - 130px);
+  height: calc(100vh - 130px);
   overflow-y: scroll;
   margin-bottom: 40px;
   background-color: #ffffff;
@@ -445,19 +479,21 @@ audio.preview-audio {
 }
 
 .blocklyDiv {
-  height:calc(100vh - 130px);
+  height: calc(100vh - 130px);
   border: 1px solid var(--light-green);
   /* display: none; hide the element by default */
 }
 
 /* Makes our label white. */
 .blocklyTreeLabel {
-  color:#333;
+  color: #333;
 }
+
 .blocklyToolboxDiv {
   /* background-color: whitesmoke; */
   background-color: white;
 }
+
 /* Adds padding around the group of categories and separators. */
 /* .blocklyToolboxContents {
   padding: 0.5em;
@@ -477,10 +513,11 @@ audio.preview-audio {
 .customIcon {
   /* margin: 0.1em; */
   padding: 2px;
-  color:black;
+  color: black;
   /* width: 30px; */
   /* color:rgb(0, 0, 0); */
 }
+
 /* Stacks the icon on top of the label. */
 .blocklyTreeRowContentContainer {
   display: flex;
@@ -502,9 +539,11 @@ audio.preview-audio {
   white-space: nowrap !important;
   overflow: visible !important;
 }
+
 .blocklyTreeSelected .customIcon {
-   filter: invert(1);
+  filter: invert(1);
 }
+
 .wifi-popup,
 .usedata-popup {
   display: none;
@@ -518,8 +557,8 @@ audio.preview-audio {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-.wifi-popup h3 > div,
-.usedata-popup h3 > div {
+.wifi-popup h3>div,
+.usedata-popup h3>div {
   font-style: italic;
   background-color: var(--light-green);
 }
@@ -534,7 +573,7 @@ audio.preview-audio {
   border-radius: 15px;
 }
 
-.wifi-popup-content{
+.wifi-popup-content {
   background-color: white;
   margin: 10% auto;
   padding: 10px 20px 10px 20px;
@@ -543,38 +582,46 @@ audio.preview-audio {
   height: 450px;
   border-radius: 15px;
 }
+
 .wifi-popup-content input:disabled {
   opacity: 0.5;
   filter: grayscale(0.5);
 }
+
 .wifi-popup-content input[type="text"] {
   width: 280px;
   border: 1px solid #ccc;
   margin: 3px auto;
 }
+
 .wifi-popup-content input[type="password"] {
   width: 280px;
   border: 1px solid #ccc;
   margin: 3px auto;
 }
+
 .wifi_list {
-  text-align:center;
-  width:100%;
-  height:100%;
-  border-collapse:collapse;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
 }
+
 .wifi_list th {
   background-color: #edf5e0;
   border: 1px solid;
 }
+
 .wifi_list td {
   border: 1px solid;
   cursor: pointer;
 }
+
 .wifi_list tbody {
   background-color: #eee;
 }
-.wifi-popup-content .confirm{
+
+.wifi-popup-content .confirm {
   background-color: var(--dark-teal);
   /* float: left; */
   border: none;
@@ -591,15 +638,155 @@ audio.preview-audio {
 .wifi-popup-content .confirm:focus,
 .wifi-popup-content .cancel:hover,
 .wifi-popup-content .cancel:focus {
-  opacity:0.8;
+  opacity: 0.8;
 }
 
-header > div > h2 > select {
-  height:20.5px;
+header>div>h2>select {
+  height: 20.5px;
   background: var(--light-yellow);
   border: 1px solid rgba(0, 0, 0, 0.3);
   border-radius: 15px;
   padding: auto;
   font-size: x-small !important;
   margin-bottom: auto;
+}
+
+/* alert, confirm, prompt Modal */
+.alert-popup,
+.prompt-popup,
+.confirm-popup {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* 반투명 배경 유지 */
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* macOS 시스템 폰트 적용 (선택 사항 - 팝업 전체에 적용) */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+/* --- Popup Content Box Styles --- */
+.alert-popup-content,
+.prompt-popup-content,
+.confirm-popup-content {
+  background-color: #fff;
+  /* 흰색 배경 유지 */
+  padding: 18px 25px;
+  /* 좌우 패딩 약간 늘림 (선택 사항) */
+  border-radius: 14px;
+  /* macOS 스타일의 둥근 모서리 (더 작게 조정) */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  min-width: 280px;
+  max-width: 400px;
+  text-align: center;
+}
+
+/* --- Internal Element Styles --- */
+.alert-popup-content p,
+.prompt-popup-content p,
+.confirm-popup-content p {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.0em;
+  /* macOS 기본 폰트 크기에 가깝게 약간 줄임 (선택 사항) */
+  line-height: 1.4;
+  /* 줄 간격 추가 */
+  word-wrap: break-word;
+  color: #333;
+  /* 약간 부드러운 검정색 */
+}
+
+.prompt-popup-content input[type="text"] {
+  width: calc(100% - 20px);
+  padding: 8px 10px;
+  margin-bottom: 15px;
+  border: 1px solid #CCCCCC;
+  /* 테두리 색상 연하게 변경 */
+  border-radius: 6px;
+  /* 약간 둥근 모서리 */
+  box-sizing: border-box;
+  font-size: 1em;
+  font-family: inherit;
+  /* 컨테이너 폰트 상속 */
+}
+
+/* --- Button Container & Buttons --- */
+.popup-buttons {
+  display: flex;
+  justify-content: flex-end;
+  /* 버튼 오른쪽 정렬 유지 */
+  gap: 10px;
+  /* 버튼 사이 간격 약간 늘림 */
+  margin-top: 15px;
+  /* 버튼 위 여백 약간 늘림 */
+}
+
+.popup-buttons button {
+  /* font-family: "Noto Sans Regular", sans-serif; */
+  /* 이전 폰트 */
+  font-family: inherit;
+  /* 컨테이너 폰트 상속 */
+  padding: 6px 16px;
+  /* macOS 버튼 패딩과 유사하게 조정 (상하 축소, 좌우 확대) */
+  outline: none;
+  border: 1px solid transparent;
+  /* 기본 테두리는 투명하게 (레이아웃 유지용) */
+  border-radius: 7px;
+  /* macOS 스타일의 둥근 모서리 */
+  cursor: pointer;
+  font-size: 0.95em;
+  /* macOS 버튼 폰트 크기와 유사하게 약간 줄임 */
+  font-weight: 500;
+  /* 약간 두꺼운 글꼴 (Medium) */
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  /* 전환 효과 */
+  min-width: auto;
+}
+
+/* OK/Confirm Button Style (macOS 파란색 버튼) */
+#alertOkBtn,
+#confirmOkBtn,
+#promptOkBtn {
+  background-color: var(--yellow);
+  color: black;
+  /* 흰색 글자 */
+  border-color: var(--yellow);
+  /* 테두리 색상 일치 */
+}
+
+#alertOkBtn:hover,
+#confirmOkBtn:hover,
+#promptOkBtn:hover {
+  background-color: var(--dark-yellow);
+  /* 호버 시 약간 어두운 파란색 */
+  border-color: var(--dark-yellow);
+  font-weight: bold;
+  /* 기본 font-weight 유지하거나 필요시 bold */
+}
+
+/* Cancel Button Style (macOS 라이트모드 회색 버튼) */
+#confirmCancelBtn,
+#promptCancelBtn {
+  background-color: #F2F2F7;
+  /* macOS 라이트 모드 연한 회색 배경 */
+  color: black;
+  /* 파란색 글자 (또는 검정색: black;) */
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  /* 매우 연한 회색 테두리 */
+}
+
+#confirmCancelBtn:hover,
+#promptCancelBtn:hover {
+  background-color: #E5E5EA;
+  /* 호버 시 약간 더 진한 회색 */
+  border-color: rgba(0, 0, 0, 0.2);
+  font-weight: bold;
+  /* 기본 font-weight 유지하거나 필요시 bold */
+  color: black;
+  /* 호버 시 글자색 변경 필요 시 */
 }

@@ -1,0 +1,436 @@
+@font-face {
+    font-family: "Malgun Gothic";
+    font-style: normal;
+    src: local("Malgun Gothic"), local("Dotum"), local("Gulim");
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    /* 모바일 pinch zoom 방지 */
+    touch-action: pan-x pan-y;
+    height: 100%;
+    font-size: 10px;
+    --mid-gray: #6c6c6c;
+    --yellow: #f4de3d;
+    --dark-yellow: #f4d85a;
+    --light-green: #edf5e0;
+    --light-yellow: rgb(248, 242, 172);
+    --teal: #13bfd5;
+    --dark-teal: #11abbf;
+    --red: #f16449;
+    --dark-red: #d85a41;
+}
+
+html:lang(ko) {
+    font-family: Helvetica, "맑은 고딕", "malgun gothic", "Apple SD Gothic Neo",
+        "Apple SD 산돌고딕 Neo", "Microsoft NeoGothic", "Droid sans", sans-serif;
+}
+
+body {
+    font-family: Helvetica, "맑은 고딕", "malgun gothic", "Apple SD Gothic Neo",
+        "Apple SD 산돌고딕 Neo", "Microsoft NeoGothic", "Droid sans", sans-serif;
+    color: black;
+    /* background-color: white; */
+    box-sizing: border-box;
+    font-size: 1.6rem;
+    position: relative;
+    word-break: keep-all;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+}
+
+header {
+    font-weight: bold;
+}
+
+header.title {
+    color: black;
+    background-color: var(--dark-yellow);
+    cursor: default;
+    width: 100%;
+    height: 3.1rem;
+    padding-left: 16px;
+    padding-right: 16px;
+    z-index: 99;
+    box-shadow: 0 3px 3px -3px #333;
+}
+
+.title h2 {
+    margin: 0.1em auto;
+    font-family: Tahoma, sans-serif;
+    font-size: 2rem;
+}
+
+.title h2 > a {
+    padding: 0.3rem 0.3rem 0.3rem 0.3rem;
+}
+
+header,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: Helvetica, "맑은 고딕", "malgun gothic", "Apple SD Gothic Neo",
+        "Apple SD 산돌고딕 Neo", "Microsoft NeoGothic", "Droid sans", sans-serif;
+}
+
+textarea,
+select,
+input {
+    /* font-size: 10px; */
+    color: black;
+    font-weight: normal;
+    outline: none;
+    font-family: Helvetica, "맑은 고딕", "malgun gothic", "Apple SD Gothic Neo",
+        "Apple SD 산돌고딕 Neo", "Microsoft NeoGothic", "Droid sans", sans-serif;
+}
+
+select,
+input {
+    background: rgb(248, 242, 172, 0.85);
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    border-radius: 15px;
+    padding: 4px;
+    font-size: 16px !important;
+}
+
+/* 링크 스타일 */
+a:link,
+a:visited {
+    color: #0896d9;
+    text-decoration: none;
+}
+
+a:hover,
+a:focus {
+    color: #0896d9;
+    cursor: pointer;
+}
+
+.readable-hidden,
+.a11y,
+legend {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    margin: -1px;
+    clip: rect(0, 0, 0, 0);
+}
+
+.a11y:focus {
+    top: 5px;
+    left: 50%;
+    width: auto;
+    height: auto;
+    margin: 0;
+    clip: rect(auto, auto, auto, auto);
+    background-color: #000;
+    color: #fff;
+    padding: 5px 10px;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+.clearfix:after {
+    content: "";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+body::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+body::-webkit-scrollbar-track {
+    border-radius: 3px;
+    margin: 3px;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+body::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+body::-webkit-scrollbar-thumb:hover {
+    border-radius: 3px;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+main {
+    display: flex;
+    flex: 1 0 80vh;
+}
+
+div {
+    touch-action: pan-x pan-y;
+}
+
+/* 기본 스타일 */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+
+/* 3분할 레이아웃 컨테이너 */
+.container {
+    display: flex;
+    width: 100vw;
+    height: calc(100vh - 30px);
+    /* 상단 바 높이 제외 */
+    overflow: hidden;
+}
+
+.left-panel {
+    flex: 0 0 33%;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-right: 1px solid #ddd;
+    overflow-y: auto;
+}
+
+.center-panel {
+    flex: 0 0 34%;
+    background-color: #fff;
+    padding: 20px;
+    border-right: 1px solid #ddd;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.right-panel {
+    flex: 0 0 33%;
+    background-color: #fff;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* 제목 스타일 */
+.left-panel h2,
+.center-panel h2,
+.right-panel h2 {
+    text-align: center;
+    font-size: 1.3em;
+    padding-bottom: 10px;
+}
+
+/* 버튼 및 업로드 버튼 */
+button,
+label.upload-button {
+    padding: 10px 15px;
+    font-size: 0.95em;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--yellow);
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover,
+label.upload-button:hover {
+    background-color: var(--dark-yellow);
+    transform: translateY(-1px);
+    font-weight: bold;
+}
+
+/* 클래스 컨테이너 */
+.class-container {
+    cursor: pointer;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 10px;
+    background-color: #fafafa;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.class-container:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-2px);
+}
+
+.class-container.selected {
+    border: 2px solid var(--yellow);
+    background-color: #fffce0;
+}
+
+.class-buttons {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+/* 이미지 컬렉션 및 썸네일 */
+.image-collection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.thumbnail {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s;
+}
+
+.thumbnail:hover {
+    transform: scale(1.05);
+}
+
+/* 공통 버튼 그룹 */
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+/* 카메라 섹션 */
+#camera-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 500px;
+}
+
+#camera {
+    width: 240px;
+    height: 320px;
+    background-color: #fff;
+    border: none;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+/* 학습 파라미터 */
+#training-params {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 10px;
+    margin-top: 15px;
+    width: 100%;
+    max-width: 500px;
+}
+
+#training-params label,
+#training-params input {
+    font-size: 0.9em;
+}
+
+/* 진행 상황 및 예측 결과 */
+#progress-section,
+#prediction-section {
+    text-align: center;
+    margin-top: 50px;
+}
+
+#prediction-section h3 {
+    margin-bottom: 10px;
+    font-size: 1.2em;
+    color: #444;
+}
+
+#preview-status {
+    font-weight: bold;
+    color: var(--yellow);
+    animation: pulse 1s infinite;
+}
+
+#class-name {
+    height: 40px;
+    /* 버튼 높이와 유사하게 설정 */
+    border-radius: 6px;
+    /* 버튼과 동일한 라운딩 */
+    box-sizing: border-box;
+    /* 패딩 포함 높이 계산 */
+    font-size: 0.95em;
+    /* 버튼과 동일한 폰트 크기 */
+    padding: 0 10px;
+    /* 수평 여백 */
+    border: 1px solid #ccc;
+    /* 기본 테두리 */
+}
+
+#epochs,
+#batch-size {
+    height: 50px;
+    /* 버튼 높이와 유사하게 설정 */
+    border-radius: 6px;
+    /* 버튼과 동일한 라운딩 */
+    box-sizing: border-box;
+    /* 패딩 포함 높이 계산 */
+    font-size: 0.95em;
+    /* 버튼과 동일한 폰트 크기 */
+    padding: 0 10px;
+    /* 수평 여백 */
+    border: 1px solid #ccc;
+    /* 기본 테두리 */
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 600px) {
+    .container {
+        flex-direction: column;
+        height: calc(100vh - 30px);
+    }
+
+    .left-panel,
+    .center-panel,
+    .right-panel {
+        width: 100%;
+        height: auto;
+        padding: 15px;
+        border-right: none;
+    }
+
+    #camera {
+        width: 100%;
+        height: auto;
+    }
+}

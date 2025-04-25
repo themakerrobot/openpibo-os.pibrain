@@ -1,310 +1,354 @@
 <!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <title>Pibo Maker for piBrain</title>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="mobile-web-app-capable" content="yes" />
 
-    <link rel="stylesheet" href="../static/fontello.css" type="text/css" />
-    <link rel="stylesheet" href="../static/index.css?ver=240701v6" />
-    <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
-    <link rel="stylesheet" href="../static/codemirror.css" />
-    <link rel="stylesheet" href="../static/cobalt.css" />
-    <link rel="stylesheet" href="../static/duotone-light.css" />
-    <link rel="stylesheet" href="../static/jquery.jsonview.min.css" />
-    <link rel="shortcut icon" href="../static/icon.png?ver=240319v1" type="image/x-icon" />
+<head>
+  <title>Pibo Maker for piBrain</title>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="mobile-web-app-capable" content="yes" />
 
-    <script src="../static/ko2en.js?ver=240319v4"></script>
-    <script src="../static/blockly_compressed.js?ver=240319v1"></script>
-    <script src="../static/blocks_compressed.js?ver=240319v1"></script>
-    <script src="../static/python_compressed.js?ver=240319v1"></script>
-    <script src="../static/customblock.js?ver=240319v34"></script>
-    <script src="../static/customblock_callback.js?ver=240319v34"></script>
-    <script src="../static/customblock_toolbox.js?ver=240319v34"></script>
-    <script src="../static/jquery-3.1.1.min.js"></script>
-    <script src="../static/field-bitmap.js"></script>
-    <script src="../static/jquery.jsonview.min.js"></script>
-    <script src="../static/codemirror.min.js"></script>
-    <script src="../static/comment.js"></script>
-    <script src="../static/python.js"></script>
-    <script src="../static/disable-top-blocks.js"></script>
-    <script src="../static/socket.io.min.js?ver=240319v3"></script>
-  </head>
-  <body>
-    <header class="title">
-      <div style="float:left">
-        <h2>
-          <i class="fa-solid fa-code">IDE</i>&nbsp;
-          <!-- <i class="fa-solid fa-left-right" style="opacity:30%"></i>&nbsp;
+  <link rel="stylesheet" href="../static/fontello.css" type="text/css" />
+  <link rel="stylesheet" href="../static/index.css?ver=240701v6" />
+  <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
+  <link rel="stylesheet" href="../static/codemirror.css" />
+  <link rel="stylesheet" href="../static/cobalt.css" />
+  <link rel="stylesheet" href="../static/duotone-light.css" />
+  <link rel="stylesheet" href="../static/jquery.jsonview.min.css" />
+  <link rel="shortcut icon" href="../static/icon.png?ver=240319v1" type="image/x-icon" />
+
+  <script src="../static/ko2en.js?ver=240319v4"></script>
+  <script src="../static/blockly_compressed.js?ver=240319v1"></script>
+  <script src="../static/blocks_compressed.js?ver=240319v1"></script>
+  <script src="../static/python_compressed.js?ver=240319v1"></script>
+  <script src="../static/customblock.js?ver=240319v34"></script>
+  <script src="../static/customblock_callback.js?ver=240319v34"></script>
+  <script src="../static/customblock_toolbox.js?ver=240319v34"></script>
+  <script src="../static/jquery-3.1.1.min.js"></script>
+  <script src="../static/field-bitmap.js"></script>
+  <script src="../static/jquery.jsonview.min.js"></script>
+  <script src="../static/codemirror.min.js"></script>
+  <script src="../static/comment.js"></script>
+  <script src="../static/python.js"></script>
+  <script src="../static/disable-top-blocks.js"></script>
+  <script src="../static/socket.io.min.js?ver=240319v3"></script>
+</head>
+
+<body>
+  <header class="title">
+    <div style="float:left">
+      <h2>
+        <i class="fa-solid fa-code">IDE</i>
+        <!-- <i class="fa-solid fa-left-right" style="opacity:30%"></i>&nbsp;
           <a id="home_bt">
             <i class="fa-solid fa-microchip" style="opacity:30%">Tools</i>
           </a> -->
-        </h2>
-      </div>
-      <div style="float:right">
-        <h2 style="display: flex; align-items: center; justify-content: center;">
-          <!-- <a id="restore_bt">
+      </h2>
+    </div>
+    <div style="float:right">
+      <h2 style="display: flex; align-items: center; justify-content: center;">
+        <!-- <a id="restore_bt">
             <i class="fa-solid fa-eraser"></i>
           </a>&nbsp;&nbsp; -->
-          <a id="llm_bt" title="LLM">
-            <i class="fa-solid fa-comment"></i>
-          </a>&nbsp;&nbsp;
-          <a id="classifier_bt" title="Image Classifier">
-            <i class="fa-solid fa-images"></i>
-          </a>&nbsp;&nbsp;
-          <a id="poweroff_bt" title="Power Off">
-            <i class="fa-solid fa-power-off"></i>
-          </a>&nbsp;&nbsp;
-          <a id="restart_bt" title="Restart">
-            <i class="fa-solid fa-arrow-rotate-right"></i>
-          </a>&nbsp;&nbsp;
-          <a id='guide_bt' title="Guide">
-            <i class="fa-solid fa-circle-question"></i>
-          </a>&nbsp;&nbsp;
-          <select id="language" aria-label="language">
-            <option value="ko">한국어</option>
-            <option value="en">English</option>
-          </select>&nbsp;
-          <a id='logo_bt'>
-            <img src="../static/themaker.png" style="height:22px" alt="" />
-          </a>
-        </h2>
-      </div>
-    </header>
+        <a id="llm_bt" title="Chat Bot">
+          <i class="fa-solid fa-comment"></i>
+        </a>&nbsp;&nbsp;
+        <a id="classifier_bt" title="Image Classifier">
+          <i class="fa-solid fa-images"></i>
+        </a>&nbsp;&nbsp;
+        <a id='guide_bt' title="Guide">
+          <i class="fa-solid fa-circle-question"></i>
+        </a>&nbsp;&nbsp;
+        <a id="fullscreen_bt" title="Full Screen">
+          <span id='fullscreen_txt'></span>
+        </a>
+        &nbsp;&nbsp;
+        <a id="poweroff_bt" title="Power Off">
+          <i class="fa-solid fa-power-off"></i>
+        </a>&nbsp;&nbsp;
+        <select id="language" aria-label="language">
+          <option value="ko">한국어</option>
+          <option value="en">English</option>
+        </select>&nbsp;
+        <a id='logo_bt'>
+          <img src="../static/themaker.png" style="height:22px" alt="" />
+        </a>
+      </h2>
+    </div>
+  </header>
 
-    <main>
-      <div class="wifi-popup" id="wifiPopup" style="display:none">
-        <div class="wifi-popup-content">
-          <h3>
-            <div style="float:left"><i class="fa-solid fa-circle-exclamation"></i>&nbsp;<span data-key="internet_settings"></span></div>
-            <div style="float:right"><a id="hidewifi"><i class="fa-solid fa-rectangle-xmark"></i></a></div>
-          </h3>
-          <h3>&nbsp;</h3>
-          <span id="network_info"></span>
-          <br>
-          <table style="width:100%">
-            <tr>
-              <td>
-                <span data-key="wifi_type"></span>
-              </td>
-              <td colspan="2">
-                <label><input type="radio" name="wifi_type_sel" value="wpa-psk" checked />wpa-psk</label>
-                <label><input type="radio" name="wifi_type_sel" value="none" />none</label>
-                <label><input type="radio" name="wifi_type_sel" value="wpa-eap" />wpa-eap</label>
-                <label><input type="radio" name="wifi_type_sel" value="custom" />cutsom</label>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <span data-key="wifi_name"></span>
-              </td>
-              <td>
-                <input type="text" name="ssid" id="ssid" disabled aria-label="ssid" />
-              </td>
-              <td rowspan="3">
-                <button type="button" class="confirm" id="wifi_bt"><i class="fa-solid fa-check-double"></i>&nbsp;<span data-key="confirm"></span></button>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <span data-key="wifi_identity"></span>
-              </td>
-              <td>
-                <input type="text" name="identity" id="identity" disabled aria-label="identity"/>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <span data-key="password"></span>
-              </td>
-              <td>
-                <input type="password" id="psk" name="psk" aria-label="psk" /><input type="checkbox" id="psk_visible" name="psk_visible"  aria-label="psk_visible"/>
-              </td>
-            </tr>
+  <main>
+    <div class="wifi-popup" id="wifiPopup" style="display:none">
+      <div class="wifi-popup-content">
+        <h3>
+          <div style="float:left"><i class="fa-solid fa-circle-exclamation"></i>&nbsp;<span
+              data-key="internet_settings"></span></div>
+          <div style="float:right"><a id="hidewifi"><i class="fa-solid fa-rectangle-xmark"></i></a></div>
+        </h3>
+        <h3>&nbsp;</h3>
+        <span id="network_info"></span>
+        <br>
+        <table style="width:100%">
+          <tr>
+            <td>
+              <span data-key="wifi_type"></span>
+            </td>
+            <td colspan="2">
+              <label><input type="radio" name="wifi_type_sel" value="wpa-psk" checked />wpa-psk</label>
+              <label><input type="radio" name="wifi_type_sel" value="none" />none</label>
+              <label><input type="radio" name="wifi_type_sel" value="wpa-eap" />wpa-eap</label>
+              <label><input type="radio" name="wifi_type_sel" value="custom" />cutsom</label>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span data-key="wifi_name"></span>
+            </td>
+            <td>
+              <input type="text" name="ssid" id="ssid" disabled aria-label="ssid" />
+            </td>
+            <td rowspan="3">
+              <button type="button" class="confirm" id="wifi_bt"><i class="fa-solid fa-check-double"></i>&nbsp;<span
+                  data-key="confirm"></span></button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span data-key="wifi_identity"></span>
+            </td>
+            <td>
+              <input type="text" name="identity" id="identity" disabled aria-label="identity" />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span data-key="password"></span>
+            </td>
+            <td>
+              <input type="password" id="psk" name="psk" aria-label="psk" /><input type="checkbox" id="psk_visible"
+                name="psk_visible" aria-label="psk_visible" />
+            </td>
+          </tr>
+        </table>
+
+        <div style="height:190px;overflow-y:scroll;">
+          <table class="wifi_list" id="wifi_list">
+            <thead>
+              <tr>
+                <th style="width:450px;"><span data-key="wifi_name"></span></th>
+                <th><span data-key="wifi_signal"></span></th>
+                <th><span data-key="wifi_psk"></span></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
           </table>
-
-          <div style="height:190px;overflow-y:scroll;">
-            <table class="wifi_list" id="wifi_list">
-              <thead><tr><th style="width:450px;"><span data-key="wifi_name"></span></th><th><span data-key="wifi_signal"></span></th><th><span data-key="wifi_psk"></span></th></tr></thead>
-              <tbody></tbody>
-            </table>
+        </div>
+      </div>
+    </div>
+    <div class="usedata-popup" id="usedataPopup" style="display:none">
+      <div class="usedata-popup-content">
+        <h3>
+          <div style="float:left"><i class="fa-solid fa-circle-exclamation"></i>&nbsp;<span data-key="usedata"></span>
           </div>
-        </div>
+          <div style="float:right"><a id="hideUsedata"><i class="fa-solid fa-rectangle-xmark"></i></a></div>
+        </h3>
+        <h3>&nbsp;</h3>
+        <div style="height:210px;overflow-y:scroll" id="usedata_json"></div>
       </div>
-      <div class="usedata-popup" id="usedataPopup" style="display:none">
-        <div class="usedata-popup-content">
-          <h3>
-            <div style="float:left"><i class="fa-solid fa-circle-exclamation"></i>&nbsp;<span data-key="usedata"></span></div>
-            <div style="float:right"><a id="hideUsedata"><i class="fa-solid fa-rectangle-xmark"></i></a></div>
-          </h3>
-          <h3>&nbsp;</h3>
-          <div style="height:210px;overflow-y:scroll" id="usedata_json"></div>
-        </div>
-      </div>
+    </div>
 
-      <div class="content">
-        <div class="wrapper ide">
-          <div class="editor-row">
-            <div class="editor-col">
-              <!-- <i class="fa-solid fa-computer"></i>
+    <div class="alert-popup" id="alertPopup" style="display:none;">
+      <div class="alert-popup-content">
+        <p id="alertMessageElement">여기에 알림 메시지가 표시됩니다.</p>
+        <div class="popup-buttons">
+          <button id="alertOkBtn">확인</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="prompt-popup" id="promptPopup" style="display:none;">
+      <div class="prompt-popup-content">
+        <p id="promptMessageElement">여기에 프롬프트 메시지가 표시됩니다.</p>
+        <input type="text" id="promptInputElement" />
+        <div class="popup-buttons">
+          <button id="promptOkBtn">확인</button>
+          <button id="promptCancelBtn">취소</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="confirm-popup" id="confirmPopup" style="display:none;">
+      <div class="confirm-popup-content">
+        <p id="confirmMessageElement">여기에 확인 메시지가 표시됩니다.</p>
+        <div class="popup-buttons">
+          <button id="confirmOkBtn">확인</button>
+          <button id="confirmCancelBtn">취소</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="wrapper ide" id="browser_en">
+        <div class="editor-row">
+          <div class="editor-col">
+            <!-- <i class="fa-solid fa-computer"></i>
               <input type="checkbox" id="hiddenfile" name="hiddenfile" title="숨김파일보기" disabled/> -->
-              <label for="upload">
-                <i class="fa-solid fa-file-upload fa-lg"></i>&nbsp;
-                <span data-key="upload"></span>
-              </label>
-              <div class="filebox">
-                <form method="post" action="/upload" enctype="multipart/form-data">
-                  <input type="file" id="upload" multiple>
-                </form>
-              </div>
-              <button id="add_directory" style="background-color:#dcb9b2">
-                <i class="fa-solid fa-folder-plus fa-lg"></i>&nbsp;
-                <span data-key="add_directory"></span>
-              </button>
-              <button id="add_file">
-                <i class="fa-solid fa-file-circle-plus fa-lg"></i>&nbsp;
-                <span data-key="add_file"></span>
-              </button>
-            </div>
-          </div>
-
-          <div class="filepath" style="width:320px">
-            <i class="fa-solid fa-folder-open"></i><span id="path"></span>
-          </div>
-
-          <div class="editor-row">
-            <div class="editor-col">
-              <div class="fm-table-wrap">
-                <table id="fm_table">
-                  <tbody></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <div class="filepath" style="width:320px">
-            <i class="fa-solid fa-file"></i><span id="mediapath"></span>
-          </div>
-
-          <div class="editor-row">
-            <div class="editor-col">
-              <img id="image" class="preview-img" alt="" />
-            </div>
-          </div>
-
-          <div class="editor-row">
-            <div class="editor-col">
-              <audio controls id="audio" class="preview-audio"></audio>
-            </div>
-          </div>
-        </div>
-
-        <div class="wrapper ide">
-          <div class="editor-row">
-            <div class="editor-col">
-              <!-- <i class="fa fa-solid fa-laptop-code"> </i> -->
-              <div name="codetype">
-                <button name="block">
-                  <i class="fa-solid fa-cube fa-lg"></i>
-                  <span data-key="block"></span>
-                </button>
-                <button name="python">
-                  <i class="fa-brands fa-python fa-lg"></i>
-                  <span data-key="python"></span>
-                </button>
-              </div>
-              <span id='codecheck'></span>
-            </div>
-
-            <div class="editor-col">
-              <i class="fa-solid fa-text-height" style="margin-top:3px;margin-bottom:-3px;">
-                <input type="number" id="fontsize" min="5" max="50" value="14" step="1" pattern="\d*" aria-label="fontsize" />
-              </i>
-              <button id="execute" class="btn-teal">
-                <i class="fa-solid fa-flag fa-lg"></i>&nbsp;<span data-key="execute"></span>
-              </button>
-              <button id="stop" class="btn-red disabled">
-                <i class="fa-solid fa-circle fa-lg"></i>&nbsp;<span data-key="stop"></span>
-              </button>
-              <button id="save" class="btn">
-                <i class="fa-solid fa-save fa-lg"></i>&nbsp;<span data-key="save"></span>
-              </button>
-              <i class="fa-solid fa-circle-half-stroke fa-lg" style="margin-top:3px;margin-bottom:-3px;">
-                <input type="checkbox" id="theme_check" name="theme_check" checked aria-label="theme_check" /> 
-              </i>
-              <i class="fa-solid fa-arrows-left-right-to-line fa-lg" style="margin-top:3px;margin-bottom:-3px;">
-                <input type="checkbox" id="result_check" name="result_check" aria-label="result_check" />
-              </i>
-            </div>
-          </div>
-
-          <div class="filepath">
-            <i class="fa-solid fa-file"></i><span id="codepath"></span>
-          </div>
-
-          <div class="editor-row">
-            <div id="blocklyDiv" class="blocklyDiv"></div>
-            <div id="codeDiv">
-              <form id="code_form">
-                <textarea id="codemirror-code" name="source_code" aria-label="source_code"></textarea>
+            <label for="upload">
+              <i class="fa-solid fa-file-upload fa-lg"></i>&nbsp;
+              <span data-key="upload"></span>
+            </label>
+            <div class="filebox">
+              <form method="post" action="/upload" enctype="multipart/form-data">
+                <input type="file" id="upload" multiple>
               </form>
             </div>
+            <button id="add_directory" style="background-color:#dcb9b2">
+              <i class="fa-solid fa-folder-plus fa-lg"></i>&nbsp;
+              <span data-key="add_directory"></span>
+            </button>
+            <button id="add_file">
+              <i class="fa-solid fa-file-circle-plus fa-lg"></i>&nbsp;
+              <span data-key="add_file"></span>
+            </button>
           </div>
         </div>
 
-        <div class="wrapper ide" id="result_en">
-          <div class="editor-row">
-            <div class="editor-col">
-              <!-- <i class="fa fa-solid fa-file-lines"><span> 결과</span></i> -->
-              <button id="eraser">
-                <i class="fa-solid fa-eraser fa-lg"></i>&nbsp;<span data-key="reset"></span>
+        <div class="filepath" style="width:320px">
+          <i class="fa-solid fa-folder-open"></i><span id="path"></span>
+        </div>
+
+        <div class="editor-row">
+          <div class="editor-col">
+            <div class="fm-table-wrap">
+              <table id="fm_table">
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="filepath" style="width:320px">
+          <i class="fa-solid fa-file"></i><span id="mediapath"></span>
+        </div>
+
+        <div class="editor-row">
+          <div class="editor-col">
+            <img id="image" class="preview-img" alt="" />
+          </div>
+        </div>
+
+        <div class="editor-row">
+          <div class="editor-col">
+            <audio controls id="audio" class="preview-audio"></audio>
+          </div>
+        </div>
+      </div>
+
+      <div class="wrapper ide">
+        <div class="editor-row">
+          <div class="editor-col">
+            <!-- <i class="fa fa-solid fa-laptop-code"> </i> -->
+            <div name="codetype">
+              <button name="block">
+                <i class="fa-solid fa-cube fa-lg"></i>
+                <span data-key="block"></span>
               </button>
-              <i class="fas fa-keyboard" style="margin-top:3px;margin-bottom:-3px;">
-                <input type="text" id="prompt" name="prompt" style="border-radius: 5px;" aria-label="prompt" />
-              </i>
-              <button id="prompt_bt">
-                <i class="fa-solid fa-arrow-left fa-lg"></i>&nbsp;<span data-key="enter"></span>
+              <button name="python">
+                <i class="fa-brands fa-python fa-lg"></i>
+                <span data-key="python"></span>
               </button>
-              <!-- <i class="fa fa-solid fa-link"></i>
+            </div>
+            <span id='codecheck'></span>
+          </div>
+
+          <div class="editor-col">
+            <i class="fa-solid fa-text-height" style="margin-top:3px;margin-bottom:-3px;">
+              <input type="number" id="fontsize" min="5" max="50" value="14" step="1" pattern="\d*"
+                aria-label="fontsize" />
+            </i>
+            <button id="execute" class="btn-teal">
+              <i class="fa-solid fa-flag fa-lg"></i>&nbsp;<span data-key="execute"></span>
+            </button>
+            <button id="stop" class="btn-red disabled">
+              <i class="fa-solid fa-circle fa-lg"></i>&nbsp;<span data-key="stop"></span>
+            </button>
+            <button id="save" class="btn">
+              <i class="fa-solid fa-save fa-lg"></i>&nbsp;<span data-key="save"></span>
+            </button>
+            <i class="fa-solid fa-circle-half-stroke fa-lg" style="margin-top:3px;margin-bottom:-3px;">
+              <input type="checkbox" id="theme_check" name="theme_check" checked aria-label="theme_check" />
+            </i>
+            <i class="fa-solid fa-arrows-left-right-to-line fa-lg" style="margin-top:3px;margin-bottom:-3px;">
+              <input type="checkbox" id="result_check" name="result_check" aria-label="result_check" />
+            </i>
+          </div>
+        </div>
+
+        <div class="filepath">
+          <i class="fa-solid fa-file"></i><span id="codepath"></span>
+        </div>
+
+        <div class="editor-row">
+          <div id="blocklyDiv" class="blocklyDiv"></div>
+          <div id="codeDiv">
+            <form id="code_form">
+              <textarea id="codemirror-code" name="source_code" aria-label="source_code"></textarea>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="wrapper ide" id="result_en">
+        <div class="editor-row">
+          <div class="editor-col">
+            <!-- <i class="fa fa-solid fa-file-lines"><span> 결과</span></i> -->
+            <button id="eraser">
+              <i class="fa-solid fa-eraser fa-lg"></i>&nbsp;<span data-key="reset"></span>
+            </button>
+            <i class="fas fa-keyboard" style="margin-top:3px;margin-bottom:-3px;">
+              <input type="text" id="prompt" name="prompt" style="border-radius: 5px;" aria-label="prompt" />
+            </i>
+            <button id="prompt_bt">
+              <i class="fa-solid fa-arrow-left fa-lg"></i>&nbsp;<span data-key="enter"></span>
+            </button>
+            <!-- <i class="fa fa-solid fa-link"></i>
               <input type="checkbox" id="terminal_check" name="terminal_check" title="터미널" /> -->
-            </div>
           </div>
-          <div class="filepath">
-            <i class="fa-solid fa-file"></i><span id="respath"></span>
-          </div>
+        </div>
+        <div class="filepath">
+          <i class="fa-solid fa-file"></i><span id="respath"></span>
+        </div>
 
-          <div class="editor-row">
-            <div class="editor-col">
-              <textarea id="result" class="result" disabled aria-label="result"></textarea>
-              <!-- <iframe id="terminal" class="result" loading="lazy" style="display:none"></iframe> -->
-            </div>
+        <div class="editor-row">
+          <div class="editor-col">
+            <textarea id="result" class="result" disabled aria-label="result"></textarea>
+            <!-- <iframe id="terminal" class="result" loading="lazy" style="display:none"></iframe> -->
           </div>
         </div>
       </div>
-    </main>
-    <footer>
-      <div style="float:left;padding:0.7rem 0 0.7rem 0">
-        <i class="fa-solid fa-robot fa-flip"></i>
-        <span id="s_os_version"></span>,
-        <a id="usedata_bt"><i class="fa-solid fa-tags"></i><span id="s_serial"></span></a>
-        &nbsp;&nbsp;<a id="fullscreen_bt"><span id='fullscreen_txt'></span></a>
-      </div>
-      <div style="float:right;padding:0.7rem 0 0.7rem 0">
-        <a id="showNetwork">
-          <span id="s_network"></span>
-        </a>,
-        <i class="fa-solid fa-temperature-empty"></i>
-        <span id="s_cpu_temp"></span>,
-        <i class="fa-solid fa-memory"></i>
-        <span id="s_memory"></span>,
-        <i class="fa-solid fa-clock"></i>
-        <span id="s_runtime"></span>, <span id="d_battery_val"></span>
-        <span id="d_dc_val"></span>
-      </div>
-    </footer>
-    <script src="../static/index.js?ver=240707v35"></script>
-  </body>
+    </div>
+  </main>
+  <footer>
+    <div style="float:left;padding:0.7rem 0 0.7rem 0">
+      <i class="fa-solid fa-robot fa-flip"></i>
+      <span id="s_os_version"></span>,
+      <a id="usedata_bt"><i class="fa-solid fa-tags"></i><span id="s_serial"></span></a>
+    </div>
+    <div style="float:right;padding:0.7rem 0 0.7rem 0">
+      <a id="showNetwork">
+        <span id="s_network"></span>
+      </a>,
+      <i class="fa-solid fa-temperature-empty"></i>
+      <span id="s_cpu_temp"></span>,
+      <i class="fa-solid fa-memory"></i>
+      <span id="s_memory"></span>,
+      <i class="fa-solid fa-clock"></i>
+      <span id="s_runtime"></span>, <span id="d_battery_val"></span>
+      <span id="d_dc_val"></span>
+    </div>
+  </footer>
+  <script src="../static/index.js?ver=240707v35"></script>
+</body>
+
 </html>

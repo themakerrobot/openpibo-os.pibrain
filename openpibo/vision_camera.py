@@ -115,6 +115,16 @@ Functions:
 
     return np.full((h, w, 3), colors, dtype=np.uint8)
 
+  def imshow(self, img, ratio=1.0):
+    """
+    이미지 파일을 Web IDE에 출력합니다.
+
+    :param numpy.ndarray img: 이미지 객체
+    :param float ratio: 이미지 사이즈 변환 비율 (다수 동시 사용시, 네트워크 부하)
+    """
+
+    self.imshow_to_ide(img, ratio)
+
   def imshow_to_ide(self, img, ratio=0.25):
     """
     이미지 파일을 Web IDE에 출력합니다.

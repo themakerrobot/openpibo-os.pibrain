@@ -369,7 +369,6 @@ async def handle_restore(sid):
     except Exception as e:
         await sio.emit('update', {'dialog': f'초기화 오류: {str(e)}'}, room=sid)
 
-
 @app.sio.on('add_file')
 async def handle_add_file(sid, p):
   global codeText, codePath
@@ -394,7 +393,6 @@ async def handle_add_file(sid, p):
   except Exception as err:
     await app.sio.emit('update', {'dialog': f'파일 불러오기 오류: {str(err)}'})
 
-
 @app.sio.on('add_directory')
 async def handle_add_directory(sid, p):
   if is_protect(PATH):
@@ -407,7 +405,6 @@ async def handle_add_directory(sid, p):
     await app.sio.emit('update_file_manager', {'data': directory_data})
   except Exception as err:
     await app.sio.emit('update', {'dialog': f'디렉토리 생성 오류: {str(err)}'})
-
 
 @app.sio.on('save')
 async def handle_save(sid, d):
@@ -424,7 +421,6 @@ async def handle_save(sid, d):
     shutil.chown(os.path.dirname(codePath), user='pi', group='pi')
   except Exception as err:
     await app.sio.emit('update', {'dialog': f'파일 저장 오류: {str(err)}'})
-
 
 async def execute(EXEC, codepath):
   global record, ps
@@ -514,14 +510,12 @@ async def handle_stop(sid):
     ps.kill()
     await ps.wait()
 
-
 @app.sio.on('prompt')
 async def handle_prompt(sid, s):
   global ps
   if ps and ps.stdin:
     ps.stdin.write((s + "\n").encode())
     await ps.stdin.drain()
-
 
 # Additional code for the periodic system status updates
 async def periodic_system_update():
@@ -537,7 +531,6 @@ async def periodic_system_update():
 #@app.on_event('startup')
 #async def on_startup():
 #  asyncio.create_task(periodic_system_update())
-
 
 if __name__ == '__main__':
   import argparse

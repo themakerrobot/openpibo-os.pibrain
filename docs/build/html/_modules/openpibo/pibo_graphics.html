@@ -1,0 +1,452 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ko" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>openpibo.pibo_graphics &mdash; OPENPIBO 0.9.3.1 문서</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/mycss.css?v=5d8bc77e" />
+
+  
+    <link rel="shortcut icon" href="../../_static/icon.png"/>
+    <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python/_modules/openpibo/pibo_graphics.html" />
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=a094e606"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+      <script src="../../_static/translations.js?v=afa94a99"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="색인" href="../../genindex.html" />
+    <link rel="search" title="검색" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            OPENPIBO
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notes/piboMaker.html">파이보 메이커</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notes/software.html">소프트웨어</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notes/hardware.html">하드웨어</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Block</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../blocks/guide.html">블록코딩</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/audio.html">audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/collect.html">collect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/device.html">device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/usb_uart.html">usb_uart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/motion.html">motion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/oled.html">oled</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/pibo_graphics.html">pibo_graphics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/speech.html">speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_camera.html">vision_camera</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_detect.html">vision_detect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_face.html">vision_face</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_classify.html">vision_classify</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/utils.html">utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">OPENPIBO</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">모듈 코드</a></li>
+      <li class="breadcrumb-item active">openpibo.pibo_graphics</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>openpibo.pibo_graphics의 소스 코드</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">USB UART 통신을 위한 클래스 입니다.</span>
+
+<span class="sd">Class:</span>
+<span class="sd">:obj:`~openpibo.pibo_graphics.PiboGraphics`</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">openpibo_models</span>
+
+<div class="viewcode-block" id="PiboGraphics">
+<a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics">[문서]</a>
+<span class="k">class</span> <span class="nc">PiboGraphics</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">view_instance</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">240</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">320</span><span class="p">,</span>
+                 <span class="n">animation_delay</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">move_step_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">turn_step_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">icon_path</span><span class="o">=</span><span class="n">openpibo_models</span><span class="o">.</span><span class="n">filepath</span><span class="p">(</span><span class="s1">&#39;pibo_graphics.png&#39;</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">view_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;view_instance cannot be None&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view</span> <span class="o">=</span> <span class="n">view_instance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">height</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">animation_delay</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">animation_delay</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">move_step_size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">move_step_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">turn_step_size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">turn_step_size</span><span class="p">)</span>
+
+        <span class="c1"># Icon loading</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">icon_orig</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">icon_loaded</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_load_and_resize_icon</span><span class="p">(</span><span class="n">icon_path</span><span class="p">)</span>
+
+        <span class="c1"># Frame buffer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+
+        <span class="c1"># --- State Variables ---</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angle_deg</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pen_down</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pen_color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span> <span class="c1"># White</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pen_thickness</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># Black</span>
+
+        <span class="c1"># --- Drawing History ---</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># List to store drawing commands</span>
+
+        <span class="c1"># Initialize and show</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">show_initial</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_load_and_resize_icon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Loads and resizes the icon.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">icon_path</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: Icon file not found: &#39;</span><span class="si">{</span><span class="n">icon_path</span><span class="si">}</span><span class="s2">&#39;. Fallback icon.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">loaded_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">icon_path</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_UNCHANGED</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">loaded_icon</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;imread failed&quot;</span><span class="p">)</span>
+            <span class="n">resized_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">loaded_icon</span><span class="p">,</span> <span class="n">ICON_TARGET_SIZE</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_AREA</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">resized_icon</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unexpected channels&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">icon_orig</span> <span class="o">=</span> <span class="n">resized_icon</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">icon_loaded</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded &amp; resized &#39;</span><span class="si">{</span><span class="n">icon_path</span><span class="si">}</span><span class="s2">&#39; to </span><span class="si">{</span><span class="n">ICON_TARGET_SIZE</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error loading/resizing icon &#39;</span><span class="si">{</span><span class="n">icon_path</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. Fallback icon.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">icon_orig</span> <span class="o">=</span> <span class="kc">None</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">icon_loaded</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_add_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_tuple</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds a drawing command to the history.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">command_tuple</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_redraw_from_history</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clears frame and redraws everything from history.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">[:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">:</span>
+            <span class="n">command</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">command</span> <span class="o">==</span> <span class="s1">&#39;line&#39;</span><span class="p">:</span>
+                    <span class="n">_</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">thickness</span> <span class="o">=</span> <span class="n">item</span>
+                    <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">x1</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">y1</span><span class="p">))),</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">x2</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">y2</span><span class="p">))),</span> <span class="n">color</span><span class="p">,</span> <span class="n">thickness</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s1">&#39;circle&#39;</span><span class="p">:</span>
+                     <span class="n">_</span><span class="p">,</span> <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">thickness</span> <span class="o">=</span> <span class="n">item</span>
+                     <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">cx</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">cy</span><span class="p">))),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">r</span><span class="p">)),</span> <span class="n">color</span><span class="p">,</span> <span class="n">thickness</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s1">&#39;dot&#39;</span><span class="p">:</span>
+                     <span class="n">_</span><span class="p">,</span> <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">item</span>
+                     <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">cx</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">cy</span><span class="p">))),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">r</span><span class="p">)),</span> <span class="n">color</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="c1"># Add other shapes if implemented (e.g., ellipse for arcs)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error replaying history item </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">_update_display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Redraws everything and shows on OLED.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_redraw_from_history</span><span class="p">()</span> <span class="c1"># Redraw path history first</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_draw_turtle_icon</span><span class="p">()</span>    <span class="c1"># Draw icon on top</span>
+        <span class="k">try</span><span class="p">:</span>                        <span class="c1"># Show final frame</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">)</span>
+            <span class="n">delay</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="k">if</span> <span class="n">initial</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">animation_delay</span>
+            <span class="k">if</span> <span class="n">delay</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error during oled.imshow/sleep: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_draw_turtle_icon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Draws the icon onto self.frame (does not show).&quot;&quot;&quot;</span>
+        <span class="c1"># This function now ONLY draws the icon, assuming frame is ready.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">icon_loaded</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">icon_orig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Fallback: Draw a simple gray triangle</span>
+            <span class="n">tip</span> <span class="o">=</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span> <span class="n">base1</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">);</span> <span class="n">base2</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span> <span class="n">points</span> <span class="o">=</span> <span class="p">[</span><span class="n">tip</span><span class="p">,</span> <span class="n">base1</span><span class="p">,</span> <span class="n">base2</span><span class="p">]</span>
+            <span class="n">angle_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">angle_deg</span><span class="p">);</span> <span class="n">cos_a</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle_rad</span><span class="p">);</span> <span class="n">sin_a</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle_rad</span><span class="p">)</span>
+            <span class="n">screen_points</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">vx</span><span class="p">,</span> <span class="n">vy</span> <span class="ow">in</span> <span class="n">points</span><span class="p">:</span>
+                <span class="n">rotated_vx</span> <span class="o">=</span> <span class="n">vx</span> <span class="o">*</span> <span class="n">cos_a</span> <span class="o">-</span> <span class="n">vy</span> <span class="o">*</span> <span class="n">sin_a</span><span class="p">;</span> <span class="n">rotated_vy</span> <span class="o">=</span> <span class="n">vx</span> <span class="o">*</span> <span class="n">sin_a</span> <span class="o">+</span> <span class="n">vy</span> <span class="o">*</span> <span class="n">cos_a</span>
+                <span class="n">screen_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">rotated_vx</span><span class="p">;</span> <span class="n">screen_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">rotated_vy</span>
+                <span class="n">screen_points</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">screen_x</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">screen_y</span><span class="p">))])</span>
+            <span class="n">pts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">screen_points</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">fillPoly</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">,</span> <span class="p">[</span><span class="n">pts</span><span class="p">],</span> <span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">))</span> <span class="c1"># Gray fallback</span>
+            <span class="k">return</span>
+
+        <span class="c1"># --- Icon Rotation ---</span>
+        <span class="n">icon_h</span><span class="p">,</span> <span class="n">icon_w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">icon_orig</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">center</span> <span class="o">=</span> <span class="p">(</span><span class="n">icon_w</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">icon_h</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">rotation_angle_cv</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">angle_deg</span>
+        <span class="n">rot_mat</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">getRotationMatrix2D</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">rotation_angle_cv</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">border_val</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">icon_orig</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span> <span class="k">else</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">rotated_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">warpAffine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">icon_orig</span><span class="p">,</span> <span class="n">rot_mat</span><span class="p">,</span> <span class="p">(</span><span class="n">icon_w</span><span class="p">,</span> <span class="n">icon_h</span><span class="p">),</span>
+                                      <span class="n">flags</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_LINEAR</span><span class="p">,</span> <span class="n">borderMode</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">BORDER_CONSTANT</span><span class="p">,</span> <span class="n">borderValue</span><span class="o">=</span><span class="n">border_val</span><span class="p">)</span>
+
+        <span class="c1"># --- Overlaying / Alpha Blending ---</span>
+        <span class="n">tx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">icon_w</span> <span class="o">/</span> <span class="mi">2</span><span class="p">));</span> <span class="n">ty</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">icon_h</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">frame_h</span><span class="p">,</span> <span class="n">frame_w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">roi_x_start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">tx</span><span class="p">);</span> <span class="n">roi_y_start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">ty</span><span class="p">)</span>
+        <span class="n">roi_x_end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">frame_w</span><span class="p">,</span> <span class="n">tx</span> <span class="o">+</span> <span class="n">icon_w</span><span class="p">);</span> <span class="n">roi_y_end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">frame_h</span><span class="p">,</span> <span class="n">ty</span> <span class="o">+</span> <span class="n">icon_h</span><span class="p">)</span>
+        <span class="n">icon_x_start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">tx</span><span class="p">);</span> <span class="n">icon_y_start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">ty</span><span class="p">)</span>
+        <span class="n">icon_x_end</span> <span class="o">=</span> <span class="n">icon_x_start</span> <span class="o">+</span> <span class="p">(</span><span class="n">roi_x_end</span> <span class="o">-</span> <span class="n">roi_x_start</span><span class="p">)</span>
+        <span class="n">icon_y_end</span> <span class="o">=</span> <span class="n">icon_y_start</span> <span class="o">+</span> <span class="p">(</span><span class="n">roi_y_end</span> <span class="o">-</span> <span class="n">roi_y_start</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">roi_x_end</span> <span class="o">&gt;</span> <span class="n">roi_x_start</span> <span class="ow">and</span> <span class="n">roi_y_end</span> <span class="o">&gt;</span> <span class="n">roi_y_start</span> <span class="ow">and</span> <span class="n">icon_x_end</span> <span class="o">&gt;</span> <span class="n">icon_x_start</span> <span class="ow">and</span> <span class="n">icon_y_end</span> <span class="o">&gt;</span> <span class="n">icon_y_start</span><span class="p">:</span>
+            <span class="n">roi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">[</span><span class="n">roi_y_start</span><span class="p">:</span><span class="n">roi_y_end</span><span class="p">,</span> <span class="n">roi_x_start</span><span class="p">:</span><span class="n">roi_x_end</span><span class="p">]</span>
+            <span class="n">icon_part</span> <span class="o">=</span> <span class="n">rotated_icon</span><span class="p">[</span><span class="n">icon_y_start</span><span class="p">:</span><span class="n">icon_y_end</span><span class="p">,</span> <span class="n">icon_x_start</span><span class="p">:</span><span class="n">icon_x_end</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">roi</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">icon_part</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="n">roi</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">icon_part</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="k">return</span>
+
+            <span class="k">if</span> <span class="n">icon_part</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span> <span class="c1"># BGRA</span>
+                <span class="n">alpha</span> <span class="o">=</span> <span class="n">icon_part</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">:]</span> <span class="o">/</span> <span class="mf">255.0</span>
+                <span class="n">bgr_icon</span> <span class="o">=</span> <span class="n">icon_part</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">blended</span> <span class="o">=</span> <span class="p">(</span><span class="n">bgr_icon</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">roi</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">[</span><span class="n">roi_y_start</span><span class="p">:</span><span class="n">roi_y_end</span><span class="p">,</span> <span class="n">roi_x_start</span><span class="p">:</span><span class="n">roi_x_end</span><span class="p">]</span> <span class="o">=</span> <span class="n">blended</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Alpha blending error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">icon_part</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span> <span class="c1"># BGR</span>
+                 <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">[</span><span class="n">roi_y_start</span><span class="p">:</span><span class="n">roi_y_end</span><span class="p">,</span> <span class="n">roi_x_start</span><span class="p">:</span><span class="n">roi_x_end</span><span class="p">]</span> <span class="o">=</span> <span class="n">icon_part</span>
+
+
+    <span class="c1"># --- Public Turtle Methods ---</span>
+
+<div class="viewcode-block" id="PiboGraphics.reset">
+<a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.reset">[문서]</a>
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show_initial</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clears screen and history, resets state.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angle_deg</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pen_down</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pen_color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pen_thickness</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># Clear history</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Turtle state and history reset.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">show_initial</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_display</span><span class="p">(</span><span class="n">initial</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># Update display (clears frame, draws icon, shows)</span></div>
+
+
+<div class="viewcode-block" id="PiboGraphics.clear">
+<a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.clear">[문서]</a>
+    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clears drawing area (history), redraws icon, shows.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># Clear history</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_display</span><span class="p">()</span> <span class="c1"># Update display (clears frame, draws icon, shows)</span></div>
+
+
+<div class="viewcode-block" id="PiboGraphics.bgcolor">
+<a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.bgcolor">[문서]</a>
+    <span class="k">def</span> <span class="nf">bgcolor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets background color and clears screen/history.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span> <span class="c1"># clear handles history clear, redraw and show</span></div>
+
+
+<div class="viewcode-block" id="PiboGraphics.penup">
+<a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.penup">[문서]</a>
+    <span class="k">def</span> <span class="nf">penup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_down</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="PiboGraphics.pendown">
+<a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.pendown">[문서]</a>
+    <span class="k">def</span> <span class="nf">pendown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_down</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="PiboGraphics.pencolor">
+<a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.pencolor">[문서]</a>
+    <span class="k">def</span> <span class="nf">pencolor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_color</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="PiboGraphics.pensize">
+<a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.pensize">[문서]</a>
+    <span class="k">def</span> <span class="nf">pensize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_thickness</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">width</span><span class="p">))</span></div>
+
+
+    <span class="c1"># --- Animated Methods ---</span>
+
+<div class="viewcode-block" id="PiboGraphics.forward">
+<a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.forward">[문서]</a>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distance</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Moves forward step-by-step, adding to history if pen down.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">distance</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_display</span><span class="p">();</span> <span class="k">return</span>
+
+        <span class="n">num_steps</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">distance</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">move_step_size</span><span class="p">)))</span>
+        <span class="n">step_dist</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">distance</span><span class="p">)</span> <span class="o">/</span> <span class="n">num_steps</span>
+        <span class="n">angle_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">angle_deg</span><span class="p">)</span>
+        <span class="n">dx_step</span> <span class="o">=</span> <span class="n">step_dist</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle_rad</span><span class="p">)</span>
+        <span class="n">dy_step</span> <span class="o">=</span> <span class="o">-</span><span class="n">step_dist</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle_rad</span><span class="p">)</span>
+        <span class="n">current_x_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">;</span> <span class="n">current_y_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_steps</span><span class="p">):</span>
+            <span class="n">next_x</span> <span class="o">=</span> <span class="n">current_x_start</span> <span class="o">+</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx_step</span>
+            <span class="n">next_y</span> <span class="o">=</span> <span class="n">current_y_start</span> <span class="o">+</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">dy_step</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_down</span><span class="p">:</span>
+                <span class="c1"># Add line segment to history</span>
+                <span class="n">start_step</span> <span class="o">=</span> <span class="p">(</span><span class="n">current_x_start</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">dx_step</span><span class="p">,</span> <span class="n">current_y_start</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">dy_step</span><span class="p">)</span>
+                <span class="n">end_step</span> <span class="o">=</span> <span class="p">(</span><span class="n">next_x</span><span class="p">,</span> <span class="n">next_y</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_add_history</span><span class="p">((</span><span class="s1">&#39;line&#39;</span><span class="p">,</span> <span class="n">start_step</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">start_step</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">end_step</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">end_step</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">pen_color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_thickness</span><span class="p">))</span>
+
+            <span class="c1"># Update position state for this step</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">next_x</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">next_y</span>
+            <span class="c1"># Update the display fully (clears, redraws history+icon, shows)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_display</span><span class="p">()</span>
+
+        <span class="c1"># Ensure final precise position</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">current_x_start</span> <span class="o">+</span> <span class="n">distance</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle_rad</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">current_y_start</span> <span class="o">-</span> <span class="n">distance</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle_rad</span><span class="p">)</span></div>
+
+        <span class="c1"># Optional final display update for precision</span>
+        <span class="c1"># self._update_display()</span>
+
+<div class="viewcode-block" id="PiboGraphics.backward">
+<a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.backward">[문서]</a>
+    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distance</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="o">-</span><span class="n">distance</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PiboGraphics.left">
+<a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.left">[문서]</a>
+    <span class="k">def</span> <span class="nf">left</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Turns left step-by-step, updating icon display.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">angle</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_display</span><span class="p">();</span> <span class="k">return</span>
+        <span class="n">num_steps</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">turn_step_size</span><span class="p">)))</span>
+        <span class="n">step_angle</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span> <span class="o">/</span> <span class="n">num_steps</span>
+        <span class="n">current_angle_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">angle_deg</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_steps</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">angle_deg</span> <span class="o">=</span> <span class="p">(</span><span class="n">current_angle_start</span> <span class="o">+</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">step_angle</span><span class="p">)</span> <span class="o">%</span> <span class="mi">360</span>
+            <span class="c1"># Update display (redraws history and icon with new angle)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_display</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angle_deg</span> <span class="o">=</span> <span class="p">(</span><span class="n">current_angle_start</span> <span class="o">+</span> <span class="n">angle</span><span class="p">)</span> <span class="o">%</span> <span class="mi">360</span> <span class="c1"># Ensure final angle</span></div>
+
+
+<div class="viewcode-block" id="PiboGraphics.right">
+<a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.right">[문서]</a>
+    <span class="k">def</span> <span class="nf">right</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="p">(</span><span class="o">-</span><span class="n">angle</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PiboGraphics.setheading">
+<a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.setheading">[문서]</a>
+    <span class="k">def</span> <span class="nf">setheading</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets absolute heading instantly, updates display.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angle_deg</span> <span class="o">=</span> <span class="n">angle</span> <span class="o">%</span> <span class="mi">360</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_display</span><span class="p">()</span> <span class="c1"># Show icon in new orientation</span></div>
+
+
+    <span class="c1"># --- Non-Animated Methods (Add to history, update display once) ---</span>
+
+<div class="viewcode-block" id="PiboGraphics.goto">
+<a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.goto">[문서]</a>
+    <span class="k">def</span> <span class="nf">goto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Goes instantly, adds line to history if pen down.&quot;&quot;&quot;</span>
+        <span class="n">new_x</span><span class="p">,</span> <span class="n">new_y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_down</span><span class="p">:</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">_add_history</span><span class="p">((</span><span class="s1">&#39;line&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">new_x</span><span class="p">,</span> <span class="n">new_y</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">pen_color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_thickness</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">new_x</span><span class="p">,</span> <span class="n">new_y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_display</span><span class="p">()</span> <span class="c1"># Show final result</span></div>
+
+
+<div class="viewcode-block" id="PiboGraphics.circle">
+<a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.circle">[문서]</a>
+    <span class="k">def</span> <span class="nf">circle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="mi">360</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds circle/arc to history if pen down.&quot;&quot;&quot;</span>
+        <span class="c1"># This only adds the command, actual drawing happens in _redraw_from_history</span>
+        <span class="c1"># For instant visual feedback, _update_display is called.</span>
+        <span class="c1"># Note: Arc drawing based on extent is not implemented in redraw yet.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_down</span><span class="p">:</span>
+            <span class="n">radius_int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">radius</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">radius_int</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                 <span class="k">if</span> <span class="n">extent</span> <span class="o">==</span> <span class="mi">360</span> <span class="ow">or</span> <span class="n">extent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                     <span class="bp">self</span><span class="o">.</span><span class="n">_add_history</span><span class="p">((</span><span class="s1">&#39;circle&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">radius_int</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">pen_color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_thickness</span><span class="p">))</span>
+                 <span class="k">else</span><span class="p">:</span>
+                     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Arc drawing (extent!=360) not fully supported in history redraw yet.&quot;</span><span class="p">)</span>
+                     <span class="c1"># Could add an &#39;arc&#39; command type if needed</span>
+                     <span class="c1"># For now, maybe draw full circle or nothing</span>
+                     <span class="bp">self</span><span class="o">.</span><span class="n">_add_history</span><span class="p">((</span><span class="s1">&#39;circle&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">radius_int</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">pen_color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_thickness</span><span class="p">))</span> <span class="c1"># Draw full circle for now</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_display</span><span class="p">()</span> <span class="c1"># Show result</span></div>
+
+
+<div class="viewcode-block" id="PiboGraphics.dot">
+<a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.dot">[문서]</a>
+    <span class="k">def</span> <span class="nf">dot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color_bgr</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds dot to history.&quot;&quot;&quot;</span>
+        <span class="n">dot_color</span> <span class="o">=</span> <span class="n">color_bgr</span> <span class="k">if</span> <span class="n">color_bgr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_color</span>
+        <span class="n">dot_diameter</span> <span class="o">=</span> <span class="n">size</span> <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pen_thickness</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_thickness</span><span class="p">)</span>
+        <span class="n">dot_radius</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">dot_diameter</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_history</span><span class="p">((</span><span class="s1">&#39;dot&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">dot_radius</span><span class="p">,</span> <span class="n">dot_color</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_display</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025 THEMAKER. All rights reserved. openpibo-python-0.9.3.1.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,8 +1,11 @@
 from openpibo.oled import OledByPiBrain as Oled
 from openpibo.audio import Audio
 from fastapi import FastAPI, Body
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, Body, Request
+from fastapi.responses import JSONResponse,HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 
 from threading import Timer
@@ -26,6 +29,13 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 apmode = True
+
+templates = Jinja2Templates(directory="/home/pi/openpibo-os/docs")
+app.mount("/build", StaticFiles(directory="/home/pi/openpibo-os/docs/build"), name="build")
+
+@app.get('/', response_class=HTMLResponse)
+async def read_root(request: Request):
+  return templates.TemplateResponse("index.html", {"request": request})
 
 #@app.get("/device/{pkt}")
 #async def device_command(pkt: str):

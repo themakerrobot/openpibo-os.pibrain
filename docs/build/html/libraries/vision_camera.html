@@ -67,6 +67,7 @@
 <li class="toctree-l1"><a class="reference internal" href="usb_uart.html">usb_uart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="motion.html">motion</a></li>
 <li class="toctree-l1"><a class="reference internal" href="oled.html">oled</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pibo_graphics.html">pibo_graphics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="speech.html">speech</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">vision_camera</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#openpibo.vision_camera.Camera"><code class="docutils literal notranslate"><span class="pre">Camera</span></code></a><ul>
@@ -74,6 +75,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.imread"><code class="docutils literal notranslate"><span class="pre">Camera.imread()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.read"><code class="docutils literal notranslate"><span class="pre">Camera.read()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.create_matte"><code class="docutils literal notranslate"><span class="pre">Camera.create_matte()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.imshow"><code class="docutils literal notranslate"><span class="pre">Camera.imshow()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.imshow_to_ide"><code class="docutils literal notranslate"><span class="pre">Camera.imshow_to_ide()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.resize"><code class="docutils literal notranslate"><span class="pre">Camera.resize()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_camera.Camera.rotate"><code class="docutils literal notranslate"><span class="pre">Camera.rotate()</span></code></a></li>
@@ -201,6 +203,20 @@
 <dt class="sig sig-object py" id="openpibo.vision_camera.Camera.create_matte">
 <span class="sig-name descname"><span class="pre">create_matte</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(255,</span> <span class="pre">255,</span> <span class="pre">255)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">480</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">640</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.create_matte"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.create_matte" title="Link to this definition"></a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.imshow">
+<span class="sig-name descname"><span class="pre">imshow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.imshow"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.imshow" title="Link to this definition"></a></dt>
+<dd><p>이미지 파일을 Web IDE에 출력합니다.</p>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – 이미지 객체</p></li>
+<li><p><strong>ratio</strong> (<em>float</em>) – 이미지 사이즈 변환 비율 (다수 동시 사용시, 네트워크 부하)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.vision_camera.Camera.imshow_to_ide">

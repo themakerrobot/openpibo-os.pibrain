@@ -30,6 +30,7 @@ OPENPIBO PACKAGE for piBrain
    libraries/usb_uart
    libraries/motion
    libraries/oled
+   libraries/pibo_graphics
    libraries/speech
    libraries/vision_camera
    libraries/vision_detect
