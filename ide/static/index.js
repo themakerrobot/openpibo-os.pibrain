@@ -1,22 +1,34 @@
 let fullscreen = false;
-$('#fullscreen_txt').html(
-  fullscreen ?
-    '<i class="fa-solid fa-minimize"></i>' :
-    '<i class="fa-solid fa-maximize"></i>'
-);
 
-$('#fullscreen_bt').on('click', function () {
-  if (!fullscreen && document.documentElement.requestFullscreen) {
-    document.documentElement.requestFullscreen();
-    fullscreen = true;
-    $('#fullscreen_txt').html('<i class="fa-solid fa-minimize"></i>');
-  }
-  else if (fullscreen && document.exitFullscreen) {
-    document.exitFullscreen();
-    fullscreen = false;
-    $('#fullscreen_txt').html('<i class="fa-solid fa-maximize"></i>');
-  }
-  else { }
+const fullscreenTxt = document.getElementById('fullscreen_txt');
+const fullscreenBt = document.getElementById('fullscreen_bt');
+
+const updateIcon = () => {
+    fullscreenTxt.innerHTML = fullscreen
+        ? '<i class="fa-solid fa-minimize"></i>'
+        : '<i class="fa-solid fa-maximize"></i>';
+};
+
+updateIcon(); // 초기 아이콘 설정
+
+fullscreenBt.addEventListener('click', (e) => {
+    e.preventDefault(); // <a> 태그 기본 동작 방지
+
+    if (!fullscreen && document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+        fullscreen = true;
+    } else if (fullscreen && document.exitFullscreen) {
+        document.exitFullscreen();
+        fullscreen = false;
+    }
+
+    updateIcon();
+});
+
+// 사용자가 ESC 등으로 fullscreen 종료했을 때 아이콘 동기화
+document.addEventListener('fullscreenchange', () => {
+    fullscreen = !!document.fullscreenElement;
+    updateIcon();
 });
 
 // --- Get references to popup elements (using provided IDs) ---
@@ -191,17 +203,48 @@ async function prompt_popup(message, defaultValue = '') {
   });
 }
 
-$('#llm_bt').on('click', function () {
-  window.open(`http://${location.hostname}:50020`);
+document.getElementById("llm_bt").addEventListener("click", function () {
+  fetch(`http://${location.hostname}/llm?enable=on`)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.text();
+  })
+  .then(data => {
+    window.open(`http://${location.hostname}:50020`);
+  //   console.log('데이터 수신 성공:', data);
+  })
+  .catch(error => {
+  //   console.error('데이터 요청 중 에러 발생:', error);
+  });
 });
-$('#classifier_bt').on('click', function () {
-  window.open(`http://${location.hostname}:50010`);
+document.getElementById("classifier_bt").addEventListener("click", async function () {
+  fetch(`http://${location.hostname}/classifier?enable=on`)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.text();
+  })
+  .then(data => {
+    window.open(`http://${location.hostname}:50010`);
+  //   console.log('데이터 수신 성공:', data);
+  })
+  .catch(error => {
+  //   console.error('데이터 요청 중 에러 발생:', error);
+  });
 });
-$('#guide_bt').on('click', function () {
+document.getElementById("guide_bt").addEventListener("click", function () {
   window.open(`http://${location.hostname}:8080`);
 });
-$("#poweroff_bt").on("click", async function () {
-  if (await confirm_popup(translations["confirm_poweroff"][lang])) socket.emit("poweroff");
+document.getElementById("poweroff_bt").addEventListener("click", async function () {
+  if (await confirm_popup(translations["confirm_poweroff"][lang])) {
+      socket.emit("poweroff");
+  }
+});
+document.getElementById("logo_bt").addEventListener("click", function () {
+  location.href = `http://${location.hostname}`;
 });
 
 const init_usedata = {
@@ -252,10 +295,6 @@ let CODE_PATH = '';
 let BLOCK_PATH = '';
 let saveCode = "";
 let saveBlock = "{}";
-
-$("#logo_bt").on("click", function () {
-  location.href = `http://${location.hostname}`;
-});
 
 $("#fontsize").on("change", function () {
   document.querySelector("div.CodeMirror").style.fontSize = `${$("#fontsize").val()}px`;
@@ -990,7 +1029,7 @@ const workspace = Blockly.inject("blocklyDiv", {
 });
 
 Blockly.Python.init(workspace);
-Blockly.Python.nameDB_.getName = (name, type) => {
+Blockly.Python.nameDB_.getName = function(name, type) {
   const enc_name = Blockly.Names.prototype.getName.call(this, name, type);
 
   // 인코딩된 한글 문자 디코딩

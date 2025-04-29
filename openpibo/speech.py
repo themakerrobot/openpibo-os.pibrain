@@ -424,7 +424,7 @@ Functions:
 
     """
 
-    os.system(f"pkill llama-server;/home/pi/llama.cpp/build/bin/llama-server -m /home/pi/.model/llm/gemma-3-1b-it-Q2_K.gguf --log-disable --host 0.0.0.0 --port {port} &")    
+    os.system(f"systemctl start llama-server")    
     print("Connect to http:{Device IP}:50020 for LLM Web-UI")
 
 
@@ -450,7 +450,7 @@ Functions:
         messages.append({"role": "user", "content": prompt})
     
     payload = {
-      "model": "gemma-3-1b-it-Q2_K",  # 모델명 (환경에 맞게 수정)
+      "model": "hyperclovax-seed-text-instruct-0.5b-q4_k_m.gguf",  # 모델명 (환경에 맞게 수정)
       "messages": messages,
       "temperature": 0.8,   # 생성 텍스트의 무작위성 조절
       "top_p": 0.95,        # 누적 확률 임계값
@@ -482,4 +482,4 @@ Functions:
 
     """
 
-    os.system("pkill llama-server")    
+    os.system("systemctl stop llama-server")    

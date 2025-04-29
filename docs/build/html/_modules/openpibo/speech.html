@@ -570,7 +570,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;pkill llama-server;/home/pi/llama.cpp/build/bin/llama-server -m /home/pi/.model/llm/gemma-3-1b-it-Q2_K.gguf --log-disable --host 0.0.0.0 --port </span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2"> &amp;&quot;</span><span class="p">)</span>    
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;systemctl start llama-server&quot;</span><span class="p">)</span>    
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Connect to http:{Device IP}:50020 for LLM Web-UI&quot;</span><span class="p">)</span></div>
 
 
@@ -599,7 +599,7 @@
         <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">})</span>
     
     <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
-      <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;gemma-3-1b-it-Q2_K&quot;</span><span class="p">,</span>  <span class="c1"># 모델명 (환경에 맞게 수정)</span>
+      <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;hyperclovax-seed-text-instruct-0.5b-q4_k_m.gguf&quot;</span><span class="p">,</span>  <span class="c1"># 모델명 (환경에 맞게 수정)</span>
       <span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="n">messages</span><span class="p">,</span>
       <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>   <span class="c1"># 생성 텍스트의 무작위성 조절</span>
       <span class="s2">&quot;top_p&quot;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">,</span>        <span class="c1"># 누적 확률 임계값</span>
@@ -634,7 +634,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;pkill llama-server&quot;</span><span class="p">)</span>    </div>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;systemctl stop llama-server&quot;</span><span class="p">)</span>    </div>
 </div>
 
 </pre></div>

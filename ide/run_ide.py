@@ -186,11 +186,9 @@ async def show_file(data: UploadFile = File(...)):
     await socket_manager.emit('update', {'dialog': f'보기 오류: {str(err)}'})
   return JSONResponse(content={"message": "이미지 표시 완료"}, status_code=200)
 
-
 @app.sio.on('connection')
 async def handle_connection(sid, *args, **kwargs):
   pass  # Placeholder for any connection initialization
-
 
 @app.sio.on('init')
 async def handle_init(sid):
@@ -209,6 +207,25 @@ async def handle_init(sid):
     codeText = ''
   await app.sio.emit('init', {'codepath': codePath, 'codetext': codeText, 'path': PATH})
 
+@app.get('/classifier')
+async def classifier(enable: str):
+  # print("Eanable classifier:", enable)
+  if enable == "on":
+    subprocess.Popen(['systemctl', 'start', 'classify.service'])
+  elif enable == "off":
+    subprocess.Popen(['systemctl', 'stop', 'classify.service'])
+  await asyncio.sleep(2)
+  return HTMLResponse(content="", status_code=200)
+
+@app.get('/llm')
+async def classifier(enable: str):
+  # print("Eanable llm:", enable)
+  if enable == "on":
+    subprocess.Popen(['systemctl', 'start', 'llama-server.service'])
+  elif enable == "off":
+    subprocess.Popen(['systemctl', 'stop', 'llama-server.service'])
+  await asyncio.sleep(2)
+  return HTMLResponse(content="", status_code=200)
 
 @app.sio.on('reset_log')
 async def handle_reset_log(sid):

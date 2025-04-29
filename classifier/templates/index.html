@@ -37,6 +37,36 @@
   </header>
 
   <main>
+    <div class="alert-popup" id="alertPopup" style="display:none;">
+      <div class="alert-popup-content">
+        <p id="alertMessageElement">여기에 알림 메시지가 표시됩니다.</p>
+        <div class="popup-buttons">
+          <button id="alertOkBtn">확인</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="prompt-popup" id="promptPopup" style="display:none;">
+      <div class="prompt-popup-content">
+        <p id="promptMessageElement">여기에 프롬프트 메시지가 표시됩니다.</p>
+        <input type="text" id="promptInputElement" />
+        <div class="popup-buttons">
+          <button id="promptOkBtn">확인</button>
+          <button id="promptCancelBtn">취소</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="confirm-popup" id="confirmPopup" style="display:none;">
+      <div class="confirm-popup-content">
+        <p id="confirmMessageElement">여기에 확인 메시지가 표시됩니다.</p>
+        <div class="popup-buttons">
+          <button id="confirmOkBtn">확인</button>
+          <button id="confirmCancelBtn">취소</button>
+        </div>
+      </div>
+    </div>
+
     <div class="container">
       <!-- 왼쪽 패널: 클래스 관리 -->
       <div class="left-panel">

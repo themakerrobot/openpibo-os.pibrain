@@ -43,9 +43,9 @@ echo "START - run_ide.py"
 sudo systemctl start ide.service
 
 # classifier server
-echo "START - classifier.py"
+# echo "START - classifier.py"
 #/etc/systemd/system/classify.service
-sudo systemctl start classify.service
+# sudo systemctl start classify.service
 
 # Amp init
 #sudo gpio mode 7 out

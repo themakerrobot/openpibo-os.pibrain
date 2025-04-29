@@ -297,5 +297,9 @@ const translations = {
   start: {
     ko: "시작",
     en: "Start"
+  },
+  classifier: {
+    ko: "분류기",
+    en: "Classifier"
   }
 };

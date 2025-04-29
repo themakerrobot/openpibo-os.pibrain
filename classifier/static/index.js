@@ -80,7 +80,7 @@ async function alert_popup(message) {
 
 // --- confirm_popup Function (수정됨) ---
 async function confirm_popup(message) {
-    console.log("await confirm_popup: 함수 시작, 메시지:", message); // 디버깅 로그
+    console.log("confirm_popup: 함수 시작, 메시지:", message); // 디버깅 로그
     return new Promise((resolve) => {
         hidePopups(); // 다른 팝업 숨기기
 
@@ -91,25 +91,25 @@ async function confirm_popup(message) {
         const cancelButton = document.getElementById('confirmCancelBtn');
 
         if (!popupElement || !msgElement || !okButton || !cancelButton) {
-            console.error("await confirm_popup: 필수 요소를 찾을 수 없습니다!", { popupElement, msgElement, okButton, cancelButton });
+            console.error("confirm_popup: 필수 요소를 찾을 수 없습니다!", { popupElement, msgElement, okButton, cancelButton });
             resolve(false); // 요소를 찾을 수 없으면 즉시 false 반환 (오류 상황)
             return;
         }
-        console.log("await confirm_popup: 요소 찾음:", { popupElement, msgElement, okButton, cancelButton }); // 디버깅 로그
+        console.log("confirm_popup: 요소 찾음:", { popupElement, msgElement, okButton, cancelButton }); // 디버깅 로그
 
         msgElement.textContent = message;
         popupElement.style.display = 'flex'; // 팝업 표시
-        console.log("await confirm_popup: 팝업 표시됨. 사용자 입력 대기 중..."); // 디버깅 로그
+        console.log("confirm_popup: 팝업 표시됨. 사용자 입력 대기 중..."); // 디버깅 로그
 
         // --- 이벤트 핸들러 정의 ---
         const okHandler = () => {
-            console.log("await confirm_popup: 확인 버튼 클릭됨"); // 디버깅 로그
+            console.log("confirm_popup: 확인 버튼 클릭됨"); // 디버깅 로그
             cleanup();
             resolve(true); // Promise를 true로 완료
         };
 
         const cancelHandler = () => {
-            console.log("await confirm_popup: 취소 버튼 클릭됨"); // 디버깅 로그
+            console.log("confirm_popup: 취소 버튼 클릭됨"); // 디버깅 로그
             cleanup();
             resolve(false); // Promise를 false로 완료
         };
@@ -117,7 +117,7 @@ async function confirm_popup(message) {
         // --- 리스너 정리 함수 ---
         // 이 함수는 버튼이 클릭될 때 호출되어 리스너를 제거하고 팝업을 숨김
         const cleanup = () => {
-            console.log("await confirm_popup: 리스너 정리 및 팝업 숨김"); // 디버깅 로그
+            console.log("confirm_popup: 리스너 정리 및 팝업 숨김"); // 디버깅 로그
             okButton.removeEventListener('click', okHandler);
             cancelButton.removeEventListener('click', cancelHandler);
             hidePopups();
@@ -131,7 +131,7 @@ async function confirm_popup(message) {
         // 새 리스너 추가
         okButton.addEventListener('click', okHandler);
         cancelButton.addEventListener('click', cancelHandler);
-        console.log("await confirm_popup: 이벤트 리스너 추가됨"); // 디버깅 로그
+        console.log("confirm_popup: 이벤트 리스너 추가됨"); // 디버깅 로그
 
         // 이 시점에서는 resolve()가 호출되지 않음! 핸들러 내부에서만 호출됨.
     });
@@ -139,7 +139,7 @@ async function confirm_popup(message) {
 
 // --- prompt_popup Function (리스너 관리 강화) ---
 async function prompt_popup(message, defaultValue = '') {
-    console.log("await prompt_popup: 함수 시작, 메시지:", message); // 디버깅 로그
+    console.log("prompt_popup: 함수 시작, 메시지:", message); // 디버깅 로그
     return new Promise((resolve) => {
         hidePopups();
 
@@ -150,39 +150,39 @@ async function prompt_popup(message, defaultValue = '') {
         const cancelButton = document.getElementById('promptCancelBtn');
 
         if (!popupElement || !msgElement || !inputElement || !okButton || !cancelButton) {
-            console.error("await prompt_popup: 필수 요소를 찾을 수 없습니다!", { popupElement, msgElement, inputElement, okButton, cancelButton });
+            console.error("prompt_popup: 필수 요소를 찾을 수 없습니다!", { popupElement, msgElement, inputElement, okButton, cancelButton });
             resolve(null); // 오류 시 null 반환
             return;
         }
-        console.log("await prompt_popup: 요소 찾음:", { popupElement, msgElement, inputElement, okButton, cancelButton }); // 디버깅 로그
+        console.log("prompt_popup: 요소 찾음:", { popupElement, msgElement, inputElement, okButton, cancelButton }); // 디버깅 로그
 
         msgElement.textContent = message;
         inputElement.value = defaultValue;
         popupElement.style.display = 'flex';
         inputElement.focus(); // 입력 필드에 포커스
-        console.log("await prompt_popup: 팝업 표시됨. 사용자 입력 대기 중..."); // 디버깅 로그
+        console.log("prompt_popup: 팝업 표시됨. 사용자 입력 대기 중..."); // 디버깅 로그
 
         const okHandler = () => {
-            console.log("await prompt_popup: 확인 버튼 클릭됨"); // 디버깅 로그
+            console.log("prompt_popup: 확인 버튼 클릭됨"); // 디버깅 로그
             cleanup();
             resolve(inputElement.value); // 입력된 값으로 완료
         };
 
         const cancelHandler = () => {
-            console.log("await prompt_popup: 취소 버튼 클릭됨"); // 디버깅 로그
+            console.log("prompt_popup: 취소 버튼 클릭됨"); // 디버깅 로그
             cleanup();
             resolve(null); // 취소 시 null로 완료
         };
 
         const enterKeyHandler = (event) => {
             if (event.key === 'Enter') {
-                console.log("await prompt_popup: Enter 키 입력됨"); // 디버깅 로그
+                console.log("prompt_popup: Enter 키 입력됨"); // 디버깅 로그
                 okHandler(); // 확인 버튼 클릭과 동일하게 처리
             }
         };
 
         const cleanup = () => {
-            console.log("await prompt_popup: 리스너 정리 및 팝업 숨김"); // 디버깅 로그
+            console.log("prompt_popup: 리스너 정리 및 팝업 숨김"); // 디버깅 로그
             okButton.removeEventListener('click', okHandler);
             cancelButton.removeEventListener('click', cancelHandler);
             inputElement.removeEventListener('keydown', enterKeyHandler);
@@ -198,9 +198,13 @@ async function prompt_popup(message, defaultValue = '') {
         okButton.addEventListener('click', okHandler);
         cancelButton.addEventListener('click', cancelHandler);
         inputElement.addEventListener('keydown', enterKeyHandler);
-        console.log("await prompt_popup: 이벤트 리스너 추가됨"); // 디버깅 로그
+        console.log("prompt_popup: 이벤트 리스너 추가됨"); // 디버깅 로그
     });
 }
+
+document.getElementById("logo_bt").addEventListener("click", () => {
+    location.href = `http://${location.hostname}`;
+});
 
 // 1) Socket.IO 연결
 const socket = io(`http://${location.host}`, { path: "/socket.io" });
@@ -658,7 +662,21 @@ async function exportConvertedModelAsZipAndConvert() {
     }
 }
 
-
 window.addEventListener('beforeunload', (evt) => {
-    socket.emit('control_cam', false);
+    // socket.emit('control_cam', false);
+    //socket.emit('classifier_off');
+
+    fetch(`http://${location.hostname}/classifier?enable=off`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(data => {
+    //   console.log('데이터 수신 성공:', data);
+    })
+    .catch(error => {
+    //   console.error('데이터 요청 중 에러 발생:', error);
+    });
 });
