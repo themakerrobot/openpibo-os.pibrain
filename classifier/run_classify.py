@@ -186,6 +186,24 @@ async def convert_tfjs_to_keras_api(tfjs_zip: UploadFile = File(...), background
         if not os.path.exists(h5_path):
             return JSONResponse({"error": "❌ 변환된 model.keras 파일이 생성되지 않았습니다."}, status_code=500)
 
+        try:
+            shutil.copy2(h5_path, "/home/pi/mymodel/model.keras")
+        except FileNotFoundError:
+            return JSONResponse({"error": f"❌ mymodel/model.keras 저장 중 오류 발생"}, status_code=500)
+        except OSError as e: # 권한 문제 등 포함
+            return JSONResponse({"error": f"❌ mymodel/model.keras 저장 중 권환 중 오류 발생: {str(e)}"}, status_code=500)
+        except Exception as e:
+            return JSONResponse({"error": f"❌ mymodel/model.keras 저장 중 오류 발생: {str(e)}"}, status_code=500)
+
+        try:
+            shutil.copy2(label_path, "/home/pi/mymodel/labels.txt")
+        except FileNotFoundError:
+            return JSONResponse({"error": f"❌ mymodel/labels.txt 저장 중 오류 발생"}, status_code=500)
+        except OSError as e: # 권한 문제 등 포함
+            return JSONResponse({"error": f"❌ mymodel/labels.txt 저장 중 권환 중 오류 발생: {str(e)}"}, status_code=500)
+        except Exception as e:
+            return JSONResponse({"error": f"❌ mymodel/model.keras 저장 중 오류 발생: {str(e)}"}, status_code=500)
+
         # ✅ ZIP 파일 생성
         output_zip_path = os.path.join(work_dir, "converted_keras.zip")
         try:

@@ -1,5 +1,7 @@
 """
-USB UART 통신을 위한 클래스 입니다.
+Turtle package와 유사한 그래픽 위한 클래스 입니다.
+TEST
+기준: 240x320 (파이브레인)
 
 Class:
 :obj:`~openpibo.pibo_graphics.PiboGraphics`
@@ -272,3 +274,113 @@ class PiboGraphics:
         dot_radius = max(1, int(round(dot_diameter / 2)))
         self._add_history(('dot', self.x, self.y, dot_radius, dot_color))
         self._update_display()
+
+
+# --- Example Usage ---
+if __name__ == "__main__":
+    oled_instance = Oled()
+
+    t = Turtle(oled_instance, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, animation_delay=0.001, move_step_size=8, turn_step_size=16)
+    t.pencolor(0, 255, 0)
+    
+    t.pensize(2)
+    # 글자 및 간격 크기 설정 (예시 값이므로 조절 필요)
+    letter_height = 40
+    letter_width_approx = 25 # 글자 간 이동을 위한 대략적인 폭
+    letter_spacing = 8
+    curve_segment = 5  # 곡선을 그릴 때 사용할 짧은 선분 길이
+    curve_angle = 30   # 곡선을 그릴 때 꺾는 각도
+
+    # --- P 그리기 ---
+    print("Drawing: P")
+    t.penup()
+    t.goto(50,150)
+    t.pendown()
+    t.left(90)    # 위로
+    t.forward(letter_height) # |
+    t.right(90)   # 오른쪽으로
+    t.forward(curve_segment) # P의 윗부분 시작
+    # P의 곡선 부분 (6번 * 30도 = 180도)
+    for _ in range(6):
+        t.right(curve_angle)
+        t.forward(curve_segment)
+    t.right(90) # 아래로
+    # 정확히 중간에 닿기 어려우므로 높이의 절반 약간 넘게 이동
+    t.forward(letter_height * 0.55)
+    # P 완성 후 다음 글자 위치로 이동 준비
+    t.left(90)    # 다시 오른쪽 보게
+    t.penup()
+#     t.forward(letter_width_approx + letter_spacing) # P 폭만큼 + 간격만큼 이동
+
+    # --- 우측에 I 그리기 ---
+    i_start_x = 50 + letter_width_approx + letter_spacing # P 시작점 기준 계산
+    i_start_y = 150  # P와 같은 기준선
+    print(f"Drawing I near ({i_start_x}, {i_start_y})...")
+    t.penup()
+    t.goto(i_start_x, i_start_y)
+    t.setheading(90) # 위쪽(북쪽) 방향 설정
+    t.pendown()
+    t.forward(letter_height) # I의 세로선 그리기
+    t.penup() # I 그리기 완료
+
+
+    # --- 아래 goto(50, 200) 위치에 B O 적기 ---
+
+    # --- B 그리기 (수정: circle 대신 근사 사용) ---
+    print("Drawing B at (50, 200)...")
+    t.penup()
+    t.goto(100, 150) # B 시작 위치 (좌하단 기준)
+    t.pendown()
+    t.setheading(90) # 위쪽 방향
+    t.forward(letter_height) # B의 세로선 |
+    t.right(90) # 오른쪽 방향으로 전환
+
+    # --- 위쪽 반원 근사 ---
+    # 반원의 반지름과 둘레 계산 (대략 높이의 1/4)
+    radius_b = letter_height / 4.0
+    arc_length = math.pi * radius_b
+    # 작은 스텝으로 나누기 (예: 6~10 스텝 정도)
+    n_steps = 8
+    step_len = arc_length / n_steps
+    step_angle = 180.0 / n_steps # 180도를 n_steps로 나눔
+
+    # 작은 선분과 각도 회전 반복하여 반원 그리기
+    for _ in range(n_steps):
+        t.forward(step_len)
+        t.right(step_angle) # 오른쪽으로 꺾으며 반원
+
+    # --- 아래쪽 반원 근사 ---
+    # 현재 위치는 세로선 중간, 방향은 아래쪽(270도)을 향하고 있음
+    # 아래쪽 반원을 그리려면 다시 오른쪽(0도)을 봐야 함
+    # 하지만 right(step_angle)을 n_steps 만큼 했으므로 총 180도 회전한 상태. 즉 왼쪽(180도) 보고 있음
+    # 따라서 오른쪽(0도) 보려면 right(180) 또는 left(180) 필요. setheading이 간단.
+    t.setheading(0) # 확실하게 오른쪽(0도) 방향 설정
+
+    for _ in range(n_steps):
+        t.forward(step_len)
+        t.right(step_angle) # 오른쪽으로 꺾으며 아래 반원
+
+    # B 완성. 거북이는 대략 (50, 200) 근처에서 다시 오른쪽(0도)을 보고 있음
+    t.setheading(0) # 혹시 모르니 최종 방향 고정
+    # --- B 그리기 (수정 끝) ---
+    # --- O 그리기 ---
+    # B 옆에 O를 그리기 위해 위치 이동
+    o_start_x = 100 + letter_width_approx + letter_spacing # O를 그릴 X축 시작점 근처
+    o_start_y = 125 # B와 같은 기준선
+    o_radius = letter_height * 0.6 / 2 # O는 약간 작게 (높이의 60% 지름)
+    print(f"Drawing O near ({o_start_x}, {o_start_y})...")
+    t.penup()
+    # O를 그리기 위해 원의 아래쪽 중앙점으로 이동
+    t.goto(o_start_x + o_radius, o_start_y)
+    t.pendown()
+    t.setheading(0) # 원 그리기를 위해 방향 설정 (circle은 방향 영향 적음)
+    t.circle(o_radius) # O 그리기
+    t.penup() # O 그리기 완료
+    
+    t.goto(200, 280)
+    t.pendown()
+
+    print("Finished drawing I, B, O.")
+    print("Finished drawing 'pibo'")
+    
+    
