@@ -41,49 +41,6 @@ async def read_root(request: Request):
 #async def device_command(pkt: str):
 #  return JSONResponse(content=f"not support", status_code=500)
 
-@app.get('/usedata')
-async def f():
-
-  try:
-    res = {}
-    with open(f'/home/pi/.openpibo.json', 'rb') as f:
-      res = json.load(f)
-  except Exception as ex:
-    print(f'[usedata] Error: {ex}')
-    pass
-  return JSONResponse(content=res, status_code=200)
-
-@app.post('/usedata')
-async def f(data: dict = Body(...)):
-  try:
-    res = None
-    with open(f'/home/pi/.openpibo.json', 'rb') as f:
-      res = json.load(f)
-  except Exception as ex:
-    print(f'[usedata] Error: {ex}')
-    pass
-
-  try:
-    if res == None:
-      with open(f'/home/pi/.openpibo.json', 'w') as f:
-        json.dump(data, f)
-      shutil.chown(f'/home/pi/.openpibo.json', 'pi', 'pi')
-    else:
-      tmp = {}
-      for k in data:
-        if type(data[k]) is dict:
-          tmp[k] = dict(Counter(res[k]) + Counter(data[k]))
-        else:
-          tmp[k] = res[k] + data[k] if k in res else data[k]
-      with open(f'/home/pi/.openpibo.json', 'w') as f:
-        json.dump(tmp, f)
-  except Exception as ex:
-    with open(f'/home/pi/.openpibo.json', 'w') as f:
-      json.dump(data, f)
-    shutil.chown(f'/home/pi/.openpibo.json', 'pi', 'pi')
-
-  return JSONResponse(content=res, status_code=200)
-
 @app.get('/wifi_scan')
 async def f():
   return JSONResponse(content=wifi.wifi_scan(), status_code=200)

@@ -238,6 +238,13 @@ document.getElementById("classifier_bt").addEventListener("click", async functio
 document.getElementById("guide_bt").addEventListener("click", function () {
   window.open(`http://${location.hostname}:8080`);
 });
+
+document.getElementById("restore_bt").addEventListener("click", async function () {
+  if (await confirm_popup(translations["confirm_restore"][lang])) {
+    socket.emit("restore");
+  }
+});
+
 document.getElementById("poweroff_bt").addEventListener("click", async function () {
   if (await confirm_popup(translations["confirm_poweroff"][lang])) {
       socket.emit("poweroff");
@@ -247,19 +254,7 @@ document.getElementById("logo_bt").addEventListener("click", function () {
   location.href = `http://${location.hostname}`;
 });
 
-const init_usedata = {
-  staytime: 0,
-  home: { click: 0, keydown: 0, staytime: 0 },
-  device: { click: 0, keydown: 0, staytime: 0 },
-  motion: { click: 0, keydown: 0, staytime: 0 },
-  vision: { click: 0, keydown: 0, staytime: 0 },
-  speech: { click: 0, keydown: 0, staytime: 0 },
-  simulator: { click: 0, keydown: 0, staytime: 0 },
-  block: { click: 0, keydown: 0, execute: 0, staytime: 0 },
-  python: { click: 0, keydown: 0, execute: 0, staytime: 0 }
-};
 const system_port = 8080;
-let usedata = init_usedata; // from server
 const MAX_FILENAME_LENGTH = 50;
 const MAX_FILE_NUMBER = 10;
 const codeEditor = CodeMirror.fromTextArea(
@@ -457,8 +452,6 @@ socket.on("system", (data) => {
   $("#network_info").html(`<i class="fas fa-network-wired"></i> ${data[7]}, <i class="fa-solid fa-wifi"></i> ${data[6]}/${data[8]}`);
 });
 
-let startTime_item = new Date().getTime();
-
 codeTypeBtns.forEach((btn) => {
   const handler = (e) => {
     let before_codetype = "";
@@ -468,9 +461,6 @@ codeTypeBtns.forEach((btn) => {
     codeTypeBtns.forEach((el) => el.classList.remove("checked"));
     const target = e.currentTarget;
     target.classList.add("checked");
-
-    usedata[target.name]["staytime"] += parseInt((new Date().getTime() - startTime_item) / 1000);
-    startTime_item = new Date().getTime();
 
     if (target.name == "block") {
       if (before_codetype != "block") {
@@ -524,7 +514,7 @@ execute.addEventListener("click", async function () {
     });
     update_block();
     // for block
-    socket.emit("executeb", { codetype: "python", codepath: "/home/pi/blockly.py", codetext: Blockly.Python.workspaceToCode(workspace) });
+    socket.emit("executeb", { codetype: "python", codepath: "/home/pi/.tmp.py", codetext: Blockly.Python.workspaceToCode(workspace) });
   }
   else {
     saveCode = codeEditor.getValue();
@@ -538,9 +528,6 @@ execute.addEventListener("click", async function () {
   execute.disabled = true;
   stop.disabled = false;
   $("#respath").text($("#codepath").html());
-
-  usedata[codetype]["execute"]++;
-  localStorage.setItem("usedata", JSON.stringify(usedata));
 });
 
 stop.addEventListener("click", function () {
@@ -868,7 +855,7 @@ $("#save").on("click", async function () {
     // }
     saveBlock = JSON.stringify(Blockly.serialization.workspaces.save(workspace))
     socket.emit("save", {
-      codepath: "/home/pi/blockly.py",
+      codepath: "/home/pi/.tmp.py",
       codetext: Blockly.Python.workspaceToCode(workspace)
     });
     socket.emit("save", {
@@ -1096,7 +1083,7 @@ $(document).keydown(async (evt) => {
       // }
       saveBlock = JSON.stringify(Blockly.serialization.workspaces.save(workspace))
       socket.emit("save", {
-        codepath: "/home/pi/blockly.py",
+        codepath: "/home/pi/.tmp.py",
         codetext: Blockly.Python.workspaceToCode(workspace)
       });
       socket.emit("save", {
@@ -1119,200 +1106,203 @@ $(document).keydown(async (evt) => {
   return true;
 });
 
-$("#showNetwork").on("click", function () {
-  document.getElementById("usedataPopup").style.display = "none";
 
-  $("#wifi_list > tbody").empty();
-  $("#wifi_list > tbody").append(
-    $("<tr>")
-      .append(
-        $("<td colspan='4'>").append("Scanning...")
-      )
-  )
-  $.ajax({
-    url: `http://${location.hostname}:${system_port}/wifi_scan`,
-  }).always((xhr, status) => {
-    if (status == "success") {
-      data = xhr
-      $("#wifi_list > tbody").empty();
-      for (let i = 0; i < data.length; i++) {
-        if (data[i].essid.length > 50 || data[i].essid.includes('\x00')) continue;
-        $("#wifi_list > tbody").append(
-          $("<tr>")
-            .append(
-              $("<td>").append(data[i].essid),
-              $("<td>").append(`${data[i].signal_quality} %`),
-              $("<td>").append(data[i].encryption)
-            )
-            .hover(
-              function () {
-                $(this).animate({ opacity: "0.5" }, 100);
-              },
-              function () {
-                $(this).animate({ opacity: "1" }, 100);
-              }
-            )
-            .click(function () {
-              let lst = $(this).children();
-              $("#ssid").val(lst.eq(0).text());
-              $("#identity").val("");
-              $("#psk").val("");
-              $(`input[name='wifi_type_sel'][value='${lst.eq(2).text()}']`).prop("checked", true).trigger("change");
-              if (lst.eq(2).text() == "none") { // open
-                $("#ssid").prop("disabled", false);
-                $("#identity").prop("disabled", true);
-                $("#psk").prop("disabled", true);
-              }
-              else if (lst.eq(2).text() == "wpa-psk") { // wpa-psk
-                $("#ssid").prop("disabled", false);
-                $("#identity").prop("disabled", true);
-                $("#psk").prop("disabled", false);
-              }
-              else if (lst.eq(2).text() == "wpa-eap") { // wpa-enterprise
-                $("#ssid").prop("disabled", false);
-                $("#identity").prop("disabled", false);
-                $("#psk").prop("disabled", false);
-              }
-            })
-        );
-      }
-    } else {
-      //
-    }
-  });
-  document.getElementById("wifiPopup").style.display = "block";
-});
+    // --- Element Selectors ---
+    const wifiPopup = $("#wifiPopup");
+    const wifiListUl = $("#wifi_list_ul");
+    const connectionForm = $("#connection-form");
+    const ssidInput = $("#ssid");
+    const securityTypeDisplay = $("#security-type-display");
+    const securityTypeHidden = $("#security-type-hidden");
+    const identityFieldDiv = $(".identity-field"); // The div containing the input
+    const passwordFieldDiv = $(".password-field"); // The div containing the input
+    const identityInput = $("#identity");
+    const pskInput = $("#psk");
+    const statusMessage = $("#status-message");
+    const connectButton = $("#wifi_submit_bt");
+    const cancelButton = $("#cancelWifi"); // Added ID to cancel button in HTML
+    const closeButton = $("#hidewifi");
+    const manualConnectionLink = $("#manualConnectionLink"); // Added ID in HTML
+    const connectionFormTitle = $("#connection-form-title");
 
-$("#hidewifi").on("click", function () {
-  document.getElementById("wifiPopup").style.display = "none";
-});
 
-$.ajax({
-  url: `http://${location.hostname}:${system_port}/wifi`,
-}).always((xhr, status) => {
-  if (status == "success") {
-    $("#ssid").val(xhr["ssid"]);
-    $("#psk").val(xhr["psk"]);
-    if (xhr["key-mgmt"] == "none") { // open
-      $("#ssid").prop("disabled", false);
-      $("#identity").prop("disabled", true);
-      $("#identity").val("");
-      $("#psk").prop("disabled", true);
-      $("#psk").val("");
-      $(`input[name='wifi_type_sel'][value='${xhr["key-mgmt"]}']`).prop("checked", true).trigger("change");
-    }
-    else if (xhr["key-mgmt"] == "wpa-psk") { // wpa-psk
-      $("#ssid").prop("disabled", false);
-      $("#ssid").val(xhr["ssid"]);
-      $("#identity").prop("disabled", true);
-      $("#identity").val("");
-      $("#psk").prop("disabled", false);
-      $("#psk").val(xhr["psk"]);
-      $(`input[name='wifi_type_sel'][value='${xhr["key-mgmt"]}']`).prop("checked", true).trigger("change");
-    }
-    else if (xhr["key-mgmt"] == "wpa-eap") { // wpa-enterprise
-      $("#ssid").prop("disabled", false);
-      $("#ssid").val(xhr["ssid"]);
-      $("#identity").prop("disabled", false);
-      $("#identity").val(xhr["identity"]);
-      $("#psk").prop("disabled", false);
-      $("#psk").val(xhr["psk"]);
-      $(`input[name='wifi_type_sel'][value='${xhr["key-mgmt"]}']`).prop("checked", true).trigger("change");
-    }
-  } else {
-    //
-  }
-});
+    // --- Function to update form fields based on selected network ---
+    function updateFormForNetwork(ssid, securityType) {
+        ssidInput.val(ssid);
+        securityTypeDisplay.text(securityType || 'Unknown'); // Display type
+        securityTypeHidden.val(securityType || ''); // Store type if needed
 
-$("#wifi_bt").on("click", async function () {
-  let comment = "Wifi: " + $("#ssid").val().trim();
-  comment += "\nPSK: " + $("#psk").val().trim();
-  comment += "\nEncryption: " + ($("#psk").val().trim() == "" ? "OPEN" : "WPA-PSK");
-  comment += translations["confirm_wifi"][lang];
-  if (await confirm_popup(comment)) {
-    $.ajax({
-      url: `http://${location.hostname}:${system_port}/wifi`,
-      type: "post",
-      data: JSON.stringify({ ssid: $("#ssid").val().trim(), psk: $("#psk").val().trim(), identity: $("#identity").val().trim() }),
-      contentType: "application/json",
-    }).always((xhr, status) => {
-      if (status == "success") {
-      } else {
-        //await alert_popup("WPA-PSK 방식에서는 비밀번호가 8자리 이상이어야 합니다.")
-      }
+        // Reset fields and hide them initially
+        identityInput.val('');
+        pskInput.val('');
+        identityFieldDiv.addClass('hidden');
+        passwordFieldDiv.addClass('hidden');
+        ssidInput.prop('readonly', true); // SSID is usually read-only when selected from list
+        connectionFormTitle.find('[data-key]').attr('data-key', 'enter_network_info'); // Reset title key
+
+        // Show/hide fields based on security type
+        if (!securityType || securityType.toLowerCase() === 'none') {
+            // Open network - no password/id needed
+        } else if (securityType.toLowerCase().includes('psk')) { // Catches wpa-psk, wpa2-psk etc.
+            passwordFieldDiv.removeClass('hidden');
+            pskInput.focus();
+        } else if (securityType.toLowerCase().includes('eap')) { // Catches wpa-eap etc.
+            identityFieldDiv.removeClass('hidden');
+            passwordFieldDiv.removeClass('hidden');
+            identityInput.focus();
+        } else {
+             // Other types might need password? Default to showing password field
+             passwordFieldDiv.removeClass('hidden');
+             pskInput.focus();
+        }
+
+        statusMessage.text('').removeClass('error'); // Clear status
+        connectionForm.show(); // Show the form
+    }
+
+    // --- Event Handlers ---
+
+    // Show Popup and Scan Networks
+    $("#showNetwork").on("click", function() {
+        wifiListUl.empty().append('<li><span data-key="scanning">Scanning...</span></li>'); // Show scanning message
+        statusMessage.text('').removeClass('error'); // Clear previous status
+        connectionForm.hide(); // Hide form until network is selected
+        wifiPopup.show();
+
+        $.ajax({
+            url: `http://${location.hostname}:${system_port}/wifi_scan`,
+            timeout: 15000 // Add a timeout for scan
+        }).done(function(data) {
+            wifiListUl.empty(); // Clear "Scanning..." message
+            if (data && data.length > 0) {
+                data.forEach(function(network) {
+                    // Skip invalid SSIDs
+                    if (network.essid.length > 50 || network.essid.includes('\x00')) return;
+
+                    // Determine icons (replace with actual icon classes/HTML)
+                    let signalIcon = '📶'; // Placeholder
+                    let quality = parseInt(network.signal_quality, 10);
+                    // Basic signal strength icon logic (example)
+                    if (quality < 30) signalIcon = '📶'; // Low
+                    else if (quality < 60) signalIcon = '📶'; // Medium
+                    else signalIcon = '📶'; // High
+
+                    let securityIcon = network.encryption.toLowerCase() === 'none' ? '🔓' : '🔒'; // Placeholder
+
+                    // Create list item
+                    const listItem = $('<li>')
+                        .addClass('network-item')
+                        .attr('data-ssid', network.essid) // Store data in attributes
+                        .attr('data-security', network.encryption)
+                        .append(
+                            $('<span>').addClass('name').text(network.essid),
+                            $('<span>').addClass('details').append(
+                                $('<span>').addClass('signal').html(`${signalIcon} ${quality}%`), // Use .html() if icons are HTML
+                                $('<span>').addClass('security').html(`${securityIcon} ${network.encryption}`)
+                            )
+                        );
+                    wifiListUl.append(listItem);
+                });
+            } else {
+                wifiListUl.append('<li><span data-key="no_networks_found">No networks found.</span></li>');
+            }
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            wifiListUl.empty().append('<li><span data-key="scan_failed">Scan failed. Please try again.</span></li>');
+            console.error("Wi-Fi Scan failed:", textStatus, errorThrown);
+            statusMessage.text('Scan failed').addClass('error');
+        });
     });
-  }
-});
 
-$(document).on("click keydown", (evt) => {
-  if (["click", "keydown"].includes(evt.type)) {
-    let codetype = "";
-    codeTypeBtns.forEach((el) => {
-      if (el.classList.value.includes("checked")) codetype = el.name;
+    // Handle clicks on dynamically added network list items
+    wifiListUl.on('click', '.network-item', function() {
+        const ssid = $(this).data('ssid');
+        const security = $(this).data('security');
+        // Highlight selected item (optional)
+        $(this).siblings().css('background-color', ''); // Reset others
+        $(this).css('background-color', '#e0e0ff'); // Highlight selected
+        updateFormForNetwork(ssid, security);
     });
-    usedata[codetype][evt.type]++;
-  }
-});
 
-$("#restore_bt").on("click", async function () {
-  await alert_popup('not support')
-  return
-  if (await confirm_popup(translations["confirm_restore"][lang])) {
-    usedata = init_usedata;
-    socket.emit("restore");
-  }
-});
+    // Hide Popup (Close button)
+    closeButton.on("click", function() {
+        wifiPopup.hide();
+    });
 
-let startTime = new Date().getTime();
+    // Hide Popup (Cancel button)
+    cancelButton.on("click", function() {
+        wifiPopup.hide();
+    });
+
+    // Show manual connection form section
+     manualConnectionLink.on("click", function(e) {
+        e.preventDefault();
+        connectionForm.show();
+        ssidInput.val('').prop('readonly', false).focus(); // Clear, enable, focus SSID
+        securityTypeDisplay.text('Manual'); // Indicate manual setup
+        securityTypeHidden.val('custom'); // Or appropriate value
+        identityFieldDiv.removeClass('hidden'); // Show all fields for manual
+        passwordFieldDiv.removeClass('hidden');
+        statusMessage.text('').removeClass('error');
+        connectionFormTitle.find('[data-key]').attr('data-key', 'manual_connection_title'); // Change title key
+        wifiListUl.find('.network-item').css('background-color', ''); // Deselect list item
+     });
+
+
+    // Handle Form Submission (Connect button)
+    connectionForm.on("submit", async function(event) {
+        event.preventDefault(); // Prevent default form submission
+        statusMessage.text('Connecting...').removeClass('error'); // Show status
+
+        const ssid = ssidInput.val().trim();
+        const psk = pskInput.val().trim(); // Assume password is in psk field
+        const identity = identityInput.val().trim();
+        // Determine key_mgmt based on which fields are visible/filled or hidden security type
+        let key_mgmt = securityTypeHidden.val() || 'wpa-psk'; // Default assumption or get from selection
+        if (securityTypeHidden.val() === 'custom') {
+            // Need logic here to determine type if manual, maybe from a dropdown added earlier
+             console.warn("Need logic to determine key_mgmt for custom connection");
+             // For now, assume based on filled fields
+             if (identity && psk) key_mgmt = 'wpa-eap';
+             else if (psk) key_mgmt = 'wpa-psk';
+             else key_mgmt = 'none';
+        }
+
+
+        // --- Optional: Use your confirm_popup ---
+        let confirmMessage = `Connect to Wi-Fi: ${ssid}`;
+        confirmMessage += translations["confirm_wifi"][lang]; // Adapt your translation logic
+
+        // Replace with your actual confirm_popup call if it returns a promise
+        let proceed = await confirm_popup(confirmMessage);
+        if (proceed) {
+            $.ajax({
+                url: `http://${location.hostname}:${system_port}/wifi`,
+                type: "post",
+                data: JSON.stringify({
+                    ssid: ssid,
+                    psk: psk,
+                    identity: identity,
+                    key_mgmt: key_mgmt // Send determined key_mgmt
+                 }),
+                contentType: "application/json",
+                timeout: 20000 // Add timeout
+            }).done(function(response) {
+                 // Assuming success means connection attempt was accepted by backend
+                 statusMessage.text('Connection request sent successfully.').removeClass('error');
+                 console.log("Connection request success:", response);
+                 // Optionally close popup after a delay
+                 setTimeout(function() { wifiPopup.hide(); }, 2000);
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                statusMessage.text('Connection request failed.').addClass('error');
+                console.error("Connection request failed:", textStatus, errorThrown, jqXHR.responseText);
+            });
+        } else {
+             statusMessage.text('Connection cancelled.').removeClass('error');
+        }
+    });
 
 window.addEventListener('beforeunload', (evt) => {
-  usedata["staytime"] = parseInt((new Date().getTime() - startTime) / 1000);
-  let codetype = "";
-  codeTypeBtns.forEach((el) => {
-    if (el.classList.value.includes("checked")) codetype = el.name;
-  });
-  usedata[codetype]["staytime"] += parseInt((new Date().getTime() - startTime_item) / 1000);
-  $.ajax({
-    url: `http://${location.hostname}:${system_port}/usedata`,
-    type: "post",
-    data: JSON.stringify(usedata),
-    contentType: "application/json",
-  }).always((xhr, status) => {
-    if (status == "success") {
-      usedata = init_usedata;
-    } else {
-      //await alert_popup(`usedata error.\n >> ${xhr.responseJSON["result"]}`);
-    }
-  });
   socket.emit("stop");
-});
-
-$("#usedata_bt").on("click", function () {
-  document.getElementById("wifiPopup").style.display = "none";
-
-  $.ajax({
-    url: `http://${location.hostname}:${system_port}/usedata`,
-    type: "post",
-    data: JSON.stringify(usedata),
-    contentType: "application/json",
-  }).always((xhr, status) => {
-    if (status == "success") {
-      $("#usedata_json").JSONView(xhr, { collapsed: true });
-      usedata = init_usedata;
-    } else {
-      //await alert_popup(`usedata error.\n >> ${xhr.responseJSON["result"]}`);
-    }
-  });
-  document.getElementById("usedataPopup").style.display = "block";
-});
-
-$("#hideUsedata").on("click", function () {
-  document.getElementById("usedataPopup").style.display = "none";
-});
-
-$('#psk_visible').on('click', function () {
-  $('#psk_visible').toggleClass('active');
-  $('#psk').prop('type', $('#psk_visible').hasClass('active') ? "text" : "password");
 });
 
 $('input[name="wifi_type_sel"]').on('click', function () {

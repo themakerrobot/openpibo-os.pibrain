@@ -48,7 +48,6 @@ codeExec = {
 
 protectList = [
   '/home/pi/openpibo-',
-  '/home/pi/llama.cpp',
   '/home/pi/node_modules',
   '/home/pi/package.json',
   '/home/pi/package-lock.json',
@@ -280,7 +279,7 @@ async def handle_play(sid, p):
 @app.sio.on('load')
 async def handle_load(sid, p):
   global codeText, codePath
-  if is_protect(p):
+  if is_protect(p) :
     await app.sio.emit('update', {'dialog': '파일 불러오기 오류: 보호 파일입니다.'})
     return
   try:
@@ -340,49 +339,13 @@ async def handle_rename(sid, d):
 
 @app.sio.on('restore')
 async def handle_restore(sid):
-    base_path = Path("/home/pi/")
-    protected_files = {
-        ".tools.json", 
-        ".ide.json",
-        "openpibo-python",
-        "test.json",
-        "node_modules",
-        "package.json",
-        "package-lock.json",
-        "openpibo-os",
-        "openpibo-os.hat",
-        "openpibo-files"
-    }
-    protected_dirs = {"code", "myimage", "myaudio", "mymodel"}
-    
     try:
-        # Loop through the directory and handle files/directories
-        for item in base_path.iterdir():
-            try:
-                if item.name in protected_files or item.name.startswith('.'):
-                    continue
-
-                if item.name in protected_dirs:
-                    for sub_item in item.iterdir():
-                        if sub_item.is_file():
-                            sub_item.unlink()
-                        elif sub_item.is_dir():
-                            shutil.rmtree(sub_item)
-                    continue
-
-                if item.is_file() or item.is_dir():
-                    if item.is_file():
-                        item.unlink()
-                    elif item.is_dir():
-                        shutil.rmtree(item)
-
-            except Exception as e:
-                await sio.emit('update', {'dialog': f'초기화 오류: {str(e)}'}, room=sid)
-                return
-        
-        # Shutdown the system
+        os.system("rm -rf /home/pi/code/*")
+        os.system("rm -rf /home/pi/myimage/*")
+        os.system("rm -rf /home/pi/mymodel/*")
+        os.system("rm -rf /home/pi/myaudio/*")
+        os.system("sudo /home/pi/openpibo-os/system/conwifi.sh wpa-psk 'pibo' '!pibo0314'")
         subprocess.Popen(['shutdown', '-h', 'now'])
-
     except Exception as e:
         await sio.emit('update', {'dialog': f'초기화 오류: {str(e)}'}, room=sid)
 

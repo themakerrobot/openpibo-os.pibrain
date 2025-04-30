@@ -48,9 +48,6 @@
     </div>
     <div style="float:right">
       <h2 style="display: flex; align-items: center; justify-content: center;">
-        <!-- <a id="restore_bt">
-            <i class="fa-solid fa-eraser"></i>
-          </a>&nbsp;&nbsp; -->
         <a id="llm_bt" title="Chat Bot">
           <i class="fa-solid fa-comment"></i>
         </a>&nbsp;&nbsp;
@@ -62,8 +59,10 @@
         </a>&nbsp;&nbsp;
         <a id="fullscreen_bt" title="Full Screen">
           <span id='fullscreen_txt'></span>
-        </a>
-        &nbsp;&nbsp;
+        </a>&nbsp;&nbsp;
+        <a id="restore_bt">
+            <i class="fa-solid fa-eraser" title="Restore"></i>
+          </a>&nbsp;&nbsp;
         <a id="poweroff_bt" title="Power Off">
           <i class="fa-solid fa-power-off"></i>
         </a>&nbsp;&nbsp;
@@ -77,84 +76,51 @@
       </h2>
     </div>
   </header>
-
   <main>
-    <div class="wifi-popup" id="wifiPopup" style="display:none">
+    <div class="wifi-popup" id="wifiPopup" style="display:none;">
       <div class="wifi-popup-content">
-        <h3>
-          <div style="float:left"><i class="fa-solid fa-circle-exclamation"></i>&nbsp;<span
-              data-key="internet_settings"></span></div>
-          <div style="float:right"><a id="hidewifi"><i class="fa-solid fa-rectangle-xmark"></i></a></div>
-        </h3>
-        <h3>&nbsp;</h3>
-        <span id="network_info"></span>
-        <br>
-        <table style="width:100%">
-          <tr>
-            <td>
-              <span data-key="wifi_type"></span>
-            </td>
-            <td colspan="2">
-              <label><input type="radio" name="wifi_type_sel" value="wpa-psk" checked />wpa-psk</label>
-              <label><input type="radio" name="wifi_type_sel" value="none" />none</label>
-              <label><input type="radio" name="wifi_type_sel" value="wpa-eap" />wpa-eap</label>
-              <label><input type="radio" name="wifi_type_sel" value="custom" />cutsom</label>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <span data-key="wifi_name"></span>
-            </td>
-            <td>
-              <input type="text" name="ssid" id="ssid" disabled aria-label="ssid" />
-            </td>
-            <td rowspan="3">
-              <button type="button" class="confirm" id="wifi_bt"><i class="fa-solid fa-check-double"></i>&nbsp;<span
-                  data-key="confirm"></span></button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <span data-key="wifi_identity"></span>
-            </td>
-            <td>
-              <input type="text" name="identity" id="identity" disabled aria-label="identity" />
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <span data-key="password"></span>
-            </td>
-            <td>
-              <input type="password" id="psk" name="psk" aria-label="psk" /><input type="checkbox" id="psk_visible"
-                name="psk_visible" aria-label="psk_visible" />
-            </td>
-          </tr>
-        </table>
-
-        <div style="height:190px;overflow-y:scroll;">
-          <table class="wifi_list" id="wifi_list">
-            <thead>
-              <tr>
-                <th style="width:450px;"><span data-key="wifi_name"></span></th>
-                <th><span data-key="wifi_signal"></span></th>
-                <th><span data-key="wifi_psk"></span></th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+        <h1>
+          <span><i class="fa-solid fa-circle-exclamation"></i>&nbsp;<span data-key="internet_settings">Internet Settings</span></span>
+          <a id="hidewifi"><i class="fa-solid fa-rectangle-xmark"></i></a>
+        </h1>
+        <div>
+          <span id="network_info"></span>
         </div>
-      </div>
-    </div>
-    <div class="usedata-popup" id="usedataPopup" style="display:none">
-      <div class="usedata-popup-content">
-        <h3>
-          <div style="float:left"><i class="fa-solid fa-circle-exclamation"></i>&nbsp;<span data-key="usedata"></span>
+        <div class="network-list-section">
+          <h2><span data-key="available_networks">Available Networks</span></h2>
+          <ul class="network-list" id="wifi_list_ul">
+            <li><span data-key="scanning">Scanning...</span></li>
+          </ul>
+           <p><a href="#" id="manualConnectionLink"><span data-key="manual_connection">Manual Connection / Other Network...</span></a></p>
+        </div>
+
+        <form class="connection-details" id="connection-form" style="display: none;">
+          <div class="form-group">
+            <label for="ssid"><span data-key="wifi_name">Name (SSID):</span></label>
+            <input type="text" id="ssid" name="ssid" readonly aria-label="ssid">
           </div>
-          <div style="float:right"><a id="hideUsedata"><i class="fa-solid fa-rectangle-xmark"></i></a></div>
-        </h3>
-        <h3>&nbsp;</h3>
-        <div style="height:210px;overflow-y:scroll" id="usedata_json"></div>
+
+          <div class="form-group">
+            <p><strong id="security-type-display"></strong></p>
+            <input type="hidden" id="security-type-hidden" name="security-type">
+          </div>
+
+          <div class="form-group identity-field hidden">
+            <label for="identity"><span data-key="wifi_identity">Identity:</span></label>
+            <input type="text" id="identity" name="identity" aria-label="identity">
+          </div>
+
+          <div class="form-group password-field hidden">
+            <label for="psk"><span data-key="password">Password:</span></label>
+            <input type="password" id="psk" name="psk" aria-label="psk">
+          </div>
+
+          <div id="status-message" class="status-message"></div>
+
+          <div class="dialog-actions">
+            <button type="submit" class="connect-button" id="wifi_submit_bt"><i class="fa-solid fa-check-double"></i>&nbsp;<span data-key="confirm"></span></button>
+          </div>
+        </form>
       </div>
     </div>
 
