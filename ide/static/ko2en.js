@@ -26,6 +26,10 @@ const translations = {
     ko: "확인",
     en: "Confirm"
   },
+  cancel: {
+    ko: "취소",
+    en: "Cancel"
+  },
   reset: {
     ko: "초기화",
     en: "Reset"

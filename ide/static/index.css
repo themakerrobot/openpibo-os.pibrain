@@ -606,7 +606,7 @@ header>div>h2>select {
 
 .prompt-popup-content input[type="text"] {
   width: calc(100% - 20px);
-  padding: 8px 10px;
+  /*padding: 8px 10px;*/
   margin-bottom: 15px;
   border: 1px solid #CCCCCC;
   /* 테두리 색상 연하게 변경 */
@@ -634,7 +634,7 @@ header>div>h2>select {
   /* 이전 폰트 */
   font-family: inherit;
   /* 컨테이너 폰트 상속 */
-  padding: 6px 16px;
+  /*padding: 6px 16px;*/
   /* macOS 버튼 패딩과 유사하게 조정 (상하 축소, 좌우 확대) */
   outline: none;
   border: 1px solid transparent;
@@ -644,7 +644,6 @@ header>div>h2>select {
   cursor: pointer;
   font-size: 0.95em;
   /* macOS 버튼 폰트 크기와 유사하게 약간 줄임 */
-  font-weight: 500;
   /* 약간 두꺼운 글꼴 (Medium) */
   transition: background-color 0.15s ease, border-color 0.15s ease;
   /* 전환 효과 */
