@@ -599,7 +599,7 @@ header>div>h2>select {
   /* macOS 기본 폰트 크기에 가깝게 약간 줄임 (선택 사항) */
   line-height: 1.4;
   /* 줄 간격 추가 */
-  word-wrap: break-word;
+  white-space:pre-line;
   color: #333;
   /* 약간 부드러운 검정색 */
 }

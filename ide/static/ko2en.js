@@ -10,6 +10,14 @@ const translations = {
     ko: "인터넷 설정",
     en: "Internet settings"
   },
+  available_networks: {
+    ko: "사용 가능한 Wifi",
+    en: "Available networks"
+  },
+  manual_connection: {
+    ko: "수동 설정",
+    en: "Manual Connection / Other Network..."
+  },
   wifi_name: {
     ko: "이름",
     en: "Name"
