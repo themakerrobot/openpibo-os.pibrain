@@ -344,6 +344,8 @@ async def handle_restore(sid):
         os.system("rm -rf /home/pi/myimage/*")
         os.system("rm -rf /home/pi/mymodel/*")
         os.system("rm -rf /home/pi/myaudio/*")
+        os.system("rm -rf /home/pi/examples/*")
+        os.system("cp -rf /home/pi/openpibo-os/examples/* /home/pi/examples/")
         os.system("sudo /home/pi/openpibo-os/system/conwifi.sh wpa-psk 'pibo' '!pibo0314'")
         subprocess.Popen(['shutdown', '-h', 'now'])
     except Exception as e:

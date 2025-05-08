@@ -99,8 +99,8 @@ const translations = {
     en: (oldname, newname) => {return `Are you sure you want to rename the file or folder ${oldname} to ${newname}?`}
   },
   confirm_restore: {
-    ko: "초기화하시겠습니까?",
-    en: "Are you sure you want to reset?"
+    ko: "초기화하시겠습니까?\n초기화 후 종료합니다.",
+    en: "Are you sure you want to reset?\nAfter reset, power off"
   },
   confirm_poweroff: {
     ko: "정말 종료하시겠습니까?",
