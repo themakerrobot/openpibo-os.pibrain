@@ -1,0 +1,3 @@
+#!/bin/sh -e
+sudo /home/pi/.pyenv/bin/python3 /home/pi/openpibo-os/test/test.py 
+exit 0
