@@ -9,7 +9,7 @@ import os
 import numpy as np
 from PIL import Image,ImageDraw,ImageFont
 from picamera2 import Picamera2
-from libcamera import Transform
+#from libcamera import Transform
 import openpibo_models
 import logging
 
@@ -65,7 +65,7 @@ Functions:
                 'size': (1280, 960),
                 'format': 'RGB888'
               },
-              transform=Transform(hflip=False, vflip=False),
+              #transform=Transform(hflip=False, vflip=False),
               buffer_count=2
             )
 
@@ -103,7 +103,7 @@ Functions:
     # return cv2.rotate(self.cap.capture_array(),cv2.ROTATE_90_COUNTERCLOCKWISE)
     #return self.cap.capture_array()
 
-  def create_matte(self, colors=(255,255,255), w=480, h=640):
+  def create_matte(self, colors=(255,255,255)):
     if type(colors) is str:
       colors = (int(colors[5:7], 16), int(colors[3:5], 16), int(colors[1:3], 16))
 
@@ -113,7 +113,7 @@ Functions:
     if len(colors) != 3:
       raise Exception(f'len({colors}) must be 3')
 
-    return np.full((h, w, 3), colors, dtype=np.uint8)
+    return np.full((self.height, self.width, 3), colors, dtype=np.uint8)
 
   def imshow(self, img, ratio=1.0):
     """
@@ -137,8 +137,8 @@ Functions:
       raise Exception('"img" must be image data from opencv')
 
     img = cv2.resize(img, (0, 0), fx=ratio, fy=ratio, interpolation=cv2.INTER_AREA)
-    # curl -X 'POST' -so /dev/null 'http://0.0.0.0:50000/show' -H 'accept: application/json' -H 'Content-Type: multipart/form-data' -F 'data=@{filename};type=image/png'
-    requests.post('http://0.0.0.0:50000/show', headers={'accept': 'application/json'}, files={'data': ('filename', cv2.imencode('.jpg', img)[1].tobytes(), 'image/png')})
+    # curl -X 'POST' -so /dev/null 'http://0.0.0.0/show' -H 'accept: application/json' -H 'Content-Type: multipart/form-data' -F 'data=@{filename};type=image/png'
+    requests.post('http://0.0.0.0/show', headers={'accept': 'application/json'}, files={'data': ('filename', cv2.imencode('.jpg', img)[1].tobytes(), 'image/png')})
 
   def resize (self, img, w, h):
     """
