@@ -68,6 +68,7 @@ async function alert_popup(message) {
     }
     alertMessageElement.textContent = message;
     alertPopup.style.display = 'flex';
+    alertOkBtn.focus();
 
     // --- Use addEventListener with { once: true } for robust cleanup ---
     const handler = () => {
@@ -100,6 +101,7 @@ async function confirm_popup(message) {
         msgElement.textContent = message;
         popupElement.style.display = 'flex'; // 팝업 표시
         console.log("confirm_popup: 팝업 표시됨. 사용자 입력 대기 중..."); // 디버깅 로그
+        okButton.focus();
 
         // --- 이벤트 핸들러 정의 ---
         const okHandler = () => {
