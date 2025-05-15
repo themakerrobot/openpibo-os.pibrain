@@ -73,9 +73,9 @@ Functions:
     """
 
     if verbose == True:
-      os.system(f'arecord -D plug:dmic_sv -c2 -r 16000 -f S32_LE -d {timeout} -t wav -q -vv -V streo stream.raw;sox stream.raw -c 1 -b 16 {filename};rm stream.raw')
+      os.system(f'arecord -D plug:dmic_sv -c2 -r 44100 -f S16_LE -d {timeout} -t wav -q -vv -V stereo stream.raw;sox stream.raw -c 1 -b 16 {filename};rm stream.raw')
     else:
-      os.system(f'arecord -D dmic_sv -c2 -r 16000 -f S32_LE -d {timeout} -t wav -q stream.raw;sox stream.raw -q -c 1 -b 16 {filename};rm stream.raw')
+      os.system(f'arecord -D plug:dmic_sv -c2 -r 44100 -f S16_LE -d {timeout} -t wav -q stream.raw;sox stream.raw -q -c 1 -b 16 {filename};rm stream.raw')
 
 if __name__ == "__main__":
   import time

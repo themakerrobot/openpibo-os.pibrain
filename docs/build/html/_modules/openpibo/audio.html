@@ -183,9 +183,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">verbose</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-      <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;arecord -D plug:dmic_sv -c2 -r 16000 -f S32_LE -d </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s1"> -t wav -q -vv -V streo stream.raw;sox stream.raw -c 1 -b 16 </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">;rm stream.raw&#39;</span><span class="p">)</span>
+      <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;arecord -D plug:dmic_sv -c2 -r 44100 -f S16_LE -d </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s1"> -t wav -q -vv -V stereo stream.raw;sox stream.raw -c 1 -b 16 </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">;rm stream.raw&#39;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-      <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;arecord -D dmic_sv -c2 -r 16000 -f S32_LE -d </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s1"> -t wav -q stream.raw;sox stream.raw -q -c 1 -b 16 </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">;rm stream.raw&#39;</span><span class="p">)</span></div>
+      <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;arecord -D plug:dmic_sv -c2 -r 44100 -f S16_LE -d </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s1"> -t wav -q stream.raw;sox stream.raw -q -c 1 -b 16 </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">;rm stream.raw&#39;</span><span class="p">)</span></div>
 </div>
 
 
