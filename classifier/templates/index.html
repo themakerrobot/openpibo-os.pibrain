@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <title>Image Classifier</title>
+  <title>Image Classifier for piBrain</title>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -124,10 +124,9 @@
         <!-- 내보내기, 불러오기, 변환 버튼 그룹 -->
         <div class="button-group" id="model-controls">
           <input type="file" id="model-upload" onchange="importModel(event)" style="display:none">
-          <button onclick="document.getElementById('model-upload').click()"><i class="fa-solid fa-file-import"></i>
-            불러오기(tfjs)</button>
-          <button onclick="exportModelAsZip()"><i class="fa-solid fa-file-export"></i> 내보내기(tfjs)</button>
-          <button onclick="convertToH5()"><i class="fas fa-exchange-alt"></i> 내보내기(keras)</button>
+          <button onclick="document.getElementById('model-upload').click()"><i class="fa-solid fa-upload"></i> 불러오기(tfjs)</button>
+          <button onclick="exportModelAsZip()"><i class="fa-solid fa-download"></i> 내보내기(tfjs)</button>
+          <button id="convertToH5_bt" onclick="convertToH5()"><i class="fas fa-check"></i> mymodel 저장(keras)</button>
           <!--<input type="file" id="model-convert-upload" style="display:none" accept=".zip">-->
         </div>
         <!-- 진행 상황 영역 -->

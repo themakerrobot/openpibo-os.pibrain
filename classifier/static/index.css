@@ -243,7 +243,7 @@ body {
 button,
 label.upload-button {
     padding: 10px 15px;
-    font-size: 0.95em;
+    font-size: 0.9em;
     border: none;
     border-radius: 6px;
     background-color: var(--yellow);
@@ -254,7 +254,6 @@ label.upload-button {
 
 button:hover,
 label.upload-button:hover {
-    background-color: var(--dark-yellow);
     transform: translateY(-1px);
     font-weight: bold;
 }

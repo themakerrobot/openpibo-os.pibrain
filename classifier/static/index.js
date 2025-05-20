@@ -608,12 +608,15 @@ function convertToH5() {
     exportConvertedModelAsZipAndConvert();
 }
 
+const convertToH5_bt = document.getElementById("convertToH5_bt")
+const convertToH5_bt_innerHTML = convertToH5_bt.innerHTML;
 async function exportConvertedModelAsZipAndConvert() {
     if (!model) {
         await alert_popup('모델이 없습니다. 먼저 학습하기 또는 불러오기를 실행하세요.');
         return;
     }
     try {
+        convertToH5_bt.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i>&nbsp; 모델 변환중";
         // model.save를 사용하여 모델 아티팩트(export)
         const modelArtifacts = await model.save(tf.io.withSaveHandler(async (artifacts) => artifacts));
 
@@ -661,6 +664,9 @@ async function exportConvertedModelAsZipAndConvert() {
     } catch (err) {
         console.error('변환 중 오류:', err);
         await alert_popup('모델 변환 중 오류가 발생했습니다.');
+    }
+    finally {
+        convertToH5_bt.innerHTML = convertToH5_bt_innerHTML;
     }
 }
 
