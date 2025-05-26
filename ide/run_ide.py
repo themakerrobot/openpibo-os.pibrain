@@ -235,6 +235,7 @@ async def handle_reset_log(sid):
 
 @app.sio.on('poweroff')
 async def handle_poweroff(sid):
+  subprocess.Popen([f'{ENV_PATH}/python3', '/home/pi/openpibo-os/system/clear_disp.py'])
   subprocess.Popen(['shutdown', '-h', 'now'])
   #subprocess.Popen(['echo', '"#11:!"', '>', '/dev/ttyS0'])
 
@@ -347,6 +348,7 @@ async def handle_restore(sid):
         os.system("rm -rf /home/pi/examples/*")
         os.system("cp -rf /home/pi/openpibo-os/examples/* /home/pi/examples/")
         os.system("sudo /home/pi/openpibo-os/system/conwifi.sh wpa-psk 'pibo' '!pibo0314'")
+        subprocess.Popen([f'{ENV_PATH}/python3', '/home/pi/openpibo-os/system/clear_disp.py'])
         subprocess.Popen(['shutdown', '-h', 'now'])
     except Exception as e:
         await sio.emit('update', {'dialog': f'초기화 오류: {str(e)}'}, room=sid)
