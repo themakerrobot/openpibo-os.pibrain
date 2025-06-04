@@ -210,6 +210,7 @@ async def handle_init(sid):
 async def classifier(enable: str):
   # print("Eanable classifier:", enable)
   if enable == "on":
+    subprocess.Popen(['systemctl', 'stop', 'llama-server.service'])
     subprocess.Popen(['systemctl', 'start', 'classify.service'])
   elif enable == "off":
     subprocess.Popen(['systemctl', 'stop', 'classify.service'])
@@ -220,6 +221,7 @@ async def classifier(enable: str):
 async def classifier(enable: str):
   # print("Eanable llm:", enable)
   if enable == "on":
+    subprocess.Popen(['systemctl', 'stop', 'classify.service'])
     subprocess.Popen(['systemctl', 'start', 'llama-server.service'])
   elif enable == "off":
     subprocess.Popen(['systemctl', 'stop', 'llama-server.service'])
@@ -450,6 +452,8 @@ async def execute(EXEC, codepath):
 @app.sio.on('execute')
 async def handle_execute(sid, d):
   global codeText, codePath, ps
+  subprocess.Popen(['systemctl', 'stop', 'llama-server.service'])
+  subprocess.Popen(['systemctl', 'stop', 'classify.service'])
   try:
     if is_protect(d['codepath']) or is_protect(os.path.dirname(d['codepath'])):
       await app.sio.emit('update', {'dialog': '실행 오류: 보호 파일입니다.', 'exit': True})
@@ -471,6 +475,8 @@ async def handle_execute(sid, d):
 @app.sio.on('executeb')
 async def handle_executeb(sid, d):
   global ps
+  subprocess.Popen(['systemctl', 'stop', 'llama-server.service'])
+  subprocess.Popen(['systemctl', 'stop', 'classify.service'])
   try:
     if ps and ps.returncode is None:
       ps.kill()
