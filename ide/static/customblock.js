@@ -3304,7 +3304,7 @@ function updateSecondDropdown(folderValue, fileValue) {
 function getFilesForFolder(folderValue) {
   return new Promise((resolve, reject) => {
     $.ajax({
-      url: `http://${location.hostname}:50000/dir?folderName=${folderValue}`,
+      url: `http://${location.hostname}/dir?folderName=${folderValue}`,
       method: 'GET',
       success: function(data) {
         resolve(data); // AJAX 요청 성공 시, 데이터를 resolve로 반환
