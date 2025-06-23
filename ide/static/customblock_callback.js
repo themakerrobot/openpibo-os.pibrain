@@ -642,9 +642,6 @@ Blockly.Python.forBlock['vision_transfer'] = function(block) {
     case 'detail':
       res = `camera.detailEnhance(${img})`;
       break;
-    case 'sketch_g':
-      res = `camera.pencilSketch(${img})[0]`;
-      break;
     case 'sketch_c':
       res = `camera.pencilSketch(${img})[1]`;
       break;

@@ -2060,7 +2060,6 @@ Blockly.defineBlocksWithJsonArray(
           "options":[
             [ '%{BKY_VISION_CARTOON}', 'cartoon'],
             [ '%{BKY_VISION_DETAIL}', 'detail' ],
-            [ '%{BKY_VISION_SKETCH_G}', 'sketch_g'],
             [ '%{BKY_VISION_SKETCH_C}', 'sketch_c'],
             [ '%{BKY_VISION_VERTICAL}', 'vflip'],
             [ '%{BKY_VISION_HORIZONTAL}', 'hflip' ],

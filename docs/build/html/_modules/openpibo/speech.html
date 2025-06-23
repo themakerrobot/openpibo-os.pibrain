@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>openpibo.speech &mdash; OPENPIBO 0.9.3.2 문서</title>
+  <title>openpibo.speech &mdash; OPENPIBO 0.9.3.3 문서</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -16,7 +16,7 @@
     <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/_modules/openpibo/speech.html" />
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=976c6c6c"></script>
+      <script src="../../_static/documentation_options.js?v=3314e875"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -577,7 +577,7 @@
 
 <div class="viewcode-block" id="Dialog.call_llm">
 <a class="viewcode-back" href="../../libraries/speech.html#openpibo.speech.Dialog.call_llm">[문서]</a>
-  <span class="k">def</span> <span class="nf">call_llm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">system_prompt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_tokens</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">call_llm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">system_prompt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">max_tokens</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    LLM 서버(OpenAI 호환 Chat Completions API)를 호출합니다.</span>
 <span class="sd">    </span>
@@ -599,9 +599,9 @@
         <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">})</span>
     
     <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
-      <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;hyperclovax-seed-text-instruct-0.5b-q4_k_m.gguf&quot;</span><span class="p">,</span>  <span class="c1"># 모델명 (환경에 맞게 수정)</span>
+      <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;llm-model.gguf&quot;</span><span class="p">,</span>  <span class="c1"># 모델명 (환경에 맞게 수정)</span>
       <span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="n">messages</span><span class="p">,</span>
-      <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>   <span class="c1"># 생성 텍스트의 무작위성 조절</span>
+      <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="n">temperature</span><span class="p">,</span>   <span class="c1"># 생성 텍스트의 무작위성 조절</span>
       <span class="s2">&quot;top_p&quot;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">,</span>        <span class="c1"># 누적 확률 임계값</span>
       <span class="s2">&quot;max_tokens&quot;</span><span class="p">:</span> <span class="n">max_tokens</span>     <span class="c1"># 생성 최대 토큰 수 (필요에 따라 조정)</span>
     <span class="p">}</span>
@@ -646,7 +646,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025 THEMAKER. All rights reserved. openpibo-python-0.9.3.2.</p>
+    <p>&#169; Copyright 2025 THEMAKER. All rights reserved. openpibo-python-0.9.3.3.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
