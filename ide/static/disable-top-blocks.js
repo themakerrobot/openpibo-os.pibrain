@@ -55,6 +55,9 @@
           if (isOrphan(block)) { // 함수 밖 -> 무조건 비활성화
             block.setEnabled(false); 
           } else { // 함수 안 -> 우클릭 상태에 따름
+            if (typeof block.userDisabled === 'undefined') {
+              block.userDisabled = block.disabled;
+            }
             block.setEnabled (block.userDisabled? false:true)
           }
         });
@@ -73,4 +76,3 @@
     window.DisableTopBlocks = DisableTopBlocks;
     window.isOrphan = isOrphan;
   })();
-  
