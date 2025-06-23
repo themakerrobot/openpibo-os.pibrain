@@ -13,7 +13,7 @@ create_open_connection() {
 
   echo "Deleting existing connection: $CON_NAME (if it exists)"
   sudo nmcli connection del "$CON_NAME" 2>/dev/null
-  sudo rm -rf /etc/NetworkManager/system-connections/*.nmconnection
+  sudo rm -rf /etc/NetworkManager/system-connections/*.nmconnection*
 
   echo "Adding open network connection: SSID='$SSID'"
   sudo nmcli connection add type wifi con-name "$CON_NAME" ifname wlan0 ssid "$SSID" \
@@ -33,7 +33,7 @@ create_wpa_connection() {
 
   echo "Deleting existing connection: $CON_NAME (if it exists)"
   sudo nmcli connection del "$CON_NAME" 2>/dev/null
-  sudo rm -rf /etc/NetworkManager/system-connections/*.nmconnection
+  sudo rm -rf /etc/NetworkManager/system-connections/*.nmconnection*
 
   echo "Adding WPA-PSK network connection: SSID='$SSID'"
   sudo nmcli connection add type wifi con-name "$CON_NAME" ifname wlan0 ssid "$SSID" \
@@ -50,7 +50,7 @@ create_wpa_e_connection() {
 
   echo "Deleting existing connection: $CON_NAME (if it exists)"
   sudo nmcli connection del "$CON_NAME" 2>/dev/null
-  sudo rm -rf /etc/NetworkManager/system-connections/*.nmconnection
+  sudo rm -rf /etc/NetworkManager/system-connections/*.nmconnection*
   echo "Adding WPA-Enterprise network connection: SSID='$SSID'"
   sudo nmcli connection add type wifi con-name "$CON_NAME" ifname wlan0 ssid "$SSID" \
     wifi-sec.key-mgmt wpa-eap \
