@@ -1555,6 +1555,7 @@ let toolbox = (lang) => {
           {
             "kind": "block",
             "type": "speech_ostt",
+            "disabled":"true",
             "inputs":{
               "timeout": {
                 "shadow": {
