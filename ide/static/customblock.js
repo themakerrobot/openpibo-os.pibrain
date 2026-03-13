@@ -1427,6 +1427,26 @@ Blockly.defineBlocksWithJsonArray(
       helpUrl: ''
     },
     {
+      type: 'speech_ostt',
+      message0: '%{BKY_SPEECH_OSTT}',
+      args0:
+        [
+          {
+            "type": "field_image",
+            "src": "svg/ear-listen-solid.svg",
+            "width": 27,
+            "height": 27
+          },
+          {"type":"input_dummy"},
+          {"type": "input_value", "name": "timeout", "check":"Number"},
+        ],
+      output: 'String',
+      inputsInline: true,
+      colour: color_type["speech"],
+      tooltip: '%{BKY_SPEECH_OSTT_TOOLTIP}',
+      helpUrl: ''
+    },
+    {
       type: 'speech_otts',
       message0: '%{BKY_SPEECH_OTTS}',
       args0:
@@ -1441,13 +1461,24 @@ Blockly.defineBlocksWithJsonArray(
           {"type": "input_value", "name": "text", "check":"String"},
           {"type": "field_dropdown", "name":"voice",
             "options":[
-              [ 'ko0', '0' ],
-              [ 'ko1', '1' ],
-              [ 'ko2', '2' ],
-              [ 'ko3', '3' ],
-              [ 'ko4', '4' ],
-              [ 'ko5', '5' ],
-              [ 'ko6', '6' ],
+              [ 'm1', 'm1' ],
+              [ 'm2', 'm2' ],
+              [ 'm3', 'm3' ],
+              [ 'm4', 'm4' ],
+              [ 'm5', 'm5' ],
+              [ 'f1', 'f1' ],
+              [ 'f2', 'f2' ],
+              [ 'f3', 'f3' ],
+              [ 'f4', 'f4' ],
+              [ 'f5', 'f5' ],
+            ]
+          },
+          {"type": "field_dropdown", "name":"lang",
+           "options":[
+              ['%{BKY_LANG_KO}','ko'],
+              ['%{BKY_LANG_EN}','en'],
+              ['%{BKY_LANG_ES}','es'],
+              ['%{BKY_LANG_FR}','fr'],
             ]
           },
           {"type": "field_dropdown", "name":"dir",
@@ -1486,13 +1517,24 @@ Blockly.defineBlocksWithJsonArray(
           {"type": "input_value", "name": "text", "check":"String"},
           {"type": "field_dropdown", "name":"voice",
             "options":[
-              [ 'ko0', '0' ],
-              [ 'ko1', '1' ],
-              [ 'ko2', '2' ],
-              [ 'ko3', '3' ],
-              [ 'ko4', '4' ],
-              [ 'ko5', '5' ],
-              [ 'ko6', '6' ],
+              [ 'm1', 'm1' ],
+              [ 'm2', 'm2' ],
+              [ 'm3', 'm3' ],
+              [ 'm4', 'm4' ],
+              [ 'm5', 'm5' ],
+              [ 'f1', 'f1' ],
+              [ 'f2', 'f2' ],
+              [ 'f3', 'f3' ],
+              [ 'f4', 'f4' ],
+              [ 'f5', 'f5' ],
+            ]
+          },
+          {"type": "field_dropdown", "name":"lang",
+           "options":[
+              ['%{BKY_LANG_KO}','ko'],
+              ['%{BKY_LANG_EN}','en'],
+              ['%{BKY_LANG_ES}','es'],
+              ['%{BKY_LANG_FR}','fr'], 
             ]
           },
           {"type": "input_value", "name": "volume", "check":"Number"}

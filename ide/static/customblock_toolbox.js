@@ -1554,6 +1554,20 @@ let toolbox = (lang) => {
           },
           {
             "kind": "block",
+            "type": "speech_ostt",
+            "inputs":{
+              "timeout": {
+                "shadow": {
+                  "type": "math_number",
+                  "fields": {
+                    "NUM": "5"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "kind": "block",
             "type": "speech_otts",
             "inputs":{
               "text":{

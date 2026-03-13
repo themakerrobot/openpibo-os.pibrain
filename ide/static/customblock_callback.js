@@ -425,17 +425,25 @@ Blockly.Python.forBlock['speech_gtts_play'] = function(block) {
 
   return `speech.tts(text=${text}, filename='/home/pi/tmp.mp3', lang= '${lang}', voice='gtts')\naudio.play('/home/pi/tmp.mp3', ${volume})\n`;
 }
+Blockly.Python.forBlock['speech_ostt'] = function(block) {
+  Blockly.Python.definitions_['from_speech_import_SpeechOnDevice'] = 'from openpibo.speech import SpeechOnDevice';
+  Blockly.Python.definitions_['assign_speech_ondevice'] = 'speech_ondevice = SpeechOnDevice()';
+
+  const timeout = Blockly.Python.valueToCode(block, 'timeout', Blockly.Python.ORDER_ATOMIC);
+  return [`speech_ondevice.stt(timeout=${timeout}, verbose=False)['text']`, Blockly.Python.ORDER_ATOMIC];
+}
 Blockly.Python.forBlock['speech_otts'] = function(block) {
   Blockly.Python.definitions_['from_speech_import_SpeechOnDevice'] = 'from openpibo.speech import SpeechOnDevice';
   Blockly.Python.definitions_['assign_speech_ondevice'] = 'speech_ondevice = SpeechOnDevice()';
 
   const text = Blockly.Python.valueToCode(block, 'text', Blockly.Python.ORDER_ATOMIC);
   const voice = block.getFieldValue("voice");
+  const lang = block.getFieldValue("lang")
   const dir = block.getFieldValue("dir");
   const filename = Blockly.Python.valueToCode(block, 'filename', Blockly.Python.ORDER_ATOMIC);
   const extension = block.getFieldValue("extension");
   
-  return `speech_ondevice.tts(text=${text}, filename='${dir}'+${filename}+'${extension}', voice=${voice})\n`;
+  return `speech_ondevice.tts(text=${text}, filename='${dir}'+${filename}+'${extension}', lang='${lang}', voice='${voice}')\n`;
 }
 Blockly.Python.forBlock['speech_otts_play'] = function(block) {
   Blockly.Python.definitions_['from_speech_import_SpeechOnDevice'] = 'from openpibo.speech import SpeechOnDevice';
@@ -445,9 +453,10 @@ Blockly.Python.forBlock['speech_otts_play'] = function(block) {
 
   const text = Blockly.Python.valueToCode(block, 'text', Blockly.Python.ORDER_ATOMIC);
   const voice = block.getFieldValue("voice");
+  const lang = block.getFieldValue("lang")
   const volume = Blockly.Python.valueToCode(block, 'volume', Blockly.Python.ORDER_ATOMIC);
 
-  return `speech_ondevice.tts(text=${text}, filename='/home/pi/tmp.mp3', voice=${voice})\naudio.play('/home/pi/tmp.mp3', ${volume})\n`;
+  return `speech_ondevice.tts(text=${text}, filename='/home/pi/tmp.mp3', lang='${lang}', voice='${voice}')\naudio.play('/home/pi/tmp.mp3', ${volume})\n`;
 }
 Blockly.Python.forBlock['speech_etts'] = function(block) {
   Blockly.Python.definitions_['from_speech_import_Speech'] = 'from openpibo.speech import Speech';
