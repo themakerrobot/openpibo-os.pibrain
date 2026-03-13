@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>openpibo.vision_detect &mdash; OPENPIBO 0.9.3.3 문서</title>
+  <title>openpibo.vision_detect &mdash; OPENPIBO 0.9.3.6 문서</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -16,7 +16,7 @@
     <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/_modules/openpibo/vision_detect.html" />
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=3314e875"></script>
+      <script src="../../_static/documentation_options.js?v=6b1d76cb"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -250,7 +250,7 @@
     <span class="c1">#                    openpibo_detect_models.filepath(&quot;frozen_inference_graph.pb&quot;),</span>
     <span class="c1">#                    openpibo_detect_models.filepath(&quot;ssd_mobilenet_v2_coco_2018_03_29.pbtxt&quot;)</span>
     <span class="c1">#                )</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">object_detector</span> <span class="o">=</span> <span class="n">YOLO</span><span class="p">(</span><span class="s2">&quot;/home/pi/.model/object/yolo11s.onnx&quot;</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">&quot;detect&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">object_detector</span> <span class="o">=</span> <span class="n">YOLO</span><span class="p">(</span><span class="s2">&quot;/home/pi/.model/object/yolo26s.onnx&quot;</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">&quot;detect&quot;</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">pose_detector</span> <span class="o">=</span> <span class="n">Movenet</span><span class="p">(</span><span class="n">openpibo_detect_models</span><span class="o">.</span><span class="n">filepath</span><span class="p">(</span><span class="s2">&quot;movenet_lightning.tflite&quot;</span><span class="p">))</span>
 
     <span class="c1"># marker</span>
@@ -707,7 +707,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025 THEMAKER. All rights reserved. openpibo-python-0.9.3.3.</p>
+    <p>&#169; Copyright 2025 THEMAKER. All rights reserved. openpibo-python-0.9.3.6.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -26,30 +26,14 @@ mkdir -p /home/pi/myaudio
 mkdir -p /home/pi/mymodel
 
 # motor init
-#servo init
-
-# ap start
-echo "START - ap-start"
-sudo /home/pi/openpibo-os/system/hotspot.sh start
+sudo servo init
 
 # network init
-echo "START - booting.py"
 #/etc/systemd/system/booting.service
 sudo systemctl start booting.service
 
 # run server
-echo "START - run_ide.py"
-#/etc/systemd/system/ide.service
 sudo systemctl start ide.service
-
-# classifier server
-# echo "START - classifier.py"
-#/etc/systemd/system/classify.service
-# sudo systemctl start classify.service
-
-# Amp init
-#sudo gpio mode 7 out
-#sudo gpio write 7 1
 
 sudo iw wlan0 set power_save off
 #sudo iw ap0 set power_save off

@@ -7,17 +7,18 @@ Class:
 """
 import cv2
 import os
+import json
 import numpy as np
 import tensorflow as tf
 import logging
+from PIL import Image  # FIX: TeachableMachine.predict()에서 사용하므로 추가
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # TensorFlow C++ 로그 제거
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 os.environ['LIBCAMERA_LOG_LEVELS'] = '3'
-tf.get_logger().setLevel(logging.ERROR)   # Python 기반 TensorFlow 로그 제거
-tf.autograph.set_verbosity(0)             # AutoGraph 관련 메시지 비활성화
-
-# ✅ 추가: TensorFlow 내부 디버그 메시지 완전 차단
+tf.get_logger().setLevel(logging.ERROR)
+tf.autograph.set_verbosity(0)
 logging.getLogger("tensorflow").setLevel(logging.ERROR)
+
 
 class TeachableMachine:
   """
@@ -50,20 +51,16 @@ Functions:
     :param str model_path: Teachable Machine의 모델파일
     :param str label_path: Teachable Machine의 라벨파일
     """
-
     with open(label_path, 'r') as f:
       c = f.readlines()
       class_names = [item.split(maxsplit=1)[1].strip('\n') for item in c]
 
-    # Load TFLite model and allocate tensors
     self.interpreter = tf.lite.Interpreter(model_path=model_path)
     self.interpreter.allocate_tensors()
 
-    # Get input and output tensors.
     self.input_details = self.interpreter.get_input_details()
     self.output_details = self.interpreter.get_output_details()
 
-    # check the type of the input tensor
     self.floating_model = self.input_details[0]['dtype'] == np.float32
 
     self.height = self.input_details[0]['shape'][1]
@@ -85,22 +82,18 @@ Functions:
 
     :returns: 가장 높은 확률을 가진 클래스 명, 결과(raw 데이터)
     """
-
     try:
       img = cv2.cvtColor(cv2.resize(img, (self.width, self.height)), cv2.COLOR_BGR2RGB)
-      image = Image.fromarray(img)
+      image = Image.fromarray(img)  # FIX: PIL.Image import 추가로 정상 동작
 
-      # Add a batch dimension
       input_data = np.expand_dims(image, axis=0)
 
       if self.floating_model:
         input_data = (np.float32(input_data) - 127.5) / 127.5
 
-      # feed data to input tensor and run the interpreter
       self.interpreter.set_tensor(self.input_details[0]['index'], input_data)
       self.interpreter.invoke()
 
-      # Obtain results and map them to the classes
       preds = self.interpreter.get_tensor(self.output_details[0]['index'])
       preds = np.squeeze(preds)
       return self.class_names[np.argmax(preds)], preds
@@ -138,18 +131,13 @@ Functions:
     :param str model_path: Classifier의 모델파일
     :param str label_path: Classifier의 라벨파일
     """
-    # ✅ 모델 로드
     self.model = tf.keras.models.load_model(model_path)
 
-    # ✅ 레이블 로드
     with open(label_path, "r", encoding="utf-8") as f:
       self.class_names = [line.strip() for line in f.readlines()]
 
     base_model = tf.keras.applications.MobileNetV2(input_shape=(224, 224, 3), include_top=False, pooling="avg")
     self.feature_extractor = tf.keras.Model(inputs=base_model.input, outputs=base_model.output)
-
-    # print(f"✅ 모델 로드 완료: {model_path}")
-    # print(f"✅ 레이블 로드 완료: {self.class_names}")
 
   def predict(self, img):
     """
@@ -166,20 +154,72 @@ Functions:
     :returns: 가장 높은 확률을 가진 클래스 명, 결과(raw 데이터)
     """
     try:
-      # ✅ 이미지 전처리 (224x224 크기로 조정 후 정규화)
-      img = cv2.resize(img, (224, 224))  # 크기 조정
-      img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # RGB 변환
-      img = img.astype("float32") / 255.0  # 정규화
-      img = np.expand_dims(img, axis=0)  # 배치 차원 추가
+      img = cv2.resize(img, (224, 224))
+      img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+      img = img.astype("float32") / 255.0
+      img = np.expand_dims(img, axis=0)
 
-      features = self.feature_extractor.predict(img,  verbose=None)  # (1, 1280) 벡터 추출
+      # FIX: .predict() → __call__(training=False)
+      # 단건 추론 시 .predict()의 배치 처리 오버헤드 제거 → 지연시간 감소
+      features = self.feature_extractor(img, training=False)
+      preds = self.model(features, training=False).numpy()
 
-      # ✅ 예측 수행
-      preds = self.model.predict(features, verbose=None)  
-      pred_index = np.argmax(preds)  # 가장 높은 확률을 가진 클래스 인덱스
-      confidence = preds[0][pred_index]  # 확률 값
-      name = self.class_names[pred_index]  # 클래스 이름
+      pred_index = np.argmax(preds)
+      name = self.class_names[pred_index]
 
-      return name, preds[0]  # (예측 클래스명, raw 결과)
+      return name, preds[0]
     except Exception as ex:
       raise Exception('Classifier Model did not load properly.')
+
+  def convert_tfjs_to_keras(self, model_path, output_path):
+    """
+    Load a TensorFlow.js model (model.json + weights.bin) and convert it to a Keras H5 model.
+    """
+    model_json_path = os.path.join(model_path, "model.json")
+    weights_spec_path = os.path.join(model_path, "weightsSpecs.json")
+    weights_bin_path = os.path.join(model_path, "weights.bin")
+
+    if not os.path.exists(model_json_path):
+      raise FileNotFoundError(f"❌ Error: {model_json_path} 파일을 찾을 수 없습니다.")
+    if not os.path.exists(weights_spec_path):
+      raise FileNotFoundError(f"❌ Error: {weights_spec_path} 파일을 찾을 수 없습니다.")
+    if not os.path.exists(weights_bin_path):
+      raise FileNotFoundError(f"❌ Error: {weights_bin_path} 파일을 찾을 수 없습니다.")
+
+    with open(model_json_path, "r") as f:
+      model_config = json.load(f)
+
+    model = tf.keras.models.model_from_json(json.dumps(model_config))
+
+    with open(weights_spec_path, "r") as f:
+      weights_specs = json.load(f)
+
+    with open(weights_bin_path, "rb") as f:
+      binary_data = f.read()
+
+    weight_arrays = []
+    offset = 0
+
+    try:
+      for spec in weights_specs:
+        shape = tuple(spec["shape"])
+        dtype = np.dtype(spec["dtype"])
+        size = np.prod(shape)
+
+        byte_offset = spec.get("byte_offset", offset)
+        np_array = np.frombuffer(binary_data, dtype=dtype, count=size, offset=byte_offset).reshape(shape)
+        weight_arrays.append(np_array)
+        offset += size * dtype.itemsize
+
+    except Exception as e:
+      raise ValueError(f"❌ Error: 가중치 로드 중 오류 발생 - {str(e)}")
+
+    model_weights = model.get_weights()
+    if len(weight_arrays) != len(model_weights):
+      print(f"⚠️ Warning: 가중치 개수가 맞지 않습니다! (기대 값: {len(model_weights)}, 받은 값: {len(weight_arrays)})")
+
+    model.set_weights(weight_arrays)
+    model.save(output_path)
+    print(f"✅ TFJS → KERAS 변환 완료: {output_path}")
+
+    return model

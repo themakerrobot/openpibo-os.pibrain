@@ -142,7 +142,7 @@ Functions:
     #                    openpibo_detect_models.filepath("frozen_inference_graph.pb"),
     #                    openpibo_detect_models.filepath("ssd_mobilenet_v2_coco_2018_03_29.pbtxt")
     #                )
-    self.object_detector = YOLO("/home/pi/.model/object/yolo11s.onnx", task="detect")
+    self.object_detector = YOLO("/home/pi/.model/object/yolo26s.onnx", task="detect")
     self.pose_detector = Movenet(openpibo_detect_models.filepath("movenet_lightning.tflite"))
 
     # marker

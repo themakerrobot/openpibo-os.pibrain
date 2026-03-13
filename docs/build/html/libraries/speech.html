@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>speech &mdash; OPENPIBO 0.9.3.3 문서</title>
+  <title>speech &mdash; OPENPIBO 0.9.3.6 문서</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -17,7 +17,7 @@
     <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/libraries/speech.html" />
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=3314e875"></script>
+      <script src="../_static/documentation_options.js?v=6b1d76cb"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -77,6 +77,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#openpibo.speech.SpeechOnDevice"><code class="docutils literal notranslate"><span class="pre">SpeechOnDevice</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#openpibo.speech.SpeechOnDevice.tts"><code class="docutils literal notranslate"><span class="pre">SpeechOnDevice.tts()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.speech.SpeechOnDevice.stt"><code class="docutils literal notranslate"><span class="pre">SpeechOnDevice.stt()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#openpibo.speech.Dialog"><code class="docutils literal notranslate"><span class="pre">Dialog</span></code></a><ul>
@@ -213,7 +214,7 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="openpibo.speech.SpeechOnDevice">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openpibo.speech.</span></span><span class="sig-name descname"><span class="pre">SpeechOnDevice</span></span><a class="reference internal" href="../_modules/openpibo/speech.html#SpeechOnDevice"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.SpeechOnDevice" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openpibo.speech.</span></span><span class="sig-name descname"><span class="pre">SpeechOnDevice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">onnx_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'/home/pi/.model/tts/assets/onnx'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voice_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'/home/pi/.model/tts/assets/voice_styles'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#SpeechOnDevice"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.SpeechOnDevice" title="Link to this definition"></a></dt>
 <dd><p>기반 클래스: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Functions:
 <a class="reference internal" href="#openpibo.speech.SpeechOnDevice.tts" title="openpibo.speech.SpeechOnDevice.tts"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tts()</span></code></a></p>
@@ -231,21 +232,49 @@
 </div></blockquote>
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.speech.SpeechOnDevice.tts">
-<span class="sig-name descname"><span class="pre">tts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tts.mp3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voice</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ko'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#SpeechOnDevice.tts"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.SpeechOnDevice.tts" title="Link to this definition"></a></dt>
-<dd><p>TTS(Text to Speech)</p>
-<p>Text(문자)를 Speech(말)로 변환하여 파일로 저장합니다.</p>
+<span class="sig-name descname"><span class="pre">tts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'tts.wav'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'m1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ko'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/openpibo/speech.html#SpeechOnDevice.tts"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.SpeechOnDevice.tts" title="Link to this definition"></a></dt>
+<dd><p>TTS(Text to Speech) — 텍스트를 음성 파일로 변환합니다.</p>
+<blockquote>
+<div><p>example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tts</span><span class="o">.</span><span class="n">tts</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s1">&#39;안녕하세요! 만나서 반가워요!&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;/home/pi/tts.wav&#39;</span><span class="p">,</span> <span class="n">voice</span><span class="o">=</span><span class="s1">&#39;m1&#39;</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s1">&#39;ko&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<em>str</em>) – 변환할 문장</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – 저장할 음성 파일 경로 (.wav)</p></li>
+<li><p><strong>voice</strong> (<em>str</em>) – 목소리 종류 (m1~m5/f1~f5)</p></li>
+<li><p><strong>lang</strong> (<em>str</em>) – 언어 코드 (‘ko’, ‘en’, ‘es’, ‘pt’, ‘fr’)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns str<span class="colon">:</span></dt>
+<dd class="field-even"><p>저장된 파일 경로</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.speech.SpeechOnDevice.stt">
+<span class="sig-name descname"><span class="pre">stt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'stream.wav'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#SpeechOnDevice.stt"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.SpeechOnDevice.stt" title="Link to this definition"></a></dt>
+<dd><p>STT(Speech to Text)</p>
+<p>목소리를 녹음한 후 faster-whisper로 텍스트로 변환합니다.</p>
 <p>example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">speech_od</span><span class="o">.</span><span class="n">tts</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s1">&#39;안녕하세요! 만나서 반가워요!&#39;</span><span class="p">,</span> <span class="s1">&#39;ko&#39;</span><span class="p">,</span> <span class="s1">&#39;/home/pi/tts.mp3&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">speech_od</span><span class="o">.</span><span class="n">stt</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">매개변수<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> (<em>str</em>) – 변환할 문장구</p></li>
-<li><p><strong>voice</strong> (<em>int</em>) – 목소리 번호 0 - 5</p></li>
-<li><p><strong>lang</strong> (<em>str</em>) – 사용할 언어(ko)</p></li>
-<li><p><strong>filename</strong> (<em>str</em>) – 변환된 음성파일의 경로 (mp3)</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – 녹음 파일 저장 경로 (.wav)</p></li>
+<li><p><strong>timeout</strong> (<em>int</em>) – 녹음 시간(s)</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – 녹음 진행 출력 여부</p></li>
+<li><p><strong>lang</strong> (<em>str</em>) – 언어 힌트 (None=자동감지, ‘ko’, ‘en’ 등)</p></li>
 </ul>
+</dd>
+<dt class="field-even">반환<span class="colon">:</span></dt>
+<dd class="field-even"><p>(인식된 문자열, 감지된 언어)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -507,7 +536,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025 THEMAKER. All rights reserved. openpibo-python-0.9.3.3.</p>
+    <p>&#169; Copyright 2025 THEMAKER. All rights reserved. openpibo-python-0.9.3.6.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

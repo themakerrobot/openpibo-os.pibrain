@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vision_classify &mdash; OPENPIBO 0.9.3.3 문서</title>
+  <title>vision_classify &mdash; OPENPIBO 0.9.3.6 문서</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -17,7 +17,7 @@
     <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/libraries/vision_classify.html" />
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=3314e875"></script>
+      <script src="../_static/documentation_options.js?v=6b1d76cb"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -81,6 +81,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#openpibo.vision_classify.CustomClassifier"><code class="docutils literal notranslate"><span class="pre">CustomClassifier</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_classify.CustomClassifier.load"><code class="docutils literal notranslate"><span class="pre">CustomClassifier.load()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_classify.CustomClassifier.predict"><code class="docutils literal notranslate"><span class="pre">CustomClassifier.predict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openpibo.vision_classify.CustomClassifier.convert_tfjs_to_keras"><code class="docutils literal notranslate"><span class="pre">CustomClassifier.convert_tfjs_to_keras()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -239,6 +240,12 @@
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_classify.CustomClassifier.convert_tfjs_to_keras">
+<span class="sig-name descname"><span class="pre">convert_tfjs_to_keras</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_classify.html#CustomClassifier.convert_tfjs_to_keras"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_classify.CustomClassifier.convert_tfjs_to_keras" title="Link to this definition"></a></dt>
+<dd><p>Load a TensorFlow.js model (model.json + weights.bin) and convert it to a Keras H5 model.</p>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -254,7 +261,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025 THEMAKER. All rights reserved. openpibo-python-0.9.3.3.</p>
+    <p>&#169; Copyright 2025 THEMAKER. All rights reserved. openpibo-python-0.9.3.6.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

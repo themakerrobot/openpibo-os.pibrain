@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>openpibo.collect &mdash; OPENPIBO 0.9.3.3 문서</title>
+  <title>openpibo.collect &mdash; OPENPIBO 0.9.3.6 문서</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -16,7 +16,7 @@
     <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/_modules/openpibo/collect.html" />
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=3314e875"></script>
+      <script src="../../_static/documentation_options.js?v=6b1d76cb"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -105,11 +105,17 @@
 <span class="sd">:obj:`~openpibo.collect.Wikipedia`</span>
 <span class="sd">:obj:`~openpibo.collect.Weather`</span>
 <span class="sd">:obj:`~openpibo.collect.News`</span>
+<span class="sd">:obj:`~openpibo.collect.ExchangeRate`</span>
+<span class="sd">:obj:`~openpibo.collect.AirQuality`</span>
+<span class="sd">:obj:`~openpibo.collect.Trivia`</span>
+<span class="sd">:obj:`~openpibo.collect.Country`</span>
+<span class="sd">:obj:`~openpibo.collect.OnThisDay`</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">quote</span>
 <span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
 <span class="kn">import</span> <span class="nn">requests</span>
+
 
 <div class="viewcode-block" id="Wikipedia">
 <a class="viewcode-back" href="../../libraries/collect.html#openpibo.collect.Wikipedia">[문서]</a>
@@ -128,6 +134,7 @@
 <span class="sd">        wiki = Wikipedia()</span>
 <span class="sd">        # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="Wikipedia.search">
 <a class="viewcode-back" href="../../libraries/collect.html#openpibo.collect.Wikipedia.search">[문서]</a>
     <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -140,52 +147,67 @@
 
 <span class="sd">        :param str search_text: 위키백과에서의 검색어</span>
 
-<span class="sd">        :returns: 내용을 dictionary 배열 형태로 반환합니다.</span>
+<span class="sd">        :returns: 내용을 dictionary 형태로 반환합니다.</span>
 
 <span class="sd">            대부분의 경우 &#39;0&#39;번 항목에 개요를 표시하고, 검색된 내용이 없을 경우 None을 반환합니다.</span>
 
 <span class="sd">            example::</span>
 
-<span class="sd">                [&#39;0&#39;:{</span>
-<span class="sd">                    &#39;title&#39;: &#39;명칭&#39;, </span>
-<span class="sd">                    &#39;content&#39;: &quot;한국어 ‘강아지’는 ‘개’에 어린 짐승을 뜻하는 ‘아지’가 붙은 말이다...&quot;</span>
-<span class="sd">                }, ... ]</span>
-<span class="sd">                or</span>
-<span class="sd">                None</span>
+<span class="sd">                {</span>
+<span class="sd">                    &#39;0&#39;:   {&#39;title&#39;: &#39;개요&#39;, &#39;content&#39;: [&#39;...&#39;, ...]},</span>
+<span class="sd">                    &#39;1&#39;:   {&#39;title&#39;: &#39;역사&#39;, &#39;content&#39;: [...]},</span>
+<span class="sd">                    &#39;1.1&#39;: {&#39;title&#39;: &#39;초기 역사&#39;, &#39;content&#39;: [...]},</span>
+<span class="sd">                }</span>
+<span class="sd">                or None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">_chapters</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;0&#39;</span><span class="p">:{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span><span class="s1">&#39;개요&#39;</span><span class="p">,</span> <span class="s1">&#39;content&#39;</span><span class="p">:[]}}</span>
-        <span class="n">encode_text</span> <span class="o">=</span> <span class="n">quote</span><span class="p">(</span><span class="n">search_text</span><span class="p">)</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://ko.wikipedia.org/wiki/</span><span class="si">{</span><span class="n">encode_text</span><span class="si">}</span><span class="s1">&#39;</span>
-        <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span> <span class="p">:</span> <span class="s1">&#39;Mozilla/5.0&#39;</span><span class="p">})</span>
-        <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="s1">&#39;html.parser&#39;</span><span class="p">)</span>
-        <span class="n">total_content</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;class&#39;</span><span class="p">:</span> <span class="s1">&#39;mw-parser-output&#39;</span><span class="p">})</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://ko.wikipedia.org/w/api.php&#39;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;action&#39;</span><span class="p">:</span> <span class="s1">&#39;query&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;prop&#39;</span><span class="p">:</span> <span class="s1">&#39;extracts&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;titles&#39;</span><span class="p">:</span> <span class="n">search_text</span><span class="p">,</span>
+            <span class="s1">&#39;format&#39;</span><span class="p">:</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;explaintext&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;exsectionformat&#39;</span><span class="p">:</span> <span class="s1">&#39;wiki&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;redirects&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0&#39;</span><span class="p">})</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">total_content</span><span class="p">:</span>
+        <span class="n">pages</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;query&#39;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pages&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pages</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-        <span class="c1"># chapter_idx = &#39;3.1&#39;, chapter_list = [3, 1]</span>
-        <span class="n">chapter_idx</span><span class="p">,</span> <span class="n">chapter_list</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">parent_num</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">content</span> <span class="ow">in</span> <span class="n">total_content</span><span class="p">:</span>
-            <span class="n">tag</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">name</span>
-            <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="k">elif</span> <span class="n">tag</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;h&#39;</span><span class="p">:</span>
-                <span class="n">new_parent_num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">tag</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="mi">2</span>
-                <span class="k">if</span> <span class="n">new_parent_num</span> <span class="o">&lt;=</span> <span class="n">parent_num</span><span class="p">:</span>
-                    <span class="n">chapter_list</span> <span class="o">=</span> <span class="n">chapter_list</span><span class="p">[:</span><span class="n">new_parent_num</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
-                    <span class="n">chapter_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">chapter_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-                <span class="n">chapter_idx</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">chapter_list</span><span class="p">))</span>
-                <span class="n">_chapters</span><span class="p">[</span><span class="n">chapter_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-                <span class="n">_chapters</span><span class="p">[</span><span class="n">chapter_idx</span><span class="p">][</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">_chapters</span><span class="p">[</span><span class="n">chapter_idx</span><span class="p">][</span><span class="s1">&#39;content&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;p&#39;</span><span class="p">:</span>
-                <span class="n">_chapters</span><span class="p">[</span><span class="n">chapter_idx</span><span class="p">][</span><span class="s1">&#39;content&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">content</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;ul&#39;</span><span class="p">:</span>
-                <span class="n">_chapters</span><span class="p">[</span><span class="n">chapter_idx</span><span class="p">][</span><span class="s1">&#39;content&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">content</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">page</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">pages</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="k">if</span> <span class="s1">&#39;missing&#39;</span> <span class="ow">in</span> <span class="n">page</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">extract</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;extract&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">extract</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">_chapters</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;0&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;개요&#39;</span><span class="p">,</span> <span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="p">[]}}</span>
+        <span class="n">current_idx</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span>
+        <span class="n">h2_count</span> <span class="o">=</span> <span class="n">h3_count</span> <span class="o">=</span> <span class="n">h4_count</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">extract</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;==== &#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">line</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39; ====&#39;</span><span class="p">):</span>
+                <span class="n">h4_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">current_idx</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">h2_count</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">h3_count</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">h4_count</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="n">_chapters</span><span class="p">[</span><span class="n">current_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;= &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;=== &#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">line</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39; ===&#39;</span><span class="p">):</span>
+                <span class="n">h3_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">h4_count</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">current_idx</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">h2_count</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">h3_count</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="n">_chapters</span><span class="p">[</span><span class="n">current_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;= &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;== &#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">line</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39; ==&#39;</span><span class="p">):</span>
+                <span class="n">h2_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">h3_count</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">h4_count</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">current_idx</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">h2_count</span><span class="p">)</span>
+                <span class="n">_chapters</span><span class="p">[</span><span class="n">current_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;= &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                <span class="n">_chapters</span><span class="p">[</span><span class="n">current_idx</span><span class="p">][</span><span class="s1">&#39;content&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
 
         <span class="k">return</span> <span class="n">_chapters</span></div>
 
@@ -209,16 +231,18 @@
 <span class="sd">            example::</span>
 
 <span class="sd">                [</span>
-<span class="sd">                    &quot;한국어 ‘강아지’는 ‘개’에 어린 짐승을 뜻하는 ‘아지’가 붙은 말이다...&quot;,</span>
+<span class="sd">                    &quot;한국어 &#39;강아지&#39;는 &#39;개&#39;에 어린 짐승을 뜻하는 &#39;아지&#39;가 붙은 말이다...&quot;,</span>
 <span class="sd">                    ...</span>
 <span class="sd">                ]</span>
-<span class="sd">                or</span>
-<span class="sd">                None</span>
+<span class="sd">                or None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">search_text</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">item</span> <span class="o">!=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">]</span></div>
+        <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">item</span><span class="p">]</span></div>
 </div>
+
 
 
 <div class="viewcode-block" id="Weather">
@@ -238,6 +262,7 @@
 <span class="sd">        weather = Weather()</span>
 <span class="sd">        # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">region_list</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;전국&#39;</span><span class="p">:</span> <span class="mi">108</span><span class="p">,</span>
         <span class="s1">&#39;서울&#39;</span><span class="p">:</span> <span class="mi">109</span><span class="p">,</span>
@@ -264,7 +289,7 @@
 
 <div class="viewcode-block" id="Weather.search">
 <a class="viewcode-back" href="../../libraries/collect.html#openpibo.collect.Weather.search">[문서]</a>
-    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search_region</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;전국&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search_region</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;전국&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        해당 지역(```search_region```)의 날씨 정보(종합예보, 오늘/내일/모레 날씨)를 가져옵니다.</span>
 
@@ -284,32 +309,17 @@
 <span class="sd">            example::</span>
 
 <span class="sd">                {</span>
-<span class="sd">                    &#39;forecast&#39;: &#39;내일 경기남부 가끔 비, 내일까지 바람 약간 강, 낮과 밤의 기온차 큼&#39;</span>
-<span class="sd">                    &#39;today&#39;:</span>
-<span class="sd">                    {</span>
-<span class="sd">                        &#39;weather&#39;: &#39;전국 대체로 흐림&#39;,</span>
-<span class="sd">                        &#39;minimum_temp&#39;: &#39;15.3 ~ 21.6&#39;,</span>
-<span class="sd">                        &#39;highst_temp&#39;: &#39;23.1 ~ 27.6&#39;</span>
-<span class="sd">                    }</span>
-<span class="sd">                    &#39;tomorrow&#39;:</span>
-<span class="sd">                    {</span>
-<span class="sd">                        &#39;weather&#39;: &#39;전국 대체로 흐림&#39;,</span>
-<span class="sd">                        &#39;minimum_temp&#39;: &#39;15.3 ~ 21.6&#39;, </span>
-<span class="sd">                        &#39;highst_temp&#39;: &#39;23.1 ~ 27.6&#39;</span>
-<span class="sd">                    }</span>
-<span class="sd">                    &#39;after_tomorrow&#39;:</span>
-<span class="sd">                    {</span>
-<span class="sd">                        &#39;weather&#39;: &#39;전국 대체로 흐림&#39;,</span>
-<span class="sd">                        &#39;minimum_temp&#39;: &#39;15.3 ~ 21.6&#39;,</span>
-<span class="sd">                        &#39;highst_temp&#39;: &#39;23.1 ~ 27.6&#39;</span>
-<span class="sd">                    }</span>
+<span class="sd">                    &#39;forecast&#39;: &#39;내일 경기남부 가끔 비, 내일까지 바람 약간 강, 낮과 밤의 기온차 큼&#39;,</span>
+<span class="sd">                    &#39;today&#39;:         {&#39;weather&#39;: &#39;...&#39;, &#39;minimum_temp&#39;: &#39;...&#39;, &#39;highst_temp&#39;: &#39;...&#39;},</span>
+<span class="sd">                    &#39;tomorrow&#39;:      {&#39;weather&#39;: &#39;...&#39;, &#39;minimum_temp&#39;: &#39;...&#39;, &#39;highst_temp&#39;: &#39;...&#39;},</span>
+<span class="sd">                    &#39;after_tomorrow&#39;:{&#39;weather&#39;: &#39;...&#39;, &#39;minimum_temp&#39;: &#39;...&#39;, &#39;highst_temp&#39;: &#39;...&#39;},</span>
 <span class="sd">                }</span>
 <span class="sd">                or None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">region</span> <span class="o">=</span> <span class="n">Weather</span><span class="o">.</span><span class="n">region_list</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">search_region</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">region</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
-          <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">search_region</span><span class="si">}</span><span class="s1">&quot; not support&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">region</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">search_region</span><span class="si">}</span><span class="s1">&quot; not support&#39;</span><span class="p">)</span>
 
         <span class="n">_forecast</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
         <span class="n">_today</span> <span class="o">=</span> <span class="p">{}</span>
@@ -317,14 +327,20 @@
         <span class="n">_after_tomorrow</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://www.weather.go.kr/w/weather/forecast/short-term.do?stnId=</span><span class="si">{</span><span class="n">region</span><span class="si">}</span><span class="s1">&#39;</span>
-        <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span> <span class="p">:</span> <span class="s1">&#39;Mozilla/5.0&#39;</span><span class="p">})</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0&#39;</span><span class="p">})</span>
         <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="s1">&#39;html.parser&#39;</span><span class="p">)</span>
-        <span class="n">forecasts</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;class&#39;</span><span class="p">:</span> <span class="s1">&#39;cmp-view-content&#39;</span><span class="p">})</span><span class="o">.</span><span class="n">text</span>
-        <span class="n">forecasts</span> <span class="o">=</span> <span class="n">forecasts</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;□&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;○&#39;</span><span class="p">)</span>
+
+        <span class="n">view_content</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;class&#39;</span><span class="p">:</span> <span class="s1">&#39;cmp-view-content&#39;</span><span class="p">})</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">view_content</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">forecasts</span> <span class="o">=</span> <span class="n">view_content</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;□&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;○&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">forecast</span> <span class="ow">in</span> <span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">strip</span><span class="p">,</span> <span class="n">forecasts</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s1">&#39;)&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">forecast</span><span class="p">:</span>
+                <span class="k">continue</span>
             <span class="n">split_point</span> <span class="o">=</span> <span class="n">forecast</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;)&#39;</span><span class="p">)</span>
-            <span class="n">date</span> <span class="o">=</span> <span class="n">forecast</span><span class="p">[:</span><span class="n">split_point</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">desc</span> <span class="o">=</span> <span class="n">forecast</span><span class="p">[</span><span class="n">split_point</span><span class="o">+</span><span class="mi">2</span><span class="p">:]</span>
+            <span class="n">date</span> <span class="o">=</span> <span class="n">forecast</span><span class="p">[:</span><span class="n">split_point</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">desc</span> <span class="o">=</span> <span class="n">forecast</span><span class="p">[</span><span class="n">split_point</span> <span class="o">+</span> <span class="mi">2</span><span class="p">:]</span>
             <span class="k">if</span> <span class="s1">&#39;종합&#39;</span> <span class="ow">in</span> <span class="n">date</span><span class="p">:</span>
                 <span class="n">_forecast</span> <span class="o">=</span> <span class="n">desc</span>
             <span class="k">if</span> <span class="s1">&#39;오늘&#39;</span> <span class="ow">in</span> <span class="n">date</span><span class="p">:</span>
@@ -335,83 +351,59 @@
                 <span class="n">_after_tomorrow</span><span class="p">[</span><span class="s1">&#39;weather&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">desc</span>
 
         <span class="n">temp_table</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;tbody&#39;</span><span class="p">)</span>
-        <span class="n">all_temps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">temp_table</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;td&#39;</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]))</span>
-        <span class="n">_today</span><span class="p">[</span><span class="s1">&#39;minimum_temp&#39;</span><span class="p">],</span> <span class="n">_tomorrow</span><span class="p">[</span><span class="s1">&#39;minimum_temp&#39;</span><span class="p">],</span> <span class="n">_after_tomorrow</span><span class="p">[</span><span class="s1">&#39;minimum_temp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_temps</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span>
-        <span class="n">_today</span><span class="p">[</span><span class="s1">&#39;highst_temp&#39;</span><span class="p">],</span> <span class="n">_tomorrow</span><span class="p">[</span><span class="s1">&#39;highst_temp&#39;</span><span class="p">],</span> <span class="n">_after_tomorrow</span><span class="p">[</span><span class="s1">&#39;highst_temp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_temps</span><span class="p">[</span><span class="mi">7</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">temp_table</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
 
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;forecast&#39;</span><span class="p">:</span><span class="n">_forecast</span><span class="p">,</span> <span class="s1">&#39;today&#39;</span><span class="p">:</span><span class="n">_today</span><span class="p">,</span> <span class="s1">&#39;tomorrow&#39;</span><span class="p">:</span><span class="n">_tomorrow</span><span class="p">,</span> <span class="s1">&#39;after_tomorrow&#39;</span><span class="p">:</span><span class="n">_after_tomorrow</span><span class="p">}</span></div>
+        <span class="n">all_temps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">temp_table</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;td&#39;</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_temps</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">_today</span><span class="p">[</span><span class="s1">&#39;minimum_temp&#39;</span><span class="p">],</span>    <span class="n">_tomorrow</span><span class="p">[</span><span class="s1">&#39;minimum_temp&#39;</span><span class="p">],</span>    <span class="n">_after_tomorrow</span><span class="p">[</span><span class="s1">&#39;minimum_temp&#39;</span><span class="p">]</span>    <span class="o">=</span> <span class="n">all_temps</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span>
+        <span class="n">_today</span><span class="p">[</span><span class="s1">&#39;highst_temp&#39;</span><span class="p">],</span>     <span class="n">_tomorrow</span><span class="p">[</span><span class="s1">&#39;highst_temp&#39;</span><span class="p">],</span>     <span class="n">_after_tomorrow</span><span class="p">[</span><span class="s1">&#39;highst_temp&#39;</span><span class="p">]</span>     <span class="o">=</span> <span class="n">all_temps</span><span class="p">[</span><span class="mi">7</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;forecast&#39;</span><span class="p">:</span>       <span class="n">_forecast</span><span class="p">,</span>
+            <span class="s1">&#39;today&#39;</span><span class="p">:</span>          <span class="n">_today</span><span class="p">,</span>
+            <span class="s1">&#39;tomorrow&#39;</span><span class="p">:</span>       <span class="n">_tomorrow</span><span class="p">,</span>
+            <span class="s1">&#39;after_tomorrow&#39;</span><span class="p">:</span> <span class="n">_after_tomorrow</span><span class="p">,</span>
+        <span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="Weather.search_s">
 <a class="viewcode-back" href="../../libraries/collect.html#openpibo.collect.Weather.search_s">[문서]</a>
-    <span class="k">def</span> <span class="nf">search_s</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search_region</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;전국&#39;</span><span class="p">,</span> <span class="n">search_type</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;forecast&#39;</span><span class="p">,</span> <span class="n">search_item</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;weather&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">search_s</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search_region</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;전국&#39;</span><span class="p">,</span> <span class="n">search_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;forecast&#39;</span><span class="p">,</span> <span class="n">search_item</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;weather&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        해당 지역(```search_region```)의 날씨 정보(종합예보, 오늘/내일/모레 날씨)를 가져옵니다.</span>
+<span class="sd">        해당 지역(```search_region```)의 날씨 정보를 간단하게 가져옵니다. (block 전용)</span>
 
 <span class="sd">        example::</span>
 
 <span class="sd">            result = weather.search_s(&#39;서울&#39;)</span>
 
 <span class="sd">        :param str search_region: 검색 가능한 지역 (default: 전국)</span>
+<span class="sd">        :param str search_type: &#39;forecast&#39; | &#39;today&#39; | &#39;tomorrow&#39; | &#39;after_tomorrow&#39; (default: forecast)</span>
+<span class="sd">        :param str search_item: &#39;weather&#39; | &#39;minimum_temp&#39; | &#39;highst_temp&#39; (default: weather)</span>
 
-<span class="sd">            검색할 수 있는 지역은 다음과 같습니다::</span>
+<span class="sd">            search_type이 forecast일 경우 search_item은 무시합니다.</span>
 
-<span class="sd">                &#39;전국&#39;, &#39;서울&#39;, &#39;인천&#39;, &#39;경기&#39;, &#39;부산&#39;, &#39;울산&#39;, &#39;경남&#39;, &#39;대구&#39;, &#39;경북&#39;,</span>
-<span class="sd">                &#39;광주&#39;, &#39;전남&#39;, &#39;전북&#39;, &#39;대전&#39;, &#39;세종&#39;, &#39;충남&#39;, &#39;충북&#39;, &#39;강원&#39;, &#39;제주&#39;</span>
-
-<span class="sd">        :param str search_type: 검색할 내용 (default: forecast)</span>
-
-<span class="sd">            검색할 내용은 다음과 같습니다::</span>
-
-<span class="sd">                &#39;forecast&#39;, &#39;today&#39;, &#39;tomorrow&#39;, &#39;after_tomorrow&#39;</span>
-<span class="sd">            </span>
-<span class="sd">        :param str search_item: 검색할 내용 (default: weather)</span>
-
-<span class="sd">            검색할 내용은 다음과 같습니다::</span>
-
-<span class="sd">                &#39;weather&#39;, &#39;minimum_temp&#39;, &#39;highst_temp&#39; </span>
-<span class="sd">                search_type이 forecast일 경우, search_item은 무시합니다.</span>
-
-<span class="sd">        :returns: 파라미터에 따라, 종합예보 혹은 오늘/내일/모레의 날씨, 최저기온, 최고기온을 반환합니다.</span>
-<span class="sd">            example::</span>
-
-<span class="sd">                {</span>
-<span class="sd">                    &#39;forecast&#39;: &#39;내일 경기남부 가끔 비, 내일까지 바람 약간 강, 낮과 밤의 기온차 큼&#39;</span>
-<span class="sd">                    &#39;today&#39;:</span>
-<span class="sd">                    {</span>
-<span class="sd">                        &#39;weather&#39;: &#39;전국 대체로 흐림&#39;,</span>
-<span class="sd">                        &#39;minimum_temp&#39;: &#39;15.3 ~ 21.6&#39;,</span>
-<span class="sd">                        &#39;highst_temp&#39;: &#39;23.1 ~ 27.6&#39;</span>
-<span class="sd">                    }</span>
-<span class="sd">                    &#39;tomorrow&#39;:</span>
-<span class="sd">                    {</span>
-<span class="sd">                        &#39;weather&#39;: &#39;전국 대체로 흐림&#39;,</span>
-<span class="sd">                        &#39;minimum_temp&#39;: &#39;15.3 ~ 21.6&#39;, </span>
-<span class="sd">                        &#39;highst_temp&#39;: &#39;23.1 ~ 27.6&#39;</span>
-<span class="sd">                    }</span>
-<span class="sd">                    &#39;after_tomorrow&#39;:</span>
-<span class="sd">                    {</span>
-<span class="sd">                        &#39;weather&#39;: &#39;전국 대체로 흐림&#39;,</span>
-<span class="sd">                        &#39;minimum_temp&#39;: &#39;15.3 ~ 21.6&#39;,</span>
-<span class="sd">                        &#39;highst_temp&#39;: &#39;23.1 ~ 27.6&#39;</span>
-<span class="sd">                    }</span>
-<span class="sd">                }</span>
-<span class="sd">                or None</span>
-
+<span class="sd">        :returns: 파라미터에 따라 종합예보 혹은 날씨/최저기온/최고기온 문자열을 반환합니다.</span>
+<span class="sd">                  None일 경우 None 반환.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">search_region</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="n">search_type</span> <span class="o">==</span> <span class="s1">&#39;forecast&#39;</span><span class="p">:</span>
-          <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;forecast&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span> <span class="c1"># search_type (&#39;today&#39;|&#39;tomorrow&#39;|&#39;after_tomorrow&#39;)</span>
-          <span class="k">if</span> <span class="n">search_item</span> <span class="o">==</span> <span class="s1">&#39;minimum_temp&#39;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="n">search_type</span><span class="p">][</span><span class="n">search_item</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; ~ &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-          <span class="k">elif</span> <span class="n">search_item</span> <span class="o">==</span> <span class="s1">&#39;highst_temp&#39;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="n">search_type</span><span class="p">][</span><span class="n">search_item</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; ~ &#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-          <span class="k">else</span><span class="p">:</span> <span class="c1"># weather</span>
-            <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="n">search_type</span><span class="p">][</span><span class="n">search_item</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span></div>
+            <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;forecast&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">search_item</span> <span class="o">==</span> <span class="s1">&#39;minimum_temp&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="n">search_type</span><span class="p">][</span><span class="n">search_item</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; ~ &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">search_item</span> <span class="o">==</span> <span class="s1">&#39;highst_temp&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="n">search_type</span><span class="p">][</span><span class="n">search_item</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; ~ &#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="n">search_type</span><span class="p">][</span><span class="n">search_item</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span></div>
 </div>
+
 
 
 <div class="viewcode-block" id="News">
@@ -431,19 +423,20 @@
 <span class="sd">        news = News()</span>
 <span class="sd">        # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">topic_list</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;속보&#39;</span><span class="p">:</span> <span class="s1">&#39;newsflash&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;정치&#39;</span><span class="p">:</span> <span class="s1">&#39;politics&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;경제&#39;</span><span class="p">:</span> <span class="s1">&#39;economy&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;사회&#39;</span><span class="p">:</span> <span class="s1">&#39;society&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;국제&#39;</span><span class="p">:</span> <span class="s1">&#39;international&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;문화&#39;</span><span class="p">:</span> <span class="s1">&#39;culture&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;연예&#39;</span><span class="p">:</span> <span class="s1">&#39;entertainment&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;스포츠&#39;</span><span class="p">:</span> <span class="s1">&#39;sports&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;풀영상&#39;</span><span class="p">:</span> <span class="s1">&#39;fullvideo&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;뉴스랭킹&#39;</span><span class="p">:</span> <span class="s1">&#39;newsrank&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;뉴스룸&#39;</span><span class="p">:</span> <span class="s1">&#39;newsroom&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;아침&amp;&#39;</span><span class="p">:</span> <span class="s1">&#39;morningand&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;속보&#39;</span><span class="p">:</span>      <span class="s1">&#39;newsflash&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;정치&#39;</span><span class="p">:</span>      <span class="s1">&#39;politics&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;경제&#39;</span><span class="p">:</span>      <span class="s1">&#39;economy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;사회&#39;</span><span class="p">:</span>      <span class="s1">&#39;society&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;국제&#39;</span><span class="p">:</span>      <span class="s1">&#39;international&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;문화&#39;</span><span class="p">:</span>      <span class="s1">&#39;culture&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;연예&#39;</span><span class="p">:</span>      <span class="s1">&#39;entertainment&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;스포츠&#39;</span><span class="p">:</span>    <span class="s1">&#39;sports&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;풀영상&#39;</span><span class="p">:</span>    <span class="s1">&#39;fullvideo&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;뉴스랭킹&#39;</span><span class="p">:</span>  <span class="s1">&#39;newsrank&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;뉴스룸&#39;</span><span class="p">:</span>    <span class="s1">&#39;newsroom&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;아침&amp;&#39;</span><span class="p">:</span>     <span class="s1">&#39;morningand&#39;</span><span class="p">,</span>
         <span class="s1">&#39;썰전 라이브&#39;</span><span class="p">:</span> <span class="s1">&#39;ssulzunlive&#39;</span><span class="p">,</span>
         <span class="s1">&#39;정치부회의&#39;</span><span class="p">:</span> <span class="s1">&#39;politicaldesk&#39;</span><span class="p">,</span>
     <span class="p">}</span>
@@ -453,7 +446,7 @@
 
 <div class="viewcode-block" id="News.search">
 <a class="viewcode-back" href="../../libraries/collect.html#openpibo.collect.News.search">[문서]</a>
-    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search_topic</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;뉴스랭킹&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search_topic</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;뉴스랭킹&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        해당 주제(```search_topic```)에 맞는 뉴스를 가져옵니다.</span>
 
@@ -474,82 +467,771 @@
 
 <span class="sd">                [</span>
 <span class="sd">                    {</span>
-<span class="sd">                        &#39;title&#39;: &#39;또 소방차 막은 불법주차, 이번엔 가차없이 밀어버렸다&#39;, </span>
-<span class="sd">                        &#39;link&#39;: &#39;https://news.jtbc.joins.com/article/article.aspx?...&#39;,</span>
-<span class="sd">                        &#39;description&#39;: &#39;2019년 4월 소방당국의 불법주정차 강경대응 훈련 모습...,</span>
-<span class="sd">                        &#39;pubDate&#39;: &#39;2021.09.03&#39;</span>
-<span class="sd">                    }, </span>
+<span class="sd">                        &#39;title&#39;:       &#39;소방차 막은 불법주차, 이번엔 가차없이 밀어버렸다&#39;,</span>
+<span class="sd">                        &#39;link&#39;:        &#39;https://news.jtbc.joins.com/article/...&#39;,</span>
+<span class="sd">                        &#39;description&#39;: &#39;2019년 4월 소방당국의 불법주정차 강경대응 훈련 모습...&#39;,</span>
+<span class="sd">                        &#39;pubDate&#39;:     &#39;2021.09.03&#39;</span>
+<span class="sd">                    },</span>
+<span class="sd">                    ...</span>
 <span class="sd">                ]</span>
 <span class="sd">                or None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">topic</span> <span class="o">=</span> <span class="n">News</span><span class="o">.</span><span class="n">topic_list</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">search_topic</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">topic</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
-          <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">search_topic</span><span class="si">}</span><span class="s1">&quot; not support&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">topic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">search_topic</span><span class="si">}</span><span class="s1">&quot; not support&#39;</span><span class="p">)</span>
 
         <span class="n">_articles</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://fs.jtbc.joins.com//RSS/</span><span class="si">{</span><span class="n">topic</span><span class="si">}</span><span class="s1">.xml&#39;</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span> <span class="p">:</span> <span class="s1">&#39;Mozilla/5.0&#39;</span><span class="p">})</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0&#39;</span><span class="p">})</span>
+
+        <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
         <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="s1">&#39;xml&#39;</span><span class="p">)</span>
         <span class="n">items</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">findAll</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">items</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
-          <span class="n">_articles</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-            <span class="s1">&#39;title&#39;</span><span class="p">:</span><span class="n">item</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
-            <span class="s1">&#39;link&#39;</span><span class="p">:</span><span class="n">item</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;link&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
-            <span class="s1">&#39;description&#39;</span><span class="p">:</span><span class="n">item</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
-            <span class="s1">&#39;pubDate&#39;</span><span class="p">:</span><span class="n">item</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;pubDate&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
-          <span class="p">})</span>
+            <span class="n">title_tag</span>       <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">)</span>
+            <span class="n">link_tag</span>        <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;link&#39;</span><span class="p">)</span>
+            <span class="n">description_tag</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">)</span>
+            <span class="n">pubdate_tag</span>     <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;pubDate&#39;</span><span class="p">)</span>
+            <span class="n">_articles</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s1">&#39;title&#39;</span><span class="p">:</span>       <span class="n">title_tag</span><span class="o">.</span><span class="n">text</span>       <span class="k">if</span> <span class="n">title_tag</span>       <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;link&#39;</span><span class="p">:</span>        <span class="n">link_tag</span><span class="o">.</span><span class="n">text</span>        <span class="k">if</span> <span class="n">link_tag</span>        <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">description_tag</span><span class="o">.</span><span class="n">text</span> <span class="k">if</span> <span class="n">description_tag</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;pubDate&#39;</span><span class="p">:</span>     <span class="n">pubdate_tag</span><span class="o">.</span><span class="n">text</span>     <span class="k">if</span> <span class="n">pubdate_tag</span>     <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="p">})</span>
         <span class="k">return</span> <span class="n">_articles</span></div>
 
 
 <div class="viewcode-block" id="News.search_s">
 <a class="viewcode-back" href="../../libraries/collect.html#openpibo.collect.News.search_s">[문서]</a>
-    <span class="k">def</span> <span class="nf">search_s</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search_topic</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;뉴스랭킹&#39;</span><span class="p">,</span> <span class="n">search_type</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;title&quot;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">search_s</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search_topic</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;뉴스랭킹&#39;</span><span class="p">,</span> <span class="n">search_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;title&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        해당 주제(```search_topic```)에 맞는 뉴스를 가져옵니다.</span>
+<span class="sd">        해당 주제(```search_topic```)에 맞는 뉴스를 간단하게 가져옵니다. (block 전용)</span>
 
 <span class="sd">        example::</span>
 
 <span class="sd">            result = news.search_s(&#39;속보&#39;)</span>
 
 <span class="sd">        :param str search_topic: 검색 가능한 뉴스 주제 (default: 뉴스랭킹)</span>
+<span class="sd">        :param str search_type:  &#39;title&#39; | &#39;link&#39; | &#39;description&#39; (default: title)</span>
 
-<span class="sd">            검색할 수 있는 주제는 다음과 같습니다::</span>
+<span class="sd">        :returns: 선택한 요소의 리스트, None일 경우 None 반환.</span>
 
-<span class="sd">                &#39;속보&#39;, &#39;정치&#39;, &#39;경제&#39;, &#39;사회&#39;, &#39;국제&#39;, &#39;문화&#39;, &#39;연예&#39;, &#39;스포츠&#39;,</span>
-<span class="sd">                &#39;풀영상&#39;, &#39;뉴스랭킹&#39;, &#39;뉴스룸&#39;, &#39;아침&amp;&#39;, &#39;썰전 라이브&#39;, &#39;정치부회의&#39;</span>
+<span class="sd">            example::</span>
 
-<span class="sd">        :param str search_type: 검색할 내용 (default: title)</span>
+<span class="sd">                [&#39;소방차 막은 불법주차, 이번엔 가차없이 밀어버렸다&#39;, ...]</span>
+<span class="sd">                or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-<span class="sd">            검색할 내용은 다음과 같습니다::</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">search_topic</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="n">search_type</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">res</span> <span class="k">if</span> <span class="s1">&#39;다시보기&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">search_type</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)]</span></div>
+</div>
 
-<span class="sd">                &#39;title&#39;, &#39;link&#39;, &#39;description&#39;</span>
 
-<span class="sd">        :returns: title, link, description 중 선택한 요소의 리스트</span>
+
+<div class="viewcode-block" id="ExchangeRate">
+<a class="viewcode-back" href="../../libraries/collect.html#openpibo.collect.ExchangeRate">[문서]</a>
+<span class="k">class</span> <span class="nc">ExchangeRate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions:</span>
+<span class="sd">:meth:`~openpibo.collect.ExchangeRate.search`</span>
+<span class="sd">:meth:`~openpibo.collect.ExchangeRate.search_s`</span>
+
+<span class="sd">    실시간 환율 정보를 가져옵니다. (API 키 불필요)</span>
+
+<span class="sd">    example::</span>
+
+<span class="sd">        from openpibo.collect import ExchangeRate</span>
+
+<span class="sd">        er = ExchangeRate()</span>
+<span class="sd">        # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">currency_name</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;KRW&#39;</span><span class="p">:</span> <span class="s1">&#39;한국 원&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;USD&#39;</span><span class="p">:</span> <span class="s1">&#39;미국 달러&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;EUR&#39;</span><span class="p">:</span> <span class="s1">&#39;유로&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;JPY&#39;</span><span class="p">:</span> <span class="s1">&#39;일본 엔&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;CNY&#39;</span><span class="p">:</span> <span class="s1">&#39;중국 위안&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;GBP&#39;</span><span class="p">:</span> <span class="s1">&#39;영국 파운드&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;AUD&#39;</span><span class="p">:</span> <span class="s1">&#39;호주 달러&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;CAD&#39;</span><span class="p">:</span> <span class="s1">&#39;캐나다 달러&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;CHF&#39;</span><span class="p">:</span> <span class="s1">&#39;스위스 프랑&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;HKD&#39;</span><span class="p">:</span> <span class="s1">&#39;홍콩 달러&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;SGD&#39;</span><span class="p">:</span> <span class="s1">&#39;싱가포르 달러&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;THB&#39;</span><span class="p">:</span> <span class="s1">&#39;태국 바트&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;VND&#39;</span><span class="p">:</span> <span class="s1">&#39;베트남 동&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    주요 통화 코드와 이름입니다.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ExchangeRate.search">
+<a class="viewcode-back" href="../../libraries/collect.html#openpibo.collect.ExchangeRate.search">[문서]</a>
+    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;USD&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        기준 통화(``base``)에 대한 실시간 환율 정보를 가져옵니다.</span>
+
+<span class="sd">        example::</span>
+
+<span class="sd">            result = er.search(&#39;USD&#39;)</span>
+
+<span class="sd">        :param str base: 기준 통화 코드 (default: USD)</span>
+
+<span class="sd">            주요 통화 코드::</span>
+
+<span class="sd">                &#39;USD&#39;(미국 달러), &#39;KRW&#39;(한국 원), &#39;EUR&#39;(유로),</span>
+<span class="sd">                &#39;JPY&#39;(일본 엔), &#39;CNY&#39;(중국 위안) 등 ISO 4217 코드</span>
+
+<span class="sd">        :returns: 기준 통화 대비 각 통화의 환율 dictionary를 반환합니다.</span>
+<span class="sd">                  실패 시 None을 반환합니다.</span>
+
+<span class="sd">            example::</span>
+
+<span class="sd">                {</span>
+<span class="sd">                    &#39;base&#39;:   &#39;USD&#39;,</span>
+<span class="sd">                    &#39;date&#39;:   &#39;2024-03-13&#39;,</span>
+<span class="sd">                    &#39;rates&#39;:  {&#39;KRW&#39;: 1340.5, &#39;JPY&#39;: 149.2, &#39;EUR&#39;: 0.92, ...}</span>
+<span class="sd">                }</span>
+<span class="sd">                or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://open.er-api.com/v6/latest/</span><span class="si">{</span><span class="n">base</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0&#39;</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="s1">&#39;success&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;base&#39;</span><span class="p">:</span>  <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;base_code&#39;</span><span class="p">,</span> <span class="n">base</span><span class="p">),</span>
+            <span class="s1">&#39;date&#39;</span><span class="p">:</span>  <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;time_last_update_utc&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;rates&#39;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;rates&#39;</span><span class="p">,</span> <span class="p">{}),</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="ExchangeRate.search_s">
+<a class="viewcode-back" href="../../libraries/collect.html#openpibo.collect.ExchangeRate.search_s">[문서]</a>
+    <span class="k">def</span> <span class="nf">search_s</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;USD&#39;</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;KRW&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        기준 통화(``base``) 대비 대상 통화(``target``)의 환율을 반환합니다. (block 전용)</span>
+
+<span class="sd">        example::</span>
+
+<span class="sd">            result = er.search_s(&#39;USD&#39;, &#39;KRW&#39;)</span>
+
+<span class="sd">        :param str base:   기준 통화 코드 (default: USD)</span>
+<span class="sd">        :param str target: 대상 통화 코드 (default: KRW)</span>
+
+<span class="sd">        :returns: 환율 float 값, 실패 시 None</span>
+
+<span class="sd">            example::</span>
+
+<span class="sd">                1340.5</span>
+<span class="sd">                or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;rates&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AirQuality">
+<a class="viewcode-back" href="../../libraries/collect.html#openpibo.collect.AirQuality">[문서]</a>
+<span class="k">class</span> <span class="nc">AirQuality</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions:</span>
+<span class="sd">:meth:`~openpibo.collect.AirQuality.search`</span>
+<span class="sd">:meth:`~openpibo.collect.AirQuality.search_s`</span>
+
+<span class="sd">    네이버 날씨 검색을 통해 실시간 미세먼지 정보를 가져옵니다. (API 키 불필요)</span>
+
+<span class="sd">    example::</span>
+
+<span class="sd">        from openpibo.collect import AirQuality</span>
+
+<span class="sd">        aq = AirQuality()</span>
+<span class="sd">        # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">region_list</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;서울&#39;</span><span class="p">,</span> <span class="s1">&#39;부산&#39;</span><span class="p">,</span> <span class="s1">&#39;대구&#39;</span><span class="p">,</span> <span class="s1">&#39;인천&#39;</span><span class="p">,</span> <span class="s1">&#39;광주&#39;</span><span class="p">,</span> <span class="s1">&#39;대전&#39;</span><span class="p">,</span> <span class="s1">&#39;울산&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;경기&#39;</span><span class="p">,</span> <span class="s1">&#39;강원&#39;</span><span class="p">,</span> <span class="s1">&#39;충북&#39;</span><span class="p">,</span> <span class="s1">&#39;충남&#39;</span><span class="p">,</span> <span class="s1">&#39;전북&#39;</span><span class="p">,</span> <span class="s1">&#39;전남&#39;</span><span class="p">,</span> <span class="s1">&#39;경북&#39;</span><span class="p">,</span> <span class="s1">&#39;경남&#39;</span><span class="p">,</span> <span class="s1">&#39;제주&#39;</span><span class="p">,</span> <span class="s1">&#39;세종&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    미세먼지 정보를 검색할 수 있는 지역입니다.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 &#39;</span>
+                      <span class="s1">&#39;(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Accept-Language&#39;</span><span class="p">:</span> <span class="s1">&#39;ko-KR,ko;q=0.9&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="AirQuality.search">
+<a class="viewcode-back" href="../../libraries/collect.html#openpibo.collect.AirQuality.search">[문서]</a>
+    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search_region</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;서울&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        해당 지역(``search_region``)의 실시간 미세먼지 정보를 가져옵니다.</span>
+
+<span class="sd">        example::</span>
+
+<span class="sd">            result = aq.search(&#39;서울&#39;)</span>
+
+<span class="sd">        :param str search_region: 검색할 지역명 (default: 서울)</span>
+
+<span class="sd">            검색할 수 있는 지역::</span>
+
+<span class="sd">                &#39;서울&#39;, &#39;부산&#39;, &#39;대구&#39;, &#39;인천&#39;, &#39;광주&#39;, &#39;대전&#39;, &#39;울산&#39;,</span>
+<span class="sd">                &#39;경기&#39;, &#39;강원&#39;, &#39;충북&#39;, &#39;충남&#39;, &#39;전북&#39;, &#39;전남&#39;, &#39;경북&#39;, &#39;경남&#39;, &#39;제주&#39;, &#39;세종&#39;</span>
+
+<span class="sd">        :returns: 미세먼지 정보 dictionary를 반환합니다. 실패 시 None.</span>
+
+<span class="sd">            example::</span>
+
+<span class="sd">                {</span>
+<span class="sd">                    &#39;pm10_grade&#39;: &#39;좋음&#39;,  # 미세먼지 등급</span>
+<span class="sd">                    &#39;pm25_grade&#39;: &#39;보통&#39;,  # 초미세먼지 등급</span>
+<span class="sd">                }</span>
+<span class="sd">                or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">search_region</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">region_list</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">search_region</span><span class="si">}</span><span class="s1">&quot; not support&#39;</span><span class="p">)</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://search.naver.com/search.naver?query=</span><span class="si">{</span><span class="n">quote</span><span class="p">(</span><span class="n">search_region</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot; 날씨&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_headers</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s1">&#39;html.parser&#39;</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;pm10_grade&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;pm25_grade&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+
+        <span class="c1"># 구조: &lt;a class=&quot;box&quot;&gt;&lt;strong class=&quot;title&quot;&gt;미세먼지&lt;/strong&gt;&lt;span class=&quot;txt&quot;&gt;좋음&lt;/span&gt;&lt;/a&gt;</span>
+        <span class="n">label_map</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;미세먼지&#39;</span><span class="p">:</span> <span class="s1">&#39;pm10_grade&#39;</span><span class="p">,</span> <span class="s1">&#39;초미세먼지&#39;</span><span class="p">:</span> <span class="s1">&#39;pm25_grade&#39;</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">box</span> <span class="ow">in</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;a.box&#39;</span><span class="p">):</span>
+            <span class="n">title_tag</span> <span class="o">=</span> <span class="n">box</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;strong&#39;</span><span class="p">,</span> <span class="n">class_</span><span class="o">=</span><span class="s1">&#39;title&#39;</span><span class="p">)</span>
+            <span class="n">txt_tag</span>   <span class="o">=</span> <span class="n">box</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;span&#39;</span><span class="p">,</span>   <span class="n">class_</span><span class="o">=</span><span class="s1">&#39;txt&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">title_tag</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">txt_tag</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="n">title_tag</span><span class="o">.</span><span class="n">get_text</span><span class="p">(</span><span class="n">strip</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">title</span> <span class="ow">in</span> <span class="n">label_map</span> <span class="ow">and</span> <span class="n">result</span><span class="p">[</span><span class="n">label_map</span><span class="p">[</span><span class="n">title</span><span class="p">]]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">label_map</span><span class="p">[</span><span class="n">title</span><span class="p">]]</span> <span class="o">=</span> <span class="n">txt_tag</span><span class="o">.</span><span class="n">get_text</span><span class="p">(</span><span class="n">strip</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="AirQuality.search_s">
+<a class="viewcode-back" href="../../libraries/collect.html#openpibo.collect.AirQuality.search_s">[문서]</a>
+    <span class="k">def</span> <span class="nf">search_s</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search_region</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;서울&#39;</span><span class="p">,</span> <span class="n">search_item</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;pm10&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        해당 지역의 미세먼지 정보를 단일 값으로 반환합니다. (block 전용)</span>
+
+<span class="sd">        example::</span>
+
+<span class="sd">            result = aq.search_s(&#39;서울&#39;, &#39;pm10&#39;)</span>
+
+<span class="sd">        :param str search_region: 검색할 지역명 (default: 서울)</span>
+<span class="sd">        :param str search_item:   조회 항목 (default: pm10)</span>
+
+<span class="sd">            조회 가능한 항목::</span>
+
+<span class="sd">                &#39;pm10_grade&#39; 미세먼지 등급 (좋음/보통/나쁨/매우나쁨)</span>
+<span class="sd">                &#39;pm25_grade&#39; 초미세먼지 등급</span>
+
+<span class="sd">        :returns: 해당 항목의 값 문자열, 실패 시 None</span>
+
+<span class="sd">            example::</span>
+
+<span class="sd">                &#39;45&#39;</span>
+<span class="sd">                &#39;보통&#39;</span>
+<span class="sd">                or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">search_region</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">search_item</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Trivia">
+<a class="viewcode-back" href="../../libraries/collect.html#openpibo.collect.Trivia">[문서]</a>
+<span class="k">class</span> <span class="nc">Trivia</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions:</span>
+<span class="sd">:meth:`~openpibo.collect.Trivia.search`</span>
+<span class="sd">:meth:`~openpibo.collect.Trivia.search_s`</span>
+
+<span class="sd">    Open Trivia DB에서 퀴즈 문제를 가져옵니다. (API 키 불필요)</span>
+
+<span class="sd">    example::</span>
+
+<span class="sd">        from openpibo.collect import Trivia</span>
+
+<span class="sd">        trivia = Trivia()</span>
+<span class="sd">        # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">category_list</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;일반&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span> <span class="s1">&#39;책&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;영화&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s1">&#39;음악&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;게임&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+        <span class="s1">&#39;과학&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span> <span class="s1">&#39;컴퓨터&#39;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="s1">&#39;수학&#39;</span><span class="p">:</span> <span class="mi">19</span><span class="p">,</span> <span class="s1">&#39;스포츠&#39;</span><span class="p">:</span> <span class="mi">21</span><span class="p">,</span> <span class="s1">&#39;지리&#39;</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span>
+        <span class="s1">&#39;역사&#39;</span><span class="p">:</span> <span class="mi">23</span><span class="p">,</span> <span class="s1">&#39;정치&#39;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span> <span class="s1">&#39;동물&#39;</span><span class="p">:</span> <span class="mi">27</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    퀴즈 카테고리 목록입니다.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">difficulty_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;easy&#39;</span><span class="p">,</span> <span class="s1">&#39;medium&#39;</span><span class="p">,</span> <span class="s1">&#39;hard&#39;</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    퀴즈 난이도입니다.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Trivia.search">
+<a class="viewcode-back" href="../../libraries/collect.html#openpibo.collect.Trivia.search">[문서]</a>
+    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">category</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;일반&#39;</span><span class="p">,</span> <span class="n">difficulty</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;easy&#39;</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        퀴즈 문제를 가져옵니다. (영어)</span>
+
+<span class="sd">        example::</span>
+
+<span class="sd">            result = trivia.search(&#39;과학&#39;, &#39;easy&#39;, 3)</span>
+
+<span class="sd">        :param str category:   카테고리 (default: 일반)</span>
+
+<span class="sd">            카테고리 목록::</span>
+
+<span class="sd">                &#39;일반&#39;, &#39;책&#39;, &#39;영화&#39;, &#39;음악&#39;, &#39;게임&#39;, &#39;과학&#39;,</span>
+<span class="sd">                &#39;컴퓨터&#39;, &#39;수학&#39;, &#39;스포츠&#39;, &#39;지리&#39;, &#39;역사&#39;, &#39;정치&#39;, &#39;동물&#39;</span>
+
+<span class="sd">        :param str difficulty: 난이도 (default: easy)</span>
+
+<span class="sd">            난이도 목록::</span>
+
+<span class="sd">                &#39;easy&#39;, &#39;medium&#39;, &#39;hard&#39;</span>
+
+<span class="sd">        :param int count: 문제 수 (default: 1, 최대 50)</span>
+
+<span class="sd">        :returns: 퀴즈 문제 리스트를 반환합니다. 실패 시 None.</span>
 
 <span class="sd">            example::</span>
 
 <span class="sd">                [</span>
-<span class="sd">                    &#39;또 소방차 막은 불법주차, 이번엔 가차없이 밀어버렸다&#39;,</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &#39;question&#39;:   &#39;What is the chemical symbol for water?&#39;,</span>
+<span class="sd">                        &#39;answer&#39;:     &#39;H2O&#39;,</span>
+<span class="sd">                        &#39;options&#39;:    [&#39;H2O&#39;, &#39;CO2&#39;, &#39;NaCl&#39;, &#39;O2&#39;],  # 정답 포함 4지선다 (섞인 순서)</span>
+<span class="sd">                        &#39;category&#39;:   &#39;과학&#39;,</span>
+<span class="sd">                        &#39;difficulty&#39;: &#39;easy&#39;,</span>
+<span class="sd">                        &#39;type&#39;:       &#39;multiple&#39;,  # &#39;multiple&#39; or &#39;boolean&#39;</span>
+<span class="sd">                    },</span>
+<span class="sd">                    ...</span>
+<span class="sd">                ]</span>
+<span class="sd">                or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">html</span> <span class="k">as</span> <span class="nn">html_lib</span>
+        <span class="kn">import</span> <span class="nn">random</span>
+
+        <span class="k">if</span> <span class="n">category</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">category_list</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s1">&quot; not support&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">difficulty</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">difficulty_list</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">difficulty</span><span class="si">}</span><span class="s1">&quot; not support&#39;</span><span class="p">)</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;amount&#39;</span><span class="p">:</span>     <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">count</span><span class="p">),</span> <span class="mi">50</span><span class="p">),</span>
+            <span class="s1">&#39;category&#39;</span><span class="p">:</span>   <span class="bp">self</span><span class="o">.</span><span class="n">category_list</span><span class="p">[</span><span class="n">category</span><span class="p">],</span>
+            <span class="s1">&#39;difficulty&#39;</span><span class="p">:</span> <span class="n">difficulty</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span>       <span class="s1">&#39;multiple&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;encode&#39;</span><span class="p">:</span>     <span class="s1">&#39;url3986&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;https://opentdb.com/api.php&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                            <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0&#39;</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;response_code&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;results&#39;</span><span class="p">,</span> <span class="p">[]):</span>
+            <span class="n">question</span>    <span class="o">=</span> <span class="n">html_lib</span><span class="o">.</span><span class="n">unescape</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">unquote</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;question&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)))</span>
+            <span class="n">answer</span>      <span class="o">=</span> <span class="n">html_lib</span><span class="o">.</span><span class="n">unescape</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">unquote</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;correct_answer&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)))</span>
+            <span class="n">incorrects</span>  <span class="o">=</span> <span class="p">[</span><span class="n">html_lib</span><span class="o">.</span><span class="n">unescape</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">unquote</span><span class="p">(</span><span class="n">o</span><span class="p">))</span>
+                           <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;incorrect_answers&#39;</span><span class="p">,</span> <span class="p">[])]</span>
+            <span class="n">options</span>     <span class="o">=</span> <span class="n">incorrects</span> <span class="o">+</span> <span class="p">[</span><span class="n">answer</span><span class="p">]</span>
+            <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s1">&#39;question&#39;</span><span class="p">:</span>   <span class="n">question</span><span class="p">,</span>
+                <span class="s1">&#39;answer&#39;</span><span class="p">:</span>     <span class="n">answer</span><span class="p">,</span>
+                <span class="s1">&#39;options&#39;</span><span class="p">:</span>    <span class="n">options</span><span class="p">,</span>
+                <span class="s1">&#39;category&#39;</span><span class="p">:</span>   <span class="n">category</span><span class="p">,</span>
+                <span class="s1">&#39;difficulty&#39;</span><span class="p">:</span> <span class="n">difficulty</span><span class="p">,</span>
+                <span class="s1">&#39;type&#39;</span><span class="p">:</span>       <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;multiple&#39;</span><span class="p">),</span>
+            <span class="p">})</span>
+        <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">result</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Trivia.search_s">
+<a class="viewcode-back" href="../../libraries/collect.html#openpibo.collect.Trivia.search_s">[문서]</a>
+    <span class="k">def</span> <span class="nf">search_s</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">category</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;일반&#39;</span><span class="p">,</span> <span class="n">difficulty</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;easy&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        퀴즈 문제 1개를 간단하게 반환합니다. (block 전용)</span>
+
+<span class="sd">        example::</span>
+
+<span class="sd">            result = trivia.search_s(&#39;과학&#39;, &#39;easy&#39;)</span>
+
+<span class="sd">        :param str category:   카테고리 (default: 일반)</span>
+<span class="sd">        :param str difficulty: 난이도 (default: easy)</span>
+
+<span class="sd">        :returns: 퀴즈 1개의 dictionary, 실패 시 None</span>
+
+<span class="sd">            example::</span>
+
+<span class="sd">                {</span>
+<span class="sd">                    &#39;question&#39;: &#39;What is the chemical symbol for water?&#39;,</span>
+<span class="sd">                    &#39;answer&#39;:   &#39;H2O&#39;,</span>
+<span class="sd">                    &#39;options&#39;:  [&#39;H2O&#39;, &#39;CO2&#39;, &#39;NaCl&#39;, &#39;O2&#39;],</span>
+<span class="sd">                    ...</span>
+<span class="sd">                }</span>
+<span class="sd">                or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">difficulty</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Country">
+<a class="viewcode-back" href="../../libraries/collect.html#openpibo.collect.Country">[문서]</a>
+<span class="k">class</span> <span class="nc">Country</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions:</span>
+<span class="sd">:meth:`~openpibo.collect.Country.search`</span>
+<span class="sd">:meth:`~openpibo.collect.Country.search_s`</span>
+
+<span class="sd">    restcountries.com에서 국가 정보를 가져옵니다. (API 키 불필요)</span>
+
+<span class="sd">    example::</span>
+
+<span class="sd">        from openpibo.collect import Country</span>
+
+<span class="sd">        country = Country()</span>
+<span class="sd">        # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">info_list</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;capital&#39;</span><span class="p">,</span> <span class="s1">&#39;region&#39;</span><span class="p">,</span> <span class="s1">&#39;subregion&#39;</span><span class="p">,</span> <span class="s1">&#39;population&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;area&#39;</span><span class="p">,</span> <span class="s1">&#39;languages&#39;</span><span class="p">,</span> <span class="s1">&#39;currencies&#39;</span><span class="p">,</span> <span class="s1">&#39;flag&#39;</span><span class="p">,</span> <span class="s1">&#39;borders&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;timezones&#39;</span><span class="p">,</span> <span class="s1">&#39;tld&#39;</span><span class="p">,</span> <span class="s1">&#39;car_side&#39;</span><span class="p">,</span> <span class="s1">&#39;landlocked&#39;</span><span class="p">,</span> <span class="s1">&#39;latlng&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    조회 가능한 항목 목록입니다.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Country.search">
+<a class="viewcode-back" href="../../libraries/collect.html#openpibo.collect.Country.search">[문서]</a>
+    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        국가명으로 국가 정보를 검색합니다. (영어 국가명)</span>
+
+<span class="sd">        example::</span>
+
+<span class="sd">            result = country.search(&#39;korea&#39;)</span>
+<span class="sd">            result = country.search(&#39;france&#39;)</span>
+
+<span class="sd">        :param str search_name: 검색할 국가명 (영어)</span>
+
+<span class="sd">        :returns: 국가 정보 dictionary를 반환합니다. 실패 시 None.</span>
+
+<span class="sd">            example::</span>
+
+<span class="sd">                {</span>
+<span class="sd">                    &#39;name&#39;:       &#39;South Korea&#39;,           # 국가명</span>
+<span class="sd">                    &#39;official&#39;:   &#39;Republic of Korea&#39;,     # 공식 국가명</span>
+<span class="sd">                    &#39;capital&#39;:    &#39;서울특별시&#39;,             # 수도 (해당 언어로 제공 시)</span>
+<span class="sd">                    &#39;region&#39;:     &#39;Asia&#39;,                  # 대륙</span>
+<span class="sd">                    &#39;subregion&#39;:  &#39;Eastern Asia&#39;,          # 소지역</span>
+<span class="sd">                    &#39;population&#39;: 51744876,                # 인구</span>
+<span class="sd">                    &#39;area&#39;:       100210.0,                # 면적 (km²)</span>
+<span class="sd">                    &#39;languages&#39;:  [&#39;Korean&#39;],              # 공용어</span>
+<span class="sd">                    &#39;currencies&#39;: [{&#39;name&#39;: &#39;South Korean won&#39;, &#39;symbol&#39;: &#39;₩&#39;}],</span>
+<span class="sd">                    &#39;flag&#39;:       &#39;🇰🇷&#39;,                  # 국기 이모지</span>
+<span class="sd">                    &#39;flag_url&#39;:   &#39;https://flagcdn.com/kr.png&#39;,</span>
+<span class="sd">                    &#39;borders&#39;:    [&#39;PRK&#39;],                 # 인접국 코드</span>
+<span class="sd">                    &#39;timezones&#39;:  [&#39;UTC+09:00&#39;],</span>
+<span class="sd">                    &#39;tld&#39;:        [&#39;.kr&#39;],                 # 국가 도메인</span>
+<span class="sd">                    &#39;car_side&#39;:   &#39;right&#39;,                 # 운전석 방향</span>
+<span class="sd">                    &#39;landlocked&#39;: False,                   # 내륙국 여부</span>
+<span class="sd">                    &#39;latlng&#39;:     [37.0, 127.5],           # 위경도</span>
+<span class="sd">                }</span>
+<span class="sd">                or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;https://restcountries.com/v3.1/name/</span><span class="si">{</span><span class="n">requests</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">search_name</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0&#39;</span><span class="p">},</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># 검색 결과 중 공식명/일반명이 가장 근접한 항목 선택</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="k">if</span> <span class="n">search_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;common&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">n</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;official&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()):</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">d</span>
+                <span class="k">break</span>
+
+        <span class="n">name_obj</span>   <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">currencies</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;currencies&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">langs</span>      <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;languages&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">flags</span>      <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;flags&#39;</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span>       <span class="n">name_obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;common&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;official&#39;</span><span class="p">:</span>   <span class="n">name_obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;official&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;capital&#39;</span><span class="p">:</span>    <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;capital&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s1">&#39;region&#39;</span><span class="p">:</span>     <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;region&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;subregion&#39;</span><span class="p">:</span>  <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;subregion&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;population&#39;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;population&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="s1">&#39;area&#39;</span><span class="p">:</span>       <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;area&#39;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="s1">&#39;languages&#39;</span><span class="p">:</span>  <span class="nb">list</span><span class="p">(</span><span class="n">langs</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+            <span class="s1">&#39;currencies&#39;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span> <span class="s1">&#39;symbol&#39;</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;symbol&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)}</span>
+                <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">currencies</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="p">],</span>
+            <span class="s1">&#39;flag&#39;</span><span class="p">:</span>       <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;flag&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;flag_url&#39;</span><span class="p">:</span>   <span class="n">flags</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;borders&#39;</span><span class="p">:</span>    <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;borders&#39;</span><span class="p">,</span> <span class="p">[]),</span>
+            <span class="s1">&#39;timezones&#39;</span><span class="p">:</span>  <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;timezones&#39;</span><span class="p">,</span> <span class="p">[]),</span>
+            <span class="s1">&#39;tld&#39;</span><span class="p">:</span>        <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;tld&#39;</span><span class="p">,</span> <span class="p">[]),</span>
+            <span class="s1">&#39;car_side&#39;</span><span class="p">:</span>   <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;car&#39;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;side&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;landlocked&#39;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;landlocked&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="s1">&#39;latlng&#39;</span><span class="p">:</span>     <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;latlng&#39;</span><span class="p">,</span> <span class="p">[]),</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="Country.search_s">
+<a class="viewcode-back" href="../../libraries/collect.html#openpibo.collect.Country.search_s">[문서]</a>
+    <span class="k">def</span> <span class="nf">search_s</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">search_item</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;capital&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        국가 정보 중 특정 항목만 반환합니다. (block 전용)</span>
+
+<span class="sd">        example::</span>
+
+<span class="sd">            result = country.search_s(&#39;korea&#39;, &#39;capital&#39;)</span>
+<span class="sd">            result = country.search_s(&#39;france&#39;, &#39;population&#39;)</span>
+
+<span class="sd">        :param str search_name: 검색할 국가명 (영어)</span>
+<span class="sd">        :param str search_item: 조회 항목 (default: capital)</span>
+
+<span class="sd">            조회 가능한 항목::</span>
+
+<span class="sd">                &#39;name&#39;       국가명</span>
+<span class="sd">                &#39;capital&#39;    수도</span>
+<span class="sd">                &#39;region&#39;     대륙</span>
+<span class="sd">                &#39;subregion&#39;  소지역</span>
+<span class="sd">                &#39;population&#39; 인구</span>
+<span class="sd">                &#39;area&#39;       면적 (km²)</span>
+<span class="sd">                &#39;languages&#39;  공용어</span>
+<span class="sd">                &#39;currencies&#39; 화폐</span>
+<span class="sd">                &#39;flag&#39;       국기 이모지</span>
+<span class="sd">                &#39;borders&#39;    인접국 코드 목록</span>
+<span class="sd">                &#39;car_side&#39;   운전석 방향 (left/right)</span>
+<span class="sd">                &#39;landlocked&#39; 내륙국 여부</span>
+<span class="sd">                &#39;latlng&#39;     위경도</span>
+
+<span class="sd">        :returns: 해당 항목의 값, 실패 시 None</span>
+
+<span class="sd">            example::</span>
+
+<span class="sd">                &#39;Seoul&#39;</span>
+<span class="sd">                51744876</span>
+<span class="sd">                [&#39;Korean&#39;]</span>
+<span class="sd">                or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">search_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">search_item</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="OnThisDay">
+<a class="viewcode-back" href="../../libraries/collect.html#openpibo.collect.OnThisDay">[문서]</a>
+<span class="k">class</span> <span class="nc">OnThisDay</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions:</span>
+<span class="sd">:meth:`~openpibo.collect.OnThisDay.search`</span>
+<span class="sd">:meth:`~openpibo.collect.OnThisDay.search_s`</span>
+
+<span class="sd">    Wikipedia REST API를 사용해 특정 날짜에 일어난 역사적 사건을 가져옵니다. (API 키 불필요, 영어)</span>
+
+<span class="sd">    example::</span>
+
+<span class="sd">        from openpibo.collect import OnThisDay</span>
+
+<span class="sd">        otd = OnThisDay()</span>
+<span class="sd">        # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">type_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;events&#39;</span><span class="p">,</span> <span class="s1">&#39;births&#39;</span><span class="p">,</span> <span class="s1">&#39;deaths&#39;</span><span class="p">,</span> <span class="s1">&#39;holidays&#39;</span><span class="p">,</span> <span class="s1">&#39;selected&#39;</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    조회 가능한 유형입니다.</span>
+
+<span class="sd">    - ``events``   : 역사적 사건</span>
+<span class="sd">    - ``births``   : 이날 태어난 인물</span>
+<span class="sd">    - ``deaths``   : 이날 사망한 인물</span>
+<span class="sd">    - ``holidays`` : 공휴일/기념일</span>
+<span class="sd">    - ``selected`` : Wikipedia 편집자 선정 주요 사건</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="OnThisDay.search">
+<a class="viewcode-back" href="../../libraries/collect.html#openpibo.collect.OnThisDay.search">[문서]</a>
+    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">month</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">day</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">event_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;events&#39;</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        특정 날짜(``month``/``day``)의 역사적 사건을 가져옵니다.</span>
+
+<span class="sd">        example::</span>
+
+<span class="sd">            result = otd.search(3, 1)           # 3월 1일 사건</span>
+<span class="sd">            result = otd.search(8, 15, &#39;births&#39;, 3)  # 8월 15일 태어난 인물 3명</span>
+
+<span class="sd">        :param int month:      월 (1~12)</span>
+<span class="sd">        :param int day:        일 (1~31)</span>
+<span class="sd">        :param str event_type: 조회 유형 (default: events)</span>
+
+<span class="sd">            조회 가능한 유형::</span>
+
+<span class="sd">                &#39;events&#39;   역사적 사건</span>
+<span class="sd">                &#39;births&#39;   이날 태어난 인물</span>
+<span class="sd">                &#39;deaths&#39;   이날 사망한 인물</span>
+<span class="sd">                &#39;holidays&#39; 공휴일/기념일</span>
+<span class="sd">                &#39;selected&#39; Wikipedia 선정 주요 사건</span>
+
+<span class="sd">        :param int count: 반환 건수 (default: 5)</span>
+
+<span class="sd">        :returns: 사건 리스트를 반환합니다. 실패 시 None.</span>
+
+<span class="sd">            example::</span>
+
+<span class="sd">                [</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &#39;year&#39;:  1919,</span>
+<span class="sd">                        &#39;text&#39;:  &#39;The March 1st Movement begins in Korea...&#39;,</span>
+<span class="sd">                        &#39;pages&#39;: [&#39;March 1st Movement&#39;, &#39;Korea&#39;],  # 관련 Wikipedia 문서</span>
+<span class="sd">                    },</span>
 <span class="sd">                    ...</span>
 <span class="sd">                ]</span>
 <span class="sd">                or None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">search_topic</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="n">search_type</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">res</span> <span class="k">if</span> <span class="s1">&#39;다시보기&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">v</span><span class="p">[</span><span class="n">search_type</span><span class="p">]]</span></div>
+        <span class="k">if</span> <span class="n">event_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_list</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">event_type</span><span class="si">}</span><span class="s1">&quot; not support&#39;</span><span class="p">)</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://en.wikipedia.org/api/rest_v1/feed/onthisday/</span><span class="si">{</span><span class="n">event_type</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">month</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">day</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0&#39;</span><span class="p">},</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">data</span>  <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">event_type</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">items</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">[:</span><span class="n">count</span><span class="p">]:</span>
+            <span class="n">pages</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pages&#39;</span><span class="p">,</span> <span class="p">[])]</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s1">&#39;year&#39;</span><span class="p">:</span>  <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+                <span class="s1">&#39;text&#39;</span><span class="p">:</span>  <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+                <span class="s1">&#39;pages&#39;</span><span class="p">:</span> <span class="n">pages</span><span class="p">,</span>
+            <span class="p">})</span>
+        <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">result</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="OnThisDay.search_s">
+<a class="viewcode-back" href="../../libraries/collect.html#openpibo.collect.OnThisDay.search_s">[문서]</a>
+    <span class="k">def</span> <span class="nf">search_s</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">month</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">day</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">event_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;events&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        특정 날짜의 역사적 사건 1개를 반환합니다. (block 전용)</span>
+
+<span class="sd">        Wikipedia 선정 주요 사건(selected) 중 첫 번째 항목을 반환합니다.</span>
+
+<span class="sd">        example::</span>
+
+<span class="sd">            result = otd.search_s(3, 1)</span>
+<span class="sd">            result = otd.search_s(8, 15, &#39;births&#39;)</span>
+
+<span class="sd">        :param int month:      월 (1~12)</span>
+<span class="sd">        :param int day:        일 (1~31)</span>
+<span class="sd">        :param str event_type: 조회 유형 (default: events)</span>
+
+<span class="sd">        :returns: ``&#39;[연도] 사건 내용&#39;`` 형식의 문자열, 실패 시 None</span>
+
+<span class="sd">            example::</span>
+
+<span class="sd">                &#39;[1919] The March 1st Movement begins in Korea...&#39;</span>
+<span class="sd">                or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">event_type</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span></div>
 </div>
 
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-  <span class="n">wiki</span> <span class="o">=</span> <span class="n">Wikipedia</span><span class="p">()</span>
-  <span class="n">weather</span> <span class="o">=</span> <span class="n">Weather</span><span class="p">()</span>
-  <span class="n">news</span> <span class="o">=</span> <span class="n">News</span><span class="p">()</span>
+    <span class="n">wiki</span>    <span class="o">=</span> <span class="n">Wikipedia</span><span class="p">()</span>
+    <span class="n">weather</span> <span class="o">=</span> <span class="n">Weather</span><span class="p">()</span>
+    <span class="n">news</span>    <span class="o">=</span> <span class="n">News</span><span class="p">()</span>
+    <span class="n">er</span>      <span class="o">=</span> <span class="n">ExchangeRate</span><span class="p">()</span>
+    <span class="n">aq</span>      <span class="o">=</span> <span class="n">AirQuality</span><span class="p">()</span>
 
-  <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;wiki:&#39;</span><span class="p">,</span> <span class="n">wiki</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;로봇&#39;</span><span class="p">))</span>
-  <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;weather:&#39;</span><span class="p">,</span> <span class="n">weather</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;서울&#39;</span><span class="p">))</span>
-  <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;news:&#39;</span><span class="p">,</span> <span class="n">news</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;속보&#39;</span><span class="p">))</span>
+    <span class="n">trivia</span>  <span class="o">=</span> <span class="n">Trivia</span><span class="p">()</span>
+    <span class="n">country</span> <span class="o">=</span> <span class="n">Country</span><span class="p">()</span>
+    <span class="n">otd</span>     <span class="o">=</span> <span class="n">OnThisDay</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;wiki:&#39;</span><span class="p">,</span>      <span class="n">wiki</span><span class="o">.</span><span class="n">search_s</span><span class="p">(</span><span class="s1">&#39;로봇&#39;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;weather:&#39;</span><span class="p">,</span>   <span class="n">weather</span><span class="o">.</span><span class="n">search_s</span><span class="p">(</span><span class="s1">&#39;서울&#39;</span><span class="p">,</span> <span class="s1">&#39;today&#39;</span><span class="p">,</span> <span class="s1">&#39;weather&#39;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;news:&#39;</span><span class="p">,</span>      <span class="n">news</span><span class="o">.</span><span class="n">search_s</span><span class="p">(</span><span class="s1">&#39;속보&#39;</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;exchange:&#39;</span><span class="p">,</span>  <span class="n">er</span><span class="o">.</span><span class="n">search_s</span><span class="p">(</span><span class="s1">&#39;USD&#39;</span><span class="p">,</span> <span class="s1">&#39;KRW&#39;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;air:&#39;</span><span class="p">,</span>       <span class="n">aq</span><span class="o">.</span><span class="n">search_s</span><span class="p">(</span><span class="s1">&#39;서울&#39;</span><span class="p">,</span> <span class="s1">&#39;pm10_grade&#39;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;trivia:&#39;</span><span class="p">,</span>    <span class="n">trivia</span><span class="o">.</span><span class="n">search_s</span><span class="p">(</span><span class="s1">&#39;과학&#39;</span><span class="p">,</span> <span class="s1">&#39;easy&#39;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;country:&#39;</span><span class="p">,</span>   <span class="n">country</span><span class="o">.</span><span class="n">search_s</span><span class="p">(</span><span class="s1">&#39;korea&#39;</span><span class="p">,</span> <span class="s1">&#39;capital&#39;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;onthisday:&#39;</span><span class="p">,</span> <span class="n">otd</span><span class="o">.</span><span class="n">search_s</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;events&#39;</span><span class="p">))</span>
 </pre></div>
 
            </div>
@@ -559,7 +1241,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025 THEMAKER. All rights reserved. openpibo-python-0.9.3.3.</p>
+    <p>&#169; Copyright 2025 THEMAKER. All rights reserved. openpibo-python-0.9.3.6.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

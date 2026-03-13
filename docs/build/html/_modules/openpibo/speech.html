@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>openpibo.speech &mdash; OPENPIBO 0.9.3.3 문서</title>
+  <title>openpibo.speech &mdash; OPENPIBO 0.9.3.6 문서</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -16,7 +16,7 @@
     <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/_modules/openpibo/speech.html" />
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=3314e875"></script>
+      <script src="../../_static/documentation_options.js?v=6b1d76cb"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -109,16 +109,24 @@
 
 <span class="kn">import</span> <span class="nn">csv</span>
 <span class="kn">import</span> <span class="nn">random</span>
-<span class="c1">#import io</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="c1">#from konlpy.tag import Mecab</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">napi_host</span><span class="p">,</span> <span class="n">sapi_host</span>
 <span class="kn">from</span> <span class="nn">.modules.speech.mtranslate</span> <span class="kn">import</span> <span class="n">translate</span>
-<span class="kn">from</span> <span class="nn">.modules.speech.mtts</span> <span class="kn">import</span> <span class="n">OnDeviceTTS</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">onnxruntime</span> <span class="k">as</span> <span class="nn">ort</span>
+<span class="kn">import</span> <span class="nn">soundfile</span> <span class="k">as</span> <span class="nn">sf</span>
+<span class="kn">from</span> <span class="nn">.modules.speech.mtts</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">load_text_to_speech</span><span class="p">,</span>
+    <span class="n">load_voice_style</span><span class="p">,</span>
+    <span class="n">TextToSpeech</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">import</span> <span class="nn">openpibo_models</span>
 <span class="c1">#current_path = os.path.dirname(os.path.realpath(__file__))</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;ORT_LOGGING_LEVEL&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;3&quot;</span>
 
 <div class="viewcode-block" id="speech_api">
 <a class="viewcode-back" href="../../libraries/speech.html#openpibo.speech.speech_api">[문서]</a>
@@ -234,11 +242,11 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">verbose</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-      <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;arecord -D dmic_sv -c2 -r 16000 -f S32_LE -d </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s1"> -t wav -q -vv -V streo stream.raw;sox stream.raw -c 1 -b 16 </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">;rm stream.raw&#39;</span><span class="p">)</span>
+      <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;arecord -D plug:dmic_sv -c2 -r 16000 -f S32_LE -d </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s1"> -t wav -q -vv -V streo stream.raw;sox stream.raw -c 1 -b 16 </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">;rm stream.raw&#39;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-      <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;arecord -D dmic_sv -c2 -r 16000 -f S32_LE -d </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s1"> -t wav -q stream.raw;sox stream.raw -q -c 1 -b 16 </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">;rm stream.raw&#39;</span><span class="p">)</span>
+      <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;arecord -D plug:dmic_sv -c2 -r 16000 -f S32_LE -d </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s1"> -t wav -q stream.raw;sox stream.raw -q -c 1 -b 16 </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">;rm stream.raw&#39;</span><span class="p">)</span>
 
-    <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SAPI_HOST</span> <span class="o">+</span> <span class="s1">&#39;/stt&#39;</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;file&#39;</span><span class="p">:</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)})</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;https://o-vapi.circul.us/stt&quot;</span> <span class="o">+</span> <span class="s1">&#39;/stt&#39;</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;uploadFile&#39;</span><span class="p">:</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)})</span>
 
     <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;response error: </span><span class="si">{</span><span class="n">res</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -249,6 +257,8 @@
     <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span></div>
 </div>
 
+
+<span class="n">DEFAULT_MODEL_DIR</span> <span class="o">=</span> <span class="s2">&quot;/home/pi/.model&quot;</span>
 
 <div class="viewcode-block" id="SpeechOnDevice">
 <a class="viewcode-back" href="../../libraries/speech.html#openpibo.speech.SpeechOnDevice">[문서]</a>
@@ -267,38 +277,126 @@
 <span class="sd">    # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
 <span class="sd">  &quot;&quot;&quot;</span>
 
-  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">otts</span> <span class="o">=</span> <span class="n">OnDeviceTTS</span><span class="p">()</span>
-  
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">onnx_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_MODEL_DIR</span><span class="si">}</span><span class="s2">/tts/assets/onnx&quot;</span><span class="p">,</span>
+    <span class="n">voice_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_MODEL_DIR</span><span class="si">}</span><span class="s2">/tts/assets/voice_styles&quot;</span><span class="p">,</span>
+    <span class="n">total_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="n">speed</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.05</span><span class="p">,</span>
+  <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :param str onnx_dir: ONNX 모델 디렉토리 경로</span>
+<span class="sd">    :param str voice_dir: 보이스 스타일 JSON 디렉토리 경로</span>
+<span class="sd">    :param int total_step: 디노이징 스텝 수 (높을수록 품질↑, 속도↓)</span>
+<span class="sd">    :param float speed: 말하기 속도 (높을수록 빠름)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">onnx_dir</span> <span class="o">=</span> <span class="n">onnx_dir</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">voice_dir</span> <span class="o">=</span> <span class="n">voice_dir</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">total_step</span> <span class="o">=</span> <span class="n">total_step</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">speed</span> <span class="o">=</span> <span class="n">speed</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">:</span> <span class="n">TextToSpeech</span> <span class="o">=</span> <span class="n">load_text_to_speech</span><span class="p">(</span><span class="n">onnx_dir</span><span class="p">,</span> <span class="n">use_gpu</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+ 
 <div class="viewcode-block" id="SpeechOnDevice.tts">
 <a class="viewcode-back" href="../../libraries/speech.html#openpibo.speech.SpeechOnDevice.tts">[문서]</a>
-  <span class="k">def</span> <span class="nf">tts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;tts.mp3&quot;</span><span class="p">,</span> <span class="n">voice</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s2">&quot;ko&quot;</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">tts</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;tts.wav&quot;</span><span class="p">,</span>
+    <span class="n">voice</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;m1&quot;</span><span class="p">,</span>
+    <span class="n">lang</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ko&quot;</span><span class="p">,</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    TTS(Text to Speech)</span>
+<span class="sd">    TTS(Text to Speech) — 텍스트를 음성 파일로 변환합니다.</span>
 
-<span class="sd">    Text(문자)를 Speech(말)로 변환하여 파일로 저장합니다.</span>
+<span class="sd">      example::</span>
+
+<span class="sd">        tts.tts(text=&#39;안녕하세요! 만나서 반가워요!&#39;, filename=&#39;/home/pi/tts.wav&#39;, voice=&#39;m1&#39;, lang=&#39;ko&#39;)</span>
+
+<span class="sd">    :param str text: 변환할 문장</span>
+<span class="sd">    :param str filename: 저장할 음성 파일 경로 (.wav)</span>
+<span class="sd">    :param str voice: 목소리 종류 (m1~m5/f1~f5)</span>
+<span class="sd">    :param str lang: 언어 코드 (&#39;ko&#39;, &#39;en&#39;, &#39;es&#39;, &#39;pt&#39;, &#39;fr&#39;)</span>
+<span class="sd">    :returns str: 저장된 파일 경로</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s1">&quot; must be str type&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">voice</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;m1&quot;</span><span class="p">,</span> <span class="s2">&quot;m2&quot;</span><span class="p">,</span> <span class="s2">&quot;m3&quot;</span><span class="p">,</span> <span class="s2">&quot;m4&quot;</span><span class="p">,</span> <span class="s2">&quot;m5&quot;</span><span class="p">,</span> <span class="s2">&quot;f1&quot;</span><span class="p">,</span> <span class="s2">&quot;f2&quot;</span><span class="p">,</span> <span class="s2">&quot;f3&quot;</span><span class="p">,</span> <span class="s2">&quot;f4&quot;</span><span class="p">,</span> <span class="s2">&quot;f5&quot;</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;voice must be 0~9, got </span><span class="si">{</span><span class="n">voice</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">lang</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;ko&quot;</span><span class="p">,</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="s2">&quot;es&quot;</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="s2">&quot;fr&quot;</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported lang: </span><span class="si">{</span><span class="n">lang</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">voice_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">voice_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">voice</span><span class="si">}</span><span class="s2">.json&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">voice_path</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Voice style not found: </span><span class="si">{</span><span class="n">voice_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">style</span> <span class="o">=</span> <span class="n">load_voice_style</span><span class="p">([</span><span class="n">voice_path</span><span class="p">])</span>
+    <span class="n">wav</span><span class="p">,</span> <span class="n">duration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">(</span>
+      <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
+      <span class="n">lang</span><span class="o">=</span><span class="n">lang</span><span class="p">,</span>
+      <span class="n">style</span><span class="o">=</span><span class="n">style</span><span class="p">,</span>
+      <span class="n">total_step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">total_step</span><span class="p">,</span>
+      <span class="n">speed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">speed</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">out_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">out_dir</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">out_dir</span><span class="p">):</span>
+      <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">out_dir</span><span class="p">)</span>
+
+    <span class="c1"># wav 저장</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">wav</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">sample_rate</span> <span class="o">*</span> <span class="n">duration</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">())]</span>
+    <span class="n">sf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SpeechOnDevice.stt">
+<a class="viewcode-back" href="../../libraries/speech.html#openpibo.speech.SpeechOnDevice.stt">[문서]</a>
+  <span class="k">def</span> <span class="nf">stt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;stream.wav&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    STT(Speech to Text)</span>
+
+<span class="sd">    목소리를 녹음한 후 faster-whisper로 텍스트로 변환합니다.</span>
 
 <span class="sd">    example::</span>
 
-<span class="sd">      speech_od.tts(text=&#39;안녕하세요! 만나서 반가워요!&#39;, &#39;ko&#39;, &#39;/home/pi/tts.mp3&#39;)</span>
+<span class="sd">      speech_od.stt(timeout=5)</span>
 
-<span class="sd">    :param str text: 변환할 문장구</span>
-
-<span class="sd">    :param int voice: 목소리 번호 0 - 5</span>
-
-<span class="sd">    :param str lang: 사용할 언어(ko)</span>
-
-<span class="sd">    :param str filename: 변환된 음성파일의 경로 (mp3)</span>
+<span class="sd">    :param str filename: 녹음 파일 저장 경로 (.wav)</span>
+<span class="sd">    :param int timeout: 녹음 시간(s)</span>
+<span class="sd">    :param bool verbose: 녹음 진행 출력 여부</span>
+<span class="sd">    :param str lang: 언어 힌트 (None=자동감지, &#39;ko&#39;, &#39;en&#39; 등)</span>
+<span class="sd">    :returns: (인식된 문자열, 감지된 언어)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 녹음 (Speech 클래스와 동일)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+      <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;arecord -D plug:dmic_sv -c2 -r 16000 -f S32_LE -d </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s1"> -t wav -q -vv -V streo stream.raw;sox stream.raw -c 1 -b 16 </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">;rm stream.raw&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;arecord -D plug:dmic_sv -c2 -r 16000 -f S32_LE -d </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s1"> -t wav -q stream.raw;sox stream.raw -q -c 1 -b 16 </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">;rm stream.raw&#39;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s1">&quot; must be str type&#39;</span><span class="p">)</span>
+    <span class="c1"># 다운로드</span>
+    <span class="c1">#python3 -c &quot;</span>
+    <span class="c1">#from huggingface_hub import snapshot_download</span>
+    <span class="c1">#snapshot_download(</span>
+    <span class="c1">#    repo_id=&#39;Systran/faster-whisper-base&#39;,  # 또는 faster-whisper-small</span>
+    <span class="c1">#    local_dir=&#39;/home/pi/.model/stt/whisper-base&#39;</span>
+    <span class="c1">#)</span>
+    <span class="c1">#&quot;</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">otts</span><span class="o">.</span><span class="n">text_to_speech</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">voice</span><span class="o">=</span><span class="n">voice</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="n">lang</span><span class="p">,</span> <span class="n">static</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+    <span class="c1"># STT (faster-whisper)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_stt_model&#39;</span><span class="p">):</span>
+      <span class="kn">from</span> <span class="nn">faster_whisper</span> <span class="kn">import</span> <span class="n">WhisperModel</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_stt_model</span> <span class="o">=</span> <span class="n">WhisperModel</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_MODEL_DIR</span><span class="si">}</span><span class="s2">/stt/whisper-base&quot;</span><span class="p">,</span>
+        <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
+        <span class="n">local_files_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">compute_type</span><span class="o">=</span><span class="s2">&quot;int8&quot;</span><span class="p">,</span>
+      <span class="p">)</span>
+
+    <span class="n">segments</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stt_model</span><span class="o">.</span><span class="n">transcribe</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">vad_filter</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="n">lang</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">seg</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">segments</span><span class="p">])</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;lang&quot;</span><span class="p">:</span><span class="n">info</span><span class="o">.</span><span class="n">language</span><span class="p">}</span></div>
 </div>
 
-
-
+ 
 <div class="viewcode-block" id="Dialog">
 <a class="viewcode-back" href="../../libraries/speech.html#openpibo.speech.Dialog">[문서]</a>
 <span class="k">class</span> <span class="nc">Dialog</span><span class="p">:</span>
@@ -570,9 +668,8 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;systemctl start llama-server&quot;</span><span class="p">)</span>    
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;systemctl start llama-server&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Connect to http:{Device IP}:50020 for LLM Web-UI&quot;</span><span class="p">)</span></div>
-
 
 
 <div class="viewcode-block" id="Dialog.call_llm">
@@ -590,14 +687,14 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://0.0.0.0:50020/v1/chat/completions&quot;</span>
-    
+
     <span class="c1"># Chat API 메시지 배열 구성</span>
     <span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="n">system_prompt</span><span class="p">:</span>
         <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">system_prompt</span><span class="p">})</span>
     <span class="k">if</span> <span class="n">prompt</span><span class="p">:</span>
         <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">})</span>
-    
+
     <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
       <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;llm-model.gguf&quot;</span><span class="p">,</span>  <span class="c1"># 모델명 (환경에 맞게 수정)</span>
       <span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="n">messages</span><span class="p">,</span>
@@ -605,15 +702,15 @@
       <span class="s2">&quot;top_p&quot;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">,</span>        <span class="c1"># 누적 확률 임계값</span>
       <span class="s2">&quot;max_tokens&quot;</span><span class="p">:</span> <span class="n">max_tokens</span>     <span class="c1"># 생성 최대 토큰 수 (필요에 따라 조정)</span>
     <span class="p">}</span>
-    
+
     <span class="k">try</span><span class="p">:</span>
       <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
       <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>  <span class="c1"># 4xx, 5xx 에러 발생 시 예외 처리</span>
     <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;LLM 서버 호출 실패: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    
+
     <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-    
+
     <span class="c1"># OpenAI Chat API 표준 응답 형식에 따른 처리</span>
     <span class="k">if</span> <span class="s2">&quot;choices&quot;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
       <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;message&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
@@ -634,7 +731,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;systemctl stop llama-server&quot;</span><span class="p">)</span>    </div>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;systemctl stop llama-server&quot;</span><span class="p">)</span></div>
 </div>
 
 </pre></div>
@@ -646,7 +743,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025 THEMAKER. All rights reserved. openpibo-python-0.9.3.3.</p>
+    <p>&#169; Copyright 2025 THEMAKER. All rights reserved. openpibo-python-0.9.3.6.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
