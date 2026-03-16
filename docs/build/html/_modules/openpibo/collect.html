@@ -702,8 +702,8 @@
 <span class="sd">            example::</span>
 
 <span class="sd">                {</span>
-<span class="sd">                    &#39;pm10_grade&#39;: &#39;좋음&#39;,  # 미세먼지 등급</span>
-<span class="sd">                    &#39;pm25_grade&#39;: &#39;보통&#39;,  # 초미세먼지 등급</span>
+<span class="sd">                    &#39;pm10&#39;: &#39;좋음&#39;,  # 미세먼지 등급</span>
+<span class="sd">                    &#39;pm25&#39;: &#39;보통&#39;,  # 초미세먼지 등급</span>
 <span class="sd">                }</span>
 <span class="sd">                or None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -718,10 +718,10 @@
 
         <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s1">&#39;html.parser&#39;</span><span class="p">)</span>
 
-        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;pm10_grade&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;pm25_grade&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;pm10&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;pm25&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
 
         <span class="c1"># 구조: &lt;a class=&quot;box&quot;&gt;&lt;strong class=&quot;title&quot;&gt;미세먼지&lt;/strong&gt;&lt;span class=&quot;txt&quot;&gt;좋음&lt;/span&gt;&lt;/a&gt;</span>
-        <span class="n">label_map</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;미세먼지&#39;</span><span class="p">:</span> <span class="s1">&#39;pm10_grade&#39;</span><span class="p">,</span> <span class="s1">&#39;초미세먼지&#39;</span><span class="p">:</span> <span class="s1">&#39;pm25_grade&#39;</span><span class="p">}</span>
+        <span class="n">label_map</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;미세먼지&#39;</span><span class="p">:</span> <span class="s1">&#39;pm10&#39;</span><span class="p">,</span> <span class="s1">&#39;초미세먼지&#39;</span><span class="p">:</span> <span class="s1">&#39;pm25&#39;</span><span class="p">}</span>
         <span class="k">for</span> <span class="n">box</span> <span class="ow">in</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;a.box&#39;</span><span class="p">):</span>
             <span class="n">title_tag</span> <span class="o">=</span> <span class="n">box</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;strong&#39;</span><span class="p">,</span> <span class="n">class_</span><span class="o">=</span><span class="s1">&#39;title&#39;</span><span class="p">)</span>
             <span class="n">txt_tag</span>   <span class="o">=</span> <span class="n">box</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;span&#39;</span><span class="p">,</span>   <span class="n">class_</span><span class="o">=</span><span class="s1">&#39;txt&#39;</span><span class="p">)</span>
@@ -752,8 +752,8 @@
 
 <span class="sd">            조회 가능한 항목::</span>
 
-<span class="sd">                &#39;pm10_grade&#39; 미세먼지 등급 (좋음/보통/나쁨/매우나쁨)</span>
-<span class="sd">                &#39;pm25_grade&#39; 초미세먼지 등급</span>
+<span class="sd">                &#39;pm10&#39; 미세먼지 등급 (좋음/보통/나쁨/매우나쁨)</span>
+<span class="sd">                &#39;pm25&#39; 초미세먼지 등급</span>
 
 <span class="sd">        :returns: 해당 항목의 값 문자열, 실패 시 None</span>
 

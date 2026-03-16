@@ -562,8 +562,8 @@ Functions:
             example::
 
                 {
-                    'pm10_grade': '좋음',  # 미세먼지 등급
-                    'pm25_grade': '보통',  # 초미세먼지 등급
+                    'pm10': '좋음',  # 미세먼지 등급
+                    'pm25': '보통',  # 초미세먼지 등급
                 }
                 or None
         """
@@ -578,10 +578,10 @@ Functions:
 
         soup = BeautifulSoup(resp.text, 'html.parser')
 
-        result = {'pm10_grade': None, 'pm25_grade': None}
+        result = {'pm10': None, 'pm25': None}
 
         # 구조: <a class="box"><strong class="title">미세먼지</strong><span class="txt">좋음</span></a>
-        label_map = {'미세먼지': 'pm10_grade', '초미세먼지': 'pm25_grade'}
+        label_map = {'미세먼지': 'pm10', '초미세먼지': 'pm25'}
         for box in soup.select('a.box'):
             title_tag = box.find('strong', class_='title')
             txt_tag   = box.find('span',   class_='txt')
@@ -609,8 +609,8 @@ Functions:
 
             조회 가능한 항목::
 
-                'pm10_grade' 미세먼지 등급 (좋음/보통/나쁨/매우나쁨)
-                'pm25_grade' 초미세먼지 등급
+                'pm10' 미세먼지 등급 (좋음/보통/나쁨/매우나쁨)
+                'pm25' 초미세먼지 등급
 
         :returns: 해당 항목의 값 문자열, 실패 시 None
 
