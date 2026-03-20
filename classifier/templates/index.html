@@ -8,142 +8,232 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
-  <link rel="stylesheet" href="../static/index.css?ver=240701v6" />
+  <link rel="stylesheet" href="../static/index.css?ver=260320v1" />
   <link rel="shortcut icon" href="../static/icon.png?ver=240319v1" type="image/x-icon" />
-
   <script src="../static/jszip.min.js"></script>
   <script src="../static/tf.min-3.11.0.js"></script>
 </head>
 
 <body>
-  <!-- 상단 바 -->
+  <!-- ====== HEADER ====== -->
   <header class="title">
     <div style="float:left">
-      <h2>
-        <i class="fa-solid fa-glasses"></i> 이미지 분류
-      </h2>
+      <h2><i class="fa-solid fa-glasses"></i> 이미지 분류</h2>
     </div>
     <div style="float:right">
-      <h2 style="display: flex; align-items: center; justify-content: center;">
-        <a id="fullscreen_bt" title="Full Screen">
-          <span id='fullscreen_txt'></span>
-        </a>&nbsp;&nbsp;
-        <a id='logo_bt'>
-          <img src="../static/themaker.png" style="height:22px" alt="" />
-        </a>
+      <h2 style="display:flex;align-items:center;gap:10px;">
+        <a id="fullscreen_bt" title="Full Screen"><span id="fullscreen_txt"></span></a>
+        <a id="logo_bt"><img src="../static/themaker.png" style="height:20px" alt="" /></a>
       </h2>
     </div>
   </header>
 
+  <!-- ====== POPUPS ====== -->
+  <div class="alert-popup" id="alertPopup" style="display:none;">
+    <div class="alert-popup-content">
+      <p id="alertMessageElement"></p>
+      <div class="popup-buttons"><button id="alertOkBtn">확인</button></div>
+    </div>
+  </div>
+  <div class="prompt-popup" id="promptPopup" style="display:none;">
+    <div class="prompt-popup-content">
+      <p id="promptMessageElement"></p>
+      <input type="text" id="promptInputElement" />
+      <div class="popup-buttons">
+        <button id="promptOkBtn">확인</button>
+        <button id="promptCancelBtn">취소</button>
+      </div>
+    </div>
+  </div>
+  <div class="confirm-popup" id="confirmPopup" style="display:none;">
+    <div class="confirm-popup-content">
+      <p id="confirmMessageElement"></p>
+      <div class="popup-buttons">
+        <button id="confirmOkBtn">확인</button>
+        <button id="confirmCancelBtn">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== STEP INDICATOR ====== -->
+  <div class="step-bar">
+    <div class="step active" id="step1" data-step="1">
+      <div class="step-circle">1</div>
+      <div class="step-label">클래스 만들기</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="step2" data-step="2">
+      <div class="step-circle">2</div>
+      <div class="step-label">샘플 촬영</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="step3" data-step="3">
+      <div class="step-circle">3</div>
+      <div class="step-label">학습하기</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="step4" data-step="4">
+      <div class="step-circle">4</div>
+      <div class="step-label">예측하기</div>
+    </div>
+  </div>
+
+  <!-- ====== MAIN 3-PANEL ====== -->
   <main>
-    <div class="alert-popup" id="alertPopup" style="display:none;">
-      <div class="alert-popup-content">
-        <p id="alertMessageElement">여기에 알림 메시지가 표시됩니다.</p>
-        <div class="popup-buttons">
-          <button id="alertOkBtn">확인</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="prompt-popup" id="promptPopup" style="display:none;">
-      <div class="prompt-popup-content">
-        <p id="promptMessageElement">여기에 프롬프트 메시지가 표시됩니다.</p>
-        <input type="text" id="promptInputElement" />
-        <div class="popup-buttons">
-          <button id="promptOkBtn">확인</button>
-          <button id="promptCancelBtn">취소</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="confirm-popup" id="confirmPopup" style="display:none;">
-      <div class="confirm-popup-content">
-        <p id="confirmMessageElement">여기에 확인 메시지가 표시됩니다.</p>
-        <div class="popup-buttons">
-          <button id="confirmOkBtn">확인</button>
-          <button id="confirmCancelBtn">취소</button>
-        </div>
-      </div>
-    </div>
-
     <div class="container">
-      <!-- 왼쪽 패널: 클래스 관리 -->
+
+      <!-- LEFT: 클래스 관리 -->
       <div class="left-panel">
-        <h2><i class="fas fa-th-list"></i> 클래스 관리</h2>
-        <div id="class-management">
-          <input type="text" id="class-name" placeholder="클래스 이름" onkeydown="if(event.key==='Enter') addClass()">
-          <button onclick="addClass()"><i class="fa-solid fa-folder-plus"></i> 클래스 추가</button>
+        <div class="panel-header">
+          <i class="fas fa-th-list"></i> 클래스 관리
         </div>
+
+        <div id="class-management">
+          <div class="class-add-row">
+            <input type="text" id="class-name" placeholder="클래스 이름 입력"
+              onkeydown="if(event.key==='Enter') addClass()">
+            <button onclick="addClass()" class="btn-teal">
+              <i class="fa-solid fa-plus"></i> 추가
+            </button>
+          </div>
+        </div>
+
         <div id="class-list">
-          <!-- 동적으로 추가되는 클래스 및 이미지 컬렉션 -->
+          <!-- 동적으로 추가 -->
+        </div>
+
+        <div class="panel-hint" id="class-hint">
+          <i class="fa-solid fa-lightbulb"></i> 클래스를 만들고 클릭해서 선택하세요
         </div>
       </div>
 
-      <!-- 중앙 패널: 이미지 학습 -->
+      <!-- CENTER: 카메라 & 학습 -->
       <div class="center-panel">
-        <h2><i class="fas fa-camera"></i> 이미지 학습</h2>
-        <!-- 카메라 제어: 4개의 버튼 -->
-        <div class="button-group" id="camera-controls">
-          <button id="enable-camera-btn" onclick="if(!cameraEnabled){toggleCamera();}"><i class="fas fa-video"></i> 카메라
-            켜기</button>
-          <button id="disable-camera-btn" onclick="if(cameraEnabled){toggleCamera();}"><i
-              class="fas fa-video-slash"></i> 카메라 끄기</button>
-          <button id="capture-button" ontouchstart="startCapturingImages(); event.preventDefault();"
-            ontouchend="stopCapturingImages()" ontouchcancel="stopCapturingImages()"
-            onmousedown="startCapturingImages(); event.preventDefault();" onmouseup="stopCapturingImages()"
-            onmouseleave="stopCapturingImages()">
-            <i class="fa-solid fa-plus"></i> 샘플 추가
+        <div class="panel-header">
+          <i class="fas fa-camera"></i> 카메라 &amp; 샘플
+        </div>
+
+        <!-- 카메라 토글 (단일 버튼) -->
+        <div class="camera-controls">
+          <button id="camera-toggle-btn" class="btn-camera-toggle" onclick="toggleCamera()">
+            <i class="fas fa-video"></i> 카메라 켜기
           </button>
+          <!-- 기존 JS 호환용 숨김 버튼 -->
+          <button id="enable-camera-btn"  style="display:none"></button>
+          <button id="disable-camera-btn" style="display:none"></button>
         </div>
-        <!-- 카메라 섹션 -->
+
+        <!-- 카메라 피드 -->
         <div id="camera-section">
-          <img id="camera" alt="Camera Feed"
-            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HwAF/gL+eCDUMAAAAABJRU5ErkJggg==" />
+          <div class="camera-frame" id="camera-frame">
+            <img id="camera" alt="Camera Feed"
+              src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HwAF/gL+eCDUMAAAAABJRU5ErkJggg==" />
+            <div class="camera-off-overlay" id="camera-off-overlay">
+              <i class="fas fa-video-slash fa-2x"></i>
+              <span>카메라가 꺼져 있습니다</span>
+            </div>
+          </div>
         </div>
-        <!-- 학습 버튼 -->
-        <div class="button-group" id="train-controls">
-          <button onclick="trainAndPredict()"><i class="fa-solid fa-graduation-cap"></i> 학습하기</button>
+
+        <!-- 선택된 클래스 표시 -->
+        <div class="selected-class-info" id="selected-class-info">
+          <i class="fa-solid fa-arrow-pointer"></i>
+          <span id="selected-class-name">클래스를 선택하세요</span>
         </div>
+
+        <!-- 샘플 추가 버튼 -->
+        <button id="capture-button"
+          ontouchstart="startCapturingImages(); event.preventDefault();"
+          ontouchend="stopCapturingImages()" ontouchcancel="stopCapturingImages()"
+          onmousedown="startCapturingImages(); event.preventDefault();"
+          onmouseup="stopCapturingImages()" onmouseleave="stopCapturingImages()"
+          class="btn-capture btn-disabled" id="capture-button">
+          <i class="fa-solid fa-camera-retro"></i> 꾹 눌러서 샘플 추가
+        </button>
+
         <!-- 학습 파라미터 -->
         <div id="training-params">
-          <label for="epochs">
-            <p id="epochs-text">반복 학습 횟수: </p>
-          </label>
-          <input type="number" id="epochs" value="15" min="1" max="100">
-          <label for="batch-size">
-            <p id="batch-text">한번에 학습할 이미지 수: </p>
-          </label>
-          <input type="number" id="batch-size" value="32" min="1" max="256">
+          <div class="param-item">
+            <label for="epochs">반복 학습 횟수</label>
+            <input type="number" id="epochs" value="15" min="1" max="100">
+          </div>
+          <div class="param-item">
+            <label for="batch-size">배치 크기</label>
+            <input type="number" id="batch-size" value="32" min="1" max="256">
+          </div>
+        </div>
+
+        <!-- 학습 버튼 -->
+        <div class="button-group" id="train-controls">
+          <button onclick="trainAndPredict()" class="btn-teal btn-large" id="train-btn">
+            <i class="fa-solid fa-graduation-cap"></i> 학습 시작
+          </button>
         </div>
       </div>
 
-      <!-- 오른쪽 패널: 결과 / 예측 -->
+      <!-- RIGHT: 결과 & 예측 -->
       <div class="right-panel">
-        <h2><i class="fas fa-laptop"></i> 결과 및 예측</h2>
-        <!-- 내보내기, 불러오기, 변환 버튼 그룹 -->
+        <div class="panel-header">
+          <i class="fas fa-laptop"></i> 결과 &amp; 예측
+        </div>
+
+        <!-- 모델 관리 버튼 -->
         <div class="button-group" id="model-controls">
           <input type="file" id="model-upload" onchange="importModel(event)" style="display:none">
-          <button onclick="document.getElementById('model-upload').click()"><i class="fa-solid fa-upload"></i> 불러오기(tfjs)</button>
-          <button onclick="exportModelAsZip()"><i class="fa-solid fa-download"></i> 내보내기(tfjs)</button>
-          <button id="convertToH5_bt" onclick="convertToH5()"><i class="fas fa-check"></i> mymodel 저장(keras)</button>
-          <!--<input type="file" id="model-convert-upload" style="display:none" accept=".zip">-->
+          <button onclick="document.getElementById('model-upload').click()" class="btn-sm">
+            <i class="fa-solid fa-upload"></i> 불러오기
+          </button>
+          <button onclick="exportModelAsZip()" class="btn-sm">
+            <i class="fa-solid fa-download"></i> 내보내기
+          </button>
+          <button id="convertToH5_bt" onclick="convertToH5()" class="btn-sm btn-teal">
+            <i class="fas fa-save"></i> keras 저장
+          </button>
         </div>
-        <!-- 진행 상황 영역 -->
+
+        <!-- 학습 진행 -->
         <div id="progress-section">
-          <p id="training-progress">초기화 중입니다.</p>
-          <progress id="progress-bar" value="0" max="100"></progress>
+          <div class="progress-header">
+            <span id="progress-label">준비 중</span>
+            <span id="progress-pct"></span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+          </div>
+          <p id="training-progress" class="progress-detail">초기화 중입니다.</p>
         </div>
-        <!-- 예측 결과 영역 -->
+
+        <!-- 예측 결과 -->
         <div id="prediction-section">
-          <h2><i class="fas fa-chart-line"></i> 예측 결과</h2>
-          <button id="preview-btn" onclick="setPreviewMode()"><i class="fas fa-eye"></i> 미리보기</button>
-          <button id="inference-btn" onclick="setInferenceMode()"><i class="fas fa-brain"></i> 추론하기</button>
-          <p id="prediction-result">아직 예측이 없습니다</p>
-          <p id="preview-status">(미리보기 실행 중)</p>
+          <div class="panel-subheader">
+            <i class="fas fa-chart-bar"></i> 예측 결과
+            <span class="inference-dot" id="inference-dot" title="추론 실행 중"></span>
+          </div>
+
+          <div class="inference-controls">
+            <button id="inference-toggle-btn" onclick="toggleInference()" class="btn-sm btn-teal">
+              <i class="fas fa-brain"></i> 추론 시작
+            </button>
+          </div>
+
+          <!-- 기존 JS 호환용 숨김 버튼 -->
+          <button id="preview-btn"   onclick="setPreviewMode()"   style="display:none"></button>
+          <button id="inference-btn" onclick="setInferenceMode()" style="display:none"></button>
+
+          <div id="preview-status" class="inference-status"></div>
+
+          <!-- 확률 바 (동적 생성) -->
+          <div id="prediction-bars"></div>
+
+          <!-- 기존 JS 호환용 숨김 요소 -->
+          <p id="prediction-result" style="display:none"></p>
         </div>
       </div>
+
     </div>
   </main>
+
   <script src="../static/index.js?ver=240701v6"></script>
+  <script src="../static/classifier_extra.js?ver=260320v1"></script>
 </body>
 </html>

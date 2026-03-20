@@ -1,575 +1,733 @@
+/* ============================================================
+   classifier.css — Image Classifier UI
+   IDE와 동일한 CSS 변수/폰트 사용
+   ============================================================ */
+
 @font-face {
-    font-family: "Malgun Gothic";
-    font-style: normal;
-    src: local("Malgun Gothic"), local("Dotum"), local("Gulim");
+  font-family: "Malgun Gothic";
+  font-style: normal;
+  src: local("Malgun Gothic"), local("Dotum"), local("Gulim");
 }
 
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  --mid-gray:     #6c6c6c;
+  --yellow:       #f4de3d;
+  --dark-yellow:  #f4d85a;
+  --light-green:  #edf5e0;
+  --light-yellow: rgb(248, 242, 172);
+  --teal:         #13bfd5;
+  --dark-teal:    #11abbf;
+  --red:          #f16449;
+  --dark-red:     #d85a41;
+
+  --font-ko: "Noto Sans KR", "Noto Sans CJK KR", "맑은 고딕", "malgun gothic",
+    "Apple SD Gothic Neo", "Droid Sans", sans-serif;
+
+  --header-h:   3.1rem;
+  --stepbar-h:  52px;
+  --border:     1px solid rgba(0,0,0,0.09);
+  --panel-bg:   #f8f8f6;
+  --radius:     10px;
 }
 
-html,
-body {
-    /* 모바일 pinch zoom 방지 */
-    touch-action: pan-x pan-y;
-    height: 100%;
-    font-size: 10px;
-    --mid-gray: #6c6c6c;
-    --yellow: #f4de3d;
-    --dark-yellow: #f4d85a;
-    --light-green: #edf5e0;
-    --light-yellow: rgb(248, 242, 172);
-    --teal: #13bfd5;
-    --dark-teal: #11abbf;
-    --red: #f16449;
-    --dark-red: #d85a41;
+html, body {
+  touch-action: pan-x pan-y;
+  height: 100%;
+  margin: 0;
+  font-size: 10px;
+  font-family: var(--font-ko);
+  color: #1a1a1a;
+  background: #f4f4f0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-html:lang(ko) {
-    font-family: Helvetica, "맑은 고딕", "malgun gothic", "Apple SD Gothic Neo",
-        "Apple SD 산돌고딕 Neo", "Microsoft NeoGothic", "Droid sans", sans-serif;
-}
-
-body {
-    font-family: Helvetica, "맑은 고딕", "malgun gothic", "Apple SD Gothic Neo",
-        "Apple SD 산돌고딕 Neo", "Microsoft NeoGothic", "Droid sans", sans-serif;
-    color: black;
-    /* background-color: white; */
-    box-sizing: border-box;
-    font-size: 1.6rem;
-    position: relative;
-    word-break: keep-all;
-    display: flex;
-    flex-direction: column;
-    margin: 0 auto;
-}
-
-header {
-    font-weight: bold;
-}
-
+/* ── Header ─────────────────────────────────────────────── */
 header.title {
-    color: black;
-    background-color: var(--dark-yellow);
-    cursor: default;
-    width: 100%;
-    height: 3.1rem;
-    padding-left: 16px;
-    padding-right: 16px;
-    z-index: 99;
-    box-shadow: 0 3px 3px -3px #333;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: var(--header-h);
+  background: var(--dark-yellow);
+  padding: 0 14px;
+  display: flex; align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
 .title h2 {
-    margin: 0.1em auto;
-    font-family: Tahoma, sans-serif;
-    font-size: 2rem;
+  margin: 0;
+  font-family: Tahoma, sans-serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #111;
 }
 
-.title h2 > a {
-    padding: 0.3rem 0.3rem 0.3rem 0.3rem;
+header a { color: #333; }
+header a:hover { color: #000; }
+
+/* ── Step Bar ────────────────────────────────────────────── */
+.step-bar {
+  position: fixed;
+  top: var(--header-h); left: 0; right: 0;
+  z-index: 190;
+  height: var(--stepbar-h);
+  background: #fff;
+  border-bottom: var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
 }
 
-header,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    font-family: Helvetica, "맑은 고딕", "malgun gothic", "Apple SD Gothic Neo",
-        "Apple SD 산돌고딕 Neo", "Microsoft NeoGothic", "Droid sans", sans-serif;
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  opacity: 0.4;
+  transition: opacity 0.2s;
 }
 
-textarea,
-select,
-input {
-    /* font-size: 10px; */
-    color: black;
-    font-weight: normal;
-    outline: none;
-    font-family: Helvetica, "맑은 고딕", "malgun gothic", "Apple SD Gothic Neo",
-        "Apple SD 산돌고딕 Neo", "Microsoft NeoGothic", "Droid sans", sans-serif;
+.step.active  { opacity: 1; }
+.step.done    { opacity: 0.7; }
+
+.step-circle {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: #ddd;
+  color: #666;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, color 0.2s;
 }
 
-select,
-input {
-    background: rgb(248, 242, 172, 0.85);
-    border: 1px solid rgba(0, 0, 0, 0.5);
-    border-radius: 15px;
-    padding: 4px;
-    font-size: 16px !important;
+.step.active .step-circle {
+  background: var(--teal);
+  color: #fff;
 }
 
-/* 링크 스타일 */
-a:link,
-a:visited {
-    color: #0896d9;
-    text-decoration: none;
+.step.done .step-circle {
+  background: var(--dark-yellow);
+  color: #111;
 }
 
-a:hover,
-a:focus {
-    color: #0896d9;
-    cursor: pointer;
+.step-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #555;
+  white-space: nowrap;
 }
 
-.readable-hidden,
-.a11y,
-legend {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    margin: -1px;
-    clip: rect(0, 0, 0, 0);
+.step.active .step-label { color: var(--dark-teal); }
+
+.step-line {
+  width: 40px;
+  height: 2px;
+  background: #e0e0e0;
+  margin: 0 4px;
+  margin-bottom: 14px;
 }
 
-.a11y:focus {
-    top: 5px;
-    left: 50%;
-    width: auto;
-    height: auto;
-    margin: 0;
-    clip: rect(auto, auto, auto, auto);
-    background-color: #000;
-    color: #fff;
-    padding: 5px 10px;
-    transform: translateX(-50%);
-    z-index: 10;
-}
-
-.clearfix:after {
-    content: "";
-    display: block;
-    height: 0;
-    clear: both;
-    visibility: hidden;
-}
-
-body::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-    background-color: rgba(0, 0, 0, 0.1);
-}
-
-body::-webkit-scrollbar-track {
-    border-radius: 3px;
-    margin: 3px;
-    background-color: rgba(0, 0, 0, 0.1);
-}
-
-body::-webkit-scrollbar-thumb {
-    border-radius: 3px;
-    background-color: rgba(0, 0, 0, 0.2);
-}
-
-body::-webkit-scrollbar-thumb:hover {
-    border-radius: 3px;
-    background-color: rgba(0, 0, 0, 0.3);
-}
-
+/* ── Main layout ─────────────────────────────────────────── */
 main {
-    display: flex;
-    flex: 1 0 80vh;
+  margin-top: calc(var(--header-h) + var(--stepbar-h));
+  flex: 1;
+  overflow: hidden;
+  display: flex;
 }
 
-div {
-    touch-action: pan-x pan-y;
-}
-
-/* 기본 스타일 */
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background-color: #f5f5f5;
-    color: #333;
-    margin: 0;
-    box-sizing: border-box;
-}
-
-*,
-*:before,
-*:after {
-    box-sizing: inherit;
-}
-
-/* 3분할 레이아웃 컨테이너 */
 .container {
-    display: flex;
-    width: 100vw;
-    height: calc(100vh - 30px);
-    /* 상단 바 높이 제외 */
-    overflow: hidden;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ── Panels ──────────────────────────────────────────────── */
+.left-panel, .center-panel, .right-panel {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .left-panel {
-    flex: 0 0 33%;
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-right: 1px solid #ddd;
-    overflow-y: auto;
+  flex: 0 0 28%;
+  background: var(--panel-bg);
+  border-right: var(--border);
 }
 
 .center-panel {
-    flex: 0 0 34%;
-    background-color: #fff;
-    padding: 20px;
-    border-right: 1px solid #ddd;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  flex: 0 0 38%;
+  background: #fff;
+  border-right: var(--border);
+  align-items: center;
 }
 
 .right-panel {
-    flex: 0 0 33%;
-    background-color: #fff;
-    padding: 20px;
-    overflow-y: auto;
+  flex: 1;
+  background: #fff;
 }
 
-/* 제목 스타일 */
-.left-panel h2,
-.center-panel h2,
-.right-panel h2 {
-    text-align: center;
-    font-size: 1.3em;
-    padding-bottom: 10px;
+.panel-header {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  padding: 12px 14px 10px;
+  border-bottom: var(--border);
+  background: #f4f4f0;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
-/* 버튼 및 업로드 버튼 */
-button,
-label.upload-button {
-    padding: 10px 15px;
-    font-size: 0.9em;
-    border: none;
-    border-radius: 6px;
-    background-color: var(--yellow);
-    color: #333;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
+.panel-subheader {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  padding: 10px 0 8px;
+  border-bottom: var(--border);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-button:hover,
-label.upload-button:hover {
-    transform: translateY(-1px);
-    font-weight: bold;
+/* 추론 상태 도트 */
+.inference-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #ddd;
+  display: inline-block;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.inference-dot.running {
+  background: var(--teal);
+  box-shadow: 0 0 0 3px rgba(19,191,213,0.25);
+  animation: dot-pulse 1.2s infinite;
+}
+@keyframes dot-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(19,191,213,0.25); }
+  50%       { box-shadow: 0 0 0 6px rgba(19,191,213,0.1); }
 }
 
-/* 클래스 컨테이너 */
-.class-container {
-    cursor: pointer;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 10px;
-    background-color: #fafafa;
-    transition: background-color 0.3s, transform 0.2s;
+/* 추론 토글 버튼 실행 중 상태 */
+#inference-toggle-btn.running {
+  background: var(--red);
+  box-shadow: 0 3px #903c2b;
+}
+#inference-toggle-btn.running:hover { background: var(--dark-red); }
+
+/* ── Buttons ─────────────────────────────────────────────── */
+button, label.upload-button {
+  font-family: var(--font-ko);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--yellow);
+  color: #111;
+  cursor: pointer;
+  box-shadow: 0 3px var(--mid-gray);
+  transition: background 0.15s;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  -webkit-font-smoothing: antialiased;
 }
 
-.class-container:hover {
-    background-color: #f0f0f0;
-    transform: translateY(-2px);
+button:hover, label.upload-button:hover {
+  background: var(--dark-yellow);
+  font-weight: 700;
 }
 
-.class-container.selected {
-    border: 2px solid var(--yellow);
-    background-color: #fffce0;
+button:active, label.upload-button:active {
+  box-shadow: 0 1px var(--mid-gray);
+  transform: translateY(2px);
 }
 
-.class-buttons {
-    display: flex;
-    gap: 5px;
-    margin-top: 10px;
-    flex-wrap: wrap;
+button.btn-teal {
+  background: var(--teal);
+  box-shadow: 0 3px #074c55;
+}
+button.btn-teal:hover  { background: var(--dark-teal); }
+button.btn-teal:active { box-shadow: 0 1px #074c55; }
+
+button.btn-sm {
+  font-size: 12px;
+  padding: 5px 10px;
 }
 
-/* 이미지 컬렉션 및 썸네일 */
-.image-collection {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 10px;
+button.btn-large {
+  font-size: 14px;
+  padding: 10px 24px;
+  width: 100%;
+  justify-content: center;
 }
 
-.thumbnail {
-    width: 40px;
-    height: 40px;
-    object-fit: cover;
-    border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s;
+button.btn-disabled {
+  opacity: 0.4;
+  pointer-events: none;
 }
 
-.thumbnail:hover {
-    transform: scale(1.05);
-}
-
-/* 공통 버튼 그룹 */
-.button-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 15px;
-}
-
-/* 카메라 섹션 */
-#camera-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
-    width: 100%;
-    max-width: 500px;
-}
-
-#camera {
-    width: 240px;
-    height: 320px;
-    background-color: #fff;
-    border: none;
-    border-radius: 6px;
-    margin-bottom: 15px;
-}
-
-/* 학습 파라미터 */
-#training-params {
-    display: flex;
-    justify-content: space-evenly;
-    gap: 10px;
-    margin-top: 15px;
-    width: 100%;
-    max-width: 500px;
-}
-
-#training-params label,
-#training-params input {
-    font-size: 0.9em;
-}
-
-/* 진행 상황 및 예측 결과 */
-#progress-section,
-#prediction-section {
-    text-align: center;
-    margin-top: 50px;
-}
-
-#prediction-section h3 {
-    margin-bottom: 10px;
-    font-size: 1.2em;
-    color: #444;
-}
-
-#preview-status {
-    font-weight: bold;
-    color: var(--yellow);
-    animation: pulse 1s infinite;
+/* ── Class management ────────────────────────────────────── */
+.class-add-row {
+  display: flex;
+  gap: 6px;
+  padding: 10px 12px;
+  border-bottom: var(--border);
 }
 
 #class-name {
-    height: 40px;
-    /* 버튼 높이와 유사하게 설정 */
-    border-radius: 6px;
-    /* 버튼과 동일한 라운딩 */
-    box-sizing: border-box;
-    /* 패딩 포함 높이 계산 */
-    font-size: 0.95em;
-    /* 버튼과 동일한 폰트 크기 */
-    padding: 0 10px;
-    /* 수평 여백 */
-    border: 1px solid #ccc;
-    /* 기본 테두리 */
+  flex: 1;
+  height: 36px;
+  border-radius: var(--radius);
+  border: 1.5px solid #ddd;
+  padding: 0 10px;
+  font-size: 13px;
+  font-family: var(--font-ko);
+  background: #fff;
+  color: #111;
+  transition: border-color 0.15s;
+}
+#class-name:focus { border-color: var(--teal); outline: none; }
+
+#class-list { padding: 8px 10px; flex: 1; }
+
+.class-container {
+  cursor: pointer;
+  margin-bottom: 10px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  background: #fff;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
 }
 
-#epochs,
-#batch-size {
-    height: 50px;
-    /* 버튼 높이와 유사하게 설정 */
-    border-radius: 6px;
-    /* 버튼과 동일한 라운딩 */
-    box-sizing: border-box;
-    /* 패딩 포함 높이 계산 */
-    font-size: 0.95em;
-    /* 버튼과 동일한 폰트 크기 */
-    padding: 0 10px;
-    /* 수평 여백 */
-    border: 1px solid #ccc;
-    /* 기본 테두리 */
+.class-container:hover {
+  border-color: var(--teal);
+  box-shadow: 0 2px 8px rgba(19,191,213,0.1);
 }
 
-@keyframes pulse {
-
-    0%,
-    100% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.05);
-    }
+.class-container.selected {
+  border-color: var(--teal);
+  background: rgba(19,191,213,0.06);
+  box-shadow: 0 2px 10px rgba(19,191,213,0.15);
 }
 
-/* 반응형 디자인 */
-@media (max-width: 600px) {
-    .container {
-        flex-direction: column;
-        height: calc(100vh - 30px);
-    }
-
-    .left-panel,
-    .center-panel,
-    .right-panel {
-        width: 100%;
-        height: auto;
-        padding: 15px;
-        border-right: none;
-    }
-
-    #camera {
-        width: 100%;
-        height: auto;
-    }
+.class-container h3 {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-/* alert, confirm, prompt Modal */
-.alert-popup,
-.prompt-popup,
-.confirm-popup {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    /* 반투명 배경 유지 */
-    z-index: 1000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* macOS 시스템 폰트 적용 (선택 사항 - 팝업 전체에 적용) */
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+.class-sample-count {
+  font-size: 11px;
+  font-weight: 600;
+  color: #888;
+  background: #f0f0f0;
+  border-radius: 20px;
+  padding: 1px 8px;
 }
 
-/* --- Popup Content Box Styles --- */
-.alert-popup-content,
-.prompt-popup-content,
-.confirm-popup-content {
-    background-color: #fff;
-    /* 흰색 배경 유지 */
-    padding: 18px 25px;
-    /* 좌우 패딩 약간 늘림 (선택 사항) */
-    border-radius: 14px;
-    /* macOS 스타일의 둥근 모서리 (더 작게 조정) */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    min-width: 280px;
-    max-width: 400px;
-    text-align: center;
+.class-container.selected .class-sample-count {
+  background: rgba(19,191,213,0.15);
+  color: var(--dark-teal);
 }
 
-/* --- Internal Element Styles --- */
-.alert-popup-content p,
-.prompt-popup-content p,
-.confirm-popup-content p {
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-size: 1.0em;
-    /* macOS 기본 폰트 크기에 가깝게 약간 줄임 (선택 사항) */
-    line-height: 1.4;
-    /* 줄 간격 추가 */
-    word-wrap: break-word;
-    color: #333;
-    /* 약간 부드러운 검정색 */
+.image-collection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 6px 0;
+  min-height: 0;
+}
+
+.thumbnail {
+  width: 44px; height: 44px;
+  object-fit: cover;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  cursor: pointer;
+  transition: transform 0.15s, opacity 0.15s;
+}
+.thumbnail:hover { transform: scale(1.08); opacity: 0.85; }
+
+.class-buttons {
+  display: flex;
+  gap: 5px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.panel-hint {
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #999;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── Camera section ──────────────────────────────────────── */
+.camera-controls {
+  padding: 10px 14px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.btn-camera-toggle {
+  width: 100%;
+  max-width: 240px;
+  justify-content: center;
+}
+.btn-camera-toggle.active {
+  background: var(--red);
+  box-shadow: 0 3px #903c2b;
+  color: #fff;
+}
+.btn-camera-toggle.active:hover { background: var(--dark-red); }
+
+.camera-frame {
+  position: relative;
+  width: 240px;
+  height: 320px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #111;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  flex-shrink: 0;
+}
+
+#camera {
+  display: block;
+  width: 240px;
+  height: 320px;
+  object-fit: cover;
+}
+
+.camera-off-overlay {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 8px;
+  background: rgba(0,0,0,0.7);
+  color: rgba(255,255,255,0.6);
+  font-size: 13px;
+  font-weight: 500;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.camera-off-overlay.hidden { display: none; }
+
+/* 선택된 클래스 표시 */
+.selected-class-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  width: 100%;
+  max-width: 240px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #888;
+  background: #f8f8f6;
+  border-radius: var(--radius);
+  margin: 8px 0;
+  border: 1.5px dashed #ddd;
+  transition: color 0.2s, border-color 0.2s;
+}
+.selected-class-info.has-selection {
+  color: var(--dark-teal);
+  border-color: var(--teal);
+  background: rgba(19,191,213,0.05);
+}
+
+/* 샘플 추가 버튼 */
+.btn-capture {
+  width: 100%;
+  max-width: 240px;
+  justify-content: center;
+  padding: 12px;
+  font-size: 14px;
+  background: var(--teal);
+  box-shadow: 0 3px #074c55;
+  color: #111;
+  margin-bottom: 10px;
+  user-select: none;
+}
+.btn-capture:hover  { background: var(--dark-teal); }
+.btn-capture:active { box-shadow: 0 1px #074c55; }
+.btn-capture.capturing {
+  background: var(--dark-yellow);
+  animation: pulse-btn 0.5s infinite;
+}
+
+@keyframes pulse-btn {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.02); }
+}
+
+/* Training params */
+#training-params {
+  display: flex;
+  gap: 12px;
+  padding: 10px 14px;
+  width: 100%;
+  max-width: 240px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.param-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  flex: 1;
+}
+
+.param-item label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #666;
+  text-align: center;
+}
+
+#epochs, #batch-size {
+  width: 100%;
+  height: 38px;
+  border-radius: 8px;
+  border: 1.5px solid #ddd;
+  background: #fff;
+  padding: 0 8px;
+  font-size: 14px;
+  font-family: var(--font-ko);
+  color: #111;
+  text-align: center;
+  font-weight: 600;
+}
+#epochs:focus, #batch-size:focus { border-color: var(--teal); outline: none; }
+
+#train-controls {
+  padding: 0 14px 14px;
+  width: 100%;
+  max-width: 240px;
+}
+
+/* ── Right panel - progress ─────────────────────────────── */
+#progress-section {
+  padding: 14px 16px;
+  border-bottom: var(--border);
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #333;
+}
+
+#progress-pct {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--dark-teal);
+}
+
+.progress-track {
+  height: 10px;
+  background: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--teal), var(--dark-teal));
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+.progress-detail {
+  font-size: 12px;
+  color: #888;
+  margin: 0;
+  font-family: 'Courier New', monospace;
+  min-height: 1.4em;
+}
+
+/* ── Right panel - prediction ────────────────────────────── */
+#prediction-section {
+  padding: 14px 16px;
+}
+
+.inference-controls {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.inference-status {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--teal);
+  min-height: 1.4em;
+  margin-bottom: 10px;
+}
+
+.inference-status.running {
+  animation: pulse-text 1.2s infinite;
+}
+
+@keyframes pulse-text {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+/* 예측 확률 바 */
+#prediction-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pred-bar-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pred-bar-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+  width: 90px;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pred-bar-track {
+  flex: 1;
+  height: 18px;
+  background: #eee;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+
+.pred-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--teal), var(--dark-teal));
+  border-radius: 6px;
+  transition: width 0.3s ease;
+}
+
+.pred-bar-fill.top {
+  background: linear-gradient(90deg, var(--dark-yellow), #e8a800);
+}
+
+.pred-bar-pct {
+  font-size: 12px;
+  font-weight: 700;
+  color: #555;
+  width: 38px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* Model controls */
+#model-controls {
+  padding: 10px 14px;
+  border-bottom: var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-start;
+}
+
+/* ── Popups (IDE와 동일) ──────────────────────────────────── */
+.alert-popup, .prompt-popup, .confirm-popup {
+  position: fixed; inset: 0; z-index: 400;
+  background: rgba(0,0,0,0.5);
+  display: flex; justify-content: center; align-items: center;
+  font-family: var(--font-ko);
+}
+
+.alert-popup-content, .prompt-popup-content, .confirm-popup-content {
+  background: #fff;
+  padding: 20px 26px;
+  border-radius: 14px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  min-width: 280px; max-width: 400px;
+  text-align: center;
+}
+
+.alert-popup-content p, .prompt-popup-content p, .confirm-popup-content p {
+  margin: 0 0 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
 }
 
 .prompt-popup-content input[type="text"] {
-    width: calc(100% - 20px);
-    padding: 8px 10px;
-    margin-bottom: 15px;
-    border: 1px solid #CCCCCC;
-    /* 테두리 색상 연하게 변경 */
-    border-radius: 6px;
-    /* 약간 둥근 모서리 */
-    box-sizing: border-box;
-    font-size: 1em;
-    font-family: inherit;
-    /* 컨테이너 폰트 상속 */
+  width: calc(100% - 20px);
+  margin-bottom: 14px;
+  border: 1px solid #ccc; border-radius: 6px;
+  box-sizing: border-box; font-size: 14px;
+  padding: 8px 10px;
 }
 
-/* --- Button Container & Buttons --- */
 .popup-buttons {
-    display: flex;
-    justify-content: flex-end;
-    /* 버튼 오른쪽 정렬 유지 */
-    gap: 10px;
-    /* 버튼 사이 간격 약간 늘림 */
-    margin-top: 15px;
-    /* 버튼 위 여백 약간 늘림 */
+  display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px;
 }
 
 .popup-buttons button {
-    /* font-family: "Noto Sans Regular", sans-serif; */
-    /* 이전 폰트 */
-    font-family: inherit;
-    /* 컨테이너 폰트 상속 */
-    padding: 6px 16px;
-    /* macOS 버튼 패딩과 유사하게 조정 (상하 축소, 좌우 확대) */
-    outline: none;
-    border: 1px solid transparent;
-    /* 기본 테두리는 투명하게 (레이아웃 유지용) */
-    border-radius: 7px;
-    /* macOS 스타일의 둥근 모서리 */
-    cursor: pointer;
-    font-size: 0.95em;
-    /* macOS 버튼 폰트 크기와 유사하게 약간 줄임 */
-    font-weight: 500;
-    /* 약간 두꺼운 글꼴 (Medium) */
-    transition: background-color 0.15s ease, border-color 0.15s ease;
-    /* 전환 효과 */
-    min-width: auto;
+  box-shadow: none;
+  border-radius: 8px;
+  font-size: 13px;
+  padding: 6px 16px;
+  min-width: auto;
+  width: auto;
 }
 
-/* OK/Confirm Button Style (macOS 파란색 버튼) */
-#alertOkBtn,
-#confirmOkBtn,
-#promptOkBtn {
-    background-color: var(--yellow);
-    color: black;
-    /* 흰색 글자 */
-    border-color: var(--yellow);
-    /* 테두리 색상 일치 */
+#alertOkBtn, #confirmOkBtn, #promptOkBtn {
+  background: var(--yellow); border: 1px solid var(--yellow);
+}
+#alertOkBtn:hover, #confirmOkBtn:hover, #promptOkBtn:hover {
+  background: var(--dark-yellow);
 }
 
-#alertOkBtn:hover,
-#confirmOkBtn:hover,
-#promptOkBtn:hover {
-    background-color: var(--dark-yellow);
-    /* 호버 시 약간 어두운 파란색 */
-    border-color: var(--dark-yellow);
-    font-weight: bold;
-    /* 기본 font-weight 유지하거나 필요시 bold */
+#confirmCancelBtn, #promptCancelBtn {
+  background: #F2F2F7; border: 1px solid rgba(0,0,0,0.12); color: #111;
 }
+#confirmCancelBtn:hover, #promptCancelBtn:hover { background: #E5E5EA; }
 
-/* Cancel Button Style (macOS 라이트모드 회색 버튼) */
-#confirmCancelBtn,
-#promptCancelBtn {
-    background-color: #F2F2F7;
-    /* macOS 라이트 모드 연한 회색 배경 */
-    color: black;
-    /* 파란색 글자 (또는 검정색: black;) */
-    border: 1px solid rgba(0, 0, 0, 0.15);
-    /* 매우 연한 회색 테두리 */
-}
-
-#confirmCancelBtn:hover,
-#promptCancelBtn:hover {
-    background-color: #E5E5EA;
-    /* 호버 시 약간 더 진한 회색 */
-    border-color: rgba(0, 0, 0, 0.2);
-    font-weight: bold;
-    /* 기본 font-weight 유지하거나 필요시 bold */
-    color: black;
-    /* 호버 시 글자색 변경 필요 시 */
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .container { flex-direction: column; overflow-y: auto; }
+  .left-panel, .center-panel, .right-panel {
+    flex: none; width: 100%; border-right: none; border-bottom: var(--border);
+    overflow-y: visible;
+  }
+  .step-line { width: 24px; }
 }

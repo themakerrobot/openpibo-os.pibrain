@@ -1547,62 +1547,6 @@ Blockly.defineBlocksWithJsonArray(
       helpUrl: ''
     },
     {
-      type: 'speech_etts',
-      message0: '%{BKY_SPEECH_ETTS}',
-      args0:
-        [
-          {
-            "type": "field_image",
-            "src": "svg/file-audio-solid.svg",
-            "width": 27,
-            "height": 27
-          },
-          {"type":"input_dummy"},
-          {"type": "input_value", "name": "text", "check":"String"},
-          {"type": "field_dropdown", "name":"dir",
-            "options":[
-              [ '%{BKY_FOLDER_SELECT}', ''],
-              [ 'code', '/home/pi/code/' ],
-              [ 'myaudio', '/home/pi/myaudio/' ],
-            ]
-          },
-          {"type": "input_value", "name": "filename", "check":"String"},
-          {
-            "type": "field_dropdown",
-            "name": "extension",
-            "options": [['mp3', '.mp3'], ['wav', '.wav'],['-', '']]
-          },
-        ],
-      nextStatement: true,
-      previousStatement: true,
-      inputsInline: true,
-      colour: color_type["speech"],
-      tooltip: '%{BKY_SPEECH_ETTS_TOOLTIP}',
-      helpUrl: ''
-    },
-    {
-      type: 'speech_etts_play',
-      message0: '%{BKY_SPEECH_ETTS_PLAY}',
-      args0:
-        [
-          {
-            "type": "field_image",
-            "src": "svg/file-audio-solid.svg",
-            "width": 27,
-            "height": 27
-          },
-          {"type":"input_dummy"},
-          {"type": "input_value", "name": "text", "check":"String"},
-          {"type": "input_value", "name": "volume", "check":"Number"}
-        ],
-      nextStatement: true,
-      previousStatement: true,
-      inputsInline: true,
-      colour: color_type["speech"],
-      tooltip: '%{BKY_SPEECH_ETTS_PLAY_TOOLTIP}',
-      helpUrl: ''
-    },
-    {
       type: 'speech_translate',
       message0: '%{BKY_SPEECH_TRANSLATE}',
       args0:
