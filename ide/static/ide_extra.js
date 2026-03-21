@@ -802,6 +802,38 @@
     });
   }
 
+/* ── Copy Buttons ────────────────────────────────────────── */
+function makeCopyBtn(getTextFn, targetEl) {
+  const btn = document.createElement('button');
+  btn.title = '복사';
+  btn.innerHTML = '<i class="fa-regular fa-copy"></i>';
+  btn.style.cssText = [
+    'position:absolute', 'top:8px', 'right:8px', 'z-index:10',
+    'background:#fff', 'border:1px solid #ccc', 'border-radius:6px',
+    'padding:4px 7px', 'cursor:pointer', 'opacity:0.5',
+    'transition:opacity 0.15s'
+  ].join(';');
+  btn.addEventListener('mouseenter', () => btn.style.opacity = '1');
+  btn.addEventListener('mouseleave', () => btn.style.opacity = '0.5');
+  btn.addEventListener('click', () => {
+    navigator.clipboard.writeText(getTextFn()).then(() => {
+      btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+      setTimeout(() => btn.innerHTML = '<i class="fa-regular fa-copy"></i>', 1500);
+    });
+  });
+
+  targetEl.style.position = 'relative';
+  targetEl.appendChild(btn);
+}
+
+  // 결과창
+  const resultEl = document.getElementById('result');
+  if (resultEl) makeCopyBtn(() => resultEl.value, resultEl.parentElement);
+  
+  // 코드 에디터
+  const codeDiv = document.getElementById('codeDiv');
+  if (codeDiv) makeCopyBtn(() => window.codeEditor ? window.codeEditor.getValue() : '', codeDiv);
+
   /* ── Initial layout refresh ──────────────────────────────── */
   setTimeout(refreshEditors, 500);
 
