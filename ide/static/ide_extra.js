@@ -636,8 +636,7 @@
     // 복사 버튼 이벤트
     previewOverlay.addEventListener('click', (e) => {
       if (e.target.closest('#preview_copy_btn')) {
-        const text = previewCode.innerText;
-        navigator.clipboard.writeText(text).then(() => {
+        copyToClipboard(previewCode.innerText).then(() => {
           const copyBtn = document.getElementById('preview_copy_btn');
           if (copyBtn) {
             copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> 복사됨';
@@ -824,6 +823,22 @@
   }
 
   /* ── Copy Buttons ────────────────────────────────────────── */
+  function copyToClipboard(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text);
+    }
+    // HTTP 환경 폴백 (로컬 IP 접속 시)
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    return Promise.resolve();
+  }
+
   function makeCopyBtn(getTextFn) {
     const btn = document.createElement('button');
     btn.title = '복사';
@@ -837,7 +852,7 @@
     btn.addEventListener('mouseenter', () => btn.style.opacity = '1');
     btn.addEventListener('mouseleave', () => btn.style.opacity = '0.5');
     btn.addEventListener('click', () => {
-      navigator.clipboard.writeText(getTextFn()).then(() => {
+      copyToClipboard(getTextFn()).then(() => {
         btn.innerHTML = '<i class="fa-solid fa-check"></i>';
         setTimeout(() => btn.innerHTML = '<i class="fa-solid fa-copy"></i>', 1500);
       });
