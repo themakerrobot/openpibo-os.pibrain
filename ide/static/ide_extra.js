@@ -803,15 +803,16 @@
   }
 
 /* ── Copy Buttons ────────────────────────────────────────── */
-function makeCopyBtn(getTextFn, targetEl) {
+function makeCopyBtn(getTextFn) {
   const btn = document.createElement('button');
   btn.title = '복사';
   btn.innerHTML = '<i class="fa-regular fa-copy"></i>';
   btn.style.cssText = [
     'position:absolute', 'top:8px', 'right:8px', 'z-index:10',
-    'background:#fff', 'border:1px solid #ccc', 'border-radius:6px',
-    'padding:4px 7px', 'cursor:pointer', 'opacity:0.5',
-    'transition:opacity 0.15s'
+    'background:rgba(255,255,255,0.85)', 'border:1px solid #ccc',
+    'border-radius:6px', 'padding:3px 7px', 'cursor:pointer',
+    'opacity:0.5', 'transition:opacity 0.15s',
+    'box-shadow:none'
   ].join(';');
   btn.addEventListener('mouseenter', () => btn.style.opacity = '1');
   btn.addEventListener('mouseleave', () => btn.style.opacity = '0.5');
@@ -821,18 +822,25 @@ function makeCopyBtn(getTextFn, targetEl) {
       setTimeout(() => btn.innerHTML = '<i class="fa-regular fa-copy"></i>', 1500);
     });
   });
-
-  targetEl.style.position = 'relative';
-  targetEl.appendChild(btn);
+  return btn;
 }
 
-  // 결과창
-  const resultEl = document.getElementById('result');
-  if (resultEl) makeCopyBtn(() => resultEl.value, resultEl.parentElement);
-  
-  // 코드 에디터
-  const codeDiv = document.getElementById('codeDiv');
-  if (codeDiv) makeCopyBtn(() => window.codeEditor ? window.codeEditor.getValue() : '', codeDiv);
+// 코드 에디터: CodeMirror div에 직접 붙이기 (overflow:hidden 우회)
+const cmEl = document.querySelector('.CodeMirror');
+if (cmEl) {
+  cmEl.style.position = 'relative';
+  cmEl.appendChild(makeCopyBtn(() => window.codeEditor ? window.codeEditor.getValue() : ''));
+}
+
+// 결과창: #result textarea를 wrapper로 감싸서 붙이기
+const resultEl = document.getElementById('result');
+if (resultEl) {
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'position:relative;flex:1;display:flex;flex-direction:column;min-height:0;';
+  resultEl.parentNode.insertBefore(wrap, resultEl);
+  wrap.appendChild(resultEl);
+  wrap.appendChild(makeCopyBtn(() => resultEl.value));
+}
 
   /* ── Initial layout refresh ──────────────────────────────── */
   setTimeout(refreshEditors, 500);
