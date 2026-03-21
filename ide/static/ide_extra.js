@@ -599,11 +599,18 @@
       <span style="font-family:var(--font-ko);font-size:13px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.05em;">
         <i class="fa-brands fa-python" style="color:#3572A5;margin-right:6px;"></i>생성된 Python 코드
       </span>
-      <button id="preview_close_btn" style="
-        background:rgba(255,255,255,0.08);border:none;border-radius:8px;
-        color:#aaa;font-size:13px;padding:4px 12px;cursor:pointer;
-        font-family:var(--font-ko);font-weight:600;box-shadow:none;
-      "><i class="fa-solid fa-xmark"></i> 닫기</button>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button id="preview_copy_btn" style="
+          background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;
+          color:#aaa;font-size:13px;padding:4px 12px;cursor:pointer;
+          font-family:var(--font-ko);font-weight:600;box-shadow:none;
+        "><i class="fa-solid fa-copy"></i> 복사</button>
+        <button id="preview_close_btn" style="
+          background:rgba(255,255,255,0.08);border:none;border-radius:8px;
+          color:#aaa;font-size:13px;padding:4px 12px;cursor:pointer;
+          font-family:var(--font-ko);font-weight:600;box-shadow:none;
+        "><i class="fa-solid fa-xmark"></i> 닫기</button>
+      </div>
     `;
     previewOverlay.appendChild(previewHeader);
 
@@ -625,6 +632,20 @@
       editorPane.style.position = 'relative';
       editorPane.appendChild(previewOverlay);
     }
+
+    // 복사 버튼 이벤트
+    previewOverlay.addEventListener('click', (e) => {
+      if (e.target.closest('#preview_copy_btn')) {
+        const text = previewCode.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+          const copyBtn = document.getElementById('preview_copy_btn');
+          if (copyBtn) {
+            copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> 복사됨';
+            setTimeout(() => { copyBtn.innerHTML = '<i class="fa-solid fa-copy"></i> 복사'; }, 1500);
+          }
+        });
+      }
+    });
 
     // Python 문법 색상 — 토크나이저 방식 (정규식 중복 매칭 방지)
     const KEYWORDS = new Set([
@@ -802,45 +823,46 @@
     });
   }
 
-/* ── Copy Buttons ────────────────────────────────────────── */
-function makeCopyBtn(getTextFn) {
-  const btn = document.createElement('button');
-  btn.title = '복사';
-  btn.innerHTML = '<i class="fa-regular fa-copy"></i>';
-  btn.style.cssText = [
-    'position:absolute', 'top:8px', 'right:8px', 'z-index:10',
-    'background:rgba(255,255,255,0.85)', 'border:1px solid #ccc',
-    'border-radius:6px', 'padding:3px 7px', 'cursor:pointer',
-    'opacity:0.5', 'transition:opacity 0.15s',
-    'box-shadow:none'
-  ].join(';');
-  btn.addEventListener('mouseenter', () => btn.style.opacity = '1');
-  btn.addEventListener('mouseleave', () => btn.style.opacity = '0.5');
-  btn.addEventListener('click', () => {
-    navigator.clipboard.writeText(getTextFn()).then(() => {
-      btn.innerHTML = '<i class="fa-solid fa-check"></i>';
-      setTimeout(() => btn.innerHTML = '<i class="fa-regular fa-copy"></i>', 1500);
+  /* ── Copy Buttons ────────────────────────────────────────── */
+  function makeCopyBtn(getTextFn) {
+    const btn = document.createElement('button');
+    btn.title = '복사';
+    btn.innerHTML = '<i class="fa-solid fa-copy"></i>';
+    btn.style.cssText = [
+      'position:absolute', 'top:8px', 'right:8px', 'z-index:10',
+      'background:rgba(255,255,255,0.85)', 'border:1px solid #ccc',
+      'border-radius:6px', 'padding:3px 7px', 'cursor:pointer',
+      'opacity:0.5', 'transition:opacity 0.15s', 'box-shadow:none'
+    ].join(';');
+    btn.addEventListener('mouseenter', () => btn.style.opacity = '1');
+    btn.addEventListener('mouseleave', () => btn.style.opacity = '0.5');
+    btn.addEventListener('click', () => {
+      navigator.clipboard.writeText(getTextFn()).then(() => {
+        btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+        setTimeout(() => btn.innerHTML = '<i class="fa-solid fa-copy"></i>', 1500);
+      });
     });
-  });
-  return btn;
-}
+    return btn;
+  }
 
-// 코드 에디터: CodeMirror div에 직접 붙이기 (overflow:hidden 우회)
-const cmEl = document.querySelector('.CodeMirror');
-if (cmEl) {
-  cmEl.style.position = 'relative';
-  cmEl.appendChild(makeCopyBtn(() => window.codeEditor ? window.codeEditor.getValue() : ''));
-}
+  // 결과창: #result textarea를 wrapper로 감싸서 붙이기
+  const resultEl = document.getElementById('result');
+  if (resultEl) {
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'position:relative;flex:1;display:flex;flex-direction:column;min-height:0;';
+    resultEl.parentNode.insertBefore(wrap, resultEl);
+    wrap.appendChild(resultEl);
+    wrap.appendChild(makeCopyBtn(() => resultEl.value));
+  }
 
-// 결과창: #result textarea를 wrapper로 감싸서 붙이기
-const resultEl = document.getElementById('result');
-if (resultEl) {
-  const wrap = document.createElement('div');
-  wrap.style.cssText = 'position:relative;flex:1;display:flex;flex-direction:column;min-height:0;';
-  resultEl.parentNode.insertBefore(wrap, resultEl);
-  wrap.appendChild(resultEl);
-  wrap.appendChild(makeCopyBtn(() => resultEl.value));
-}
+  // 코드 에디터: CodeMirror 로딩 후 붙이기
+  setTimeout(() => {
+    const cmEl = document.querySelector('.CodeMirror');
+    if (cmEl) {
+      cmEl.style.position = 'relative';
+      cmEl.appendChild(makeCopyBtn(() => window.codeEditor ? window.codeEditor.getValue() : ''));
+    }
+  }, 800);
 
   /* ── Initial layout refresh ──────────────────────────────── */
   setTimeout(refreshEditors, 500);
