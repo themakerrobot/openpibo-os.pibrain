@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
-  <title>Pibo Maker for piBrain</title>
+  <title>IDE for piBrain</title>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -10,7 +9,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
 
   <link rel="stylesheet" href="../static/fontello.css" type="text/css" />
-  <link rel="stylesheet" href="../static/index.css?ver=260320v1" />
+  <link rel="stylesheet" href="../static/index.css?ver=260320v2" />
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
   <link rel="stylesheet" href="../static/codemirror.css" />
   <link rel="stylesheet" href="../static/cobalt.css" />
@@ -48,12 +47,8 @@
     </div>
     <div class="header-right">
       <h2>
-        <a id="llm_bt" title="Chat Bot"><i class="fa-solid fa-comment"></i></a>
-        <a id="classifier_bt" title="Image Classifier"><i class="fa-solid fa-images"></i></a>
-        <a id="guide_bt" title="Guide"><i class="fa-solid fa-circle-question"></i></a>
         <a id="fullscreen_bt" title="Full Screen"><span id="fullscreen_txt"></span></a>
         <a id="restore_bt" title="Restore"><i class="fa-solid fa-eraser"></i></a>
-        <a id="poweroff_bt" title="Power Off"><i class="fa-solid fa-power-off"></i></a>
         <select id="language" aria-label="language">
           <option value="ko">한국어</option>
           <option value="en">English</option>
@@ -65,64 +60,19 @@
     </div>
   </header>
 
-  <!-- ====== MODALS ====== -->
-
-  <!-- WiFi Popup -->
-  <div class="wifi-popup" id="wifiPopup" style="display:none;">
-    <div class="wifi-popup-content">
-      <h1>
-        <span><i class="fa-solid fa-circle-exclamation"></i>&nbsp;<span data-key="internet_settings">Internet Settings</span></span>
-        <a id="hidewifi"><i class="fa-solid fa-rectangle-xmark"></i></a>
-      </h1>
-      <div><span id="network_info"></span></div>
-      <div class="network-list-section">
-        <h2><span data-key="available_networks">Available Networks</span></h2>
-        <ul class="network-list" id="wifi_list_ul">
-          <li><span>...</span></li>
-        </ul>
-        <p><a href="#" id="manualConnectionLink"><span data-key="manual_connection">Manual Connection / Other Network...</span></a></p>
-      </div>
-      <form class="connection-details" id="connection-form" style="display: none;">
-        <div class="form-group">
-          <label for="ssid"><span data-key="wifi_name">Name (SSID):</span></label>
-          <input type="text" id="ssid" name="ssid" readonly aria-label="ssid">
-        </div>
-        <div class="form-group">
-          <p><strong id="security-type-display"></strong></p>
-          <input type="hidden" id="security-type-hidden" name="security-type">
-        </div>
-        <div class="form-group identity-field hidden">
-          <label for="identity"><span data-key="wifi_identity">Identity:</span></label>
-          <input type="text" id="identity" name="identity" aria-label="identity">
-        </div>
-        <div class="form-group password-field hidden">
-          <label for="psk"><span data-key="password">Password:</span></label>
-          <input type="password" id="psk" name="psk" aria-label="psk">
-        </div>
-        <div id="status-message" class="status-message"></div>
-        <div class="dialog-actions">
-          <button type="submit" class="connect-button" id="wifi_submit_bt">
-            <i class="fa-solid fa-check-double"></i>&nbsp;<span data-key="confirm"></span>
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Alert Popup -->
+  <!-- ====== POPUPS ====== -->
   <div class="alert-popup" id="alertPopup" style="display:none;">
     <div class="alert-popup-content">
-      <p id="alertMessageElement">alert text</p>
+      <p id="alertMessageElement"></p>
       <div class="popup-buttons">
         <button id="alertOkBtn"><span data-key="confirm"></span></button>
       </div>
     </div>
   </div>
 
-  <!-- Prompt Popup -->
   <div class="prompt-popup" id="promptPopup" style="display:none;">
     <div class="prompt-popup-content">
-      <p id="promptMessageElement">prompt text</p>
+      <p id="promptMessageElement"></p>
       <input type="text" id="promptInputElement" />
       <div class="popup-buttons">
         <button id="promptOkBtn"><span data-key="confirm"></span></button>
@@ -131,10 +81,9 @@
     </div>
   </div>
 
-  <!-- Confirm Popup -->
   <div class="confirm-popup" id="confirmPopup" style="display:none;">
     <div class="confirm-popup-content">
-      <p id="confirmMessageElement">confirm text</p>
+      <p id="confirmMessageElement"></p>
       <div class="popup-buttons">
         <button id="confirmOkBtn"><span data-key="confirm"></span></button>
         <button id="confirmCancelBtn"><span data-key="cancel"></span></button>
@@ -148,8 +97,6 @@
     <!-- LEFT: File Sidebar -->
     <aside class="sidebar" id="browser_en">
       <div class="sidebar-inner">
-
-        <!-- File Actions Bar -->
         <div class="sidebar-actions">
           <label for="upload" class="sidebar-btn sidebar-btn-teal" title="Upload file">
             <i class="fa-solid fa-file-upload"></i>
@@ -169,32 +116,22 @@
             <span data-key="add_file">새 파일</span>
           </button>
         </div>
-
-        <!-- Current Path -->
         <div class="sidebar-path">
           <i class="fa-solid fa-folder-open"></i>
           <span id="path" class="path-text"></span>
         </div>
-
-        <!-- File Table + Drop Zone -->
         <div class="fm-table-wrap" id="drop_zone">
-          <table id="fm_table">
-            <tbody></tbody>
-          </table>
-          <!-- Drop overlay (shown on dragover) -->
+          <table id="fm_table"><tbody></tbody></table>
           <div class="drop-overlay" id="drop_overlay">
             <i class="fa-solid fa-cloud-arrow-up fa-2x"></i>
             <span>Drop to upload</span>
           </div>
         </div>
-
       </div>
     </aside>
 
     <!-- MIDDLE: Editor -->
     <section class="editor-pane">
-
-      <!-- Editor Toolbar -->
       <div class="editor-toolbar">
         <div class="toolbar-group toolbar-left">
           <div class="codetype-switch" name="codetype">
@@ -209,7 +146,6 @@
           </div>
           <span id="codecheck" class="unsaved-dot" title="Unsaved changes"></span>
         </div>
-
         <div class="toolbar-group toolbar-right">
           <label class="toolbar-label" title="Font size">
             <i class="fa-solid fa-text-height"></i>
@@ -230,14 +166,10 @@
           </label>
         </div>
       </div>
-
-      <!-- Code filepath bar -->
       <div class="editor-filepath">
         <i class="fa-solid fa-file"></i>
         <span id="codepath"></span>
       </div>
-
-      <!-- Editor Body -->
       <div class="editor-body">
         <div id="blocklyDiv" class="blocklyDiv"></div>
         <div id="codeDiv">
@@ -246,7 +178,6 @@
           </form>
         </div>
       </div>
-
     </section>
 
     <!-- RESIZER -->
@@ -254,8 +185,6 @@
 
     <!-- RIGHT: Result -->
     <aside class="result-pane" id="result_en">
-
-      <!-- Result Toolbar -->
       <div class="result-toolbar">
         <button id="eraser">
           <i class="fa-solid fa-eraser fa-lg"></i>&nbsp;<span data-key="reset"></span>
@@ -271,14 +200,10 @@
           <i class="fa-solid fa-display"></i>
         </button>
       </div>
-
-      <!-- Result filepath -->
       <div class="editor-filepath">
         <i class="fa-solid fa-file"></i>
         <span id="respath"></span>
       </div>
-
-      <!-- Inline Media Viewer (hidden by default) -->
       <div id="media_viewer" style="display:none;">
         <div id="media_viewer_inner">
           <div class="media-viewer-path">
@@ -289,35 +214,12 @@
           <audio controls id="audio" class="preview-audio"></audio>
         </div>
       </div>
-
-      <!-- Output textarea -->
       <textarea id="result" class="result" disabled aria-label="result"></textarea>
-
     </aside>
 
   </main>
 
-  <!-- ====== FOOTER ====== -->
-  <footer>
-    <div class="footer-left">
-      <i class="fa-solid fa-robot fa-flip"></i>
-      <span id="s_os_version"></span>,
-      <a id="usedata_bt"><i class="fa-solid fa-tags"></i><span id="s_serial"></span></a>
-    </div>
-    <div class="footer-right">
-      <a id="showNetwork">
-        <span id="s_network"></span>
-      </a>,
-      <i class="fa-solid fa-temperature-empty"></i>
-      <span id="s_cpu_temp"></span>,
-      <i class="fa-solid fa-memory"></i>
-      <span id="s_memory"></span>,
-      <i class="fa-solid fa-clock"></i>
-      <span id="s_runtime"></span>
-    </div>
-  </footer>
-
-  <!-- ====== MOBILE TAB BAR (tablet/mobile only) ====== -->
+  <!-- ====== MOBILE TAB BAR ====== -->
   <nav class="mobile-tabbar" id="mobile_tabbar">
     <button class="mobile-tab" id="tab_files" title="Files">
       <i class="fa-solid fa-folder-open"></i>
@@ -333,8 +235,7 @@
     </button>
   </nav>
 
-  <script src="../static/index.js?ver=240707v35"></script>
+  <script src="../static/index.js?ver=260320v2"></script>
   <script src="../static/ide_extra.js?ver=260320v1"></script>
 </body>
-
 </html>

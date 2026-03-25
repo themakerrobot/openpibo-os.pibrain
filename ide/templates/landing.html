@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PiBrain Maker</title>
+  <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
+  <link rel="shortcut icon" href="../static/icon.png" type="image/x-icon" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%; overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+      background: #f0fafa;
+      display: flex; flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; height: 52px; flex-shrink: 0;
+      background: #f9c300; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .header-logo img { height: clamp(20px, 2.2vh, 32px); }
+    .header-right { display: flex; align-items: center; gap: 8px; }
+
+    .hdr-btn {
+      display: flex; align-items: center; gap: 6px;
+      border: none; border-radius: 20px;
+      padding: 6px 14px; font-size: 12px; font-weight: 700;
+      cursor: pointer; transition: background 0.15s; color: #333;
+    }
+    .hdr-btn-sys   { background: rgba(0,0,0,0.1); }
+    .hdr-btn-sys:hover { background: rgba(0,0,0,0.18); }
+    .hdr-btn-power { background: rgba(220,50,50,0.15); color: #c0392b; }
+    .hdr-btn-power:hover { background: rgba(220,50,50,0.25); }
+
+    /* ── Main ── */
+    main {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: clamp(8px, 1.5vh, 24px);
+      padding: clamp(8px, 1.5vh, 20px) 20px;
+      overflow: hidden;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      display: flex; flex-direction: column;
+      align-items: center; text-align: center;
+      gap: clamp(4px, 0.8vh, 12px);
+    }
+    .hero-char {
+      height: clamp(60px, 10vh, 110px); width: auto;
+      filter: drop-shadow(0 8px 24px rgba(0,180,200,0.2));
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-8px); }
+    }
+    .hero h1 {
+      font-size: clamp(1.4rem, 3vh, 2.4rem); font-weight: 900;
+      color: #0d1f2d; line-height: 1.2;
+    }
+    .hero h1 span { color: #13bfd5; }
+    .hero p { font-size: clamp(11px, 1.3vh, 14px); color: #667; }
+
+    /* ── Wave ── */
+    .wave { width: 100%; overflow: hidden; line-height: 0; flex-shrink: 0; }
+    .wave svg { display: block; height: clamp(16px, 2.5vh, 32px); }
+
+    /* ── Cards ── */
+    .cards-section {
+      width: 100%; max-width: clamp(600px, 70vw, 1100px);
+      padding: 0 clamp(12px, 2vw, 32px);
+    }
+    .cards-section h2 {
+      font-size: clamp(10px, 1.1vh, 13px); font-weight: 700;
+      color: #aaa; text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: clamp(6px, 1vh, 12px); padding-left: 4px;
+    }
+    .cards {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      gap: clamp(8px, 1.2vw, 18px);
+    }
+    .card {
+      background: #fff; border-radius: clamp(10px, 1.2vw, 16px);
+      padding: clamp(12px, 1.8vh, 22px) clamp(8px, 1vw, 16px);
+      text-align: center; cursor: pointer; border: 2px solid transparent;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+      transition: transform 0.18s, box-shadow 0.18s;
+      display: flex; flex-direction: column; align-items: center;
+      gap: clamp(4px, 0.7vh, 8px);
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(0,0,0,0.12); }
+
+    .card.ide   { border-color: #13bfd5; }
+    .card.tools { border-color: #607d8b; }
+    .card.cls   { border-color: #ff6d00; }
+    .card.llm   { border-color: #7c4dff; }
+    .card.guide { border-color: #2e7d32; }
+
+    .card-icon {
+      width: clamp(36px, 4.5vh, 54px); height: clamp(36px, 4.5vh, 54px);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: clamp(14px, 2vh, 22px);
+    }
+    .card.ide   .card-icon { background: #e0f7fa; color: #13bfd5; }
+    .card.tools .card-icon { background: #eceff1; color: #607d8b; }
+    .card.cls   .card-icon { background: #fff3e0; color: #ff6d00; }
+    .card.llm   .card-icon { background: #ede7f6; color: #7c4dff; }
+    .card.guide .card-icon { background: #e8f5e9; color: #2e7d32; }
+
+    .card h3 { font-size: clamp(11px, 1.4vh, 15px); font-weight: 800; color: #0d1f2d; }
+    .card p  { font-size: clamp(10px, 1.1vh, 12px); color: #999; line-height: 1.5; }
+
+    .card-btn {
+      padding: clamp(4px, 0.7vh, 8px) clamp(10px, 1.5vw, 20px);
+      border-radius: 20px; border: none;
+      font-size: clamp(10px, 1.1vh, 12px); font-weight: 700;
+      cursor: pointer; color: #fff; transition: opacity 0.15s;
+    }
+    .card-btn:hover { opacity: 0.85; }
+    .card.ide   .card-btn { background: #13bfd5; }
+    .card.tools .card-btn { background: #607d8b; }
+    .card.cls   .card-btn { background: #ff6d00; }
+    .card.llm   .card-btn { background: #7c4dff; }
+    .card.guide .card-btn { background: #2e7d32; }
+
+    /* ── Footer ── */
+    footer {
+      flex-shrink: 0; background: #f9c300;
+      padding: 8px 20px; display: flex;
+      align-items: center; justify-content: space-between;
+      font-size: 11px; color: #555; font-weight: 600;
+    }
+    .footer-info { display: flex; align-items: center; gap: 10px; opacity: 0.8; }
+
+    /* ── Spinner ── */
+    .spinner-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(255,255,255,0.85); z-index: 100;
+      align-items: center; justify-content: center;
+      flex-direction: column; gap: 14px;
+    }
+    .spinner-overlay.active { display: flex; }
+    .spinner-overlay i    { font-size: 32px; color: #13bfd5; }
+    .spinner-overlay span { font-size: 14px; font-weight: 700; color: #444; }
+
+    /* ── Modal base ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45); z-index: 200;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+
+    .modal-box {
+      background: #fff; border-radius: 20px;
+      width: min(520px, 92vw); max-height: 88vh; overflow-y: auto;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.22);
+    }
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 22px 14px; border-bottom: 1px solid #f0f0f0;
+    }
+    .modal-header h2 {
+      font-size: 16px; font-weight: 800; color: #0d1f2d;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .modal-close {
+      background: none; border: none; font-size: 18px;
+      color: #aaa; cursor: pointer; padding: 2px 8px;
+      border-radius: 6px; transition: background 0.12s;
+    }
+    .modal-close:hover { background: #f0f0f0; color: #333; }
+    .modal-body { padding: 18px 22px 22px; }
+
+    /* ── System info ── */
+    .si-section {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #bbb; margin: 16px 0 8px;
+    }
+    .si-section:first-child { margin-top: 0; }
+    .si-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .si-item {
+      background: #f8f9fa; border-radius: 10px; padding: 10px 14px;
+      display: flex; flex-direction: column; gap: 3px;
+    }
+    .si-item.full { grid-column: 1 / -1; }
+    .si-label { font-size: 11px; color: #999; font-weight: 600; }
+    .si-value { font-size: 14px; font-weight: 700; color: #0d1f2d; word-break: break-all; }
+
+    .si-wifi-btn {
+      width: 100%; margin-top: 16px; padding: 12px;
+      border-radius: 10px; border: none; background: #13bfd5;
+      color: #fff; font-size: 14px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; gap: 8px; transition: opacity 0.15s;
+    }
+    .si-wifi-btn:hover { opacity: 0.88; }
+
+    .si-power-btn {
+      width: 100%; margin-top: 8px; padding: 12px;
+      border-radius: 10px; border: none; background: #e53935;
+      color: #fff; font-size: 14px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; gap: 8px; transition: opacity 0.15s;
+    }
+    .si-power-btn:hover { opacity: 0.88; }
+
+    /* ── WiFi modal ── */
+    .wifi-section-title {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #bbb; margin: 16px 0 8px;
+    }
+    .wifi-section-title:first-child { margin-top: 0; }
+
+    .network-list {
+      list-style: none; border: 1px solid #eee; border-radius: 10px;
+      overflow: hidden; max-height: 200px; overflow-y: auto;
+    }
+    .network-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 11px 14px; border-bottom: 1px solid #f5f5f5;
+      cursor: pointer; transition: background 0.12s;
+    }
+    .network-item:last-child { border-bottom: none; }
+    .network-item:hover { background: #f0f8ff; }
+    .network-item.selected { background: #e0f7fa; }
+    .ni-name    { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+    .ni-details { font-size: 11px; color: #999; display: flex; gap: 8px; }
+
+    .wifi-manual-link { display: block; margin-top: 8px; font-size: 12px; text-align: right; }
+    .wifi-manual-link a { color: #13bfd5; text-decoration: none; font-weight: 600; }
+
+    .wifi-form { margin-top: 16px; border-top: 1px solid #f0f0f0; padding-top: 16px; }
+    .wf-group { margin-bottom: 12px; }
+    .wf-group label { display: block; font-size: 12px; font-weight: 600; color: #555; margin-bottom: 4px; }
+    .wf-group input[type=text],
+    .wf-group input[type=password] {
+      width: 100%; padding: 10px 12px; border: 1.5px solid #ddd; border-radius: 8px;
+      font-size: 14px; outline: none; background: #fff; color: #111;
+      transition: border-color 0.15s;
+    }
+    .wf-group input:focus { border-color: #13bfd5; }
+    .wf-group input[readonly] { background: #f5f5f5; color: #888; }
+    .wf-status { font-size: 12px; font-weight: 600; color: #13bfd5; min-height: 16px; margin: 8px 0; }
+    .wf-status.error { color: #e53935; }
+    .hidden { display: none !important; }
+
+    .wifi-connect-btn {
+      width: 100%; padding: 12px; border-radius: 10px; border: none;
+      background: #13bfd5; color: #fff; font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: opacity 0.15s;
+    }
+    .wifi-connect-btn:hover { opacity: 0.88; }
+
+    /* ── Poweroff confirm ── */
+    .poweroff-msg {
+      font-size: 15px; color: #333; margin-bottom: 20px;
+      line-height: 1.5; text-align: center;
+    }
+    .poweroff-actions { display: flex; gap: 10px; }
+    .poweroff-actions button {
+      flex: 1; padding: 12px; border-radius: 10px; border: none;
+      font-size: 14px; font-weight: 700; cursor: pointer;
+    }
+    .btn-confirm-power { background: #e53935; color: #fff; }
+    .btn-confirm-power:hover { opacity: 0.88; }
+    .btn-cancel-power  { background: #f0f0f0; color: #333; }
+    .btn-cancel-power:hover { background: #e0e0e0; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px)  { .cards { grid-template-columns: repeat(3, 1fr); } .si-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 580px)  { .cards { grid-template-columns: repeat(2, 1fr); } header { padding: 0 12px; } }
+  </style>
+</head>
+<body>
+
+  <!-- ====== HEADER ====== -->
+  <header>
+    <div class="header-logo">
+      <img src="../static/circulus_logo.png" alt="CIRCULUS" />
+    </div>
+    <div class="header-right">
+      <span id="hdr_network" style="font-size:12px;font-weight:600;color:#444;"></span>
+      <button class="hdr-btn hdr-btn-sys" id="btn_sysinfo">
+        <i class="fa-solid fa-circle-info"></i> 시스템 정보
+      </button>
+      <button class="hdr-btn hdr-btn-power" id="btn_poweroff">
+        <i class="fa-solid fa-power-off"></i> 전원 끄기
+      </button>
+    </div>
+  </header>
+
+  <!-- ====== MAIN ====== -->
+  <main>
+    <div class="hero">
+      <img class="hero-char" src="../static/pibrain_char.png" alt="pibrain" />
+      <h1>PiBrain <span>제어 시스템</span></h1>
+      <p>학습 대상을 선택하면 맞춤 제어 화면으로 이동합니다</p>
+    </div>
+
+    <div class="wave">
+      <svg viewBox="0 0 1440 40" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#e0f7fa" d="M0,20 C360,40 1080,0 1440,20 L1440,40 L0,40 Z"/>
+      </svg>
+    </div>
+
+    <div class="cards-section">
+      <h2>🛠 도구</h2>
+      <div class="cards">
+        <div class="card ide" id="card_ide">
+          <div class="card-icon"><i class="fa-solid fa-code"></i></div>
+          <h3>IDE</h3>
+          <p>코드 작성 및<br>실행 환경</p>
+          <button class="card-btn">열기 →</button>
+        </div>
+        <div class="card tools" id="card_tools">
+          <div class="card-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+          <h3>Tools</h3>
+          <p>LED·버튼·카메라<br>비전 제어</p>
+          <button class="card-btn">열기 →</button>
+        </div>
+        <div class="card cls" id="card_cls">
+          <div class="card-icon"><i class="fa-solid fa-images"></i></div>
+          <h3>Classifier</h3>
+          <p>이미지 분류<br>학습 도구</p>
+          <button class="card-btn">열기 →</button>
+        </div>
+        <div class="card llm" id="card_llm">
+          <div class="card-icon"><i class="fa-solid fa-comment"></i></div>
+          <h3>Chat Bot</h3>
+          <p>AI 챗봇<br>대화 인터페이스</p>
+          <button class="card-btn">열기 →</button>
+        </div>
+        <div class="card guide" id="card_guide">
+          <div class="card-icon"><i class="fa-solid fa-circle-question"></i></div>
+          <h3>가이드</h3>
+          <p>사용 설명서<br>및 예제</p>
+          <button class="card-btn">열기 →</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ====== FOOTER ====== -->
+  <footer>
+    <div class="footer-info">
+      <span><i class="fa-solid fa-robot"></i> <span id="ft_serial">-</span></span>
+      <span>|</span>
+      <span><i class="fa-solid fa-thermometer-half"></i> <span id="ft_temp">-</span></span>
+    </div>
+    <div style="opacity:0.6;">© CIRCULUS Inc.</div>
+  </footer>
+
+  <!-- ====== MODAL: 시스템 정보 ====== -->
+  <div class="modal-overlay" id="modal_sysinfo">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2><i class="fa-solid fa-microchip"></i> 시스템 정보</h2>
+        <button class="modal-close" data-close="modal_sysinfo">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="si-section">장치</div>
+        <div class="si-grid">
+          <div class="si-item">
+            <div class="si-label">시리얼 번호</div>
+            <div class="si-value" id="si_serial">-</div>
+          </div>
+          <div class="si-item">
+            <div class="si-label">OS 버전</div>
+            <div class="si-value" id="si_os">-</div>
+          </div>
+        </div>
+
+        <div class="si-section">시스템 상태</div>
+        <div class="si-grid">
+          <div class="si-item">
+            <div class="si-label">CPU 온도</div>
+            <div class="si-value" id="si_temp">-</div>
+          </div>
+          <div class="si-item">
+            <div class="si-label">메모리 사용</div>
+            <div class="si-value" id="si_memory">-</div>
+          </div>
+          <div class="si-item full">
+            <div class="si-label">가동 시간</div>
+            <div class="si-value" id="si_runtime">-</div>
+          </div>
+        </div>
+
+        <div class="si-section">네트워크</div>
+        <div class="si-grid">
+          <div class="si-item full">
+            <div class="si-label">연결 정보</div>
+            <div class="si-value" id="si_network">-</div>
+          </div>
+        </div>
+
+        <button class="si-wifi-btn" id="btn_open_wifi">
+          <i class="fa-solid fa-wifi"></i> Wi-Fi 설정
+        </button>
+        <button class="si-power-btn" id="btn_poweroff_modal">
+          <i class="fa-solid fa-power-off"></i> 전원 끄기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== MODAL: Wi-Fi ====== -->
+  <div class="modal-overlay" id="modal_wifi">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2><i class="fa-solid fa-wifi"></i> Wi-Fi 설정</h2>
+        <button class="modal-close" data-close="modal_wifi">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="si-item full" style="margin-bottom:12px;">
+          <div class="si-label">현재 연결</div>
+          <div class="si-value" id="wifi_current">-</div>
+        </div>
+
+        <div class="wifi-section-title">주변 네트워크</div>
+        <ul class="network-list" id="wifi_list"></ul>
+        <div class="wifi-manual-link">
+          <a href="#" id="wifi_manual_link">직접 입력 / 다른 네트워크...</a>
+        </div>
+
+        <form class="wifi-form hidden" id="wifi_form">
+          <div class="wf-group">
+            <label>네트워크 이름 (SSID)</label>
+            <input type="text" id="wf_ssid" readonly />
+          </div>
+          <div class="wf-group hidden" id="wf_identity_group">
+            <label>Identity</label>
+            <input type="text" id="wf_identity" />
+          </div>
+          <div class="wf-group hidden" id="wf_psk_group">
+            <label>비밀번호</label>
+            <input type="password" id="wf_psk" />
+          </div>
+          <input type="hidden" id="wf_security" />
+          <div class="wf-status" id="wf_status"></div>
+          <button type="submit" class="wifi-connect-btn">
+            <i class="fa-solid fa-check-double"></i> 연결
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== MODAL: 전원 끄기 확인 ====== -->
+  <div class="modal-overlay" id="modal_poweroff">
+    <div class="modal-box" style="max-width:360px;">
+      <div class="modal-header">
+        <h2><i class="fa-solid fa-power-off"></i> 전원 끄기</h2>
+        <button class="modal-close" data-close="modal_poweroff">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="poweroff-msg">정말 전원을 끄시겠습니까?<br>실행 중인 프로그램이 종료됩니다.</p>
+        <div class="poweroff-actions">
+          <button class="btn-cancel-power" data-close="modal_poweroff">취소</button>
+          <button class="btn-confirm-power" id="btn_confirm_poweroff">전원 끄기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SPINNER ====== -->
+  <div class="spinner-overlay" id="spinner">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+    <span id="spinner_msg">서비스 시작 중...</span>
+  </div>
+
+  <script src="../static/socket.io.min.js"></script>
+  <script>
+    const SYSTEM_PORT = 8080;
+
+    // ── Socket ───────────────────────────────────────────────
+    const socket = io();
+
+    socket.on('system', (data) => {
+      // [serial, os_version, runtime_sec, cpu_temp, total_mem, free_mem, wifi_ssid, eth_ip, wifi_ip]
+      const [serial, os, runtimeSec, temp, totalMem, freeMem, wifiSsid, ethIp, wifiIp] = data;
+      const memPct   = Math.floor((totalMem - freeMem) / totalMem * 100);
+      const runtimeH = Math.floor(runtimeSec / 3600);
+      const runtimeM = Math.floor((runtimeSec % 3600) / 60);
+
+      setText('si_serial',  serial);
+      setText('si_os',      os);
+      setText('si_temp',    temp);
+      setText('si_memory',  `${memPct} %`);
+      setText('si_runtime', `${runtimeH}시간 ${runtimeM}분`);
+      setText('si_network', `유선: ${ethIp}  /  무선: ${wifiSsid} (${wifiIp})`);
+      setText('ft_serial',  serial);
+      setText('ft_temp',    temp);
+      setText('wifi_current', `유선: ${ethIp}  /  무선: ${wifiSsid}`);
+      document.getElementById('hdr_network').innerHTML =
+        `<i class="fas fa-network-wired"></i> ${ethIp}&nbsp;&nbsp;<i class="fa-solid fa-wifi"></i> ${wifiSsid}`;
+    });
+
+    // ── Helpers ──────────────────────────────────────────────
+    function setText(id, val) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val;
+    }
+
+    function openModal(id)  { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+    document.querySelectorAll('[data-close]').forEach(btn => {
+      btn.addEventListener('click', () => closeModal(btn.dataset.close));
+    });
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.classList.remove('active');
+      });
+    });
+
+    function showSpinner(msg) {
+      document.getElementById('spinner_msg').textContent = msg;
+      document.getElementById('spinner').classList.add('active');
+    }
+    function hideSpinner() {
+      document.getElementById('spinner').classList.remove('active');
+    }
+
+    // ── Cards ────────────────────────────────────────────────
+    document.getElementById('card_ide').addEventListener('click', () => {
+      window.open(`http://${location.hostname}/ide`);
+    });
+    document.getElementById('card_tools').addEventListener('click', () => {
+      showSpinner('Tools 시작 중...');
+      fetch(`http://${location.hostname}/tools?enable=on`)
+        .then(() => setTimeout(() => { hideSpinner(); window.open(`http://${location.hostname}:50040`); }, 3000))
+        .catch(() => hideSpinner());
+    });
+    document.getElementById('card_cls').addEventListener('click', () => {
+      showSpinner('Classifier 시작 중...');
+      fetch(`http://${location.hostname}/classifier?enable=on`)
+        .then(() => setTimeout(() => { hideSpinner(); window.open(`http://${location.hostname}:50010`); }, 3000))
+        .catch(() => hideSpinner());
+    });
+    document.getElementById('card_llm').addEventListener('click', () => {
+      showSpinner('Chat Bot 시작 중...');
+      fetch(`http://${location.hostname}/llm?enable=on`)
+        .then(() => setTimeout(() => { hideSpinner(); window.open(`http://${location.hostname}:50020`); }, 3000))
+        .catch(() => hideSpinner());
+    });
+    document.getElementById('card_guide').addEventListener('click', () => {
+      window.open(`http://${location.hostname}:${SYSTEM_PORT}`);
+    });
+
+    // ── System info modal ────────────────────────────────────
+    document.getElementById('btn_sysinfo').addEventListener('click', () => {
+      socket.emit('init_lcd');
+      openModal('modal_sysinfo');
+    });
+
+    // ── Power off ────────────────────────────────────────────
+    function openPoweroff() {
+      closeModal('modal_sysinfo');
+      openModal('modal_poweroff');
+    }
+    document.getElementById('btn_poweroff').addEventListener('click', openPoweroff);
+    document.getElementById('btn_poweroff_modal').addEventListener('click', openPoweroff);
+    document.getElementById('btn_confirm_poweroff').addEventListener('click', () => {
+      socket.emit('poweroff');
+      closeModal('modal_poweroff');
+    });
+
+    // ── Wi-Fi ────────────────────────────────────────────────
+    function openWifi() {
+      closeModal('modal_sysinfo');
+      document.getElementById('wifi_form').classList.add('hidden');
+      document.getElementById('wf_status').textContent = '';
+      document.getElementById('wf_status').className = 'wf-status';
+      const list = document.getElementById('wifi_list');
+      list.innerHTML = '<li style="padding:12px 14px;color:#999;">스캔 중...</li>';
+      openModal('modal_wifi');
+
+      fetch(`http://${location.hostname}:${SYSTEM_PORT}/wifi_scan`, { signal: AbortSignal.timeout(15000) })
+        .then(r => r.json())
+        .then(networks => {
+          list.innerHTML = '';
+          const valid = networks.filter(n => n.essid && n.essid.length <= 50 && !n.essid.includes('\x00'));
+          if (!valid.length) {
+            list.innerHTML = '<li style="padding:12px 14px;color:#999;">검색된 네트워크 없음</li>';
+            return;
+          }
+          valid.forEach(n => {
+            const li = document.createElement('li');
+            li.className = 'network-item';
+            li.dataset.ssid = n.essid;
+            li.dataset.security = n.encryption;
+            li.innerHTML = `
+              <span class="ni-name">${n.essid}</span>
+              <span class="ni-details">
+                <span>📶 ${parseInt(n.signal_quality)}%</span>
+                <span>${n.encryption.toLowerCase() === 'none' ? '🔓' : '🔒'} ${n.encryption}</span>
+              </span>`;
+            li.addEventListener('click', () => selectNetwork(n.essid, n.encryption, li));
+            list.appendChild(li);
+          });
+        })
+        .catch(() => {
+          list.innerHTML = '<li style="padding:12px 14px;color:#e53935;">스캔 실패. 다시 시도하세요.</li>';
+        });
+    }
+
+    function selectNetwork(ssid, security, li) {
+      document.querySelectorAll('.network-item').forEach(el => el.classList.remove('selected'));
+      li.classList.add('selected');
+      showWifiForm(ssid, security, true);
+    }
+
+    function showWifiForm(ssid, security, readonly) {
+      const form = document.getElementById('wifi_form');
+      form.classList.remove('hidden');
+      document.getElementById('wf_ssid').value    = ssid;
+      document.getElementById('wf_ssid').readOnly = readonly;
+      document.getElementById('wf_security').value = security;
+      document.getElementById('wf_identity').value = '';
+      document.getElementById('wf_psk').value      = '';
+      document.getElementById('wf_status').textContent = '';
+      document.getElementById('wf_status').className   = 'wf-status';
+
+      const t = (security || '').toLowerCase();
+      const identityGroup = document.getElementById('wf_identity_group');
+      const pskGroup      = document.getElementById('wf_psk_group');
+      identityGroup.classList.add('hidden');
+      pskGroup.classList.add('hidden');
+
+      if (t.includes('eap')) {
+        identityGroup.classList.remove('hidden');
+        pskGroup.classList.remove('hidden');
+        document.getElementById('wf_identity').focus();
+      } else if (t !== 'none' && t !== '') {
+        pskGroup.classList.remove('hidden');
+        document.getElementById('wf_psk').focus();
+      }
+    }
+
+    document.getElementById('btn_open_wifi').addEventListener('click', openWifi);
+
+    document.getElementById('wifi_manual_link').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.querySelectorAll('.network-item').forEach(el => el.classList.remove('selected'));
+      showWifiForm('', 'wpa-psk', false);
+      document.getElementById('wf_ssid').focus();
+      document.getElementById('wf_identity_group').classList.remove('hidden');
+      document.getElementById('wf_psk_group').classList.remove('hidden');
+    });
+
+    document.getElementById('wifi_form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const ssid     = document.getElementById('wf_ssid').value.trim();
+      const identity = document.getElementById('wf_identity').value.trim();
+      const psk      = document.getElementById('wf_psk').value.trim();
+      let key_mgmt   = document.getElementById('wf_security').value || 'wpa-psk';
+      if (!key_mgmt || key_mgmt === 'custom') {
+        key_mgmt = identity ? 'wpa-eap' : psk ? 'wpa-psk' : 'none';
+      }
+
+      const statusEl = document.getElementById('wf_status');
+      statusEl.textContent = '연결 중...';
+      statusEl.className = 'wf-status';
+
+      fetch(`http://${location.hostname}:${SYSTEM_PORT}/wifi`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ssid, psk, identity, key_mgmt }),
+        signal: AbortSignal.timeout(20000),
+      })
+        .then(() => {
+          statusEl.textContent = '연결 요청을 전송했습니다.';
+          setTimeout(() => closeModal('modal_wifi'), 2000);
+        })
+        .catch(() => {
+          statusEl.textContent = '연결 요청 실패.';
+          statusEl.className = 'wf-status error';
+        });
+    });
+  </script>
+</body>
+</html>

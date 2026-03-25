@@ -98,52 +98,47 @@ def file_extension_check(filename):
 
 @app.get('/dir')
 async def get_directory(folderName: str):
-  #file_types = filetype.split(",")
   files = []
   try:
     for p in os.scandir(folderName):
       if not p.is_dir() and not p.is_symlink() and not p.name.startswith('.'):
-        #ext = file_extension_check(p.name)
-        #if ext in file_types:
         files.append(p.name)
   except Exception as err:
     files = []
   return files
 
 
+# ── 랜딩 페이지 ──────────────────────────────────────────────
 @app.get('/', response_class=HTMLResponse)
-async def read_root(request: Request):
+async def read_landing(request: Request):
+  return templates.TemplateResponse("landing.html", {"request": request})
+
+# ── IDE ───────────────────────────────────────────────────────
+@app.get('/ide', response_class=HTMLResponse)
+async def read_ide(request: Request):
   return templates.TemplateResponse("index.html", {"request": request})
+
 
 @app.get("/download")
 async def download_item(filename: str):
   full_path = os.path.join(PATH, filename)
 
-  # 보호 디렉토리 체크
   if is_protect(full_path):
     await socket_manager.emit('update', {'dialog': '파일 다운로드 오류: 보호 디렉토리입니다.'})
     return JSONResponse(content={'error': '파일 다운로드 오류: 보호 디렉토리입니다.'}, status_code=403)
 
-  # 존재 여부 체크
   if not os.path.exists(full_path):
     raise JSONResponse(content={'error':"파일 또는 폴더를 찾을 수 없습니다."}, status_code=404)
 
-  # 파일인 경우: 그대로 다운로드
   if os.path.isfile(full_path):
     return FileResponse(full_path, filename=filename)
 
-  # 폴더인 경우: /tmp/download.zip 로 압축 후 다운로드 (매번 새로 생성)
   elif os.path.isdir(full_path):
     zip_path = "/tmp/download.zip"
-
-    # 기존 압축 파일이 있다면 삭제
     if os.path.exists(zip_path):
       os.remove(zip_path)
-
-    # shutil.make_archive는 base_name 인자로 확장자 없는 경로를 요구함
-    base_name = "/tmp/download"  # 결과적으로 /tmp/download.zip 생성됨
+    base_name = "/tmp/download"
     shutil.make_archive(base_name, 'zip', root_dir=full_path)
-
     return FileResponse(zip_path, media_type="application/zip", filename="download.zip")
     
   else:
@@ -159,7 +154,6 @@ async def upload_file(files: List[UploadFile] = File(...)):
     with open(file_location, "wb") as f:
       content = await file.read()
       f.write(content)
-  # Update file manager
   directory_data = read_directory(PATH)
   await socket_manager.emit('update_file_manager', {'data': directory_data})
   try:
@@ -187,7 +181,7 @@ async def show_file(data: UploadFile = File(...)):
 
 @app.sio.on('connection')
 async def handle_connection(sid, *args, **kwargs):
-  pass  # Placeholder for any connection initialization
+  pass
 
 @app.sio.on('init')
 async def handle_init(sid):
@@ -206,11 +200,24 @@ async def handle_init(sid):
     codeText = ''
   await app.sio.emit('init', {'codepath': codePath, 'codetext': codeText, 'path': PATH})
 
+@app.get('/tools')
+async def tools(enable: str):
+  print(f'[tools] enable={enable}')
+  if enable == "on":
+    subprocess.Popen(['systemctl', 'stop', 'classify.service'])
+    subprocess.Popen(['systemctl', 'stop', 'llama-server.service'])
+    subprocess.Popen(['systemctl', 'start', 'tools.service'])
+  elif enable == "off":
+    subprocess.Popen(['systemctl', 'stop', 'tools.service'])
+  await asyncio.sleep(2)
+  return HTMLResponse(content="", status_code=200)
+
 @app.get('/classifier')
-async def classifier(enable: str):
-  # print("Eanable classifier:", enable)
+async def classifierf(enable: str):
+  print(f'[classifier] enable={enable}')
   if enable == "on":
     subprocess.Popen(['systemctl', 'stop', 'llama-server.service'])
+    subprocess.Popen(['systemctl', 'stop', 'tools.service'])
     subprocess.Popen(['systemctl', 'start', 'classify.service'])
   elif enable == "off":
     subprocess.Popen(['systemctl', 'stop', 'classify.service'])
@@ -218,15 +225,22 @@ async def classifier(enable: str):
   return HTMLResponse(content="", status_code=200)
 
 @app.get('/llm')
-async def classifier(enable: str):
-  # print("Eanable llm:", enable)
+async def llm(enable: str):
+  print(f'[llm] enable={enable}')
   if enable == "on":
     subprocess.Popen(['systemctl', 'stop', 'classify.service'])
+    subprocess.Popen(['systemctl', 'stop', 'tools.service'])
     subprocess.Popen(['systemctl', 'start', 'llama-server.service'])
   elif enable == "off":
     subprocess.Popen(['systemctl', 'stop', 'llama-server.service'])
   await asyncio.sleep(2)
   return HTMLResponse(content="", status_code=200)
+
+
+@app.sio.on('init_lcd')
+async def handle_init_lcd(sid):
+  subprocess.Popen([f'{ENV_PATH}/python3', '/home/pi/openpibo-os/system/network_disp.py'])
+
 
 @app.sio.on('reset_log')
 async def handle_reset_log(sid):
@@ -239,7 +253,6 @@ async def handle_reset_log(sid):
 async def handle_poweroff(sid):
   os.system(f'{ENV_PATH}/python3 /home/pi/openpibo-os/system/clear_disp.py')
   subprocess.Popen(['shutdown', '-h', 'now'])
-  #subprocess.Popen(['echo', '"#11:!"', '>', '/dev/ttyS0'])
 
 
 @app.sio.on('restart')
@@ -353,7 +366,7 @@ async def handle_restore(sid):
         os.system(f'{ENV_PATH}/python3 /home/pi/openpibo-os/system/clear_disp.py')
         subprocess.Popen(['shutdown', '-h', 'now'])
     except Exception as e:
-        await sio.emit('update', {'dialog': f'초기화 오류: {str(e)}'}, room=sid)
+        await app.sio.emit('update', {'dialog': f'초기화 오류: {str(e)}'})
 
 @app.sio.on('add_file')
 async def handle_add_file(sid, p):
@@ -442,18 +455,18 @@ async def execute(EXEC, codepath):
       await app.sio.emit('update', {'record': record})
 
     await ps.wait()
-    ps = None  # 프로세스가 종료되었으므로 ps를 None으로 설정
+    ps = None
     record += "\n종료됨."
     await app.sio.emit('update', {'record': record, 'exit': True})
     directory_data = read_directory(PATH)
     await app.sio.emit('update_file_manager', {'data': directory_data})
 
-# execute 핸들러 수정
 @app.sio.on('execute')
 async def handle_execute(sid, d):
   global codeText, codePath, ps
   subprocess.Popen(['systemctl', 'stop', 'llama-server.service'])
   subprocess.Popen(['systemctl', 'stop', 'classify.service'])
+  subprocess.Popen(['systemctl', 'stop', 'tools.service'])
   try:
     if is_protect(d['codepath']) or is_protect(os.path.dirname(d['codepath'])):
       await app.sio.emit('update', {'dialog': '실행 오류: 보호 파일입니다.', 'exit': True})
@@ -471,12 +484,12 @@ async def handle_execute(sid, d):
   except Exception as err:
     await app.sio.emit('update', {'dialog': f'실행 오류: {str(err)}', 'exit': True})
 
-# executeb 핸들러 수정
 @app.sio.on('executeb')
 async def handle_executeb(sid, d):
   global ps
   subprocess.Popen(['systemctl', 'stop', 'llama-server.service'])
   subprocess.Popen(['systemctl', 'stop', 'classify.service'])
+  subprocess.Popen(['systemctl', 'stop', 'tools.service'])
   try:
     if ps and ps.returncode is None:
       ps.kill()
@@ -489,13 +502,11 @@ async def handle_executeb(sid, d):
   except Exception as err:
     await app.sio.emit('update', {'dialog': f'실행 오류: {str(err)}', 'exit': True})
 
-# stop 핸들러 수정
 @app.sio.on('stop')
 async def handle_stop(sid):
   global ps
   subprocess.Popen(['pkill', 'play'])
   subprocess.Popen(['pkill', 'llama-server'])
-  #subprocess.Popen(['servo', 'init'])
   if ps and ps.returncode is None:
     ps.kill()
     await ps.wait()
@@ -507,7 +518,6 @@ async def handle_prompt(sid, s):
     ps.stdin.write((s + "\n").encode())
     await ps.stdin.drain()
 
-# Additional code for the periodic system status updates
 async def periodic_system_update():
   while True:
     try:
@@ -517,10 +527,6 @@ async def periodic_system_update():
       await app.sio.emit('update', {'dialog': '초기화: 시스템 파일 오류입니다.'})
 
     await asyncio.sleep(10)
-
-#@app.on_event('startup')
-#async def on_startup():
-#  asyncio.create_task(periodic_system_update())
 
 if __name__ == '__main__':
   import argparse

@@ -492,5 +492,5 @@ async function exportConvertedModelAsZipAndConvert() {
 
 window.addEventListener('beforeunload', () => {
     stopCameraStream();
-    fetch(`http://${location.hostname}/classifier?enable=off`).catch(() => {});
+    fetch(`http://${location.hostname}/classifier?enable=off`, { keepalive: true}).catch(() => {});
 });
