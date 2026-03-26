@@ -128,11 +128,11 @@ const translations = {
   },
   add_directory: {
     ko: "새폴더",
-    en: "new folder"
+    en: "Folder"
   },
   add_file: {
     ko: "새파일",
-    en: "new file"
+    en: "File"
   },
   python: {
     ko: "파이썬",

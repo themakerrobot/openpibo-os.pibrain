@@ -637,9 +637,6 @@ const setLanguage = (langCode) => {
   document.head.appendChild(script);
 
   workspace.updateToolbox(toolbox_dict[langCode]);
-
-  document.getElementById('add_directory').style.width = langCode === 'en' ? '105px' : '80px';
-  document.getElementById('add_file').style.width      = langCode === 'en' ? '100px' : '85px';
 };
 
 const languageSel = document.getElementById('language');

@@ -1,5 +1,5 @@
 /* ============================================================
-   PiBrain IDE — index.css
+   Pibo Maker IDE — index.css (redesigned 2026-03-20)
    ============================================================ */
 
 @font-face {
@@ -10,6 +10,7 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
+/* ── CSS Variables ─────────────────────────────────────────── */
 :root {
   --mid-gray:     #6c6c6c;
   --yellow:       #f4de3d;
@@ -37,12 +38,17 @@
     "Apple SD Gothic Neo", "Apple SD 산돌고딕 Neo", "Droid Sans", sans-serif;
 }
 
+/* ── Base ──────────────────────────────────────────────────── */
 html, body {
   touch-action: pan-x pan-y;
-  height: 100%; margin: 0;
-  font-size: 10px; font-family: var(--font-ko);
-  color: #1a1a1a; background: #f4f4f0;
-  display: flex; flex-direction: column;
+  height: 100%;
+  margin: 0;
+  font-size: 10px;
+  font-family: var(--font-ko);
+  color: #1a1a1a;
+  background: #f4f4f0;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -56,7 +62,9 @@ header, h1, h2, h3, h4, h5, h6 {
 }
 
 textarea, select, input {
-  color: #1a1a1a; font-weight: 500; outline: none;
+  color: #1a1a1a;
+  font-weight: 500;
+  outline: none;
   font-family: var(--font-ko);
   -webkit-font-smoothing: antialiased;
 }
@@ -64,28 +72,35 @@ textarea, select, input {
 select, input {
   background: rgba(248, 242, 172, 0.85);
   border: 1px solid rgba(0,0,0,0.4);
-  border-radius: 12px; padding: 3px 8px;
+  border-radius: 12px;
+  padding: 3px 8px;
   font-size: 14px !important;
 }
 
 a:link, a:visited { color: #0896d9; text-decoration: none; }
 a:hover, a:focus   { color: #0896d9; cursor: pointer; }
 
+/* ── Scrollbar ─────────────────────────────────────────────── */
 ::-webkit-scrollbar         { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track   { background: rgba(0,0,0,0.05); border-radius: 3px; }
 ::-webkit-scrollbar-thumb   { background: rgba(0,0,0,0.18); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.3); }
 
+/* ── Accessibility ─────────────────────────────────────────── */
 .readable-hidden, .a11y, legend {
   position: absolute; width: 1px; height: 1px;
   overflow: hidden; margin: -1px; clip: rect(0,0,0,0);
 }
 
-/* ── Header ── */
+/* ============================================================
+   HEADER
+   ============================================================ */
 header.title {
   position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-  height: var(--header-h); background: var(--dark-yellow);
-  display: flex; align-items: center; justify-content: space-between;
+  height: var(--header-h);
+  background: var(--dark-yellow);
+  display: flex; align-items: center;
+  justify-content: space-between;
   padding: 0 12px 0 8px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
@@ -99,7 +114,8 @@ header.title {
 }
 
 .header-logo {
-  margin: 0; font-family: Tahoma, sans-serif;
+  margin: 0;
+  font-family: Tahoma, sans-serif;
   font-size: 1.9rem; font-weight: 700;
   letter-spacing: -0.02em; color: #111;
 }
@@ -112,27 +128,34 @@ header.title {
   border: none; background: rgba(0,0,0,0.1);
   cursor: pointer; font-size: 1.4rem; color: #111;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: none; padding: 0; transition: background 0.15s;
+  box-shadow: none; padding: 0;
+  transition: background 0.15s;
 }
 .sidebar-toggle-btn:hover  { background: rgba(0,0,0,0.18); }
 .sidebar-toggle-btn:active { transform: none; box-shadow: none; }
 
 header > div > h2 > select {
-  height: 22px; background: var(--light-yellow);
+  height: 22px;
+  background: var(--light-yellow);
   border: 1px solid rgba(0,0,0,0.25);
   border-radius: 10px; padding: 0 6px;
   font-size: 11px !important; color: #111;
 }
 
-/* ── Main — footer 없으므로 전체 높이 사용 ── */
+/* ============================================================
+   MAIN LAYOUT  — footer 제거로 전체 높이 사용
+   ============================================================ */
 main {
-  display: flex; flex-direction: row;
+  display: flex;
+  flex-direction: row;
   margin-top: var(--header-h);
   height: calc(100vh - var(--header-h));
   overflow: hidden;
 }
 
-/* ── Left Sidebar ── */
+/* ============================================================
+   LEFT SIDEBAR
+   ============================================================ */
 .sidebar {
   width: var(--sidebar-w); min-width: var(--sidebar-w);
   display: flex; flex-direction: column;
@@ -149,23 +172,24 @@ main {
 }
 
 .sidebar-actions {
-  display: flex; align-items: stretch; gap: 5px;
-  padding: 4px 8px; border-bottom: var(--border);
-  background: #f4f4f0; flex-shrink: 0; height: 42px;
+  display: flex; align-items: center; gap: 5px;
+  padding: 7.5px 4px; border-bottom: var(--border);
+  background: #f4f4f0; flex-shrink: 0;
 }
 
+/* ── 사이드바 버튼: 아이콘+텍스트 한 줄 ── */
 .sidebar-btn {
-  font-family: var(--font-ko); font-size: 11px; font-weight: 600;
-  padding: 3px 6px; border: none; border-radius: 10px;
+  font-family: var(--font-ko); font-size: 13px; font-weight: 600;
+  padding: 5px 8px; border: none; border-radius: 10px;
   background: var(--yellow); box-shadow: 0 3px var(--mid-gray);
-  cursor: pointer; display: flex; flex-direction: column;
+  cursor: pointer; display: flex; flex-direction: row;
   align-items: center; justify-content: center;
-  gap: 1px; flex: 1; width: auto !important;
-  line-height: 1.1; text-align: center;
+  gap: 4px; flex: 1; width: auto !important;
+  line-height: 1.2; text-align: center; white-space: nowrap;
   -webkit-font-smoothing: antialiased;
 }
-.sidebar-btn i    { font-size: 13px; }
-.sidebar-btn span { font-size: 10px; white-space: nowrap; }
+.sidebar-btn i    { font-size: 13px; flex-shrink: 0; }
+.sidebar-btn span { font-size: 13px; white-space: nowrap; }
 .sidebar-btn:hover  { background: var(--dark-yellow); font-weight: bold; }
 .sidebar-btn:active { background: var(--dark-yellow); box-shadow: 0 1px var(--mid-gray); transform: translateY(2px); }
 .sidebar-btn-teal   { background: var(--teal); }
@@ -211,14 +235,17 @@ label[for=upload].sidebar-btn:active { box-shadow: 0 1px var(--mid-gray); positi
 }
 .fm-table-wrap.dragover .drop-overlay { display: flex; }
 
-/* ── Editor Pane ── */
+/* ============================================================
+   EDITOR PANE
+   ============================================================ */
 .editor-pane {
   flex: 1 1 0; display: flex; flex-direction: column;
   overflow: hidden; min-width: 0; background: #fff;
 }
 
 .editor-toolbar {
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: center;
+  justify-content: space-between;
   padding: 0 10px; height: var(--toolbar-h);
   background: #f4f4f0; border-bottom: var(--border);
   flex-shrink: 0; gap: 8px; flex-wrap: wrap;
@@ -227,7 +254,8 @@ label[for=upload].sidebar-btn:active { box-shadow: 0 1px var(--mid-gray); positi
 .toolbar-group { display: flex; align-items: center; gap: 7px; }
 
 .codetype-switch {
-  display: flex; border: 1.5px solid var(--yellow);
+  display: flex;
+  border: 1.5px solid var(--yellow);
   border-radius: 12px; overflow: hidden;
 }
 .codetype-switch > button {
@@ -313,7 +341,9 @@ label[for=upload].sidebar-btn:active { box-shadow: 0 1px var(--mid-gray); positi
 }
 .blocklyTreeSelected .customIcon { filter: invert(1); }
 
-/* ── Pane Resizer ── */
+/* ============================================================
+   PANE RESIZER
+   ============================================================ */
 .pane-resizer {
   width: var(--resizer-w); min-width: var(--resizer-w);
   background: #d0dae8; cursor: col-resize;
@@ -322,7 +352,9 @@ label[for=upload].sidebar-btn:active { box-shadow: 0 1px var(--mid-gray); positi
 .pane-resizer::after { content: ''; position: absolute; inset: 0 -4px; }
 .pane-resizer:hover, .pane-resizer.dragging { background: var(--navy-light); }
 
-/* ── Result Pane ── */
+/* ============================================================
+   RESULT PANE
+   ============================================================ */
 .result-pane {
   width: var(--result-w); min-width: 200px;
   display: flex; flex-direction: column;
@@ -365,7 +397,9 @@ label[for=upload].sidebar-btn:active { box-shadow: 0 1px var(--mid-gray); positi
 .result.result-has-error { border-top-color: var(--red); background: #fff8f7; }
 .result.result-ok        { border-top-color: #2ecc71; background: #f7fff9; }
 
-/* ── Buttons ── */
+/* ============================================================
+   BUTTONS (shared)
+   ============================================================ */
 button {
   font-family: var(--font-ko); font-size: 13px; font-weight: 600;
   padding: 5px 12px; outline: none;
@@ -387,7 +421,9 @@ button.btn-red:active { box-shadow: 0 1px #903c2b; }
 
 button.disabled { opacity: 0.45; filter: grayscale(0.5); pointer-events: none; }
 
-/* ── Media Viewer ── */
+/* ============================================================
+   INLINE MEDIA VIEWER
+   ============================================================ */
 #media_viewer {
   flex-shrink: 0; background: #111;
   border-bottom: 2px solid var(--teal); overflow: hidden;
@@ -410,7 +446,9 @@ button.disabled { opacity: 0.45; filter: grayscale(0.5); pointer-events: none; }
 .preview-audio:not([src]) { display: none; }
 #viewer_toggle_btn.active { background: var(--dark-teal); box-shadow: 0 1px #074c55; }
 
-/* ── Popups ── */
+/* ============================================================
+   POPUPS (alert, confirm, prompt)
+   ============================================================ */
 .alert-popup, .prompt-popup, .confirm-popup {
   position: fixed; inset: 0; z-index: 400;
   background: rgba(0,0,0,0.5);
@@ -460,7 +498,9 @@ button.disabled { opacity: 0.45; filter: grayscale(0.5); pointer-events: none; }
 }
 #confirmCancelBtn:hover, #promptCancelBtn:hover { background: #E5E5EA; }
 
-/* ── Responsive ── */
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 @media (max-width: 1100px) {
   :root { --result-w: 280px; }
 
@@ -495,8 +535,8 @@ button.disabled { opacity: 0.45; filter: grayscale(0.5); pointer-events: none; }
     z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
     transition: transform 0.25s ease; transform: translateX(-100%);
   }
-  .sidebar.open     { transform: translateX(0); }
-  .result-pane      { transform: translateX(100%); }
+  .sidebar.open    { transform: translateX(0); }
+  .result-pane     { transform: translateX(100%); }
   .result-pane.open { transform: translateX(0); }
 
   .editor-pane { width: 100vw; }

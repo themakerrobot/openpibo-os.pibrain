@@ -349,11 +349,14 @@
   });
   applyBreakpoint();
 
-  /* ── Language change → Blockly resize fix ───────────────── */
+  /* ── Language change → Blockly resize fix + preview btn 갱신 ── */
   const langSelect = document.getElementById('language');
   if (langSelect) {
     langSelect.addEventListener('change', () => {
       setTimeout(refreshEditors, 300);
+      // previewBtn이 이미 생성된 경우 텍스트 갱신
+      const pb = document.getElementById('blockly_preview_btn');
+      if (pb) pb.innerHTML = getPreviewLabel(previewOpenRef[0]);
     });
   }
 
@@ -552,16 +555,32 @@
 
   /* ── UX 3. Blockly → Python 미리보기 토글 ───────────────── */
   const toolbar = document.querySelector('.editor-toolbar .toolbar-left');
+
+  // previewOpen 상태를 배열로 감싸서 langSelect 핸들러에서도 접근 가능하게
+  const previewOpenRef = [false];
+
+  // 현재 lang 가져오기 (ko2en.js의 전역 변수)
+  function getCurrentLang() {
+    return (typeof lang !== 'undefined' ? lang : 'ko');
+  }
+
+  // 코드보기 버튼 라벨 생성
+  function getPreviewLabel(isOpen) {
+    const isKo = getCurrentLang() === 'ko';
+    if (isOpen) {
+      return '<i class="fa-solid fa-xmark"></i> ' + (isKo ? '닫기' : 'Close');
+    }
+    return '<i class="fa-brands fa-python"></i> ' + (isKo ? '코드보기' : 'Preview');
+  }
+
   if (toolbar) {
     const previewBtn = document.createElement('button');
     previewBtn.id    = 'blockly_preview_btn';
     previewBtn.title = '블록에서 생성된 Python 코드 보기';
-    previewBtn.innerHTML = '<i class="fa-brands fa-python"></i> 코드보기';
+    previewBtn.innerHTML = getPreviewLabel(false);
     previewBtn.style.cssText = 'display:none; font-size:12px; padding:4px 10px;';
 
     toolbar.appendChild(previewBtn);
-
-    let previewOpen = false;
 
     // 블록/파이썬 모드 전환 감지해서 버튼 표시 여부 결정
     const codeTypeBtns = document.querySelectorAll('div[name=codetype] button');
@@ -569,7 +588,7 @@
       let mode = '';
       codeTypeBtns.forEach(b => { if (b.classList.contains('checked')) mode = b.name; });
       previewBtn.style.display = mode === 'block' ? '' : 'none';
-      if (mode !== 'block' && previewOpen) closePreview();
+      if (mode !== 'block' && previewOpenRef[0]) closePreview();
     }
     codeTypeBtns.forEach(b => b.addEventListener('click', () => setTimeout(updatePreviewBtnVisibility, 50)));
     setTimeout(updatePreviewBtnVisibility, 600);
@@ -587,29 +606,14 @@
       'padding:20px 24px',
     ].join(';');
 
-    // 헤더 바
+    // 헤더 바 (아이콘 버튼만)
     const previewHeader = document.createElement('div');
-    previewHeader.style.cssText = [
-      'display:flex', 'align-items:center', 'justify-content:space-between',
-      'margin-bottom:16px',
-      'padding-bottom:10px',
-      'border-bottom:1px solid rgba(255,255,255,0.1)',
-    ].join(';');
+    previewHeader.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;';
     previewHeader.innerHTML = `
-      <span style="font-family:var(--font-ko);font-size:13px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.05em;">
-        <i class="fa-brands fa-python" style="color:#3572A5;margin-right:6px;"></i>생성된 Python 코드
-      </span>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <button id="preview_copy_btn" style="
-          background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;
-          color:#aaa;font-size:13px;padding:4px 12px;cursor:pointer;
-          font-family:var(--font-ko);font-weight:600;box-shadow:none;
-        "><i class="fa-solid fa-copy"></i> 복사</button>
-        <button id="preview_close_btn" style="
-          background:rgba(255,255,255,0.08);border:none;border-radius:8px;
-          color:#aaa;font-size:13px;padding:4px 12px;cursor:pointer;
-          font-family:var(--font-ko);font-weight:600;box-shadow:none;
-        "><i class="fa-solid fa-xmark"></i> 닫기</button>
+      <i class="fa-brands fa-python" style="color:#3572A5;font-size:20px;"> python</i>
+      <div style="display:flex;gap:6px;">
+        <button id="preview_copy_btn" title="복사" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:#aaa;font-size:14px;padding:4px 10px;cursor:pointer;box-shadow:none;"><i class="fa-solid fa-copy"></i></button>
+        <button id="preview_close_btn" title="닫기" style="background:rgba(255,255,255,0.08);border:none;border-radius:8px;color:#aaa;font-size:14px;padding:4px 10px;cursor:pointer;box-shadow:none;"><i class="fa-solid fa-xmark"></i></button>
       </div>
     `;
     previewOverlay.appendChild(previewHeader);
@@ -639,8 +643,8 @@
         copyToClipboard(previewCode.innerText).then(() => {
           const copyBtn = document.getElementById('preview_copy_btn');
           if (copyBtn) {
-            copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> 복사됨';
-            setTimeout(() => { copyBtn.innerHTML = '<i class="fa-solid fa-copy"></i> 복사'; }, 1500);
+            copyBtn.innerHTML = '<i class="fa-solid fa-check"></i>';
+            setTimeout(() => { copyBtn.innerHTML = '<i class="fa-solid fa-copy"></i>'; }, 1500);
           }
         });
       }
@@ -729,16 +733,16 @@
     function openPreview() {
       if (typeof Blockly === 'undefined' || typeof workspace === 'undefined') return;
       const code = Blockly.Python.workspaceToCode(workspace);
-      previewCode.innerHTML = syntaxHighlight(code || '# (블록이 비어 있습니다)');
+      previewCode.innerHTML = syntaxHighlight(code || '# (...)');
       previewOverlay.style.display = 'block';
-      previewBtn.innerHTML = '<i class="fa-solid fa-xmark"></i> 닫기';
-      previewOpen = true;
+      previewBtn.innerHTML = getPreviewLabel(true);
+      previewOpenRef[0] = true;
     }
 
     function closePreview() {
       previewOverlay.style.display = 'none';
-      previewBtn.innerHTML = '<i class="fa-brands fa-python"></i> 코드보기';
-      previewOpen = false;
+      previewBtn.innerHTML = getPreviewLabel(false);
+      previewOpenRef[0] = false;
     }
 
     // 헤더의 닫기 버튼
@@ -747,7 +751,7 @@
     });
 
     previewBtn.addEventListener('click', () => {
-      previewOpen ? closePreview() : openPreview();
+      previewOpenRef[0] ? closePreview() : openPreview();
     });
   }
 
