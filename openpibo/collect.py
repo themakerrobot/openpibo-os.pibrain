@@ -616,7 +616,6 @@ Functions:
 
             example::
 
-                '45'
                 '보통'
                 or None
         """
@@ -1056,7 +1055,7 @@ if __name__ == "__main__":
     print('weather:',   weather.search_s('서울', 'today', 'weather'))
     print('news:',      news.search_s('속보', 'title'))
     print('exchange:',  er.search_s('USD', 'KRW'))
-    print('air:',       aq.search_s('서울', 'pm10_grade'))
+    print('air:',       aq.search_s('서울', 'pm10'))
     print('trivia:',    trivia.search_s('과학', 'easy'))
     print('country:',   country.search_s('korea', 'capital'))
     print('onthisday:', otd.search_s(3, 1, 'events'))
