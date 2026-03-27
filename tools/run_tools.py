@@ -385,7 +385,7 @@ async def tts(text: str, voice: str = 'f1'):
         sp = await ensure_speech()
         au = await ensure_audio()
         await asyncio.to_thread(sp.tts, text, filename=TTS_FILE, voice=voice)
-        await asyncio.to_thread(au.play, TTS_FILE, background=False)
+        await asyncio.to_thread(au.play, TTS_FILE, volume=100, background=False)
         return JSONResponse({"ok": True})
     except Exception as e:
         return JSONResponse({"ok": False, "error": str(e)})
