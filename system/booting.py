@@ -1,6 +1,5 @@
 from openpibo.oled import OledByPiBrain as Oled
 from openpibo.audio import Audio
-from fastapi import FastAPI, Body
 from fastapi import FastAPI, Body, Request
 from fastapi.responses import JSONResponse,HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -28,7 +27,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
-apmode = True
+apmode = False
 
 templates = Jinja2Templates(directory="/home/pi/openpibo-os/docs")
 app.mount("/build", StaticFiles(directory="/home/pi/openpibo-os/docs/build"), name="build")
@@ -37,9 +36,6 @@ app.mount("/build", StaticFiles(directory="/home/pi/openpibo-os/docs/build"), na
 async def read_root(request: Request):
   return templates.TemplateResponse("index.html", {"request": request})
 
-#@app.get("/device/{pkt}")
-#async def device_command(pkt: str):
-#  return JSONResponse(content=f"not support", status_code=500)
 
 @app.get('/wifi_scan')
 async def f():
@@ -65,7 +61,7 @@ async def f(data: dict = Body(...)):
       os.system(f"sudo /home/pi/openpibo-os/system/conwifi.sh wpa-enterprise '{data['ssid']}' '{data['identity']}' '{data['psk']}'")
   else:
     return JSONResponse(content=f"Error: {str(ex)}", status_code=500)
-  os.system('shutdown -r now &') 
+  os.system('shutdown -r now &')
   return JSONResponse(content="ok", status_code=200)
 
 def wifi_update():
@@ -109,12 +105,13 @@ def boot():
   aud.play("/home/pi/openpibo-os/system/opening.mp3", 70)
   ole.clear()
   ole.draw_image("/home/pi/openpibo-os/system/pibrain320.jpg")
+  ole.draw_text((5,0), os_version)
   ole.show()
   time.sleep(5)
   for i in range(1,10):
     tmp = os.popen('/home/pi/openpibo-os/system/system.sh').read().strip('\n').split(',')
     if (tmp[6] != '' and tmp[6][0:3] != '169') or (tmp[7] != '' and tmp[7][0:3] != '169'):
-      os.system("/home/pi/openpibo-os/system/hotspot.sh stop")
+      #os.system("/home/pi/openpibo-os/system/hotspot.sh stop")
       break
     ole.draw_text((5,5), "-".join(["" for _ in range(i+1)]))
     ole.show()

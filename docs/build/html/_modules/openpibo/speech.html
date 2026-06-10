@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>openpibo.speech &mdash; OPENPIBO 0.9.3.3 문서</title>
+  <title>openpibo.speech &mdash; OPENPIBO 0.9.3.3.1 문서</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -16,7 +16,7 @@
     <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/_modules/openpibo/speech.html" />
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=3314e875"></script>
+      <script src="../../_static/documentation_options.js?v=d96300f4"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -116,7 +116,15 @@
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">napi_host</span><span class="p">,</span> <span class="n">sapi_host</span>
 <span class="kn">from</span> <span class="nn">.modules.speech.mtranslate</span> <span class="kn">import</span> <span class="n">translate</span>
-<span class="kn">from</span> <span class="nn">.modules.speech.mtts</span> <span class="kn">import</span> <span class="n">OnDeviceTTS</span>
+<span class="kn">import</span> <span class="nn">onnxruntime</span> <span class="k">as</span> <span class="nn">ort</span>
+<span class="kn">import</span> <span class="nn">soundfile</span> <span class="k">as</span> <span class="nn">sf</span>
+<span class="kn">from</span> <span class="nn">.modules.speech.mtts</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">load_text_to_speech</span><span class="p">,</span>
+    <span class="n">load_voice_style</span><span class="p">,</span>
+    <span class="n">TextToSpeech</span><span class="p">,</span>
+    <span class="n">AVAILABLE_LANGS</span><span class="p">,</span>
+<span class="p">)</span>
+
 <span class="kn">import</span> <span class="nn">openpibo_models</span>
 <span class="c1">#current_path = os.path.dirname(os.path.realpath(__file__))</span>
 
@@ -250,6 +258,8 @@
 </div>
 
 
+<span class="n">DEFAULT_MODEL_DIR</span> <span class="o">=</span> <span class="s2">&quot;/home/pi/.model&quot;</span>
+
 <div class="viewcode-block" id="SpeechOnDevice">
 <a class="viewcode-back" href="../../libraries/speech.html#openpibo.speech.SpeechOnDevice">[문서]</a>
 <span class="k">class</span> <span class="nc">SpeechOnDevice</span><span class="p">:</span>
@@ -267,36 +277,77 @@
 <span class="sd">    # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
 <span class="sd">  &quot;&quot;&quot;</span>
 
-  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">otts</span> <span class="o">=</span> <span class="n">OnDeviceTTS</span><span class="p">()</span>
-  
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">onnx_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_MODEL_DIR</span><span class="si">}</span><span class="s2">/tts/assets/onnx&quot;</span><span class="p">,</span>
+    <span class="n">voice_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_MODEL_DIR</span><span class="si">}</span><span class="s2">/tts/assets/voice_styles&quot;</span><span class="p">,</span>
+    <span class="n">total_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="n">speed</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.05</span><span class="p">,</span>
+  <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :param str onnx_dir: ONNX 모델 디렉토리 경로</span>
+<span class="sd">    :param str voice_dir: 보이스 스타일 JSON 디렉토리 경로</span>
+<span class="sd">    :param int total_step: 디노이징 스텝 수 (높을수록 품질↑, 속도↓)</span>
+<span class="sd">    :param float speed: 말하기 속도 (높을수록 빠름)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">onnx_dir</span> <span class="o">=</span> <span class="n">onnx_dir</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">voice_dir</span> <span class="o">=</span> <span class="n">voice_dir</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">total_step</span> <span class="o">=</span> <span class="n">total_step</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">speed</span> <span class="o">=</span> <span class="n">speed</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">:</span> <span class="n">TextToSpeech</span> <span class="o">=</span> <span class="n">load_text_to_speech</span><span class="p">(</span><span class="n">onnx_dir</span><span class="p">,</span> <span class="n">use_gpu</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
 <div class="viewcode-block" id="SpeechOnDevice.tts">
 <a class="viewcode-back" href="../../libraries/speech.html#openpibo.speech.SpeechOnDevice.tts">[문서]</a>
-  <span class="k">def</span> <span class="nf">tts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;tts.mp3&quot;</span><span class="p">,</span> <span class="n">voice</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s2">&quot;ko&quot;</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">tts</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;tts.wav&quot;</span><span class="p">,</span>
+    <span class="n">voice</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;m1&quot;</span><span class="p">,</span>
+    <span class="n">lang</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;na&quot;</span><span class="p">,</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    TTS(Text to Speech)</span>
+<span class="sd">    TTS(Text to Speech) — 텍스트를 음성 파일로 변환합니다.</span>
 
-<span class="sd">    Text(문자)를 Speech(말)로 변환하여 파일로 저장합니다.</span>
+<span class="sd">      example::</span>
 
-<span class="sd">    example::</span>
+<span class="sd">        tts.tts(text=&#39;안녕하세요! 만나서 반가워요!&#39;, filename=&#39;/home/pi/tts.wav&#39;, voice=&#39;m1&#39;, lang=&#39;na&#39;)</span>
 
-<span class="sd">      speech_od.tts(text=&#39;안녕하세요! 만나서 반가워요!&#39;, &#39;ko&#39;, &#39;/home/pi/tts.mp3&#39;)</span>
-
-<span class="sd">    :param str text: 변환할 문장구</span>
-
-<span class="sd">    :param int voice: 목소리 번호 0 - 5</span>
-
-<span class="sd">    :param str lang: 사용할 언어(ko)</span>
-
-<span class="sd">    :param str filename: 변환된 음성파일의 경로 (mp3)</span>
+<span class="sd">    :param str text: 변환할 문장</span>
+<span class="sd">    :param str filename: 저장할 음성 파일 경로 (.wav)</span>
+<span class="sd">    :param str voice: 목소리 종류 (m1~m5/f1~f5)</span>
+<span class="sd">    :param str lang: 언어 코드 (&#39;na&#39;=자동/기타, &#39;ko&#39;, &#39;en&#39;, &#39;ja&#39; ...)</span>
+<span class="sd">    :returns str: 저장된 파일 경로</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s1">&quot; must be str type&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s1">&quot; must be str type&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">voice</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;m1&quot;</span><span class="p">,</span> <span class="s2">&quot;m2&quot;</span><span class="p">,</span> <span class="s2">&quot;m3&quot;</span><span class="p">,</span> <span class="s2">&quot;m4&quot;</span><span class="p">,</span> <span class="s2">&quot;m5&quot;</span><span class="p">,</span> <span class="s2">&quot;f1&quot;</span><span class="p">,</span> <span class="s2">&quot;f2&quot;</span><span class="p">,</span> <span class="s2">&quot;f3&quot;</span><span class="p">,</span> <span class="s2">&quot;f4&quot;</span><span class="p">,</span> <span class="s2">&quot;f5&quot;</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;voice must be m1~m5/f1~f5, got </span><span class="si">{</span><span class="n">voice</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">lang</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">AVAILABLE_LANGS</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported lang: </span><span class="si">{</span><span class="n">lang</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">otts</span><span class="o">.</span><span class="n">text_to_speech</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">voice</span><span class="o">=</span><span class="n">voice</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="n">lang</span><span class="p">,</span> <span class="n">static</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+    <span class="n">voice_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">voice_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">voice</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">.json&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">voice_path</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Voice style not found: </span><span class="si">{</span><span class="n">voice_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">style</span> <span class="o">=</span> <span class="n">load_voice_style</span><span class="p">([</span><span class="n">voice_path</span><span class="p">])</span>
+    <span class="n">wav</span><span class="p">,</span> <span class="n">duration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">(</span>
+      <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
+      <span class="n">lang</span><span class="o">=</span><span class="n">lang</span><span class="p">,</span>
+      <span class="n">style</span><span class="o">=</span><span class="n">style</span><span class="p">,</span>
+      <span class="n">total_step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">total_step</span><span class="p">,</span>
+      <span class="n">speed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">speed</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">out_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">out_dir</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">out_dir</span><span class="p">):</span>
+      <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">out_dir</span><span class="p">)</span>
+
+    <span class="c1"># wav 저장</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">wav</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">sample_rate</span> <span class="o">*</span> <span class="n">duration</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">())]</span>
+    <span class="n">sf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">filename</span></div>
 </div>
-
 
 
 <div class="viewcode-block" id="Dialog">
@@ -646,7 +697,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025 THEMAKER. All rights reserved. openpibo-python-0.9.3.3.</p>
+    <p>&#169; Copyright 2025 THEMAKER. All rights reserved. openpibo-python-0.9.3.3.1.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

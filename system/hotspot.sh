@@ -13,6 +13,7 @@ DHCP_RANGE_START="192.168.34.10"
 DHCP_RANGE_END="192.168.34.50"
 SUBNET_MASK="255.255.255.0"
 CONNECTION_NAME="pibo-ap"
+WIFI_NAME="pibo-wifi"
 
 # 명령어 사용 안내
 usage() {
@@ -65,13 +66,17 @@ remove_dnsmasq_config() {
 
 # 핫스팟 모드 시작
 start_hotspot() {
+  sudo nmcli connection down "$WIFI_NAME" || true
+  #sudo nmcli connection delete "$WIFI_NAME" || true
+  #sudo rm -rf /etc/NetworkManager/system-connections/*.nmconnection*
+  sudo find /etc/NetworkManager/system-connections/ -name "*.nmconnection*" ! -name "pibo-wifi*" -delete
   create_virtual_interface
   echo "Starting hotspot on $AP_IFACE with SSID: $AP_SSID..."
   sudo nmcli connection add type wifi ifname "$AP_IFACE" con-name "$CONNECTION_NAME" autoconnect no ssid "$AP_SSID"
   sudo nmcli connection modify "$CONNECTION_NAME" 802-11-wireless.mode ap 802-11-wireless.band bg \
       ipv4.method manual ipv4.addresses "$STATIC_IP/24" wifi-sec.key-mgmt wpa-psk wifi-sec.psk "$AP_PASSWORD"
   sudo nmcli connection up "$CONNECTION_NAME"
-  
+
   enable_nat_ip_forwarding
   configure_dnsmasq
   sudo iw ap0 set power_save off
@@ -114,4 +119,3 @@ case "$command" in
     usage
     ;;
 esac
-

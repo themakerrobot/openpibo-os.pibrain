@@ -16,7 +16,15 @@ import os
 import requests
 from . import napi_host, sapi_host
 from .modules.speech.mtranslate import translate
-from .modules.speech.mtts import OnDeviceTTS
+import onnxruntime as ort
+import soundfile as sf
+from .modules.speech.mtts import (
+    load_text_to_speech,
+    load_voice_style,
+    TextToSpeech,
+    AVAILABLE_LANGS,
+)
+
 import openpibo_models
 #current_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -138,6 +146,8 @@ Functions:
 
     return res.json()['data']
 
+DEFAULT_MODEL_DIR = "/home/pi/.model"
+
 class SpeechOnDevice:
   """
 Functions:
@@ -153,33 +163,74 @@ Functions:
     # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.
   """
 
-  def __init__(self):
-    self.otts = OnDeviceTTS()
-  
-  def tts(self, text, filename="tts.mp3", voice=2, lang="ko"):
+  def __init__(
+    self,
+    onnx_dir: str = f"{DEFAULT_MODEL_DIR}/tts/assets/onnx",
+    voice_dir: str = f"{DEFAULT_MODEL_DIR}/tts/assets/voice_styles",
+    total_step: int = 5,
+    speed: float = 1.05,
+  ):
     """
-    TTS(Text to Speech)
+    :param str onnx_dir: ONNX 모델 디렉토리 경로
+    :param str voice_dir: 보이스 스타일 JSON 디렉토리 경로
+    :param int total_step: 디노이징 스텝 수 (높을수록 품질↑, 속도↓)
+    :param float speed: 말하기 속도 (높을수록 빠름)
+    """
+    self.onnx_dir = onnx_dir
+    self.voice_dir = voice_dir
+    self.total_step = total_step
+    self.speed = speed
+    self._model: TextToSpeech = load_text_to_speech(onnx_dir, use_gpu=False)
 
-    Text(문자)를 Speech(말)로 변환하여 파일로 저장합니다.
+  def tts(
+    self,
+    text: str,
+    filename: str = "tts.wav",
+    voice: str = "m1",
+    lang: str = "na",
+  ) -> str:
+    """
+    TTS(Text to Speech) — 텍스트를 음성 파일로 변환합니다.
 
-    example::
+      example::
 
-      speech_od.tts(text='안녕하세요! 만나서 반가워요!', 'ko', '/home/pi/tts.mp3')
+        tts.tts(text='안녕하세요! 만나서 반가워요!', filename='/home/pi/tts.wav', voice='m1', lang='na')
 
-    :param str text: 변환할 문장구
-
-    :param int voice: 목소리 번호 0 - 5
-
-    :param str lang: 사용할 언어(ko)
-
-    :param str filename: 변환된 음성파일의 경로 (mp3)
+    :param str text: 변환할 문장
+    :param str filename: 저장할 음성 파일 경로 (.wav)
+    :param str voice: 목소리 종류 (m1~m5/f1~f5)
+    :param str lang: 언어 코드 ('na'=자동/기타, 'ko', 'en', 'ja' ...)
+    :returns str: 저장된 파일 경로
     """
 
-    if type(text) is not str:
-      raise Exception(f'"{text}" must be str type')
+    if not isinstance(text, str):
+      raise TypeError(f'"{text}" must be str type')
+    if voice not in ("m1", "m2", "m3", "m4", "m5", "f1", "f2", "f3", "f4", "f5"):
+      raise ValueError(f"voice must be m1~m5/f1~f5, got {voice}")
+    if lang not in AVAILABLE_LANGS:
+      raise ValueError(f"Unsupported lang: {lang}")
 
-    self.otts.text_to_speech(text=text, filename=filename, voice=voice, lang=lang, static=0)
+    voice_path = os.path.join(self.voice_dir, f"{voice.upper()}.json")
+    if not os.path.exists(voice_path):
+      raise FileNotFoundError(f"Voice style not found: {voice_path}")
 
+    style = load_voice_style([voice_path])
+    wav, duration = self._model(
+      text=text,
+      lang=lang,
+      style=style,
+      total_step=self.total_step,
+      speed=self.speed,
+    )
+
+    out_dir = os.path.dirname(filename)
+    if out_dir and not os.path.exists(out_dir):
+      os.makedirs(out_dir)
+
+    # wav 저장
+    w = wav[0, : int(self._model.sample_rate * duration[0].item())]
+    sf.write(filename, w, self._model.sample_rate)
+    return filename
 
 class Dialog:
   """
