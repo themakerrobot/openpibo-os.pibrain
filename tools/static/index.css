@@ -1,0 +1,286 @@
+/* ── Base ──────────────────────────────────────────────────── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  font-size: 10px;              /* IDE와 동일한 rem 베이스 → 3.1rem = 31px */
+}
+
+body {
+  font-family: "Noto Sans KR", -apple-system, sans-serif;
+  background: #f0fafa;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ── Header ────────────────────────────────────────────────── */
+header {
+  background: #f4d85a;
+  padding: 0 20px;
+  height: 3.1rem;               /* IDE의 --header-h와 동일 (= 31px) */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  flex-shrink: 0;
+}
+
+header h1 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1a1a1a;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* KO/EN 버튼 — IDE의 button 기본 스타일과 동일 */
+#lang-toggle {
+  font-family: "Noto Sans KR", -apple-system, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 12px;
+  background: #f4de3d;          /* IDE --yellow */
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 3px #6c6c6c;   /* IDE --mid-gray */
+  cursor: pointer;
+  color: #1a1a1a;
+  white-space: nowrap;
+}
+#lang-toggle:hover  { font-weight: bold; background: #f4d85a; }
+#lang-toggle:active { background: #f4d85a; box-shadow: 0 1px #6c6c6c; transform: translateY(2px); }
+
+/* ── Nav tabs ──────────────────────────────────────────────── */
+nav {
+  background: #fff;
+  border-bottom: 2px solid #f4d85a;
+  display: flex;
+  gap: 2px;
+  padding: 0 16px;
+  overflow-x: auto;
+}
+
+nav button {
+  padding: 12px 20px;
+  border: none;
+  background: none;
+  font-size: 14px;
+  font-weight: 700;
+  color: #999;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+nav button.active { color: #1a1a1a; border-bottom-color: #f4d85a; }
+nav button:hover:not(.active) { color: #555; }
+
+/* ── Tab panes ─────────────────────────────────────────────── */
+.tab { display: none; padding: 20px; max-width: 860px; width: 100%; margin: 0 auto; }
+.tab.active { display: block; }
+
+/* ── Card ──────────────────────────────────────────────────── */
+.card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  margin-bottom: 14px;
+}
+.card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 14px;
+}
+
+/* ── Buttons ───────────────────────────────────────────────── */
+.btn {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn:hover    { opacity: 0.85; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-yellow { background: #f4d85a; color: #1a1a1a; }
+.btn-gray   { background: #eee;    color: #555; }
+.btn-teal   { background: #13bfd5; color: #fff; }
+.btn-red    { background: #f44336; color: #fff; }
+.btn-sm     { padding: 7px 12px; font-size: 13px; }
+
+/* ── Buttons tab ───────────────────────────────────────────── */
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.bi {
+  border-radius: 14px;
+  padding: 20px 10px;
+  text-align: center;
+  background: #f5f5f5;
+  border: 2px solid #ddd;
+  transition: all 0.2s;
+}
+.bi.on {
+  background: #fffde7;
+  border-color: #f4d85a;
+  box-shadow: 0 0 0 3px rgba(244,216,90,0.2);
+}
+.bi .num    { font-size: 28px; font-weight: 900; color: #ccc; }
+.bi.on .num { color: #f4d85a; }
+.bi .lbl    { font-size: 12px; color: #bbb; margin-top: 4px; }
+.bi.on .lbl { color: #888; }
+.log-box {
+  background: #f8f8f8;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #555;
+  min-height: 60px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+/* ── LED tab ───────────────────────────────────────────────── */
+.led-preview {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: #111;
+  margin: 0 auto 20px;
+  border: 3px solid #eee;
+  transition: background 0.2s, box-shadow 0.3s;
+}
+.led-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.led-row label           { font-size: 13px; font-weight: 700; width: 16px; }
+.led-row label.r         { color: #f44336; }
+.led-row label.g         { color: #4caf50; }
+.led-row label.b         { color: #2196f3; }
+.led-row input[type=range]  { flex: 1; accent-color: #f4d85a; }
+.led-row input[type=number] {
+  width: 60px; padding: 6px;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px; text-align: center;
+}
+.color-picker {
+  width: 48px; height: 36px;
+  border: none; border-radius: 8px; cursor: pointer; padding: 2px;
+}
+.presets { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
+/* ── Camera / Vision tab ───────────────────────────────────── */
+#cam-wrap {
+  position: relative; width: 100%;
+  border-radius: 14px; overflow: hidden;
+  background: #111; min-height: 220px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 14px;
+}
+#cam-img { width: 100%; display: block; }
+.cam-ph  { color: #666; font-size: 14px; }
+
+.vision-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+@media (max-width: 560px) {
+  .vision-grid { grid-template-columns: repeat(3, 1fr); }
+}
+.vbtn {
+  padding: 10px 4px;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 12px; font-weight: 700; color: #888;
+  cursor: pointer; text-align: center;
+  transition: all 0.15s;
+}
+.vbtn:hover  { border-color: #f4d85a; color: #555; }
+.vbtn.active { border-color: #f4d85a; background: #fffde7; color: #1a1a1a; }
+
+.result-box {
+  background: #f8f8f8;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px; color: #444;
+  min-height: 36px;
+  word-break: break-all;
+}
+.marker-row {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: #666;
+  margin-bottom: 10px;
+}
+.marker-row input {
+  width: 70px; padding: 6px;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  font-size: 13px; text-align: center;
+}
+
+/* ── TTS tab ───────────────────────────────────────────────── */
+.form-label { font-size: 13px; font-weight: 700; color: #555; margin-bottom: 6px; display: block; }
+.form-group { margin-bottom: 14px; }
+.form-group textarea {
+  width: 100%; padding: 10px 12px;
+  border: 1.5px solid #ddd;
+  border-radius: 10px;
+  font-size: 14px; font-family: inherit;
+  resize: vertical; min-height: 80px;
+}
+.voice-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.voice-btn {
+  padding: 10px 4px;
+  border: 2px solid #eee; border-radius: 10px;
+  background: #fff;
+  font-size: 12px; font-weight: 700; color: #888;
+  cursor: pointer; text-align: center;
+  transition: all 0.15s;
+}
+.voice-btn:hover  { border-color: #f4d85a; }
+.voice-btn.active { border-color: #f4d85a; background: #fffde7; color: #1a1a1a; }
+
+/* ── LCD tab ───────────────────────────────────────────────── */
+.lcd-preview {
+  width: 100%; max-width: 240px; height: 320px;
+  border-radius: 10px; border: 3px solid #333;
+  margin: 0 auto 16px;
+  display: flex; align-items: flex-start; justify-content: flex-start;
+  overflow: hidden; position: relative;
+}
+.lcd-preview canvas { width: 100%; height: 100%; }
+
+.row2 { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
+.row2 label              { font-size: 13px; font-weight: 700; color: #555; min-width: 60px; }
+.row2 input[type=number] {
+  width: 72px; padding: 6px 8px;
+  border: 1.5px solid #ddd; border-radius: 8px;
+  font-size: 14px; text-align: center;
+}
+.row2 input[type=color] {
+  width: 48px; height: 34px;
+  border: none; border-radius: 8px; cursor: pointer; padding: 2px;
+}
+.oled-status {
+  background: #f8f8f8; border-radius: 10px;
+  padding: 10px 14px; font-size: 13px; color: #444; min-height: 32px;
+}
+
+/* ── Form utility ──────────────────────────────────────────── */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { opacity: 1; }

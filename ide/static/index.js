@@ -639,14 +639,24 @@ const setLanguage = (langCode) => {
   workspace.updateToolbox(toolbox_dict[langCode]);
 };
 
-const languageSel = document.getElementById('language');
+// ── Language init & toggle ────────────────────────────────────
+const languageSel  = document.getElementById('language');
+const langToggleBtn = document.getElementById('lang-toggle');
+
+const syncLangToggle = (langCode) => {
+  if (langToggleBtn) langToggleBtn.textContent = langCode === 'ko' ? 'EN' : 'KO';
+};
+
 languageSel.value = lang;
+syncLangToggle(lang);
 setLanguage(lang);
 localStorage.setItem('language', lang);
+
 languageSel.addEventListener('change', () => {
   lang = languageSel.value;
   setLanguage(lang);
   localStorage.setItem('language', lang);
+  syncLangToggle(lang);
 });
 
 // ── Cleanup ──────────────────────────────────────────────────
