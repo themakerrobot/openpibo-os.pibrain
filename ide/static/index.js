@@ -766,14 +766,15 @@ $("#add_file").on("click", async function () {
   }
 });
 
-$("#upload").on("change", async (e) => {
-  let upload_files = $("#upload")[0].files;
+// 업로드 공통 로직 (버튼 선택 / 드래그앤드롭 공용)
+async function uploadFiles(fileList) {
+  if (!fileList || fileList.length === 0) return;
 
-  if (upload_files.length > MAX_FILE_NUMBER) {
+  if (fileList.length > MAX_FILE_NUMBER) {
     await alert_popup(translations['file_number_limit'][lang](MAX_FILE_NUMBER));
     return;
   }
-  for (item of upload_files) {
+  for (let item of fileList) {
     if (item.name.length > MAX_FILENAME_LENGTH) {
       await alert_popup(translations['name_size_limit'][lang](MAX_FILENAME_LENGTH));
       return;
@@ -781,11 +782,9 @@ $("#upload").on("change", async (e) => {
   }
 
   let formData = new FormData();
-  for (item of upload_files) {
-    //formData.append('data', item);
+  for (let item of fileList) {
     formData.append('files', item);
   }
-  $("#upload").val("");
   $.ajax({
     url: `/upload`,
     type: 'post',
@@ -798,11 +797,60 @@ $("#upload").on("change", async (e) => {
       if (status == "success") {
         await alert_popup(translations['file_ok'][lang]);
       } else {
-        await alert_popup(`${translations['file_error'][lang]}\n >> ${xhr.responseJSON["result"]}`);
-        $("#upload").val("");
+        const detail = (xhr.responseJSON && (xhr.responseJSON.error || xhr.responseJSON.result)) || "";
+        await alert_popup(`${translations['file_error'][lang]}\n >> ${detail}`);
       }
     });
+}
+
+$("#upload").on("change", async (e) => {
+  await uploadFiles($("#upload")[0].files);
+  $("#upload").val("");
 });
+
+// 파일브라우저 영역에 드래그앤드롭 업로드
+(function () {
+  const dropZone = document.getElementById('browser_en');
+  if (!dropZone) return;
+
+  // 영역 밖에 떨어뜨렸을 때 브라우저가 파일을 열어버리는 기본동작 차단
+  ['dragover', 'drop'].forEach((evt) => {
+    window.addEventListener(evt, (e) => {
+      if (e.target.closest && e.target.closest('#browser_en')) return;
+      e.preventDefault();
+    });
+  });
+
+  // 자식 요소 위를 지날 때 깜빡임 방지용 깊이 카운터
+  let dragDepth = 0;
+
+  dropZone.addEventListener('dragenter', (e) => {
+    e.preventDefault();
+    dragDepth++;
+    dropZone.classList.add('dragover');
+  });
+
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+  });
+
+  dropZone.addEventListener('dragleave', () => {
+    dragDepth--;
+    if (dragDepth <= 0) {
+      dragDepth = 0;
+      dropZone.classList.remove('dragover');
+    }
+  });
+
+  dropZone.addEventListener('drop', async (e) => {
+    e.preventDefault();
+    dragDepth = 0;
+    dropZone.classList.remove('dragover');
+    const files = e.dataTransfer && e.dataTransfer.files;
+    if (files && files.length) await uploadFiles(files);
+  });
+})();
 
 $("#eraser").on("click", function () {
   result.value = "";
