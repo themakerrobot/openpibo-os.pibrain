@@ -671,20 +671,7 @@ async function exportConvertedModelAsZipAndConvert() {
 }
 
 window.addEventListener('beforeunload', (evt) => {
-    // socket.emit('control_cam', false);
-    //socket.emit('classifier_off');
-
-    fetch(`http://${location.hostname}/classifier?enable=off`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.text();
-    })
-    .then(data => {
-    //   console.log('데이터 수신 성공:', data);
-    })
-    .catch(error => {
-    //   console.error('데이터 요청 중 에러 발생:', error);
-    });
+    // keepalive 가 없으면 브라우저가 언로드 중에 이 요청을 취소한다.
+    // 탭을 닫아도 classify.service 가 계속 돌아 카메라를 쥐고 있게 된다.
+    fetch(`http://${location.hostname}/classifier?enable=off`, { keepalive: true }).catch(() => {});
 });

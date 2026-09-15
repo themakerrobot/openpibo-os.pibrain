@@ -185,9 +185,11 @@ async def show_file(data: UploadFile = File(...)):
     await socket_manager.emit('update', {'dialog': f'보기 오류: {str(err)}'})
   return JSONResponse(content={"message": "이미지 표시 완료"}, status_code=200)
 
-@app.sio.on('connection')
+# 'connection' 은 Node.js 이벤트명이라 fastapi_socketio 에서 한 번도 안 불린다.
+# 'connect' 가 맞다. 다만 종료 판단에는 쓰지 말 것 (아래 tools/classifier 주석 참고).
+@app.sio.on('connect')
 async def handle_connection(sid, *args, **kwargs):
-  pass  # Placeholder for any connection initialization
+  pass
 
 @app.sio.on('init')
 async def handle_init(sid):
