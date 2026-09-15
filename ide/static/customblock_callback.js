@@ -371,60 +371,6 @@ Blockly.Python.forBlock['oled_clear'] = function(block) {
 }
 
 // speech
-Blockly.Python.forBlock['speech_stt'] = function(block) {
-  Blockly.Python.definitions_['from_speech_import_Speech'] = 'from openpibo.speech import Speech';
-  Blockly.Python.definitions_['assign_speech'] = 'speech = Speech()';
-
-  //const timeout = block.getFieldValue("timeout");
-  const timeout = Blockly.Python.valueToCode(block, 'timeout', Blockly.Python.ORDER_ATOMIC);
-  return [`speech.stt(timeout=${timeout}, verbose=False)`, Blockly.Python.ORDER_ATOMIC];
-}
-Blockly.Python.forBlock['speech_tts'] = function(block) {
-  Blockly.Python.definitions_['from_speech_import_Speech'] = 'from openpibo.speech import Speech';
-  Blockly.Python.definitions_['assign_speech'] = 'speech = Speech()';
-
-  const text = Blockly.Python.valueToCode(block, 'text', Blockly.Python.ORDER_ATOMIC);
-  const dir = block.getFieldValue("dir");
-  const filename = Blockly.Python.valueToCode(block, 'filename', Blockly.Python.ORDER_ATOMIC);
-  const extension = block.getFieldValue("extension");
-  const voice = block.getFieldValue("voice");
-  return `speech.tts(text=${text}, filename='${dir}'+${filename}+'${extension}', voice='${voice}')\n`;
-}
-Blockly.Python.forBlock['speech_tts_play'] = function(block) {
-  Blockly.Python.definitions_['from_speech_import_Speech'] = 'from openpibo.speech import Speech';
-  Blockly.Python.definitions_['assign_speech'] = 'speech = Speech()';
-  Blockly.Python.definitions_['from_audio_import_Audio'] = 'from openpibo.audio import Audio';
-  Blockly.Python.definitions_['assign_audio'] = 'audio = Audio()';  
-
-  const text = Blockly.Python.valueToCode(block, 'text', Blockly.Python.ORDER_ATOMIC);
-  const voice = block.getFieldValue("voice");
-  const volume = Blockly.Python.valueToCode(block, 'volume', Blockly.Python.ORDER_ATOMIC);
-  return `speech.tts(text=${text}, filename='/home/pi/tmp.mp3', voice='${voice}')\naudio.play('/home/pi/tmp.mp3', ${volume})\n`;
-}
-Blockly.Python.forBlock['speech_gtts'] = function(block) {
-  Blockly.Python.definitions_['from_speech_import_Speech'] = 'from openpibo.speech import Speech';
-  Blockly.Python.definitions_['assign_speech'] = 'speech = Speech()';
-
-  const text = Blockly.Python.valueToCode(block, 'text', Blockly.Python.ORDER_ATOMIC);
-  const dir = block.getFieldValue("dir");
-  const filename = Blockly.Python.valueToCode(block, 'filename', Blockly.Python.ORDER_ATOMIC);
-  const extension = block.getFieldValue("extension");
-  const lang = block.getFieldValue("lang");
-
-  return `speech.tts(text=${text}, filename='${dir}'+${filename}+'${extension}', lang= '${lang}', voice='gtts')\n`;
-}
-Blockly.Python.forBlock['speech_gtts_play'] = function(block) {
-  Blockly.Python.definitions_['from_speech_import_Speech'] = 'from openpibo.speech import Speech';
-  Blockly.Python.definitions_['assign_speech'] = 'speech = Speech()';
-  Blockly.Python.definitions_['from_audio_import_Audio'] = 'from openpibo.audio import Audio';
-  Blockly.Python.definitions_['assign_audio'] = 'audio = Audio()';  
-
-  const text = Blockly.Python.valueToCode(block, 'text', Blockly.Python.ORDER_ATOMIC);
-  const lang = block.getFieldValue("lang");
-  const volume = Blockly.Python.valueToCode(block, 'volume', Blockly.Python.ORDER_ATOMIC);
-
-  return `speech.tts(text=${text}, filename='/home/pi/tmp.mp3', lang= '${lang}', voice='gtts')\naudio.play('/home/pi/tmp.mp3', ${volume})\n`;
-}
 Blockly.Python.forBlock['speech_otts'] = function(block) {
   Blockly.Python.definitions_['from_speech_import_SpeechOnDevice'] = 'from openpibo.speech import SpeechOnDevice';
   Blockly.Python.definitions_['assign_speech_ondevice'] = 'speech_ondevice = SpeechOnDevice()';
@@ -470,35 +416,6 @@ Blockly.Python.forBlock['speech_etts_play'] = function(block) {
   const volume = Blockly.Python.valueToCode(block, 'volume', Blockly.Python.ORDER_ATOMIC);
 
   return `speech.tts(text=${text}, filename='/home/pi/tmp.mp3', voice='espeak')\naudio.play('/home/pi/tmp.mp3', ${volume})\n`;
-}
-Blockly.Python.forBlock['speech_translate'] = function(block) {
-  Blockly.Python.definitions_['from_speech_import_Dialog'] = 'from openpibo.speech import Dialog';
-  Blockly.Python.definitions_['assign_dialog'] = 'dialog = Dialog()';
-
-  const text = Blockly.Python.valueToCode(block, 'text', Blockly.Python.ORDER_ATOMIC);
-  const lang = block.getFieldValue("lang");
-  return [`dialog.translate(${text}, '${lang}')`, Blockly.Python.ORDER_ATOMIC];
-}
-Blockly.Python.forBlock['speech_get_dialog'] = function(block) {
-  Blockly.Python.definitions_['from_speech_import_Dialog'] = 'from openpibo.speech import Dialog';
-  Blockly.Python.definitions_['assign_dialog'] = 'dialog = Dialog()';
-
-  const text = Blockly.Python.valueToCode(block, 'text', Blockly.Python.ORDER_ATOMIC);
-  return [`dialog.get_dialog(${text})`, Blockly.Python.ORDER_ATOMIC];
-}
-Blockly.Python.forBlock['speech_load_dialog'] = function(block) {
-  Blockly.Python.definitions_['from_speech_import_Dialog'] = 'from openpibo.speech import Dialog';
-  Blockly.Python.definitions_['assign_dialog'] = 'dialog = Dialog()';
-
-  const dir = block.getFieldValue("dir");
-  const filename = Blockly.Python.valueToCode(block, 'filename', Blockly.Python.ORDER_ATOMIC);
-  return `dialog.load('${dir}'+${filename}+'.csv')\n`;
-}
-Blockly.Python.forBlock['speech_reset_dialog'] = function(block) {
-  Blockly.Python.definitions_['from_speech_import_Dialog'] = 'from openpibo.speech import Dialog';
-  Blockly.Python.definitions_['assign_dialog'] = 'dialog = Dialog()';
-
-  return `dialog.reset()\n`;
 }
 Blockly.Python.forBlock['speech_start_llm'] = function(block) {
   Blockly.Python.definitions_['from_speech_import_Dialog'] = 'from openpibo.speech import Dialog';
@@ -983,20 +900,6 @@ Blockly.Python.forBlock['vision_predict_cf'] = function(block) {
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
   return [`cf.predict(${img})[0]`, Blockly.Python.ORDER_ATOMIC];
-}
-Blockly.Python.forBlock['vision_call_ai_img'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_vision_api'] = 'from openpibo.vision_detect import vision_api';
-
-  const type = block.getFieldValue("type");
-  const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
-  return [`vision_api('${type}', ${img})['data']`, Blockly.Python.ORDER_ATOMIC];
-}
-Blockly.Python.forBlock['vision_call_ai_img_ext'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_vision_api'] = 'from openpibo.vision_detect import vision_api';
-
-  const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
-  const type = Blockly.Python.valueToCode(block, 'type', Blockly.Python.ORDER_ATOMIC);
-  return [`vision_api(${type}, ${img})['data']`, Blockly.Python.ORDER_ATOMIC];
 }
 
 // Utils

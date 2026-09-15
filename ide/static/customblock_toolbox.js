@@ -1449,111 +1449,6 @@ let toolbox = (lang) => {
         "contents": [
           {
             "kind": "block",
-            "type": "speech_stt",
-            "disabled":"true",
-            "inputs":{
-              "timeout": {
-                "shadow": {
-                  "type": "math_number",
-                  "fields": {
-                    "NUM": "5"
-                  }
-                }
-              }
-            }
-          },
-          {
-            "kind": "block",
-            "type": "speech_tts",
-            "inputs":{
-              "text":{
-                "shadow": {
-                  "type": "text",
-                  "fields": {
-                    "TEXT": translations['sample_text'][lang]
-                  }
-                }
-              },
-              "filename":{
-                "shadow": {
-                  "type": "text",
-                  "fields": {
-                    "TEXT": "tts"
-                    // "TEXT": translations['audio_filename'][lang]
-                  }
-                }
-              },
-            }
-          },
-          {
-            "kind": "block",
-            "type": "speech_tts_play",
-            "inputs":{
-              "text":{
-                "shadow": {
-                  "type": "text",
-                  "fields": {
-                    "TEXT": translations['sample_text'][lang]
-                  }
-                }
-              },
-              "volume": {
-                "shadow": {
-                  "type": "math_number",
-                  "fields": {
-                    "NUM": "80"
-                  }
-                }
-              }
-            }
-          },
-          {
-            "kind": "block",
-            "type": "speech_gtts",
-            "inputs":{
-              "text":{
-                "shadow": {
-                  "type": "text",
-                  "fields": {
-                    "TEXT": translations['sample_text'][lang]
-                  }
-                }
-              },
-              "filename":{
-                "shadow": {
-                  "type": "text",
-                  "fields": {
-                    "TEXT": "tts"
-                    // "TEXT": translations['audio_filename'][lang]
-                  }
-                }
-              },
-            }
-          },
-          {
-            "kind": "block",
-            "type": "speech_gtts_play",
-            "inputs":{
-              "text":{
-                "shadow": {
-                  "type": "text",
-                  "fields": {
-                    "TEXT": translations['sample_text'][lang]
-                  }
-                }
-              },
-              "volume": {
-                "shadow": {
-                  "type": "math_number",
-                  "fields": {
-                    "NUM": "80"
-                  }
-                }
-              }
-            }
-          },
-          {
-            "kind": "block",
             "type": "speech_otts",
             "inputs":{
               "text":{
@@ -1641,53 +1536,6 @@ let toolbox = (lang) => {
                 }
               }
             }
-          },
-          {
-            "kind": "block",
-            "type": "speech_translate",
-            "inputs":{
-              "text":{
-                "shadow": {
-                  "type": "text",
-                  "fields": {
-                    "TEXT": translations['sample_text'][lang]
-                  }
-                }
-              }
-            }
-          },
-          {
-            "kind": "block",
-            "type": "speech_get_dialog",
-            "inputs":{
-              "text":{
-                "shadow": {
-                  "type": "text",
-                  "fields": {
-                    "TEXT": translations['sample_text'][lang]
-                  }
-                }
-              }
-            }
-          },
-          {
-            "kind": "block",
-            "type": "speech_load_dialog",
-            "inputs":{
-              "filename":{
-                "shadow": {
-                  "type": "text",
-                  "fields": {
-                    "TEXT": "dialog"
-                    // "TEXT": translations["csv_filename"][lang]
-                  }
-                }
-              }
-            }
-          },
-          {
-            "kind": "block",
-            "type": "speech_reset_dialog",
           },
           {
             "kind": "block",
@@ -2637,37 +2485,6 @@ let toolbox = (lang) => {
                   "type": "variables_get",
                 }
               }
-            }
-          },
-          {
-            "kind": "block",
-            "type": "vision_call_ai_img",
-            "inputs":{
-              "img":{
-                "shadow":{
-                  "type":"variables_get",
-                }
-              }
-            }
-          },
-          {
-            "kind": "block",
-            "type": "vision_call_ai_img_ext",
-            "inputs":{
-              "img":{
-                "shadow":{
-                  "type":"variables_get",
-                }
-              },
-              "type":{
-                "shadow": {
-                  "type": "text",
-                  "fields": {
-                    "TEXT": "object/object_search_e"
-                    // "TEXT": translations["image_filename"][lang]
-                  }
-                }
-              },
             }
           },
         ],
