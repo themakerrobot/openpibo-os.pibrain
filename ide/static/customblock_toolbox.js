@@ -865,43 +865,7 @@ let toolbox = (lang) => {
           "icon": "customIcon fa-solid fa-music"
         }
       },
-      { // Collect
-        "kind": "category",
-        "name": translations['collect'][lang],
-        "contents": [
-          {
-            "kind": "block",
-            "type": "wikipedia_search",
-            "inputs":{
-              "topic":{
-                "shadow": {
-                  "type": "text",
-                  "fields": {
-                    "TEXT": translations['robot'][lang]
-                  }
-                }
-              }
-            }
-          },
-          {
-            "kind": "block",
-            "type": "weather_forecast",
-          },
-          {
-            "kind": "block",
-            "type": "weather_search",
-          },
-          {
-            "kind": "block",
-            "type": "news_search",
-          },
-        ],
-        "colour": color_type["collect"],
-        "cssConfig": {
-          "icon": "customIcon fa-solid fa-magnifying-glass-chart"
-        }
-      },
-      { // Device
+            { // Device
         "kind": "category",
         "name": translations['device'][lang],
         "contents": [

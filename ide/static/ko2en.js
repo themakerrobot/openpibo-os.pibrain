@@ -1,5 +1,5 @@
-const blang = (navigator.language || navigator.userLanguage).includes('ko')?'ko':'en';
-let lang = localStorage.getItem("language")?localStorage.getItem("language"):blang;
+const blang = 'en';
+let lang = localStorage.getItem("language") || blang;
 
 const translations = {
   password: {

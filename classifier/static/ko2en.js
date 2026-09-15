@@ -1,5 +1,5 @@
-const blang = (navigator.language || navigator.userLanguage).includes('ko')?'ko':'en';
-let lang = localStorage.getItem("classifier_language")?localStorage.getItem("classifier_language"):blang;
+const blang = 'en';
+let lang = localStorage.getItem("classifier_language") || blang;
 
 // 앱마다 포트가 달라 origin 이 분리되므로 localStorage 키도 앱별로 따로 쓴다.
 // (ide: language, tools: tools_language, classifier: classifier_language)

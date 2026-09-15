@@ -1,5 +1,5 @@
-const blang = (navigator.language || navigator.userLanguage).includes('ko') ? 'ko' : 'en';
-let lang = localStorage.getItem("tools_language") ? localStorage.getItem("tools_language") : blang;
+const blang = 'en';
+let lang = localStorage.getItem("tools_language") || blang;
 
 const T = {
   /* ── Navigation ─────────────────────────────────────────── */
