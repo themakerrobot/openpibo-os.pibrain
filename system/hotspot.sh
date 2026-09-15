@@ -6,7 +6,8 @@ IFS=$'\n\t'
 ETH_IFACE="eth0"
 WIFI_IFACE="wlan0"
 AP_IFACE="ap0"
-AP_SSID="pibo-$(grep 'Serial' /proc/cpuinfo | awk '{print $3}' | rev | cut -c -8 | rev)"
+RPI_SERIAL="$(grep 'Serial' /proc/cpuinfo | awk '{print $3}')"
+AP_SSID="pibo-$(echo "$RPI_SERIAL" | rev | cut -c -8 | rev)"
 AP_PASSWORD="!pibo0314"
 STATIC_IP="192.168.34.1"
 DHCP_RANGE_START="192.168.34.10"
@@ -14,6 +15,11 @@ DHCP_RANGE_END="192.168.34.50"
 SUBNET_MASK="255.255.255.0"
 CONNECTION_NAME="pibo-ap"
 WIFI_NAME="pibo-wifi"
+
+# 채널: 시리얼 기반으로 1/6/11 중 하나 고정 (12·13 제외, 비중첩 채널 분산)
+# '자동' 이면 같은 교실의 로봇 여러 대가 한 채널에 몰린다.
+AP_CHANNELS=(1 6 11)
+AP_CHANNEL="${AP_CHANNELS[$(( 0x${RPI_SERIAL: -4} % 3 ))]}"
 
 # 명령어 사용 안내
 usage() {
@@ -71,9 +77,9 @@ start_hotspot() {
   #sudo rm -rf /etc/NetworkManager/system-connections/*.nmconnection*
   sudo find /etc/NetworkManager/system-connections/ -name "*.nmconnection*" ! -name "pibo-wifi*" -delete
   create_virtual_interface
-  echo "Starting hotspot on $AP_IFACE with SSID: $AP_SSID..."
+  echo "Starting hotspot on $AP_IFACE with SSID: $AP_SSID (channel $AP_CHANNEL)..."
   sudo nmcli connection add type wifi ifname "$AP_IFACE" con-name "$CONNECTION_NAME" autoconnect no ssid "$AP_SSID"
-  sudo nmcli connection modify "$CONNECTION_NAME" 802-11-wireless.mode ap 802-11-wireless.band bg \
+  sudo nmcli connection modify "$CONNECTION_NAME" 802-11-wireless.mode ap 802-11-wireless.band bg 802-11-wireless.channel "$AP_CHANNEL" \
       ipv4.method manual ipv4.addresses "$STATIC_IP/24" wifi-sec.key-mgmt wpa-psk wifi-sec.psk "$AP_PASSWORD"
   sudo nmcli connection up "$CONNECTION_NAME"
 
@@ -95,7 +101,7 @@ stop_hotspot() {
 # 핫스팟 상태 확인
 status_hotspot() {
   if nmcli -t -f NAME,DEVICE con show --active | grep -q "$CONNECTION_NAME"; then
-    echo "Hotspot is active on $AP_IFACE with SSID: $AP_SSID"
+    echo "Hotspot is active on $AP_IFACE with SSID: $AP_SSID (channel $AP_CHANNEL)"
     echo "Static IP: $STATIC_IP"
   else
     echo "Hotspot is not active"
