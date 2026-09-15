@@ -107,9 +107,9 @@ case $1 in
     echo "Successfully connected to WPA-PSK network: SSID='$SSID'"
     ;;
 
-  wpa-enterpise)
+  wpa-enterprise|wpa-enterpise|wpa-e)
     if [ $# -ne 4 ]; then
-      echo "Usage: sudo $0 wpa-e <SSID> <IDENTITY> <PASSWORD>"
+      echo "Usage: sudo $0 wpa-enterprise <SSID> <IDENTITY> <PASSWORD>"
       exit 1
     fi
     SSID="$2"
@@ -133,7 +133,7 @@ case $1 in
     echo "Usage:"
     echo "  Open network:         sudo $0 open <SSID>"
     echo "  WPA-PSK network:      sudo $0 wpa-psk <SSID> <PSK>"
-    echo "  WPA-Enterprise:       sudo $0 wpa-e <SSID> <IDENTITY> <PASSWORD>"
+    echo "  WPA-Enterprise:       sudo $0 wpa-enterprise <SSID> <IDENTITY> <PASSWORD>"
     exit 1
     ;;
 esac
