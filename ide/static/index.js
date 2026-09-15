@@ -227,6 +227,26 @@ llm_bt.addEventListener("click", function () {
   //   console.error('데이터 요청 중 에러 발생:', error);
   });
 });
+// H/W 검수. 출하 검수용이라 헤더 아이콘으로 내놓지 않고 푸터 시리얼번호를 누르게 했다.
+// 검수 서버는 카메라·LCD·GPIO·오디오를 독점하므로 학생이 실수로 열면 곤란하다.
+//
+// 주의: usedata_bt 의 innerHTML 을 스피너로 갈아끼우지 말 것. socket 'system'
+// 이벤트가 주기적으로 #s_serial 에 텍스트를 다시 쓰는데, 그 span 을 날려버리면
+// 시리얼이 영영 안 돌아온다.
+const usedata_bt = document.getElementById("usedata_bt");
+if (usedata_bt) {
+  usedata_bt.addEventListener("click", async function () {
+    if (!(await confirm_popup(translations["confirm_hwtest"][lang]))) return;
+    fetch(`http://${location.hostname}/hwtest?enable=on`)
+      .then(() => {
+        setTimeout(function () {
+          window.open(`http://${location.hostname}:50050`);
+        }, 4000);
+      })
+      .catch(() => {});
+  });
+}
+
 const tools_bt = document.getElementById("tools_bt")
 tools_bt.addEventListener("click", function () {
   const tools_bt_innerHTML = tools_bt.innerHTML;

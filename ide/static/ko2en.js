@@ -314,6 +314,10 @@ const translations = {
     ko: "분류기",
     en: "Classifier"
   },
+  confirm_hwtest: {
+    ko: "하드웨어 검수 페이지를 엽니다.\n검수 중에는 IDE·Tools·Classifier 를 쓸 수 없습니다.",
+    en: "Open the hardware inspection page.\nThe IDE, Tools and Classifier are unavailable while it runs."
+  },
   err_download_protected: { ko: "파일 다운로드 오류: 보호 디렉토리입니다.", en: "Download error: protected directory." },
   err_not_found:          { ko: "파일 또는 폴더를 찾을 수 없습니다.", en: "File or folder not found." },
   err_invalid_path:       { ko: "올바른 파일 또는 폴더가 아닙니다.", en: "Not a valid file or folder." },

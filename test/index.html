@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PiBrain Hardware Inspection Report</title>
+<style>
+  :root {
+    --ink:        #1a1a1a;
+    --ink-soft:   #555;
+    --line:       #b9bcc2;
+    --head-bg:    #eef1f5;
+    --accent:     #1d4ed8;
+    --pass:       #0f7a3d;
+    --fail:       #c02626;
+    --wait:       #8a6d00;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 16px 12px 48px;
+    background: #f2f4f7;
+    color: var(--ink);
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* screen-only toolbar */
+  .toolbar {
+    max-width: 200mm;
+    margin: 0 auto 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+  .toolbar .spacer { flex: 1 1 auto; }
+  .btn {
+    font: inherit;
+    padding: 7px 14px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: #fff;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .btn:hover:not(:disabled) { background: var(--head-bg); }
+  .btn:disabled { color: #aaa; cursor: not-allowed; }
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    font-weight: 600;
+  }
+  .btn-primary:hover:not(:disabled) { background: #1741ad; }
+  .btn-danger { color: var(--fail); border-color: var(--fail); }
+  .btn-danger:hover:not(:disabled) { background: var(--fail); color: #fff; }
+  .btn-sm { padding: 3px 10px; font-size: 12px; }
+
+  /* report sheet */
+  .sheet {
+    max-width: 200mm;
+    margin: 0 auto;
+    background: #fff;
+    padding: 14mm 14mm 12mm;
+    box-shadow: 0 1px 4px rgba(0,0,0,.14);
+  }
+
+  .sheet-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 8px;
+  }
+  .sheet-head h1 { margin: 0; font-size: 19px; letter-spacing: -0.2px; }
+  .sheet-head .sub { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
+  .sheet-head .doc-no { font-size: 11px; color: var(--ink-soft); text-align: right; white-space: nowrap; }
+
+  h2 {
+    font-size: 13px;
+    margin: 14px 0 5px;
+    padding-left: 6px;
+    border-left: 3px solid var(--accent);
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+  th, td {
+    border: 1px solid var(--line);
+    padding: 5px 8px;
+    text-align: left;
+    vertical-align: middle;
+  }
+  th { background: var(--head-bg); font-weight: 600; white-space: nowrap; }
+  td.key { background: var(--head-bg); font-weight: 600; width: 30mm; white-space: nowrap; }
+  .c { text-align: center; }
+
+  /* result marks */
+  .status { font-weight: 700; white-space: nowrap; }
+  .status.ready   { color: var(--wait); font-weight: 400; }
+  .status.testing { color: var(--accent); }
+  .status.success { color: var(--pass); }
+  .status.fail    { color: var(--fail); }
+
+  .note {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font: inherit;
+    color: inherit;
+    padding: 0;
+  }
+  .note:focus { outline: 1px solid var(--accent); }
+
+  .fill {
+    border: none;
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+    font: inherit;
+    color: inherit;
+    padding: 1px 2px;
+    min-width: 28mm;
+  }
+  .fill:focus { outline: none; border-bottom-color: var(--accent); }
+
+  /* capture / log */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: start; }
+  .box {
+    border: 1px solid var(--line);
+    min-height: 44mm;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-soft);
+    font-size: 11px;
+    text-align: center;
+  }
+  .box img { max-width: 100%; max-height: 42mm; object-fit: contain; }
+  #button-log {
+    display: block;
+    text-align: left;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 10.5px;
+    /* The log never scrolls: the script keeps only the last LOG_ROWS lines in
+       the element, and the height is exactly that many rows. Scrolling an
+       overflow box leaves half a row showing at the top and bottom when the
+       report prints, and no amount of snapping scrollTop is reliable across
+       the screen-to-print relayout. */
+    line-height: 14px;
+    white-space: pre;
+    overflow: hidden;
+    height: 182px;       /* 12 rows: 14px x 12 + 12 padding + 2 border */
+    color: var(--ink);
+  }
+
+  .summary {
+    margin-top: 10px;
+    padding: 7px 10px;
+    border: 1px solid var(--line);
+    background: var(--head-bg);
+    font-weight: 600;
+  }
+
+  .sign-table td { height: 17mm; vertical-align: top; }
+  .sign-table td.key { height: auto; vertical-align: middle; }
+
+  .foot {
+    margin-top: 10px;
+    font-size: 10px;
+    color: var(--ink-soft);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* print */
+  @page { size: A4 portrait; margin: 11mm; }
+
+  @media print {
+    body { background: #fff; padding: 0; font-size: 10.5px; }
+    .no-print { display: none !important; }
+    .sheet { max-width: none; margin: 0; padding: 0; box-shadow: none; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    table, .box, .summary { page-break-inside: avoid; break-inside: avoid; }
+    h2 { page-break-after: avoid; break-after: avoid; }
+    .box { min-height: 38mm; }
+    #button-log { min-height: 182px; }   /* beat .box's min-height */
+    .fill { border-bottom: 1px solid var(--ink); }
+  }
+
+  @media (max-width: 700px) {
+    .two-col { grid-template-columns: 1fr; }
+    .sheet { padding: 10mm 6mm; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar no-print">
+  <button class="btn btn-primary" id="btn-run-all">Run All Tests</button>
+  <button class="btn" id="btn-print">Print / Save as PDF</button>
+  <button class="btn" id="btn-reset">Reset Results</button>
+  <span class="spacer"></span>
+  <button class="btn btn-danger" id="btn-halt">Shut Down</button>
+</div>
+
+<div class="sheet">
+
+  <div class="sheet-head">
+    <div>
+      <h1>PiBrain Hardware Inspection Report</h1>
+      <div class="sub">Pre-delivery functional verification</div>
+    </div>
+    <div class="doc-no">
+      Date&nbsp;<input class="fill" id="f-date" style="min-width:26mm">
+    </div>
+  </div>
+
+  <h2>1. Device Information</h2>
+  <table>
+    <tbody>
+      <tr>
+        <td class="key">Serial No.</td><td id="info-serial">Loading...</td>
+        <td class="key">Board</td><td id="info-board">Loading...</td>
+      </tr>
+      <tr>
+        <td class="key">OS Version</td><td id="info-os">Loading...</td>
+        <td class="key">Memory</td><td id="info-memory">Loading...</td>
+      </tr>
+      <tr>
+        <td class="key">Library</td><td id="info-library">Loading...</td>
+        <td class="key">Wi-Fi region</td><td id="info-regdom">Loading...</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>2. Test Results</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:40mm">Item</th>
+        <th>Acceptance criteria</th>
+        <th class="c" style="width:22mm">Result</th>
+        <th style="width:38mm">Remarks</th>
+        <th class="c no-print" style="width:20mm">Run</th>
+      </tr>
+    </thead>
+    <tbody id="test-table-body"></tbody>
+  </table>
+
+  <div class="summary" id="summary">Pass 0 &middot; Fail 0 &middot; Not tested 6</div>
+
+  <h2>3. Camera Capture &amp; Button Log</h2>
+  <div class="two-col">
+    <div class="box" id="camera-box">Run the camera test to capture an image.</div>
+    <div class="box" id="button-log">Run the button test to record the log.</div>
+  </div>
+
+  <h2>4. Confirmation</h2>
+  <table class="sign-table">
+    <tbody>
+      <tr>
+        <td class="key">Inspector</td>
+        <td style="width:52mm"><input class="fill" id="f-inspector" style="width:100%" value="Circulus Inc."></td>
+        <td class="key">Signature</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="foot">
+    <span>openpibo-os.pibrain &middot; H/W Inspection Report</span>
+    <span id="foot-stamp"></span>
+  </div>
+
+</div>
+
+<script>
+const API = '';
+
+/* This server must never be left running -- it holds the camera, the LCD's SPI
+   bus, the GPIO buttons and the audio device, so the IDE and the tools
+   misbehave while it is up. Three independent shutdown paths, each covering
+   the one before it:
+     1. closing the tab posts /api/shutdown, so the server kills itself
+     2. the same handler calls the IDE's /hwtest?enable=off, so run_ide.py
+        terminates the process and clears its handle
+     3. test.py's own watchdog exits after IDLE_TIMEOUT with no heartbeat,
+        which covers a force-quit, a sleeping tablet or a dropped network
+   keepalive is mandatory: without it the browser cancels the request
+   mid-unload, which is the bug that left tools/classifier running. */
+window.addEventListener('beforeunload', () => {
+  fetch(`${API}/api/shutdown`, { method: 'POST', keepalive: true }).catch(() => {});
+  fetch(`http://${location.hostname}/hwtest?enable=off`, { method: 'GET', keepalive: true })
+    .catch(() => {});
+});
+
+/* Heartbeat. The watchdog counts from the last one it received.
+
+   document.hidden is exact and owes nothing to timers, unlike the interval
+   itself, which a browser throttles to about one tick per minute once the tab
+   goes to the background. Stop heartbeating after HIDDEN_LIMIT hidden and the
+   server is gone IDLE_TIMEOUT later; come back before that and nothing was
+   interrupted. */
+const HIDDEN_LIMIT = 180000;   // 3 minutes out of sight
+let hiddenSince = document.hidden ? Date.now() : null;
+
+document.addEventListener('visibilitychange', () => {
+  hiddenSince = document.hidden ? Date.now() : null;
+  if (!document.hidden) fetch(`${API}/api/ping`).catch(() => {});
+});
+
+setInterval(() => {
+  if (hiddenSince !== null && Date.now() - hiddenSince > HIDDEN_LIMIT) return;
+  fetch(`${API}/api/ping`).catch(() => {});
+}, 15000);
+
+const tests = [
+  { id: 'lcd',    name: 'LCD (ILI9341)',   crit: 'Text and the R/G/B letters show in the right colours' },
+  { id: 'audio',  name: 'Speaker',         crit: 'Effect sound plays clearly, no distortion' },
+  { id: 'camera', name: 'Camera',          crit: 'Captured image has correct framing and colour, and appears on the LCD' },
+  { id: 'led',    name: 'LED (NeoPixel)',  crit: 'Red, green and blue light up in sequence, then go out' },
+  { id: 'button', name: 'Buttons x4',      crit: 'All four buttons register when pressed' },
+  { id: 'wifi',   name: 'Wi-Fi',           crit: 'Scan finds access points; region matches the delivery country' },
+];
+
+const LABEL = { ready: 'Not tested', testing: 'Testing', success: 'PASS', fail: 'FAIL' };
+/* Symbols so the result is still readable on a black-and-white printer */
+const MARK  = { ready: '–', testing: '…', success: '✔', fail: '✘' };
+
+let busy = false;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderTable();
+  fetchSystemInfo();
+  const d = new Date();
+  const ymd = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  document.getElementById('f-date').value = ymd;
+  document.getElementById('foot-stamp').textContent = ymd;
+});
+
+document.getElementById('btn-print').addEventListener('click', () => window.print());
+document.getElementById('btn-run-all').addEventListener('click', runAll);
+document.getElementById('btn-halt').addEventListener('click', haltSystem);
+document.getElementById('btn-reset').addEventListener('click', () => {
+  if (!confirm('Clear all test results?')) return;
+  tests.forEach(t => setStatus(t.id, 'ready'));
+  document.querySelectorAll('.note').forEach(n => n.value = '');
+  document.getElementById('camera-box').textContent = 'Run the camera test to capture an image.';
+  document.getElementById('button-log').textContent = 'Run the button test to record the log.';
+});
+
+function renderTable() {
+  const tb = document.getElementById('test-table-body');
+  tb.innerHTML = '';
+  tests.forEach(t => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${t.name}</td>
+      <td>${t.crit}</td>
+      <td class="c"><span class="status ready" id="status-${t.id}">${MARK.ready} ${LABEL.ready}</span></td>
+      <td><input class="note" id="note-${t.id}"></td>
+      <td class="c no-print"><button class="btn btn-sm" id="btn-${t.id}">Run</button></td>`;
+    tb.appendChild(tr);
+    tr.querySelector(`#btn-${t.id}`).addEventListener('click', () => runOne(t.id));
+  });
+  updateSummary();
+}
+
+function setStatus(id, state) {
+  const el = document.getElementById(`status-${id}`);
+  el.className = `status ${state}`;
+  el.textContent = `${MARK[state]} ${LABEL[state]}`;
+  updateSummary();
+}
+
+function updateSummary() {
+  const n = { success: 0, fail: 0, ready: 0, testing: 0 };
+  tests.forEach(t => {
+    const el = document.getElementById(`status-${t.id}`);
+    if (!el) return;
+    const s = el.className.split(' ')[1];
+    n[s] = (n[s] || 0) + 1;
+  });
+  let verdict = '';
+  if (n.success + n.fail === tests.length) {
+    verdict = n.fail === 0 ? '   —   OVERALL: PASS' : '   —   OVERALL: FAIL';
+  }
+  document.getElementById('summary').textContent =
+    `Pass ${n.success} · Fail ${n.fail} · Not tested ${n.ready + n.testing}${verdict}`;
+}
+
+function lockUI(lock) {
+  busy = lock;
+  document.querySelectorAll('.toolbar button, #test-table-body button')
+    .forEach(b => b.disabled = lock);
+}
+
+async function fetchSystemInfo() {
+  try {
+    const res = await fetch(`${API}/api/system-info`);
+    if (!res.ok) throw new Error(res.status);
+    const d = await res.json();
+    document.getElementById('info-serial').textContent  = d.serial;
+    document.getElementById('info-board').textContent   = d.board;
+    document.getElementById('info-os').textContent      = d.os_version;
+    document.getElementById('info-memory').textContent  = d.memory;
+    document.getElementById('info-library').textContent = d.library;
+    document.getElementById('info-regdom').textContent  = d.regdom;
+    /* Chrome and Firefox take the "Save as PDF" filename from document.title,
+       so the report lands as <serial>.pdf. Strip anything a filesystem would
+       choke on -- get_serial() returns "N/A" when /proc/cpuinfo cannot be read. */
+    const safe = String(d.serial || '').replace(/[^A-Za-z0-9_.-]/g, '_');
+    if (safe) document.title = safe;
+  } catch (e) {
+    ['serial','board','os','memory','library','regdom'].forEach(k => {
+      document.getElementById(`info-${k}`).textContent = 'Read failed';
+    });
+  }
+}
+
+async function runOne(id) {
+  if (busy) return;
+  lockUI(true);
+  await execute(id);
+  lockUI(false);
+}
+
+async function runAll() {
+  if (busy) return;
+  if (!confirm(`Run all ${tests.length} tests in order. You will be asked to confirm each result.`)) return;
+  lockUI(true);
+  for (const t of tests) {
+    await execute(t.id);
+    await sleep(400);
+  }
+  lockUI(false);
+  alert('All tests finished. Review the results and print the report.');
+}
+
+/* Run one item and record its result. */
+async function execute(id) {
+  setStatus(id, 'testing');
+
+  if (id === 'camera') { await runCamera(id);  return; }
+  if (id === 'button') { await runButtons(id); return; }
+
+  let detail = '';
+  try {
+    const res  = await fetch(`${API}/api/test/${id}`, { method: 'POST' });
+    const body = await res.json();
+    if (!res.ok) throw new Error(body.detail || `server error ${res.status}`);
+    if (id === 'wifi') {
+      detail = `${body.count} AP found, region ${body.regdom}` +
+               (body.top && body.top.length ? ` / ${body.top.join(', ')}` : '');
+      document.getElementById(`note-${id}`).value = detail;
+      if (body.count === 0) {
+        setStatus(id, 'fail');
+        return;
+      }
+    }
+  } catch (e) {
+    document.getElementById(`note-${id}`).value = `Error: ${e.message}`;
+    setStatus(id, 'fail');
+    return;
+  }
+
+  setStatus(id, ask(id, detail) ? 'success' : 'fail');
+}
+
+async function runCamera(id) {
+  const box = document.getElementById('camera-box');
+  box.textContent = 'Capturing...';
+  try {
+    const res = await fetch(`${API}/api/test/camera`);
+    if (!res.ok) {
+      let msg = `server error ${res.status}`;
+      try { msg = (await res.json()).detail || msg; } catch (_) {}
+      throw new Error(msg);
+    }
+    const url = URL.createObjectURL(await res.blob());
+    const img = new Image();
+    /* onerror hands back an Event, not an Error. Rejecting with it directly
+       leaves e.message undefined and prints "Capture failed: undefined". */
+    await new Promise((ok, ng) => {
+      img.onload  = ok;
+      img.onerror = () => ng(new Error('image could not be decoded'));
+      img.src = url;
+    });
+    box.innerHTML = '';
+    box.appendChild(img);
+    await sleep(600);
+    setStatus(id, ask(id) ? 'success' : 'fail');
+  } catch (e) {
+    box.textContent = `Capture failed: ${e.message}`;
+    document.getElementById(`note-${id}`).value = `Error: ${e.message}`;
+    setStatus(id, 'fail');
+  }
+}
+
+/* Rows the log element can show. Keeping the element to exactly this many
+   lines is what removes the scrollbar and the half-row clipping on print. */
+const LOG_ROWS = 12;
+const BUTTON_SECONDS = 30;
+
+async function runButtons(id) {
+  const log = document.getElementById('button-log');
+  const lines = [];
+  let seen = [];
+  const push = line => {
+    lines.push(line);
+    log.textContent = lines.slice(-LOG_ROWS).join('\n');
+  };
+  log.textContent = '';
+  alert(`Press each of the four buttons once during the next ${BUTTON_SECONDS} seconds.`);
+  const es = new EventSource(`${API}/api/test/button`);
+
+  await new Promise(done => {
+    const finish = () => { if (es.readyState !== EventSource.CLOSED) es.close(); done(); };
+    es.onmessage = ev => {
+      const d = JSON.parse(ev.data);
+      seen = d.seen || [];
+      /* Keep an entry to one line -- the column is narrow and a wrapped line
+         gets clipped mid-row when the report prints. */
+      push(`${String(d.count).padStart(2,'0')}  B1 ${d.b1} | B2 ${d.b2} | B3 ${d.b3} | B4 ${d.b4}`);
+    };
+    es.onerror = () => {
+      /* The stream ends on its own after the last sample and EventSource then
+         tries to reconnect, so this fires on a normal finish too. Only say
+         something when nothing at all came through -- otherwise it prints as
+         a stray line in the report. */
+      if (!log.textContent.trim()) log.textContent = 'No button data received.';
+      finish();
+    };
+    setTimeout(finish, (BUTTON_SECONDS + 2) * 1000);
+  });
+
+  const missing = [1,2,3,4].filter(n => !seen.includes(n));
+  const detail = missing.length
+    ? `Never pressed: B${missing.join(', B')}`
+    : 'All four buttons registered';
+  push('');
+  push(detail);
+  document.getElementById(`note-${id}`).value = detail;
+
+  if (missing.length) { setStatus(id, 'fail'); return; }
+  setStatus(id, ask(id, detail) ? 'success' : 'fail');
+}
+
+function ask(id, detail) {
+  const t = tests.find(x => x.id === id);
+  return confirm(`[${t.name}]\n\n${t.crit}\n\n${detail ? detail + '\n\n' : ''}Press OK if this passed.`);
+}
+
+function haltSystem() {
+  if (busy) { alert('Cannot shut down while a test is running.'); return; }
+  if (!confirm('Shut the system down. Make sure the report has been printed.')) return;
+  fetch(`${API}/api/halt`, { method: 'POST' })
+    .then(r => r.json())
+    .then(d => alert(d.message))
+    .catch(() => alert('Failed to send the shutdown command.'));
+}
+</script>
+</body>
+</html>

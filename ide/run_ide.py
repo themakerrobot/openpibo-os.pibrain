@@ -208,11 +208,48 @@ async def handle_init(sid):
     codeText = ''
   await app.sio.emit('init', {'codepath': codePath, 'codetext': codeText, 'path': PATH})
 
+# 하드웨어 검수 페이지(test/test.py, 50050번). systemd 유닛이 아니라 IDE 가 직접
+# 띄운다. 유닛 파일은 리포 밖이라 이미지 작업이 되므로, 리포 안에서 끝나게 했다.
+HWTEST_DIR = '/home/pi/openpibo-os/test'
+HWTEST_PY = f'{HWTEST_DIR}/test.py'
+hwtest_proc = None
+
+def stop_hwtest():
+  """검수 서버를 내린다. 여러 번 불러도 안전하다."""
+  global hwtest_proc
+  if hwtest_proc is not None and hwtest_proc.poll() is None:
+    hwtest_proc.terminate()
+    try:
+      hwtest_proc.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+      hwtest_proc.kill()
+  hwtest_proc = None
+  # 브라우저가 강제 종료돼 enable=off 를 못 받았거나 IDE 가 재시작돼 핸들을 잃은
+  # 경우까지 정리한다. 전체 경로로 띄우므로 cmdline 에 HWTEST_PY 가 그대로 있다.
+  subprocess.Popen(['pkill', '-f', HWTEST_PY])
+
+@app.get('/hwtest')
+async def hwtest(enable: str):
+  global hwtest_proc
+  print(f'[hwtest] enable={enable}')
+  if enable == "on":
+    # 검수 프로그램이 카메라·LCD(SPI)·GPIO·오디오를 독점해야 한다
+    subprocess.Popen(['systemctl', 'stop', 'tools.service'])
+    subprocess.Popen(['systemctl', 'stop', 'classify.service'])
+    subprocess.Popen(['systemctl', 'stop', 'llama-server.service'])
+    if hwtest_proc is None or hwtest_proc.poll() is not None:
+      hwtest_proc = subprocess.Popen([f'{ENV_PATH}/python3', HWTEST_PY], cwd=HWTEST_DIR)
+    await asyncio.sleep(3)
+  elif enable == "off":
+    stop_hwtest()
+  return HTMLResponse(content="", status_code=200)
+
 # 세 서비스는 카메라·오디오·LCD 를 공유하므로 동시에 못 돈다. 하나를 켜면 나머지를 끈다.
 @app.get('/tools')
 async def tools(enable: str):
   print(f'[tools] enable={enable}')
   if enable == "on":
+    stop_hwtest()   # 검수 서버가 카메라·오디오를 쥐고 있으면 tools 가 실패한다
     subprocess.Popen(['systemctl', 'stop', 'classify.service'])
     subprocess.Popen(['systemctl', 'stop', 'llama-server.service'])
     subprocess.Popen(['systemctl', 'start', 'tools.service'])
@@ -225,6 +262,7 @@ async def tools(enable: str):
 async def classifier(enable: str):
   print(f'[classifier] enable={enable}')
   if enable == "on":
+    stop_hwtest()   # 〃 (classifier 는 카메라를 직접 쓴다)
     subprocess.Popen(['systemctl', 'stop', 'llama-server.service'])
     subprocess.Popen(['systemctl', 'stop', 'tools.service'])
     subprocess.Popen(['systemctl', 'start', 'classify.service'])
@@ -237,6 +275,7 @@ async def classifier(enable: str):
 async def llm(enable: str):
   print(f'[llm] enable={enable}')
   if enable == "on":
+    stop_hwtest()   # 〃
     subprocess.Popen(['systemctl', 'stop', 'classify.service'])
     subprocess.Popen(['systemctl', 'stop', 'tools.service'])
     subprocess.Popen(['systemctl', 'start', 'llama-server.service'])
@@ -469,6 +508,7 @@ async def execute(EXEC, codepath):
 @app.sio.on('execute')
 async def handle_execute(sid, d):
   global codeText, codePath, ps
+  stop_hwtest()   # 사용자 코드가 카메라·LCD 를 쓰므로 검수 서버를 먼저 내린다
   subprocess.Popen(['systemctl', 'stop', 'llama-server.service'])
   subprocess.Popen(['systemctl', 'stop', 'classify.service'])
   subprocess.Popen(['systemctl', 'stop', 'tools.service'])
@@ -493,6 +533,7 @@ async def handle_execute(sid, d):
 @app.sio.on('executeb')
 async def handle_executeb(sid, d):
   global ps
+  stop_hwtest()   # 〃
   subprocess.Popen(['systemctl', 'stop', 'llama-server.service'])
   subprocess.Popen(['systemctl', 'stop', 'classify.service'])
   subprocess.Popen(['systemctl', 'stop', 'tools.service'])
