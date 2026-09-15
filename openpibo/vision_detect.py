@@ -3,10 +3,9 @@
 
 Class:
 :meth:`~openpibo.vision_detect.putTextPIL`
-:meth:`~openpibo.vision_detect.vision_api`
 :obj:`~openpibo.vision_detect.Detect`
 """
-import cv2,dlib,requests
+import cv2,dlib
 import os,pickle,math
 import numpy as np
 from pyzbar import pyzbar
@@ -63,36 +62,6 @@ def putTextPIL(img, text, points, size=30, colors=(255,255,255)):
   ImageDraw.Draw(pil).text(points, text, font=font, fill=colors)  # putText
   img[:] = np.array(pil)  # PIL to CV
   return img
-
-def vision_api(mode, image, params={}):
-  """
-  인공지능 비전 API를 호출합니다.
-
-  :param str mode: 호출할 비전 API (https://o-vapi.circul.us/guide)
-  :param str/numpy.ndarray image: 표시할 이미지 (파일 경로 or cv 이미지)
-  :returns: ``Json`` 타입 결과의 데이터
-
-  example::
-
-    { 'type': 'caption', 'result': 'ok', 
-      'data': {
-        caption:  "사람에게 로봇을 과시하는 사람", 
-        caption_en:  "a person showing off a robot to a person",
-        raw:  [
-          "a person showing off a robot to a person",
-          "a robot that is sitting on top of a table",
-          "a very cute white robot that is sitting in front of a table"
-        ]
-      }
-    }
-
-  """
-
-  if type(image) is np.ndarray:
-    return requests.post(f"https://o-vapi.circul.us/{mode}", files={'uploadFile':cv2.imencode('.jpg', image)[1].tobytes()}, params=params).json()
-  else:
-    return requests.post(f"https://o-vapi.circul.us/{mode}", files={'uploadFile':open(image, 'rb')}, params=params).json()
-
 
 class Detect:
   """
