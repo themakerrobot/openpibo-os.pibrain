@@ -121,12 +121,12 @@ async def download_item(filename: str):
 
   # 보호 디렉토리 체크
   if is_protect(full_path):
-    await socket_manager.emit('update', {'dialog': '파일 다운로드 오류: 보호 디렉토리입니다.'})
-    return JSONResponse(content={'error': '파일 다운로드 오류: 보호 디렉토리입니다.'}, status_code=403)
+    await socket_manager.emit('update', {'dialog': 'err_download_protected'})
+    return JSONResponse(content={'error': 'err_download_protected'}, status_code=403)
 
   # 존재 여부 체크
   if not os.path.exists(full_path):
-    raise JSONResponse(content={'error':"파일 또는 폴더를 찾을 수 없습니다."}, status_code=404)
+    raise JSONResponse(content={'error':"err_not_found"}, status_code=404)
 
   # 파일인 경우: 그대로 다운로드
   if os.path.isfile(full_path):
@@ -147,13 +147,13 @@ async def download_item(filename: str):
     return FileResponse(zip_path, media_type="application/zip", filename="download.zip")
     
   else:
-    raise JSONResponse(content={'error':"올바른 파일 또는 폴더가 아닙니다."}, status_code=403)
+    raise JSONResponse(content={'error':"err_invalid_path"}, status_code=403)
 
 @app.post('/upload')
 async def upload_file(files: List[UploadFile] = File(...)):
   if is_protect(PATH):
-    await socket_manager.emit('update', {'dialog': '파일 업로드 오류: 보호 디렉토리입니다.'})
-    return JSONResponse(content={'error': '파일 업로드 오류: 보호 디렉토리입니다.'}, status_code=403)
+    await socket_manager.emit('update', {'dialog': 'err_upload_protected'})
+    return JSONResponse(content={'error': 'err_upload_protected'}, status_code=403)
   for file in files:
     file_location = os.path.join(PATH, file.filename)
     with open(file_location, "wb") as f:
@@ -166,7 +166,7 @@ async def upload_file(files: List[UploadFile] = File(...)):
     shutil.chown(PATH, user='pi', group='pi')
   except Exception as err:
     print(err)
-  return JSONResponse(content={"message": "파일 업로드 완료"}, status_code=200)
+  return JSONResponse(content={"message": "msg_upload_done"}, status_code=200)
 
 
 @app.post('/show')
@@ -182,8 +182,8 @@ async def show_file(data: UploadFile = File(...)):
       await socket_manager.emit('update', {'image': encoded_image, 'filepath': tmp_path})
   except Exception as err:
     print(err)
-    await socket_manager.emit('update', {'dialog': f'보기 오류: {str(err)}'})
-  return JSONResponse(content={"message": "이미지 표시 완료"}, status_code=200)
+    await socket_manager.emit('update', {'dialog': 'err_view', 'detail': str(err)})
+  return JSONResponse(content={"message": "msg_view_done"}, status_code=200)
 
 # 'connection' 은 Node.js 이벤트명이라 fastapi_socketio 에서 한 번도 안 불린다.
 # 'connect' 가 맞다. 다만 종료 판단에는 쓰지 말 것 (아래 tools/classifier 주석 참고).
@@ -199,7 +199,7 @@ async def handle_init(sid):
     await app.sio.emit('system', system_info)
   except Exception as err:
     print(err)
-    await app.sio.emit('update', {'dialog': '초기화: 시스템 파일 오류입니다.'})
+    await app.sio.emit('update', {'dialog': 'err_init_sysfile'})
 
   try:
     with open(codePath, 'r') as f:
@@ -282,7 +282,7 @@ async def handle_view(sid, p):
       encoded_image = base64.b64encode(data).decode('utf-8')
       await app.sio.emit('update', {'image': encoded_image, 'filepath': p})
   except Exception as err:
-    await app.sio.emit('update', {'dialog': f'보기 오류: {str(err)}'})
+    await app.sio.emit('update', {'dialog': 'err_view', 'detail': str(err)})
 
 
 @app.sio.on('play')
@@ -293,14 +293,14 @@ async def handle_play(sid, p):
       encoded_audio = base64.b64encode(data).decode('utf-8')
       await app.sio.emit('update', {'audio': encoded_audio, 'filepath': p})
   except Exception as err:
-    await app.sio.emit('update', {'dialog': f'재생 오류: {str(err)}'})
+    await app.sio.emit('update', {'dialog': 'err_play', 'detail': str(err)})
 
 
 @app.sio.on('load')
 async def handle_load(sid, p):
   global codeText, codePath
   if is_protect(p) :
-    await app.sio.emit('update', {'dialog': '파일 불러오기 오류: 보호 파일입니다.'})
+    await app.sio.emit('update', {'dialog': 'err_load_protected'})
     return
   try:
     with open(p, 'r') as f:
@@ -308,14 +308,14 @@ async def handle_load(sid, p):
       codePath = p
       await app.sio.emit('update', {'code': codeText, 'filepath': codePath})
   except Exception as err:
-    await app.sio.emit('update', {'dialog': f'파일 불러오기 오류: {str(err)}'})
+    await app.sio.emit('update', {'dialog': 'err_load', 'detail': str(err)})
 
 
 @app.sio.on('delete')
 async def handle_delete(sid, d):
   global codeText, codePath
   if is_protect(d):
-    await app.sio.emit('update', {'dialog': '파일 삭제 오류: 보호 파일입니다.'})
+    await app.sio.emit('update', {'dialog': 'err_delete_protected'})
     return
   if d == codePath:
     codePath = ""
@@ -327,7 +327,7 @@ async def handle_delete(sid, d):
       os.remove(d)
   except Exception as err:
     print(err)
-    await app.sio.emit('update', {'dialog': '파일 삭제 오류: 파일명 파싱 에러입니다.'})
+    await app.sio.emit('update', {'dialog': 'err_delete_parse'})
     return
   directory_data = read_directory(PATH)
   await app.sio.emit('update_file_manager', {'data': directory_data})
@@ -339,12 +339,12 @@ async def handle_rename(sid, d):
   oldpath = d['oldpath']
   newpath = d['newpath']
   if is_protect(oldpath) or is_protect(newpath):
-    await app.sio.emit('update', {'dialog': '파일 이름 변경 오류: 보호 파일입니다.'})
+    await app.sio.emit('update', {'dialog': 'err_rename_protected'})
     return
   try:
     os.rename(oldpath, newpath)
   except Exception as err:
-    await app.sio.emit('update', {'dialog': '파일 이름 변경 오류: 파일명 파싱 에러입니다.'})
+    await app.sio.emit('update', {'dialog': 'err_rename_parse'})
     return
   directory_data = read_directory(PATH)
   await app.sio.emit('update_file_manager', {'data': directory_data})
@@ -355,7 +355,7 @@ async def handle_rename(sid, d):
         codePath = newpath
         await app.sio.emit('update', {'code': codeText, 'filepath': codePath})
     except Exception as err:
-      await app.sio.emit('update', {'dialog': f'파일 불러오기 오류: {str(err)}'})
+      await app.sio.emit('update', {'dialog': 'err_load', 'detail': str(err)})
 
 @app.sio.on('restore')
 async def handle_restore(sid):
@@ -370,13 +370,13 @@ async def handle_restore(sid):
         os.system(f'{ENV_PATH}/python3 /home/pi/openpibo-os/system/clear_disp.py')
         subprocess.Popen(['shutdown', '-h', 'now'])
     except Exception as e:
-        await sio.emit('update', {'dialog': f'초기화 오류: {str(e)}'}, room=sid)
+        await sio.emit('update', {'dialog': 'err_init', 'detail': str(e)}, room=sid)
 
 @app.sio.on('add_file')
 async def handle_add_file(sid, p):
   global codeText, codePath
   if is_protect(PATH):
-    await app.sio.emit('update', {'dialog': '파일 생성 오류: 보호 디렉토리입니다.'})
+    await app.sio.emit('update', {'dialog': 'err_create_protected'})
     return
   if not os.path.exists(p):
     try:
@@ -386,7 +386,7 @@ async def handle_add_file(sid, p):
       directory_data = read_directory(PATH)
       await app.sio.emit('update_file_manager', {'data': directory_data})
     except Exception as err:
-      await app.sio.emit('update', {'dialog': f'파일 생성 오류: {str(err)}'})
+      await app.sio.emit('update', {'dialog': 'err_create', 'detail': str(err)})
       return
   codePath = p
   try:
@@ -394,12 +394,12 @@ async def handle_add_file(sid, p):
       codeText = f.read()
       await app.sio.emit('update', {'code': codeText, 'filepath': p})
   except Exception as err:
-    await app.sio.emit('update', {'dialog': f'파일 불러오기 오류: {str(err)}'})
+    await app.sio.emit('update', {'dialog': 'err_load', 'detail': str(err)})
 
 @app.sio.on('add_directory')
 async def handle_add_directory(sid, p):
   if is_protect(PATH):
-    await app.sio.emit('update', {'dialog': '디렉토리 생성 오류: 보호 폴더입니다.'})
+    await app.sio.emit('update', {'dialog': 'err_mkdir_protected'})
     return
   try:
     os.makedirs(p, exist_ok=True)
@@ -407,14 +407,14 @@ async def handle_add_directory(sid, p):
     directory_data = read_directory(PATH)
     await app.sio.emit('update_file_manager', {'data': directory_data})
   except Exception as err:
-    await app.sio.emit('update', {'dialog': f'디렉토리 생성 오류: {str(err)}'})
+    await app.sio.emit('update', {'dialog': 'err_mkdir', 'detail': str(err)})
 
 @app.sio.on('save')
 async def handle_save(sid, d):
   global codeText, codePath
   try:
     if is_protect(d['codepath']) or is_protect(os.path.dirname(d['codepath'])):
-      await app.sio.emit('update', {'dialog': '파일 저장 오류: 보호 파일입니다.'})
+      await app.sio.emit('update', {'dialog': 'err_save_protected'})
       return
     codeText = d['codetext']
     codePath = d['codepath']
@@ -423,7 +423,7 @@ async def handle_save(sid, d):
       f.write(codeText)
     shutil.chown(os.path.dirname(codePath), user='pi', group='pi')
   except Exception as err:
-    await app.sio.emit('update', {'dialog': f'파일 저장 오류: {str(err)}'})
+    await app.sio.emit('update', {'dialog': 'err_save', 'detail': str(err)})
 
 async def execute(EXEC, codepath):
   global record, ps
@@ -460,7 +460,7 @@ async def execute(EXEC, codepath):
 
     await ps.wait()
     ps = None  # 프로세스가 종료되었으므로 ps를 None으로 설정
-    record += "\n종료됨."
+    record += "\n[exit]"
     await app.sio.emit('update', {'record': record, 'exit': True})
     directory_data = read_directory(PATH)
     await app.sio.emit('update_file_manager', {'data': directory_data})
@@ -474,7 +474,7 @@ async def handle_execute(sid, d):
   subprocess.Popen(['systemctl', 'stop', 'tools.service'])
   try:
     if is_protect(d['codepath']) or is_protect(os.path.dirname(d['codepath'])):
-      await app.sio.emit('update', {'dialog': '실행 오류: 보호 파일입니다.', 'exit': True})
+      await app.sio.emit('update', {'dialog': 'err_run_protected', 'exit': True})
       return
     codeText = d['codetext']
     codePath = d['codepath']
@@ -487,7 +487,7 @@ async def handle_execute(sid, d):
     shutil.chown(os.path.dirname(codePath), user='pi', group='pi')
     await execute(codeExec[d["codetype"]], codePath)
   except Exception as err:
-    await app.sio.emit('update', {'dialog': f'실행 오류: {str(err)}', 'exit': True})
+    await app.sio.emit('update', {'dialog': 'err_run', 'detail': str(err), 'exit': True})
 
 # executeb 핸들러 수정
 @app.sio.on('executeb')
@@ -506,7 +506,7 @@ async def handle_executeb(sid, d):
     shutil.chown(os.path.dirname(d['codepath']), user='pi', group='pi')
     await execute(codeExec[d["codetype"]], d['codepath'])
   except Exception as err:
-    await app.sio.emit('update', {'dialog': f'실행 오류: {str(err)}', 'exit': True})
+    await app.sio.emit('update', {'dialog': 'err_run', 'detail': str(err), 'exit': True})
 
 # stop 핸들러 수정
 @app.sio.on('stop')
@@ -533,7 +533,7 @@ async def periodic_system_update():
       system_info = subprocess.check_output(['/home/pi/openpibo-os/system/system.sh']).decode().strip().split(',')
       await app.sio.emit('system', system_info)
     except Exception as err:
-      await app.sio.emit('update', {'dialog': '초기화: 시스템 파일 오류입니다.'})
+      await app.sio.emit('update', {'dialog': 'err_init_sysfile'})
 
     await asyncio.sleep(10)
 

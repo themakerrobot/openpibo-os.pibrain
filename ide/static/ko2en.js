@@ -313,5 +313,36 @@ const translations = {
   classifier: {
     ko: "분류기",
     en: "Classifier"
-  }
+  },
+  err_download_protected: { ko: "파일 다운로드 오류: 보호 디렉토리입니다.", en: "Download error: protected directory." },
+  err_not_found:          { ko: "파일 또는 폴더를 찾을 수 없습니다.", en: "File or folder not found." },
+  err_invalid_path:       { ko: "올바른 파일 또는 폴더가 아닙니다.", en: "Not a valid file or folder." },
+  err_upload_protected:   { ko: "파일 업로드 오류: 보호 디렉토리입니다.", en: "Upload error: protected directory." },
+  msg_upload_done:        { ko: "파일 업로드 완료", en: "Upload complete" },
+  msg_view_done:          { ko: "이미지 표시 완료", en: "Image displayed" },
+  err_init_sysfile:       { ko: "초기화: 시스템 파일 오류입니다.", en: "Init: system file error." },
+  err_load_protected:     { ko: "파일 불러오기 오류: 보호 파일입니다.", en: "Load error: protected file." },
+  err_delete_protected:   { ko: "파일 삭제 오류: 보호 파일입니다.", en: "Delete error: protected file." },
+  err_delete_parse:       { ko: "파일 삭제 오류: 파일명 파싱 에러입니다.", en: "Delete error: invalid file name." },
+  err_rename_protected:   { ko: "파일 이름 변경 오류: 보호 파일입니다.", en: "Rename error: protected file." },
+  err_rename_parse:       { ko: "파일 이름 변경 오류: 파일명 파싱 에러입니다.", en: "Rename error: invalid file name." },
+  err_create_protected:   { ko: "파일 생성 오류: 보호 디렉토리입니다.", en: "Create error: protected directory." },
+  err_mkdir_protected:    { ko: "디렉토리 생성 오류: 보호 폴더입니다.", en: "Create folder error: protected folder." },
+  err_save_protected:     { ko: "파일 저장 오류: 보호 파일입니다.", en: "Save error: protected file." },
+  err_run_protected:      { ko: "실행 오류: 보호 파일입니다.", en: "Run error: protected file." },
+  err_view:   { ko: (d) => `보기 오류: ${d}`,          en: (d) => `View error: ${d}` },
+  err_play:   { ko: (d) => `재생 오류: ${d}`,          en: (d) => `Play error: ${d}` },
+  err_load:   { ko: (d) => `파일 불러오기 오류: ${d}`, en: (d) => `Load error: ${d}` },
+  err_init:   { ko: (d) => `초기화 오류: ${d}`,        en: (d) => `Init error: ${d}` },
+  err_create: { ko: (d) => `파일 생성 오류: ${d}`,     en: (d) => `Create error: ${d}` },
+  err_mkdir:  { ko: (d) => `디렉토리 생성 오류: ${d}`, en: (d) => `Create folder error: ${d}` },
+  err_save:   { ko: (d) => `파일 저장 오류: ${d}`,     en: (d) => `Save error: ${d}` },
+  err_run:    { ko: (d) => `실행 오류: ${d}`,          en: (d) => `Run error: ${d}` }
+};
+
+// 키 → 현재 언어 문자열. 모르는 키(일반 문자열)는 그대로 반환.
+const t = (key, ...args) => {
+  const v = (translations[key] || {})[lang];
+  if (v === undefined) return key;
+  return typeof v === 'function' ? v(...args) : v;
 };

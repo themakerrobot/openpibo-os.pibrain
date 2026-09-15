@@ -394,7 +394,7 @@ socket.on("update", async (data) => {
   }
 
   if ("dialog" in data) {
-    await alert_popup(data["dialog"]);
+    await alert_popup(t(data["dialog"], data["detail"]));
   }
 
   if ("exit" in data) {
@@ -1452,7 +1452,7 @@ const setLanguage = (langCode) => {
     }
   });
 
-  const langFileVersion = '240110v11';
+  const langFileVersion = '260916v1';
   const langFile = `../static/${langCode}.js?ver=${langFileVersion}`;
   const prevKoScript = document.querySelector(`script[src*="../static/ko.js?ver=${langFileVersion}"]`);
   if (prevKoScript) {
