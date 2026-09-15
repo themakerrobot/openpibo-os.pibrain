@@ -206,11 +206,25 @@ async def handle_init(sid):
     codeText = ''
   await app.sio.emit('init', {'codepath': codePath, 'codetext': codeText, 'path': PATH})
 
+# 세 서비스는 카메라·오디오·LCD 를 공유하므로 동시에 못 돈다. 하나를 켜면 나머지를 끈다.
+@app.get('/tools')
+async def tools(enable: str):
+  print(f'[tools] enable={enable}')
+  if enable == "on":
+    subprocess.Popen(['systemctl', 'stop', 'classify.service'])
+    subprocess.Popen(['systemctl', 'stop', 'llama-server.service'])
+    subprocess.Popen(['systemctl', 'start', 'tools.service'])
+  elif enable == "off":
+    subprocess.Popen(['systemctl', 'stop', 'tools.service'])
+  await asyncio.sleep(2)
+  return HTMLResponse(content="", status_code=200)
+
 @app.get('/classifier')
 async def classifier(enable: str):
-  # print("Eanable classifier:", enable)
+  print(f'[classifier] enable={enable}')
   if enable == "on":
     subprocess.Popen(['systemctl', 'stop', 'llama-server.service'])
+    subprocess.Popen(['systemctl', 'stop', 'tools.service'])
     subprocess.Popen(['systemctl', 'start', 'classify.service'])
   elif enable == "off":
     subprocess.Popen(['systemctl', 'stop', 'classify.service'])
@@ -218,10 +232,11 @@ async def classifier(enable: str):
   return HTMLResponse(content="", status_code=200)
 
 @app.get('/llm')
-async def classifier(enable: str):
-  # print("Eanable llm:", enable)
+async def llm(enable: str):
+  print(f'[llm] enable={enable}')
   if enable == "on":
     subprocess.Popen(['systemctl', 'stop', 'classify.service'])
+    subprocess.Popen(['systemctl', 'stop', 'tools.service'])
     subprocess.Popen(['systemctl', 'start', 'llama-server.service'])
   elif enable == "off":
     subprocess.Popen(['systemctl', 'stop', 'llama-server.service'])
@@ -454,6 +469,7 @@ async def handle_execute(sid, d):
   global codeText, codePath, ps
   subprocess.Popen(['systemctl', 'stop', 'llama-server.service'])
   subprocess.Popen(['systemctl', 'stop', 'classify.service'])
+  subprocess.Popen(['systemctl', 'stop', 'tools.service'])
   try:
     if is_protect(d['codepath']) or is_protect(os.path.dirname(d['codepath'])):
       await app.sio.emit('update', {'dialog': '실행 오류: 보호 파일입니다.', 'exit': True})
@@ -477,6 +493,7 @@ async def handle_executeb(sid, d):
   global ps
   subprocess.Popen(['systemctl', 'stop', 'llama-server.service'])
   subprocess.Popen(['systemctl', 'stop', 'classify.service'])
+  subprocess.Popen(['systemctl', 'stop', 'tools.service'])
   try:
     if ps and ps.returncode is None:
       ps.kill()

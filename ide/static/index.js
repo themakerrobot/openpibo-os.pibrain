@@ -227,6 +227,27 @@ llm_bt.addEventListener("click", function () {
   //   console.error('데이터 요청 중 에러 발생:', error);
   });
 });
+const tools_bt = document.getElementById("tools_bt")
+tools_bt.addEventListener("click", function () {
+  const tools_bt_innerHTML = tools_bt.innerHTML;
+  tools_bt.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i>";
+  fetch(`http://${location.hostname}/tools?enable=on`)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.text();
+  })
+  .then(data => {
+    setTimeout(function() {
+      window.open(`http://${location.hostname}:50040`);
+      tools_bt.innerHTML = tools_bt_innerHTML;
+    }, 3000);
+  })
+  .catch(error => {
+    tools_bt.innerHTML = tools_bt_innerHTML;
+  });
+});
 const classifier_bt = document.getElementById("classifier_bt")
 classifier_bt.addEventListener("click", async function () {
   const classifier_bt_innerHTML = classifier_bt.innerHTML;
