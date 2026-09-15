@@ -92,7 +92,7 @@ async function confirm_popup(message) {
         const cancelButton = document.getElementById('confirmCancelBtn');
 
         if (!popupElement || !msgElement || !okButton || !cancelButton) {
-            console.error("confirm_popup: 필수 요소를 찾을 수 없습니다!", { popupElement, msgElement, okButton, cancelButton });
+            console.error("confirm_popup: required elements not found", { popupElement, msgElement, okButton, cancelButton });
             resolve(false); // 요소를 찾을 수 없으면 즉시 false 반환 (오류 상황)
             return;
         }
@@ -152,7 +152,7 @@ async function prompt_popup(message, defaultValue = '') {
         const cancelButton = document.getElementById('promptCancelBtn');
 
         if (!popupElement || !msgElement || !inputElement || !okButton || !cancelButton) {
-            console.error("prompt_popup: 필수 요소를 찾을 수 없습니다!", { popupElement, msgElement, inputElement, okButton, cancelButton });
+            console.error("prompt_popup: required elements not found", { popupElement, msgElement, inputElement, okButton, cancelButton });
             resolve(null); // 오류 시 null 반환
             return;
         }
@@ -239,7 +239,7 @@ async function loadMobileNetFeatureModel() {
     tf.tidy(() => {
         mobilenet.predict(tf.zeros([1, MOBILE_NET_INPUT_HEIGHT, MOBILE_NET_INPUT_WIDTH, 3]));
     });
-    document.getElementById('training-progress').innerText = '초기화를 완료했습니다.';
+    setLabel(document.getElementById('training-progress'), null, 'init_done');
 }
 loadMobileNetFeatureModel();
 
@@ -261,7 +261,7 @@ function addClass() {
         const btnGroup = document.createElement('div');
         btnGroup.className = 'class-buttons';
         const downloadButton = document.createElement('button');
-        downloadButton.innerHTML = '<i class="fas fa-download"></i> 다운로드';
+        setLabel(downloadButton, '<i class="fas fa-download"></i>', 'download');
         downloadButton.onclick = (e) => {
             e.stopPropagation();
             downloadClassDataset(className);
@@ -275,7 +275,7 @@ function addClass() {
             uploadClassDataset(e, className);
         };
         const uploadLabel = document.createElement('label');
-        uploadLabel.innerHTML = '<i class="fas fa-upload"></i> 업로드';
+        setLabel(uploadLabel, '<i class="fas fa-upload"></i>', 'upload');
         uploadLabel.classList.add('upload-button');
         uploadLabel.onclick = () => {
             uploadInput.click();
@@ -283,10 +283,10 @@ function addClass() {
         btnGroup.appendChild(uploadInput);
         btnGroup.appendChild(uploadLabel);
         const deleteButton = document.createElement('button');
-        deleteButton.innerHTML = '<i class="fas fa-trash"></i> 삭제';
+        setLabel(deleteButton, '<i class="fas fa-trash"></i>', 'delete_');
         deleteButton.onclick = async (e) => {
             e.stopPropagation();
-            if (await confirm_popup(`${className} 클래스를 삭제하시겠습니까?`)) {
+            if (await confirm_popup(t('confirm_del_class', className))) {
                 classContainer.remove();
                 const classIndex = CLASS_NAMES.indexOf(className);
                 if (classIndex > -1) {
@@ -317,7 +317,7 @@ function selectClass(className) {
 // 4) 이미지 캡처
 async function startCapturingImages() {
     if (gatherDataState === -1) {
-        await alert_popup('이미지 추가할 클래스를 선택하세요.');
+        await alert_popup(t('err_select_class'));
         return;
     }
     capturing = true;
@@ -359,7 +359,7 @@ function addImageToClass(imgTensor, classIndex) {
             imageElement.src = canvas.toDataURL();
             imageElement.className = 'thumbnail';
             imageElement.onclick = async () => {
-                if (await confirm_popup('이 이미지를 삭제하시겠습니까?')) {
+                if (await confirm_popup(t('confirm_del_image'))) {
                     imageElement.remove();
                 }
             };
@@ -388,7 +388,7 @@ async function uploadClassDataset(event, className) {
                     return;
                 }
                 imgElement.onclick = async () => {
-                    if (await confirm_popup('이 이미지를 삭제하시겠습니까?')) {
+                    if (await confirm_popup(t('confirm_del_image'))) {
                         imgElement.remove();
                     }
                 };
@@ -406,7 +406,7 @@ async function uploadClassDataset(event, className) {
                 }
             };
         }
-        await alert_popup(`${className} 데이터셋 업로드 했습니다.`);
+        await alert_popup(t('msg_dataset_up', className));
     }
 }
 function downloadClassDataset(className) {
@@ -433,7 +433,7 @@ function downloadClassDataset(className) {
 // 6) 모델 학습
 async function trainAndPredict() {
     if (trainingDataInputs.length === 0) {
-        await alert_popup('학습할 데이터가 없습니다. 이미지를 추가해주세요.');
+        await alert_popup(t('err_no_data'));
         return;
     }
     predict = false;
@@ -460,7 +460,7 @@ async function trainAndPredict() {
         outputsAsTensor.dispose();
         oneHotOutputs.dispose();
         inputsAsTensor.dispose();
-        document.getElementById('training-progress').innerText = '학습 완료';
+        setLabel(document.getElementById('training-progress'), null, 'train_done');
         predict = true;
     });
 }
@@ -485,7 +485,7 @@ async function predictImage() {
     const confidence = predictionData[classIndex];
     const className = CLASS_NAMES[classIndex];
     document.getElementById('prediction-result').innerText =
-        `예측 클래스: ${className} (신뢰도: ${(confidence * 100).toFixed(2)}%)`;
+        t('predict_label', className, (confidence * 100).toFixed(2));
     img.dispose();
     features.dispose();
     prediction.dispose();
@@ -516,13 +516,13 @@ function toggleCamera() {
 // 8) 미리보기 및 추론 모드를 위한 새 함수
 async function setInferenceMode() {
     if (!model) {
-        await alert_popup('모델이 없습니다. 먼저 학습하기 또는 불러오기를 실행하세요.');
+        await alert_popup(t('err_no_model'));
         return;
     }
     if (!previewing) {
         predictInterval = setInterval(() => predictImage(), 1000);
         previewing = true;
-        document.getElementById('preview-status').innerText = '(추론 실행 중)';
+        setLabel(document.getElementById('preview-status'), null, 'status_inference');
         document.getElementById('prediction-result').style.visibility = 'visible';
     }
 }
@@ -530,7 +530,7 @@ function setPreviewMode() {
     if (previewing) {
         clearInterval(predictInterval);
         previewing = false;
-        document.getElementById('preview-status').innerText = '(미리보기 실행 중)';
+        setLabel(document.getElementById('preview-status'), null, 'status_preview');
         document.getElementById('prediction-result').style.visibility = 'hidden';
     }
 }
@@ -538,7 +538,7 @@ function setPreviewMode() {
 // 9) 모델 내보내기 / 불러오기, 변환 (기존 코드와 동일)
 async function exportModelAsZip() {
     if (!model) {
-        await alert_popup('모델이 없습니다. 먼저 학습하기 또는 불러오기를 실행하세요.');
+        await alert_popup(t('err_no_model'));
         return;
     }
     const zip = new JSZip();
@@ -559,8 +559,8 @@ async function exportModelAsZip() {
             a.click();
         });
     } catch (error) {
-        console.error("모델 내보내기 중 오류 발생:", error);
-        await alert_popup("모델을 내보내는 도중 오류가 발생했습니다.");
+        console.error("model export error:", error);
+        await alert_popup(t('err_export'));
     }
 }
 async function importModel(event) {
@@ -571,12 +571,12 @@ async function importModel(event) {
         const modelJson = await zip.file('model.json').async('string');
         const weightDataFile = zip.file('weights.bin');
         if (!weightDataFile) {
-            await alert_popup('weights.bin 파일이 누락되었습니다.');
+            await alert_popup(t('err_no_weights'));
             return;
         }
         const weightSpecsFile = zip.file('weightsSpecs.json');
         if (!weightSpecsFile) {
-            await alert_popup('weightsSpecs.json 파일이 누락되었습니다.');
+            await alert_popup(t('err_no_specs'));
             return;
         }
         const weightData = await weightDataFile.async('arraybuffer');
@@ -594,11 +594,11 @@ async function importModel(event) {
             const labelsText = await labelsFile.async('string');
             CLASS_NAMES.splice(0, CLASS_NAMES.length, ...labelsText.split('\n'));
         }
-        await alert_popup('모델을 성공적으로 불러왔습니다.');
-        document.getElementById('training-progress').innerText = '모델을 불러왔습니다.';
+        await alert_popup(t('msg_model_loaded'));
+        setLabel(document.getElementById('training-progress'), null, 'progress_loaded');
     } catch (error) {
-        console.error("모델 불러오기 중 오류 발생:", error);
-        await alert_popup("모델을 불러오는 중 오류가 발생했습니다.");
+        console.error("model import error:", error);
+        await alert_popup(t('err_import'));
     }
 }
 
@@ -609,14 +609,13 @@ function convertToH5() {
 }
 
 const convertToH5_bt = document.getElementById("convertToH5_bt")
-const convertToH5_bt_innerHTML = convertToH5_bt.innerHTML;
 async function exportConvertedModelAsZipAndConvert() {
     if (!model) {
-        await alert_popup('모델이 없습니다. 먼저 학습하기 또는 불러오기를 실행하세요.');
+        await alert_popup(t('err_no_model'));
         return;
     }
     try {
-        convertToH5_bt.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i>&nbsp; 모델 변환중";
+        setLabel(convertToH5_bt, "<i class='fa-solid fa-spinner fa-spin'></i>&nbsp;", 'converting');
         // model.save를 사용하여 모델 아티팩트(export)
         const modelArtifacts = await model.save(tf.io.withSaveHandler(async (artifacts) => artifacts));
 
@@ -646,8 +645,8 @@ async function exportConvertedModelAsZipAndConvert() {
         });
         if (!response.ok) {
             const errorMessage = await response.text();
-            console.error("모델 변환 요청 실패:", errorMessage);
-            await alert_popup(`모델 변환 요청 실패: ${errorMessage}`);
+            console.error("conversion request failed:", errorMessage);
+            await alert_popup(t('err_convert_req', errorMessage));
             return;
         }
         // 변환된 H5 모델 파일(blob)을 받아서 다운로드 처리
@@ -660,13 +659,13 @@ async function exportConvertedModelAsZipAndConvert() {
         a.click();
         a.remove();
         URL.revokeObjectURL(downloadUrl);
-        await alert_popup('H5 변환 성공! converted_h5.zip이 다운로드 되었습니다.');
+        await alert_popup(t('msg_h5_done'));
     } catch (err) {
-        console.error('변환 중 오류:', err);
-        await alert_popup('모델 변환 중 오류가 발생했습니다.');
+        console.error('conversion error:', err);
+        await alert_popup(t('err_convert'));
     }
     finally {
-        convertToH5_bt.innerHTML = convertToH5_bt_innerHTML;
+        setLabel(convertToH5_bt, '<i class="fas fa-check"></i>', 'save_keras');
     }
 }
 
