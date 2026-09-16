@@ -175,8 +175,9 @@ echo "===== 시스템 ====="
 hostname                                                       # 시리얼 8자리
 df -h / | tail -1                                              # 카드 용량으로 확장됐는지
 timedatectl | grep -i "time zone"
-iw reg get | grep country | head -2                            # setup_country.sh 가 넣은 regdom
-cat /boot/firmware/cmdline.txt                                 # regdom 이 한 번만, 파일은 한 줄
+cat /boot/firmware/cmdline.txt                                 # regdom 토큰이 한 번만, 파일은 한 줄
+sudo raspi-config nonint get_wifi_country                      # 국가코드
+iw reg get | grep country | head -2                            # 접속한 AP 가 덮어쓸 수 있다
 head -13 /etc/rc.local | tail -1                               # system/init 호출 (PiShrink 원복 확인)
 ls -l /boot/firmware/custom.toml /boot/firmware/firstrun.sh 2>&1   # 둘 다 없어야 한다
 
