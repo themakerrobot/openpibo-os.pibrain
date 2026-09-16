@@ -18,6 +18,7 @@ from .modules.speech.mtts import (
     load_text_to_speech,
     load_voice_style,
     TextToSpeech,
+    AVAILABLE_LANGS,
 )
 #current_path = os.path.dirname(os.path.realpath(__file__))
 
