@@ -10,8 +10,8 @@
 #
 # --regdom 을 주면 timezone 은 <국가코드> 를 따르고 무선 규제도메인만 다른 값을
 # 쓴다. 필리핀 기기의 5GHz 상위 채널(149~165)을 살리려고 만든 탈출구다.
-# 자세한 배경은 CLAUDE.md '현장 네트워크' 참고. 아래는 Pibo(Pi 4, CYW43455)
-# 실측이다. PiBrain 보드가 같은 무선 칩인지는 확인 필요 — 다르면 이 항목은 무관하다.
+# 자세한 배경은 CLAUDE.md '현장 네트워크' 참고. PiBrain 은 Pibo 와 같은
+# 라즈베리파이 보드(Pi 4, CYW43455)를 쓰므로 아래 실측이 그대로 적용된다.
 #   - CYW43455 의 채널 목록은 Linux regdb 가 아니라 펌웨어의 CLM blob 이 정한다
 #   - Raspberry Pi OS 가 까는 blob 은 2015년 축소판(2676 B, 124개국)이고
 #     그 안의 PH 항목이 5725~5850 을 안 준다. 규제 문제가 아니라 blob 결함이다
@@ -99,6 +99,9 @@ if [ "$(grep -o 'cfg80211\.ieee80211_regdom=[A-Za-z]*' "$CMDLINE" | wc -l)" != "
    || ! grep -q "cfg80211\.ieee80211_regdom=$REGDOM\( \|$\)" "$CMDLINE"; then
   echo "!! $CMDLINE 정규화 실패. 아래 줄을 손으로 고칠 것 (파일은 반드시 한 줄)"
   cat "$CMDLINE"
+  echo
+  echo "   부팅 때 다시 덧붙는 경우가 있다. 아래 둘이 남아 있으면 지우고 재부팅할 것:"
+  ls -l /boot/firmware/custom.toml /boot/firmware/firstrun.sh 2>&1 || true
   exit 1
 fi
 
@@ -121,6 +124,7 @@ echo
 echo "done. reboot required."
 echo "재부팅 후 확인:"
 echo "  cat $CMDLINE                          → cfg80211.ieee80211_regdom=$REGDOM 가 한 번만, 파일은 한 줄"
+echo "    ↑ 재부팅 뒤에도 같은지 다시 볼 것. custom.toml/firstrun.sh 가 남아 있으면 부팅 때 덧붙는다"
 echo "  timedatectl | grep 'Time zone'        → $TZNAME"
 echo "  raspi-config nonint get_wifi_country  → $REGDOM"
 echo "  iw reg get | head -2                  → country $REGDOM"
