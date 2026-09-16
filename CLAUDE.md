@@ -66,6 +66,12 @@ PiBrain OS 리포. 기기의 `/home/pi/openpibo-os` 가 이 리포의 작업본�
 - 파이썬은 `/home/pi/.pyenv/bin/python3`.
 - `booting.py` 가 `docs/build` 를 `/build` 로 서빙한다. IDE 헤더의 Guide 버튼이 8080 을 연다.
 - 검수 서버만 유닛이 아니다. 유닛 파일은 리포 밖이라 이미지 작업이 되므로, 리포 안에서 끝나게 했다.
+- **유닛 파일은 `/etc/systemd/system/` 에 있어 이미지에 속한다.** 260624 이미지에는
+  `tools.service` 가 없어서 Tools 버튼이 아무것도 안 열렸다. 원본을
+  `system/tools.service` 로 리포에 넣어 뒀고, 설치는 `IMAGE.md` 의 단계다.
+  `enable` 하지 않는다 — IDE 가 `start`/`stop` 으로만 켜고 끈다.
+  `WorkingDirectory=/home/pi/openpibo-os/tools` 를 빼면 `run_tools.py` 의
+  `directory="static"` / `"templates"` 상대경로가 깨져 서비스는 떠 있는데 화면만 안 뜬다.
 
 ### 기기 작업본은 심볼릭 링크다
 

@@ -45,6 +45,35 @@ pyenv 를 새로 만들면 이 단계가 통째로 빠지니, 처음부터 이�
 위 스크립트를 돌려 본체를 지워야 한다. `openpibo-python` 이 설치된 채로 남으면
 `.pth` 경로보다 먼저 잡혀서 리포 소스가 무시된다.
 
+### `tools.service` 설치 (이미지당 1회)
+
+유닛 파일은 `/etc/systemd/system/` 에 있어 **리포가 아니라 이미지에 속한다.**
+260624 이미지에는 이 유닛이 없다. Tools 버튼이 아무것도 안 여는 원인이 이것이다.
+
+```bash
+sudo cp /home/pi/openpibo-os/system/tools.service /etc/systemd/system/tools.service
+sudo systemctl daemon-reload
+```
+
+**`enable` 하지 않는다.** IDE 가 `/tools?enable=on` 에서 `systemctl start`,
+탭을 닫을 때 `stop` 으로 켜고 끈다. 부팅 때 떠 있으면 카메라를 쥔 채로 남는다.
+`classify.service` `llama-server.service` 도 같은 방식이다.
+
+확인:
+
+```bash
+systemctl cat tools.service                    # WorkingDirectory 가 .../tools
+systemctl is-enabled tools.service             # disabled 여야 한다
+sudo systemctl start tools.service && sleep 2
+curl -s -o /dev/null -w '%{http_code}\n' http://localhost:50040/   # 200
+sudo systemctl stop tools.service
+```
+
+`WorkingDirectory` 는 빼면 안 된다. `run_tools.py` 가
+`StaticFiles(directory="static")` · `Jinja2Templates(directory="templates")` 를
+**상대경로**로 열기 때문에, 작업 디렉토리가 `tools/` 가 아니면 서비스는 떠 있는데
+화면만 안 뜬다.
+
 ### 납품 국가 설정
 
 `system/setup_country.sh <국가코드>` 를 돌린다. 여러 번 돌려도 안전하다.

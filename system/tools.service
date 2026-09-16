@@ -1,0 +1,15 @@
+[Unit]
+Description=OpenPibo tools Service
+After=network.target
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/home/pi/openpibo-os/tools
+ExecStart=/home/pi/.pyenv/bin/python3 /home/pi/openpibo-os/tools/run_tools.py
+Restart=on-failure
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
