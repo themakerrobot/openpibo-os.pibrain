@@ -124,7 +124,7 @@ echo
 echo "done. reboot required."
 echo "재부팅 후 확인:"
 echo "  cat $CMDLINE                          → cfg80211.ieee80211_regdom=$REGDOM 가 한 번만, 파일은 한 줄"
-echo "    ↑ 재부팅 뒤에도 같은지 다시 볼 것. custom.toml/firstrun.sh 가 남아 있으면 부팅 때 덧붙는다"
+echo "    ↑ 이 스크립트가 끝난 뒤의 값이다. 중간에 보면 raspi-config 가 덧붙인 값이 보인다"
 echo "  timedatectl | grep 'Time zone'        → $TZNAME"
 echo "  raspi-config nonint get_wifi_country  → $REGDOM"
 echo "  iw reg get | head -2                  → country $REGDOM"
