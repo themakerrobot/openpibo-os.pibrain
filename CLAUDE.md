@@ -254,8 +254,10 @@ AP 채널이 `자동` 이면 같은 교실의 로봇이 한 채널에 몰린다.
 ### `cmdline.txt` 의 regdom — raspi-config 가 값을 덧붙인다
 
 `raspi-config nonint do_wifi_country` 는 `cfg80211.ieee80211_regdom` 값을 교체하지 못하고
-**덧붙인다.** Pibo 에서 `=PHPH`, PiBrain 260916v1-gl 첫 배포에서 `=MYMY` 가 나왔다.
-2글자 국가코드가 아니게 되어 커널이 무시하고, `get_wifi_country` 도 빈 값을 돌려준다.
+**덧붙인다.** Pibo 에서 `=PHPH` 가 나왔다. 2글자 국가코드가 아니게 되어 커널이 무시하고,
+`get_wifi_country` 도 빈 값을 돌려준다.
+
+PiBrain 에서 본 `=MYMY` 는 이것과 다르다. 아래 '`cat` 으로 보지 말 것' 항목의 착시다.
 
 `setup_country.sh` 가 매번 정규화한다. **토큰을 전부 지우고 하나만 다시 붙인다.**
 값만 치환하면 토큰이 둘로 늘어난 경우를 못 고친다(첫 개만 바뀐다).
@@ -264,8 +266,25 @@ AP 채널이 `자동` 이면 같은 교실의 로봇이 한 채널에 몰린다.
 정규화를 못 하고 깨진 값만 남기 때문이다.
 
 **값은 스크립트가 끝난 뒤에 본다.** 스크립트 중간에 읽으면 `raspi-config` 가 덧붙인
-`=MYMY` 가 그대로 보인다. 정규화는 그 다음 줄에서 일어난다. 260916v3-gl 배포 때 이 중간
-상태를 보고 실패로 오인했다. 끝까지 돌고 나면 토큰 하나로 정리된다.
+`=MYMY` 가 그대로 보인다. 정규화는 그 다음 줄에서 일어난다. 끝까지 돌고 나면 토큰 하나로 정리된다.
+
+**`cat cmdline.txt` 로 확인하지 말 것. 파일에 끝 개행이 없다.**
+바로 뒤에 다른 명령을 이어 돌리면 그 출력이 같은 줄에 붙어 버린다.
+
+```
+$ cat /boot/firmware/cmdline.txt        # 개행 없이 끝남
+$ sudo raspi-config nonint get_wifi_country
+
+console=... cfg80211.ieee80211_regdom=MYMY     ← =MY 뒤에 다음 명령의 MY 가 붙은 것
+```
+
+`=MY` 가 정상인데 `=MYMY` 로 보인다. 260916v3-gl·v4-gl 배포에서 두 번 이걸 보고
+실패로 오인했다. 확인은 `grep -o` 로 토큰만 뽑아서 한다.
+
+```bash
+grep -o 'cfg80211\.ieee80211_regdom=[A-Za-z]*' /boot/firmware/cmdline.txt | wc -l   # 1
+grep -o 'cfg80211\.ieee80211_regdom=[A-Za-z]*' /boot/firmware/cmdline.txt           # =MY
+```
 
 이미지를 새로 구운 카드라면 `/boot/firmware/custom.toml` 과 `firstrun.sh` 도 함께 본다.
 남아 있으면 부팅 때 `do_wifi_country` 가 다시 불려 값이 또 덧붙는다 (`IMAGE.md` 참고).
@@ -283,7 +302,7 @@ country IE 에 덮어써진 값을 보여준다.** 국내에서 MY 이미지를 
 국가 설정 확인은 출하 전 `cmdline.txt` 로 하는 것이 맞다.
 
 ```bash
-cat /boot/firmware/cmdline.txt          # regdom 토큰이 한 번만, 파일은 한 줄
+grep -o 'cfg80211\.ieee80211_regdom=[A-Za-z]*' /boot/firmware/cmdline.txt | wc -l   # 1
 sudo raspi-config nonint get_wifi_country
 ```
 
