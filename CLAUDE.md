@@ -228,6 +228,14 @@ AP 채널이 `자동` 이면 같은 교실의 로봇이 한 채널에 몰린다.
 `raspi-config` 는 `|| true` 로 받는다. 그 종료코드로 `set -e` 가 중단되면
 정규화를 못 하고 깨진 값만 남기 때문이다.
 
+**재부팅 뒤에 한 번 더 본다.** `/boot/firmware/custom.toml` 이나 `firstrun.sh` 가 남아 있으면
+부팅 때 `do_wifi_country` 가 다시 불려 값이 또 덧붙는다. 스크립트가 끝난 직후에는 멀쩡하고
+재부팅 뒤에 깨지므로, 한 번만 보면 놓친다. 둘을 지우고 재부팅하면 재발하지 않는다.
+
+```bash
+ls -l /boot/firmware/custom.toml /boot/firmware/firstrun.sh 2>&1   # 둘 다 없어야 한다
+```
+
 확인은 `iw reg get` 이 아니라 `cmdline.txt` 로 한다. **`iw reg get` 은 접속한 AP 의
 country IE 에 덮어써진 값을 보여준다.** 국내에서 MY 이미지를 검증하면 KR 로 나오는 게 정상이다.
 
