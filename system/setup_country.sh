@@ -78,9 +78,12 @@ fi
 sudo timedatectl set-timezone "$TZNAME"
 
 # raspi-config 는 cmdline.txt 의 cfg80211.ieee80211_regdom 을 교체하지 못하고
-# 덧붙인다. Pibo 에서 '=PHPH' 가, PiBrain 260916v1-gl 첫 배포에서 '=MYMY' 가 나왔다.
-# 유효한 2글자 국가코드가 아니게 되고 raspi-config nonint get_wifi_country 도
-# 빈 값을 돌려준다.
+# 덧붙인다. Pibo 에서 '=PHPH' 가 나왔다. 유효한 2글자 국가코드가 아니게 되고
+# raspi-config nonint get_wifi_country 도 빈 값을 돌려준다.
+#
+# PiBrain 에서 본 '=MYMY' 는 이것과 다르다. cmdline.txt 에 끝 개행이 없어서
+# cat 다음에 이어 돌린 명령의 출력이 같은 줄에 붙어 보인 것뿐이다. 확인은
+# cat 이 아니라 grep -o 로 한다 (아래 '재부팅 후 확인' 참고).
 #
 # 종료코드로 중단되면 정규화를 못 하고 깨진 값만 남으므로 || true 로 받는다.
 # 이 명령이 실패해도 아래에서 cmdline 을 직접 바로잡는다.
@@ -123,8 +126,10 @@ done
 echo
 echo "done. reboot required."
 echo "재부팅 후 확인:"
-echo "  cat $CMDLINE                          → cfg80211.ieee80211_regdom=$REGDOM 가 한 번만, 파일은 한 줄"
-echo "    ↑ 이 스크립트가 끝난 뒤의 값이다. 중간에 보면 raspi-config 가 덧붙인 값이 보인다"
+echo "  grep -o 'cfg80211\.ieee80211_regdom=[A-Za-z]*' $CMDLINE"
+echo "    → cfg80211.ieee80211_regdom=$REGDOM 한 줄만 나와야 한다"
+echo "    ↑ cat 으로 보지 말 것. 이 파일은 끝 개행이 없어서 바로 뒤에 돌린 명령의"
+echo "      출력이 같은 줄에 붙는다 (=$REGDOM 인데 =$REGDOM$REGDOM 으로 보인다)"
 echo "  timedatectl | grep 'Time zone'        → $TZNAME"
 echo "  raspi-config nonint get_wifi_country  → $REGDOM"
 echo "  iw reg get | head -2                  → country $REGDOM"

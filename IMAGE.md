@@ -203,7 +203,9 @@ echo "===== 시스템 ====="
 hostname                                                       # 시리얼 8자리
 df -h / | tail -1                                              # 카드 용량으로 확장됐는지
 timedatectl | grep -i "time zone"
-cat /boot/firmware/cmdline.txt                                 # regdom 토큰이 한 번만, 파일은 한 줄
+grep -o 'cfg80211\.ieee80211_regdom=[A-Za-z]*' /boot/firmware/cmdline.txt   # =XX 한 줄만
+# cat 으로 보지 말 것. 이 파일은 끝 개행이 없어서 바로 뒤에 돌린 명령의
+# 출력이 같은 줄에 붙는다 (=MY 인데 =MYMY 로 보인다)
 sudo raspi-config nonint get_wifi_country                      # 국가코드
 iw reg get | grep country | head -2                            # 접속한 AP 가 덮어쓸 수 있다
 head -13 /etc/rc.local | tail -1                               # system/init 호출 (PiShrink 원복 확인)
