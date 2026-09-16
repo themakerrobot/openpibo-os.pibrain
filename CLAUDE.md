@@ -67,6 +67,32 @@ PiBrain OS 리포. 기기의 `/home/pi/openpibo-os` 가 이 리포의 작업본�
 - `booting.py` 가 `docs/build` 를 `/build` 로 서빙한다. IDE 헤더의 Guide 버튼이 8080 을 연다.
 - 검수 서버만 유닛이 아니다. 유닛 파일은 리포 밖이라 이미지 작업이 되므로, 리포 안에서 끝나게 했다.
 
+### 기기 작업본은 심볼릭 링크다
+
+```
+/home/pi/openpibo-os  ->  /home/pi/.openpibo-os.pibrain
+```
+
+`openpibo-os` 는 **링크**고 실체는 `.openpibo-os.<리포 접미사>` 다 (Pibo 는 `.openpibo-os.pibo`).
+서비스와 스크립트는 전부 `/home/pi/openpibo-os` 절대경로를 쓰므로 링크만 맞으면 된다.
+
+**링크를 `mv` 하지 말 것. 바꾸는 건 언제나 링크가 가리키는 실체다.**
+링크를 옮기면 그 자리에 실제 디렉토리가 들어앉아 구조가 깨지고, 옛 실체는 고아로 남는다.
+260916v1-gl 배포 때 실제로 그렇게 깨뜨렸다.
+
+```bash
+ls -ld /home/pi/openpibo-os      # l 로 시작해야 한다. d 면 이미 깨진 것
+```
+
+깨졌으면 이렇게 되돌린다.
+
+```bash
+sudo systemctl stop ide.service booting.service
+sudo mv /home/pi/.openpibo-os.pibrain /home/pi/.openpibo-os.old2   # 고아 실체를 치운다
+sudo mv /home/pi/openpibo-os          /home/pi/.openpibo-os.pibrain
+sudo ln -sfn /home/pi/.openpibo-os.pibrain /home/pi/openpibo-os
+```
+
 ### 기기 배포 — 순서가 전부다
 
 **AP 모드에서는 인터넷이 없다.** 새 버전을 받기 전에 기존 작업본을 지우면 복구할 방법이 없다.
@@ -76,19 +102,22 @@ PiBrain OS 리포. 기기의 `/home/pi/openpibo-os` 가 이 리포의 작업본�
 ping -c1 github.com
 
 # 1) 새 위치에 먼저 받는다. 실패해도 기존 작업본은 그대로다
+#    한 줄로 쓴다. 줄바꿈이 끊기면 목적지가 빠져 엉뚱한 이름으로 받아진다
 git clone --depth=1 --branch <태그> <url> /home/pi/.openpibo-os.new
 
 # 2) 받은 게 맞는지 확인. 이상하면 중단하고 .openpibo-os.new 만 지우면 된다
-cat /home/pi/.openpibo-os.new/ide/templates/index.html | grep '?ver='
+git -C /home/pi/.openpibo-os.new describe --tags
 
-# 3) 교체
-sudo mv /home/pi/openpibo-os /home/pi/.openpibo-os.old
-sudo mv /home/pi/.openpibo-os.new /home/pi/openpibo-os
+# 3) 교체 — 링크는 건드리지 않는다. 실체만 바꾼다
+sudo mv /home/pi/.openpibo-os.pibrain /home/pi/.openpibo-os.old
+sudo mv /home/pi/.openpibo-os.new     /home/pi/.openpibo-os.pibrain
 
 # 4) 정상 확인 후에 백업 삭제
 sudo rm -rf /home/pi/.openpibo-os.old
 ```
 
+- 3번이 끝나도 링크는 그대로 `.openpibo-os.pibrain` 을 가리킨다. 그래서 링크를 다시 걸 필요가 없다.
+- 되돌리려면 3번의 두 `mv` 를 반대로 하면 된다. 링크는 여전히 안 건드린다.
 - `cd` 를 `rm` 앞에 두지 말 것. 지워진 디렉토리 안에 서 있으면 다음 명령이 엉뚱한 곳에서 돈다.
 - `sudo` 가 필요한 이유: 서비스가 root 로 돌아서 `__pycache__` 가 root 소유다.
 - 기기에서는 clone/reset 외 git 명령을 쓰지 말 것 (shallow·detached 라 결과를 믿을 수 없다).
