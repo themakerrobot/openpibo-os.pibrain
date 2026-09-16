@@ -216,6 +216,26 @@ system/setup_country.sh  system/setup_openpibo_src.sh  test/test
 AP 채널이 `자동` 이면 같은 교실의 로봇이 한 채널에 몰린다. `hotspot.sh` 가 시리얼 끝 4자리로
 1/6/11 중 하나를 고정한다. `hotspot.sh status` 에 `(channel N)` 이 찍힌다.
 
+### `cmdline.txt` 의 regdom — raspi-config 가 값을 덧붙인다
+
+`raspi-config nonint do_wifi_country` 는 `cfg80211.ieee80211_regdom` 값을 교체하지 못하고
+**덧붙인다.** Pibo 에서 `=PHPH`, PiBrain 260916v1-gl 첫 배포에서 `=MYMY` 가 나왔다.
+2글자 국가코드가 아니게 되어 커널이 무시하고, `get_wifi_country` 도 빈 값을 돌려준다.
+
+`setup_country.sh` 가 매번 정규화한다. **토큰을 전부 지우고 하나만 다시 붙인다.**
+값만 치환하면 토큰이 둘로 늘어난 경우를 못 고친다(첫 개만 바뀐다).
+정규화 뒤 토큰 개수와 값을 확인하고, 틀리면 `exit 1` 로 멈춘다.
+`raspi-config` 는 `|| true` 로 받는다. 그 종료코드로 `set -e` 가 중단되면
+정규화를 못 하고 깨진 값만 남기 때문이다.
+
+확인은 `iw reg get` 이 아니라 `cmdline.txt` 로 한다. **`iw reg get` 은 접속한 AP 의
+country IE 에 덮어써진 값을 보여준다.** 국내에서 MY 이미지를 검증하면 KR 로 나오는 게 정상이다.
+
+```bash
+cat /boot/firmware/cmdline.txt          # regdom 토큰이 한 번만, 파일은 한 줄
+sudo raspi-config nonint get_wifi_country
+```
+
 ### 5GHz 채널 — 실측
 
 **PiBrain 은 Pibo 와 같은 라즈베리파이 보드(Pi 4 · CYW43455)를 쓴다.**

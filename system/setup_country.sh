@@ -76,19 +76,30 @@ if [ "$REGDOM" != "$CC" ]; then
 fi
 
 sudo timedatectl set-timezone "$TZNAME"
-sudo raspi-config nonint do_wifi_country "$REGDOM"
 
-# raspi-config 는 cmdline.txt 의 cfg80211.ieee80211_regdom 값을 교체하지 못하고
-# 덧붙이는 경우가 있다. 재실행했더니 실제로 '=PHPH' 가 됐다(260910v4-ph 검증 중).
+# raspi-config 는 cmdline.txt 의 cfg80211.ieee80211_regdom 을 교체하지 못하고
+# 덧붙인다. Pibo 에서 '=PHPH' 가, PiBrain 260916v1-gl 첫 배포에서 '=MYMY' 가 나왔다.
 # 유효한 2글자 국가코드가 아니게 되고 raspi-config nonint get_wifi_country 도
-# 빈 값을 돌려주므로, 실행할 때마다 값을 정규화한다.
+# 빈 값을 돌려준다.
+#
+# 종료코드로 중단되면 정규화를 못 하고 깨진 값만 남으므로 || true 로 받는다.
+# 이 명령이 실패해도 아래에서 cmdline 을 직접 바로잡는다.
+sudo raspi-config nonint do_wifi_country "$REGDOM" || true
+
+# 정규화: 있는 토큰을 '전부' 지우고 하나만 다시 붙인다.
+# 값만 치환하는 방식은 토큰이 두 개로 늘어난 경우를 못 고친다 (첫 개만 바뀐다).
 # cmdline.txt 는 반드시 한 줄이어야 하니 개행을 넣는 편집은 하지 않는다.
 CMDLINE=/boot/firmware/cmdline.txt
 [ -f "$CMDLINE" ] || CMDLINE=/boot/cmdline.txt
-if grep -q 'cfg80211\.ieee80211_regdom=' "$CMDLINE"; then
-  sudo sed -i "s/cfg80211\.ieee80211_regdom=[A-Za-z]*/cfg80211.ieee80211_regdom=$REGDOM/" "$CMDLINE"
-else
-  sudo sed -i "1 s/\$/ cfg80211.ieee80211_regdom=$REGDOM/" "$CMDLINE"
+sudo sed -i -E "s/ *cfg80211\.ieee80211_regdom=[A-Za-z]*//g" "$CMDLINE"
+sudo sed -i "1 s/\$/ cfg80211.ieee80211_regdom=$REGDOM/" "$CMDLINE"
+
+# 정규화 결과를 즉시 확인한다. 여기서 안 잡으면 기기가 잘못된 regdom 으로 나간다.
+if [ "$(grep -o 'cfg80211\.ieee80211_regdom=[A-Za-z]*' "$CMDLINE" | wc -l)" != "1" ] \
+   || ! grep -q "cfg80211\.ieee80211_regdom=$REGDOM\( \|$\)" "$CMDLINE"; then
+  echo "!! $CMDLINE 정규화 실패. 아래 줄을 손으로 고칠 것 (파일은 반드시 한 줄)"
+  cat "$CMDLINE"
+  exit 1
 fi
 
 # 베이스 이미지에 남아있는 brcmfmac 국가코드 잔재를 제거한다.
