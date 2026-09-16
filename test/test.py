@@ -18,9 +18,6 @@ from openpibo.oled import OledByPiBrain as Oled
 from openpibo.vision_camera import Camera
 from openpibo.audio import Audio
 
-sys.path.insert(0, '/home/pi/openpibo-os/system')
-import wifi
-
 PORT = 50050
 ENV_PATH = '/home/pi/.pyenv/bin'
 OS_ROOT = '/home/pi/openpibo-os'
@@ -147,19 +144,6 @@ def get_lib():
         return "N/A"
 
 
-def get_regdom():
-    # 무선 규제도메인. setup_country.sh 가 제대로 먹었는지 출하 전에 확인한다.
-    # raspi-config 대신 iw 를 읽는 이유: 실제 커널에 적용된 값이 나오고, 읽기
-    # 전용이며, cmdline.txt 가 '=PHPH' 처럼 깨져 있으면 여기서 티가 난다.
-    try:
-        for line in os.popen('iw reg get').read().splitlines():
-            if line.strip().startswith('country'):
-                return line.strip().split()[1].rstrip(':')
-    except Exception:
-        pass
-    return "N/A"
-
-
 # ==============================================================================
 # 3. HARDWARE TESTS
 # ==============================================================================
@@ -215,16 +199,6 @@ def camera_test():
         raise HTTPException(status_code=500, detail=f"Camera capture failed: {e}")
 
 
-def wifi_test():
-    nets = wifi.wifi_scan()
-    top = sorted(nets, key=lambda n: int(n.get('signal_quality') or 0), reverse=True)[:3]
-    return {
-        "count": len(nets),
-        "regdom": get_regdom(),
-        "top": [f"{n['essid']}({n['signal_quality']})" for n in top],
-    }
-
-
 BUTTON_SAMPLES = 30     # 1초 간격. 버튼 4개를 하나씩 눌러볼 시간이다
 
 
@@ -253,7 +227,6 @@ TEST_FUNCTIONS = {
     "lcd": lcd_test,
     "audio": audio_test,
     "led": led_test,
-    "wifi": wifi_test,
 }
 
 
@@ -283,7 +256,6 @@ async def get_system_info():
         "os_version": get_os(),
         "memory": get_memory(),
         "library": get_lib(),
-        "regdom": get_regdom(),
     }
 
 

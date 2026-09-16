@@ -231,6 +231,10 @@ AP 채널이 `자동` 이면 같은 교실의 로봇이 한 채널에 몰린다.
 확인은 `iw reg get` 이 아니라 `cmdline.txt` 로 한다. **`iw reg get` 은 접속한 AP 의
 country IE 에 덮어써진 값을 보여준다.** 국내에서 MY 이미지를 검증하면 KR 로 나오는 게 정상이다.
 
+검수 보고서에는 regdom 을 넣지 않는다. 한때 Wi-Fi 행으로 넣었다가 뺐다.
+`iw reg get` 값이라 국내에서 검수하면 해외 기기 보고서에 KR 이 남아 오해를 산다.
+국가 설정 확인은 출하 전 `cmdline.txt` 로 하는 것이 맞다.
+
 ```bash
 cat /boot/firmware/cmdline.txt          # regdom 토큰이 한 번만, 파일은 한 줄
 sudo raspi-config nonint get_wifi_country
@@ -240,7 +244,6 @@ sudo raspi-config nonint get_wifi_country
 
 **PiBrain 은 Pibo 와 같은 라즈베리파이 보드(Pi 4 · CYW43455)를 쓴다.**
 그래서 아래 실측이 PiBrain 에 그대로 적용된다. 재측정할 필요 없다.
-검수 보고서의 Wi-Fi 행에 regdom 이 찍히므로 출하 전에 값을 확인할 수 있다.
 
 - Raspberry Pi OS Bookworm 이 까는 CLM blob 의 **PH 항목이 5725~5850 MHz 를 안 준다.**
   `regdom=PH` 면 채널 149~165 가 `disabled`, 5GHz 는 36~48 만 쓸 수 있다.
