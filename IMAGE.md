@@ -121,9 +121,15 @@ IDE → 푸터의 **시리얼번호 클릭** → 검수 페이지(50050).
 
 이미지에 개인 정보와 기기별 상태가 딸려간다. 전원 끄기 전에 지운다.
 
+**WiFi 설정(`/etc/NetworkManager/system-connections/`)은 지우지 않는다.**
+출하 기본값이 사내 공유기(`pibo`)에 붙는 것이다. 지우면 기기가 AP 모드로만 뜬다.
+`conwifi.sh` 가 새 WiFi 를 붙일 때 기존 것을 전부 지우고 새로 만들므로,
+현장에서 교실 공유기를 설정하면 이 값은 자동으로 대체된다.
+
+`psk` 는 평문으로 저장되고 배포되는 모든 기기에 들어간다. 의도한 것이다.
+
 ```bash
 # 기기별 상태
-sudo rm -f  /etc/NetworkManager/system-connections/*.nmconnection*   # WiFi 비번
 sudo rm -rf /home/pi/code/* /home/pi/myimage/* /home/pi/myaudio/* /home/pi/mymodel/* 2>/dev/null
 sudo rm -rf /home/pi/.npm /home/pi/openpibo-files/.git               # 용량
 sudo rm -f  /home/pi/.bash_history /root/.bash_history
@@ -136,6 +142,13 @@ sudo journalctl --rotate && sudo journalctl --vacuum-time=1s
 ls -la /home/pi/.ssh/                 # 개인키가 있으면 지운다. known_hosts 도 사내 호스트가 남는다
 ls -d  /home/pi/.git 2>/dev/null      # 있으면 지운다
 grep -rIl "token\|password\|secret" /home/pi 2>/dev/null | head
+
+# GitHub 토큰 — docs 를 기기에서 빌드해 푸시했다면 remote URL 에 박혀 있다
+git -C /home/pi/openpibo-os remote -v
+sudo git -C /home/pi/openpibo-os remote set-url origin https://github.com/themakerrobot/openpibo-os.pibrain.git
+sudo git -C /home/pi/openpibo-os config --local --unset user.email 2>/dev/null
+sudo git -C /home/pi/openpibo-os config --local --unset user.name  2>/dev/null
+git -C /home/pi/openpibo-os remote -v       # 토큰이 없어야 한다
 
 sudo shutdown -h now
 ```
