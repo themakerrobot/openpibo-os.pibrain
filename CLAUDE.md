@@ -228,9 +228,13 @@ AP 채널이 `자동` 이면 같은 교실의 로봇이 한 채널에 몰린다.
 `raspi-config` 는 `|| true` 로 받는다. 그 종료코드로 `set -e` 가 중단되면
 정규화를 못 하고 깨진 값만 남기 때문이다.
 
-**재부팅 뒤에 한 번 더 본다.** `/boot/firmware/custom.toml` 이나 `firstrun.sh` 가 남아 있으면
-부팅 때 `do_wifi_country` 가 다시 불려 값이 또 덧붙는다. 스크립트가 끝난 직후에는 멀쩡하고
-재부팅 뒤에 깨지므로, 한 번만 보면 놓친다. 둘을 지우고 재부팅하면 재발하지 않는다.
+**값은 스크립트가 끝난 뒤에 본다.** 스크립트 중간에 읽으면 `raspi-config` 가 덧붙인
+`=MYMY` 가 그대로 보인다. 정규화는 그 다음 줄에서 일어난다. 260916v3-gl 배포 때 이 중간
+상태를 보고 실패로 오인했다. 끝까지 돌고 나면 토큰 하나로 정리된다.
+
+이미지를 새로 구운 카드라면 `/boot/firmware/custom.toml` 과 `firstrun.sh` 도 함께 본다.
+남아 있으면 부팅 때 `do_wifi_country` 가 다시 불려 값이 또 덧붙는다 (`IMAGE.md` 참고).
+위 배포 기기에는 둘 다 없었고 재부팅해도 값이 유지됐다.
 
 ```bash
 ls -l /boot/firmware/custom.toml /boot/firmware/firstrun.sh 2>&1   # 둘 다 없어야 한다
