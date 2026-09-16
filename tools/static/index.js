@@ -183,7 +183,7 @@ function updateMarkerLen() {
 }
 
 /* ── TTS ─────────────────────────────────────────────────────*/
-let selectedVoice = 'f1';
+let selectedVoice = 'm1';   // IDE 블록 라벨 k0. 첫 버튼이 active 인 것과 맞춘다
 
 function setVoice(v, btn) {
   selectedVoice = v;
