@@ -447,7 +447,7 @@ python3 -m py_compile ide/run_ide.py system/booting.py system/wifi.py test/test.
 node --check ide/static/index.js ide/static/ko2en.js
 node --check ide/static/customblock.js ide/static/customblock_callback.js ide/static/customblock_toolbox.js
 node --check tools/static/index.js tools/static/ko2en.js
-node --check classifier/static/index.js classifier/static/ko2en.js classifier/static/classifier_extra.js
+node --check classifier/static/index.js classifier/static/ko2en.js
 bash -n system/*.sh
 python3 -c "import json,glob; [json.load(open(f)) for f in glob.glob('examples/*.json')]"
 
