@@ -231,8 +231,7 @@
         <td class="key">Memory</td><td id="info-memory">Loading...</td>
       </tr>
       <tr>
-        <td class="key">Library</td><td id="info-library">Loading...</td>
-        <td class="key">Wi-Fi region</td><td id="info-regdom">Loading...</td>
+        <td class="key">Library</td><td id="info-library" colspan="3">Loading...</td>
       </tr>
     </tbody>
   </table>
@@ -251,7 +250,7 @@
     <tbody id="test-table-body"></tbody>
   </table>
 
-  <div class="summary" id="summary">Pass 0 &middot; Fail 0 &middot; Not tested 6</div>
+  <div class="summary" id="summary">Pass 0 &middot; Fail 0 &middot; Not tested 5</div>
 
   <h2>3. Camera Capture &amp; Button Log</h2>
   <div class="two-col">
@@ -324,7 +323,6 @@ const tests = [
   { id: 'camera', name: 'Camera',          crit: 'Captured image has correct framing and colour, and appears on the LCD' },
   { id: 'led',    name: 'LED (NeoPixel)',  crit: 'Red, green and blue light up in sequence, then go out' },
   { id: 'button', name: 'Buttons x4',      crit: 'All four buttons register when pressed' },
-  { id: 'wifi',   name: 'Wi-Fi',           crit: 'Scan finds access points; region matches the delivery country' },
 ];
 
 const LABEL = { ready: 'Not tested', testing: 'Testing', success: 'PASS', fail: 'FAIL' };
@@ -410,14 +408,13 @@ async function fetchSystemInfo() {
     document.getElementById('info-os').textContent      = d.os_version;
     document.getElementById('info-memory').textContent  = d.memory;
     document.getElementById('info-library').textContent = d.library;
-    document.getElementById('info-regdom').textContent  = d.regdom;
     /* Chrome and Firefox take the "Save as PDF" filename from document.title,
        so the report lands as <serial>.pdf. Strip anything a filesystem would
        choke on -- get_serial() returns "N/A" when /proc/cpuinfo cannot be read. */
     const safe = String(d.serial || '').replace(/[^A-Za-z0-9_.-]/g, '_');
     if (safe) document.title = safe;
   } catch (e) {
-    ['serial','board','os','memory','library','regdom'].forEach(k => {
+    ['serial','board','os','memory','library'].forEach(k => {
       document.getElementById(`info-${k}`).textContent = 'Read failed';
     });
   }
@@ -454,15 +451,6 @@ async function execute(id) {
     const res  = await fetch(`${API}/api/test/${id}`, { method: 'POST' });
     const body = await res.json();
     if (!res.ok) throw new Error(body.detail || `server error ${res.status}`);
-    if (id === 'wifi') {
-      detail = `${body.count} AP found, region ${body.regdom}` +
-               (body.top && body.top.length ? ` / ${body.top.join(', ')}` : '');
-      document.getElementById(`note-${id}`).value = detail;
-      if (body.count === 0) {
-        setStatus(id, 'fail');
-        return;
-      }
-    }
   } catch (e) {
     document.getElementById(`note-${id}`).value = `Error: ${e.message}`;
     setStatus(id, 'fail');
