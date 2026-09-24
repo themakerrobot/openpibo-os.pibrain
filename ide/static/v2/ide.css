@@ -18,9 +18,12 @@
 
 :root, :root[data-theme="soft"] {
   --c-brand:     #fbc92d;   /* 상단바 */
-  --c-brand-ink: #1f2430;
-  --c-brand-hov: rgba(31, 36, 48, .09);
-  --c-brand-seg: rgba(31, 36, 48, .12);
+  --c-brand-ink: #3d2f12;   /* 상단바 글씨 — 먹색 대신 짙은 갈색(노랑과 덜 부딪친다) */
+  --c-brand-hov: rgba(61, 47, 18, .08);
+  --c-brand-seg: rgba(61, 47, 18, .10);
+  --c-seg-on:    #fffdf6;   /* 상단바 [블록|파이썬] 선택 — 흰 알약 */
+  --c-seg-on-ink:#3d2f12;
+  --c-seg-on-sh: 0 1px 2px rgba(61, 47, 18, .25);
   --c-side:      #eceff3;   /* 왼쪽 패널 바닥 */
   --c-card:      #fbfbfc;   /* 패널 안 카드 */
   --c-bg:        #f7f8fa;   /* 편집기 줄 · 툴박스 */
@@ -33,11 +36,11 @@
   --c-ink-2:     #4b5363;
   --c-ink-3:     #6e7686;
   --c-raise:     #ffffff;
-  --c-dark:      #1f2430;   /* 먹색 주 동작 */
-  --c-dark-hov:  #333a48;
+  --c-dark:      #2563eb;   /* 주 동작(실행·저장·추가) — 파랑. 노랑의 보색. 흰 글씨 5.2:1 */
+  --c-dark-hov:  #1d4fd8;
   --c-on-dark:   #ffffff;
-  --c-accent:    #4c59d6;
-  --c-accent-t:  #e6e8fb;
+  --c-accent:    #2563eb;   /* 포커스·스위치 — 주 동작과 같은 파랑 */
+  --c-accent-t:  #e3ecfd;
   --c-sel:       #fff1c2;   /* 지금 연 파일 */
   --c-sel-ink:   #8a6400;
   --c-red:       #d6393f;
@@ -47,7 +50,7 @@
   --c-live:      #20252d;   /* 화면 출력 바탕 */
   --c-shadow:    rgba(20, 24, 40, .16);
   --c-scrim:     rgba(16, 20, 32, .48);
-  --c-ring:      rgba(76, 89, 214, .28);
+  --c-ring:      rgba(37, 99, 235, .28);
   color-scheme: light;
 }
 :root[data-theme="light"] {
@@ -57,6 +60,7 @@
 }
 :root[data-theme="dark"] {
   --c-brand: #1b1e24; --c-brand-ink: #eceef2; --c-brand-hov: rgba(255, 255, 255, .08); --c-brand-seg: rgba(255, 255, 255, .08);
+  --c-seg-on: #eceef2; --c-seg-on-ink: #1b1e24; --c-seg-on-sh: none;
   --c-side: #16191e; --c-card: #1f232a; --c-bg: #1b1e24; --c-work: #20242b;
   --c-hover: #2a2f37; --c-press: #333943; --c-line: #2c3139; --c-line-2: #3c434d;
   --c-ink: #e6e8ec; --c-ink-2: #b0b7c2; --c-ink-3: #878f9b; --c-raise: #262a32;
@@ -165,7 +169,7 @@ body.v2-app a { color: inherit; text-decoration: none; cursor: pointer; }
 .v2-top .v2-seg { background: var(--c-brand-seg); }
 .v2-top .v2-seg > button { color: var(--c-brand-ink); }
 .v2-top .v2-seg > button:hover:not(.checked) { background: var(--c-brand-hov); }
-.v2-top .v2-seg > button.checked { background: var(--c-brand-ink); color: var(--c-brand); box-shadow: none; }
+.v2-top .v2-seg > button.checked { background: var(--c-seg-on); color: var(--c-seg-on-ink); box-shadow: var(--c-seg-on-sh); }
 
 /* 헤더 아이콘 버튼 */
 .v2-app .v2-top .pb-iconbtn { color: var(--c-brand-ink); height: 34px; padding: 0 10px; }

@@ -96,8 +96,8 @@ PiBrain 까지 더하면 사본이 여섯 벌이 된다. 그래서 한 파일로
 색·배치를 새로 잡은 시안 B. **기본 화면이다** — 예전 화면은 `?ui=v1`(쿠키 `pibo_ui=v1`).
 자세한 건 루트 `CLAUDE.md` 의 '화면 v2'.
 
-- 도구·분류기: `body.pb-v2` (`pibo-ui.css` 맨 아래). 상단바 노랑 · 주 동작 먹색 ·
-  포커스·스위치 인디고 · 지울 것 빨강
+- 도구·분류기: `body.pb-v2` (`pibo-ui.css` 맨 아래). 상단바 노랑(글씨 짙은 갈색) · 주 동작 파랑 #2563eb ·
+  포커스·스위치도 파랑 · 지울 것 빨강
 - 화면 밝기 `html[data-theme]` = light / soft(기본) / dark. `PiboUI.setTheme()` · 쿠키 `pibo_theme`.
   도구·분류기 헤더에는 pibo-ui.js 가 밝기 버튼을 끼운다(누를 때마다 순환)
 - IDE: 별도 템플릿(`ide/templates/index_v2.html` + `ide/static/v2/`). 이 키트에서는 셸·모달·알림만 쓴다
