@@ -349,6 +349,24 @@ sudo raspi-config nonint get_wifi_country
 | `customblock.js` | | `color_type` **색 값만**(한글 줄 그대로) |
 | `customblock_toolbox.js` | | 기본 분류 8개의 `"colour"` 값만. **`global` 델타 파일이다** — merge 때 Collect 분류와 떨어져 있어 보통 자동으로 합쳐지지만 확인할 것 |
 | `jquery-3.7.1.min.js` | Pibo | 3.1.1 을 지우고 올렸다(v1·v2 둘 다) |
+| `tools/templates/index.html` `static/index.css` | **PiBrain 전용**(Pibo 도구와 마크업이 다르다) | 새로 짰다 — 아래 '도구 화면' |
+
+### 도구 화면 (260924)
+
+Pibo 도구와 기능·마크업이 달라(REST/SSE, 5탭) 키트의 `pb-v2` 층을 쓰지 않고 **같은 색 토큰으로 따로 짰다.**
+`body.v2-app` 이라 키트가 `pb-v2` 를 얹지 않는다. v1/v2 두 벌이 아니라 **한 벌**이다(`?ui=v1` 무관).
+
+- 상단바(노랑): 도구 · PiBrain | [IDE](`PiboUI.backToIDE`) · 화면 밝기(누를 때마다 부드럽게→밝게→어둡게, 쿠키 `pibo_theme`) · KO/EN
+- 왼쪽 레일: 버튼 · LED · 카메라 · 음성 · LCD. 본문은 카드, 넓으면 여러 칸(`auto-fit, minmax(340px)`)
+- 색은 `tools/static/index.css` 의 `--c-*` — **IDE `v2/ide.css` 와 같은 값.** 같이 고칠 것
+- 이모지를 Font Awesome 아이콘으로 바꿨다. 그러려고 `tools/webfonts/`(fa-solid·brands)를 두고
+  `run_tools.py` 에 `/webfonts` 를 마운트했다. 전에는 마운트가 없어 아이콘이 빈칸이라 이모지를 썼다
+- `ko2en.js` 의 문구에서 이모지·✓ 를 뺐다. 1·2행은 그대로(`global` 델타)
+- 버튼 안 아이콘을 지우지 않게 카메라 버튼은 라벨 `<span>` 만 바꾼다(`setCamLabel`)
+- 서비스 꺼짐: `/health` 를 5초마다 보고 두 번 연속 실패하면 배너 + [다시 켜기](`launch.html` 로 다시 연다).
+  다른 도구를 켜거나 IDE 에서 코드를 실행하면 `tools.service` 가 꺼지기 때문이다
+- id·onclick·API 는 그대로다. 검증: 5탭 × 한/영 × 부드럽게/어둡게 pageerror 0, 가로 스크롤 0(420px 포함),
+  배너 뜨고 사라짐
 
 - 기본 블록 테마(`index.js`)의 `colorTertiary` 오타가 `colourTertiary` 로 고쳐졌다(Pibo 에서 같이 옴)
 - 파이썬 편집기는 v2 전용 테마 `pibo-light`/`pibo-dark`. v1 은 예전대로 `cobalt`
@@ -373,7 +391,7 @@ Pibo 리포의 변경을 가져올 때 **항목마다 적용 여부를 먼저 �
 | MCU | 있음 (`send_raw`, 펌웨어 버전) | **없음.** 검수 보고서에 Firmware 행이 없다 |
 | 배터리 | 게이지 있음 | 없음 |
 | 진입 UI | IDE v2(노랑 상단바 + 왼쪽 패널) | 동일(260924~). 패널 탭 이름만 [PiBrain], 배터리 칸 없음. 랜딩 페이지는 쓰지 않는다 |
-| Tools | socket.io + 모션 편집기·시뮬레이터 | REST/SSE. 버튼·LED·카메라·TTS·LCD 5개 패널. 컨셉만 같다 |
+| Tools | socket.io + 모션 편집기·시뮬레이터 | REST/SSE. 버튼·LED·카메라·TTS·LCD 5개 패널. 컨셉만 같다. 화면은 v2 색으로 따로 짰다(260924) |
 | Classifier | 단순 UI | keras 변환이 있다. ko2en 키셋을 따로 만들었다 |
 | 마이크 | 2-mic HAT (`arecord -D plug:dmic_sv`) | **없음.** 녹음·STT 경로 전부 무관 |
 | UART | 없음 | `system/uart_ctrl.py`, `openpibo/usb_uart.py` |

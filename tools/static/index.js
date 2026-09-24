@@ -29,11 +29,12 @@ function applyLang() {
   /* Dynamic UI strings that were already written to the DOM */
   if (!camOn) {
     document.getElementById('cam-ph').textContent  = t('cam_off_msg');
-    document.getElementById('btn-cam').textContent = t('cam_on_btn');
+    setCamLabel('cam_on_btn');
   } else {
     document.getElementById('cam-ph').textContent  = t('cam_streaming');
-    document.getElementById('btn-cam').textContent = t('cam_off_btn');
+    setCamLabel('cam_off_btn');
   }
+  syncThemeLabel();
 
   /* Result / status placeholders — only reset if still showing placeholder */
   const vr = document.getElementById('vision-result');
@@ -83,7 +84,7 @@ function startButtonStream() {
         const time = new Date().toLocaleTimeString();
         const log = document.getElementById('btn-log');
         log.innerHTML =
-          `<span style="color:#f9c300">${time}</span> ${t('btn_pressed', k)}<br>` +
+          `<span class="log-time">${time}</span>${t('btn_pressed', k)}<br>` +
           log.innerHTML;
       }
     }
@@ -119,19 +120,26 @@ function setPreset(r, g, b) { syncLed('r', r); syncLed('g', g); syncLed('b', b);
 /* ── Camera ──────────────────────────────────────────────────*/
 let camOn = false, resultInterval = null;
 
+/* 버튼 안의 아이콘은 두고 라벨(span)만 바꾼다. data-key 도 같이 바꿔야 언어 전환이 따라온다 */
+function setCamLabel(key) {
+  const span = document.querySelector('#btn-cam > span');
+  span.setAttribute('data-key', key);
+  span.textContent = t(key);
+}
+
 function toggleCamera() {
   if (camOn) {
     fetch('/camera?d=off');
     camOn = false;
     clearInterval(resultInterval);
-    document.getElementById('btn-cam').textContent    = t('cam_on_btn');
+    setCamLabel('cam_on_btn');
     document.getElementById('btn-capture').disabled  = true;
     document.getElementById('cam-ph').textContent    = t('cam_off_msg');
     document.getElementById('cam-wrap').style.display = 'none';
   } else {
     fetch('/camera?d=on');
     camOn = true;
-    document.getElementById('btn-cam').textContent   = t('cam_off_btn');
+    setCamLabel('cam_off_btn');
     document.getElementById('btn-capture').disabled  = false;
     document.getElementById('cam-ph').textContent    = t('cam_streaming');
   }
@@ -280,6 +288,55 @@ window.addEventListener('beforeunload', () => {
   fetch('/led_off',      { keepalive: true });
   fetch(`http://${location.hostname}/tools?enable=off`, { keepalive: true }).catch(() => {});
 });
+
+/* ── 상단바: IDE · 화면 밝기 (260924 v2) ──────────────────────
+   IDE: 스크립트로 연 탭이면 닫고, 아니면 IDE 로 간다. 둘 다 beforeunload 가 서비스를 끈다.
+   밝기: 쿠키 pibo_theme (PiboUI.setTheme). IDE·분류기와 같은 값을 쓴다 */
+const THEMES = ['soft', 'light', 'dark'];
+function syncThemeLabel() {
+  const cur = document.documentElement.getAttribute('data-theme') || 'soft';
+  const lbl = document.getElementById('theme_lbl');
+  if (lbl) lbl.textContent = t('theme_' + cur);
+  const ic = document.querySelector('#theme_bt > i');
+  if (ic) ic.className = 'fa-solid ' + ({ light: 'fa-sun', soft: 'fa-circle-half-stroke', dark: 'fa-moon' }[cur] || 'fa-circle-half-stroke');
+}
+document.getElementById('ide_bt').addEventListener('click', () => PiboUI.backToIDE());
+document.getElementById('theme_bt').addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-theme') || 'soft';
+  const next = THEMES[(THEMES.indexOf(cur) + 1) % THEMES.length];
+  PiboUI.setTheme(next);
+  document.documentElement.setAttribute('data-theme', next);
+  syncThemeLabel();
+});
+
+/* ── 서비스 꺼짐 ──────────────────────────────────────────────
+   다른 도구를 켜거나 IDE 에서 코드를 실행하면 tools.service 가 꺼진다. /health 가 두 번 연속
+   실패하면 배너로 알리고 [다시 켜기] 를 준다(launch.html 로 다시 연다). 살아나면 배너를 닫는다 */
+(function watchHealth() {
+  let fails = 0, shown = false;
+  async function tick() {
+    let ok = false;
+    try {
+      const c = new AbortController(); const tm = setTimeout(() => c.abort(), 3000);
+      ok = (await fetch('/health', { cache: 'no-store', signal: c.signal })).ok;
+      clearTimeout(tm);
+    } catch (e) { ok = false; }
+    if (ok) {
+      fails = 0;
+      if (shown) { PiboUI.hideBanner('svc'); shown = false; }
+    } else if (++fails >= 2 && !shown) {
+      shown = true;
+      PiboUI.banner('svc', {
+        text: PiboUI.text('svc_stopped'), kind: 'warn',
+        actions: [
+          { label: PiboUI.text('restart'), primary: true, onClick: () => PiboUI.restartSelf('tools') },
+          { label: PiboUI.text('close'), onClick: () => PiboUI.backToIDE() }
+        ]
+      });
+    }
+  }
+  setInterval(tick, 5000);
+})();
 
 /* ── Init ────────────────────────────────────────────────────*/
 document.addEventListener('DOMContentLoaded', () => {

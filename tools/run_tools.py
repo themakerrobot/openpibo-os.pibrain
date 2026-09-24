@@ -292,6 +292,8 @@ app = FastAPI(lifespan=lifespan)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True,
     allow_methods=["*"], allow_headers=["*"])
 app.mount("/static", StaticFiles(directory="static"), name="static")
+# all.min.css 가 ../webfonts/ 를 찾는다. 없으면 아이콘이 빈칸으로 나온다(260924 전에는 그래서 이모지를 썼다)
+app.mount("/webfonts", StaticFiles(directory="webfonts"), name="webfonts")
 templates = Jinja2Templates(directory="templates")
 
 @app.get('/', response_class=HTMLResponse)

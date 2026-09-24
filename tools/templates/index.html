@@ -1,34 +1,51 @@
 <!DOCTYPE html>
 <html lang="ko">
+<!--
+  Tools for PiBrain — 화면 v2 (260924, Pibo IDE v2 와 같은 모양)
+    상단바(노랑)  도구 | IDE · 화면 밝기 · KO/EN
+    왼쪽 레일     버튼 · LED · 카메라 · 음성 · LCD
+    본문          카드. 넓으면 두 칸
+  동작은 index.js(REST/SSE) 그대로다. id·onclick 은 바꾸지 않았다.
+  색은 index.css 의 --c-* (IDE v2/ide.css 와 같은 값). 밝기는 쿠키 pibo_theme — IDE 에서 고른 값이 따라온다.
+-->
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="shortcut icon" href="/static/icon.png" type="image/x-icon"/>
   <link rel="stylesheet" href="/static/all.min.css"/>
-  <link rel="stylesheet" href="/static/index.css?ver=260916v4"/>
+  <link rel="stylesheet" href="/static/pibo-ui.css?ver=260924v1"/>
+  <link rel="stylesheet" href="/static/index.css?ver=260924v1"/>
   <title>Tools for PiBrain</title>
+  <script>/* 화면 밝기를 첫 페인트 전에 (쿠키 pibo_theme, 기본 soft) */
+    (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
+      document.documentElement.setAttribute('data-theme', m ? m[1] : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'soft')); } catch (e) {} })();</script>
 </head>
-<body>
+<body class="pb v2-app tl">
 
-<header>
-  <h1>🛠 Tools for PiBrain</h1>
-  <div class="header-right">
-    <button id="lang-toggle" onclick="toggleLang()">EN</button>
+<header class="pb-header tl-top">
+  <span class="tl-brand"><i class="fa-solid fa-microchip"></i><b data-key="title">도구</b><span class="tl-brand__sub">PiBrain</span></span>
+  <div class="tl-actions">
+    <button type="button" class="tl-hbtn" id="ide_bt" title="IDE"><i class="fa-solid fa-code"></i><span>IDE</span></button>
+    <button type="button" class="tl-hbtn" id="theme_bt"><i class="fa-solid fa-circle-half-stroke"></i><span id="theme_lbl"></span></button>
+    <button type="button" class="tl-hbtn tl-hbtn--lang" id="lang-toggle" onclick="toggleLang()">EN</button>
   </div>
 </header>
 
-<nav>
-  <button class="active" onclick="switchTab('buttons',this)"><span data-key="tab_buttons">🎮 버튼</span></button>
-  <button onclick="switchTab('led',this)"><span data-key="tab_led">💡 LED</span></button>
-  <button onclick="switchTab('camera',this)"><span data-key="tab_camera">📷 카메라 / 비전</span></button>
-  <button onclick="switchTab('tts',this)"><span data-key="tab_tts">🔊 음성합성</span></button>
-  <button onclick="switchTab('lcd',this)"><span data-key="tab_lcd">📺 LCD</span></button>
+<div class="tl-body">
+<nav class="tl-rail">
+  <button class="active" onclick="switchTab('buttons',this)"><i class="fa-solid fa-circle-dot"></i><span data-key="tab_buttons">버튼</span></button>
+  <button onclick="switchTab('led',this)"><i class="fa-solid fa-lightbulb"></i><span data-key="tab_led">LED</span></button>
+  <button onclick="switchTab('camera',this)"><i class="fa-solid fa-camera"></i><span data-key="tab_camera">카메라</span></button>
+  <button onclick="switchTab('tts',this)"><i class="fa-solid fa-volume-high"></i><span data-key="tab_tts">음성</span></button>
+  <button onclick="switchTab('lcd',this)"><i class="fa-solid fa-display"></i><span data-key="tab_lcd">LCD</span></button>
 </nav>
 
-<!-- ── 버튼 탭 ─────────────────────────────────────────────── -->
-<div class="tab active" id="tab-buttons">
-  <div class="card">
-    <div class="card-title" data-key="button_status">버튼 상태 (실시간)</div>
+<main class="tl-main">
+
+<!-- ── 버튼 ─────────────────────────────────────────────────── -->
+<section class="tab active" id="tab-buttons">
+  <div class="card card--wide">
+    <h2 class="card-title" data-key="button_status">버튼 상태 (실시간)</h2>
     <div class="button-grid">
       <div class="bi" id="bi-1"><div class="num">1</div><div class="lbl">OFF</div></div>
       <div class="bi" id="bi-2"><div class="num">2</div><div class="lbl">OFF</div></div>
@@ -37,12 +54,19 @@
     </div>
     <div class="log-box" id="btn-log" data-key="event_waiting">이벤트 대기 중...</div>
   </div>
-</div>
+</section>
 
-<!-- ── LED 탭 ──────────────────────────────────────────────── -->
-<div class="tab" id="tab-led">
+<!-- ── LED ──────────────────────────────────────────────────── -->
+<section class="tab" id="tab-led">
   <div class="card">
-    <div class="led-preview" id="led-preview"></div>
+    <h2 class="card-title" data-key="led_title">LED 색</h2>
+    <div class="led-top">
+      <div class="led-preview" id="led-preview"></div>
+      <label class="led-pick">
+        <input type="color" class="color-picker" id="led-picker" value="#000000" oninput="applyColorPicker(this.value)"/>
+        <span data-key="color_picker">컬러픽커</span>
+      </label>
+    </div>
     <div class="led-row">
       <label class="r">R</label>
       <input type="range"  id="r-range" min="0" max="255" value="0" oninput="syncLed('r',this.value)"/>
@@ -58,151 +82,135 @@
       <input type="range"  id="b-range" min="0" max="255" value="0" oninput="syncLed('b',this.value)"/>
       <input type="number" id="b-num"   min="0" max="255" value="0" oninput="syncLed('b',this.value)"/>
     </div>
-    <div class="led-row" style="margin-top:14px">
-      <label style="color:#555;width:auto;margin-right:4px" data-key="color_picker">컬러픽커</label>
-      <input type="color" class="color-picker" id="led-picker" value="#000000" oninput="applyColorPicker(this.value)"/>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="applyLed()"><i class="fa-solid fa-check"></i><span data-key="apply">적용</span></button>
+      <button class="btn" onclick="ledOff()"><i class="fa-solid fa-power-off"></i><span data-key="led_off">끄기</span></button>
     </div>
-    <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
-      <button class="btn btn-yellow" onclick="applyLed()" data-key="apply">✓ 적용</button>
-      <button class="btn btn-gray"   onclick="ledOff()"   data-key="led_off">✕ 끄기</button>
-    </div>
+  </div>
+  <div class="card">
+    <h2 class="card-title" data-key="presets_title">빠른 색</h2>
     <div class="presets">
-      <button class="btn btn-sm" style="background:#f44336;color:#fff" onclick="setPreset(255,0,0)"     data-key="preset_red">빨강</button>
-      <button class="btn btn-sm" style="background:#4caf50;color:#fff" onclick="setPreset(0,255,0)"     data-key="preset_green">초록</button>
-      <button class="btn btn-sm" style="background:#2196f3;color:#fff" onclick="setPreset(0,0,255)"     data-key="preset_blue">파랑</button>
-      <button class="btn btn-sm" style="background:#ff9800;color:#fff" onclick="setPreset(255,140,0)"   data-key="preset_orange">주황</button>
-      <button class="btn btn-sm" style="background:#9c27b0;color:#fff" onclick="setPreset(160,0,200)"   data-key="preset_purple">보라</button>
-      <button class="btn btn-sm" style="background:#fff;color:#333;border:1px solid #ddd" onclick="setPreset(255,255,255)" data-key="preset_white">흰색</button>
+      <button class="swatch" style="--sw:#ff0000" onclick="setPreset(255,0,0)"><i></i><span data-key="preset_red">빨강</span></button>
+      <button class="swatch" style="--sw:#00ff00" onclick="setPreset(0,255,0)"><i></i><span data-key="preset_green">초록</span></button>
+      <button class="swatch" style="--sw:#0000ff" onclick="setPreset(0,0,255)"><i></i><span data-key="preset_blue">파랑</span></button>
+      <button class="swatch" style="--sw:#ff8c00" onclick="setPreset(255,140,0)"><i></i><span data-key="preset_orange">주황</span></button>
+      <button class="swatch" style="--sw:#a000c8" onclick="setPreset(160,0,200)"><i></i><span data-key="preset_purple">보라</span></button>
+      <button class="swatch" style="--sw:#ffffff" onclick="setPreset(255,255,255)"><i></i><span data-key="preset_white">흰색</span></button>
     </div>
   </div>
-</div>
+</section>
 
-<!-- ── 카메라/비전 탭 ───────────────────────────────────────── -->
-<div class="tab" id="tab-camera">
+<!-- ── 카메라 / 비전 ────────────────────────────────────────── -->
+<section class="tab" id="tab-camera">
   <div class="card">
-    <div id="cam-wrap" style="display:none;margin-bottom:14px">
-      <img id="cam-img" style="width:100%;border-radius:10px;display:block" alt="camera"/>
+    <h2 class="card-title" data-key="camera_title">카메라</h2>
+    <div class="cam-stage">
+      <div id="cam-wrap" style="display:none"><img id="cam-img" alt="camera"/></div>
+      <div id="cam-ph" data-key="cam_off_msg">카메라를 켜면 기기 LCD에 표시됩니다</div>
     </div>
-    <div id="cam-ph" style="color:#888;font-size:14px;margin-bottom:14px" data-key="cam_off_msg">카메라를 켜면 기기 LCD에 표시됩니다</div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <button class="btn btn-yellow" id="btn-cam"     onclick="toggleCamera()"  data-key="cam_on_btn">📷 카메라 켜기</button>
-      <button class="btn btn-teal btn-sm" id="btn-capture" onclick="captureToWeb()" disabled data-key="capture_btn">🖼 웹에 표시</button>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btn-cam" onclick="toggleCamera()"><i class="fa-solid fa-camera"></i><span data-key="cam_on_btn">카메라 켜기</span></button>
+      <button class="btn" id="btn-capture" onclick="captureToWeb()" disabled><i class="fa-solid fa-image"></i><span data-key="capture_btn">웹에 표시</span></button>
     </div>
   </div>
   <div class="card">
-    <div class="card-title" data-key="vision_title">비전 기능</div>
+    <h2 class="card-title" data-key="vision_title">비전 기능</h2>
     <div class="vision-grid">
-      <button class="vbtn active" onclick="setVision('camera',this)">📷<br><span data-key="v_camera">카메라</span></button>
-      <button class="vbtn" onclick="setVision('grayscale',this)">🌑<br><span data-key="v_grayscale">흑백</span></button>
-      <button class="vbtn" onclick="setVision('canny',this)">✏️<br><span data-key="v_canny">엣지</span></button>
-      <button class="vbtn" onclick="setVision('edgePreservingFilter',this)">🌊<br><span data-key="v_edge_pres">엣지보존</span></button>
-      <button class="vbtn" onclick="setVision('cartoon',this)">🎨<br><span data-key="v_cartoon">카툰</span></button>
-      <button class="vbtn" onclick="setVision('sketch_rgb',this)">🖊<br><span data-key="v_sketch">스케치</span></button>
-      <button class="vbtn" onclick="setVision('detail',this)">🔍<br><span data-key="v_detail">디테일</span></button>
-      <button class="vbtn" onclick="setVision('qr',this)">📱<br><span data-key="v_qr">QR코드</span></button>
-      <button class="vbtn" onclick="setVision('face',this)">😊<br><span data-key="v_face">얼굴인식</span></button>
-      <button class="vbtn" onclick="setVision('face_landmark',this)">🗺<br><span data-key="v_landmark">랜드마크</span></button>
-      <button class="vbtn" onclick="setVision('object',this)">📦<br><span data-key="v_object">객체인식</span></button>
-      <button class="vbtn" onclick="setVision('hand',this)">✋<br><span data-key="v_hand">손인식</span></button>
-      <button class="vbtn" onclick="setVision('pose',this)">🕺<br><span data-key="v_pose">포즈</span></button>
-      <button class="vbtn" onclick="setVision('marker',this)">📌<br><span data-key="v_marker">마커</span></button>
+      <button class="vbtn active" onclick="setVision('camera',this)"><i class="fa-solid fa-camera"></i><span data-key="v_camera">카메라</span></button>
+      <button class="vbtn" onclick="setVision('grayscale',this)"><i class="fa-solid fa-circle-half-stroke"></i><span data-key="v_grayscale">흑백</span></button>
+      <button class="vbtn" onclick="setVision('canny',this)"><i class="fa-solid fa-pen"></i><span data-key="v_canny">엣지</span></button>
+      <button class="vbtn" onclick="setVision('edgePreservingFilter',this)"><i class="fa-solid fa-water"></i><span data-key="v_edge_pres">엣지보존</span></button>
+      <button class="vbtn" onclick="setVision('cartoon',this)"><i class="fa-solid fa-palette"></i><span data-key="v_cartoon">카툰</span></button>
+      <button class="vbtn" onclick="setVision('sketch_rgb',this)"><i class="fa-solid fa-pencil"></i><span data-key="v_sketch">스케치</span></button>
+      <button class="vbtn" onclick="setVision('detail',this)"><i class="fa-solid fa-magnifying-glass-plus"></i><span data-key="v_detail">디테일</span></button>
+      <button class="vbtn" onclick="setVision('qr',this)"><i class="fa-solid fa-qrcode"></i><span data-key="v_qr">QR코드</span></button>
+      <button class="vbtn" onclick="setVision('face',this)"><i class="fa-solid fa-face-smile"></i><span data-key="v_face">얼굴인식</span></button>
+      <button class="vbtn" onclick="setVision('face_landmark',this)"><i class="fa-solid fa-location-crosshairs"></i><span data-key="v_landmark">랜드마크</span></button>
+      <button class="vbtn" onclick="setVision('object',this)"><i class="fa-solid fa-box"></i><span data-key="v_object">객체인식</span></button>
+      <button class="vbtn" onclick="setVision('hand',this)"><i class="fa-solid fa-hand"></i><span data-key="v_hand">손인식</span></button>
+      <button class="vbtn" onclick="setVision('pose',this)"><i class="fa-solid fa-person-walking"></i><span data-key="v_pose">포즈</span></button>
+      <button class="vbtn" onclick="setVision('marker',this)"><i class="fa-solid fa-thumbtack"></i><span data-key="v_marker">마커</span></button>
     </div>
     <div class="marker-row" id="marker-row" style="display:none">
-      <label data-key="marker_len_label">마커 길이</label>
+      <label for="marker-len" data-key="marker_len_label">마커 길이</label>
       <input type="number" id="marker-len" value="5" min="1" max="50" step="0.1"/>
       <span>cm</span>
-      <button class="btn btn-sm btn-gray" onclick="updateMarkerLen()" data-key="apply_sm">적용</button>
+      <button class="btn btn-sm" onclick="updateMarkerLen()" data-key="apply_sm">적용</button>
     </div>
     <div class="result-box" id="vision-result" data-key="result_ph">결과가 여기에 표시됩니다</div>
   </div>
-</div>
+</section>
 
-<!-- ── TTS 탭 ────────────────────────────────────────────────── -->
-<div class="tab" id="tab-tts">
+<!-- ── 음성 ─────────────────────────────────────────────────── -->
+<section class="tab" id="tab-tts">
   <div class="card">
-    <div class="card-title" data-key="voice_select">목소리 선택</div>
+    <h2 class="card-title" data-key="voice_select">목소리 선택</h2>
     <div class="voice-grid">
-      <button class="voice-btn active" onclick="setVoice('m1',this)">👨 k0</button>
-      <button class="voice-btn" onclick="setVoice('m2',this)">👨 k1</button>
-      <button class="voice-btn" onclick="setVoice('m3',this)">👨 k2</button>
-      <button class="voice-btn" onclick="setVoice('m4',this)">👨 k3</button>
-      <button class="voice-btn" onclick="setVoice('m5',this)">👨 k4</button>
-      <button class="voice-btn" onclick="setVoice('f1',this)">👩 k5</button>
-      <button class="voice-btn" onclick="setVoice('f2',this)">👩 k6</button>
-      <button class="voice-btn" onclick="setVoice('f3',this)">👩 k7</button>
-      <button class="voice-btn" onclick="setVoice('f4',this)">👩 k8</button>
-      <button class="voice-btn" onclick="setVoice('f5',this)">👩 k9</button>
+      <button class="voice-btn active" onclick="setVoice('m1',this)"><i class="fa-solid fa-person"></i>k0</button>
+      <button class="voice-btn" onclick="setVoice('m2',this)"><i class="fa-solid fa-person"></i>k1</button>
+      <button class="voice-btn" onclick="setVoice('m3',this)"><i class="fa-solid fa-person"></i>k2</button>
+      <button class="voice-btn" onclick="setVoice('m4',this)"><i class="fa-solid fa-person"></i>k3</button>
+      <button class="voice-btn" onclick="setVoice('m5',this)"><i class="fa-solid fa-person"></i>k4</button>
+      <button class="voice-btn" onclick="setVoice('f1',this)"><i class="fa-solid fa-person-dress"></i>k5</button>
+      <button class="voice-btn" onclick="setVoice('f2',this)"><i class="fa-solid fa-person-dress"></i>k6</button>
+      <button class="voice-btn" onclick="setVoice('f3',this)"><i class="fa-solid fa-person-dress"></i>k7</button>
+      <button class="voice-btn" onclick="setVoice('f4',this)"><i class="fa-solid fa-person-dress"></i>k8</button>
+      <button class="voice-btn" onclick="setVoice('f5',this)"><i class="fa-solid fa-person-dress"></i>k9</button>
     </div>
   </div>
   <div class="card">
-    <div class="form-group">
-      <label class="form-label" data-key="tts_label">말할 내용</label>
-      <textarea id="tts-text" data-key="tts_ph" placeholder="여기에 말할 내용을 입력하세요...">안녕하세요! 저는 파이브레인입니다.</textarea>
-    </div>
-    <div style="display:flex;gap:10px;margin-bottom:14px">
-      <button class="btn btn-yellow" id="tts-btn" onclick="speakTTS()" style="flex:1" data-key="speak_btn">▶ 말하기</button>
-      <button class="btn btn-gray" onclick="stopTTS()" data-key="stop_tts_btn">■ 정지</button>
+    <label class="card-title" for="tts-text" data-key="tts_label">말할 내용</label>
+    <textarea id="tts-text" data-key="tts_ph" placeholder="여기에 말할 내용을 입력하세요...">안녕하세요! 저는 파이브레인입니다.</textarea>
+    <div class="btn-row">
+      <button class="btn btn-primary btn-grow" id="tts-btn" onclick="speakTTS()"><i class="fa-solid fa-play"></i><span data-key="speak_btn">말하기</span></button>
+      <button class="btn" onclick="stopTTS()"><i class="fa-solid fa-stop"></i><span data-key="stop_tts_btn">정지</span></button>
     </div>
     <div class="result-box" id="tts-status" data-key="waiting">대기 중...</div>
   </div>
-</div>
+</section>
 
-<!-- ── LCD 탭 ────────────────────────────────────────────────── -->
-<div class="tab" id="tab-lcd">
-
+<!-- ── LCD ──────────────────────────────────────────────────── -->
+<section class="tab" id="tab-lcd">
   <div class="card">
-    <div class="card-title" data-key="lcd_preview_title">LCD 미리보기 (240×320)</div>
-    <div class="lcd-preview">
-      <canvas id="lcd-canvas" width="240" height="320"></canvas>
-    </div>
+    <h2 class="card-title" data-key="lcd_preview_title">LCD 미리보기 (240×320)</h2>
+    <div class="lcd-preview"><canvas id="lcd-canvas" width="240" height="320"></canvas></div>
   </div>
 
   <div class="card">
-    <div class="card-title" data-key="lcd_text_title">텍스트 출력</div>
+    <h2 class="card-title" data-key="lcd_text_title">텍스트 출력</h2>
+    <label class="form-label" for="lcd-text" data-key="lcd_text_label">출력할 텍스트 (줄바꿈 지원)</label>
+    <textarea id="lcd-text" data-key="lcd_ph" placeholder="여기에 출력할 내용을 입력하세요..." oninput="updateLcdPreview()">안녕하세요!\n파이브레인입니다.</textarea>
 
-    <div class="form-group">
-      <label class="form-label" data-key="lcd_text_label">출력할 텍스트 (줄바꿈 지원)</label>
-      <textarea id="lcd-text" data-key="lcd_ph"
-        placeholder="여기에 출력할 내용을 입력하세요..."
-        style="min-height:80px;width:100%;padding:10px 12px;border:1.5px solid #ddd;border-radius:10px;font-size:14px;font-family:inherit;resize:vertical;"
-        oninput="updateLcdPreview()">안녕하세요!\n파이브레인입니다.</textarea>
-    </div>
-
-    <div class="row2">
-      <label data-key="font_size">폰트 크기</label>
-      <input type="number" id="lcd-size" value="24" min="8" max="80" step="2" oninput="updateLcdPreview()"/>
-    </div>
-    <div class="row2">
-      <label data-key="x_pos">X 위치</label>
-      <input type="number" id="lcd-x" value="10" min="0" max="230" oninput="updateLcdPreview()"/>
-      <label style="margin-left:8px" data-key="y_pos">Y 위치</label>
-      <input type="number" id="lcd-y" value="10" min="0" max="310" oninput="updateLcdPreview()"/>
-    </div>
-    <div class="row2">
-      <label data-key="text_color">글자색</label>
-      <input type="color" id="lcd-fg" value="#ffffff" oninput="updateLcdPreview()"/>
-      <label style="margin-left:8px" data-key="bg_color">배경색</label>
-      <input type="color" id="lcd-bg" value="#000000" oninput="updateLcdPreview()"/>
+    <div class="field-grid">
+      <label><span data-key="font_size">폰트 크기</span><input type="number" id="lcd-size" value="24" min="8" max="80" step="2" oninput="updateLcdPreview()"/></label>
+      <label><span data-key="x_pos">X 위치</span><input type="number" id="lcd-x" value="10" min="0" max="230" oninput="updateLcdPreview()"/></label>
+      <label><span data-key="y_pos">Y 위치</span><input type="number" id="lcd-y" value="10" min="0" max="310" oninput="updateLcdPreview()"/></label>
+      <label><span data-key="text_color">글자색</span><input type="color" id="lcd-fg" value="#ffffff" oninput="updateLcdPreview()"/></label>
+      <label><span data-key="bg_color">배경색</span><input type="color" id="lcd-bg" value="#000000" oninput="updateLcdPreview()"/></label>
     </div>
 
-    <div style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap">
-      <button class="btn btn-yellow" onclick="sendLcdText()" style="flex:1" data-key="lcd_send_btn">📤 LCD에 출력</button>
-      <button class="btn btn-gray"   onclick="clearLcd()"                   data-key="lcd_clear_btn">🗑 화면 지우기</button>
+    <div class="btn-row">
+      <button class="btn btn-primary btn-grow" onclick="sendLcdText()"><i class="fa-solid fa-paper-plane"></i><span data-key="lcd_send_btn">LCD에 출력</span></button>
+      <button class="btn" onclick="clearLcd()"><i class="fa-solid fa-eraser"></i><span data-key="lcd_clear_btn">화면 지우기</span></button>
     </div>
-    <div class="oled-status" id="lcd-status" style="margin-top:12px" data-key="waiting">대기 중...</div>
+    <div class="result-box" id="lcd-status" data-key="waiting">대기 중...</div>
   </div>
 
   <div class="card">
-    <div class="card-title" data-key="system_title">시스템</div>
-    <p style="font-size:13px;color:#666;margin-bottom:12px" data-key="lcd_reset_desc" data-html>
+    <h2 class="card-title" data-key="system_title">시스템</h2>
+    <p class="card-desc" data-key="lcd_reset_desc" data-html>
       network_disp.py를 재시작합니다.<br>카메라가 꺼진 상태에서만 동작합니다.
     </p>
-    <button class="btn btn-red btn-sm" onclick="resetOled()" data-key="lcd_reset_btn">🔄 LCD 초기화 (network_disp 재시작)</button>
-    <div class="oled-status" id="oled-reset-status" style="margin-top:10px" data-key="waiting">대기 중...</div>
+    <button class="btn btn-danger" onclick="resetOled()"><i class="fa-solid fa-rotate"></i><span data-key="lcd_reset_btn">LCD 초기화 (network_disp 재시작)</span></button>
+    <div class="result-box" id="oled-reset-status" data-key="waiting">대기 중...</div>
   </div>
+</section>
+
+</main>
 </div>
 
-<script src="/static/ko2en.js?ver=260916v4"></script>
-<script src="/static/index.js?ver=260916v4"></script>
+<script src="/static/ko2en.js?ver=260924v1"></script>
+<script src="/static/pibo-ui.js?ver=260924v1"></script>
+<script src="/static/index.js?ver=260924v1"></script>
 </body>
 </html>
