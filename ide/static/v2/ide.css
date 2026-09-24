@@ -23,7 +23,11 @@
   --c-brand-seg: rgba(61, 47, 18, .10);
   --c-seg-on:    #fffdf6;   /* 상단바 [블록|파이썬] 선택 — 흰 알약 */
   --c-seg-on-ink:#3d2f12;
-  --c-seg-on-sh: 0 1px 2px rgba(61, 47, 18, .25);
+  --c-seg-on-sh: 0 1px 3px rgba(61, 47, 18, .22), 0 0 0 .5px rgba(61, 47, 18, .14);
+  --c-seg-sh:    0 1px 3px rgba(20, 24, 40, .12), 0 0 0 .5px rgba(20, 24, 40, .08);   /* 패널 안 탭 선택 */
+  --c-btn-sh:    inset 0 1px 0 rgba(255, 255, 255, .22), 0 1px 2px rgba(37, 99, 235, .35), 0 0 0 .5px rgba(29, 79, 216, .55);
+  --c-btn2-sh:   0 .5px 1.5px rgba(20, 24, 40, .12);
+  --c-focus:     rgba(37, 99, 235, .45);
   --c-side:      #eceff3;   /* 왼쪽 패널 바닥 */
   --c-card:      #fbfbfc;   /* 패널 안 카드 */
   --c-bg:        #f7f8fa;   /* 편집기 줄 · 툴박스 */
@@ -61,6 +65,8 @@
 :root[data-theme="dark"] {
   --c-brand: #1b1e24; --c-brand-ink: #eceef2; --c-brand-hov: rgba(255, 255, 255, .08); --c-brand-seg: rgba(255, 255, 255, .08);
   --c-seg-on: #eceef2; --c-seg-on-ink: #1b1e24; --c-seg-on-sh: none;
+  --c-seg-sh: 0 1px 3px rgba(0, 0, 0, .4); --c-btn2-sh: none; --c-focus: rgba(142, 152, 255, .55);
+  --c-btn-sh: inset 0 1px 0 rgba(255, 255, 255, .3), 0 1px 2px rgba(0, 0, 0, .45);
   --c-side: #16191e; --c-card: #1f232a; --c-bg: #1b1e24; --c-work: #20242b;
   --c-hover: #2a2f37; --c-press: #333943; --c-line: #2c3139; --c-line-2: #3c434d;
   --c-ink: #e6e8ec; --c-ink-2: #b0b7c2; --c-ink-3: #878f9b; --c-raise: #262a32;
@@ -587,6 +593,19 @@ body[data-running] #execute { background: var(--c-press); color: var(--c-ink-3);
 .v2-app .pb-modal__foot { background: var(--c-raise); border-top-color: var(--c-line); }
 .v2-app .pb-modal__body pre { background: #161a20; color: #e1e5ea; border-radius: 10px; font-family: var(--mono); }
 .v2-app .pb-modal__foot .pb-btn--accent { background: var(--c-dark); color: var(--c-on-dark); border-color: transparent; }
+
+/* ── 버튼 질감 (macOS 느낌, 260924) ────────────────────────────────────────
+   주 동작: 위쪽 1px 안쪽 하이라이트 + 옅은 파란 그림자 + 0.5px 테두리. 배경색을 바꾸는 hover 에서도
+   유지되도록 그라데이션 대신 box-shadow 로만 만든다. 흰 버튼: 가는 테두리 + 1px 그림자.
+   누르면 살짝 어두워진다. 포커스는 파랑 번짐 테두리(3px, 반투명) */
+.v2-btn { box-shadow: var(--c-btn2-sh); transition: background-color .12s, border-color .12s, color .12s, box-shadow .12s, filter .08s; }
+.v2-btn--ghost { box-shadow: none; }
+.v2-btn--dark, .v2-btn--run, #alertOkBtn, #confirmOkBtn, #promptOkBtn, .dialog-actions button,
+.v2-app .pb-modal__foot .pb-btn--accent { box-shadow: var(--c-btn-sh); }
+.v2-btn:active:not(:disabled):not(.disabled), .dialog-actions button:active { filter: brightness(.93); }
+.v2-btn.disabled, .v2-btn:disabled { box-shadow: none; }
+.v2-seg > button.checked, .v2-seg > button[aria-checked="true"] { box-shadow: var(--c-seg-sh); }
+.v2-app :focus-visible { outline: 3px solid var(--c-focus); outline-offset: 1px; }
 
 /* ── 폭에 따라 ────────────────────────────────────────────────────────── */
 body[data-side="closed"] #v2_side,
