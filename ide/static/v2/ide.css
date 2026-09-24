@@ -411,7 +411,12 @@ body[data-running] #execute { background: var(--c-press); color: var(--c-ink-3);
 }
 .v2-file { flex: 1 1 auto; display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 14.5px; font-weight: 700; color: var(--c-ink); }
 .v2-file > i { color: var(--c-ink-3); flex: none; }
-.v2-file__name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.v2-file__name { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* 폴더 경로: 이름보다 먼저 줄어든다(flex-shrink 20). rtl 이라 말줄임이 앞에 붙는다 → …/code/ */
+.v2-file__dir {
+  flex: 0 20 auto; min-width: 0; margin-right: -8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  direction: rtl; font: 500 12.5px var(--mono); color: var(--c-ink-3);
+}
 .v2-file[data-empty] .v2-file__name { color: var(--c-ink-3); font-weight: 500; }
 .v2-file__dirty { flex: none; display: inline-flex; color: #e8a30c; font-size: 8px; }
 .v2-file__dirty:empty { display: none; }

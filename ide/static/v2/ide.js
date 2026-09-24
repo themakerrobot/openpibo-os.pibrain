@@ -89,15 +89,20 @@
   });
 
   /* 3) 파일 이름 ─────────────────────────────────────────────────────────── */
-  var cp = $id('codepath'), nameEl = $id('v2_file_name'), fileBox = $id('v2_file');
+  // 폴더(/home/pi/code/)는 흐리게, 이름은 굵게. 파이썬에서 사진·모델 파일을 경로로 다루므로
+  // 폴더가 보여야 한다. 좁으면 폴더가 앞쪽부터 줄어든다(…/code/). LRM 은 rtl 에서 '/' 가 끝으로 튀지 않게
+  var cp = $id('codepath'), nameEl = $id('v2_file_name'), dirEl = $id('v2_file_dir'), fileBox = $id('v2_file');
   function showName() {
     var full = (cp.textContent || '').trim();
     if (!full) {
       nameEl.textContent = tr('v2_no_file');
+      if (dirEl) dirEl.textContent = '';
       fileBox.setAttribute('data-empty', '');
       fileBox.removeAttribute('title');
     } else {
-      nameEl.textContent = full.split('/').pop();
+      var cut = full.lastIndexOf('/') + 1;
+      nameEl.textContent = full.slice(cut);
+      if (dirEl) dirEl.textContent = '\u200E' + full.slice(0, cut) + '\u200E';
       fileBox.removeAttribute('data-empty');
       fileBox.title = full;
     }
