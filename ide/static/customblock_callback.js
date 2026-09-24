@@ -939,7 +939,7 @@ Blockly.Python.forBlock['utils_dict_set'] = function(block) {
   return `${dictionary}[${keyname}] = ${value}\n`;
 }
 Blockly.Python.forBlock['utils_dict_create'] = function(block) {
-  return [`dict()\n`, Blockly.Python.ORDER_ATOMIC];
+  return ['dict()', Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['utils_array_slice_set'] = function(block) {
   const arr = Blockly.Python.valueToCode(block, 'arr', Blockly.Python.ORDER_ATOMIC);
@@ -979,3 +979,76 @@ Blockly.Python.forBlock['utils_calculate_angle'] = function(block) {
 
   return [`utils.calculate_angle(${p1}, ${p2}, ${p3})`, Blockly.Python.ORDER_ATOMIC];
 }
+
+// 예전 파일 옮기기 — utils_dict_create 는 260924v3 전까지 위아래로 끼우는 모양이었다(코드 생성은 실패).
+// 그 모양으로 저장된 파일을 지금 모양(값 블록)으로 불러오면 이을 연결이 없어 불러오기가 중간에 멈추고
+// 뒤 블록이 화면에서 사라진다(그대로 저장하면 영영 없어진다). 불러오기 전에 문장 자리에 있던 것만 걷어내고
+// 뒤 블록을 그 자리로 당긴다. 그 블록은 하는 일이 없었으므로 걷어내도 프로그램은 같다.
+// 맨 앞 ; 는 지우지 말 것 — 바로 위 `forBlock[...] = function(){...}` 에 세미콜론이 없어 괄호가 그 함수 호출로 붙는다.
+;(function () {
+  const TYPE = 'utils_dict_create';
+  let probe = null;
+
+  // 부모 블록의 그 입력이 문장 자리인가. 뮤테이터(else if 등)로 생기는 입력이 있어 실제로 만들어 본다
+  function isStatementInput(parent, name) {
+    Blockly.Events.disable();
+    try {
+      probe = probe || new Blockly.Workspace();
+      probe.clear();
+      const b = Blockly.serialization.blocks.append(
+        { type: parent.type, extraState: parent.extraState, fields: parent.fields }, probe, { recordUndo: false });
+      const input = b.getInput(name);
+      return !!(input && input.connection && input.connection.type === Blockly.NEXT_STATEMENT);
+    } catch (e) {
+      return false;
+    } finally {
+      Blockly.Events.enable();
+    }
+  }
+
+  // 문장 자리의 예전 블록을 건너뛰고 그 뒤 블록을 돌려준다. 없으면 null
+  function skip(st) {
+    while (st && st.type === TYPE) st = st.next && st.next.block;
+    return st || null;
+  }
+
+  function fix(st) {
+    for (const name in (st.inputs || {})) {
+      const slot = st.inputs[name];
+      const child = slot && slot.block;
+      if (child && child.type === TYPE && (child.next || isStatementInput(st, name))) {
+        const rest = skip(child);
+        if (rest) slot.block = rest; else delete slot.block;
+      }
+      if (slot && slot.block) fix(slot.block);
+    }
+    if (st.next && st.next.block) {
+      const rest = skip(st.next.block);
+      if (rest) { st.next.block = rest; fix(rest); } else delete st.next.block;
+      if (!st.next.block && !st.next.shadow) delete st.next;
+    }
+  }
+
+  function fixTop(st) {
+    if (st.type === TYPE && st.next) {
+      const rest = skip(st);
+      if (!rest) return null;
+      rest.x = st.x; rest.y = st.y;
+      st = rest;
+    }
+    fix(st);
+    return st;
+  }
+
+  const load = Blockly.serialization.workspaces.load;
+  Blockly.serialization.workspaces.load = function (state, workspace, opts) {
+    try {
+      if (state && state.blocks && Array.isArray(state.blocks.blocks) && JSON.stringify(state.blocks).includes(TYPE)) {
+        state.blocks.blocks = state.blocks.blocks.map(fixTop).filter(Boolean);
+      }
+    } catch (e) {
+      console.warn('legacy dict fix', e);
+    }
+    return load.call(this, state, workspace, opts);
+  };
+})();

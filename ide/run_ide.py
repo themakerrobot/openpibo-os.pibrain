@@ -15,7 +15,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi_socketio import SocketManager
 from starlette.websockets import WebSocketDisconnect
-from fastapi.templating import Jinja2Templates
 from contextlib import asynccontextmanager
 
 @asynccontextmanager
@@ -26,7 +25,6 @@ async def lifespan(app: FastAPI):
 try:
   app = FastAPI(lifespan=lifespan)
   socket_manager = SocketManager(app=app, mount_location='/socket.io')
-  templates = Jinja2Templates(directory="templates")
 
   app.mount("/static", StaticFiles(directory="static"), name="static")
   app.mount("/svg", StaticFiles(directory="svg"), name="svg")
@@ -66,6 +64,7 @@ codeText = ''
 codePath = ''
 
 mutex = asyncio.Lock()
+TEMPLATE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 # 실행 로그는 모아서 보낸다. 줄마다 보내면 print 루프가 소켓 프레임을 줄 수만큼 만든다
 LOG_FLUSH_SEC = 0.05
 
@@ -131,7 +130,10 @@ async def read_root(request: Request):
   # 쿼리가 먼저, 없으면 쿠키 (pibo-ui.js 가 심는다)
   ui = request.query_params.get('ui') or request.cookies.get('pibo_ui')
   page = "index.html" if ui == 'v1' else "index_v2.html"
-  return templates.TemplateResponse(page, {"request": request})
+  # 템플릿은 Jinja 문법을 안 쓴다. 파일을 그대로 보내면 starlette 버전과 무관하다.
+  # 전에 쓰던 TemplateResponse(이름, {"request": ...}) 는 starlette 1.0 에서 받지 않아 첫 화면이 500 이 됐다
+  # no-cache: FileResponse 는 Last-Modified 를 붙여 브라우저가 페이지를 그냥 캐시할 수 있다. 그러면 올린 ?ver 가 안 보인다
+  return FileResponse(os.path.join(TEMPLATE_DIR, page), media_type="text/html", headers={"Cache-Control": "no-cache"})
 
 @app.get("/download")
 async def download_item(filename: str):
@@ -432,7 +434,7 @@ async def handle_restore(sid):
         os.system(f'{ENV_PATH}/python3 /home/pi/openpibo-os/system/clear_disp.py')
         subprocess.Popen(['shutdown', '-h', 'now'])
     except Exception as e:
-        await sio.emit('update', {'dialog': 'err_init', 'detail': str(e)}, room=sid)
+        await app.sio.emit('update', {'dialog': 'err_init', 'detail': str(e)}, to=sid)
 
 @app.sio.on('add_file')
 async def handle_add_file(sid, p):

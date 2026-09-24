@@ -2787,8 +2787,7 @@ Blockly.defineBlocksWithJsonArray(
           },
           {"type":"input_dummy"},
         ],
-        nextStatement: true,
-        previousStatement: true,
+        output: null,   // 값 블록: [변수 = 빈 사전]. 전엔 위아래로 끼우는 모양이라 코드 생성이 실패했다
         inputsInline: true,
         colour: color_type["utils"],
         tooltip: '%{BKY_UTILS_DICT_CREATE_TOOLTIP}',

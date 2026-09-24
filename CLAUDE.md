@@ -504,6 +504,23 @@ classifier 언어 토글, 검수 보고서 구조, Tools 서비스.
 
 ---
 
+## IDE 서버·블록 메모 (260924)
+
+- **첫 화면은 `FileResponse` 로 템플릿 파일을 그대로 보낸다** (`ide/run_ide.py` 의 `/`, `tools/run_tools.py` 의 `/`).
+  템플릿에 Jinja 문법이 없어서다. 전에 쓰던 `TemplateResponse(이름, {"request": ...})` 는 starlette 1.0 부터
+  받지 않아 첫 화면이 500 이 된다(컨테이너 starlette 1.7 에서 확인). 템플릿에 Jinja 를 쓰게 되면
+  `TemplateResponse(request, 이름)` 새 순서로 쓸 것
+- `restore` 의 `except` 는 `app.sio.emit(..., to=sid)`. 전엔 정의 안 된 `sio` 를 불러 오류 안내가 안 나갔다
+- **`utils_dict_create` 는 값 블록이다(260924v3).** 전엔 위아래로 끼우는 모양인데 생성기가 값을 돌려줘서
+  코드 생성이 실패했다(`[변수 = 빈 사전]` 을 만들 수 없었다). 예전 모양으로 저장된 파일은 불러오면
+  중간에서 멈추므로 `customblock_callback.js` 끝에서 `Blockly.serialization.workspaces.load` 를 감싸
+  문장 자리의 그 블록만 걷어낸다(하는 일이 없던 블록이라 프로그램은 같다). 그 IIFE 앞 `;` 는 지우지 말 것 —
+  바로 위 `forBlock[...] = function(){...}` 에 세미콜론이 없어 괄호가 그 함수 호출로 붙는다
+- 파일은 확장자와 상관없이 **지금 모드(블록/파이썬)로 열린다.** `.json` 을 파이썬 편집기로 열어 고치고 닫을 수
+  있어서 일부러 그대로 둔다(권장 사용법은 아님)
+- `static/socket.io.min.js`(vendor)는 보안 컨텍스트(`localhost`·https)에서 `navigator.userAgentData.toLowerCase`
+  로 죽어 `io` 가 없어진다. 기기는 `http://<IP>` 라 해당 없음. **컨테이너 테스트는 `127.0.0.1` 말고 IP 주소로 열 것**
+
 ## 자주 나는 실수
 
 - `git update-index --chmod=+x` 뒤에 `git add -A` 하면 **chmod 가 취소된다.**

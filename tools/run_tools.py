@@ -2,6 +2,7 @@
 run_tools.py — Pibo Brain Tools Server (포트: 50040)
 """
 
+import os
 import asyncio
 import argparse
 import base64
@@ -12,9 +13,8 @@ import queue as _queue
 
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 
 # ── 전역 리소스 ───────────────────────────────────────────────
@@ -294,11 +294,12 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True,
 app.mount("/static", StaticFiles(directory="static"), name="static")
 # all.min.css 가 ../webfonts/ 를 찾는다. 없으면 아이콘이 빈칸으로 나온다(260924 전에는 그래서 이모지를 썼다)
 app.mount("/webfonts", StaticFiles(directory="webfonts"), name="webfonts")
-templates = Jinja2Templates(directory="templates")
 
 @app.get('/', response_class=HTMLResponse)
 async def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    # 템플릿은 Jinja 문법을 안 쓴다. 파일을 그대로 보낸다(starlette 1.0 에서 옛 TemplateResponse 호출이 500)
+    return FileResponse(os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates", "index.html"), media_type="text/html",
+                        headers={"Cache-Control": "no-cache"})
 
 @app.get('/health')
 async def health():
