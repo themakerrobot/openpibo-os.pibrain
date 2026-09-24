@@ -4,8 +4,8 @@ PiBrain OS 리포. 기기의 `/home/pi/openpibo-os` 가 이 리포의 작업본�
 
 이 릴리스 계열은 **배포본 `260624v1` 을 기준으로 만들었다.** 그 시점 이후 `master` 에
 쌓여 있던 미배포 커밋 23개(랜딩 페이지, IDE UI 전면 개편 등)는 **가져오지 않았다.**
-화면은 260624 의 연장선이다. 예외는 Tools 하나로, 260624 의 IDE 헤더에 자리만
-잡혀 있던 것을 채웠다.
+화면은 260624 의 연장선이었으나 **260924 에 Pibo 의 화면 v2(시안 B)를 들였다** — 아래 '화면 v2'.
+예전 화면(v1)은 `?ui=v1` 로 남아 있다.
 
 이 문서는 **PiBrain 값**으로 쓰여 있다. openpibo-os.pibo(Pibo) 와 구조가 비슷하지만
 하드웨어가 다르므로 그쪽 문서를 그대로 옮겨 쓰지 말 것. 다른 점은 아래 '파이보와 다른 점' 에 모아 뒀다.
@@ -238,6 +238,7 @@ git ls-tree -r HEAD | grep 100755 | awk '{print $4}'
 system/booting.py  system/clear_disp.py  system/conwifi.sh  system/hotspot.sh
 system/init  system/network_disp.py  system/system.sh
 system/setup_country.sh  system/setup_openpibo_src.sh  test/test
+design/sync.sh
 ```
 
 `system/wifi.py` `system/uart_ctrl.py` 는 import 전용이라 644 다.
@@ -327,6 +328,37 @@ sudo raspi-config nonint get_wifi_country
 
 ---
 
+## 화면 v2 (260924) — Pibo 시안 B 를 그대로
+
+**v2 가 기본이다.** 예전 화면(v1, `ide/templates/index.html`)은 주소 끝 `?ui=v1` 로 가고 `?ui=v2` 로 돌아온다
+(쿠키 `pibo_ui=v1`. 포트를 안 가려서 도구·분류기도 따라간다). v1 상단바의 마법봉 아이콘(`#new_ui_bt`)이 v2 로 가는 길이다.
+
+**원본은 Pibo 리포다.** 배치·색·동작 설명과 검증 기록은 openpibo-os.pibo 의 CLAUDE.md '화면 v2' 에 있다.
+여기서는 PiBrain 에서 다른 점만 적는다. 고칠 땐 **양쪽을 같이** 고칠 것.
+
+| 파일 | 출처 | PiBrain 에서 바꾼 것 |
+|---|---|---|
+| `design/pibo-ui.css` `pibo-ui.js` `sync.sh` `README.md` `index.html` | Pibo `design/` (공용 키트) | 없음. **Pibo 쪽이 원본** — 거기서 고치고 `design/sync.sh ~/openpibo-os.pibrain` 으로 가져온다 |
+| `ide/static/pibo-ui.*`, `tools/static/pibo-ui.*`, `classifier/static/pibo-ui.*` | `design/sync.sh` 가 만든 사본 | 직접 고치지 말 것. `bash design/sync.sh --check` |
+| `ide/static/launch.html` | Pibo | 도구 포트 **50040**, 제목 |
+| `ide/templates/index_v2.html` | Pibo | 브랜드 `PiBrain`(fa-brain), 패널 탭 [PiBrain], **배터리 칸 없음**, `?ver` |
+| `ide/static/v2/ide.css` `ide.js` `vendor/toolbox-search.*` | Pibo | 주석의 탭 이름만 |
+| `ide/static/index.js` | Pibo 를 기준으로 | H/W 검수(50050, 4초 뒤 열기) · `langFileVersion`(PiBrain `ko.js`/`en.js` 버전) 을 PiBrain 값으로 되살렸다 |
+| `ide/run_ide.py` | 항목별로 | gzip, `run_blocking`, 실행 로그 `record`/`record_add`, 저장 확인 `saved`, `/` 가 v2 기본. MCU 조회(`get_device`)는 안 가져왔다 |
+| `ide/static/ko2en.js` | Pibo 의 새 키 53개를 앞에 끼움 | `v2_tab_robot` = PiBrain. 1·2행은 그대로(`global` 델타) |
+| `customblock.js` | | `color_type` **색 값만**(한글 줄 그대로) |
+| `customblock_toolbox.js` | | 기본 분류 8개의 `"colour"` 값만. **`global` 델타 파일이다** — merge 때 Collect 분류와 떨어져 있어 보통 자동으로 합쳐지지만 확인할 것 |
+| `jquery-3.7.1.min.js` | Pibo | 3.1.1 을 지우고 올렸다(v1·v2 둘 다) |
+
+- 기본 블록 테마(`index.js`)의 `colorTertiary` 오타가 `colourTertiary` 로 고쳐졌다(Pibo 에서 같이 옴)
+- 파이썬 편집기는 v2 전용 테마 `pibo-light`/`pibo-dark`. v1 은 예전대로 `cobalt`
+- v1 에는 [파이썬 코드]·실행 상태 칩이 없다(v2 에만 있다). v1 은 되돌아갈 길로만 둔다
+- 테스트할 땐: v1 을 볼 땐 쿠키 `pibo_ui=v1` 을 넣을 것. 쿠키 없이 v1 파일을 열면 `pibo-ui.js` 가 v2 로 판정한다
+
+검증(컨테이너, 가짜 소켓): v2 동작 22/22, 기존 동작 27개 중 26(실패 1개는 테스트 탭이 뒤에 있어 늦게 뜬 것 —
+Pibo 에서도 같다), 560~1960px 한/영 상단바 넘침 0, 편집기 폭 0, pageerror 0. v1 은 도구·대화 열기·저장 확인까지 14항목.
+**실기기로는 아직 안 봤다.**
+
 ## 파이보와 다른 점
 
 Pibo 리포의 변경을 가져올 때 **항목마다 적용 여부를 먼저 판단한다.** 소스를 통째로 덮어쓰지 말 것.
@@ -340,7 +372,7 @@ Pibo 리포의 변경을 가져올 때 **항목마다 적용 여부를 먼저 �
 | IDE 블록 | `device_eye_*` `device_get_*` | **`device_pibrain_*` 별도 세트.** 아래 참고 |
 | MCU | 있음 (`send_raw`, 펌웨어 버전) | **없음.** 검수 보고서에 Firmware 행이 없다 |
 | 배터리 | 게이지 있음 | 없음 |
-| 진입 UI | IDE 헤더·푸터 | 동일. 랜딩 페이지는 쓰지 않는다 |
+| 진입 UI | IDE v2(노랑 상단바 + 왼쪽 패널) | 동일(260924~). 패널 탭 이름만 [PiBrain], 배터리 칸 없음. 랜딩 페이지는 쓰지 않는다 |
 | Tools | socket.io + 모션 편집기·시뮬레이터 | REST/SSE. 버튼·LED·카메라·TTS·LCD 5개 패널. 컨셉만 같다 |
 | Classifier | 단순 UI | keras 변환이 있다. ko2en 키셋을 따로 만들었다 |
 | 마이크 | 2-mic HAT (`arecord -D plug:dmic_sv`) | **없음.** 녹음·STT 경로 전부 무관 |
@@ -445,6 +477,8 @@ classifier 언어 토글, 검수 보고서 구조, Tools 서비스.
 python3 -m py_compile ide/run_ide.py system/booting.py system/wifi.py test/test.py \
         openpibo/speech.py openpibo/vision_detect.py openpibo/__init__.py
 node --check ide/static/index.js ide/static/ko2en.js
+node --check ide/static/v2/ide.js design/pibo-ui.js
+bash design/sync.sh --check | grep -v ' ok'                                  # 키트 사본이 원본과 같은가
 node --check ide/static/customblock.js ide/static/customblock_callback.js ide/static/customblock_toolbox.js
 node --check tools/static/index.js tools/static/ko2en.js
 node --check classifier/static/index.js classifier/static/ko2en.js

@@ -1,0 +1,991 @@
+/* ==========================================================================
+   Pibo UI Kit  —  openpibo-os.pibo / openpibo-os.pibrain 공용
+   --------------------------------------------------------------------------
+   빌드 없음. <link> 한 줄로 쓴다. 기존 노랑 분위기를 그대로 유지하되,
+   '노랑을 아껴 써서' 강조가 살아나게 한 것이 이 키트의 전부다.
+
+     <link rel="stylesheet" href="../static/pibo-ui.css?ver=YYMMDDvN">
+
+   원본은 design/pibo-ui.css 하나뿐이다. 각 앱의 static/ 으로는
+   design/sync.sh 가 복사한다. static/ 쪽을 직접 고치지 말 것.
+   ========================================================================== */
+
+:root {
+  /* ── 브랜드 색 ── 기존 값 그대로. 바꾸지 말 것 ───────────────────────── */
+  --yellow:        #f4de3d;
+  --dark-yellow:   #f4d85a;
+  --light-yellow:  rgb(248, 242, 172);
+  --teal:          #13bfd5;   /* tools 에 rgb(18,189,212) 로 1 만큼 어긋나 있었다 */
+  --dark-teal:     #11abbf;
+  --red:           #f16449;
+  --dark-red:      #d85a41;
+  --light-green:   #edf5e0;
+  --mid-gray:      #6c6c6c;
+
+  /* ── 의미 토큰 ── 컴포넌트는 위 브랜드 색을 직접 쓰지 않고 이걸 쓴다 ── */
+  --pb-bg:            #ffffff;
+  --pb-surface:       #f7f7f7;   /* 툴바·패널 바닥 */
+  --pb-surface-2:     #ededed;   /* 한 단계 더 눌린 면 */
+  --pb-border:        #cfcfcf;
+  --pb-border-strong: #9a9a9a;
+  --pb-text:          #1a1a1a;
+  --pb-text-dim:      var(--mid-gray);
+  --pb-text-on-dark:  #ffffff;
+
+  --pb-brand:         var(--yellow);        /* 헤더 = 정체성 */
+  --pb-brand-2:       var(--dark-yellow);
+  --pb-accent:        var(--yellow);        /* 주 동작 = 노랑. 화면에 하나만 */
+  --pb-accent-edge:   #c9ab00;
+  --pb-danger:        var(--red);
+  --pb-danger-edge:   var(--dark-red);
+  --pb-info:          var(--teal);
+  --pb-ok:            var(--light-green);
+  --pb-focus:         #0b63c4;               /* 흰 배경 대비 6.4:1 */
+
+  /* ── 치수 ── 태블릿 기준. 터치 타겟 44px 밑으로 내리지 말 것 ────────── */
+  --pb-tap:      44px;
+  --pb-header-h: 40px;
+  --pb-radius:   10px;
+  --pb-radius-s:  7px;
+  --pb-gap:      10px;
+  --pb-pad:      14px;
+
+  /* ── 글자 ──
+     앱(ide/tools/classifier)이 원래 쓰던 스택과 같다. 키트 컴포넌트가 앱 본문과
+     다른 글꼴로 튀지 않게 한다.
+     한때 system-ui 를 앞에 둔 스택을 .pb(=body) 에 걸었더니 파일 목록·경로·상태바까지
+     앱 전체 글꼴과 크기가 바뀌었다(16px Helvetica/맑은 고딕 -> 15px system-ui).
+     글꼴을 바꾸려면 여기 값만 고친다. PiBrain 이 다르면 이 변수만 덮어쓴다. */
+  --pb-font: Helvetica, "맑은 고딕", "malgun gothic", "Apple SD Gothic Neo",
+             "Apple SD 산돌고딕 Neo", "Microsoft NeoGothic", "Droid sans", sans-serif;
+  --pb-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --pb-fs-s:  13px;
+  --pb-fs:    15px;
+  --pb-fs-l:  17px;
+
+  --pb-shadow:   0 1px 2px rgba(0,0,0,.14);
+  --pb-shadow-2: 0 3px 10px rgba(0,0,0,.18);
+}
+
+/* ==========================================================================
+   기본
+   ========================================================================== */
+/* box-sizing 은 키트 컴포넌트에만 건다. `.pb *` 로 걸면 이 키트를 붙이는 것만으로
+   기존 레이아웃이 틀어질 수 있다. (이 리포의 세 앱은 이미 전역으로 border-box 를
+   쓰고 있어 무해하지만, PiBrain 쪽은 확인 전이다.) */
+.pb-header, .pb-header__brand, .pb-iconbar, .pb-iconbtn,
+.pb-toolbar, .pb-btn, .pb-seg, .pb-seg > button,
+.pb-field, .pb-panel, .pb-note, .pb-badge, .pb-term, .pb-statusbar {
+  box-sizing: border-box;
+}
+
+/* .pb 는 범위 표시일 뿐 앱 본문을 꾸미지 않는다. body 에 붙이므로 여기서 글꼴·크기·색을
+   정하면 앱 전체가 바뀐다. 키트 컴포넌트는 각자 글꼴을 지정한다. */
+.pb {
+  -webkit-text-size-adjust: 100%;
+}
+.pb-header, .pb-iconbtn, .pb-banner, .pb-toast, .pb-modal, .pb-runstat, .pb-statusbar {
+  font-family: var(--pb-font);
+}
+.pb-header { color: var(--pb-text); }
+
+/* 앱이 bare `button { ... }` 을 꾸며 둬도(IDE 는 노랑 배경·min-width 80px·그림자·
+   hover 시 filter:brightness·active 시 transform) 키트 버튼은 영향받지 않게 끊는다.
+   컴포넌트 규칙보다 앞에 둬서 각 컴포넌트의 min-width 등은 뒤에서 다시 잡힌다. */
+.pb-btn, .pb-iconbtn, .pb-seg > button {
+  min-width: 0; margin: 0; filter: none; transform: none;
+  transition: background-color .12s ease, border-color .12s ease;
+  -webkit-appearance: none; appearance: none;
+}
+.pb-btn:hover, .pb-iconbtn:hover, .pb-seg > button:hover,
+.pb-btn:active, .pb-iconbtn:active, .pb-seg > button:active { filter: none; }
+.pb-iconbtn:active, .pb-seg > button:active { transform: none; }
+
+/* 키보드 이동에만 링이 뜬다. 마우스 클릭에는 안 뜬다 */
+.pb :focus-visible {
+  outline: 3px solid var(--pb-focus);
+  outline-offset: 2px;
+  border-radius: var(--pb-radius-s);
+}
+
+/* ==========================================================================
+   헤더  —  노랑은 여기'만'. 브랜드 띠다
+   ========================================================================== */
+.pb-header {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--pb-gap);
+  background: linear-gradient(var(--pb-brand), var(--pb-brand-2));
+  /* 40px. 버튼(32px)은 아이콘·라벨을 가로 한 줄로 둔다.
+     예전 54px(아이콘 위·라벨 아래)는 작업 화면을 너무 먹었다 */
+  padding: 0 var(--pb-pad);
+  height: var(--pb-header-h); min-height: var(--pb-header-h);
+  flex: 0 0 auto;
+  border-bottom: 1px solid rgba(0,0,0,.18);
+}
+.pb-header__brand {
+  font-weight: 700; font-size: 15px; letter-spacing: .2px; white-space: nowrap;
+  display: flex; align-items: center; gap: 6px;
+}
+
+/* 헤더 안의 아이콘 버튼 — 아이콘만 두지 말고 글자 라벨을 같이 둔다.
+   태블릿에는 hover 가 없어서 title 툴팁이 뜨지 않는다. 라벨은 폭이 모자랄 때만 접는다 */
+/* <nav> 이 아니라 <div> 를 쓸 것. tools/static/index.css:322 에 bare `nav { position: fixed }`
+   가 있어서 <nav class="pb-iconbar"> 로 쓰면 헤더 밖으로 튀어나간다. */
+.pb-iconbar { display: flex; align-items: center; gap: 2px; flex-wrap: nowrap; min-width: 0; }
+.pb-iconbtn {
+  display: flex; flex-direction: row; align-items: center; justify-content: center;
+  gap: 6px; flex: 0 0 auto;
+  min-width: 32px; height: 32px; padding: 0 9px;
+  border: 0; background: transparent; color: inherit; box-shadow: none;
+  border-radius: var(--pb-radius-s);
+  font: inherit; font-size: var(--pb-fs-s); text-decoration: none; white-space: nowrap;
+  cursor: pointer;
+}
+/* 아이콘 자리를 고정한다. JS 가 채우는 아이콘(전체화면 등)은 크기가 제각각이다 */
+.pb-iconbtn > :first-child { display: inline-flex; align-items: center; justify-content: center;
+                             width: 16px; height: 16px; font-size: 14px; line-height: 1; }
+.pb-iconbtn__label { font-size: var(--pb-fs-s); font-weight: 600; line-height: 1; letter-spacing: -.1px; }
+.pb-iconbtn:hover  { background: rgba(0,0,0,.08); }
+.pb-iconbtn:active { background: rgba(0,0,0,.15); }
+.pb-iconbtn--danger { color: #7a1d0c; }
+/* 되돌릴 수 없는 버튼 묶음 앞에 가는 구분선 */
+.pb-iconbtn:not(.pb-iconbtn--danger) + .pb-iconbtn--danger { margin-left: 9px; position: relative; }
+.pb-iconbtn:not(.pb-iconbtn--danger) + .pb-iconbtn--danger::before {
+  content: ""; position: absolute; left: -6px; top: 8px; bottom: 8px;
+  border-left: 1px solid rgba(0,0,0,.2);
+}
+/* 언어 선택·로고 */
+.pb-header .pb-field--sm { height: 28px; margin-left: 6px; }
+.pb-header #logo_bt { display: flex; align-items: center; margin-left: 6px; }
+.pb-header #logo_bt img { height: 16px !important; }
+/* 헤더 안의 세그먼트(분류기 탭 등) */
+.pb-header .pb-seg { height: 30px; }
+.pb-header .pb-seg > button { font-size: var(--pb-fs-s); padding: 0 12px; }
+
+/* ==========================================================================
+   버튼  —  위계는 딱 네 단계. 더 만들지 말 것
+     accent  주 동작. 한 화면에 하나 (실행)
+     default 보통 동작 (저장·불러오기)
+     ghost   보조·토글 (글자크기·대비)
+     danger  되돌릴 수 없는 동작 (초기화·종료)
+   ========================================================================== */
+.pb-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  height: var(--pb-tap); min-width: var(--pb-tap); padding: 0 16px;
+  border: 1px solid var(--pb-border); border-radius: var(--pb-radius);
+  background: var(--pb-bg); color: var(--pb-text);
+  font: 700 var(--pb-fs)/1 var(--pb-font);
+  cursor: pointer; white-space: nowrap;
+  box-shadow: var(--pb-shadow);
+}
+.pb-btn:hover:not(:disabled)  { background: #fafafa; border-color: var(--pb-border-strong); }
+.pb-btn:active:not(:disabled) { transform: translateY(1px); box-shadow: none; }
+
+.pb-btn--accent {
+  background: var(--pb-accent); border-color: var(--pb-accent-edge);
+  padding: 0 22px; font-size: var(--pb-fs-l);
+}
+.pb-btn--accent:hover:not(:disabled) { background: var(--dark-yellow); }
+
+.pb-btn--danger { background: var(--pb-danger); border-color: var(--pb-danger-edge); color:#fff; }
+.pb-btn--danger:hover:not(:disabled) { background: var(--dark-red); }
+
+.pb-btn--ghost {
+  background: transparent; border-color: transparent; box-shadow: none;
+  color: var(--pb-text-dim); font-weight: 600; padding: 0 12px;
+}
+.pb-btn--ghost:hover:not(:disabled) { background: var(--pb-surface-2); border-color: transparent; }
+.pb-btn--ghost[aria-pressed="true"] { background: var(--light-yellow); color: var(--pb-text); }
+
+.pb-btn:disabled { opacity: 1; background: var(--pb-bg); color: #b9b9b9;
+                   border-color: #e6e6e6; box-shadow: none; cursor: not-allowed; }
+
+/* ==========================================================================
+   툴바 / 구분선
+   ========================================================================== */
+.pb-toolbar {
+  display: flex; align-items: center; gap: var(--pb-gap); flex-wrap: wrap;
+  background: var(--pb-surface); border-bottom: 1px solid #e0e0e0;
+  padding: 8px var(--pb-pad);
+}
+.pb-div { width: 1px; height: 28px; background: #dcdcdc; margin: 0 4px; flex: none; }
+
+/* 세그먼트 토글 (블록 / 파이썬) */
+.pb-seg { display: inline-flex; height: calc(var(--pb-tap) + 2px);  /* 테두리 1px×2 만큼 키워
+                                                         안쪽 버튼이 정확히 44px 되게 한다 */
+          border: 1px solid var(--pb-border); border-radius: var(--pb-radius);
+          overflow: hidden; box-shadow: var(--pb-shadow); }
+.pb-seg > button {
+  border: 0; background: var(--pb-bg); color: var(--pb-text-dim);
+  font: 700 var(--pb-fs)/1 var(--pb-font); padding: 0 18px; cursor: pointer;
+}
+.pb-seg > button + button { border-left: 1px solid var(--pb-border); }
+.pb-seg > button[aria-selected="true"] { background: var(--pb-accent); color: var(--pb-text); }
+
+/* ==========================================================================
+   입력
+   ========================================================================== */
+.pb-field {
+  height: var(--pb-tap); padding: 0 12px;
+  border: 1px solid var(--pb-border); border-radius: var(--pb-radius);
+  background: var(--pb-bg); color: var(--pb-text);
+  font: var(--pb-fs)/1 var(--pb-font);
+}
+.pb-field:focus { border-color: var(--pb-focus); }
+/* 헤더 안에 들어가는 작은 입력 (언어 선택 등). 헤더 안에서는 28px 로 더 줄인다 */
+.pb-field--sm { height: 32px; padding: 0 8px; font-size: var(--pb-fs-s);
+                border-radius: var(--pb-radius-s); }
+/* 세 앱 모두 `select, input { font-size: 16px !important }` 를 전역으로 갖고 있어
+   헤더 언어 선택만 글자가 커졌다. 헤더 안에서는 키트 크기로 되돌린다 */
+.pb-header .pb-field--sm { font-size: var(--pb-fs-s) !important; }
+
+.pb-label { display: block; font-size: var(--pb-fs-s); font-weight: 700;
+            color: var(--pb-text-dim); margin-bottom: 4px; }
+
+/* ==========================================================================
+   패널 · 배지 · 알림
+   ========================================================================== */
+.pb-panel { background: var(--pb-bg); border: 1px solid #e3e3e3;
+            border-radius: var(--pb-radius); padding: var(--pb-pad); }
+.pb-panel--sunken { background: var(--pb-surface); box-shadow: inset 0 1px 3px rgba(0,0,0,.06); }
+
+.pb-badge { display: inline-flex; align-items: center; gap: 5px;
+            height: 24px; padding: 0 9px; border-radius: 12px;
+            font: 700 var(--pb-fs-s)/1 var(--pb-font);
+            background: var(--pb-surface-2); color: var(--pb-text); }
+.pb-badge--on     { background: var(--pb-ok); }
+.pb-badge--off    { background: var(--pb-surface-2); color: var(--pb-text-dim); }
+.pb-badge--danger { background: var(--pb-danger); color: #fff; }
+
+/* 알림 — 색만으로 구분하지 않는다. 왼쪽 굵은 띠 + 아이콘 자리 */
+.pb-note { border-left: 4px solid var(--pb-border-strong);
+           background: var(--pb-surface); padding: 10px 14px;
+           border-radius: 0 var(--pb-radius-s) var(--pb-radius-s) 0; font-size: var(--pb-fs); }
+.pb-note--info   { border-left-color: var(--dark-teal); }
+.pb-note--warn   { border-left-color: var(--pb-accent-edge); background: #fdf8dd; }
+.pb-note--danger { border-left-color: var(--pb-danger-edge); background: #fdece8; }
+.pb-note b:first-child { display: block; margin-bottom: 2px; }
+
+/* 터미널 · 코드 */
+.pb-term { font: var(--pb-fs-s)/1.5 var(--pb-mono);
+           background: #1e1e1e; color: #e8e8e8;
+           border-radius: var(--pb-radius-s); padding: 10px 12px;
+           white-space: pre-wrap; overflow: auto; }
+
+/* 상태바 */
+.pb-statusbar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+                background: linear-gradient(var(--pb-brand-2), var(--pb-brand));
+                border-top: 1px solid rgba(0,0,0,.18);
+                padding: 4px var(--pb-pad); }   /* 글자 크기·굵기는 앱의 상태바가 정한다 */
+
+/* ==========================================================================
+   셸 레이아웃  —  VS Code 식. 페이지는 스크롤하지 않고 패널 안에서만 스크롤한다.
+
+     <body class="pb pb-shell">
+       <header class="pb-header">...</header>
+       <main>  <div class="pb-panes"> ...pb-pane... </div>  </main>
+       <footer class="pb-statusbar">...</footer>
+
+   기존처럼 calc(100vh - 130px) 같은 숫자를 패널마다 손으로 맞추지 않는다.
+   그 방식은 헤더 높이가 바뀔 때마다 전부 틀어지고, 폭이 모자라면
+   flex-wrap 으로 패널이 아래로 떨어진다.
+   ========================================================================== */
+.pb-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;          /* dvh 라야 모바일 주소창에 안 잘린다 */
+  overflow: hidden;        /* 페이지 자체는 스크롤하지 않는다 */
+  margin: 0;
+}
+/* 높이가 흐르려면 사슬 전체에 min-height:0 이 필요하다. flex 자식의 기본
+   min-height 는 auto 라 내용만큼 부풀고, 그러면 overflow 가 안 먹는다. */
+.pb-shell > main { flex: 1 1 auto; min-height: 0; display: flex; }
+.pb-shell > header, .pb-shell > footer { flex: none; }
+
+.pb-panes {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  flex-wrap: nowrap;       /* 절대 줄바꿈하지 않는다 */
+}
+.pb-pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+}
+.pb-pane--fixed { flex: 0 0 auto; }   /* 폭은 인라인 style 이나 앱 CSS 에서 */
+.pb-pane--grow  { flex: 1 1 0%; }     /* 남는 폭을 먹는다. 0% 라야 내용이 폭을 못 밀어낸다 */
+
+/* 패널 경계. 드래그는 앱 JS 가 붙인다 */
+.pb-resizer {
+  flex: 0 0 8px;
+  cursor: col-resize;
+  background: linear-gradient(90deg, transparent 3px, var(--pb-border) 3px,
+                                      var(--pb-border) 5px, transparent 5px);
+  touch-action: none;
+}
+.pb-resizer:hover, .pb-resizer[data-dragging] {
+  background: linear-gradient(90deg, transparent 2px, var(--pb-focus) 2px,
+                                      var(--pb-focus) 6px, transparent 6px);
+}
+
+/* 접힌 패널 */
+.pb-pane[hidden] { display: none; }
+.pb-pane[hidden] + .pb-resizer,
+.pb-resizer:first-child { display: none; }
+
+/* ==========================================================================
+   움직임 원칙: 150~200ms, transform/opacity 만. 의미가 있을 때만.
+   동작 줄이기 설정이면 전부 끈다 (맨 아래 prefers-reduced-motion).
+   ========================================================================== */
+@keyframes pb-fade   { from { opacity: 0 } to { opacity: 1 } }
+@keyframes pb-pop    { from { opacity: 0; transform: translateY(6px) scale(.97) } to { opacity: 1; transform: none } }
+@keyframes pb-up     { from { opacity: 0; transform: translateY(12px) } to { opacity: 1; transform: none } }
+@keyframes pb-down   { from { opacity: 0; transform: translateY(-8px) } to { opacity: 1; transform: none } }
+@keyframes pb-slide  { from { opacity: 0; transform: translateX(-10px) } to { opacity: 1; transform: none } }
+@keyframes pb-pulse  { 0%,100% { box-shadow: 0 0 0 0 rgba(241,100,73,.55) } 50% { box-shadow: 0 0 0 5px rgba(241,100,73,0) } }
+@keyframes pb-blink  { 0%,100% { opacity: 1 } 50% { opacity: .35 } }
+@keyframes pb-flash  { from { background: var(--light-yellow) } to { background: transparent } }
+
+/* display 를 지정한 키트 컴포넌트가 hidden 속성을 이기지 않게 */
+.pb-btn[hidden], .pb-iconbtn[hidden], .pb-runstat[hidden], .pb-banner[hidden] { display: none !important; }
+
+/* 작은 버튼 (배너·팝업 안) */
+.pb-btn--sm { height: 32px; min-width: 32px; padding: 0 12px; font-size: var(--pb-fs-s); border-radius: var(--pb-radius-s); }
+/* 바쁨 표시: 아이콘만 스피너로 바뀐다(JS). 누를 수 없게만 한다 */
+[aria-busy="true"] { pointer-events: none; cursor: progress; }
+
+/* ── 알림(toast) ──────────────────────────────────────────────────────── */
+.pb-toasts {
+  position: fixed; left: 50%; bottom: 52px; transform: translateX(-50%);
+  z-index: 1000; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  pointer-events: none; max-width: calc(100vw - 32px);
+}
+.pb-toast {
+  pointer-events: auto; cursor: default;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 16px; border-radius: 999px;
+  background: #2b2b2b; color: #fff; box-shadow: var(--pb-shadow-2);
+  font: 600 var(--pb-fs)/1.2 var(--pb-font);
+  animation: pb-up .18s ease-out;
+}
+.pb-toast--ok    i { color: #8fe3a4; }
+.pb-toast--info  i { color: var(--teal); }
+.pb-toast--warn  i { color: var(--yellow); }
+.pb-toast--error   { background: #7a1d0c; }
+.pb-toast--out   { opacity: 0; transform: translateY(8px); transition: opacity .16s, transform .16s; }
+
+/* ── 배너 (헤더 바로 아래 칸) ─────────────────────────────────────────── */
+.pb-banner {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 8px var(--pb-pad);
+  font: 600 var(--pb-fs)/1.35 var(--pb-font);
+  border-bottom: 1px solid rgba(0,0,0,.12);
+  animation: pb-down .18s ease-out;
+  flex: none;
+}
+.pb-banner--warn  { background: #fdf3c4; color: #5a4300; }
+.pb-banner--error { background: #fde3dd; color: #7a1d0c; }
+.pb-banner--info  { background: #e3f6f9; color: #0b4d57; }
+.pb-banner__text { flex: 1 1 240px; }
+.pb-banner__actions { display: flex; gap: 8px; }
+.pb-banner i.fa-plug-circle-xmark { animation: pb-blink 1.4s ease-in-out infinite; }
+/* 연결이 끊긴 동안은 로봇에게 보내는 버튼을 못 누르게 한다 (앱이 data-needs-robot 을 붙인다) */
+body[data-offline] [data-needs-robot] { opacity: .45; pointer-events: none; }
+
+/* ── 팝업: 이 계열 앱들이 공통으로 쓰는 alert/confirm/prompt 팝업에 등장 효과 ─
+   (클래스 이름이 세 앱 모두 같다. display:none -> flex 로 뜰 때마다 다시 재생된다) */
+.pb .alert-popup, .pb .prompt-popup, .pb .confirm-popup, .pb .wifi-popup, .pb .pb-modal {
+  animation: pb-fade .15s ease-out;
+}
+.pb .alert-popup-content, .pb .prompt-popup-content, .pb .confirm-popup-content,
+.pb .wifi-popup-content, .pb .pb-modal__box {
+  animation: pb-pop .17s ease-out;
+}
+
+/* ── 모달 (키트 자체) ───────────────────────────────────────────────── */
+.pb-modal {
+  position: fixed; inset: 0; z-index: 900;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,.42); padding: 16px;
+}
+.pb-modal[hidden] { display: none; }
+.pb-modal__box {
+  background: #fff; border-radius: 12px; box-shadow: var(--pb-shadow-2);
+  width: min(760px, 100%); max-height: min(80vh, 720px);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.pb-modal__head { display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+                  font: 700 var(--pb-fs-l)/1.2 var(--pb-font); border-bottom: 1px solid #eee; }
+.pb-modal__head > span { flex: 1; }
+.pb-modal__body { flex: 1; min-height: 0; overflow: auto; padding: 0; }
+.pb-modal__body pre { margin: 0; padding: 14px 16px; font: 13px/1.55 var(--pb-mono);
+                      white-space: pre; tab-size: 4; background: #fbfbf6; min-height: 100%; }
+.pb-modal__foot { display: flex; justify-content: flex-end; gap: 8px; padding: 10px 16px;
+                  border-top: 1px solid #eee; }
+
+/* ── 실행 상태 칩 ─────────────────────────────────────────────────────── */
+.pb-runstat { display: inline-flex; align-items: center; gap: 6px; margin-left: auto;
+              height: 22px; padding: 0 10px; border-radius: 11px;
+              font: 700 12px/1 var(--pb-font); white-space: nowrap; }
+.pb-runstat[hidden] { display: none; }
+.pb-runstat--running { background: #fde3dd; color: #8a2a17; }
+.pb-runstat--running::before { content: ''; width: 8px; height: 8px; border-radius: 50%;
+                               background: var(--red); animation: pb-blink 1s ease-in-out infinite; }
+.pb-runstat--done  { background: var(--light-green); color: #2e5a1c; }
+.pb-runstat--error { background: #fde3dd; color: #7a1d0c; }
+/* 실행 중에는 정지 버튼이 숨쉬듯 빛난다 */
+body[data-running] #stop:not(:disabled) { animation: pb-pulse 1.4s ease-in-out infinite; }
+
+/* 접힌 패널을 펼칠 때 */
+.pb-pane[data-force-show="1"] { animation: pb-slide .17s ease-out; }
+/* 방금 생긴·지금 연 항목 강조 */
+.pb-flash { animation: pb-flash 1.2s ease-out; }
+
+/* ==========================================================================
+   좁은 화면
+   ========================================================================== */
+/* 라벨은 폭이 모자랄 때만 접는다. 기준은 IDE 실측 — 라벨을 다 펴면 1024px 에서
+   한국어 872px / 영어 927px 이 필요하다(파일 토글 포함). 900px 대에는 터미널 토글이 더 붙는다 */
+@media (max-width: 999px) {
+  .pb-header { padding-left: 8px; padding-right: 8px; }
+  .pb-iconbtn { padding: 0 8px; }
+  .pb-iconbtn__label { display: none; }
+}
+@media (max-width: 720px) {
+  .pb-btn { padding: 0 12px; }
+  .pb-btn--accent { padding: 0 16px; }
+  .pb-header #logo_bt { display: none; }
+  /* 폰 폭에서는 버튼 줄을 가로로 밀어 본다. 헤더 높이는 그대로 */
+  .pb-header { gap: 8px; }
+  .pb-iconbar { overflow-x: auto; scrollbar-width: none; }
+  .pb-iconbar::-webkit-scrollbar { display: none; }
+}
+
+/* 동작 줄이기 설정을 존중한다 */
+@media (prefers-reduced-motion: reduce) {
+  .pb-btn:active:not(:disabled) { transform: none; }
+  .pb *, .pb *::before, .pb *::after, .pb-toast, .pb-banner, .pb-modal, .pb-modal__box {
+    animation: none !important; transition: none !important;
+  }
+}
+
+/* ==========================================================================
+   다듬기 — body.pb-refresh (ide · tools · classifier 가 켠다)
+   ==========================================================================
+   색은 그대로다(노랑 · 청록 · 빨강 · 연노랑). 촌스러워 보이던 건 색이 아니라 그리는
+   방식이었다. 여기서는 모양만 바꾼다. 앱 CSS 를 고치지 않고 위에서 덮으므로 body 의
+   클래스 하나를 빼면 예전 모양으로 돌아간다. PiBrain 은 켜기 전까지 영향이 없다.
+
+     1. 버튼   진한 아래 그림자(0 4px)·알약 → 얇은 테두리·옅은 그림자·둥근 사각형
+               (tools 왼쪽 메뉴처럼 nav 안의 버튼은 뺀다 — 아이콘 탭이다)
+     2. 입력칸 연노랑 알약 → 흰 바탕·회색 테두리. 누르면 청록 링
+     3. 슬라이더·체크박스 브라우저 기본 파랑 → 청록
+     4. 표     연두 칸마다 테두리(엑셀) → 흰 바탕에 줄 구분선
+     5. 노랑은 헤더 한 곳에. 상태바·표 머리·빈 미리보기 칸은 무채색 */
+
+body.pb-refresh { accent-color: var(--teal); }      /* 슬라이더 · 체크박스 · 진행바 */
+
+/* 1. 버튼 — 키트 버튼과 IDE 의 [블록|파이썬] 전환은 뺀다 */
+body.pb-refresh button:not(.pb-btn):not(.pb-iconbtn):not(.pb-seg > button):not([name="codetype"] > button):not(nav button),
+body.pb-refresh input[type="submit"],
+body.pb-refresh label[for="upload"],
+body.pb-refresh label[for="v_import_motion"] {
+  border: 1px solid rgba(0, 0, 0, .14);
+  border-radius: 9px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .10);
+}
+body.pb-refresh button:not(.pb-btn):not(.pb-iconbtn):not(.pb-seg > button):not([name="codetype"] > button):not(nav button):hover:not(:disabled),
+body.pb-refresh input[type="submit"]:hover:not(:disabled),
+body.pb-refresh label[for="upload"]:hover,
+body.pb-refresh label[for="v_import_motion"]:hover {
+  filter: brightness(.96);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, .14);
+}
+body.pb-refresh button:not(.pb-btn):not(.pb-iconbtn):not(.pb-seg > button):not([name="codetype"] > button):not(nav button):active:not(:disabled),
+body.pb-refresh input[type="submit"]:active:not(:disabled),
+body.pb-refresh label[for="upload"]:active,
+body.pb-refresh label[for="v_import_motion"]:active {
+  transform: translateY(1px);
+  top: 0;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, .18);
+}
+body.pb-refresh .upload_label:hover { box-shadow: 0 2px 5px rgba(0, 0, 0, .14); }
+
+/* IDE [블록|파이썬] — 알약 두 개 → 키트 세그먼트와 같은 모양 */
+body.pb-refresh div[name="codetype"] {
+  border: 1px solid var(--pb-border);
+  border-radius: 9px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .08);
+}
+body.pb-refresh div[name="codetype"] > button { border-radius: 0; }
+body.pb-refresh div[name="codetype"] > button + button { border-left: 1px solid var(--pb-border); }
+
+/* 2. 입력칸 — 키트 입력(.pb-field)과 터미널은 그대로 */
+body.pb-refresh input:not([type]):not(.pb-field),
+body.pb-refresh input[type="text"]:not(.pb-field),
+body.pb-refresh input[type="number"]:not(.pb-field),
+body.pb-refresh input[type="password"]:not(.pb-field),
+body.pb-refresh input[type="search"]:not(.pb-field),
+body.pb-refresh select:not(.pb-field),
+body.pb-refresh textarea:not(.pb-field):not(.result):not(.terminal) {
+  background: #fff;
+  border: 1px solid var(--pb-border);
+  border-radius: 8px;
+  transition: border-color .12s ease, box-shadow .12s ease;
+}
+body.pb-refresh input:not([type]):not(.pb-field):focus,
+body.pb-refresh input[type="text"]:not(.pb-field):focus,
+body.pb-refresh input[type="number"]:not(.pb-field):focus,
+body.pb-refresh input[type="password"]:not(.pb-field):focus,
+body.pb-refresh input[type="search"]:not(.pb-field):focus,
+body.pb-refresh select:not(.pb-field):focus,
+body.pb-refresh textarea:not(.pb-field):not(.result):not(.terminal):focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(19, 191, 213, .22);
+  outline: none;
+}
+/* 슬라이더 — 앱의 input 규칙(연노랑 바탕·테두리)이 여기에도 걸려 있었다. accent-color 만 주면
+   브라우저가 안 채운 쪽을 진한 회색으로 칠해 무거워 보여서 트랙·손잡이를 직접 그린다.
+   손잡이는 20px — 태블릿에서 손가락으로 잡을 수 있는 크기 */
+body.pb-refresh input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  background: transparent; border: 0; border-radius: 0; box-shadow: none;
+  height: 22px; padding: 0; cursor: pointer;
+}
+body.pb-refresh input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px; border-radius: 2px; background: #d4d4d4;
+}
+body.pb-refresh input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 20px; height: 20px; margin-top: -8px; border-radius: 50%;
+  background: var(--teal); border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .35);
+}
+body.pb-refresh input[type="range"]::-moz-range-track { height: 4px; border-radius: 2px; background: #d4d4d4; }
+body.pb-refresh input[type="range"]::-moz-range-thumb {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--teal); border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .35);
+}
+body.pb-refresh input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(19, 191, 213, .3); }
+
+/* 3. 표 — IDE 파일 목록 · tools 모션 표 */
+body.pb-refresh .fm-table-wrap,
+body.pb-refresh .motion-table-wrap { border: 1px solid var(--pb-border); border-radius: 10px; }
+body.pb-refresh .fm-table-wrap table { border-collapse: collapse; }
+body.pb-refresh .fm-table-wrap tbody { background: #fff; }
+body.pb-refresh .fm-table-wrap td { border-bottom: 1px solid #eee; padding-top: 3px; padding-bottom: 3px; }
+body.pb-refresh .fm-table-wrap tr:hover td { background: var(--pb-surface); }
+body.pb-refresh #fm_table tr.is-current td { background: var(--light-yellow); }
+body.pb-refresh thead,
+body.pb-refresh #motor_table thead td:nth-child(n + 2) { background: var(--pb-surface-2); font-weight: 700; }
+body.pb-refresh tbody,
+body.pb-refresh #motor_table tbody td:first-child { background: #fff; }
+
+/* 4. 무채색으로 — 빈 미리보기 칸 · 테두리 · 상태바 */
+body.pb-refresh img.preview-img { background-color: var(--pb-surface); border: 1px solid var(--pb-border); }
+body.pb-refresh .result,
+body.pb-refresh .terminal,
+body.pb-refresh .blocklyDiv { border-color: var(--pb-border); border-radius: 10px; }
+body.pb-refresh footer.pb-statusbar {
+  background: var(--pb-surface);
+  border-top: 1px solid var(--pb-border);
+  box-shadow: none;
+  color: var(--pb-text-dim);
+}
+
+/* 5. 헤더 — 그라데이션 대신 한 색, 아래는 얇은 선 */
+body.pb-refresh .pb-header {
+  background: var(--pb-brand);
+  box-shadow: none;
+  border-bottom: 1px solid rgba(0, 0, 0, .10);
+}
+
+/* tools 왼쪽 메뉴 라벨 — v1 에서는 숨긴다(아이콘 PNG 만) */
+.pb-navlabel { display: none; }
+
+/* ==========================================================================
+   v2 — body.pb-v2  (시안. 주소에 ?ui=v2 로 켜고 ?ui=v1 로 끈다)
+   ==========================================================================
+   도구·분류기용. IDE v2 는 자체 화면(ide/templates/index_v2.html + ide/static/v2/)이라
+   이 층을 쓰지 않는다. 색 값은 ide/static/v2/ide.css 와 같다 — 한쪽을 고치면 같이 고칠 것.
+
+     바탕   노랑 헤더 · 흰 패널  →  짙은 남회색 틀(헤더·왼쪽 메뉴) · 바닥 위 카드
+     노랑   헤더 전체  →  브랜드 마크와 '주 동작'(실행 · AI 가르치기) 에만
+     청록   버튼 바탕  →  상태(선택·포커스·슬라이더)는 인디고. 앱의 청록 버튼은 옅은 인디고(tonal)
+     빨강   정지 · 등록 바탕  →  옅은 빨강(tonal)
+     제목   노랑 형광펜(.mark)  →  굵은 글자 + 작은 노랑 막대
+
+   화면 밝기 — html[data-theme] (pibo-ui.js 가 쿠키 pibo_theme 로 정한다. 기본 soft)
+     light  흰 바탕
+     soft   흰색 대신 옅은 회색. 오래된 노트북 패널에서 흰 바탕이 눈부신 걸 줄인다
+     dark   #1d2025 계열 (순수 검정은 안 쓴다) */
+body.pb-v2 {
+  /* 색 — Ink & Amber (IDE v2 의 ide/static/v2/ide.css 와 같은 값)
+     틀 먹빛 남색 · 주 동작 앰버 · 상태 인디고. yellow 는 앰버, accent 는 인디고다 */
+  /* 상단바 = IDE v2(시안 B)와 같은 노랑 */
+  --v2-frame:     #fbc92d;
+  --v2-frame-2:   rgba(31, 36, 48, .10);
+  --v2-frame-3:   rgba(31, 36, 48, .16);
+  --v2-frame-line:rgba(31, 36, 48, .12);
+  --v2-frame-ink: #1f2430;
+  --v2-frame-dim: #2f3542;
+  --v2-rail:      #eceff3;   /* tools 왼쪽 메뉴 */
+  --v2-dark:      #1f2430;   /* 주 동작(먹색) — IDE v2 의 실행·저장과 같다 */
+  --v2-dark-hov:  #333a48;
+  --v2-on-dark:   #ffffff;
+  --v2-ring:      rgba(76, 89, 214, .28);
+  --v2-ring-soft: rgba(76, 89, 214, .22);
+  /* soft (기본) */
+  --v2-canvas:  #eceef4;   /* 바닥 */
+  --v2-top:     #f5f6fa;
+  --v2-surface: #f5f6fa;   /* 카드 */
+  --v2-raise:   #fdfdff;   /* 떠 있는 것 · 입력칸 */
+  --v2-sunken:  #eceef4;
+  --v2-hover:   #e5e8ef;
+  --v2-press:   #d9dde7;
+  --v2-line:    #dcdfe7;
+  --v2-line-2:  #c4cad6;
+  --v2-ink:     #1a1e29;
+  --v2-ink-2:   #474f62;
+  --v2-ink-3:   #6b7386;
+  --v2-yellow:  #f7b924;
+  --v2-yellow-2:#e8a90c;
+  --v2-yellow-t:#fdf0cc;
+  --v2-on-yellow:#1a1e29;
+  --v2-accent:  #4c59d6;
+  --v2-accent-t:#e5e7fb;
+  --v2-accent-t2:#d6daf8;
+  --v2-accent-ink:#2c3596;
+  --v2-red:     #df4a4f;
+  --v2-red-t:   #fbe4e5;
+  --v2-red-t2:  #f6d2d4;
+  --v2-red-ink: #9f1f25;
+  --v2-term:    #151924;
+  --v2-term-ink:#e3e6ee;
+  --v2-shadow:  rgba(20, 24, 40, .18);
+  --v2-scrim:   rgba(16, 20, 32, .5);
+}
+html[data-theme="light"] body.pb-v2 {
+  --v2-frame: #ffcb2f; --v2-rail: #f1f3f6;
+  --v2-canvas: #f1f3f8; --v2-top: #ffffff; --v2-surface: #ffffff; --v2-raise: #ffffff;
+  --v2-sunken: #f5f6fa; --v2-hover: #f1f3f7; --v2-press: #e6e9f0;
+  --v2-line: #e5e8ef; --v2-line-2: #d0d5df;
+  --v2-ink-2: #525a6d; --v2-ink-3: #7a8294;
+  --v2-accent-t: #e8eafc;
+}
+html[data-theme="dark"] body.pb-v2 {
+  --v2-frame: #1b1e24; --v2-frame-2: rgba(255, 255, 255, .07); --v2-frame-3: rgba(255, 255, 255, .12); --v2-frame-line: #0d0f12;
+  --v2-frame-ink: #eceef2; --v2-frame-dim: #c3c9d2; --v2-rail: #16191e;
+  --v2-dark: #f2c94c; --v2-dark-hov: #e6bb34; --v2-on-dark: #1b1d20;
+  --v2-canvas: #151922; --v2-top: #161a22; --v2-surface: #1a1e27; --v2-raise: #242935;
+  --v2-sunken: #1f232d; --v2-hover: #282e3a; --v2-press: #313847;
+  --v2-line: #2b303c; --v2-line-2: #3b4252;
+  --v2-ink: #e4e7ef; --v2-ink-2: #adb4c4; --v2-ink-3: #858da0;
+  --v2-yellow: #f5c04a; --v2-yellow-2: #e8b030; --v2-yellow-t: #3a311b; --v2-on-yellow: #1a1d24;
+  --v2-accent: #8e98ff; --v2-accent-t: #262c52; --v2-accent-t2: #303769; --v2-accent-ink: #c4c9ff;
+  --v2-red: #e8676b; --v2-red-t: #3e2226; --v2-red-t2: #4b282c; --v2-red-ink: #ffb0b2;
+  --v2-term: #11141b;
+  --v2-shadow: rgba(0, 0, 0, .45); --v2-scrim: rgba(0, 0, 0, .6);
+  color-scheme: dark;
+}
+/* 청록 틀안 — html[data-frame="teal"]. IDE v2 와 같은 값 */
+html[data-frame="teal"] body.pb-v2 {
+  --v2-frame: #0f4c55; --v2-frame-2: #16606b; --v2-frame-3: #1f7380; --v2-frame-line: #0a3a41;
+  --v2-frame-ink: #effafb; --v2-frame-dim: #a7d2d8;
+  --v2-accent: #0e8a9a; --v2-accent-t: #d9f0f2; --v2-accent-t2: #c3e6ea; --v2-accent-ink: #0a5560;
+  --v2-ring: rgba(14, 138, 154, .3); --v2-ring-soft: rgba(14, 138, 154, .22);
+}
+html[data-frame="teal"][data-theme="dark"] body.pb-v2 {
+  --v2-frame: #0b2c32; --v2-frame-2: #123c43; --v2-frame-3: #1a4d55; --v2-frame-line: #071d21;
+  --v2-frame-dim: #8fbfc5;
+  --v2-accent: #45c6d6; --v2-accent-t: #163a40; --v2-accent-t2: #1d4a51; --v2-accent-ink: #a6eaf2;
+  --v2-ring: rgba(69, 198, 214, .35); --v2-ring-soft: rgba(69, 198, 214, .25);
+}
+body.pb-v2 {
+  /* 키트 토큰을 v2 값으로 */
+  --pb-bg: var(--v2-raise);  --pb-surface: var(--v2-sunken);  --pb-surface-2: var(--v2-press);
+  --pb-border: var(--v2-line-2);  --pb-border-strong: var(--v2-ink-3);
+  --pb-text: var(--v2-ink);  --pb-text-dim: var(--v2-ink-2);
+  --pb-brand: var(--v2-top);  --pb-brand-2: var(--v2-top);
+  --pb-accent: var(--v2-yellow);  --pb-accent-edge: var(--v2-yellow-2);
+  --pb-danger: var(--v2-red);  --pb-danger-edge: var(--v2-red);
+  --pb-info: var(--v2-accent);  --pb-focus: var(--v2-accent);
+  --pb-radius: 10px;  --pb-radius-s: 8px;
+  --pb-shadow: 0 1px 2px rgba(0, 0, 0, .06);
+  --pb-font: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+             "Noto Sans KR", "Malgun Gothic", "맑은 고딕", "Segoe UI", Roboto, sans-serif;
+  /* 앱 CSS 가 직접 쓰는 옛 색 이름도 v2 값으로 */
+  --light-yellow: var(--v2-yellow-t);
+  --light-green: var(--v2-sunken);
+
+  background: var(--v2-canvas);
+  color: var(--v2-ink);
+  font-family: var(--pb-font);
+  accent-color: var(--v2-accent);
+}
+body.pb-v2 h1, body.pb-v2 h2, body.pb-v2 h3, body.pb-v2 h4, body.pb-v2 h5, body.pb-v2 h6,
+body.pb-v2 header, body.pb-v2 button, body.pb-v2 input, body.pb-v2 select, body.pb-v2 textarea,
+body.pb-v2 label, body.pb-v2 i.fa > span { font-family: var(--pb-font); }
+body.pb-v2 [hidden] { display: none !important; }   /* 앱 CSS 의 display:flex 가 hidden 을 이기던 곳(녹음 파형 등) */
+body.pb-v2 ::selection { background: var(--v2-ring-soft); }
+
+/* ── 헤더 (틀) ──────────────────────────────────────────────────────────── */
+body.pb-v2 .pb-header {
+  height: 44px; min-height: 44px;              /* IDE v2 상단바와 같은 높이 */
+  background: var(--v2-frame);
+  border-bottom: 1px solid var(--v2-frame-line);
+  color: var(--v2-frame-ink);
+}
+body.pb-v2 .pb-header__brand { font-size: 15px; gap: 8px; letter-spacing: -.1px; }
+body.pb-v2 .pb-header__brand > i:first-child {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 8px;
+  background: transparent; color: var(--v2-frame-ink); font-size: 16px;
+}
+/* THE MAKER 로고는 노랑 바탕에서 안 보인다. IDE v2 처럼 헤더에서 뺀다 */
+body.pb-v2 .pb-header #logo_bt { display: none; }
+body.pb-v2 .pb-header .pb-iconbtn { color: var(--v2-frame-dim); }
+body.pb-v2 .pb-header .pb-iconbtn:hover { background: var(--v2-frame-2); color: var(--v2-frame-ink); }
+body.pb-v2 .pb-header .pb-iconbtn:active { background: var(--v2-frame-3); }
+body.pb-v2 .pb-iconbtn[aria-pressed="true"] { background: var(--v2-accent-t); color: var(--v2-accent-ink); }
+body.pb-v2 .pb-iconbtn--danger:hover { background: var(--v2-red-t); color: var(--v2-red-ink); }
+body.pb-v2 .pb-iconbtn:not(.pb-iconbtn--danger) + .pb-iconbtn--danger::before { border-color: var(--v2-frame-3); }
+body.pb-v2 .pb-header .pb-field--sm {
+  border-color: var(--v2-frame-3); background: var(--v2-frame-2); color: var(--v2-frame-ink);
+}
+body.pb-v2 .pb-header :focus-visible { outline-color: var(--v2-yellow); }
+/* 헤더 안의 탭(분류기) */
+body.pb-v2 .pb-header .pb-seg { background: var(--v2-frame-2); }
+body.pb-v2 .pb-header .pb-seg > button { color: var(--v2-frame-dim); }
+body.pb-v2 .pb-header .pb-seg > button:hover:not([aria-selected="true"]) { background: var(--v2-frame-3); color: var(--v2-frame-ink); }
+body.pb-v2 .pb-header .pb-seg > button[aria-selected="true"],
+body.pb-v2 .pb-header .cls-tabs > button[aria-selected="true"] { background: var(--v2-frame-ink); color: var(--v2-frame); box-shadow: none; }
+
+/* ── 세그먼트: 눌린 홈 위에 떠 있는 알약 ─────────────────────────────────── */
+body.pb-v2 .pb-seg,
+body.pb-v2 div[name="codetype"] {
+  background: var(--v2-sunken); border: 0; border-radius: 9px; padding: 3px; gap: 2px;
+  box-shadow: none; overflow: visible;
+}
+body.pb-v2 .pb-seg > button,
+body.pb-v2 div[name="codetype"] > button {
+  background: transparent; color: var(--v2-ink-2); border: 0; border-radius: 7px;
+  box-shadow: none; font-weight: 600;
+}
+body.pb-v2 .pb-seg > button + button,
+body.pb-v2 div[name="codetype"] > button + button { border-left: 0; }
+body.pb-v2 .pb-seg > button:hover:not([aria-selected="true"]),
+body.pb-v2 div[name="codetype"] > button:hover:not(.checked) { background: var(--v2-hover); color: var(--v2-ink); }
+body.pb-v2 .pb-seg > button[aria-selected="true"],
+body.pb-v2 .cls-tabs > button[aria-selected="true"],
+body.pb-v2 div[name="codetype"] > button.checked {
+  background: var(--v2-raise); color: var(--v2-ink); font-weight: 700;
+  box-shadow: 0 1px 2px rgba(0,0,0,.14), 0 0 0 1px rgba(0,0,0,.04);
+}
+body.pb-v2 .pb-header .pb-seg { height: 32px; }
+body.pb-v2 div[name="codetype"] > button { width: auto; min-width: 64px; padding: 0 14px; }
+
+/* ── 키트 버튼 ──────────────────────────────────────────────────────────── */
+body.pb-v2 .pb-btn { background: var(--v2-raise); color: var(--v2-ink); border-color: var(--v2-line-2); box-shadow: var(--pb-shadow); font-weight: 600; }
+body.pb-v2 .pb-btn:hover:not(:disabled) { background: var(--v2-hover); border-color: var(--v2-line-2); }
+/* 주 동작은 먹색(IDE v2 의 실행·저장과 같다). 노랑은 상단바에만 */
+body.pb-v2 .pb-btn--accent { background: var(--v2-dark); border-color: transparent; color: var(--v2-on-dark); font-weight: 700; }
+body.pb-v2 .pb-btn--accent:hover:not(:disabled) { background: var(--v2-dark-hov); border-color: transparent; }
+body.pb-v2 .pb-btn--accent > i { color: inherit; }
+body.pb-v2 .pb-btn--danger { background: var(--v2-red); border-color: transparent; color: #fff; }
+body.pb-v2 .pb-btn--ghost,
+body.pb-v2 .pb-btn--ghost:hover:not(:disabled) { box-shadow: none; border-color: transparent; background: transparent; }
+body.pb-v2 .pb-btn--ghost:hover:not(:disabled) { background: var(--v2-hover); }
+body.pb-v2 .pb-btn--ghost[aria-pressed="true"] { background: var(--v2-accent-t); color: var(--v2-accent-ink); }
+body.pb-v2 .pb-btn:disabled { background: var(--v2-sunken); color: var(--v2-ink-3); border-color: var(--v2-line); opacity: .7; }
+
+/* ── 앱이 직접 그리던 버튼 (tools). 기본은 보조 버튼 ─────────────────────── */
+body.pb-v2 button:not(.pb-btn):not(.pb-iconbtn):not(.pb-seg > button):not([name="codetype"] > button):not(nav button),
+body.pb-v2 input[type="submit"],
+body.pb-v2 label[for="upload"],
+body.pb-v2 label[for="v_import_motion"] {
+  background: var(--v2-raise) !important;
+  color: var(--v2-ink);
+  border: 1px solid var(--v2-line-2);
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
+  font-size: 14px; font-weight: 600;
+  filter: none;
+}
+body.pb-v2 button:not(.pb-btn):not(.pb-iconbtn):not(.pb-seg > button):not([name="codetype"] > button):not(nav button):hover:not(:disabled),
+body.pb-v2 input[type="submit"]:hover:not(:disabled),
+body.pb-v2 label[for="upload"]:hover,
+body.pb-v2 label[for="v_import_motion"]:hover {
+  background: var(--v2-hover) !important; filter: none;
+}
+body.pb-v2 button:not(.pb-btn):not(.pb-iconbtn):not(.pb-seg > button):not([name="codetype"] > button):not(nav button):active:not(:disabled) {
+  transform: translateY(1px); box-shadow: none;
+}
+body.pb-v2 main button:not(.pb-btn):not(.pb-iconbtn) > i,
+body.pb-v2 main label[for="upload"] > i { color: var(--v2-ink-2); }
+
+/* 앱의 청록 버튼(.btn-teal) → 옅은 인디고 (tools 의 프레임 버튼들) */
+body.pb-v2 button.btn-teal {
+  background: var(--v2-accent-t) !important; color: var(--v2-accent-ink);
+  border-color: transparent; box-shadow: none;
+}
+body.pb-v2 button.btn-teal:hover:not(:disabled) { background: var(--v2-accent-t2) !important; border-color: transparent; }
+body.pb-v2 button.btn-teal > i { color: inherit; }
+/* 빨강 버튼 → 옅은 빨강 */
+body.pb-v2 button.btn-red {
+  background: var(--v2-red-t) !important; color: var(--v2-red-ink);
+  border-color: transparent; box-shadow: none;
+}
+body.pb-v2 button.btn-red:hover:not(:disabled) { background: var(--v2-red-t2) !important; border-color: transparent; }
+body.pb-v2 button.btn-red > i { color: inherit; }
+body.pb-v2 button.disabled, body.pb-v2 button:disabled { opacity: .45; filter: none; }
+
+/* v1 IDE 에 이 층이 걸린 경우(정적 서버로 index.html 을 직접 연 때)의 주 동작 */
+body.pb-v2 #execute {
+  background: var(--v2-yellow) !important; color: var(--v2-on-yellow);
+  border-color: transparent; font-weight: 700;
+}
+body.pb-v2 #execute:hover:not(:disabled) { background: var(--v2-yellow-2) !important; }
+body.pb-v2 #execute > i { color: var(--v2-on-yellow); }
+body.pb-v2[data-running] #stop:not(.disabled):not(:disabled) { background: var(--v2-red) !important; color: #fff; opacity: 1; }
+body.pb-v2[data-running] #stop:not(.disabled):not(:disabled) > i { color: #fff; }
+
+/* ── 입력칸 ─────────────────────────────────────────────────────────────── */
+body.pb-v2 input:not([type]):not(.pb-field),
+body.pb-v2 input[type="text"]:not(.pb-field),
+body.pb-v2 input[type="number"]:not(.pb-field),
+body.pb-v2 input[type="password"]:not(.pb-field),
+body.pb-v2 input[type="search"]:not(.pb-field),
+body.pb-v2 select:not(.pb-field),
+body.pb-v2 textarea:not(.pb-field):not(.result):not(.terminal),
+body.pb-v2 .pb-field {
+  background: var(--v2-raise); border-color: var(--v2-line-2); border-radius: 8px; color: var(--v2-ink);
+}
+body.pb-v2 textarea:disabled:not(.result):not(.terminal) { background: var(--v2-sunken); color: var(--v2-ink); opacity: 1; }
+body.pb-v2 input:focus:not([type="range"]), body.pb-v2 select:focus, body.pb-v2 textarea:focus:not(.result):not(.terminal),
+body.pb-v2 .pb-field:focus {
+  border-color: var(--v2-accent) !important;
+  box-shadow: 0 0 0 3px var(--v2-ring) !important; outline: none;
+}
+body.pb-v2 input::placeholder { color: var(--v2-ink-3); }
+body.pb-v2 input[type="range"]::-webkit-slider-runnable-track { background: var(--v2-line-2); }
+body.pb-v2 input[type="range"]::-webkit-slider-thumb { background: var(--v2-accent); border-color: var(--v2-raise); }
+body.pb-v2 input[type="range"]::-moz-range-track { background: var(--v2-line-2); }
+body.pb-v2 input[type="range"]::-moz-range-thumb { background: var(--v2-accent); border-color: var(--v2-raise); }
+
+/* ── 패널: 바닥 위 카드 ───────────────────────────────────────────────────── */
+body.pb-v2 .pb-panes { background: var(--v2-canvas); padding: 8px; }
+body.pb-v2 .pb-pane {
+  background: var(--v2-surface);
+  border: 1px solid var(--v2-line);
+  border-radius: 12px;
+}
+body.pb-v2 .pb-pane[hidden] { display: none; }
+body.pb-v2 .pb-resizer { flex-basis: 8px; background: transparent; }
+body.pb-v2 .pb-resizer:hover, body.pb-v2 .pb-resizer[data-dragging] {
+  background: linear-gradient(90deg, transparent 3px, var(--v2-accent) 3px, var(--v2-accent) 5px, transparent 5px);
+}
+
+/* ── tools: 왼쪽 메뉴(옅은 레일) + 카드 ─────────────────────────────────────── */
+body.pb-v2 main > nav { background: var(--v2-rail); border-right: 1px solid var(--v2-line); width: 64px; }
+body.pb-v2 nav ul { margin: 0; padding: 6px 0; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+body.pb-v2 nav button {
+  width: 52px; padding: 8px 0 6px; border-radius: 10px; opacity: 1;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  color: var(--v2-ink-3); font: 600 10.5px/1 var(--pb-font);
+}
+body.pb-v2 nav button::after { opacity: .5; transform: scale(.8); }   /* 검은 PNG 아이콘 */
+html[data-theme="dark"] body.pb-v2 nav button::after { filter: invert(1); }
+body.pb-v2 nav button > .pb-navlabel { order: 2; }
+body.pb-v2 nav button:hover { background: var(--v2-hover); color: var(--v2-ink); }
+body.pb-v2 nav button:hover::after { opacity: .8; }
+body.pb-v2 nav button.menu-selected { background: var(--v2-raise); color: var(--v2-ink); position: relative; box-shadow: 0 1px 2px rgba(0,0,0,.1); }
+body.pb-v2 nav button.menu-selected::after { opacity: 1; }
+body.pb-v2 main > div.content.pb-pane { border: 0; border-radius: 0; background: var(--v2-canvas); padding: 10px 12px 16px; }
+body.pb-v2 .pb-navlabel { display: block; }
+
+/* tools 카드(section) — 그림자 대신 선, 제목은 형광펜 대신 굵은 글자 */
+body.pb-v2 article { gap: 10px; }
+body.pb-v2 article > section {
+  background: var(--v2-surface); color: var(--v2-ink);
+  border: 1px solid var(--v2-line); border-radius: 12px; box-shadow: none;
+  padding: 14px 16px; min-height: 0;
+}
+body.pb-v2 .mark {
+  background: none; font-size: 15px; font-weight: 800; margin: 2px 0 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+body.pb-v2 .mark::before {
+  content: ""; width: 4px; height: 16px; border-radius: 2px; background: var(--v2-yellow-2); flex: none;
+}
+body.pb-v2 article section header { font-size: 13px; font-weight: 700; color: var(--v2-ink-2); margin: 10px 0 6px; }
+body.pb-v2 article section .label { color: var(--v2-ink-2); }
+body.pb-v2 .pibo-section > img { filter: opacity(.55); }
+html[data-theme="dark"] body.pb-v2 .pibo-section > img { filter: opacity(.35) invert(1) hue-rotate(180deg); }
+body.pb-v2 #v_img { border-radius: 10px; background: var(--v2-sunken); }
+body.pb-v2 .motion-input-label .label { color: var(--v2-ink); }
+body.pb-v2 .toggle-switch { background: var(--v2-line-2); }
+
+/* ── 표 ─────────────────────────────────────────────────────────────────── */
+body.pb-v2 .fm-table-wrap,
+body.pb-v2 .motion-table-wrap { border-color: var(--v2-line); background: var(--v2-raise); }
+body.pb-v2 .fm-table-wrap td { border-bottom-color: var(--v2-line); }
+body.pb-v2 .fm-table-wrap tr:hover td { background: var(--v2-hover); }
+body.pb-v2 #fm_table tr.is-current td { background: var(--v2-yellow-t); }
+body.pb-v2 thead,
+body.pb-v2 #motor_table thead td:nth-child(n + 2) { background: var(--v2-sunken); color: var(--v2-ink-2); }
+body.pb-v2 tbody,
+body.pb-v2 #motor_table tbody td:first-child,
+body.pb-v2 #motor_table tbody td:nth-child(n + 2) { background: var(--v2-raise); color: var(--v2-ink); }
+body.pb-v2 #motor_table tbody td:first-child { background: var(--v2-sunken); }
+
+/* ── 편집기 · 터미널 ────────────────────────────────────────────────────── */
+body.pb-v2 .blocklyDiv { border-color: var(--v2-line); }
+body.pb-v2 .result,
+body.pb-v2 .terminal {
+  background: var(--v2-term) !important; color: var(--v2-term-ink) !important;
+  border: 1px solid var(--v2-term) !important; border-radius: 10px;
+  font-family: var(--pb-mono) !important; font-size: 13.5px !important; line-height: 1.55;
+  padding: 10px 12px;
+}
+body.pb-v2 .result::-webkit-scrollbar-thumb,
+body.pb-v2 .terminal::-webkit-scrollbar-thumb { background: #3a4048; }
+body.pb-v2 .result::-webkit-scrollbar-track,
+body.pb-v2 .terminal::-webkit-scrollbar-track { background: transparent; }
+body.pb-v2 img.preview-img { background-color: var(--v2-sunken); border-color: var(--v2-line); border-radius: 10px; }
+
+/* ── 상태바 ─────────────────────────────────────────────────────────────── */
+body.pb-v2 footer.pb-statusbar {
+  background: var(--v2-frame); border-top: 1px solid var(--v2-frame-line); box-shadow: none;
+  color: var(--v2-frame-dim); min-height: 26px; height: auto; padding-top: 3px; padding-bottom: 3px;
+  font-size: 12.5px !important;
+}
+body.pb-v2 footer.pb-statusbar * { font-size: 12.5px !important; }
+
+/* ── 대화상자 (키트 · tools 의 alert/confirm/prompt) ──────────────────────── */
+body.pb-v2 .pb-modal__box,
+body.pb-v2 .alert-popup-content, body.pb-v2 .prompt-popup-content, body.pb-v2 .confirm-popup-content,
+body.pb-v2 .usedata-popup-content, body.pb-v2 .wifi-popup-content {
+  background: var(--v2-raise); color: var(--v2-ink);
+  border: 1px solid var(--v2-line); border-radius: 16px;
+  box-shadow: 0 20px 48px var(--v2-shadow);
+}
+body.pb-v2 .alert-popup-content p, body.pb-v2 .prompt-popup-content p, body.pb-v2 .confirm-popup-content p { color: var(--v2-ink); }
+body.pb-v2 .alert-popup, body.pb-v2 .prompt-popup, body.pb-v2 .confirm-popup { background-color: var(--v2-scrim); }
+body.pb-v2 .pb-modal__head, body.pb-v2 .pb-modal__foot { background: var(--v2-raise); border-color: var(--v2-line); }
+body.pb-v2 #alertOkBtn, body.pb-v2 #confirmOkBtn, body.pb-v2 #promptOkBtn {
+  background: var(--v2-dark) !important; color: var(--v2-on-dark); border-color: transparent;
+}
+body.pb-v2 #alertOkBtn:hover, body.pb-v2 #confirmOkBtn:hover, body.pb-v2 #promptOkBtn:hover { background: var(--v2-dark-hov) !important; }
+body.pb-v2 #confirmCancelBtn, body.pb-v2 #promptCancelBtn { color: var(--v2-ink); }
+
+/* ── 분류기가 직접 쓰던 흰색 ────────────────────────────────────────────── */
+body.pb-v2 .store-card, body.pb-v2 .code { background: var(--v2-raise); color: var(--v2-ink); border-color: var(--v2-line); }
+body.pb-v2 .confusion th { background: var(--v2-surface); color: var(--v2-ink-2); }
+body.pb-v2 .saved .fa-circle-check { color: var(--v2-accent); }
+/* [꾹 눌러 모으기] 누르는 동안은 빨강(모으는 중) — 위의 먹색 주 동작 규칙보다 앞서야 한다 */
+body.pb-v2 .cls-hold.is-on { background: var(--v2-red); border-color: transparent; color: #fff; }

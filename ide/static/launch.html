@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PiBrain</title>
+<link rel="stylesheet" href="all.min.css">
+<link rel="stylesheet" href="pibo-ui.css?ver=260924v9">
+<link rel="shortcut icon" href="icon.png" type="image/x-icon">
+<style>
+  /* 도구·분류기·대화를 새 탭으로 열 때 거치는 대기 페이지.
+     IDE 가 버튼을 누른 '그 순간' 이 탭을 연다 — 몇 초 뒤에 window.open 하면
+     브라우저가 팝업으로 막을 수 있어서다. 여기서 서비스를 켜고, 실제로 응답할
+     때까지 기다린 뒤 스스로 그 주소로 이동한다. */
+  html, body { height: 100%; margin: 0; background: #fafafa; }
+  body { font-family: var(--pb-font); color: var(--pb-text); }
+  .wrap { min-height: calc(100dvh - 54px); display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .card { background: #fff; border: 1px solid #e3e3e3; border-radius: 14px; box-shadow: var(--pb-shadow);
+          width: min(440px, 100%); padding: 26px 24px 20px; animation: pb-pop .18s ease-out; }
+  .ttl { display: flex; align-items: center; gap: 10px; font: 700 20px/1.2 var(--pb-font); margin: 0 0 18px; }
+  .ttl i { font-size: 22px; }
+  ol { list-style: none; margin: 0 0 16px; padding: 0; }
+  li { display: flex; align-items: center; gap: 10px; padding: 7px 0; color: #9a9a9a; font: 600 15px/1.3 var(--pb-font); }
+  li i { width: 18px; text-align: center; }
+  li i.pending { font-size: 8px; opacity: .45; }   /* fa-regular 글꼴은 기기에 없다. solid 원을 작게 */
+  li[data-s="now"]  { color: var(--pb-text); }
+  li[data-s="done"] { color: #2e7d32; }
+  li .sec { margin-left: auto; font: 600 13px var(--pb-mono); color: var(--pb-text-dim); }
+  .bar { height: 6px; border-radius: 3px; background: #eee; overflow: hidden; margin: 4px 0 14px; }
+  .bar > div { height: 100%; width: 0; background: var(--yellow); transition: width .4s ease; }
+  .msg { min-height: 20px; font: 14px/1.45 var(--pb-font); color: var(--pb-text-dim); margin: 0 0 14px; }
+  .msg.err { color: #9b2c16; font-weight: 700; }
+  .acts { display: flex; justify-content: flex-end; gap: 8px; }
+  .acts [hidden] { display: none; }
+</style>
+</head>
+<body class="pb">
+<header class="pb-header">
+  <span class="pb-header__brand"><i class="fa-solid fa-robot"></i>&nbsp;Pibo</span>
+</header>
+<div class="wrap">
+  <div class="card" role="status" aria-live="polite">
+    <p class="ttl"><i id="icon" class="fa-solid fa-microchip"></i><span id="title"></span></p>
+    <ol>
+      <li id="s1"><i class="fa-solid fa-circle pending"></i><span data-t="s1"></span></li>
+      <li id="s2"><i class="fa-solid fa-circle pending"></i><span data-t="s2"></span><span class="sec" id="sec"></span></li>
+      <li id="s3"><i class="fa-solid fa-circle pending"></i><span data-t="s3"></span></li>
+    </ol>
+    <div class="bar"><div id="bar"></div></div>
+    <p class="msg" id="msg"></p>
+    <div class="acts">
+      <button type="button" class="pb-btn" id="close"><span data-t="close"></span></button>
+      <button type="button" class="pb-btn pb-btn--accent" id="retry" hidden><i class="fa-solid fa-rotate-right"></i><span data-t="retry"></span></button>
+    </div>
+  </div>
+</div>
+<script>
+(function () {
+  'use strict';
+  var Q = new URLSearchParams(location.search);
+  var L = (Q.get('lang') || (function(){ try { return localStorage.getItem('language'); } catch (e) { return null; } })()
+           || ((navigator.language || '').indexOf('ko') === 0 ? 'ko' : 'en')) === 'ko' ? 'ko' : 'en';
+  document.documentElement.lang = L;
+  var T = {
+    s1:      { ko: '켜는 중',                     en: 'Starting' },
+    s2:      { ko: '준비될 때까지 기다리는 중',     en: 'Waiting until it is ready' },
+    s2_llm:  { ko: '대화 모델을 불러오는 중',       en: 'Loading the chat model' },
+    s3:      { ko: '여는 중',                     en: 'Opening' },
+    close:   { ko: '닫기',                        en: 'Close' },
+    retry:   { ko: '다시 시도',                   en: 'Try again' },
+    title:   { ko: '{0} 켜는 중',                 en: 'Starting {0}' },
+    slow:    { ko: '처음 켤 때는 조금 더 걸릴 수 있습니다.', en: 'The first start can take a little longer.' },
+    llmslow: { ko: '대화 모델은 크기가 커서 1~2분 걸릴 수 있습니다.', en: 'The chat model is large and can take a minute or two.' },
+    cors:    { ko: '준비 상태를 확인할 수 없어 열어 봅니다. 아직 불러오는 중이면 잠시 뒤 새로고침하세요.',
+               en: 'Could not confirm it is ready, opening anyway. If it is still loading, refresh in a moment.' },
+    fail:    { ko: '{0}을(를) 켜지 못했습니다. 로봇이 켜져 있고 같은 WiFi 에 있는지 확인한 뒤 다시 시도하세요.',
+               en: 'Could not start {0}. Check the robot is on and on the same WiFi, then try again.' },
+    bad:     { ko: '알 수 없는 도구입니다.', en: 'Unknown tool.' }
+  };
+  function t(k, a) { var s = (T[k] && (T[k][L] || T[k].en)) || k; return a == null ? s : s.replace('{0}', a); }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-t]'), function (e) { e.textContent = t(e.getAttribute('data-t')); });
+
+  var HOST = location.hostname;
+  var SVC = {
+    tools:      { port: 50040, on: '/tools?enable=on',      check: 'port',   limit: 60,
+                  name: { ko: '도구', en: 'Tools' },               icon: 'fa-microchip' },
+    classifier: { port: 50010, on: '/classifier?enable=on', check: 'port',   limit: 60,
+                  name: { ko: '분류기', en: 'Image Classifier' },   icon: 'fa-images' },
+    llm:        { port: 50020, on: '/llm?enable=on',        check: 'health', limit: 240,
+                  name: { ko: '대화', en: 'Chat' },                icon: 'fa-comment' }
+  };
+  var key = Q.get('svc'), S = SVC[key];
+  var $ = function (id) { return document.getElementById(id); };
+  $('close').onclick = function () {
+    try { window.close(); } catch (e) {}
+    setTimeout(function () { if (!window.closed) location.href = 'http://' + HOST + '/'; }, 200);
+  };
+  if (!S) { $('msg').textContent = t('bad'); $('msg').className = 'msg err'; return; }
+
+  var name = S.name[L];
+  document.title = t('title', name);
+  $('title').textContent = t('title', name);
+  $('icon').className = 'fa-solid ' + S.icon;
+  if (key === 'llm') $('s2').children[1].textContent = t('s2_llm');
+  var target = 'http://' + HOST + ':' + S.port + '/';
+  if (Q.get('ui') === 'v2') document.body.classList.add('pb-v2');
+  var UIQ = /^v[12]$/.test(Q.get('ui') || '') ? '?ui=' + Q.get('ui') : '';
+
+  function step(n, state) {
+    var li = $('s' + n); li.setAttribute('data-s', state);
+    li.firstElementChild.className = state === 'done' ? 'fa-solid fa-circle-check'
+                                   : state === 'now'  ? 'fa-solid fa-spinner fa-spin'
+                                   : 'fa-solid fa-circle pending';
+  }
+  function withTimeout(ms) {
+    var c = new AbortController(); setTimeout(function () { c.abort(); }, ms); return c.signal;
+  }
+  function turnOn() {
+    // 서버는 systemctl start 만 하고 곧바로 200 을 준다. 실제 준비 여부는 아래에서 본다.
+    return fetch('http://' + HOST + S.on, { cache: 'no-store', signal: withTimeout(4000) })
+      .then(function () { return true; }, function () { return false; });
+  }
+  // 포트가 열렸는지: CORS 헤더가 없어도 no-cors 요청은 서버가 떠 있으면 성공, 꺼져 있으면 실패한다
+  function portUp() {
+    return fetch(target, { mode: 'no-cors', cache: 'no-store', signal: withTimeout(2500) })
+      .then(function () { return true; }, function () { return false; });
+  }
+  // llama-server: /health 가 모델을 올리는 동안 503, 준비되면 200. CORS 기본 허용이라 상태가 읽힌다
+  function llmState() {
+    return fetch(target + 'health', { cache: 'no-store', signal: withTimeout(2500) })
+      .then(function (r) { return r.ok ? 'ready' : 'loading'; },
+            function () { return portUp().then(function (up) { return up ? 'blind' : 'down'; }); });
+  }
+
+  var t0 = 0, polling = null, resend = null;
+  function stopTimers() { clearInterval(polling); clearInterval(resend); }
+  function tick() {
+    var s = Math.floor((Date.now() - t0) / 1000);
+    $('sec').textContent = s + 's';
+    // 진행 바는 '예상'이 아니라 한도 대비 경과. 끝까지 차면 실패다
+    $('bar').style.width = Math.min(95, Math.round(s / S.limit * 100)) + '%';
+    if (s === 8) $('msg').textContent = t(key === 'llm' ? 'llmslow' : 'slow');
+    return s;
+  }
+  function ready(note) {
+    stopTimers();
+    step(2, 'done'); step(3, 'now');
+    $('bar').style.width = '100%';
+    if (note) $('msg').textContent = note;
+    setTimeout(function () { location.replace(target + UIQ); }, note ? 1600 : 250);
+  }
+  function fail() {
+    stopTimers();
+    step(2, 'idle');
+    $('msg').textContent = t('fail', name); $('msg').className = 'msg err';
+    $('retry').hidden = false; $('retry').focus();
+  }
+  function start() {
+    $('retry').hidden = true; $('msg').textContent = ''; $('msg').className = 'msg';
+    step(1, 'now'); step(2, 'idle'); step(3, 'idle');
+    t0 = Date.now(); tick();
+    turnOn().then(function () {
+      step(1, 'done'); step(2, 'now');
+      // 켜기 요청을 5초마다 다시 보낸다. 같은 탭에서 이전 도구 페이지가 떠나며 보낸
+      // enable=off 가 이 요청보다 늦게 도착해도 결국 켜진 상태로 끝나게 하려는 것이다.
+      // 이미 켜진 서비스에 systemctl start 는 아무 일도 하지 않는다.
+      resend = setInterval(turnOn, 5000);
+      var busy = false;
+      polling = setInterval(function () {
+        var s = tick();
+        if (s >= S.limit) return fail();
+        if (busy) return; busy = true;
+        (S.check === 'health' ? llmState() : portUp().then(function (u) { return u ? 'ready' : 'down'; }))
+          .then(function (st) {
+            busy = false;
+            if (st === 'ready') ready();
+            else if (st === 'blind') ready(t('cors'));
+          });
+      }, 1000);
+    });
+  }
+  $('retry').onclick = start;
+  start();
+})();
+</script>
+</body>
+</html>

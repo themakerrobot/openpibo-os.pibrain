@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ko">
+<!--
+  IDE v2 (시안 B) — 기본 화면(260924~). 예전 화면은 ?ui=v1, 돌아올 땐 ?ui=v2 (쿠키 pibo_ui, 도구·분류기도 같이 따라간다).
+  요소 id 는 index.html 과 전부 같다 — index.js 를 그대로 쓴다. 바뀐 건 배치와 모양뿐이다.
+    상단바       브랜드 | 블록/파이썬 | 도구·대화·분류기·도움말·더보기
+    왼쪽 패널    [PiBrain] 화면 출력·상태·출력·입력  /  [파일] 목록·추가·미리보기  +  실행·정지(늘 아래)
+    가운데       파일 이름·미저장·파이썬 코드·저장 | 블록 찾기 + 분류 + 작업판
+-->
+<head>
+  <title>PiBrain Maker</title>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <script>/* 화면 밝기(pibo-ui.js 와 같은 규칙): 쿠키 → OS 어두운 모드 → 부드럽게. 첫 페인트 전에 정해 번쩍임을 막는다 */
+    (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
+      document.documentElement.setAttribute('data-theme', m ? m[1] : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'soft')); } catch (e) {} })();</script>
+  <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
+  <link rel="stylesheet" href="../static/codemirror.css" />
+  <link rel="stylesheet" href="../static/jquery.jsonview.min.css" />
+  <link rel="stylesheet" href="../static/pibo-ui.css?ver=260924v1" />
+  <link rel="stylesheet" href="../static/v2/ide.css?ver=260924v1" />
+  <link rel="shortcut icon" href="../static/icon.png?ver=240319v1" type="image/x-icon" />
+
+  <script src="../static/ko2en.js?ver=260924v1"></script>
+  <script src="../static/blockly_compressed.js?ver=240319v1"></script>
+  <script src="../static/blocks_compressed.js?ver=240319v1"></script>
+  <script src="../static/python_compressed.js?ver=240319v1"></script>
+  <script src="../static/customblock.js?ver=260924v1"></script>
+  <script src="../static/customblock_callback.js?ver=260924v1"></script>
+  <script src="../static/customblock_toolbox.js?ver=260924v1"></script>
+  <script src="../static/jquery-3.7.1.min.js"></script>
+  <script src="../static/field-bitmap.js"></script>
+  <script src="../static/jquery.jsonview.min.js"></script>
+  <script src="../static/codemirror.min.js"></script>
+  <script src="../static/comment.js"></script>
+  <script src="../static/python.js"></script>
+  <script src="../static/disable-top-blocks.js"></script>
+  <script src="../static/socket.io.min.js?ver=240319v3"></script>
+</head>
+
+<body class="pb pb-shell v2-app">
+  <!-- ── 상단바 ─────────────────────────────────────────────────────────── -->
+  <header class="pb-header v2-top">
+    <div class="v2-top__left">
+      <button type="button" class="v2-icon v2-side-toggle" id="v2_side_toggle" data-title-key="v2_panel" aria-pressed="true"><i class="fa-solid fa-table-columns"></i></button>
+      <span class="v2-brand"><i class="fa-solid fa-brain"></i><b>PiBrain</b><span data-key="v2_brand"></span></span>
+    </div>
+
+    <div class="v2-top__mid">
+      <div name="codetype" class="v2-seg">
+        <button name="block"><i class="fa-solid fa-puzzle-piece"></i><span data-key="block"></span></button>
+        <button name="python"><i class="fa-solid fa-code"></i><span data-key="python"></span></button>
+      </div>
+    </div>
+
+    <div class="v2-top__right">
+      <div class="pb-iconbar v2-apps">
+        <a class="pb-iconbtn" id="tools_bt" title="Tools"><i class="fa-solid fa-microchip"></i><span class="pb-iconbtn__label" data-key="nav_tools"></span></a>
+        <a class="pb-iconbtn" id="llm_bt" title="Chat Bot"><i class="fa-solid fa-comment"></i><span class="pb-iconbtn__label" data-key="nav_llm"></span></a>
+        <a class="pb-iconbtn" id="classifier_bt" title="Image Classifier"><i class="fa-solid fa-images"></i><span class="pb-iconbtn__label" data-key="nav_classifier"></span></a>
+        <a class="pb-iconbtn" id="guide_bt" title="Guide"><i class="fa-solid fa-circle-question"></i><span class="pb-iconbtn__label" data-key="nav_guide"></span></a>
+      </div>
+      <details class="v2-menu" id="more_menu">
+        <summary class="pb-iconbtn" data-title-key="v2_more"><i class="fa-solid fa-ellipsis"></i></summary>
+        <div class="v2-pop v2-pop--right" role="menu">
+          <div class="v2-pop__row v2-pop__row--stack">
+            <span data-key="v2_theme"></span>
+            <div class="v2-seg v2-seg--full" id="theme_seg" role="radiogroup">
+              <button type="button" data-theme-set="light"><i class="fa-solid fa-sun"></i><span data-key="v2_theme_light"></span></button>
+              <button type="button" data-theme-set="soft"><i class="fa-solid fa-circle-half-stroke"></i><span data-key="v2_theme_soft"></span></button>
+              <button type="button" data-theme-set="dark"><i class="fa-solid fa-moon"></i><span data-key="v2_theme_dark"></span></button>
+            </div>
+          </div>
+          <div class="v2-pop__row">
+            <span data-key="v2_fontsize"></span>
+            <span class="v2-stepper">
+              <button type="button" data-step="-1" aria-label="-"><i class="fa-solid fa-minus"></i></button>
+              <input type="number" id="fontsize" min="5" max="50" value="14" step="1" pattern="\d*" aria-label="fontsize" />
+              <button type="button" data-step="1" aria-label="+"><i class="fa-solid fa-plus"></i></button>
+            </span>
+          </div>
+          <label class="v2-pop__row v2-switch">
+            <span data-key="v2_dark_editor"></span>
+            <input type="checkbox" id="theme_check" name="theme_check" checked aria-label="theme_check" />
+            <span class="v2-switch__track"></span>
+          </label>
+          <hr>
+          <a class="v2-pop__item" id="fullscreen_bt"><span id="fullscreen_txt"></span><span data-key="nav_fullscreen"></span></a>
+          <label class="v2-pop__item v2-pop__item--field"><i class="fa-solid fa-language"></i><span data-key="v2_language"></span>
+            <select id="language" aria-label="language">
+              <option value="ko">한국어</option>
+              <option value="en">English</option>
+            </select>
+          </label>
+          <a class="v2-pop__item" href="?ui=v1"><i class="fa-solid fa-clock-rotate-left"></i><span data-key="v2_old_design"></span></a>
+          <hr>
+          <a class="v2-pop__item v2-pop__item--danger" id="restore_bt"><i class="fa-solid fa-eraser"></i><span data-key="nav_restore"></span></a>
+          <a class="v2-pop__item v2-pop__item--danger" id="poweroff_bt"><i class="fa-solid fa-power-off"></i><span data-key="nav_poweroff"></span></a>
+          <hr>
+          <a class="v2-pop__logo" id="logo_bt"><img src="../static/themaker.png" alt="THE MAKER" /></a>
+        </div>
+      </details>
+    </div>
+  </header>
+
+  <main>
+    <div class="content pb-panes">
+      <!-- ── 왼쪽 패널: [PiBrain | 파일] + 실행·정지 ──────────────────────────── -->
+      <aside class="pb-pane pb-pane--fixed v2-side" id="v2_side" data-tab="robot">
+        <div class="v2-tabs" role="tablist">
+          <button type="button" role="tab" data-side-tab="robot" aria-selected="true"><span class="v2-dot" aria-hidden="true"></span><span data-key="v2_tab_robot"></span></button>
+          <button type="button" role="tab" data-side-tab="files" aria-selected="false"><span data-key="nav_files"></span></button>
+        </div>
+
+        <!-- [PiBrain] -->
+        <section class="v2-side__page" data-page="robot" id="result_en">
+          <figure class="v2-live" id="v2_live">
+            <img id="v2_live_img" alt="" />
+            <figcaption class="v2-live__empty"><i class="fa-solid fa-camera"></i><span data-key="v2_live_empty"></span></figcaption>
+            <span class="v2-live__badge"><span class="v2-live__dot"></span><span data-key="v2_live"></span></span>
+            <button type="button" class="v2-live__zoom" id="v2_live_zoom" data-title-key="v2_zoom"><i class="fa-solid fa-expand"></i></button>
+          </figure>
+
+          <div class="v2-stats">
+            <a class="v2-stat v2-stat--wide" id="showNetwork"><span id="s_network"></span><span class="v2-stat__more"><span data-key="v2_settings"></span> ›</span></a>
+            <span class="v2-stat"><i class="fa-solid fa-temperature-half"></i><span id="s_cpu_temp"></span></span>
+            <span class="v2-stat"><i class="fa-solid fa-memory"></i><span id="s_memory"></span></span>
+            <span class="v2-stat"><i class="fa-solid fa-clock"></i><span id="s_runtime"></span></span>
+            <span class="v2-stat"><i class="fa-solid fa-brain"></i><span id="s_os_version"></span></span>
+            <a class="v2-stat" id="usedata_bt" title="H/W Test"><i class="fa-solid fa-tag"></i><span id="s_serial"></span></a>
+          </div>
+
+          <div class="v2-term">
+            <div class="v2-term__bar">
+              <span class="v2-term__title" data-key="v2_output"></span>
+              <span class="v2-term__path" id="respath"></span>
+              <span id="run_status" class="pb-runstat" hidden aria-live="polite"></span>
+              <button id="eraser" class="v2-icon" data-title-key="v2_clear"><i class="fa-solid fa-eraser"></i></button>
+            </div>
+            <textarea id="result" class="result" disabled aria-label="result"></textarea>
+            <div class="v2-term__input">
+              <span class="v2-term__caret">&gt;</span>
+              <input type="text" id="prompt" name="prompt" autocomplete="off" aria-label="prompt" data-ph-key="v2_prompt_ph" />
+              <button id="prompt_bt" class="v2-icon" data-title-key="enter"><i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+          </div>
+        </section>
+
+        <!-- [파일] -->
+        <section class="v2-side__page" data-page="files" id="browser_en" hidden>
+          <div class="v2-fbar">
+            <div class="v2-crumb"><i class="fa-solid fa-folder"></i><span id="path"></span></div>
+            <details class="v2-menu" id="add_menu">
+              <summary class="v2-btn v2-btn--dark v2-btn--sm"><i class="fa-solid fa-plus"></i><span data-key="v2_add"></span></summary>
+              <div class="v2-pop v2-pop--right">
+                <button type="button" id="add_file" class="v2-pop__item"><i class="fa-solid fa-file-circle-plus"></i><span data-key="add_file"></span></button>
+                <button type="button" id="add_directory" class="v2-pop__item"><i class="fa-solid fa-folder-plus"></i><span data-key="add_directory"></span></button>
+                <hr>
+                <label for="upload" class="v2-pop__item"><i class="fa-solid fa-arrow-up-from-bracket"></i><span data-key="upload"></span></label>
+                <p class="v2-pop__hint" data-key="v2_drop_hint"></p>
+              </div>
+            </details>
+            <div class="filebox">
+              <form method="post" action="/upload" enctype="multipart/form-data">
+                <input type="file" id="upload" multiple>
+              </form>
+            </div>
+          </div>
+          <div class="fm-table-wrap v2-files">
+            <table id="fm_table"><tbody></tbody></table>
+          </div>
+          <div class="v2-preview">
+            <div class="v2-preview__head"><i class="fa-solid fa-photo-film"></i><span data-key="v2_preview"></span><span id="mediapath"></span></div>
+            <div class="v2-preview__img">
+              <img id="image" class="preview-img" alt="" />
+              <p class="v2-preview__empty"><span data-key="v2_preview_empty"></span></p>
+            </div>
+            <audio controls id="audio" class="preview-audio"></audio>
+          </div>
+        </section>
+
+        <div class="v2-run">
+          <button id="execute" class="v2-btn v2-btn--run"><i class="fa-solid fa-play"></i><span data-key="execute"></span></button>
+          <button id="stop" class="v2-btn v2-btn--stop disabled"><i class="fa-solid fa-stop"></i><span data-key="stop"></span></button>
+        </div>
+      </aside>
+
+      <div class="pb-resizer" data-pane="side" data-target="v2_side" data-side="left" data-min="280" role="separator" aria-orientation="vertical" aria-label="resize"></div>
+
+      <!-- ── 편집기 ────────────────────────────────────────────────────── -->
+      <section class="pb-pane pb-pane--grow v2-editor">
+        <div class="v2-editor__bar">
+          <div class="v2-file" id="v2_file">
+            <i class="fa-solid fa-file-lines"></i>
+            <span class="v2-file__name" id="v2_file_name"></span>
+            <span id="codecheck" class="v2-file__dirty" aria-label="unsaved"></span>
+            <span id="codepath" hidden></span>
+          </div>
+          <button type="button" class="v2-btn v2-btn--sm v2-btn--ghost" id="pycode_bt" hidden><i class="fa-solid fa-code"></i><span data-key="pycode"></span></button>
+          <button type="button" id="save" class="v2-btn v2-btn--sm v2-btn--dark"><i class="fa-solid fa-floppy-disk"></i><span data-key="save"></span></button>
+        </div>
+        <div class="v2-editor__stage">
+          <div id="blocklyDiv" class="blocklyDiv"></div>
+          <div id="codeDiv">
+            <form id="code_form">
+              <textarea id="codemirror-code" name="source_code" aria-label="source_code"></textarea>
+            </form>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ── 대화상자 ───────────────────────────────────────────────────────── -->
+  <div class="wifi-popup" id="wifiPopup" style="display:none;">
+    <div class="wifi-popup-content">
+      <h1>
+        <span><i class="fa-solid fa-wifi"></i><span data-key="internet_settings">Internet Settings</span></span>
+        <a id="hidewifi" aria-label="close"><i class="fa-solid fa-xmark"></i></a>
+      </h1>
+      <div class="v2-wifi-info"><span id="network_info"></span></div>
+      <div class="network-list-section">
+        <h2><span data-key="available_networks">Available Networks</span></h2>
+        <ul class="network-list" id="wifi_list_ul">
+          <li><span>...</span></li>
+        </ul>
+        <p><a href="#" id="manualConnectionLink"><span data-key="manual_connection">Manual Connection / Other Network...</span></a></p>
+      </div>
+
+      <form class="connection-details" id="connection-form" style="display: none;">
+        <div class="form-group">
+          <label for="ssid"><span data-key="wifi_name">Name (SSID):</span></label>
+          <input type="text" id="ssid" name="ssid" readonly aria-label="ssid">
+        </div>
+        <div class="form-group">
+          <p><strong id="security-type-display"></strong></p>
+          <input type="hidden" id="security-type-hidden" name="security-type">
+        </div>
+        <div class="form-group identity-field hidden">
+          <label for="identity"><span data-key="wifi_identity">Identity:</span></label>
+          <input type="text" id="identity" name="identity" aria-label="identity">
+        </div>
+        <div class="form-group password-field hidden">
+          <label for="psk"><span data-key="password">Password:</span></label>
+          <input type="password" id="psk" name="psk" aria-label="psk">
+        </div>
+        <div id="status-message" class="status-message"></div>
+        <div class="dialog-actions">
+          <button type="submit" class="connect-button" id="wifi_submit_bt"><i class="fa-solid fa-check"></i><span data-key="confirm"></span></button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="alert-popup" id="alertPopup" style="display:none;">
+    <div class="alert-popup-content">
+      <p id="alertMessageElement">alert text</p>
+      <div class="popup-buttons">
+        <button id="alertOkBtn"><span data-key="confirm"></span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="prompt-popup" id="promptPopup" style="display:none;">
+    <div class="prompt-popup-content">
+      <p id="promptMessageElement">prompt text</p>
+      <input type="text" id="promptInputElement" />
+      <div class="popup-buttons">
+        <button id="promptCancelBtn"><span data-key="cancel"></span></button>
+        <button id="promptOkBtn"><span data-key="confirm"></span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="confirm-popup" id="confirmPopup" style="display:none;">
+    <div class="confirm-popup-content">
+      <p id="confirmMessageElement">confirm text</p>
+      <div class="popup-buttons">
+        <button id="confirmCancelBtn"><span data-key="cancel"></span></button>
+        <button id="confirmOkBtn"><span data-key="confirm"></span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="pb-modal" id="pyModal" hidden role="dialog" aria-modal="true" aria-labelledby="pyModalTitle">
+    <div class="pb-modal__box">
+      <div class="pb-modal__head"><i class="fa-solid fa-code"></i><span id="pyModalTitle" data-key="pycode_title"></span>
+        <button type="button" class="pb-btn pb-btn--sm pb-btn--ghost" data-act="close" aria-label="close"><i class="fa-solid fa-xmark"></i></button></div>
+      <div class="pb-modal__body"><pre></pre></div>
+      <div class="pb-modal__foot">
+        <button type="button" class="pb-btn pb-btn--sm" data-act="copy"><i class="fa-solid fa-copy"></i><span data-key="copy"></span></button>
+        <button type="button" class="pb-btn pb-btn--sm pb-btn--accent" data-act="close"><span data-key="close"></span></button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../static/pibo-ui.js?ver=260924v1"></script>
+  <script src="../static/index.js?ver=260924v1"></script>
+  <script src="../static/v2/vendor/toolbox-search.js?ver=1.2.11"></script>
+  <script src="../static/v2/ide.js?ver=260924v1"></script>
+</body>
+
+</html>

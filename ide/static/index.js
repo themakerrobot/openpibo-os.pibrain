@@ -205,93 +205,52 @@ async function prompt_popup(message, defaultValue = '') {
   });
 }
 
-const llm_bt = document.getElementById("llm_bt")
-llm_bt.addEventListener("click", function () {
-  const llm_bt_innerHTML = llm_bt.innerHTML;
-  llm_bt.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i>";
-  fetch(`http://${location.hostname}/llm?enable=on`)
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.text();
-  })
-  .then(data => {
-    setTimeout(function() {
-      window.open(`http://${location.hostname}:50020`);
-      llm_bt.innerHTML = llm_bt_innerHTML;
-    }, 3000);
-  //   console.log('데이터 수신 성공:', data);
-  })
-  .catch(error => {
-  //   console.error('데이터 요청 중 에러 발생:', error);
-  });
+// 도구·대화·분류기는 누르는 '그 순간' 이름 붙인 새 탭으로 연다 (PiboUI.openService).
+// 탭은 launch.html 대기 페이지로 열리고, 거기서 서비스를 켜고 실제로 응답할 때까지
+// 기다린 뒤 스스로 이동한다.
+// 전에는 켜기 요청 후 무조건 3초 뒤에 window.open 했다. 사용자 클릭에서 3초가 지나
+// 브라우저가 팝업으로 막을 수 있었고, 대화 모델은 3초 안에 안 떠서 빈 화면이 먼저
+// 떴고, 실패하면 .catch 가 에러를 삼켜 스피너가 계속 돌았다.
+// 탭에 이름을 붙였으므로 두 번 눌러도 탭이 하나로 유지된다.
+document.getElementById("tools_bt").addEventListener("click", function () {
+  PiboUI.openService("tools");
 });
+document.getElementById("llm_bt").addEventListener("click", function () {
+  PiboUI.openService("llm");
+});
+document.getElementById("classifier_bt").addEventListener("click", function () {
+  PiboUI.openService("classifier");
+});
+
 // H/W 검수. 출하 검수용이라 헤더 아이콘으로 내놓지 않고 푸터 시리얼번호를 누르게 했다.
-// 검수 서버는 카메라·LCD·GPIO·오디오를 독점하므로 학생이 실수로 열면 곤란하다.
+// 검수 서버는 카메라·LCD·GPIO·오디오를 독점하므로 학생이 실수로 열면 곤란하다. 켜기 전에 한 번 되묻는다.
 //
 // 주의: usedata_bt 의 innerHTML 을 스피너로 갈아끼우지 말 것. socket 'system'
 // 이벤트가 주기적으로 #s_serial 에 텍스트를 다시 쓰는데, 그 span 을 날려버리면
 // 시리얼이 영영 안 돌아온다.
-const usedata_bt = document.getElementById("usedata_bt");
-if (usedata_bt) {
-  usedata_bt.addEventListener("click", async function () {
-    if (!(await confirm_popup(translations["confirm_hwtest"][lang]))) return;
-    fetch(`http://${location.hostname}/hwtest?enable=on`)
-      .then(() => {
-        setTimeout(function () {
-          window.open(`http://${location.hostname}:50050`);
-        }, 4000);
-      })
-      .catch(() => {});
+const hwtest_bt = document.getElementById("usedata_bt");
+let hwtest_busy = false;
+hwtest_bt.addEventListener("click", async function () {
+  if (hwtest_busy) return;
+  if (!(await confirm_popup(t("confirm_hwtest")))) return;
+  hwtest_busy = true;
+  hwtest_bt.style.opacity = "0.5";
+  fetch(`http://${location.hostname}/hwtest?enable=on`)
+  .then(() => {
+    setTimeout(function() {
+      window.open(`http://${location.hostname}:50050`);
+      hwtest_bt.style.opacity = "";
+      hwtest_busy = false;
+    }, 4000);
+  })
+  .catch(() => {
+    hwtest_bt.style.opacity = "";
+    hwtest_busy = false;
   });
-}
+});
 
-const tools_bt = document.getElementById("tools_bt")
-tools_bt.addEventListener("click", function () {
-  const tools_bt_innerHTML = tools_bt.innerHTML;
-  tools_bt.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i>";
-  fetch(`http://${location.hostname}/tools?enable=on`)
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.text();
-  })
-  .then(data => {
-    setTimeout(function() {
-      window.open(`http://${location.hostname}:50040`);
-      tools_bt.innerHTML = tools_bt_innerHTML;
-    }, 3000);
-  })
-  .catch(error => {
-    tools_bt.innerHTML = tools_bt_innerHTML;
-  });
-});
-const classifier_bt = document.getElementById("classifier_bt")
-classifier_bt.addEventListener("click", async function () {
-  const classifier_bt_innerHTML = classifier_bt.innerHTML;
-  classifier_bt.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i>";
-  fetch(`http://${location.hostname}/classifier?enable=on`)
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.text();
-  })
-  .then(data => {
-    setTimeout(function() {
-      window.open(`http://${location.hostname}:50010`);
-      classifier_bt.innerHTML = classifier_bt_innerHTML;
-    }, 3000);
-  //   console.log('데이터 수신 성공:', data);
-  })
-  .catch(error => {
-  //   console.error('데이터 요청 중 에러 발생:', error);
-  });
-});
 document.getElementById("guide_bt").addEventListener("click", function () {
-  window.open(`http://${location.hostname}:8080`);
+  window.open(`http://${location.hostname}:8080`, "pibo_guide");
 });
 
 document.getElementById("restore_bt").addEventListener("click", async function () {
@@ -321,13 +280,13 @@ const codeEditor = CodeMirror.fromTextArea(
     theme: "cobalt",
     extraKeys: {
       "Ctrl-S": async (instance) => {
-        if ($("#codepath").html() == "") {
+        if ($("#codepath").text() == "") {
           await alert_popup(translations['nofile'][lang]);
           return;
         }
         saveCode = codeEditor.getValue();
         CodeMirror.signal(codeEditor, "change");
-        socket.emit("save", { codepath: $("#codepath").html(), codetext: saveCode });
+        socket.emit("save", { codepath: $("#codepath").text(), codetext: saveCode });
       },
       "Ctrl-/": "toggleComment"
     },
@@ -346,6 +305,26 @@ let BLOCK_PATH = '';
 let saveCode = "";
 let saveBlock = "{}";
 
+// 빈 블록 파일(새로 만든 파일)은 [깃발 클릭했을 때] 하나를 놓고 연다.
+// 깃발 아래에 붙지 않은 블록은 disable-top-blocks 가 회색으로 막으므로, 빈 화면에서
+// 블록부터 끌어다 놓으면 왜 안 되는지 알 수 없다. 파일은 저장하기 전까지 비어 있고,
+// saveBlock 을 지금 모양으로 맞춰 두어 '저장할까요?' 가 괜히 뜨지 않게 한다.
+// 이벤트는 끄고 놓는다 — 켜 두면 블록 생성 이벤트가 '파일을 먼저 고르세요' 팝업을
+// 띄우고(파일 없이 처음 열 때), 되돌리기로 깃발이 지워진다.
+function loadStarterBlocks() {
+  Blockly.Events.disable();
+  try {
+    Blockly.serialization.workspaces.load(
+      { blocks: { languageVersion: 0, blocks: [{ type: "flag_event", x: 40, y: 40 }] } }, workspace);
+  } finally {
+    Blockly.Events.enable();
+  }
+  workspace.clearUndo();
+  workspace.scroll(0, 0);
+  saveBlock = JSON.stringify(Blockly.serialization.workspaces.save(workspace));
+  update_block();
+}
+
 $("#fontsize").on("change", function () {
   document.querySelector("div.CodeMirror").style.fontSize = `${$("#fontsize").val()}px`;
   codeEditor.refresh();
@@ -354,8 +333,8 @@ $("#fontsize").on("change", function () {
 
 socket.on("update", async (data) => {
   if ("code" in data) {
-    const oldpath = $("#codepath").html();
-    $("#codepath").html(data["filepath"]);
+    const oldpath = $("#codepath").text();
+    $("#codepath").text(data["filepath"]);
 
     if (oldpath != "" || data["code"] != "") {
       let codetype = "";
@@ -376,14 +355,11 @@ socket.on("update", async (data) => {
         }
         catch (e) {
           if (data["code"] == "") {
-            saveBlock = "{}";
-            Blockly.serialization.workspaces.load(JSON.parse("{}"), workspace);
-            workspace.scrollCenter();
-            update_block();
+            loadStarterBlocks();
           }
           else {
             await alert_popup(translations['not_load_block'][lang]);
-            $("#codepath").html(oldpath);
+            $("#codepath").text(oldpath);
           }
         }
       }
@@ -392,26 +368,37 @@ socket.on("update", async (data) => {
         codeEditor.setValue(saveCode);
       }
     }
+    // 파일 없이 블록을 쌓다가 새 파일을 연 경우는 위에서 건너뛴다(쌓은 블록을 그 파일에
+    // 저장하게 하려는 것). 쌓은 게 없을 때만 깃발을 놓는다
+    else if (document.querySelector("div[name=codetype] button[name=block]").classList.contains("checked")
+             && workspace.getAllBlocks(false).length == 0) {
+      loadStarterBlocks();
+    }
   }
 
   if ("image" in data) {
-    $("#mediapath").html(data["filepath"]);
+    $("#mediapath").text(data["filepath"]);
     $("#image").prop("src", `data:image/jpeg;charset=utf-8;base64,${data["image"]}`);
   }
 
   if ("audio" in data) {
-    $("#mediapath").html(data["filepath"]);
+    $("#mediapath").text(data["filepath"]);
     $("#audio").prop("src", `data:audio/mpeg;charset=utf-8;base64,${data["audio"]}`);
   }
 
-  if ("record" in data) {
-    result.value = data["record"];
+  // 서버는 시작할 때 전체(record)를 한 번 보내고, 그 뒤로는 늘어난 부분(record_add)만 보낸다
+  if ("record" in data || "record_add" in data) {
+    if ("record" in data) result.value = data["record"];
+    else result.value += data["record_add"];
     result.scrollTop = result.scrollHeight;
     execute.classList.add("disabled");
     stop.classList.remove("disabled");
     execute.disabled = true;
     stop.disabled = false;
   }
+
+  if ("saved" in data) onSaved(data["saved"]);
+  if ("dialog" in data && /^err_save/.test(data["dialog"])) onSaveFailed();
 
   if ("dialog" in data) {
     await alert_popup(t(data["dialog"], data["detail"]));
@@ -475,14 +462,11 @@ socket.on("init", (d) => {
     }
     catch (e) {
       if (d["codetext"] == "") {
-        saveBlock = "{}";
-        Blockly.serialization.workspaces.load(JSON.parse("{}"), workspace);
-        workspace.scrollCenter();
-        update_block();
         $("#codepath").text(d["codepath"]);
+        loadStarterBlocks();
       }
       else {
-        $("#codepath").html("");
+        $("#codepath").text("");
       }
     }
     finally {
@@ -507,6 +491,21 @@ socket.on("system", (data) => {
   $("#network_info").html(`<i class="fas fa-network-wired"></i> ${data[7]}, <i class="fa-solid fa-wifi"></i> ${data[6]}/${data[8]}`);
 });
 
+socket.on("update_battery", (data) => {
+  let bat = Number(data.split("%")[0]);
+  let bat_str = ['empty', 'quarter', 'half', 'three-quarters', 'full'];
+
+  $("#d_battery_val").html(
+    `<i class='fa fa-battery-${bat_str[Math.floor(bat / 25)]}' aria-hidden='true'></i>${data} `
+  );
+});
+
+socket.on("update_dc", (data) => {
+  $("#d_dc_val").html(
+    data.toUpperCase() == "ON" ? "<i class='fa fa-plug' aria-hidden='true'></i>" : ""
+  );
+});
+
 codeTypeBtns.forEach((btn) => {
   const handler = (e) => {
     let before_codetype = "";
@@ -521,16 +520,16 @@ codeTypeBtns.forEach((btn) => {
       if (before_codetype != "block") {
         $("#codeDiv").hide();
         $("#blocklyDiv").show();
-        CODE_PATH = $("#codepath").html();
-        $("#codepath").html(BLOCK_PATH);
+        CODE_PATH = $("#codepath").text();
+        $("#codepath").text(BLOCK_PATH);
       }
     }
     else {
       if (before_codetype == "block") {
         $("#blocklyDiv").hide();
         $("#codeDiv").show();
-        BLOCK_PATH = $("#codepath").html();
-        $("#codepath").html(CODE_PATH);
+        BLOCK_PATH = $("#codepath").text();
+        $("#codepath").text(CODE_PATH);
       }
     }
     setLanguage(lang);
@@ -544,7 +543,7 @@ codeEditor.on("change", function () {
 });
 
 execute.addEventListener("click", async function () {
-  let filepath = $("#codepath").html();
+  let filepath = $("#codepath").text();
   if (filepath == "") {
     await alert_popup(translations['nofile'][lang]);
     return;
@@ -573,7 +572,7 @@ execute.addEventListener("click", async function () {
   }
   else {
     saveCode = codeEditor.getValue();
-    codepath = $("#codepath").html();
+    codepath = $("#codepath").text();
     CodeMirror.signal(codeEditor, "change");
     socket.emit("execute", { codetype: codetype, codepath: codepath, codetext: saveCode });
   }
@@ -582,7 +581,7 @@ execute.addEventListener("click", async function () {
   stop.classList.remove("disabled");
   execute.disabled = true;
   stop.disabled = false;
-  $("#respath").text($("#codepath").html());
+  $("#respath").text($("#codepath").text());
 });
 
 stop.addEventListener("click", function () {
@@ -612,7 +611,7 @@ socket.on("update_file_manager", (d) => {
       $("<tr>")
         .append(
           $("<td style='width:30px;text-align:center'>").append(`<i class='fa-solid fa-${data[i].type}'></i>`),
-          $("<td>").append(data[i].name)
+          $("<td>").text(data[i].name)
             .hover(
               function () { $(this).animate({ opacity: "0.3" }, 100); $(this).css("cursor", "pointer"); },
               function () { $(this).animate({ opacity: "1" }, 100); $(this).css("cursor", "default"); }
@@ -620,7 +619,7 @@ socket.on("update_file_manager", (d) => {
             .click(async function () {
               let idx = $(this).closest('tr').index();
               let type = $(`#fm_table tr:eq(${idx}) td:eq(0)`).html()
-              let name = $(`#fm_table tr:eq(${idx}) td:eq(1)`).html()
+              let name = $(`#fm_table tr:eq(${idx}) td:eq(1)`).text()
 
               if (name == "..") {
                 if (CURRENT_DIR.length < 4) {
@@ -657,14 +656,14 @@ socket.on("update_file_manager", (d) => {
                     //   return;
                     // }
                     if (saveBlock != JSON.stringify(Blockly.serialization.workspaces.save(workspace))) {
-                      if (await confirm_popup(translations['confirm_save_file'][lang]($("#codepath").html())))
-                        socket.emit("save", { codepath: $("#codepath").html(), codetext: JSON.stringify(Blockly.serialization.workspaces.save(workspace)) });
+                      if (await confirm_popup(translations['confirm_save_file'][lang]($("#codepath").text())))
+                        socket.emit("save", { codepath: $("#codepath").text(), codetext: JSON.stringify(Blockly.serialization.workspaces.save(workspace)) });
                     }
                   }
                   else {
                     if (saveCode != codeEditor.getValue()) {
-                      if (await confirm_popup(translations['confirm_save_file'][lang]($("#codepath").html())))
-                        socket.emit("save", { codepath: $("#codepath").html(), codetext: codeEditor.getValue() });
+                      if (await confirm_popup(translations['confirm_save_file'][lang]($("#codepath").text())))
+                        socket.emit("save", { codepath: $("#codepath").text(), codetext: codeEditor.getValue() });
                     }
                   }
                   socket.emit("load", filepath);
@@ -672,7 +671,7 @@ socket.on("update_file_manager", (d) => {
               }
             })
           ,
-          $("<td style='width:15px;text-align:center'>").append(data[i].type == "" || data[i].protect == true ? "" : `<a href='/download?filename=${data[i].name}'><i class='fa-solid fa-circle-down'></i></a>`)
+          $("<td style='width:15px;text-align:center'>").append(data[i].type == "" || data[i].protect == true ? "" : $("<a>").attr("href", "/download?filename=" + encodeURIComponent(data[i].name)).append("<i class='fa-solid fa-circle-down'></i>"))
             //$("<td style='width:15px;text-align:center'>").append(["", "folder"].includes(data[i].type) || data[i].protect==true?"":`<a href='/download?filename=${data[i].name}'><i class='fa-solid fa-circle-down'></i></a>`)
             .hover(
               function () { $(this).animate({ opacity: "0.3" }, 100); },
@@ -689,7 +688,7 @@ socket.on("update_file_manager", (d) => {
 
               let idx = $(this).closest('tr').index();
               //let type = $(`#fm_table tr:eq(${idx}) td:eq(0)`).html();
-              let name = $(`#fm_table tr:eq(${idx}) td:eq(1)`).html();
+              let name = $(`#fm_table tr:eq(${idx}) td:eq(1)`).text();
               let newname = await prompt_popup(translations['check_newfile_name'][lang], name);
 
               if (newname != null) {
@@ -709,8 +708,8 @@ socket.on("update_file_manager", (d) => {
 
               if (!await confirm_popup(translations['confirm_rename'][lang](name, newname))) return;
 
-              if ($("#codepath").html().includes(CURRENT_DIR.join("/") + "/" + name)) {
-                $("#codepath").html("");
+              if ($("#codepath").text().includes(CURRENT_DIR.join("/") + "/" + name)) {
+                $("#codepath").text("");
               }
               if (CODE_PATH.includes(CURRENT_DIR.join("/") + "/" + name)) {
                 CODE_PATH = "";
@@ -736,10 +735,10 @@ socket.on("update_file_manager", (d) => {
 
               let idx = $(this).closest('tr').index();
               //let type = $(`#fm_table tr:eq(${idx}) td:eq(0)`).html();
-              let name = $(`#fm_table tr:eq(${idx}) td:eq(1)`).html();
+              let name = $(`#fm_table tr:eq(${idx}) td:eq(1)`).text();
               if (await confirm_popup(translations['confirm_delete_file'][lang](`${CURRENT_DIR.join("/")}/${name}`))) {
-                if ($("#codepath").html().includes(CURRENT_DIR.join("/") + "/" + name)) {
-                  $("#codepath").html("");
+                if ($("#codepath").text().includes(CURRENT_DIR.join("/") + "/" + name)) {
+                  $("#codepath").text("");
                 }
                 if (CODE_PATH.includes(CURRENT_DIR.join("/") + "/" + name)) {
                   CODE_PATH = "";
@@ -800,8 +799,8 @@ $("#add_file").on("click", async function () {
       return;
     }
     if (saveCode != codeEditor.getValue()) {
-      if (await confirm_popup(translations['confirm_save_file'][lang]($("#codepath").html())))
-        socket.emit("save", { codepath: $("#codepath").html(), codetext: codeEditor.getValue() });
+      if (await confirm_popup(translations['confirm_save_file'][lang]($("#codepath").text())))
+        socket.emit("save", { codepath: $("#codepath").text(), codetext: codeEditor.getValue() });
     }
     socket.emit('add_file', CURRENT_DIR.join("/") + "/" + name);
   }
@@ -839,7 +838,7 @@ async function uploadFiles(fileList) {
         await alert_popup(translations['file_ok'][lang]);
       } else {
         const detail = (xhr.responseJSON && (xhr.responseJSON.error || xhr.responseJSON.result)) || "";
-        await alert_popup(`${translations['file_error'][lang]}\n >> ${detail}`);
+        await alert_popup(`${translations['file_error'][lang]}\n >> ${t(detail)}`);
       }
     });
 }
@@ -941,7 +940,7 @@ $("#theme_check").on("change", function () {
 });
 
 $("#save").on("click", async function () {
-  let filepath = $("#codepath").html();
+  let filepath = $("#codepath").text();
 
   if (filepath == "") {
     await alert_popup(translations['nofile'][lang]);
@@ -951,32 +950,7 @@ $("#save").on("click", async function () {
   codeTypeBtns.forEach((el) => {
     if (el.classList.value.includes("checked")) codetype = el.name;
   });
-  if (codetype == "block") {
-    // if (filepath.substring(filepath.lastIndexOf(".") + 1, filepath.length) != "json") {
-    //   await alert_popup("json 파일만 저장 가능합니다.");
-    //   return;
-    // }
-    saveBlock = JSON.stringify(Blockly.serialization.workspaces.save(workspace))
-    socket.emit("save", {
-      codepath: "/home/pi/.tmp.py",
-      codetext: Blockly.Python.workspaceToCode(workspace)
-    });
-    socket.emit("save", {
-      codepath: $("#codepath").html(),
-      codetext: saveBlock
-    });
-    result.value = Blockly.Python.workspaceToCode(workspace);
-    update_block();
-  }
-  else {
-    codeTypeBtns.forEach((el) => {
-      if (el.classList.value.includes("checked")) codetype = el.name;
-    });
-
-    saveCode = codeEditor.getValue();
-    CodeMirror.signal(codeEditor, "change");
-    socket.emit("save", { codepath: $("#codepath").html(), codetext: saveCode });
-  }
+  doSave(codetype);
 });
 
 let update_block = function () {
@@ -1032,50 +1006,49 @@ const workspace = Blockly.inject("blocklyDiv", {
     },
     blockStyles: {
       logic_blocks: {
-        colourPrimary: '#B098CB',
-        colourSecondary: '#EDE7F6',
-        colorTertiary: '#B39DDB',
+        colourPrimary: '#5566D9',
+        colourSecondary: '#909CE6',
+        colourTertiary: '#4452AE',
       },
       loop_blocks: {
-        colourPrimary: '#85B687',
-        colourSecondary: '#E8F5E9',
-        colorTertiary: '#66BB6A',
+        colourPrimary: '#2E9E6B',
+        colourSecondary: '#77C09F',
+        colourTertiary: '#257E56',
       },
       math_blocks: {
-        colourPrimary: '#2196F3',
-        colourSecondary: '#1E88E5',
-        colorTertiary: '#0D47A1',
+        colourPrimary: '#7A56C9',
+        colourSecondary: '#A991DC',
+        colourTertiary: '#6245A1',
       },
       text_blocks: {
-        colourPrimary: '#FFAA08',
-        colourSecondary: '#555555',
-        colorTertiary: '#FF8F00',
+        colourPrimary: '#C2477B',
+        colourSecondary: '#D787A9',
+        colourTertiary: '#9B3962',
       },
       list_blocks: {
-        colourPrimary: '#4DB6AC',
-        colourSecondary: '#B2DFDB',
-        colorTertiary: '#009688',
+        colourPrimary: '#D15A3A',
+        colourSecondary: '#E1947F',
+        colourTertiary: '#A7482E',
       },
       colour_blocks: {
-        colourPrimary: '#DFADB2',
-        colourSecondary: '#FFEBEE',
-        colorTertiary: '#EF9A9A',
+        colourPrimary: '#B34FB8',
+        colourSecondary: '#CE8DD1',
+        colourTertiary: '#8F3F93',
       },
       variable_blocks: {
-        colourPrimary: '#EF9A9A',
-        colourSecondary: '#EF9A9A',
-        //colourSecondary: '#FFEBEE',
-        colorTertiary: '#EF5350',
+        colourPrimary: '#D9772B',
+        colourSecondary: '#E6A775',
+        colourTertiary: '#AE5F22',
       },
-      // variable_dynamic_blocks: {
-      //   colourPrimary: '#EF9A9A',
-      //   colourSecondary: '#FFEBEE',
-      //   colorTertiary: '#EF5350',
-      // },
+      variable_dynamic_blocks: {
+        colourPrimary: '#D9772B',
+        colourSecondary: '#E6A775',
+        colourTertiary: '#AE5F22',
+      },
       procedure_blocks: {
-        colourPrimary: '#C7BCB8',
-        colourSecondary: '#EFEBE9',
-        colorTertiary: '#BCAAA4',
+        colourPrimary: '#6C7A8C',
+        colourSecondary: '#9FA9B4',
+        colourTertiary: '#566270',
       },
     },
     categoryStyles: {
@@ -1142,7 +1115,7 @@ disableTopBlocks.init();
 workspace.addChangeListener((event) => {
   update_block();
   if (event.type == Blockly.Events.CREATE) {
-    if ($("#codepath").html() == '') setTimeout(async function () { await alert_popup(translations["confirm_block_file"][lang]) }, 500);
+    if ($("#codepath").text() == '') setTimeout(async function () { await alert_popup(translations["confirm_block_file"][lang]) }, 500);
 
     const allBlocks = workspace.getAllBlocks();
     const matchingBlocks = allBlocks.filter(block => block.type === 'flag_event');
@@ -1169,7 +1142,7 @@ workspace.addChangeListener((event) => {
 $(document).keydown(async (evt) => {
   if ((evt.which == '115' || evt.which == '83') && (evt.ctrlKey || evt.metaKey)) {
     evt.preventDefault();
-    let filepath = $("#codepath").html();
+    let filepath = $("#codepath").text();
 
     if (filepath == "") {
       await alert_popup(translations['nofile'][lang]);
@@ -1179,31 +1152,7 @@ $(document).keydown(async (evt) => {
     codeTypeBtns.forEach((el) => {
       if (el.classList.value.includes("checked")) codetype = el.name;
     });
-    if (codetype == "block") {
-      // if (filepath.substring(filepath.lastIndexOf(".") + 1, filepath.length) != "json") {
-      //   await alert_popup("json 파일만 저장 가능합니다.");
-      //   return;
-      // }
-      saveBlock = JSON.stringify(Blockly.serialization.workspaces.save(workspace))
-      socket.emit("save", {
-        codepath: "/home/pi/.tmp.py",
-        codetext: Blockly.Python.workspaceToCode(workspace)
-      });
-      socket.emit("save", {
-        codepath: $("#codepath").html(),
-        codetext: saveBlock
-      });
-      result.value = Blockly.Python.workspaceToCode(workspace);
-      update_block();
-    }
-    else {
-      codeTypeBtns.forEach((el) => {
-        if (el.classList.value.includes("checked")) codetype = el.name;
-      });
-      saveCode = codeEditor.getValue();
-      CodeMirror.signal(codeEditor, "change");
-      socket.emit("save", { codepath: $("#codepath").html(), codetext: saveCode });
-    }
+    doSave(codetype);
     return false;
   }
   return true;
@@ -1448,21 +1397,6 @@ $("#prompt_bt").on('click', function () {
   socket.emit("prompt", $("#prompt").val().trim());
 });
 
-socket.on("update_battery", (data) => {
-  let bat = Number(data.split("%")[0]);
-  let bat_str = ['empty', 'quarter', 'half', 'three-quarters', 'full'];
-
-  $("#d_battery_val").html(
-    `<i class='fa fa-battery-${bat_str[Math.floor(bat / 25)]}' aria-hidden='true'></i>${data} `
-  );
-});
-
-socket.on("update_dc", (data) => {
-  $("#d_dc_val").html(
-    data.toUpperCase() == "ON" ? "<i class='fa fa-plug' aria-hidden='true'></i>" : ""
-  );
-});
-
 const setLanguage = (langCode) => {
   const elements = document.querySelectorAll('[data-key]');
   elements.forEach(element => {
@@ -1512,3 +1446,164 @@ language.addEventListener("change", function () {
 
 // warning
 document.querySelector("div.CodeMirror textarea").setAttribute("name", "ctx");
+
+
+/* ==========================================================================
+   저장 확인
+   서버(run_ide.py handle_save)가 파일을 다 쓴 뒤 {'saved': 경로} 를 보낸다.
+   그걸 받아야 미저장 표시(●)를 지운다. 전에는 보내자마자 지워서, 저장이
+   실패해도 저장된 것처럼 보였다.
+   블록 모드에서 저장하면 생성된 파이썬 코드를 터미널에 덮어쓰던 동작은 뺐다 —
+   [파이썬 코드] 버튼이 그 역할을 한다. 실행 결과가 지워지지 않는다.
+   ========================================================================== */
+let pendingSave = null;
+const save_btn = document.getElementById("save");
+
+function doSave(codetype) {
+  const path = $("#codepath").text();
+  if (codetype == "block") {
+    const snap = JSON.stringify(Blockly.serialization.workspaces.save(workspace));
+    socket.emit("save", { codepath: "/home/pi/.tmp.py", codetext: Blockly.Python.workspaceToCode(workspace) });
+    socket.emit("save", { codepath: path, codetext: snap });
+    beginSave(path, "block", snap);
+  } else {
+    const snap = codeEditor.getValue();
+    socket.emit("save", { codepath: path, codetext: snap });
+    beginSave(path, "code", snap);
+  }
+}
+function beginSave(path, kind, snap) {
+  if (pendingSave) clearTimeout(pendingSave.timer);
+  PiboUI.busy(save_btn, true);
+  pendingSave = {
+    path, kind, snap,
+    timer: setTimeout(() => {           // 5초 안에 확인이 없으면 알린다. 표시(●)는 그대로 둔다
+      if (!pendingSave) return;
+      pendingSave = null;
+      PiboUI.busy(save_btn, false);
+      PiboUI.toast(t("save_unconfirmed"), "warn", 4000);
+    }, 5000)
+  };
+}
+function onSaved(path) {
+  if (!pendingSave || path !== pendingSave.path) return;   // .tmp.py 확인은 무시
+  clearTimeout(pendingSave.timer);
+  if (pendingSave.kind == "block") { saveBlock = pendingSave.snap; update_block(); }
+  else { saveCode = pendingSave.snap; CodeMirror.signal(codeEditor, "change"); }
+  pendingSave = null;
+  PiboUI.busy(save_btn, false);
+  PiboUI.toast(t("saved"), "ok");
+}
+function onSaveFailed() {
+  if (!pendingSave) return;
+  clearTimeout(pendingSave.timer);
+  pendingSave = null;
+  PiboUI.busy(save_btn, false);        // 이유는 뒤이어 뜨는 알림창이 말한다
+}
+
+/* ==========================================================================
+   [파이썬 코드] — 지금 블록이 어떤 파이썬이 되는지 보여준다 (복사 가능)
+   ========================================================================== */
+(function () {
+  const btn = document.getElementById("pycode_bt");
+  const modal = document.getElementById("pyModal");
+  if (!btn || !modal) return;
+  const pre = modal.querySelector("pre");
+  const close = () => { modal.hidden = true; btn.focus(); };
+  btn.addEventListener("click", () => {
+    pre.textContent = Blockly.Python.workspaceToCode(workspace) || "# (empty)";
+    modal.hidden = false;
+    modal.querySelector("[data-act=close]").focus();
+  });
+  modal.addEventListener("click", (e) => {
+    const act = e.target.closest("[data-act]");
+    if (e.target === modal || (act && act.dataset.act == "close")) return close();
+    if (act && act.dataset.act == "copy") {
+      const done = () => PiboUI.toast(t("copied"), "ok");
+      if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(pre.textContent).then(done);
+      else {                          // http 에서는 clipboard API 가 없다 (로봇은 http 다)
+        const r = document.createRange(); r.selectNodeContents(pre);
+        const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+        try { document.execCommand("copy"); done(); } catch (err) { /* 선택된 채로 둔다 */ }
+      }
+    }
+  });
+  document.addEventListener("keydown", (e) => { if (e.key == "Escape" && !modal.hidden) close(); });
+  // 블록 모드에서만 보인다. 모드는 버튼 클릭뿐 아니라 파일을 열 때(init/update)
+  // 코드가 checked 클래스를 바꿔서도 바뀌므로, 클릭이 아니라 클래스 변화를 본다
+  const sync = () => {
+    let ct = ""; codeTypeBtns.forEach((el) => { if (el.classList.contains("checked")) ct = el.name; });
+    btn.hidden = ct != "block";
+  };
+  codeTypeBtns.forEach((b) => new MutationObserver(sync).observe(b, { attributes: true, attributeFilter: ["class"] }));
+  sync();
+})();
+
+/* ==========================================================================
+   실행 상태 — 터미널 제목 줄의 칩: 실행 중(경과 시간) / 끝남 / 오류
+   실행 버튼의 disabled 가 켜지고 꺼지는 것으로 시작·끝을 안다.
+   (블록 단위 강조는 불가능하다. 파이썬이 로봇에서 돌아서 블록별로 추적할 수 없다)
+   ========================================================================== */
+(function () {
+  const chip = document.getElementById("run_status");
+  if (!chip) return;
+  let t0 = 0, timer = null, running = false;
+  const mmss = (s) => String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+  const set = (kind, text) => { chip.className = "pb-runstat pb-runstat--" + kind; chip.textContent = text; chip.hidden = false; };
+  const tick = () => set("running", t("run_running") + " " + mmss(Math.floor((Date.now() - t0) / 1000)));
+  function begin() {
+    running = true; t0 = Date.now();
+    document.body.setAttribute("data-running", "1");
+    result.classList.remove("has-error");
+    tick(); timer = setInterval(tick, 1000);
+  }
+  function end() {
+    running = false; clearInterval(timer);
+    document.body.removeAttribute("data-running");
+    const sec = Math.max(1, Math.round((Date.now() - t0) / 1000));
+    // 파이썬 예외는 stderr 로 나오고 run_ide.py 가 record 끝에 붙인다
+    const err = /Traceback \(most recent call last\)|^\w*(Error|Exception):/m.test(result.value);
+    if (err) {
+      result.classList.add("has-error");
+      set("error", t("run_error"));
+      PiboUI.toast(t("run_toast_error", sec), "error", 3500);
+    } else {
+      set("done", t("run_done") + " · " + sec + t("sec_unit"));
+      PiboUI.toast(t("run_toast_done", sec), "ok");
+    }
+  }
+  new MutationObserver(() => {
+    if (execute.disabled && !running) begin();
+    else if (!execute.disabled && running) end();
+  }).observe(execute, { attributes: true, attributeFilter: ["disabled"] });
+})();
+
+/* ==========================================================================
+   연결 끊김 — 로봇이 재부팅되거나 WiFi 가 끊기면 배너. 붙으면 저절로 사라진다.
+   끊긴 동안은 로봇에 보내는 버튼(data-needs-robot)을 못 누르게 한다.
+   ========================================================================== */
+[execute, stop, save_btn].forEach((el) => el && el.setAttribute("data-needs-robot", ""));
+PiboUI.watchSocket(socket);
+
+/* ==========================================================================
+   파일 목록에서 지금 연 파일 강조
+   ========================================================================== */
+(function () {
+  const tbody = document.querySelector("#fm_table > tbody");
+  const cp = document.getElementById("codepath");
+  if (!tbody || !cp) return;
+  let last = "";
+  const mark = () => {
+    const cur = cp.textContent.trim();
+    const dir = (CURRENT_DIR || []).join("/");
+    Array.prototype.forEach.call(tbody.rows, (tr) => {
+      const name = tr.cells[1] ? tr.cells[1].textContent : "";
+      const on = !!cur && name && name != ".." && (dir + "/" + name) === cur;
+      tr.classList.toggle("is-current", on);
+      if (on && cur !== last) { tr.classList.remove("pb-flash"); void tr.offsetWidth; tr.classList.add("pb-flash"); }
+    });
+    last = cur;
+  };
+  new MutationObserver(mark).observe(tbody, { childList: true });
+  new MutationObserver(mark).observe(cp, { childList: true, characterData: true, subtree: true });
+})();

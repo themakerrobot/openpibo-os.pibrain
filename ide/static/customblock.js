@@ -1,14 +1,14 @@
 const color_type={
-  "start":    "#E5B900",
-  "audio":    "#7dc37D",
-  "collect":  "#7d7db3",
-  "device":   "#d3b28d",
-  "motion":   "#d38d62",
-  "oled":     "#8da2c3",
-  "speech":   "#8dc3d2",
-  "vision":   "#a39c7D",
-  "recognition": "#6E92B7",
-  "utils":    "#CC9988"
+  "start":    "#E8A30C",
+  "audio":    "#8C5BD6",
+  "collect":  "#3C7DD9",
+  "device":   "#1C9AA6",
+  "motion":   "#2F7FD1",
+  "oled":     "#1B8FB5",
+  "speech":   "#7B61D1",
+  "vision":   "#1E9C75",
+  "recognition": "#D14A63",
+  "utils":    "#58677A"
 };
 
 Blockly.defineBlocksWithJsonArray(
