@@ -1,167 +1,165 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <title>Image Classifier for piBrain</title>
+  <title>Classifier for PiBrain</title>
   <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
-  <link rel="stylesheet" href="../static/index.css?ver=240701v6" />
+  <link rel="stylesheet" href="../static/pibo-ui.css?ver=260924v1" />
+  <link rel="stylesheet" href="../static/index.css?ver=260924v1" />
   <link rel="shortcut icon" href="../static/icon.png?ver=240319v1" type="image/x-icon" />
 
   <script src="../static/socket.io.min.js"></script>
-  <script src="../static/jszip.min.js"></script>
-  <script src="../static/tf.min-3.11.0.js"></script>
-  <script src="../static/ko2en.js?ver=260916v1"></script>
-  <style>
-    header>div>h2>select {
-      height: 20.5px;
-      background: rgba(248, 242, 172, 0.85);
-      border: 1px solid rgba(0, 0, 0, 0.3);
-      border-radius: 15px;
-      font-size: x-small !important;
-      margin: 0 0.3rem;
-      align-self: center;
-    }
-  </style>
+  <script src="../static/vendor/tfjs/tf.min.js"></script>
+  <script src="../static/ko2en.js?ver=260924v1"></script>
 </head>
 
-<body>
-  <!-- 상단 바 -->
-  <header class="title">
-    <div style="float:left">
-      <h2>
-        <i class="fa-solid fa-glasses"></i> <span data-key="title">이미지 분류</span>
-      </h2>
+<body class="pb pb-shell pb-refresh" data-tab="learn">
+  <script>/* v2(기본)·화면 밝기를 첫 페인트 전에. pibo_ui=v1 이면 예전 화면 (규칙은 pibo-ui.js 와 같다) */
+  (function () { try { var c = document.cookie, u = !/(?:^|;\s*)pibo_ui=v1/.test(c), m = c.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
+    if (/[?&]ui=v2/.test(location.search)) u = true; if (/[?&]ui=v1/.test(location.search)) u = false;
+    if (u) { document.body.classList.add('pb-v2');
+      document.documentElement.setAttribute('data-theme', m ? m[1] : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'soft'));
+      if (/(?:^|;\s*)pibo_frame=teal/.test(c) || /[?&]frame=teal/.test(location.search)) document.documentElement.setAttribute('data-frame', 'teal'); } } catch (e) {} })();</script>
+  <header class="pb-header">
+    <span class="pb-header__brand"><i class="fa-solid fa-glasses"></i>&nbsp;<span data-key="title"></span></span>
+    <div class="pb-seg cls-tabs" id="tabs" role="tablist">
+      <button type="button" data-tab="learn" role="tab"><i class="fa-solid fa-graduation-cap"></i><span data-key="tab_learn"></span></button>
+      <button type="button" data-tab="test" role="tab"><i class="fa-solid fa-vial"></i><span data-key="tab_test"></span></button>
+      <button type="button" data-tab="store" role="tab"><i class="fa-solid fa-box-archive"></i><span data-key="tab_store"></span></button>
     </div>
-    <div style="float:right">
-      <h2 style="display: flex; align-items: center; justify-content: center;">
-        <a id="fullscreen_bt" title="Full Screen">
-          <span id='fullscreen_txt'></span>
-        </a>&nbsp;&nbsp;
-        <select id="language" aria-label="language">
-          <option value="ko">한국어</option>
-          <option value="en">English</option>
-        </select>&nbsp;&nbsp;
-        <a id='logo_bt'>
-          <img src="../static/themaker.png" style="height:22px" alt="" />
-        </a>
-      </h2>
+    <div class="pb-iconbar">
+      <button type="button" class="pb-iconbtn" id="ide_bt" title="IDE"><i class="fa-solid fa-code"></i><span class="pb-iconbtn__label">IDE</span></button>
+      <a class="pb-iconbtn" id="fullscreen_bt" title="Full Screen"><span id="fullscreen_txt"></span><span class="pb-iconbtn__label" data-key="nav_fullscreen"></span></a>
+      <select class="pb-field pb-field--sm" id="language" aria-label="language">
+        <option value="ko">한국어</option>
+        <option value="en">English</option>
+      </select>
+      <a id="logo_bt"><img src="../static/themaker.png" style="height:22px" alt="" /></a>
     </div>
   </header>
 
-  <main>
-    <div class="alert-popup" id="alertPopup" style="display:none;">
-      <div class="alert-popup-content">
-        <p id="alertMessageElement" data-key="alert_placeholder">여기에 알림 메시지가 표시됩니다.</p>
-        <div class="popup-buttons">
-          <button id="alertOkBtn" data-key="ok">확인</button>
+  <div class="pb-panes">
+    <!-- 왼쪽: 학습 = 입력·종류 / 시험 = 모델 고르기 -->
+    <aside class="pb-pane pb-pane--fixed side" id="left_pane">
+      <section class="only-learn">
+        <h2 class="sec-title" data-key="what_to_learn"></h2>
+        <div class="pb-seg seg-wide" id="src_seg"></div>
+        <div class="pb-seg seg-wide seg-sub" id="var_seg" hidden></div>
+        <div class="sec-row">
+          <h2 class="sec-title" data-key="classes_title"></h2>
+          <button type="button" class="pb-btn pb-btn--sm" id="cls_add"><i class="fa-solid fa-plus"></i><span data-key="class_add"></span></button>
         </div>
+        <div id="cls_list"></div>
+      </section>
+
+      <section class="only-test">
+        <h2 class="sec-title" data-key="test_pick"></h2>
+        <div id="test_list"></div>
+        <h2 class="sec-title"><span data-key="threshold"></span> <b id="thr_val"></b></h2>
+        <input type="range" id="thr" min="30" max="95" step="5" aria-label="threshold">
+        <p class="muted" data-key="threshold_hint"></p>
+      </section>
+    </aside>
+
+    <div class="pb-resizer" data-pane="left" data-target="left_pane" data-side="left" data-min="280" role="separator" aria-orientation="vertical" aria-label="resize"></div>
+
+    <!-- 가운데: PiBrain 카메라 / 보관함 -->
+    <main class="pb-pane pb-pane--grow center">
+      <section class="not-store stage-wrap">
+        <div class="stage" id="stage">
+          <img id="cam" alt="PiBrain camera">
+          <canvas id="overlay"></canvas>
+          <div class="stage-msg" id="see_hint" hidden></div>
+          <div class="stage-msg stage-msg--busy" id="stage_loading" hidden><i class="fa-solid fa-spinner fa-spin"></i> <span data-key="loading_model"></span></div>
+          <figure class="crop-box" id="crop_box" hidden>
+            <canvas id="crop" width="224" height="224"></canvas>
+            <figcaption data-key="ai_sees"></figcaption>
+          </figure>
+        </div>
+        <div class="stage-bar">
+          <button type="button" class="pb-btn pb-btn--sm" id="cam_toggle" aria-pressed="true"><i class="fa-solid fa-video-slash"></i><span id="cam_toggle_label"></span></button>
+          <span class="stage-hint" id="stage_hint"></span>
+        </div>
+      </section>
+
+      <section class="only-store store">
+        <div class="sec-row">
+          <h2 class="sec-title"><span data-key="tab_store"></span> · <code id="store_root"></code></h2>
+          <button type="button" class="pb-btn pb-btn--sm" id="store_refresh"><i class="fa-solid fa-rotate"></i><span data-key="refresh"></span></button>
+        </div>
+        <p class="muted" data-key="store_hint"></p>
+        <div id="store_list"></div>
+      </section>
+    </main>
+
+    <div class="pb-resizer" data-pane="right" data-target="right_pane" data-side="right" data-min="280" role="separator" aria-orientation="vertical" aria-label="resize"></div>
+
+    <!-- 오른쪽: 학습 = 배우기·결과·저장 / 시험 = 답 -->
+    <aside class="pb-pane pb-pane--fixed side" id="right_pane">
+      <section class="only-learn">
+        <button type="button" class="pb-btn pb-btn--accent pb-btn--big" id="train_btn"><i class="fa-solid fa-graduation-cap"></i><span data-key="train"></span></button>
+        <p class="muted" id="train_need" data-key="need_two"></p>
+        <div id="train_prog" hidden>
+          <progress id="train_bar" max="100" value="0"></progress>
+          <p class="muted" id="train_text"></p>
+        </div>
+
+        <div id="result_sec" hidden>
+          <div class="acc"><b id="acc_big"></b><span data-key="acc"></span></div>
+          <p class="pb-note pb-note--warn" id="stale_note" hidden data-key="stale"></p>
+          <h2 class="sec-title"><span data-key="confusion"></span> <small class="muted" data-key="confusion_hint"></small></h2>
+          <div class="confusion" id="confusion"></div>
+
+          <h2 class="sec-title" data-key="live_title"></h2>
+          <div class="bars" id="learn_bars"></div>
+
+          <h2 class="sec-title" data-key="save_title"></h2>
+          <div class="save-row">
+            <input type="text" class="pb-field" id="save_name" maxlength="40" data-key="save_name_ph">
+            <button type="button" class="pb-btn pb-btn--accent" id="save_btn"><i class="fa-solid fa-floppy-disk"></i><span data-key="save_btn"></span></button>
+          </div>
+          <div class="saved" id="saved_box" hidden>
+            <p><i class="fa-solid fa-circle-check"></i> <code id="saved_path"></code></p>
+            <p class="muted" id="saved_block"></p>
+            <code class="code" id="saved_code"></code>
+            <button type="button" class="pb-btn pb-btn--sm" id="goto_test"><i class="fa-solid fa-vial"></i><span data-key="st_test"></span></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="only-test">
+        <p class="muted" id="test_empty" data-key="test_empty"></p>
+        <div id="test_live" hidden>
+          <p class="test-name"><b id="test_name"></b> <span class="muted" id="test_src"></span></p>
+          <div class="answer" id="test_answer">—</div>
+          <div class="bars" id="test_bars"></div>
+        </div>
+        <div id="test_photo" hidden>
+          <label class="pb-btn pb-btn--sm"><i class="fa-solid fa-image"></i><span data-key="test_photo"></span><input type="file" id="photo_input" accept="image/*" hidden></label>
+          <p class="muted" id="photo_result"></p>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <div class="pb-modal" id="dlg" hidden role="dialog" aria-modal="true">
+    <div class="pb-modal__box dlg-box">
+      <div class="pb-modal__head"><i class="fa-solid fa-glasses"></i><span id="dlg_title"></span></div>
+      <div class="pb-modal__body dlg-body">
+        <p id="dlg_text"></p>
+        <input type="text" class="pb-field" id="dlg_input" maxlength="40" hidden>
+      </div>
+      <div class="pb-modal__foot">
+        <button type="button" class="pb-btn" id="dlg_cancel"></button>
+        <button type="button" class="pb-btn pb-btn--accent" id="dlg_ok"></button>
       </div>
     </div>
+  </div>
 
-    <div class="prompt-popup" id="promptPopup" style="display:none;">
-      <div class="prompt-popup-content">
-        <p id="promptMessageElement" data-key="prompt_placeholder">여기에 프롬프트 메시지가 표시됩니다.</p>
-        <input type="text" id="promptInputElement" />
-        <div class="popup-buttons">
-          <button id="promptOkBtn" data-key="ok">확인</button>
-          <button id="promptCancelBtn" data-key="cancel">취소</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="confirm-popup" id="confirmPopup" style="display:none;">
-      <div class="confirm-popup-content">
-        <p id="confirmMessageElement" data-key="confirm_placeholder">여기에 확인 메시지가 표시됩니다.</p>
-        <div class="popup-buttons">
-          <button id="confirmOkBtn" data-key="ok">확인</button>
-          <button id="confirmCancelBtn" data-key="cancel">취소</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="container">
-      <!-- 왼쪽 패널: 클래스 관리 -->
-      <div class="left-panel">
-        <h2><i class="fas fa-th-list"></i> <span data-key="class_manage">클래스 관리</span></h2>
-        <div id="class-management">
-          <input type="text" id="class-name" data-key="class_name_ph" data-key-attr="placeholder" placeholder="클래스 이름" onkeydown="if(event.key==='Enter') addClass()">
-          <button onclick="addClass()"><i class="fa-solid fa-folder-plus"></i> <span data-key="class_add">클래스 추가</span></button>
-        </div>
-        <div id="class-list">
-          <!-- 동적으로 추가되는 클래스 및 이미지 컬렉션 -->
-        </div>
-      </div>
-
-      <!-- 중앙 패널: 이미지 학습 -->
-      <div class="center-panel">
-        <h2><i class="fas fa-camera"></i> <span data-key="train_section">이미지 학습</span></h2>
-        <!-- 카메라 제어: 4개의 버튼 -->
-        <div class="button-group" id="camera-controls">
-          <button id="enable-camera-btn" onclick="if(!cameraEnabled){toggleCamera();}"
-            data-key="camera_on" data-icon='<i class="fas fa-video"></i>'><i class="fas fa-video"></i> 카메라 켜기</button>
-          <button id="disable-camera-btn" onclick="if(cameraEnabled){toggleCamera();}"
-            data-key="camera_off" data-icon='<i class="fas fa-video-slash"></i>'><i class="fas fa-video-slash"></i> 카메라 끄기</button>
-          <button id="capture-button" ontouchstart="startCapturingImages(); event.preventDefault();"
-            ontouchend="stopCapturingImages()" ontouchcancel="stopCapturingImages()"
-            onmousedown="startCapturingImages(); event.preventDefault();" onmouseup="stopCapturingImages()"
-            onmouseleave="stopCapturingImages()">
-            <i class="fa-solid fa-plus"></i> <span data-key="sample_add">샘플 추가</span>
-          </button>
-        </div>
-        <!-- 카메라 섹션 -->
-        <div id="camera-section">
-          <img id="camera" alt="Camera Feed"
-            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HwAF/gL+eCDUMAAAAABJRU5ErkJggg==" />
-        </div>
-        <!-- 학습 버튼 -->
-        <div class="button-group" id="train-controls">
-          <button onclick="trainAndPredict()"><i class="fa-solid fa-graduation-cap"></i> <span data-key="train_start">학습하기</span></button>
-        </div>
-        <!-- 학습 파라미터 -->
-        <div id="training-params">
-          <label for="epochs">
-            <p id="epochs-text" data-key="epochs_label">반복 학습 횟수: </p>
-          </label>
-          <input type="number" id="epochs" value="15" min="1" max="100">
-          <label for="batch-size">
-            <p id="batch-text" data-key="batch_label">한번에 학습할 이미지 수: </p>
-          </label>
-          <input type="number" id="batch-size" value="32" min="1" max="256">
-        </div>
-      </div>
-
-      <!-- 오른쪽 패널: 결과 / 예측 -->
-      <div class="right-panel">
-        <h2><i class="fas fa-laptop"></i> <span data-key="result_section">결과 및 예측</span></h2>
-        <!-- 내보내기, 불러오기, 변환 버튼 그룹 -->
-        <div class="button-group" id="model-controls">
-          <input type="file" id="model-upload" onchange="importModel(event)" style="display:none">
-          <button onclick="document.getElementById('model-upload').click()"><i class="fa-solid fa-upload"></i> <span data-key="import_tfjs">불러오기(tfjs)</span></button>
-          <button onclick="exportModelAsZip()"><i class="fa-solid fa-download"></i> <span data-key="export_tfjs">내보내기(tfjs)</span></button>
-          <button id="convertToH5_bt" onclick="convertToH5()"
-            data-key="save_keras" data-icon='<i class="fas fa-check"></i>'><i class="fas fa-check"></i> mymodel 저장(keras)</button>
-          <!--<input type="file" id="model-convert-upload" style="display:none" accept=".zip">-->
-        </div>
-        <!-- 진행 상황 영역 -->
-        <div id="progress-section">
-          <p id="training-progress" data-key="initializing">초기화 중입니다.</p>
-          <progress id="progress-bar" value="0" max="100"></progress>
-        </div>
-        <!-- 예측 결과 영역 -->
-        <div id="prediction-section">
-          <h2><i class="fas fa-chart-line"></i> <span data-key="prediction_title">예측 결과</span></h2>
-          <button id="preview-btn" onclick="setPreviewMode()"><i class="fas fa-eye"></i> <span data-key="preview">미리보기</span></button>
-          <button id="inference-btn" onclick="setInferenceMode()"><i class="fas fa-brain"></i> <span data-key="inference">추론하기</span></button>
-          <p id="prediction-result" data-key="no_prediction">아직 예측이 없습니다</p>
-          <p id="preview-status" data-key="status_preview">(미리보기 실행 중)</p>
-        </div>
-      </div>
-    </div>
-  </main>
-  <script src="../static/index.js?ver=260916v2"></script>
+  <script src="../static/pibo-ui.js?ver=260924v1"></script>
+  <script type="module" src="../static/app.js?ver=260924v1"></script>
 </body>
 </html>

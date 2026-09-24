@@ -2458,11 +2458,13 @@ let toolbox = (lang) => {
             "kind": "block",
             "type": "vision_load_cf",
             "inputs":{
+              // 분류기에서 저장한 모델 폴더 이름 (/home/pi/mymodel/<이름>). 종류 이름은
+              // 모델 폴더 안에 들어 있어서 두 번째 칸(라벨)은 비워 둔다
               "modelpath":{
                 "shadow": {
                   "type": "text",
                   "fields": {
-                    "TEXT": "model.keras"
+                    "TEXT": translations['cf_model_default'][lang]
                   }
                 }
               },
@@ -2470,7 +2472,7 @@ let toolbox = (lang) => {
                 "shadow": {
                   "type": "text",
                   "fields": {
-                    "TEXT": "labels.txt"
+                    "TEXT": ""
                   }
                 }
               },

@@ -206,8 +206,8 @@ grep -rn "circul.us" --include="*.py" --include="*.js" . | grep -v "docs/\|setup
   `grep -n "[가-힣]" ide/run_ide.py` 는 주석·docstring 만 나와야 한다. 정확한 검사는
   `grep -n "[가-힣]" ide/run_ide.py | grep -E "emit|JSONResponse"` → 0.
 - `t()` 는 전역이다. 다른 스크립트 최상위에서 `t` 를 선언하지 말 것.
-- classifier 는 `data-key` / `data-key-attr` / `data-icon` 로 화면을 다시 그린다.
-  상태에 따라 문구가 바뀌는 버튼은 `setLabel(el, icon, key)` 로 키를 남겨야 언어 전환이 따라온다.
+- classifier(260924~)는 `data-key` 로 화면을 다시 그린다(`ko2en.js` 의 `setLanguage`). 상태에 따라 바뀌는 문구는
+  `app.js` 가 `t()` 로 직접 쓴다. 옛 `data-key-attr`·`data-icon`·`setLabel` 은 옛 분류기와 함께 없어졌다
 - **수정 금지**: `ide/static/ko.js`, `en.js`, `customblock.js`, `disable-top-blocks.js` 의 한글
   (Blockly 로케일·주석·API 값이다).
 - `record`(실행 로그)는 번역을 타지 않고 터미널에 그대로 찍힌다. 언어중립으로 (`[exit]`).
@@ -392,7 +392,7 @@ Pibo 리포의 변경을 가져올 때 **항목마다 적용 여부를 먼저 �
 | 배터리 | 게이지 있음 | 없음 |
 | 진입 UI | IDE v2(노랑 상단바 + 왼쪽 패널) | 동일(260924~). 패널 탭 이름만 [PiBrain], 배터리 칸 없음. 랜딩 페이지는 쓰지 않는다 |
 | Tools | socket.io + 모션 편집기·시뮬레이터 | REST/SSE. 버튼·LED·카메라·TTS·LCD 5개 패널. 컨셉만 같다. 화면은 v2 색으로 따로 짰다(260924) |
-| Classifier | 단순 UI | keras 변환이 있다. ko2en 키셋을 따로 만들었다 |
+| Classifier | teach-lab 방식(260924) | 같다(260924~). 언어 저장 키만 `classifier_language` |
 | 마이크 | 2-mic HAT (`arecord -D plug:dmic_sv`) | **없음.** 녹음·STT 경로 전부 무관 |
 | UART | 없음 | `system/uart_ctrl.py`, `openpibo/usb_uart.py` |
 | 라즈베리파이 보드 | Pi 4 · CYW43455 | **동일.** 무선·regdom 관련은 그대로 적용된다 |
@@ -422,10 +422,41 @@ Pibo 와 같다. Teachable Machine 계열(`vision_load_tm` `vision_predict_tm`
 `vision_classification`)은 **양쪽 리포 모두 정의·생성기·툴박스에서 비활성**이고,
 살아 있는 것은 `vision_load_cf` / `vision_predict_cf`(`CustomClassifier`) 뿐이다.
 
-기기 안에서 한 바퀴가 돈다 — classifier 앱이 학습하고 `model.json` · `weights.bin` ·
-`labels.txt` 로 내보내면, `CustomClassifier.load(model_path, label_path)` 가 그걸 읽는다.
 `openpibo/vision_classify.py` 에 `class TeachableMachine` 이 남아 있는 것도 Pibo 와 같다.
 라이브러리 코드일 뿐 블록으로 노출되지 않는다.
+
+### 분류기 (260924) — Pibo 와 같은 teach-lab 방식
+
+**TensorFlow 를 쓰지 않는다.** 예전(TF.js 3.11 MobileNetV2 → keras 변환 → TF 추론)을 통째로 바꿨다.
+**원본은 Pibo 리포다** — 구조·검증·가져온 코드(teach-lab)의 규칙은 openpibo-os.pibo CLAUDE.md '분류기' 에 있다.
+고칠 땐 양쪽을 같이 고칠 것.
+
+| 단계 | 어디서 | 무엇으로 |
+|---|---|---|
+| 카메라 | PiBrain → 태블릿 | socket.io `camera_image`, 320×240 JPEG |
+| 특징 뽑기·학습 | 태블릿 브라우저 | MediaPipe wasm(`classifier/static/vendor/tasks-vision`) + TF.js 작은 MLP |
+| 저장 | PiBrain | `POST /api/models` → `/home/pi/mymodel/<이름>/` |
+| 추론 | PiBrain | `CustomClassifier` — LiteRT/tflite_runtime(이미지) · MediaPipe(손·얼굴·포즈) + numpy |
+
+- 입력 4가지: 이미지 / 손(한·두 손) / 얼굴 / 포즈(상반신·전신). 학습·시험·보관함 세 탭
+- 가져온 파일: `classifier/` 전부, `openpibo/vision_classify.py`, `openpibo/modules/teachlab/`,
+  `openpibo/modules/pose/movenet.py`(TensorFlow 대체 분기를 `load_interpreter()` 로). 교체 직전의
+  PiBrain 파일은 Pibo 교체 직전과 공백만 달랐다
+- PiBrain 에서 바꾼 것: 화면 문구의 이름(PiBrain), `ko2en.js` 1·2행과 언어 저장 키 `classifier_language`
+  (`global` 델타 그대로)
+- 블록 `[이미지 모델 설정하기]`: 폴더 `mymodel`, 이름 칸에 모델 이름(기본값 '모델 이름'), 두 번째 칸은 비워 둔다.
+  **예전 `model.keras` 는 못 읽는다**(불러오면 다시 학습하라는 오류). 의도한 호환 단절이다
+- 지운 것: `tf.min-3.11.0.js` · MobileNetV2 가중치 · `model.json` · `jszip` · `tfjs_to_keras.py`(`/convert`)
+- 사물 인식(`vision_detect`)은 **가져오지 않았다** — PiBrain 쪽(yolo26s)이 더 새 것이다
+- 기기 런타임(`tflite-runtime`·`mediapipe`)은 **PiBrain 기기에서 확인 전** — IMAGE.md '분류기 런타임 확인'
+- PiBrain 카메라가 좌우 반전 없이 들어오는지 **확인 필요.** 브라우저·파이썬 모두 뒤집지 않는다는 전제다
+
+검증(컨테이너, 가짜 카메라 + headless Chromium): 학습·저장·시험·보관함 e2e 25/25.
+브라우저가 저장한 네 모델을 **PiBrain 의 `openpibo`** 로 추론한 답 8/8 일치(tflite-runtime 2.14.0 ·
+mediapipe 0.10.18 · numpy 1.26.4). 특징 코사인 이미지 0.96~0.98 · 손 0.99 · 포즈 0.99 · 얼굴 0.83~0.93.
+**PiBrain 실기기로는 아직 안 봤다.**
+
+**docs 를 다시 빌드해야 한다** — `vision_classify` API(`CustomClassifier.load`)가 바뀌었다. 기기에서 `make clean html` ('docs' 절). 아직 안 했다.
 
 ### 마이크가 없다 — 되살리지 말 것
 
@@ -499,7 +530,9 @@ node --check ide/static/v2/ide.js design/pibo-ui.js
 bash design/sync.sh --check | grep -v ' ok'                                  # 키트 사본이 원본과 같은가
 node --check ide/static/customblock.js ide/static/customblock_callback.js ide/static/customblock_toolbox.js
 node --check tools/static/index.js tools/static/ko2en.js
-node --check classifier/static/index.js classifier/static/ko2en.js
+node --check classifier/static/ko2en.js
+node --check --input-type=module < classifier/static/app.js
+python3 -m py_compile classifier/run_classify.py openpibo/vision_classify.py openpibo/modules/teachlab/*.py
 bash -n system/*.sh
 python3 -c "import json,glob; [json.load(open(f)) for f in glob.glob('examples/*.json')]"
 

@@ -107,6 +107,30 @@ PiBrain 은 Pibo 와 같은 라즈베리파이 보드(Pi 4 · CYW43455)를 쓰�
 AP(핫스팟)는 국가 설정과 무관하다. `hotspot.sh` 가 2.4GHz 채널 1/6/11 중
 시리얼로 하나를 고른다.
 
+### 분류기 런타임 확인 (260924~, 이미지당 1회)
+
+분류기가 TF.js→keras 방식에서 teach-lab 방식으로 바뀌었다(CLAUDE.md '분류기'). 기기에서 추론하려면:
+
+| 쓰는 곳 | 패키지 | Pibo 기기(260923) 에서 확인한 버전 |
+|---|---|---|
+| 이미지 · movenet(포즈) | `tflite-runtime` (또는 `ai-edge-litert`, 없으면 TensorFlow 로 떨어진다) | 2.14.0 |
+| 손 · 얼굴 · 포즈 | `mediapipe` | 0.10.18 |
+| 전부 | `numpy` | 1.26.4 |
+
+**PiBrain 기기에 무엇이 깔려 있는지는 아직 확인 전이다.** 아래를 돌려 값을 받아 적을 것. 추측으로 채우지 말 것.
+
+```bash
+/home/pi/.pyenv/bin/python3 -m pip list 2>/dev/null | grep -i -E "tflite|litert|tensorflow|mediapipe|numpy|onnxruntime"
+/home/pi/.pyenv/bin/python3 -c "from openpibo.modules.teachlab import load_interpreter; print(load_interpreter())"
+#   tflite_runtime / ai_edge_litert 가 나오면 된다. tensorflow 가 나오면 동작은 하지만 무겁다
+/home/pi/.pyenv/bin/python3 -c "import mediapipe; print(mediapipe.__version__)"
+```
+
+- `tflite_runtime`·`ai_edge_litert` 가 둘 다 없고 TensorFlow 도 없으면 분류기(이미지)와 movenet 이 못 뜬다
+- `mediapipe` 가 없으면 손·얼굴·포즈 모델만 못 쓴다(이미지 모델은 된다)
+- TensorFlow 를 지우는 건 **위 확인이 끝난 뒤에만.** PiBrain 의 사물 인식(`vision_detect`, yolo26s)은
+  Pibo 와 코드가 다르다 — 무엇을 import 하는지 먼저 볼 것(Pibo 처럼 torch·ultralytics 를 걷어낼 수 있는지는 별개)
+
 ### H/W 검수
 
 카드를 뜨기 전에 기준 기기를 한 번 통과시킨다.
