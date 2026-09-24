@@ -10,6 +10,23 @@
    design/sync.sh 가 복사한다. static/ 쪽을 직접 고치지 말 것.
    ========================================================================== */
 
+/* ── 글꼴: Pretendard (SIL OFL 1.1, fonts/LICENSE.txt) ─────────────────────
+   v2 글꼴 스택 맨 앞이 "Pretendard" 인데 파일을 안 싣고 있어서, 학교 윈도 노트북에서는
+   맑은 고딕·Arial 로 떨어졌다. 파이보가 직접 보낸다(인터넷 불필요).
+   원본 배포판의 KS X 1001 subset 을 **고치지 않고** 그대로 쓴다 — 우리가 subset 을 새로 만들면
+   OFL 의 Reserved Font Name 때문에 이름을 Pretendard 로 둘 수 없다.
+   400~800 다섯 굵기. 브라우저는 화면에 쓰인 굵기만 받는다(굵기당 약 270KB, 처음 한 번). */
+@font-face { font-family: "Pretendard"; font-weight: 400; font-style: normal; font-display: swap;
+  src: local("Pretendard Regular"), url("fonts/Pretendard-Regular.subset.woff2") format("woff2"); }
+@font-face { font-family: "Pretendard"; font-weight: 500; font-style: normal; font-display: swap;
+  src: local("Pretendard Medium"), url("fonts/Pretendard-Medium.subset.woff2") format("woff2"); }
+@font-face { font-family: "Pretendard"; font-weight: 600; font-style: normal; font-display: swap;
+  src: local("Pretendard SemiBold"), url("fonts/Pretendard-SemiBold.subset.woff2") format("woff2"); }
+@font-face { font-family: "Pretendard"; font-weight: 700; font-style: normal; font-display: swap;
+  src: local("Pretendard Bold"), url("fonts/Pretendard-Bold.subset.woff2") format("woff2"); }
+@font-face { font-family: "Pretendard"; font-weight: 800; font-style: normal; font-display: swap;
+  src: local("Pretendard ExtraBold"), url("fonts/Pretendard-ExtraBold.subset.woff2") format("woff2"); }
+
 :root {
   /* ── 브랜드 색 ── 기존 값 그대로. 바꾸지 말 것 ───────────────────────── */
   --yellow:        #f4de3d;
@@ -996,3 +1013,46 @@ body.pb-v2 .confusion th { background: var(--v2-surface); color: var(--v2-ink-2)
 body.pb-v2 .saved .fa-circle-check { color: var(--v2-accent); }
 /* [꾹 눌러 모으기] 누르는 동안은 빨강(모으는 중) — 위의 먹색 주 동작 규칙보다 앞서야 한다 */
 body.pb-v2 .cls-hold.is-on { background: var(--v2-red); border-color: transparent; color: #fff; }
+
+/* ── 다듬기 (260924): 꽉 찬 파랑은 한 구역에 하나, 수치는 한 색 ─────────────
+   분류기 학습 화면에 파란 판이 [꾹 눌러 모으기]×종류 수 + [AI 가르치기] + [저장] 으로
+   네다섯 개 떠 있었고, 수치는 노랑(장수·막대·결과)·청록(표)·베이지가 섞여 있었다.
+   꽉 찬 파랑은 [AI 가르치기]·[저장] 만 남기고 나머지는 옅은 파랑, 수치는 파랑 한 가지로 */
+body.pb-v2 {
+  --v2-tint:     var(--v2-accent-t);
+  --v2-tint-hov: #d4e1fb;
+  --v2-tint-ink: #1d4ed8;   /* 옅은 파랑 위 글씨 — #e3ecfd 대비 5.6:1 */
+  --v2-meter:    #b9c1ce;   /* 막대의 나머지 값 */
+}
+html[data-theme="dark"] body.pb-v2 { --v2-tint-hov: var(--v2-accent-t2); --v2-tint-ink: var(--v2-accent-ink); --v2-meter: #4a5264; }
+body.pb-v2 .cls-hold:not(.is-on),
+body.pb-v2 .store-card .pb-btn--accent {
+  background: var(--v2-tint); color: var(--v2-tint-ink); border-color: transparent; box-shadow: none;
+}
+body.pb-v2 .cls-hold:not(.is-on):hover:not(:disabled),
+body.pb-v2 .store-card .pb-btn--accent:hover:not(:disabled) { background: var(--v2-tint-hov); border-color: transparent; }
+/* [AI 가르치기] 는 크기 대신 자리로 눈에 띈다. 64px 판이 화면을 누르고 있었다 */
+body.pb-v2 #train_btn { min-height: 48px; height: 48px; font-size: 16px; }
+
+body.pb-v2 .cls-count, body.pb-v2 .store-acc { background: var(--v2-sunken); color: var(--v2-ink-2); }
+body.pb-v2 .bar-track { height: 10px; background: var(--v2-sunken); }
+body.pb-v2 .bar-fill { background: var(--v2-meter); }
+body.pb-v2 .bar.is-best .bar-fill { background: var(--v2-accent); }
+body.pb-v2 .confusion td.hit  { background: rgba(37, 99, 235, calc(var(--a) * .26)); color: var(--v2-tint-ink); }
+body.pb-v2 .confusion td.miss { background: rgba(223, 74, 79, calc(var(--a) * .3 + .06)); }
+body.pb-v2 .answer { background: var(--v2-tint); color: var(--v2-tint-ink); }
+body.pb-v2 .answer.is-unsure { background: var(--v2-sunken); color: var(--v2-ink-3); }
+body.pb-v2 .model-pick[aria-selected="true"] { background: var(--v2-tint); border-color: rgba(37, 99, 235, .45); }
+html[data-theme="dark"] body.pb-v2 .model-pick[aria-selected="true"] { border-color: var(--v2-accent); }
+body.pb-v2 #thr, body.pb-v2 #train_prog progress { accent-color: var(--v2-accent); }
+
+/* 상단바의 언어 고르기: 날것 select 판 대신 IDE 상단바 버튼처럼 */
+body.pb-v2 .pb-header select.pb-field--sm {
+  background-color: transparent; border-color: transparent; font-weight: 600; cursor: pointer;
+}
+body.pb-v2 .pb-header select.pb-field--sm:hover { background-color: var(--v2-frame-2); }
+body.pb-v2 .pb-header select.pb-field--sm option { background: var(--v2-raise); color: var(--v2-ink); }
+
+/* 도구 [동작]: 모터 이름이 1.2rem 굵은 글씨로 좁은 칸에 눌려 있었다 */
+body.pb-v2 .motion-input-label span { font-size: 12.5px; font-weight: 600; letter-spacing: 0; color: var(--v2-ink-2); white-space: nowrap; }
+body.pb-v2 #motor_table thead td { font-size: 12.5px; font-weight: 600; color: var(--v2-ink-2); }

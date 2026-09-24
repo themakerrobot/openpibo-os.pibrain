@@ -7,7 +7,8 @@
 |---|---|
 | `pibo-ui.css` | **원본은 이것 하나.** 토큰 + 컴포넌트 (11 KB, gzip 3.5 KB) |
 | `index.html` | 스타일 가이드. 컴포넌트를 실제로 렌더하면서 규칙도 같이 적어 둔 문서 |
-| `sync.sh` | 원본을 각 앱 `static/` 으로 복사 / 어긋남 확인 |
+| `sync.sh` | 원본을 각 앱 `static/` 으로 복사 / 어긋남 확인 (`fonts/` 는 `static/fonts/` 로) |
+| `fonts/` | Pretendard 400~800 (원본 배포판의 KS X 1001 subset, 고치지 않음) + `LICENSE.txt`(SIL OFL 1.1) |
 
 스타일 가이드는 브라우저로 `design/index.html` 을 열면 된다. Font Awesome 을
 `../ide/static/all.min.css` 에서 끌어오므로 리포 안에서 열어야 아이콘이 나온다.
@@ -113,6 +114,7 @@ PiBrain 까지 더하면 사본이 여섯 벌이 된다. 그래서 한 파일로
 - 루트 `font-size` 를 건드리지 않는다. `index.css:18` 의 `html { font-size: 10px }` 은
   브라우저 글자 크기 설정을 무력화한다. 키트는 `px` 을 쓴다
 - 글꼴은 앱이 원래 쓰던 스택(`--pb-font`)이다. 키트는 앱 본문 글꼴을 바꾸지 않는다
+  (`pb-refresh` 기준. v2 층 `pb-v2` 는 Pretendard 를 쓴다 — `fonts/`)
 
 ## 검증
 

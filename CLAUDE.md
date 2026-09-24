@@ -339,7 +339,8 @@ sudo raspi-config nonint get_wifi_country
 | 파일 | 출처 | PiBrain 에서 바꾼 것 |
 |---|---|---|
 | `design/pibo-ui.css` `pibo-ui.js` `sync.sh` `README.md` `index.html` | Pibo `design/` (공용 키트) | 없음. **Pibo 쪽이 원본** — 거기서 고치고 `design/sync.sh ~/openpibo-os.pibrain` 으로 가져온다 |
-| `ide/static/pibo-ui.*`, `tools/static/pibo-ui.*`, `classifier/static/pibo-ui.*` | `design/sync.sh` 가 만든 사본 | 직접 고치지 말 것. `bash design/sync.sh --check` |
+| `design/fonts/` (Pretendard 400~800, SIL OFL) | Pibo `design/fonts/` | 없음. 원본 배포판 파일 그대로 — 이유는 Pibo CLAUDE.md '다듬기' |
+| `ide/static/pibo-ui.*`, `tools/static/pibo-ui.*`, `classifier/static/pibo-ui.*`, `*/static/fonts/` | `design/sync.sh` 가 만든 사본 | 직접 고치지 말 것. `bash design/sync.sh --check` |
 | `ide/static/launch.html` | Pibo | 도구 포트 **50040**, 제목 |
 | `ide/templates/index_v2.html` | Pibo | 브랜드 `PiBrain`(fa-brain), 패널 탭 [PiBrain], **배터리 칸 없음**, `?ver` |
 | `ide/static/v2/ide.css` `ide.js` `vendor/toolbox-search.*` | Pibo | 주석의 탭 이름만 |

@@ -286,6 +286,13 @@ body[data-offline] .v2-dot { background: var(--c-red); box-shadow: 0 0 0 3px rgb
   color: #8b94a1; font-size: 12.5px; text-align: center; line-height: 1.5;
 }
 .v2-live__empty > i { font-size: 24px; opacity: .7; }
+/* 아직 한 장도 안 온 칸은 검은 판 대신 옅은 점선 칸. 밝은 화면 한가운데 검정 덩어리가 무거웠다.
+   첫 그림이 오면 ide.js 가 data-has 를 달고, 그때부터 사진 바탕(--c-live)이 된다 */
+.v2-live:not([data-has]) { background: var(--c-bg); }
+.v2-live:not([data-has])::before {
+  content: ""; position: absolute; inset: 0; border: 1.5px dashed var(--c-line-2); border-radius: inherit; pointer-events: none;
+}
+.v2-live:not([data-has]) .v2-live__empty { color: var(--c-ink-3); }
 .v2-live img[src]:not([src=""]) ~ .v2-live__empty { display: none; }
 .v2-live__badge {
   position: absolute; left: 8px; top: 8px; display: none; align-items: center; gap: 6px; height: 22px; padding: 0 8px;

@@ -149,6 +149,7 @@
   var box = null;
   function onFrame(src) {
     liveImg.src = src;
+    live.setAttribute('data-has', '');
     if (box && box.hasAttribute('data-live')) box.firstChild.src = src;
     live.setAttribute('data-fresh', '');
     clearTimeout(liveTimer);
@@ -331,6 +332,20 @@
     setTimeout(function () { whenMsgReady(cb, tries + 1); }, 50);
   }
   whenMsgReady(setupToolbox);
+
+  /* 10) 블록 글꼴 ─────────────────────────────────────────────────────────── */
+  /* 블록 글자도 화면과 같은 Pretendard 로(pibo-ui.css 의 @font-face). Blockly 는 글자 폭을 재서
+     블록 크기를 정하므로 글꼴 파일이 다 온 뒤에 테마를 다시 걸어 새로 잰다. 파일이 없으면
+     (옛 기기 캐시 등) 그대로 둔다. v1 은 건드리지 않는다 */
+  if (document.fonts && document.fonts.load) {
+    document.fonts.load('700 16px "Pretendard"', '가A').then(function (faces) {
+      var ws = window.Blockly && Blockly.getMainWorkspace();
+      if (!faces.length || !ws) return;
+      var th = ws.getTheme();
+      th.setFontStyle({ family: '"Pretendard", sans-serif', weight: th.fontStyle.weight, size: th.fontStyle.size });
+      ws.setTheme(th);
+    }).catch(function (e) { console.warn('block font', e); });
+  }
 
   fire();
 })();
