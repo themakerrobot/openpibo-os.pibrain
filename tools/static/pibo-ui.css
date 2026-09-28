@@ -1112,7 +1112,7 @@ body.pb-v2 #export_motion_bt { margin-left: auto; }
 /* 표: 늘 500px 이던 것을 내용만큼으로(최대는 예전 그대로 500px — 42vh 로 줄였더니 노트북에서 12줄밖에
    안 보이고 아래가 비었다). 비어 있으면 안내 한 줄 */
 body.pb-v2 .motion-table-wrap { height: auto; min-height: 150px; max-height: 500px; overflow-y: auto; border-radius: 10px; }
-body.pb-v2 #motor_table thead td { position: sticky; top: 0; z-index: 1; font-size: 12.5px; font-weight: 600; color: var(--v2-ink-2); }
+body.pb-v2 #motor_table thead td { position: sticky; top: 0; z-index: 1; font-size: 12.5px; font-weight: 600; color: var(--v2-ink-2); background: var(--v2-sunken); }
 body.pb-v2 #motor_table tbody tr { cursor: pointer; }
 body.pb-v2 #motor_table td { padding: 3px 4px; font-size: 13.5px; font-variant-numeric: tabular-nums; white-space: nowrap; }
 /* 로봇 칸은 늘 왼쪽에 붙어 있다(그림을 보며 모터를 맞추는 화면). 오른쪽(표·저장)만 스크롤되고,
@@ -1120,9 +1120,17 @@ body.pb-v2 #motor_table td { padding: 3px 4px; font-size: 13.5px; font-variant-n
    (한때 1200px 아래에서 오른쪽을 로봇 아래로 내렸는데, 표를 보려면 로봇이 화면 밖으로 나가서 되돌렸다)
    900px 이하(태블릿 세로)만 위아래로 쌓는다 */
 @media (min-width: 901px) {
-  body.pb-v2 #article_motion { flex-wrap: nowrap; align-items: flex-start; }
+  body.pb-v2 #article_motion { flex-wrap: nowrap; align-items: flex-start; margin-bottom: 0; }
   body.pb-v2 #article_motion > .pibo-section { position: sticky; top: 0; flex: none; align-self: flex-start; }
-  body.pb-v2 #article_motion > section:nth-child(2) { flex: 1 1 0; width: auto; min-width: 0; }
+  /* 오른쪽 칸은 화면 높이(--motion-h, index.js 의 fitRobot 이 잰다)에 맞추고 **표만** 스크롤한다.
+     [반복·실행·정지] 줄과 [모션이름·등록] 줄은 늘 보인다. 아주 낮은 화면(520px 미만)만 칸 전체가 스크롤된다 */
+  body.pb-v2 #article_motion > section:nth-child(2) {
+    flex: 1 1 0; width: auto; min-width: 0;
+    height: var(--motion-h, calc(100vh - 78px)); min-height: 520px; overflow-y: auto;
+    display: flex; flex-direction: column;
+  }
+  body.pb-v2 #article_motion .motion-record { flex: 1 1 auto; min-height: 0; }
+  body.pb-v2 #article_motion .motion-table-wrap { flex: 1 1 auto; min-height: 140px; max-height: none; }
 }
 @media (max-width: 900px) { body.pb-v2 #article_motion > section:nth-child(2) { width: 100%; } }
 body.pb-v2 .motion-table-wrap { overflow-x: auto; }
@@ -1186,6 +1194,26 @@ body.pb-v2 .s-speak #volume { width: 80px; text-align: right; }
 body.pb-v2 .s-speak #volume + i { color: var(--v2-ink-3); font-size: 12px; }
 body.pb-v2 .s-speak select[name="s_voice_type"] { width: 160px; }
 body.pb-v2 .s-speak #s_tts_val { flex: 1 1 0; min-width: 0; }
+/* 목소리: PiBrain 도구처럼 타일(select 는 v2 에서 숨기고 값만 맞춘다) */
+body.pb-v2 .s-speak .s-voice-row { align-items: flex-start; }
+body.pb-v2 .s-speak .s-voice-row > .label { padding-top: 9px; }
+body.pb-v2 .s-speak .s-voice-row > select, body.pb-v2 .s-speak .s-voice-row > .pb-sep { display: none; }
+body.pb-v2 #s_voice_tiles { flex: 1 1 0; display: grid !important; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 6px; }
+body.pb-v2 #s_voice_tiles .s-voice[data-v="espeak"] { grid-column: span 2; }
+body.pb-v2 #s_voice_tiles .s-voice {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 36px; padding: 0 8px;
+  border-radius: 9px; border: 1px solid var(--v2-line-2); background: var(--v2-raise) !important; color: var(--v2-ink-2);
+  font-size: 13px !important; font-weight: 600; box-shadow: var(--pb-shadow); cursor: pointer;
+}
+body.pb-v2 #s_voice_tiles .s-voice > i { color: var(--v2-ink-3); }
+body.pb-v2 #s_voice_tiles .s-voice:hover { background: var(--v2-hover) !important; }
+body.pb-v2 #s_voice_tiles .s-voice[aria-pressed="true"] { background: var(--v2-tint) !important; border-color: rgba(37, 99, 235, .5); color: var(--v2-tint-ink); }
+body.pb-v2 #s_voice_tiles .s-voice[aria-pressed="true"] > i { color: var(--v2-tint-ink); }
+html[data-theme="dark"] body.pb-v2 #s_voice_tiles .s-voice[aria-pressed="true"] { border-color: var(--v2-accent); }
+body.pb-v2 #s_tts_stop_bt { min-width: 84px; }
+body.pb-v2 .s-status { min-height: 20px; margin: -2px 0 0 82px; font-size: 13px; color: var(--v2-ink-3); }
+body.pb-v2 .s-status[data-kind="ok"] { color: #1f9d62; }
+body.pb-v2 .s-status[data-kind="err"] { color: var(--v2-red-ink); }
 body.pb-v2 #s_tts_bt { width: auto !important; min-width: 110px; background: var(--v2-dark) !important; color: var(--v2-on-dark); border-color: transparent; box-shadow: var(--v2-btn-sh); font-weight: 700; }
 body.pb-v2 #s_tts_bt:hover { background: var(--v2-dark-hov) !important; }
 body.pb-v2 #mic_bt { background: var(--v2-dark) !important; color: var(--v2-on-dark); border-color: transparent; box-shadow: var(--v2-btn-sh); font-weight: 700; }
@@ -1215,8 +1243,18 @@ body.pb-v2 .motion-path textarea {
   background: var(--v2-sunken); color: var(--v2-ink-2); border: 1px solid var(--v2-line); border-radius: 8px;
   padding: 8px 10px; font-size: 13px; line-height: 1.5; height: 64px; min-height: 64px;
 }
-/* 예제 동작: 주황 글씨를 쉼표로 늘어놓던 것 → 누르는 알약. 쉼표 글자는 font-size 0 으로 감춘다 */
+/* 예제 동작: 주황 글씨를 쉼표로 늘어놓던 것 → 누르는 알약. 쉼표 글자는 font-size 0 으로 감춘다.
+   평소엔 접어 둔다([예제 동작 29개 ▸]). 펼치면 표가 그만큼 줄어든다 */
 body.pb-v2 .motion-samples { margin-top: 8px; }
+body.pb-v2 .motion-samples > .motion-saved-title, body.pb-v2 .motion-samples > .pb-sep { display: none; }
+body.pb-v2 #motion_samples_toggle {
+  display: inline-flex !important; align-items: center; gap: 8px; height: 30px; padding: 0 10px 0 6px;
+  background: transparent !important; border: 0; box-shadow: none; color: var(--v2-ink); font-size: 13px; font-weight: 700;
+}
+body.pb-v2 #motion_samples_toggle:hover { background: var(--v2-hover) !important; }
+body.pb-v2 #motion_samples_toggle > i { font-size: 11px; color: var(--v2-ink-3); transition: transform .15s; }
+body.pb-v2 .motion-samples[data-open] #motion_samples_toggle > i { transform: rotate(90deg); }
+body.pb-v2 .motion-samples:not([data-open]) > b { display: none; }
 body.pb-v2 .motion-samples > b { display: block; margin-top: 6px; font-weight: 600; }
 body.pb-v2 #motion_samples { display: flex; flex-wrap: wrap; gap: 6px; font-size: 0; }
 body.pb-v2 #motion_samples > a {
