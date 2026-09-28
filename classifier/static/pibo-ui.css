@@ -1111,6 +1111,7 @@ body.pb-v2 #article_motion > .pibo-section { min-width: 0; width: auto; }
   /* 좁은 폭: 저장 칸 머리줄 버튼은 아이콘만(이름은 title), 장면 카드 작은 버튼은 글자만, 키 안내는 숨김 */
   body.pb-v2 .mlib__tools > button > span, body.pb-v2 .mlib__tools > label > span { display: none; }
   body.pb-v2 .mhead__keys { display: none; }
+  body.pb-v2 #article_motion .mscene #ms_delete > span { display: none; }   /* 이름은 title */
 }
 body.pb-v2 .mside { flex: none; width: 196px; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
 /* 조작 패널·장면 만들기·저장 칸은 같은 상자 모양 */
