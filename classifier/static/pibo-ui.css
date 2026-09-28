@@ -1079,7 +1079,56 @@ body.pb-v2 #init_bt { position: static; }
 body.pb-v2 #m_time_val { width: 72px; text-align: right; }
 body.pb-v2 .motion-unit { margin-left: -2px; color: var(--v2-ink-3); font-size: 13px; }
 
-/* 모터 칸: 로봇 그림 위에서도 읽히게 작은 카드로. 자리(행 간격)는 v1 그대로 */
+/* ── [동작] 사진 위 번호 점 + 옆 조작 패널 (260928) ─────────────────────────────
+   사진에 모터 칸 10개를 겹쳐 두던 것을 번호 점(현재 각도)으로 바꾸고, 누른 모터 하나를 옆 패널에서
+   크게 조절한다(슬라이더 · −5 −1 +1 +5 · 숫자). 예전 칸(.motion-input-group)은 값 저장소로만 남긴다 */
+body.pb-v2 .motion-input-group { display: none !important; }
+body.pb-v2 .mbody { display: flex; align-items: flex-start; gap: 14px; margin-top: 10px; }
+body.pb-v2 .mstage { position: relative; flex: none; width: 360px; }
+body.pb-v2 .mstage > img { display: block; width: 100%; height: auto; margin: 0; filter: opacity(.6); }
+html[data-theme="dark"] body.pb-v2 .mstage > img { filter: opacity(.9); }
+body.pb-v2 #article_motion .mstage .mdot {
+  position: absolute; transform: translate(-50%, -50%); display: inline-flex; align-items: center; gap: 5px;
+  height: 30px; padding: 0 9px 0 3px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  background: var(--v2-raise) !important; color: var(--v2-ink) !important; border: 2px solid var(--v2-accent) !important;
+  box-shadow: 0 2px 6px rgba(20, 24, 40, .18) !important; font-size: 13px !important; font-weight: 700;
+}
+body.pb-v2 #article_motion .mstage .mdot > b {
+  display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--v2-accent); color: #fff; font-size: 12px;
+}
+body.pb-v2 #article_motion .mstage .mdot .mdot__v { font-variant-numeric: tabular-nums; min-width: 1.6em; text-align: right; }
+body.pb-v2 #article_motion .mstage .mdot:hover { transform: translate(-50%, -50%) scale(1.06); }
+body.pb-v2 #article_motion .mstage .mdot[aria-pressed="true"] { background: var(--v2-accent) !important; color: #fff !important; }
+body.pb-v2 #article_motion .mstage .mdot[aria-pressed="true"] > b { background: #fff; color: var(--v2-accent); }
+html[data-theme="dark"] body.pb-v2 #article_motion .mstage .mdot[aria-pressed="true"] { color: #10131a !important; }
+/* 왼쪽 칸은 사진+패널 크기만큼만(예전 모터 칸 때문에 걸려 있던 min-width 590 해제) → 오른쪽 표 폭이 는다 */
+body.pb-v2 #article_motion > .pibo-section { min-width: 0; width: auto; }
+@media (max-width: 1199px) and (min-width: 901px) {
+  body.pb-v2 .mstage { width: 300px; }
+  body.pb-v2 .mpanel { width: 168px !important; }
+  body.pb-v2 #motor_table td { padding: 3px 2px; font-size: 12.5px; }
+}
+body.pb-v2 .mpanel {
+  flex: none; width: 190px; min-width: 0; position: sticky; top: 0; display: flex; flex-direction: column; gap: 12px;
+  padding: 14px; border-radius: 12px; background: var(--v2-raise); border: 1px solid var(--v2-line);
+}
+body.pb-v2 .mpanel__name { font-size: 15px; font-weight: 800; color: var(--v2-ink); }
+body.pb-v2 .mpanel__val { display: flex; align-items: baseline; gap: 4px; }
+body.pb-v2 .mpanel__val > input {
+  width: 100%; height: 52px; padding: 0 8px; text-align: center; font-size: 28px; font-weight: 800;
+  font-variant-numeric: tabular-nums; border-radius: 10px;
+}
+body.pb-v2 .mpanel__val > span { font-size: 20px; font-weight: 700; color: var(--v2-ink-3); }
+body.pb-v2 .mpanel > input[type="range"] { width: 100%; accent-color: var(--v2-accent); height: 28px; }
+body.pb-v2 .mpanel__steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+body.pb-v2 #article_motion .mpanel__steps > button {
+  height: 40px; padding: 0 !important; font-size: 15px !important; font-weight: 700; font-variant-numeric: tabular-nums;
+}
+body.pb-v2 .mpanel__lim { font-size: 12px; color: var(--v2-ink-3); text-align: center; font-variant-numeric: tabular-nums; }
+@media (max-width: 900px) { body.pb-v2 .mbody { justify-content: center; } body.pb-v2 .mpanel { width: 240px; } }
+
+/* 모터 칸: 로봇 그림 위에서도 읽히게 작은 카드로. 자리(행 간격)는 v1 그대로 (v2 에서는 위 번호 점으로 바뀌어 숨김) */
 body.pb-v2 .motion-input-row > div {
   background: var(--v2-raise); background: color-mix(in srgb, var(--v2-raise) 90%, transparent);
   border: 1px solid var(--v2-line); border-radius: 10px; padding: 4px 8px 0; box-shadow: 0 1px 2px rgba(20, 24, 40, .06);
