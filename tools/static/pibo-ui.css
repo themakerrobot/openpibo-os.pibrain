@@ -1053,6 +1053,90 @@ body.pb-v2 .pb-header select.pb-field--sm {
 body.pb-v2 .pb-header select.pb-field--sm:hover { background-color: var(--v2-frame-2); }
 body.pb-v2 .pb-header select.pb-field--sm option { background: var(--v2-raise); color: var(--v2-ink); }
 
-/* 도구 [동작]: 모터 이름이 1.2rem 굵은 글씨로 좁은 칸에 눌려 있었다 */
+/* ── 도구 [동작] 정리 (260928) ──────────────────────────────────────────────
+   'off 1' 표시, 로봇 그림 위에 겹친 모터 칸, ⋮ 로 잘린 버튼 줄, 비어 있는 500px 표,
+   '모두 지우기' 두 개를 정리했다. id 는 그대로라 index.js 는 상태 칩(data-label) 한 곳만 바뀌었다 */
+
+/* 상단바 로봇 상태: 칩 하나. 기다리는 동안 점이 깜빡인다 */
+body.pb-v2 #onoff_count, body.pb-v2 #onoff_val > i { display: none; }
+body.pb-v2 #onoff_val[data-label] {
+  display: inline-flex; align-items: center; gap: 6px; height: 24px; margin-left: 10px; padding: 0 10px;
+  border-radius: 12px; background: var(--v2-frame-2); color: var(--v2-frame-ink); font-size: 12px; font-weight: 600;
+}
+body.pb-v2 #onoff_val[data-label]::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--v2-frame-dim); }
+body.pb-v2 #onoff_val[data-label]::after { content: attr(data-label); }
+body.pb-v2 #onoff_val[data-state="on"]::before { background: #1f9d62; box-shadow: 0 0 0 2px rgba(31, 157, 98, .25); }
+body.pb-v2 #onoff_val[data-state="off"]::before { animation: pb-conn-blink 1.2s ease-in-out infinite; }
+@keyframes pb-conn-blink { 50% { opacity: .25; } }
+
+/* 왼쪽 윗줄: 떠 있던 [원래자세] 와 float 두 덩이를 한 줄로 */
+body.pb-v2 .pibo-section > div:first-child {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px; position: relative; z-index: 2;
+}
+body.pb-v2 .pibo-section > div:first-child > div { float: none !important; display: flex; align-items: center; gap: 6px; }
+body.pb-v2 #init_bt { position: static; }
+body.pb-v2 #m_time_val { width: 72px; text-align: right; }
+body.pb-v2 .motion-unit { margin-left: -2px; color: var(--v2-ink-3); font-size: 13px; }
+
+/* 모터 칸: 로봇 그림 위에서도 읽히게 작은 카드로. 자리(행 간격)는 v1 그대로 */
+body.pb-v2 .motion-input-row > div {
+  background: var(--v2-raise); background: color-mix(in srgb, var(--v2-raise) 90%, transparent);
+  border: 1px solid var(--v2-line); border-radius: 10px; padding: 4px 8px 0; box-shadow: 0 1px 2px rgba(20, 24, 40, .06);
+}
+body.pb-v2 .pibo-section { padding-bottom: 28px; }   /* 카드가 된 발 칸(M0·M6)이 아래에서 잘리지 않게 */
+body.pb-v2 .motion-input-label { gap: 6px; }
 body.pb-v2 .motion-input-label span { font-size: 12.5px; font-weight: 600; letter-spacing: 0; color: var(--v2-ink-2); white-space: nowrap; }
-body.pb-v2 #motor_table thead td { font-size: 12.5px; font-weight: 600; color: var(--v2-ink-2); }
+body.pb-v2 .motion-input-label input { width: 50px; height: 24px; padding: 0 4px; text-align: right; font-size: 13px; }
+body.pb-v2 .motion-input-row input[type="range"] { width: 100%; margin: 2px 0 0; accent-color: var(--v2-accent); }
+
+/* 오른쪽 버튼 줄: ⋮·'-' 대신 간격으로 묶는다 */
+body.pb-v2 .pb-sep { display: none; }
+body.pb-v2 .motion-record > div:first-child,
+body.pb-v2 .motion-name-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+body.pb-v2 .motion-record > div:first-child #play_cycle_val { width: 64px; margin-right: 4px; }
+body.pb-v2 #init_frame_bt { margin-left: auto; }
+/* 지우는 버튼은 판 없이 빨간 글씨(되돌릴 수 없는 것만 빨강) */
+body.pb-v2 #init_frame_bt, body.pb-v2 #reset_motion_bt {
+  background: transparent !important; border-color: transparent !important; box-shadow: none !important; color: var(--v2-red-ink);
+}
+body.pb-v2 #init_frame_bt:hover, body.pb-v2 #reset_motion_bt:hover { background: var(--v2-red-t) !important; }
+/* [등록하기] 가 이 화면의 주 동작 — 빨간 판(btn-red) 대신 파랑 */
+body.pb-v2 #add_motion_bt {
+  background: var(--v2-dark) !important; color: var(--v2-on-dark); border-color: transparent; box-shadow: var(--v2-btn-sh); font-weight: 700;
+}
+body.pb-v2 #add_motion_bt:hover:not(:disabled) { background: var(--v2-dark-hov) !important; }
+body.pb-v2 .motion-name-wrap #motion_name_val { width: 200px !important; }
+body.pb-v2 #export_motion_bt { margin-left: auto; }
+
+/* 표: 빈 500px 대신 내용만큼(최대 화면 42%), 비어 있으면 안내 한 줄 */
+body.pb-v2 .motion-table-wrap { height: auto; min-height: 150px; max-height: 42vh; overflow-y: auto; border-radius: 10px; }
+body.pb-v2 #motor_table thead td { position: sticky; top: 0; z-index: 1; font-size: 12.5px; font-weight: 600; color: var(--v2-ink-2); }
+body.pb-v2 #motor_table tbody tr { cursor: pointer; }
+body.pb-v2 #motor_table td { padding: 3px 4px; font-size: 13.5px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* 1200px 아래에서는 오른쪽 칸(표·저장)이 290px 로 눌려 표가 잘렸다 → 로봇 아래로 내린다(800px 과 같은 모양) */
+@media (max-width: 1199px) { body.pb-v2 #article_motion > section:nth-child(2) { width: 100%; } }
+body.pb-v2 #motor_table tbody tr:hover td { background: var(--v2-tint, var(--v2-accent-t)) !important; }
+body.pb-v2 .motion-table-wrap:has(tbody:empty) > .motion-empty {
+  display: block !important; padding: 36px 20px; text-align: center; color: var(--v2-ink-3); font-size: 13px; line-height: 1.6;
+}
+
+/* 저장된 동작: 제목 + 파일 경로 캡션 + 읽기 전용 목록 */
+body.pb-v2 .motion-path { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
+body.pb-v2 .motion-saved-title { font-size: 13px; font-weight: 700; color: var(--v2-ink); }
+body.pb-v2 .motion-path input#motion-path-disabled {
+  border: 0 !important; background: transparent !important; padding: 0; height: auto;
+  font-family: var(--pb-mono); font-size: 12px; color: var(--v2-ink-3);
+}
+body.pb-v2 .motion-path textarea {
+  background: var(--v2-sunken); color: var(--v2-ink-2); border: 1px solid var(--v2-line); border-radius: 8px;
+  padding: 8px 10px; font-size: 13px; line-height: 1.5; height: 64px; min-height: 64px;
+}
+/* 예제 동작: 주황 글씨를 쉼표로 늘어놓던 것 → 누르는 알약. 쉼표 글자는 font-size 0 으로 감춘다 */
+body.pb-v2 .motion-samples { margin-top: 8px; }
+body.pb-v2 .motion-samples > b { display: block; margin-top: 6px; font-weight: 600; }
+body.pb-v2 #motion_samples { display: flex; flex-wrap: wrap; gap: 6px; font-size: 0; }
+body.pb-v2 #motion_samples > a {
+  font-size: 12.5px; color: var(--v2-ink-2) !important; background: var(--v2-sunken); border: 1px solid var(--v2-line);
+  border-radius: 999px; padding: 3px 10px; font-family: var(--pb-mono); text-decoration: none;
+}
+body.pb-v2 #motion_samples > a:hover { background: var(--v2-tint, var(--v2-accent-t)); color: var(--v2-tint-ink, var(--v2-accent)) !important; border-color: transparent; }
