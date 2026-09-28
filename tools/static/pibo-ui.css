@@ -1109,8 +1109,9 @@ body.pb-v2 #add_motion_bt:hover:not(:disabled) { background: var(--v2-dark-hov) 
 body.pb-v2 .motion-name-wrap #motion_name_val { width: 200px !important; }
 body.pb-v2 #export_motion_bt { margin-left: auto; }
 
-/* 표: 빈 500px 대신 내용만큼(최대 화면 42%), 비어 있으면 안내 한 줄 */
-body.pb-v2 .motion-table-wrap { height: auto; min-height: 150px; max-height: 42vh; overflow-y: auto; border-radius: 10px; }
+/* 표: 늘 500px 이던 것을 내용만큼으로(최대는 예전 그대로 500px — 42vh 로 줄였더니 노트북에서 12줄밖에
+   안 보이고 아래가 비었다). 비어 있으면 안내 한 줄 */
+body.pb-v2 .motion-table-wrap { height: auto; min-height: 150px; max-height: 500px; overflow-y: auto; border-radius: 10px; }
 body.pb-v2 #motor_table thead td { position: sticky; top: 0; z-index: 1; font-size: 12.5px; font-weight: 600; color: var(--v2-ink-2); }
 body.pb-v2 #motor_table tbody tr { cursor: pointer; }
 body.pb-v2 #motor_table td { padding: 3px 4px; font-size: 13.5px; font-variant-numeric: tabular-nums; white-space: nowrap; }
