@@ -211,6 +211,11 @@ grep -rn "circul.us" --include="*.py" --include="*.js" . | grep -v "docs/\|setup
 - **수정 금지**: `ide/static/ko.js`, `en.js`, `customblock.js`, `disable-top-blocks.js` 의 한글
   (Blockly 로케일·주석·API 값이다).
 - `record`(실행 로그)는 번역을 타지 않고 터미널에 그대로 찍힌다. 언어중립으로 (`[exit]`).
+- **학생 프로그램의 stderr 는 stdout 에 합친다(260928).** `execute` 가 `stderr=STDOUT` 으로 띄우고 4KB 조각으로 읽는다
+  (점진 UTF-8 디코더). 전에는 stderr 를 프로그램이 끝난 뒤에 읽어서 ① 무한 반복 안의 에러가 [정지] 전까지 안 보였고
+  ② stderr 가 약 1MB 쌓이면 프로그램이 멈췄다(실측: 20초 넘게 안 끝남 → 지금 0.2초). 줄 단위(`readline`)도 버렸다 —
+  64KB 넘는 한 줄(`print('x'*100000)`)에서 예외로 실행이 끊겼고, 줄바꿈 없는 `input('이름? ')` 안내문이 안 보였다
+- **학생 코드는 root 로 돈다 — 의도한 것이다.** GPIO 등 하드웨어 접근 때문. `pi` 권한으로 내리지 말 것
 
 ---
 

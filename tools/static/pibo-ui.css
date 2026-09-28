@@ -949,7 +949,8 @@ body.pb-v2 .mark::before {
 body.pb-v2 article section header { font-size: 13px; font-weight: 700; color: var(--v2-ink-2); margin: 10px 0 6px; }
 body.pb-v2 article section .label { color: var(--v2-ink-2); }
 body.pb-v2 .pibo-section > img { filter: opacity(.55); }
-html[data-theme="dark"] body.pb-v2 .pibo-section > img { filter: opacity(.35) invert(1) hue-rotate(180deg); }
+/* 어둡게에서도 로봇은 흰색 그대로(실물 색). 전엔 뒤집어 검게 보였다 */
+html[data-theme="dark"] body.pb-v2 .pibo-section > img { filter: opacity(.9); }
 body.pb-v2 #v_img { border-radius: 10px; background: var(--v2-sunken); }
 body.pb-v2 .motion-input-label .label { color: var(--v2-ink); }
 body.pb-v2 .toggle-switch { background: var(--v2-line-2); }

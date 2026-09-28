@@ -1,4 +1,5 @@
 import os
+import codecs
 import sys
 import asyncio
 import shutil
@@ -496,6 +497,8 @@ async def execute(EXEC, codepath):
   #   {'record': 전체}      — 시작할 때(그리고 실행 중에 붙은 화면에) 한 번. 터미널을 갈아끼운다
   #   {'record_add': 조각}  — 그 뒤로는 늘어난 부분만. 터미널에 이어 붙인다
   # 예전에는 줄마다 전체를 다시 보내서 2000줄이면 39KB 출력에 39MB가 나갔다
+  # stderr 는 stdout 에 합친다(STDOUT). 따로 두고 끝에 읽으면 무한 반복 안의 에러가 정지할 때까지 안 보이고,
+  # stderr 파이프(64KB)가 차면 학생 프로그램이 거기서 멈췄다. 합치면 찍힌 순서 그대로 나온다
   global record, ps
   async with mutex:
     record = f'[{datetime.datetime.now()}]: \n\n'
@@ -506,7 +509,7 @@ async def execute(EXEC, codepath):
         f"{ENV_PATH}/{EXEC}", '-u', codepath,
         cwd=PATH,
         stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.STDOUT,
         stdin=asyncio.subprocess.PIPE
       )
     else:
@@ -514,7 +517,7 @@ async def execute(EXEC, codepath):
         EXEC, codepath,
         cwd=PATH,
         stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.STDOUT,
         stdin=asyncio.subprocess.PIPE
       )
     loop = asyncio.get_running_loop()
@@ -529,28 +532,32 @@ async def execute(EXEC, codepath):
         await app.sio.emit('update', {'record_add': chunk})
       last_flush = loop.time()
 
+    # 줄 단위(readline)가 아니라 조각 단위로 읽는다. readline 은 64KB(StreamReader 기본 한도)보다 긴 줄에서
+    # 예외를 내 실행이 중간에 끊겼다(print('x' * 100000) 같은 것). 한글이 조각 경계에서 잘리지 않게
+    # 점진 디코더를 쓴다. 줄바꿈 없는 input() 안내문도 바로 보인다
+    decoder = codecs.getincrementaldecoder('utf-8')(errors='replace')
     while True:
       try:
-        # 모아 둔 게 있으면 LOG_FLUSH_SEC 안에 다음 줄이 안 와도 보낸다.
-        # readline 은 줄바꿈을 찾기 전까지 버퍼를 소비하지 않아 여기서 끊어도 잃는 게 없다
-        line = await asyncio.wait_for(ps.stdout.readline(), timeout=LOG_FLUSH_SEC if pending else None)
+        # 모아 둔 게 있으면 LOG_FLUSH_SEC 안에 다음 조각이 안 와도 보낸다.
+        # read 는 기다리는 중에 취소돼도 버퍼를 소비하지 않아 잃는 게 없다
+        data = await asyncio.wait_for(ps.stdout.read(4096), timeout=LOG_FLUSH_SEC if pending else None)
       except asyncio.TimeoutError:
         await flush()
         continue
-      if not line:
+      if not data:
         break
-      text = line.decode(errors='replace')
+      text = decoder.decode(data)
+      if not text:
+        continue
       record += text
       pending.append(text)
       if loop.time() - last_flush >= LOG_FLUSH_SEC:
         await flush()
-    await flush()
-
-    err = await ps.stderr.read()
-    if err:
-      text = f'\n{err.decode(errors="replace")}'
+    text = decoder.decode(b'', final=True)
+    if text:
       record += text
-      await app.sio.emit('update', {'record_add': text})
+      pending.append(text)
+    await flush()
 
     await ps.wait()
     ps = None  # 프로세스가 종료되었으므로 ps를 None으로 설정
