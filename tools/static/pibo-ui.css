@@ -1105,17 +1105,34 @@ body.pb-v2 #article_motion .mstage .mdot[aria-pressed="true"] > b { background: 
 html[data-theme="dark"] body.pb-v2 #article_motion .mstage .mdot[aria-pressed="true"] { color: #10131a !important; }
 /* 왼쪽 칸은 사진+패널 크기만큼만(예전 모터 칸 때문에 걸려 있던 min-width 590 해제) → 오른쪽 표 폭이 는다 */
 body.pb-v2 #article_motion > .pibo-section { min-width: 0; width: auto; }
+/* 저장 칸 머리줄의 내보내기·가져오기·모두 지우기는 보조 동작이라 늘 아이콘만(이름은 title).
+   글자를 붙이면 영문에서 1200~1440px 까지 줄이 넘쳤다 */
+body.pb-v2 .mlib__tools > button > span, body.pb-v2 .mlib__tools > label > span { display: none; }
+body.pb-v2 .mlib__tools > button, body.pb-v2 .mlib__tools > label { width: 32px; padding: 0 !important; justify-content: center; }
 @media (max-width: 1199px) and (min-width: 901px) {
-  body.pb-v2 .mside { width: 164px !important; }
   body.pb-v2 #motor_table td { padding: 3px 1px; font-size: 12.5px; }
-  /* 좁은 폭: 저장 칸 머리줄 버튼은 아이콘만(이름은 title), 장면 카드 작은 버튼은 글자만, 키 안내는 숨김 */
-  body.pb-v2 .mlib__tools > button > span, body.pb-v2 .mlib__tools > label > span { display: none; }
+  /* 표 버튼 줄이 좁다: [이 줄 지우기](⌫)·[표 비우기](휴지통)는 아이콘만, 이름은 title */
+  body.pb-v2 #article_motion #ms_delete > span, body.pb-v2 #article_motion #init_frame_bt > span { display: none; }
+}
+@media (max-width: 1439px) and (min-width: 901px) {
+  /* 줄을 고르면 [이 줄 지우기] 가 붙어 영문에서 최대 22px 넘쳤다 → 버튼 여백만 줄인다(글자는 그대로) */
+  body.pb-v2 #article_motion .motion-record > div:first-child { gap: 4px; }
+  body.pb-v2 #article_motion .motion-record > div:first-child > button { padding-left: 8px !important; padding-right: 8px !important; }
+}
+@media (max-width: 1299px) and (min-width: 901px) {
   body.pb-v2 .mhead__keys { display: none; }
-  body.pb-v2 #article_motion .mscene #ms_delete > span { display: none; }   /* 이름은 title */
+  /* 태블릿 가로(1024~1280): 카드 폭이 좁아 사진이 폭에 걸려 가운데 줄의 절반~⅔ 만 찼다 →
+     조작 패널을 사진 아래로 내리고 두 칸(각도 | 시간·추가·수정)으로 편다. 사진 크기는 fitStage 가 남는 높이로 */
+  body.pb-v2 .mbody { flex-direction: column; justify-content: flex-start; gap: 12px; }
+  body.pb-v2 .mside { width: 100% !important; align-self: stretch !important; }
+  body.pb-v2 .mpanel { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 16px; row-gap: 8px; align-items: center; }
+  body.pb-v2 .mpanel > :not(.mpanel__add) { grid-column: 1; }
+  body.pb-v2 .mpanel__add { grid-column: 2; grid-row: 1 / span 5; align-self: stretch; justify-content: center;
+    margin: 0; padding: 0 0 0 16px; border-top: 0; border-left: 1px solid var(--v2-line); }
 }
 body.pb-v2 .mside { flex: none; width: 196px; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
 /* 조작 패널·장면 만들기·저장 칸은 같은 상자 모양 */
-body.pb-v2 .mpanel, body.pb-v2 .mscene, body.pb-v2 .mlib {
+body.pb-v2 .mpanel, body.pb-v2 .mlib {
   display: flex; flex-direction: column; gap: 10px;
   padding: 12px; border-radius: 12px; background: var(--v2-raise); border: 1px solid var(--v2-line);
 }
@@ -1139,32 +1156,37 @@ body.pb-v2 .mpanel__lim { font-size: 12px; color: var(--v2-ink-3); text-align: c
   body.pb-v2 .mstage { width: min(42vw, 340px); }
 }
 
-/* 장면 만들기 카드(260928): 시간·간격 · [장면 추가 / 이 장면 고치기] · [끝에 붙이기] [지우기] · 팔 좌우 같이 */
-body.pb-v2 .mscene__title { font-size: 14px; font-weight: 800; color: var(--v2-ink); }
-body.pb-v2 .mscene__help { font-size: 12px; line-height: 1.5; color: var(--v2-ink-3); }
-body.pb-v2 .mscene__row { display: flex; align-items: center; gap: 8px; min-width: 0; }
-body.pb-v2 .mscene__lbl { width: 34px; flex: none; font-size: 13px; font-weight: 600; color: var(--v2-ink-2); }
+/* 조작 패널 아래: 시간 · [추가·수정] · 한 줄 안내. 각도를 맞추고 바로 아래에서 누른다(260928).
+   따로 상자로 두었을 땐 내용은 한 줄인데 상자만 커서(140px) 패널 안으로 넣었다 */
+body.pb-v2 .mpanel__add { display: flex; flex-direction: column; gap: 8px; margin-top: 2px; padding-top: 12px; border-top: 1px solid var(--v2-line); }
+body.pb-v2 .mpanel__time { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--v2-ink-2); }
+body.pb-v2 .mpanel__time > span:first-child { flex: none; width: 30px; }
 body.pb-v2 #ms_time_slot { display: contents; }
-body.pb-v2 .mscene #m_time_val { flex: none; width: 84px; height: 40px; font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
-body.pb-v2 .mscene .motion-unit { margin: 0; width: 14px; flex: none; }
-body.pb-v2 #m_time_val.is-bumped { animation: pb-bump .6s ease-out; }
-@keyframes pb-bump { from { box-shadow: 0 0 0 3px var(--v2-accent); } to { box-shadow: 0 0 0 3px transparent; } }
-body.pb-v2 #article_motion .mscene #add_frame_bt {
-  flex: 1 1 auto; min-width: 0; height: 40px; justify-content: center; font-size: 15px !important; font-weight: 800; margin-left: 4px;
+body.pb-v2 .mpanel__add #m_time_val { flex: 1 1 0; min-width: 0; width: auto; height: 38px; text-align: right; font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
+body.pb-v2 .mpanel__add .motion-unit { margin: 0; flex: none; }
+body.pb-v2 #article_motion .mpanel__add #add_frame_bt {
+  width: 100%; height: 42px; justify-content: center; font-size: 15px !important; font-weight: 800;
   background: var(--v2-dark) !important; color: var(--v2-on-dark) !important; border-color: transparent !important; box-shadow: var(--v2-btn-sh) !important;
 }
-body.pb-v2 #article_motion .mscene #add_frame_bt:hover { background: var(--v2-dark-hov) !important; }
-body.pb-v2 #article_motion .mscene #add_frame_bt > i { color: inherit; }
-body.pb-v2 #article_motion .mscene #ms_delete { flex: none; display: inline-flex; align-items: center; gap: 5px; height: 40px; padding: 0 10px !important; font-size: 13px !important; white-space: nowrap; }
-body.pb-v2 #article_motion .mscene #ms_delete[hidden] { display: none; }
-body.pb-v2 #article_motion .mscene #ms_delete { background: transparent !important; border-color: transparent !important; box-shadow: none !important; color: var(--v2-red-ink) !important; }
-body.pb-v2 #article_motion .mscene #ms_delete:hover:not(:disabled) { background: var(--v2-red-t) !important; }
-/* 윗줄(왼쪽): [원래자세] · 팔·손 좌우 같이 · 키 안내 — 오른쪽 [반복·실행·정지] 줄과 높이를 맞춘다 */
+body.pb-v2 #article_motion .mpanel__add #add_frame_bt:hover { background: var(--v2-dark-hov) !important; }
+body.pb-v2 #article_motion .mpanel__add #add_frame_bt > i { color: inherit; }
+body.pb-v2 .mpanel__hint { font-size: 11.5px; color: var(--v2-ink-3); text-align: center; }
+/* [이 줄 지우기]: 표를 고르면 표 버튼 줄의 [표 비우기] 옆에 나온다. 판 없는 빨간 글씨 */
+body.pb-v2 #article_motion #ms_delete {
+  display: inline-flex; align-items: center; gap: 5px; margin-left: auto; white-space: nowrap;
+  background: transparent !important; border-color: transparent !important; box-shadow: none !important; color: var(--v2-red-ink) !important;
+}
+body.pb-v2 #article_motion #ms_delete[hidden] { display: none; }
+body.pb-v2 #article_motion #ms_delete:hover { background: var(--v2-red-t) !important; }
+body.pb-v2 #article_motion #ms_delete:not([hidden]) + #init_frame_bt { margin-left: 0; }
+body.pb-v2 #m_time_val.is-bumped { animation: pb-bump .6s ease-out; }
+@keyframes pb-bump { from { box-shadow: 0 0 0 3px var(--v2-accent); } to { box-shadow: 0 0 0 3px transparent; } }
+/* 윗줄(왼쪽): [원래자세] · 키 안내 — 오른쪽 [반복·실행·정지] 줄과 높이를 맞춘다 */
 body.pb-v2 .mhead { display: flex; align-items: center; gap: 14px; min-width: 0; white-space: nowrap; }
 body.pb-v2 #article_motion .mhead > #init_bt { position: static !important; height: 34px; padding: 0 12px; font-size: 13px; }
 body.pb-v2 .mhead__keys { margin-left: auto; font-size: 11.5px; color: var(--v2-ink-3); overflow: hidden; text-overflow: ellipsis; }
 @media (hover: none) { body.pb-v2 .mhead__keys { display: none; } }   /* 태블릿엔 키보드가 없다 */
-/* 고치는 중인 표 줄 */
+/* 고른 표 줄 */
 body.pb-v2 #motor_table tbody tr[data-sel] td { background: var(--v2-accent-t) !important; color: var(--v2-accent-ink, var(--v2-accent)); font-weight: 700; }
 body.pb-v2 #motor_table tbody tr[data-sel] td:first-child { box-shadow: inset 3px 0 0 var(--v2-accent); }
 
@@ -1242,7 +1264,7 @@ body.pb-v2 #motor_table td { padding: 3px 4px; font-size: 13.5px; font-variant-n
 /* 줄 맞춤(901px 이상): 두 카드를 같은 폭·화면 높이(--motion-h)로 놓고, 안을 같은 세 줄로 나눈다.
      윗줄 40px    [원래자세 · 키 안내]    ↔  [반복 · 실행 · 정지 · 표 비우기]
      가운데 1fr   사진 + 조작 패널        ↔  표(여기만 스크롤)
-     아랫줄 140px 표에 추가               ↔  저장 칸
+     아랫줄 140px (사진이 이어짐)          ↔  저장 칸   — 시간·[추가·수정] 은 조작 패널 아래
    전엔 왼쪽이 내용 크기, 오른쪽이 나머지라 폭·아래 끝이 서로 달랐다. 사진은 fitStage 가 가운데 줄에 맞춘다 */
 @media (min-width: 901px) {
   body.pb-v2 #article_motion { --m-top: 40px; --m-bot: 140px; flex-wrap: nowrap; align-items: stretch; margin-bottom: 0; }
@@ -1252,12 +1274,22 @@ body.pb-v2 #motor_table td { padding: 3px 4px; font-size: 13.5px; font-variant-n
     display: grid !important; grid-template-columns: minmax(0, 1fr); grid-template-rows: var(--m-top) minmax(0, 1fr) var(--m-bot); gap: 12px;
     padding: 14px 16px !important;
   }
+  /* 왼쪽은 두 줄. 1300px 이상에선 폭을 오른쪽의 1.2배로 — 1:1 이면 사진(세로로 긴 그림)이 폭에 걸려 위아래가 빈다.
+     위·아래 끝과 윗줄은 그대로 맞는다 */
+  body.pb-v2 #article_motion > .pibo-section { grid-template-rows: var(--m-top) minmax(0, 1fr); }
   body.pb-v2 #article_motion .motion-record { display: contents; }
   body.pb-v2 #article_motion .motion-record > div:first-child { flex-wrap: nowrap; white-space: nowrap; min-width: 0; }
   body.pb-v2 #article_motion .motion-table-wrap { height: auto; min-height: 0; max-height: none; margin: 0; }
   body.pb-v2 .mside { align-self: center; }
   body.pb-v2 #article_motion .motion-name-wrap { flex-wrap: nowrap; }
 }
+@media (min-width: 1300px) { body.pb-v2 #article_motion > .pibo-section { flex-grow: 1.2 !important; } }
+@media (max-width: 1023px) and (min-width: 901px) {   /* 아주 좁을 때: 저장 칸 이름 칸을 한 줄로 따로, 칸을 그만큼 키운다 */
+  body.pb-v2 #article_motion { --m-bot: 178px; }
+  body.pb-v2 #article_motion .motion-name-wrap { flex-wrap: wrap; }
+  body.pb-v2 #article_motion .motion-name-wrap #motion_name_val { flex-basis: 100%; }
+  body.pb-v2 .mlib__head > .motion-saved-title { display: none; }
+}   /* 좁으면 표·저장 칸이 넘쳐 1:1 */
 @media (max-width: 900px) { body.pb-v2 #article_motion > section:nth-child(2) { width: 100%; } }
 body.pb-v2 .motion-table-wrap { overflow-x: auto; }
 
