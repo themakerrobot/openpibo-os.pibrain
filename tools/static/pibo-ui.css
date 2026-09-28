@@ -1110,7 +1110,6 @@ body.pb-v2 #article_motion > .pibo-section { min-width: 0; width: auto; }
   body.pb-v2 #motor_table td { padding: 3px 1px; font-size: 12.5px; }
   /* 좁은 폭: 저장 칸 머리줄 버튼은 아이콘만(이름은 title), 장면 카드 작은 버튼은 글자만, 키 안내는 숨김 */
   body.pb-v2 .mlib__tools > button > span, body.pb-v2 .mlib__tools > label > span { display: none; }
-  body.pb-v2 #article_motion .mscene__sub > button > i { display: none; }
   body.pb-v2 .mhead__keys { display: none; }
 }
 body.pb-v2 .mside { flex: none; width: 196px; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
@@ -1141,35 +1140,29 @@ body.pb-v2 .mpanel__lim { font-size: 12px; color: var(--v2-ink-3); text-align: c
 
 /* 장면 만들기 카드(260928): 시간·간격 · [장면 추가 / 이 장면 고치기] · [끝에 붙이기] [지우기] · 팔 좌우 같이 */
 body.pb-v2 .mscene__title { font-size: 14px; font-weight: 800; color: var(--v2-ink); }
-body.pb-v2 .mscene__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 8px 12px; align-items: center; }
-body.pb-v2 .mscene__row { display: flex; align-items: center; gap: 6px; }
+body.pb-v2 .mscene__help { font-size: 12px; line-height: 1.5; color: var(--v2-ink-3); }
+body.pb-v2 .mscene__row { display: flex; align-items: center; gap: 8px; min-width: 0; }
 body.pb-v2 .mscene__lbl { width: 34px; flex: none; font-size: 13px; font-weight: 600; color: var(--v2-ink-2); }
 body.pb-v2 #ms_time_slot { display: contents; }
-body.pb-v2 .mscene #m_time_val, body.pb-v2 .mscene #ms_step { flex: 1 1 0; min-width: 0; width: auto; height: 38px; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
-body.pb-v2 .mscene #ms_step { text-align: right; }
+body.pb-v2 .mscene #m_time_val { flex: none; width: 84px; height: 40px; font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
 body.pb-v2 .mscene .motion-unit { margin: 0; width: 14px; flex: none; }
 body.pb-v2 #m_time_val.is-bumped { animation: pb-bump .6s ease-out; }
 @keyframes pb-bump { from { box-shadow: 0 0 0 3px var(--v2-accent); } to { box-shadow: 0 0 0 3px transparent; } }
 body.pb-v2 #article_motion .mscene #add_frame_bt {
-  width: 100%; height: 38px; justify-content: center; font-size: 15px !important; font-weight: 800;
+  flex: 1 1 auto; min-width: 0; height: 40px; justify-content: center; font-size: 15px !important; font-weight: 800; margin-left: 4px;
   background: var(--v2-dark) !important; color: var(--v2-on-dark) !important; border-color: transparent !important; box-shadow: var(--v2-btn-sh) !important;
 }
 body.pb-v2 #article_motion .mscene #add_frame_bt:hover { background: var(--v2-dark-hov) !important; }
 body.pb-v2 #article_motion .mscene #add_frame_bt > i { color: inherit; }
-body.pb-v2 .mscene__sub { display: grid; grid-template-columns: 1fr auto; gap: 6px; }
-body.pb-v2 #article_motion .mscene__sub > button { display: inline-flex; align-items: center; gap: 5px; height: 38px; padding: 0 8px !important; font-size: 12.5px !important; justify-content: center; white-space: nowrap; }
+body.pb-v2 #article_motion .mscene #ms_delete { flex: none; display: inline-flex; align-items: center; gap: 5px; height: 40px; padding: 0 10px !important; font-size: 13px !important; white-space: nowrap; }
+body.pb-v2 #article_motion .mscene #ms_delete[hidden] { display: none; }
 body.pb-v2 #article_motion .mscene #ms_delete { background: transparent !important; border-color: transparent !important; box-shadow: none !important; color: var(--v2-red-ink) !important; }
 body.pb-v2 #article_motion .mscene #ms_delete:hover:not(:disabled) { background: var(--v2-red-t) !important; }
-body.pb-v2 #article_motion .mscene__sub > button:disabled { opacity: .4; cursor: default; }
 /* 윗줄(왼쪽): [원래자세] · 팔·손 좌우 같이 · 키 안내 — 오른쪽 [반복·실행·정지] 줄과 높이를 맞춘다 */
 body.pb-v2 .mhead { display: flex; align-items: center; gap: 14px; min-width: 0; white-space: nowrap; }
 body.pb-v2 #article_motion .mhead > #init_bt { position: static !important; height: 34px; padding: 0 12px; font-size: 13px; }
-body.pb-v2 .mhead__mirror { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--v2-ink-2); cursor: pointer; }
-body.pb-v2 .mhead__mirror > input { width: 16px; height: 16px; margin: 0; accent-color: var(--v2-accent); }
 body.pb-v2 .mhead__keys { margin-left: auto; font-size: 11.5px; color: var(--v2-ink-3); overflow: hidden; text-overflow: ellipsis; }
 @media (hover: none) { body.pb-v2 .mhead__keys { display: none; } }   /* 태블릿엔 키보드가 없다 */
-/* 좌우 같이 켜면 따라 움직이는 쪽 점은 점선 */
-body.pb-v2 #article_motion .mstage .mdot[data-twin] { border-style: dashed !important; background: var(--v2-accent-t) !important; }
 /* 고치는 중인 표 줄 */
 body.pb-v2 #motor_table tbody tr[data-sel] td { background: var(--v2-accent-t) !important; color: var(--v2-accent-ink, var(--v2-accent)); font-weight: 700; }
 body.pb-v2 #motor_table tbody tr[data-sel] td:first-child { box-shadow: inset 3px 0 0 var(--v2-accent); }
@@ -1246,9 +1239,9 @@ body.pb-v2 #motor_table td { padding: 3px 4px; font-size: 13.5px; font-variant-n
    (한때 1200px 아래에서 오른쪽을 로봇 아래로 내렸는데, 표를 보려면 로봇이 화면 밖으로 나가서 되돌렸다)
    900px 이하(태블릿 세로)만 위아래로 쌓는다 */
 /* 줄 맞춤(901px 이상): 두 카드를 같은 폭·화면 높이(--motion-h)로 놓고, 안을 같은 세 줄로 나눈다.
-     윗줄 40px    [원래자세 · 좌우 같이]  ↔  [반복 · 실행 · 정지 · 표 비우기]
+     윗줄 40px    [원래자세 · 키 안내]    ↔  [반복 · 실행 · 정지 · 표 비우기]
      가운데 1fr   사진 + 조작 패널        ↔  표(여기만 스크롤)
-     아랫줄 140px 장면 만들기             ↔  저장 칸
+     아랫줄 140px 표에 추가               ↔  저장 칸
    전엔 왼쪽이 내용 크기, 오른쪽이 나머지라 폭·아래 끝이 서로 달랐다. 사진은 fitStage 가 가운데 줄에 맞춘다 */
 @media (min-width: 901px) {
   body.pb-v2 #article_motion { --m-top: 40px; --m-bot: 140px; flex-wrap: nowrap; align-items: stretch; margin-bottom: 0; }
