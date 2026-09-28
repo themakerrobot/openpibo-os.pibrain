@@ -1115,8 +1115,90 @@ body.pb-v2 .motion-table-wrap { height: auto; min-height: 150px; max-height: 500
 body.pb-v2 #motor_table thead td { position: sticky; top: 0; z-index: 1; font-size: 12.5px; font-weight: 600; color: var(--v2-ink-2); }
 body.pb-v2 #motor_table tbody tr { cursor: pointer; }
 body.pb-v2 #motor_table td { padding: 3px 4px; font-size: 13.5px; font-variant-numeric: tabular-nums; white-space: nowrap; }
-/* 1200px 아래에서는 오른쪽 칸(표·저장)이 290px 로 눌려 표가 잘렸다 → 로봇 아래로 내린다(800px 과 같은 모양) */
-@media (max-width: 1199px) { body.pb-v2 #article_motion > section:nth-child(2) { width: 100%; } }
+/* 로봇 칸은 늘 왼쪽에 붙어 있다(그림을 보며 모터를 맞추는 화면). 오른쪽(표·저장)만 스크롤되고,
+   화면보다 크면 index.js 의 fitRobot 이 zoom 으로 줄인다. 오른쪽은 남는 폭을 다 쓴다.
+   (한때 1200px 아래에서 오른쪽을 로봇 아래로 내렸는데, 표를 보려면 로봇이 화면 밖으로 나가서 되돌렸다)
+   900px 이하(태블릿 세로)만 위아래로 쌓는다 */
+@media (min-width: 901px) {
+  body.pb-v2 #article_motion { flex-wrap: nowrap; align-items: flex-start; }
+  body.pb-v2 #article_motion > .pibo-section { position: sticky; top: 0; flex: none; align-self: flex-start; }
+  body.pb-v2 #article_motion > section:nth-child(2) { flex: 1 1 0; width: auto; min-width: 0; }
+}
+@media (max-width: 900px) { body.pb-v2 #article_motion > section:nth-child(2) { width: 100%; } }
+body.pb-v2 .motion-table-wrap { overflow-x: auto; }
+
+/* ── 도구 [카메라]·[음성] 정리 (260928) ────────────────────────────────────── */
+/* 카메라 칸: 4:3 화면 칸. 그림이 오기 전에는 '기다리는 중' 안내(index.js 가 .v-stage[data-has] 를 단다) */
+body.pb-v2 .v-head { display: flex; align-items: center; justify-content: space-between; }
+body.pb-v2 .v-head > div { float: none !important; }
+body.pb-v2 .v-stage {
+  position: relative; margin: 10px 0 12px; aspect-ratio: 4 / 3; max-height: 60vh; border-radius: 12px; overflow: hidden;
+  background: var(--v2-term);
+}
+body.pb-v2 .v-stage > #v_img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; border-radius: 0; background: transparent; }
+body.pb-v2 .v-stage:not([data-has]) > #v_img { visibility: hidden; }
+body.pb-v2 .v-stage:not([data-has]) > .v-stage__empty {
+  display: flex !important; position: absolute; inset: 0; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  color: #8b94a1; font-size: 13px;
+}
+body.pb-v2 .v-stage__empty > i { font-size: 26px; opacity: .7; animation: pb-conn-blink 1.6s ease-in-out infinite; }
+/* 카메라 방향: 제목 + 값 칩, 좌우·위아래 슬라이더. 아이콘은 가운데로 돌리는 버튼 */
+body.pb-v2 .v-pos > header { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--v2-ink); margin-bottom: 6px; }
+body.pb-v2 .v-pos > header > i { font-size: 12px; font-weight: 600; color: var(--v2-ink-2); background: var(--v2-sunken); border-radius: 999px; padding: 3px 9px; }
+body.pb-v2 .v-pos > header > i > span { font-family: var(--pb-font); font-variant-numeric: tabular-nums; }
+body.pb-v2 .v-pos > div { gap: 8px; }
+body.pb-v2 .v-pos a#v_pan_reset, body.pb-v2 .v-pos a#v_tilt_reset {
+  display: inline-grid; place-items: center; width: 30px; height: 30px; flex: none; border-radius: 8px; cursor: pointer;
+  color: var(--v2-ink-2); background: var(--v2-sunken); border: 1px solid var(--v2-line);
+}
+body.pb-v2 .v-pos a#v_pan_reset:hover, body.pb-v2 .v-pos a#v_tilt_reset:hover { background: var(--v2-tint, var(--v2-accent-t)); color: var(--v2-tint-ink, var(--v2-accent)); }
+body.pb-v2 .v-pos input[type="range"] { flex: 1 1 0; width: auto !important; accent-color: var(--v2-accent); }
+
+/* 비전 기능: select 대신 타일(누르면 select 값을 바꿔 원래 흐름 그대로 서버에 보낸다) */
+body.pb-v2 .v-func { display: none; }
+body.pb-v2 #v_tiles { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; margin: 10px 0 12px; }
+body.pb-v2 #v_tiles .v-tile {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 64px; padding: 8px 4px;
+  border-radius: 10px; border: 1px solid var(--v2-line-2); background: var(--v2-raise) !important; color: var(--v2-ink-2);
+  font-size: 12.5px !important; font-weight: 600; line-height: 1.2; text-align: center; box-shadow: var(--pb-shadow); cursor: pointer;
+}
+body.pb-v2 #v_tiles .v-tile > i { font-size: 17px; color: var(--v2-ink-3); }
+body.pb-v2 #v_tiles .v-tile:hover { background: var(--v2-hover) !important; }
+body.pb-v2 #v_tiles .v-tile[aria-pressed="true"] { background: var(--v2-tint) !important; border-color: rgba(37, 99, 235, .5); color: var(--v2-tint-ink); }
+body.pb-v2 #v_tiles .v-tile[aria-pressed="true"] > i { color: var(--v2-tint-ink); }
+html[data-theme="dark"] body.pb-v2 #v_tiles .v-tile[aria-pressed="true"] { border-color: var(--v2-accent); }
+/* 마커 길이는 마커일 때만 */
+body.pb-v2 #article_vision:not([data-func="marker"]) .v-marker { display: none; }
+body.pb-v2 .v-marker { display: flex; align-items: center; gap: 8px; margin: -2px 0 12px; font-size: 13px; }
+body.pb-v2 .v-marker .label { font-size: 13px !important; }
+/* 결과: 읽기 전용 글자 칸 */
+body.pb-v2 #v_result {
+  background: var(--v2-sunken); color: var(--v2-ink); border: 1px solid var(--v2-line); border-radius: 8px;
+  padding: 8px 10px; font-family: var(--pb-mono); font-size: 12.5px; line-height: 1.5; min-height: 96px; resize: vertical;
+}
+
+/* 음성: 이름표 폭을 맞춘 줄들. 주 동작은 칸마다 하나([실행하기] · [녹음하기]) */
+body.pb-v2 .s-speak .speech-input-group { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+body.pb-v2 .s-speak .speech-input-group > .label { flex: none; width: 72px; font-size: 13px; font-weight: 600; color: var(--v2-ink-2); text-align: left; }
+body.pb-v2 .s-radio { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; margin-right: 10px; cursor: pointer; }
+body.pb-v2 .s-radio input { accent-color: var(--v2-accent); margin: 0; }
+body.pb-v2 .s-speak #volume { width: 80px; text-align: right; }
+body.pb-v2 .s-speak #volume + i { color: var(--v2-ink-3); font-size: 12px; }
+body.pb-v2 .s-speak select[name="s_voice_type"] { width: 160px; }
+body.pb-v2 .s-speak #s_tts_val { flex: 1 1 0; min-width: 0; }
+body.pb-v2 #s_tts_bt { width: auto !important; min-width: 110px; background: var(--v2-dark) !important; color: var(--v2-on-dark); border-color: transparent; box-shadow: var(--v2-btn-sh); font-weight: 700; }
+body.pb-v2 #s_tts_bt:hover { background: var(--v2-dark-hov) !important; }
+body.pb-v2 #mic_bt { background: var(--v2-dark) !important; color: var(--v2-on-dark); border-color: transparent; box-shadow: var(--v2-btn-sh); font-weight: 700; }
+body.pb-v2 #mic_bt:hover { background: var(--v2-dark-hov) !important; }
+body.pb-v2 #mic_bt > i, body.pb-v2 #s_tts_bt > i, body.pb-v2 #add_motion_bt > i { color: inherit; }
+body.pb-v2 .record-row { gap: 8px; align-items: center; }
+body.pb-v2 .record-row #mic_time_val { width: 72px; text-align: right; }
+body.pb-v2 .record-row .label { font-size: 13px; color: var(--v2-ink-3); }
+body.pb-v2 .record-row button { min-width: 110px; height: 36px; padding: 0 14px; }
+body.pb-v2 .record-row #mic_time_val { height: 36px; }
+body.pb-v2 #mic_status { margin-left: 4px; color: var(--v2-ink-2) !important; font-weight: 600; }
+body.pb-v2 .mic-wave span, body.pb-v2 .mic-progress > div { background: var(--v2-accent); }
+body.pb-v2 .mic-progress { background: var(--v2-sunken); }
 body.pb-v2 #motor_table tbody tr:hover td { background: var(--v2-tint, var(--v2-accent-t)) !important; }
 body.pb-v2 .motion-table-wrap:has(tbody:empty) > .motion-empty {
   display: block !important; padding: 36px 20px; text-align: center; color: var(--v2-ink-3); font-size: 13px; line-height: 1.6;
