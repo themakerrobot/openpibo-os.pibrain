@@ -1310,6 +1310,13 @@ body.pb-v2 #v_tiles .v-tile {
   font-size: 12.5px !important; font-weight: 600; line-height: 1.2; text-align: center; box-shadow: var(--pb-shadow); cursor: pointer;
 }
 body.pb-v2 #v_tiles .v-tile > i { font-size: 17px; color: var(--v2-ink-3); }
+/* 이름은 두 줄까지 접는다. 한글은 낱말 안에서 안 끊고(keep-all), 한 낱말이 칸보다 길면 그때만 끊는다.
+   전엔 한 줄 고정이라 'Hand Gesture detection'·'얼굴분석(랜드마크)' 가 옆 칸으로 넘쳤다(260929) */
+body.pb-v2 #v_tiles .v-tile { white-space: normal !important; }   /* 키트 버튼 규칙의 nowrap 을 푼다 */
+body.pb-v2 #v_tiles .v-tile > span {
+  max-width: 100%; white-space: normal; word-break: keep-all; overflow-wrap: anywhere;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+}
 /* 아직 모델이 안 올라온 기능(260929): 흐리게 + '준비 중' 꼬리표. 눌러 둘 수는 있다 */
 body.pb-v2 #v_tiles .v-tile[data-wait] { position: relative; opacity: .6; }
 body.pb-v2 #v_tiles .v-tile[data-wait]::after {
