@@ -1329,6 +1329,23 @@ body.pb-v2 #v_tiles .v-tile {
   font-size: 12.5px !important; font-weight: 600; line-height: 1.2; text-align: center; box-shadow: var(--pb-shadow); cursor: pointer;
 }
 body.pb-v2 #v_tiles .v-tile > i { font-size: 17px; color: var(--v2-ink-3); }
+/* 아직 모델이 안 올라온 기능(260929): 흐리게 + '준비 중' 꼬리표. 눌러 둘 수는 있다 */
+body.pb-v2 #v_tiles .v-tile[data-wait] { position: relative; opacity: .6; }
+body.pb-v2 #v_tiles .v-tile[data-wait]::after {
+  content: attr(data-wait-label); position: absolute; top: 3px; right: 4px; padding: 0 5px; border-radius: 999px;
+  font-size: 10px; font-weight: 700; line-height: 16px; background: var(--v2-sunken); color: var(--v2-ink-3);
+}
+/* 카메라 준비 단계 줄: 카메라 → 사물·손 인식 → 얼굴 인식 (n/3 · 경과 초) */
+body.pb-v2 .v-boot { display: flex; flex-direction: column; gap: 7px; margin: 0 0 10px; padding: 10px 12px; border-radius: 10px;
+  background: var(--v2-tint, var(--v2-accent-t)); color: var(--v2-ink); }
+body.pb-v2 .v-boot[hidden] { display: none; }
+body.pb-v2 .v-boot__row { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; }
+body.pb-v2 .v-boot__row > i { color: var(--v2-accent); }
+body.pb-v2 .v-boot__n { margin-left: auto; font-weight: 600; color: var(--v2-ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+body.pb-v2 .v-boot__bar { height: 4px; border-radius: 999px; background: var(--v2-sunken); overflow: hidden; }
+body.pb-v2 .v-boot__bar > i { display: block; height: 100%; background: var(--v2-accent); transition: width .4s; }
+body.pb-v2 .v-boot[data-kind="err"] { background: var(--v2-red-t); color: var(--v2-red-ink); }
+body.pb-v2 .v-boot[data-kind="err"] .v-boot__row > i, body.pb-v2 .v-boot[data-kind="err"] .v-boot__bar { display: none; }
 body.pb-v2 #v_tiles .v-tile:hover { background: var(--v2-hover) !important; }
 body.pb-v2 #v_tiles .v-tile[aria-pressed="true"] { background: var(--v2-tint) !important; border-color: rgba(37, 99, 235, .5); color: var(--v2-tint-ink); }
 body.pb-v2 #v_tiles .v-tile[aria-pressed="true"] > i { color: var(--v2-tint-ink); }
@@ -1346,8 +1363,6 @@ body.pb-v2 #v_result {
 /* 음성: 이름표 폭을 맞춘 줄들. 주 동작은 칸마다 하나([실행하기] · [녹음하기]) */
 body.pb-v2 .s-speak .speech-input-group { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
 body.pb-v2 .s-speak .speech-input-group > .label { flex: none; width: 72px; font-size: 13px; font-weight: 600; color: var(--v2-ink-2); text-align: left; }
-body.pb-v2 .s-radio { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; margin-right: 10px; cursor: pointer; }
-body.pb-v2 .s-radio input { accent-color: var(--v2-accent); margin: 0; }
 body.pb-v2 .s-speak #volume { width: 80px; text-align: right; }
 body.pb-v2 .s-speak #volume + i { color: var(--v2-ink-3); font-size: 12px; }
 body.pb-v2 .s-speak select[name="s_voice_type"] { width: 160px; }
@@ -1372,6 +1387,7 @@ body.pb-v2 #s_tts_stop_bt { min-width: 84px; }
 body.pb-v2 .s-status { min-height: 20px; margin: -2px 0 0 82px; font-size: 13px; color: var(--v2-ink-3); }
 body.pb-v2 .s-status[data-kind="ok"] { color: #1f9d62; }
 body.pb-v2 .s-status[data-kind="err"] { color: var(--v2-red-ink); }
+body.pb-v2 .s-status[data-kind="load"] { color: var(--v2-accent); font-weight: 600; }
 body.pb-v2 #s_tts_bt { width: auto !important; min-width: 110px; background: var(--v2-dark) !important; color: var(--v2-on-dark); border-color: transparent; box-shadow: var(--v2-btn-sh); font-weight: 700; }
 body.pb-v2 #s_tts_bt:hover { background: var(--v2-dark-hov) !important; }
 body.pb-v2 #mic_bt { background: var(--v2-dark) !important; color: var(--v2-on-dark); border-color: transparent; box-shadow: var(--v2-btn-sh); font-weight: 700; }

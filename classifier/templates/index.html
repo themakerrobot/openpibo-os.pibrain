@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
-  <link rel="stylesheet" href="../static/pibo-ui.css?ver=260928v11" />
+  <link rel="stylesheet" href="../static/pibo-ui.css?ver=260929v1" />
   <link rel="stylesheet" href="../static/index.css?ver=260924v1" />
   <link rel="shortcut icon" href="../static/icon.png?ver=240319v1" type="image/x-icon" />
 
@@ -21,7 +21,7 @@
   (function () { try { var c = document.cookie, u = !/(?:^|;\s*)pibo_ui=v1/.test(c), m = c.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
     if (/[?&]ui=v2/.test(location.search)) u = true; if (/[?&]ui=v1/.test(location.search)) u = false;
     if (u) { document.body.classList.add('pb-v2');
-      document.documentElement.setAttribute('data-theme', m ? m[1] : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'soft'));
+      document.documentElement.setAttribute('data-theme', m ? m[1] : 'soft');
       if (/(?:^|;\s*)pibo_frame=teal/.test(c) || /[?&]frame=teal/.test(location.search)) document.documentElement.setAttribute('data-frame', 'teal'); } } catch (e) {} })();</script>
   <header class="pb-header">
     <span class="pb-header__brand"><i class="fa-solid fa-glasses"></i>&nbsp;<span data-key="title"></span></span>
@@ -159,7 +159,7 @@
     </div>
   </div>
 
-  <script src="../static/pibo-ui.js?ver=260924v1"></script>
+  <script src="../static/pibo-ui.js?ver=260929v1"></script>
   <script type="module" src="../static/app.js?ver=260924v1"></script>
 </body>
 </html>

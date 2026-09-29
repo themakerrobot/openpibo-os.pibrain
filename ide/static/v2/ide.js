@@ -195,7 +195,9 @@
   // 파이썬 편집기: v2 전용 테마 pibo-light / pibo-dark (v2/ide.css). 화면 밝기를 따른다 —
   // 어둡게 = pibo-dark, 기본·밝게 = pibo-light. [더보기] 의 편집기 테마 스위치로 따로 바꿀 수 있고,
   // 밝기를 다시 고르면 거기에 맞춰진다. index.js 의 스위치 처리(cobalt/duotone-light)는 v1 용이라 떼어 낸다
+  // 스위치로 따로 고른 값은 기억한다(새로 고쳐도 유지, localStorage pibo_editor_theme). 밝기를 다시 고르면 지우고 따라간다
   var themeCheck = $id('theme_check');
+  var EDITOR_KEY = 'pibo_editor_theme';
   function applyEditor() {
     if (typeof codeEditor !== 'undefined') codeEditor.setOption('theme', themeCheck.checked ? 'pibo-dark' : 'pibo-light');
   }
@@ -205,9 +207,17 @@
   }
   if (themeCheck) {
     if (window.jQuery) jQuery(themeCheck).off('change');
-    themeCheck.addEventListener('change', applyEditor);
-    syncEditor(document.documentElement.getAttribute('data-theme'));
-    window.addEventListener('pibo-theme', function (e) { syncEditor(e.detail); });
+    themeCheck.addEventListener('change', function () {
+      applyEditor();
+      try { localStorage.setItem(EDITOR_KEY, themeCheck.checked ? 'dark' : 'light'); } catch (e) { /* 무시 */ }
+    });
+    var saved = null;
+    try { saved = localStorage.getItem(EDITOR_KEY); } catch (e) { /* 무시 */ }
+    syncEditor(saved || document.documentElement.getAttribute('data-theme'));
+    window.addEventListener('pibo-theme', function (e) {
+      try { localStorage.removeItem(EDITOR_KEY); } catch (err) { /* 무시 */ }
+      syncEditor(e.detail);
+    });
   }
 
   /* 9) 툴박스 ────────────────────────────────────────────────────────────── */

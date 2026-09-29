@@ -63,15 +63,13 @@
 
   /* ── 화면 밝기 (v2) ────────────────────────────────────────────────────
      흰 바탕이 오래된 노트북 패널에서 눈부시다는 현장 의견으로 넣었다. 기본은 soft(옅은 회색).
-     쿠키라서 IDE 에서 고르면 도구·분류기도 같이 바뀐다. OS 가 어두운 모드면 dark 로 시작한다.
+     쿠키라서 IDE 에서 고르면 도구·분류기도 같이 바뀐다. 고른 적 없으면 soft(OS 설정과 무관).
      v2 IDE 는 <head> 의 짧은 스크립트가 같은 규칙으로 먼저 정한다(첫 페인트 번쩍임 방지). */
   var THEMES = ['light', 'soft', 'dark'];
   function getTheme() {
     var m = null;
     try { m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/); } catch (e) { /* 무시 */ }
-    if (m) return m[1];
-    try { if (window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark'; } catch (e) { /* 무시 */ }
-    return 'soft';
+    return m ? m[1] : 'soft';   // 고른 적 없으면 늘 부드럽게(OS 어두운 모드를 따르지 않는다, 260929)
   }
   function setTheme(t) {
     if (THEMES.indexOf(t) < 0) return;

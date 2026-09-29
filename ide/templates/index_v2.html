@@ -16,12 +16,12 @@
 
   <script>/* 화면 밝기(pibo-ui.js 와 같은 규칙): 쿠키 → OS 어두운 모드 → 부드럽게. 첫 페인트 전에 정해 번쩍임을 막는다 */
     (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
-      document.documentElement.setAttribute('data-theme', m ? m[1] : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'soft')); } catch (e) {} })();</script>
+      document.documentElement.setAttribute('data-theme', m ? m[1] : 'soft'); } catch (e) {} })();</script>
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
   <link rel="stylesheet" href="../static/codemirror.css" />
   <link rel="stylesheet" href="../static/jquery.jsonview.min.css" />
-  <link rel="stylesheet" href="../static/pibo-ui.css?ver=260928v11" />
-  <link rel="stylesheet" href="../static/v2/ide.css?ver=260924v5" />
+  <link rel="stylesheet" href="../static/pibo-ui.css?ver=260929v1" />
+  <link rel="stylesheet" href="../static/v2/ide.css?ver=260929v1" />
   <link rel="shortcut icon" href="../static/icon.png?ver=240319v1" type="image/x-icon" />
 
   <script src="../static/ko2en.js?ver=260924v1"></script>
@@ -297,10 +297,10 @@
     </div>
   </div>
 
-  <script src="../static/pibo-ui.js?ver=260924v1"></script>
+  <script src="../static/pibo-ui.js?ver=260929v1"></script>
   <script src="../static/index.js?ver=260924v1"></script>
   <script src="../static/v2/vendor/toolbox-search.js?ver=1.2.11"></script>
-  <script src="../static/v2/ide.js?ver=260924v3"></script>
+  <script src="../static/v2/ide.js?ver=260929v1"></script>
 </body>
 
 </html>

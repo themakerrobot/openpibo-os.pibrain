@@ -363,6 +363,8 @@ Pibo 도구와 기능·마크업이 달라(REST/SSE, 5탭) 키트의 `pb-v2` 층
 `body.v2-app` 이라 키트가 `pb-v2` 를 얹지 않는다. v1/v2 두 벌이 아니라 **한 벌**이다(`?ui=v1` 무관).
 
 - 상단바(노랑): 도구 · PiBrain | [IDE](`PiboUI.backToIDE`) · 화면 밝기(누를 때마다 부드럽게→밝게→어둡게, 쿠키 `pibo_theme`) · KO/EN
+  - 고른 적 없으면 늘 **부드럽게**(260929, OS 어두운 모드를 따르지 않는다). 파이썬 편집기 테마를 따로 고르면 기억하고
+    바탕을 그 테마 색으로 고정한다 — Pibo CLAUDE.md '화면 밝기' 참고
 - 왼쪽 레일: 버튼 · LED · 카메라 · 음성 · LCD. 본문은 카드, 넓으면 여러 칸(`auto-fit, minmax(340px)`)
 - 색은 `tools/static/index.css` 의 `--c-*` — **IDE `v2/ide.css` 와 같은 값.** 같이 고칠 것
 - 이모지를 Font Awesome 아이콘으로 바꿨다. 그러려고 `tools/webfonts/`(fa-solid·brands)를 두고

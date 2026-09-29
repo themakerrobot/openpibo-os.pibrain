@@ -478,6 +478,15 @@ body[data-running] #execute { background: var(--c-press); color: var(--c-ink-3);
 .cm-s-pibo-dark span.cm-operator, .cm-s-pibo-dark span.cm-punctuation { color: #aab1bd; }
 .cm-s-pibo-dark span.cm-variable, .cm-s-pibo-dark span.cm-variable-2 { color: #e3e6eb; }
 .cm-s-pibo-dark span.cm-error { color: #ff7a7f; }
+/* 화면 밝기와 편집기 테마를 따로 고른 경우(260929): 바탕을 편집기 테마 쪽 색으로 고정한다.
+   전엔 둘 다 var(--c-work)(화면 밝기의 작업판 색)를 써서 부드럽게·밝게에서 [편집기 어둡게] 를 켜면
+   밝은 바탕에 밝은 글자가 됐다(어둡게 화면 + 밝은 편집기는 그 반대) */
+html:not([data-theme="dark"]) .cm-s-pibo-dark.CodeMirror,
+html:not([data-theme="dark"]) .cm-s-pibo-dark .CodeMirror-gutters { background: #20242b; }
+html:not([data-theme="dark"]) .cm-s-pibo-dark .CodeMirror-gutters { border-right-color: #2c3139; }
+html[data-theme="dark"] .cm-s-pibo-light.CodeMirror,
+html[data-theme="dark"] .cm-s-pibo-light .CodeMirror-gutters { background: #fdfdfe; }
+html[data-theme="dark"] .cm-s-pibo-light .CodeMirror-gutters { border-right-color: #dde1e7; }
 
 /* Blockly — 툴박스: 블록 찾기 + 색 타일 분류 (ide.js 가 분류 행을 그린다) */
 .v2-app .blocklyToolboxDiv {
