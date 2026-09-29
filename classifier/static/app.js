@@ -237,13 +237,18 @@ function frameThumb(src) {
   return cv.toDataURL('image/jpeg', 0.7);
 }
 
-// PiBrain 이 보낸 그림. 처리 중이면 가장 최근 것 하나만 기다리게 한다
+// PiBrain 이 보낸 그림(JPEG 바이트, 예전 서버는 base64 문자열). 처리 중이면 가장 최근 것 하나만 기다리게 한다
 let pendingFrame = null;
 let frameBusy = false;
-function showFrame(b64) {
-  if (frameBusy) { pendingFrame = b64; return; }
+let frameUrl = '';
+function showFrame(data) {
+  if (frameBusy) { pendingFrame = data; return; }
   frameBusy = true;
-  cam.src = 'data:image/jpeg;base64,' + b64;
+  if (typeof data === 'string') { cam.src = 'data:image/jpeg;base64,' + data; return; }
+  const url = URL.createObjectURL(new Blob([data], { type: 'image/jpeg' }));
+  if (frameUrl) URL.revokeObjectURL(frameUrl);   // 앞 그림은 이미 그려 뒀다
+  frameUrl = url;
+  cam.src = url;
 }
 cam.addEventListener('load', () => {
   $('stage').classList.add('has-frame');
@@ -878,7 +883,12 @@ window.addEventListener('beforeunload', () => {
 // PiBrain 연결
 // ═══════════════════════════════════════════════════════════
 const socket = io(`http://${location.host}`, { path: '/socket.io' });
-socket.on('connect', () => { if (S.camWanted) socket.emit('control_cam', true); });
+socket.on('connect', () => {
+  socket.emit('camera_visible', !document.hidden);
+  if (S.camWanted) socket.emit('control_cam', true);
+});
+// 탭이 가려지면 PiBrain 이 그림 보내기를 쉰다(카메라는 켜 둔다). 수업에서 방치된 탭이 공유기 대역을 쓰지 않게(260929)
+document.addEventListener('visibilitychange', () => socket.emit('camera_visible', !document.hidden));
 socket.on('camera_image', showFrame);
 PiboUI.watchSocket(socket, {
   banner: () => ({

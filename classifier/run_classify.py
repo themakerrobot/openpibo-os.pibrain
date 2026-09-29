@@ -21,7 +21,6 @@ import mimetypes
 import tempfile
 
 import cv2
-import base64
 
 from openpibo.vision_camera import Camera
 from fastapi import FastAPI, UploadFile, File, Form, Body
@@ -53,8 +52,9 @@ MAX_NAME = 40
 NAME_BAD = re.compile(r'[/\\:*?"<>|\x00-\x1f]')
 
 # 카메라 전송 간격 (초). 예시를 모으는 동안만 빠르게 보낸다.
-# 320x240 JPEG(품질 80) 한 장이 복잡한 장면에서 base64 로 약 25KB (coco 60장 평균).
-# 느릴 때 대당 약 0.4Mbps, [꾹 눌러 모으기] 동안만 약 1.3Mbps. 예전 품질 95 는 두 배였다
+# 320x240 JPEG(품질 80) 한 장이 복잡한 장면에서 약 18KB (60장 중앙값). 바이트 그대로 보낸다(260929, 전엔 base64 로 +33%).
+# 느릴 때 대당 약 0.29Mbps, [꾹 눌러 모으기] 동안만 약 1Mbps. 품질은 학습 입력이라 도구(70)보다 높게 둔다.
+# 보이는 화면이 하나도 없으면(탭을 가렸거나 아무도 안 붙음) 읽지도 보내지도 않는다(watchers)
 FRAME_SLOW = 0.5
 FRAME_FAST = 0.15
 JPEG_QUALITY = 80
@@ -91,24 +91,31 @@ sio = SocketManager(app=app, mount_location='/socket.io')
 # ---------------------------------
 # 카메라
 # ---------------------------------
-def to_base64(im):
+def to_jpeg(im):
   # 640x480 → 320x240. openpibo.vision_classify 도 추론할 때 같은 크기로 줄인다
   ret, buffer = cv2.imencode('.jpg', cv2.resize(im, (320, 240)), [cv2.IMWRITE_JPEG_QUALITY, JPEG_QUALITY])
   if not ret:
     return None
-  return base64.b64encode(buffer).decode('utf-8')
+  return buffer.tobytes()
+
+
+# 붙어 있는 화면(sid) → 보이는지. 브라우저가 visibilitychange 로 알려 준다
+watchers = {}
 
 
 async def vision_loop():
   while vision_en:
     try:
+      if not any(watchers.values()):
+        await asyncio.sleep(FRAME_SLOW)
+        continue
       img = await asyncio.to_thread(camera.read)
       if img is None:
         await asyncio.sleep(0.5)
         continue
-      b64_img = await asyncio.to_thread(to_base64, img)
-      if b64_img:
-        await sio.emit('camera_image', b64_img)
+      jpg = await asyncio.to_thread(to_jpeg, img)
+      if jpg:
+        await sio.emit('camera_image', jpg)
       await asyncio.sleep(frame_interval)
     except asyncio.CancelledError:
       raise
@@ -161,6 +168,22 @@ async def control_cam_http(d: str):
 @sio.on('control_cam')
 async def control_cam_socket(sid, d: bool):
   await toggle_camera_logic(d)
+
+
+@sio.on('connect')
+async def on_connect(sid, *args):
+  watchers[sid] = True
+
+
+@sio.on('disconnect')
+async def on_disconnect(sid, *args):
+  watchers.pop(sid, None)
+
+
+@sio.on('camera_visible')
+async def camera_visible(sid, visible: bool):
+  """탭이 가려지면 False(다른 탭·앱, 태블릿 화면 꺼짐). 카메라는 끄지 않고 보내기만 쉰다"""
+  watchers[sid] = bool(visible)
 
 
 @sio.on('camera_rate')
