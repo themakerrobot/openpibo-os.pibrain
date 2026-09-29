@@ -1415,3 +1415,87 @@ body.pb-v2 #motion_samples > a {
   border-radius: 999px; padding: 3px 10px; font-family: var(--pb-mono); text-decoration: none;
 }
 body.pb-v2 #motion_samples > a:hover { background: var(--v2-tint, var(--v2-accent-t)); color: var(--v2-tint-ink, var(--v2-accent)) !important; border-color: transparent; }
+
+/* ==========================================================================
+   움직임 (260929) — CSS 와 짧은 JS 만. 그림 파일·라이브러리 없음, 브라우저를 타는 기능(View Transitions,
+   @property, backdrop-filter 등)은 쓰지 않는다. 움직이는 건 transform · opacity · 작은 칸의 배경뿐.
+   움직임 줄이기 설정(prefers-reduced-motion)이면 맨 아래에서 전부 멈춘다
+   ========================================================================== */
+@keyframes pb-breathe { 0% { box-shadow: 0 0 0 0 rgba(31, 157, 98, .5); } 70%, 100% { box-shadow: 0 0 0 7px rgba(31, 157, 98, 0); } }
+@keyframes pb-scan    { from { background-position: 0 -48px; } to { background-position: 0 calc(100% + 48px); } }
+@keyframes pb-tab-in  { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes pb-rise    { from { opacity: 0; transform: translateY(10px) scale(.96); } to { opacity: 1; transform: none; } }
+@keyframes pb-shimmer { from { background-position: 150% 0; } to { background-position: -50% 0; } }
+@keyframes pb-eq      { 0%, 100% { transform: scaleY(.3); } 50% { transform: scaleY(1); } }
+
+/* 4) 로봇 연결됨: 초록 점이 숨 쉬듯 퍼진다 (도구 상단 칩) */
+body.pb-v2 #onoff_val[data-state="on"]::before { animation: pb-breathe 2.4s ease-out infinite; }
+
+/* 1) 결과 막대: 튕기듯 차오른다(살짝 넘쳤다 돌아옴). 숫자는 app.js 가 PiboUI.countTo 로 올린다 */
+body.pb-v2 .bar-fill { transition: width .45s cubic-bezier(.34, 1.56, .64, 1), background-color .2s; }
+body.pb-v2 .bar-val { font-variant-numeric: tabular-nums; }
+
+/* 2) 카메라 칸 HUD: 네 모서리 꺾쇠. 그림이 오기 전에는 스캔선이 위아래로 지나간다 */
+body.pb-v2 .v-stage::after, body.pb-v2 .stage::after {
+  content: ""; position: absolute; inset: 10px; z-index: 3; pointer-events: none;
+  --hc: rgba(255, 255, 255, .72); --hl: 18px; --hw: 2px;
+  background:
+    linear-gradient(var(--hc), var(--hc)) left top / var(--hl) var(--hw),
+    linear-gradient(var(--hc), var(--hc)) left top / var(--hw) var(--hl),
+    linear-gradient(var(--hc), var(--hc)) right top / var(--hl) var(--hw),
+    linear-gradient(var(--hc), var(--hc)) right top / var(--hw) var(--hl),
+    linear-gradient(var(--hc), var(--hc)) left bottom / var(--hl) var(--hw),
+    linear-gradient(var(--hc), var(--hc)) left bottom / var(--hw) var(--hl),
+    linear-gradient(var(--hc), var(--hc)) right bottom / var(--hl) var(--hw),
+    linear-gradient(var(--hc), var(--hc)) right bottom / var(--hw) var(--hl);
+  background-repeat: no-repeat;
+}
+body.pb-v2 .v-stage:not([data-has])::before, body.pb-v2 .stage:not(.has-frame)::before {
+  background-image: linear-gradient(to bottom, rgba(120, 170, 255, 0), rgba(120, 170, 255, .14) 70%, rgba(160, 195, 255, .38));
+  background-repeat: no-repeat; background-size: 100% 48px;
+  animation: pb-scan 2.6s linear infinite;
+}
+body.pb-v2 .v-stage:not([data-has])::before { content: ""; position: absolute; inset: 0; pointer-events: none; }
+
+/* 3) [동작] 모터 번호 점에 각도 링: 0° 는 빈 링, 한쪽 끝까지 가면 한 바퀴. + 는 시계 방향, − 는 반대.
+      index.js 가 --g-a(호의 크기)·--g-s(시작 각)를 단다 */
+body.pb-v2 #article_motion .mstage .mdot > b { position: relative; --g-t: rgba(255, 255, 255, .28); }
+body.pb-v2 #article_motion .mstage .mdot[aria-pressed="true"] > b { --g-t: rgba(37, 99, 235, .16); }
+body.pb-v2 #article_motion .mstage .mdot > b::after {
+  content: ""; position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+  background: conic-gradient(from var(--g-s, 0deg), currentColor 0deg var(--g-a, 0deg), var(--g-t) var(--g-a, 0deg) 360deg);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px));
+          mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px));
+}
+
+/* 6) 탭을 바꾸면 새 칸이 살짝 떠오르며 나타난다 (분류기 [학습|시험|보관함]). 도구 메뉴는 원래 슬라이드가 있다 */
+body.pb-v2 .only-learn, body.pb-v2 .only-test, body.pb-v2 .only-store { animation: pb-tab-in .22s ease-out backwards; }
+
+/* 7) 불러오는 동안 반짝이는 빈 카드 (분류기 보관함 첫 목록). 목록이 오면 app.js 가 통째로 바꾼다 */
+.pb-skel {
+  border-radius: 10px; min-height: 18px;
+  background: linear-gradient(90deg, var(--v2-hover, #e8e8e8) 30%, var(--v2-press, #dadada) 50%, var(--v2-hover, #e8e8e8) 70%);
+  background-size: 300% 100%; animation: pb-shimmer 1.4s ease-in-out infinite;
+}
+.pb-skel--card { height: 132px; margin-bottom: 12px; }
+
+/* 8) 팝업·알림: 살짝 튀며 나타난다 */
+body.pb-v2 .alert-popup-content, body.pb-v2 .prompt-popup-content, body.pb-v2 .confirm-popup-content,
+body.pb-v2 .wifi-popup-content, body.pb-v2 .pb-modal__box { animation: pb-rise .26s cubic-bezier(.34, 1.4, .64, 1) backwards; }
+body.pb-v2 .pb-toast { animation: pb-rise .26s cubic-bezier(.34, 1.4, .64, 1) backwards; }
+
+/* 10) [음성] 말하는 동안 이퀄라이저 막대 (실제 소리 크기가 아니라 '말하는 중' 표시. 소리는 로봇에서 난다) */
+.pb-eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; margin-right: 7px; vertical-align: -2px; }
+.pb-eq > i { display: block; width: 3px; height: 100%; border-radius: 2px; background: currentColor; transform-origin: bottom;
+             animation: pb-eq .9s ease-in-out infinite; }
+.pb-eq > i:nth-child(2) { animation-delay: -.3s; }
+.pb-eq > i:nth-child(3) { animation-delay: -.6s; }
+.pb-eq > i:nth-child(4) { animation-delay: -.15s; }
+
+@media (prefers-reduced-motion: reduce) {
+  body.pb-v2 #onoff_val::before, body.pb-v2 .v-stage::before, body.pb-v2 .stage::before,
+  body.pb-v2 .only-learn, body.pb-v2 .only-test, body.pb-v2 .only-store, .pb-skel, .pb-eq > i,
+  body.pb-v2 .alert-popup-content, body.pb-v2 .prompt-popup-content, body.pb-v2 .confirm-popup-content,
+  body.pb-v2 .wifi-popup-content, body.pb-v2 .pb-modal__box, body.pb-v2 .pb-toast { animation: none !important; }
+  body.pb-v2 .bar-fill { transition: none; }
+}

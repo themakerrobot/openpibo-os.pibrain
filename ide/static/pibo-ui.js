@@ -310,6 +310,34 @@
     });
   }
 
+  /* ── 숫자 올라가기 (260929) ─────────────────────────────────────────────
+     글자 속 첫 숫자만 이전 값에서 새 값으로 부드럽게 바꾼다. 앞뒤 글자("53.0'C", "15 %")는 그대로 두고
+     소수 자릿수도 새 값을 따른다. 처음 보이는 값은 0 에서 올라간다. 움직임 줄이기 설정이면 바로 바꾼다 */
+  var REDUCED = false;
+  try { REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { /* 무시 */ }
+  function countTo(el, text, ms) {
+    if (!el) return;
+    text = String(text);
+    var m = text.match(/-?\d+(?:\.\d+)?/);
+    if (el._pbCount) cancelAnimationFrame(el._pbCount);
+    el._pbCount = 0;
+    if (!m || REDUCED) { el.textContent = text; el._pbNum = m ? parseFloat(m[0]) : null; return; }
+    var to = parseFloat(m[0]), dec = (m[0].split('.')[1] || '').length;
+    var from = typeof el._pbNum === 'number' ? el._pbNum : 0;
+    var head = text.slice(0, m.index), tail = text.slice(m.index + m[0].length);
+    el._pbNum = to;
+    if (from === to) { el.textContent = text; return; }
+    var t0 = 0, dur = ms || 600;
+    function frame(ts) {
+      if (!t0) t0 = ts;
+      var k = Math.min(1, (ts - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = head + (from + (to - from) * e).toFixed(dec) + tail;
+      if (k < 1) el._pbCount = requestAnimationFrame(frame);
+      else { el._pbCount = 0; el.textContent = text; }
+    }
+    el._pbCount = requestAnimationFrame(frame);
+  }
+
   /* ── 서비스 열기 ───────────────────────────────────────────────────────
      누르는 '그 순간' 탭을 연다(팝업 차단 회피). 탭은 IDE 가 서빙하는 대기 페이지
      launch.html 로 열리고, 거기서 서비스를 켜고 준비될 때까지 기다린 뒤 스스로 이동한다.
@@ -361,7 +389,7 @@
     toast: toast, banner: banner, hideBanner: hideBanner, watchSocket: watchSocket,
     openService: openService, backToIDE: backToIDE, restartSelf: restartSelf,
     busy: busy, text: tr, lang: curLang,
-    getTheme: getTheme, setTheme: setTheme, ui: UI
+    getTheme: getTheme, setTheme: setTheme, ui: UI, countTo: countTo
   };
 
   function initAll() { initShell(); addThemeButton(); syncThemeButtons(); }

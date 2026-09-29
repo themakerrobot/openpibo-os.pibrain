@@ -80,6 +80,7 @@ const S = {
   trained: null,          // { json, bin, clf, accuracy, confusion, classes, source, variant, counts, saved }
   saveName: '',
   models: [],             // 보관함 목록 (/api/models)
+  modelsLoaded: false,    // 첫 목록이 오기 전에는 보관함에 반짝이는 빈 카드
   test: null,             // { name, clf, source, variant, classes }
   threshold: 0.6,
   camWanted: true,
@@ -456,6 +457,7 @@ async function refreshModels() {
   } catch (e) {
     S.models = [];
   }
+  S.modelsLoaded = true;
   renderStore();
   renderTestLeft();
 }
@@ -685,7 +687,9 @@ function renderBars(box, clf, vec, threshold, answerEl) {
     const p = probs[i];
     row.classList.toggle('is-best', i === best);
     row.querySelector('.bar-fill').style.width = (p * 100).toFixed(1) + '%';
-    row.querySelector('.bar-val').textContent = Math.round(p * 100) + '%';
+    // 숫자는 이전 값에서 부드럽게 올라간다(pibo-ui.js countTo). 막대는 CSS 가 튕기듯 채운다
+    const val = row.querySelector('.bar-val'), txt = Math.round(p * 100) + '%';
+    if (window.PiboUI && PiboUI.countTo) PiboUI.countTo(val, txt, 350); else val.textContent = txt;
   });
   if (answerEl) {
     const sure = probs[best] >= threshold;
@@ -731,6 +735,7 @@ function renderStore() {
   const box = $('store_list');
   if (!box) return;
   $('store_root').textContent = MODEL_DIR;
+  if (!S.modelsLoaded) { box.innerHTML = '<div class="pb-skel pb-skel--card"></div>'.repeat(2); return; }
   if (!S.models.length) { box.innerHTML = `<p class="muted">${esc(t('no_models'))}</p>`; return; }
   box.innerHTML = S.models.map(m => {
     const src = SOURCES.find(s => s.id === m.source) || SOURCES[0];

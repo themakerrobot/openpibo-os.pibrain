@@ -481,12 +481,18 @@ socket.on("init", (d) => {
   socket.emit("load_directory", CURRENT_DIR.join("/"));
 });
 
+// 상태 숫자는 이전 값에서 부드럽게 올라간다(pibo-ui.js countTo). 키트가 없으면 그냥 바꾼다
+const countText = (sel, txt) => {
+  const el = document.querySelector(sel);
+  if (window.PiboUI && PiboUI.countTo) PiboUI.countTo(el, txt); else if (el) el.textContent = txt;
+};
+
 socket.on("system", (data) => {
   $("#s_serial").text(data[0]);
   $("#s_os_version").text(data[1]);
   $("#s_runtime").text(`${Math.floor(data[2] / 3600)} hours`);
-  $("#s_cpu_temp").text(data[3]);
-  $("#s_memory").text(`${Math.floor( (data[4] - data[5]) / data[4] * 100)} %`);
+  countText("#s_cpu_temp", data[3]);
+  countText("#s_memory", `${Math.floor( (data[4] - data[5]) / data[4] * 100)} %`);
   $("#s_network").html(`<i class="fas fa-network-wired"></i> ${data[7]}, <i class="fa-solid fa-wifi"></i> ${data[6]}/${data[8]}`);
   $("#network_info").html(`<i class="fas fa-network-wired"></i> ${data[7]}, <i class="fa-solid fa-wifi"></i> ${data[6]}/${data[8]}`);
 });
@@ -495,9 +501,12 @@ socket.on("update_battery", (data) => {
   let bat = Number(data.split("%")[0]);
   let bat_str = ['empty', 'quarter', 'half', 'three-quarters', 'full'];
 
-  $("#d_battery_val").html(
-    `<i class='fa fa-battery-${bat_str[Math.floor(bat / 25)]}' aria-hidden='true'></i>${data} `
-  );
+  // 아이콘과 숫자 칸을 한 번만 만들고 숫자는 countText 로 (다시 만들면 매번 0 부터 올라간다)
+  const bv = document.getElementById("d_battery_val");
+  if (!bv) return;
+  if (!bv.querySelector(".v2-num")) bv.innerHTML = "<i aria-hidden='true'></i><span class='v2-num'></span> ";
+  bv.firstElementChild.className = `fa fa-battery-${bat_str[Math.min(4, Math.floor(bat / 25))]}`;
+  countText("#d_battery_val .v2-num", data);
 });
 
 socket.on("update_dc", (data) => {

@@ -195,7 +195,7 @@ body.v2-app a { color: inherit; text-decoration: none; cursor: pointer; }
   background: var(--c-raise); color: var(--c-ink);
   border: 1px solid var(--c-line); border-radius: 12px;
   box-shadow: 0 12px 32px var(--c-shadow), 0 2px 6px rgba(0,0,0,.06);
-  animation: v2-pop .14s ease-out;
+  animation: v2-pop .2s cubic-bezier(.34, 1.56, .64, 1);
 }
 @keyframes v2-pop { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 .v2-pop--right { right: 0; top: calc(100% + 6px); }
@@ -549,7 +549,7 @@ html[data-theme="dark"] .cm-s-pibo-light .CodeMirror-gutters { border-right-colo
 .wifi-popup { z-index: 900; overflow: auto; }
 .alert-popup-content, .prompt-popup-content, .confirm-popup-content {
   width: 100%; max-width: 400px; padding: 22px 22px 16px; border-radius: 16px;
-  background: var(--c-raise); color: var(--c-ink); box-shadow: 0 20px 48px var(--c-shadow); animation: v2-pop .16s ease-out;
+  background: var(--c-raise); color: var(--c-ink); box-shadow: 0 20px 48px var(--c-shadow); animation: pb-rise .26s cubic-bezier(.34, 1.4, .64, 1) backwards;
 }
 .alert-popup-content p, .prompt-popup-content p, .confirm-popup-content p { margin: 0 0 16px; font-size: 15px; line-height: 1.55; white-space: pre-line; }
 .prompt-popup-content input[type="text"], .form-group input[type="text"], .form-group input[type="password"] {
@@ -656,4 +656,24 @@ body[data-side="closed"] .pb-resizer[data-target="v2_side"] { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .v2-app *, .v2-app *::before, .v2-app *::after { animation: none !important; transition: none !important; }
+}
+
+/* ── 움직임 (260929) — 키트 pibo-ui.css '움직임' 과 같은 규칙(키프레임은 거기 있다) ─────────── */
+/* 연결됨 점이 숨 쉬듯 퍼진다. 끊기면(data-offline) 빨강으로 멈춘다 */
+body:not([data-offline]) .v2-dot { animation: pb-breathe 2.4s ease-out infinite; }
+/* [파이보 | 파일] 탭을 바꾸면 새 칸이 살짝 떠오른다 */
+.v2-side__page:not([hidden]) { animation: pb-tab-in .22s ease-out backwards; }
+/* 대화상자(와이파이 설정 포함)가 살짝 튀며 나타난다. 키트의 .pb .alert-popup-content(pb-pop)보다 우선하게 .v2-app 을 붙인다 */
+.v2-app .alert-popup-content, .v2-app .prompt-popup-content, .v2-app .confirm-popup-content,
+.v2-app .wifi-popup-content { animation: pb-rise .26s cubic-bezier(.34, 1.4, .64, 1) backwards; }
+/* 파일 목록 첫 줄들: 반짝이는 빈 줄 */
+#fm_table tr.v2-skel td { padding: 7px 10px; border: 0; }
+#fm_table tr.v2-skel .pb-skel { height: 16px; border-radius: 6px;
+  background-image: linear-gradient(90deg, var(--c-press) 30%, var(--c-hover) 50%, var(--c-press) 70%); }
+#fm_table tr.v2-skel:nth-child(2) .pb-skel { width: 72%; }
+#fm_table tr.v2-skel:nth-child(3) .pb-skel { width: 54%; }
+.v2-num { font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) {
+  .v2-dot, .v2-side__page, .v2-pop,
+  .v2-app .wifi-popup-content, .v2-app .alert-popup-content, .v2-app .prompt-popup-content, .v2-app .confirm-popup-content { animation: none !important; }
 }

@@ -5,42 +5,70 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PiBrain</title>
 <link rel="stylesheet" href="all.min.css">
-<link rel="stylesheet" href="pibo-ui.css?ver=260929v3">
+<link rel="stylesheet" href="pibo-ui.css?ver=260929v4">
 <link rel="shortcut icon" href="icon.png" type="image/x-icon">
+<script>/* 화면 밝기를 첫 페인트 전에 (pibo-ui.js 의 getTheme 과 같은 규칙. 고른 적 없으면 soft) */
+(function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
+  document.documentElement.setAttribute('data-theme', m ? m[1] : 'soft'); } catch (e) {} })();</script>
 <style>
   /* 도구·분류기·대화를 새 탭으로 열 때 거치는 대기 페이지.
      IDE 가 버튼을 누른 '그 순간' 이 탭을 연다 — 몇 초 뒤에 window.open 하면
      브라우저가 팝업으로 막을 수 있어서다. 여기서 서비스를 켜고, 실제로 응답할
      때까지 기다린 뒤 스스로 그 주소로 이동한다. */
-  html, body { height: 100%; margin: 0; background: #fafafa; }
-  body { font-family: var(--pb-font); color: var(--pb-text); }
+  html, body { height: 100%; margin: 0; }
+  body { font-family: var(--pb-font); color: var(--v2-ink); position: relative; isolation: isolate; }
+  /* 배경: 노랑·파랑·초록 빛 번짐이 천천히 흐른다(그림 파일 없이 그라데이션만, transform 으로만 움직인다) */
+  body::before {
+    content: ""; position: fixed; inset: -20%; z-index: -1; pointer-events: none;
+    background: radial-gradient(38% 42% at 28% 30%, rgba(251, 201, 45, .30), transparent 70%),
+                radial-gradient(34% 38% at 74% 66%, rgba(37, 99, 235, .16), transparent 70%),
+                radial-gradient(30% 30% at 62% 18%, rgba(31, 157, 98, .10), transparent 70%);
+    animation: lp-drift 18s ease-in-out infinite alternate;
+  }
+  html[data-theme="dark"] body::before { opacity: .5; }
+  @keyframes lp-drift { from { transform: translate(-3%, -2%) rotate(0deg); } to { transform: translate(3%, 3%) rotate(6deg); } }
   .wrap { min-height: calc(100dvh - 54px); display: flex; align-items: center; justify-content: center; padding: 16px; }
-  .card { background: #fff; border: 1px solid #e3e3e3; border-radius: 14px; box-shadow: var(--pb-shadow);
-          width: min(440px, 100%); padding: 26px 24px 20px; animation: pb-pop .18s ease-out; }
-  .ttl { display: flex; align-items: center; gap: 10px; font: 700 20px/1.2 var(--pb-font); margin: 0 0 18px; }
-  .ttl i { font-size: 22px; }
+  .card { background: var(--v2-surface); border: 1px solid var(--v2-line); border-radius: 16px;
+          box-shadow: 0 10px 30px rgba(20, 24, 40, .10);
+          width: min(440px, 100%); padding: 26px 24px 20px; animation: pb-rise .3s cubic-bezier(.34, 1.4, .64, 1) backwards; }
+  .ttl { display: flex; align-items: center; gap: 12px; font: 700 20px/1.2 var(--pb-font); margin: 0 0 18px; }
+  /* 아이콘 둘레 진행 링: 기다리는 동안 돌고, 끝나면 초록·실패면 빨강으로 멈춘다(body[data-state]) */
+  .ring { position: relative; display: inline-grid; place-items: center; flex: none;
+          width: 44px; height: 44px; border-radius: 50%; background: var(--v2-sunken); }
+  .ring > i { font-size: 19px; }
+  .ring::before {
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent 0 55%, var(--v2-accent) 100%);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px));
+            mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px));
+    animation: lp-spin 1s linear infinite;
+  }
+  body[data-state="done"] .ring::before { animation: none; background: #1f9d62; }
+  body[data-state="fail"] .ring::before { animation: none; background: var(--v2-red); }
+  @keyframes lp-spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { body::before, .ring::before, .card { animation: none !important; } }
   ol { list-style: none; margin: 0 0 16px; padding: 0; }
-  li { display: flex; align-items: center; gap: 10px; padding: 7px 0; color: #9a9a9a; font: 600 15px/1.3 var(--pb-font); }
+  li { display: flex; align-items: center; gap: 10px; padding: 7px 0; color: var(--v2-ink-3); font: 600 15px/1.3 var(--pb-font); }
   li i { width: 18px; text-align: center; }
   li i.pending { font-size: 8px; opacity: .45; }   /* fa-regular 글꼴은 기기에 없다. solid 원을 작게 */
-  li[data-s="now"]  { color: var(--pb-text); }
-  li[data-s="done"] { color: #2e7d32; }
+  li[data-s="now"]  { color: var(--v2-ink); }
+  li[data-s="done"] { color: #1f9d62; }
   li .sec { margin-left: auto; font: 600 13px var(--pb-mono); color: var(--pb-text-dim); }
-  .bar { height: 6px; border-radius: 3px; background: #eee; overflow: hidden; margin: 4px 0 14px; }
+  .bar { height: 6px; border-radius: 3px; background: var(--v2-sunken); overflow: hidden; margin: 4px 0 14px; }
   .bar > div { height: 100%; width: 0; background: var(--yellow); transition: width .4s ease; }
   .msg { min-height: 20px; font: 14px/1.45 var(--pb-font); color: var(--pb-text-dim); margin: 0 0 14px; }
-  .msg.err { color: #9b2c16; font-weight: 700; }
+  .msg.err { color: var(--v2-red-ink); font-weight: 700; }
   .acts { display: flex; justify-content: flex-end; gap: 8px; }
   .acts [hidden] { display: none; }
 </style>
 </head>
 <body class="pb pb-v2">
 <header class="pb-header">
-  <span class="pb-header__brand"><i class="fa-solid fa-robot"></i>&nbsp;Pibo</span>
+  <span class="pb-header__brand"><i class="fa-solid fa-brain"></i>&nbsp;PiBrain</span>
 </header>
 <div class="wrap">
   <div class="card" role="status" aria-live="polite">
-    <p class="ttl"><i id="icon" class="fa-solid fa-microchip"></i><span id="title"></span></p>
+    <p class="ttl"><span class="ring"><i id="icon" class="fa-solid fa-microchip"></i></span><span id="title"></span></p>
     <ol>
       <li id="s1"><i class="fa-solid fa-circle pending"></i><span data-t="s1"></span></li>
       <li id="s2"><i class="fa-solid fa-circle pending"></i><span data-t="s2"></span><span class="sec" id="sec"></span></li>
@@ -95,7 +123,7 @@
     try { window.close(); } catch (e) {}
     setTimeout(function () { if (!window.closed) location.href = 'http://' + HOST + '/'; }, 200);
   };
-  if (!S) { $('msg').textContent = t('bad'); $('msg').className = 'msg err'; return; }
+  if (!S) { document.body.dataset.state = 'fail'; $('msg').textContent = t('bad'); $('msg').className = 'msg err'; return; }
 
   var name = S.name[L];
   document.title = t('title', name);
@@ -142,6 +170,7 @@
   }
   function ready(note) {
     stopTimers();
+    document.body.dataset.state = 'done';
     step(2, 'done'); step(3, 'now');
     $('bar').style.width = '100%';
     if (note) $('msg').textContent = note;
@@ -149,11 +178,13 @@
   }
   function fail() {
     stopTimers();
+    document.body.dataset.state = 'fail';
     step(2, 'idle');
     $('msg').textContent = t('fail', name); $('msg').className = 'msg err';
     $('retry').hidden = false; $('retry').focus();
   }
   function start() {
+    document.body.dataset.state = 'busy';
     $('retry').hidden = true; $('msg').textContent = ''; $('msg').className = 'msg';
     step(1, 'now'); step(2, 'idle'); step(3, 'idle');
     t0 = Date.now(); tick();
