@@ -9,7 +9,7 @@ from contextlib import asynccontextmanager
 
 from threading import Timer
 from collections import Counter
-import json,time,os,shutil
+import json,time,os,shutil,subprocess,asyncio
 import wifi
 import network_disp
 import uart_ctrl
@@ -45,22 +45,31 @@ async def f():
 async def f():
   return JSONResponse(content={'result':'ok', 'ssid':winfo[2], 'psk':winfo[3], 'ipaddress':winfo[0], 'eth1': winfo[1], 'identity':winfo[4], 'key-mgmt':winfo[5]}, status_code=200)
 
+CONWIFI = '/home/pi/openpibo-os/system/conwifi.sh'
+
 @app.post('/wifi')
 async def f(data: dict = Body(...)):
-  print(data)
-  if data['ssid'] == "": # error
-    return JSONResponse(content=f"Error: {str(ex)}", status_code=500)
-  elif data['psk'] == "": # open
-    os.system(f"sudo /home/pi/openpibo-os/system/conwifi.sh open '{data['ssid']}'")
-  elif data['psk'] != "": # wpa or wpa-e
-    if len(data['psk']) < 8:
-      return JSONResponse(content={'result':'fail', 'data':'psk must be at least 8 digits.'}, status_code=200)
-    elif data['identity'] == "": # wpa
-      os.system(f"sudo /home/pi/openpibo-os/system/conwifi.sh wpa-psk '{data['ssid']}' '{data['psk']}'")
-    else: #wpa-e
-      os.system(f"sudo /home/pi/openpibo-os/system/conwifi.sh wpa-enterprise '{data['ssid']}' '{data['identity']}' '{data['psk']}'")
-  else:
-    return JSONResponse(content=f"Error: {str(ex)}", status_code=500)
+  # 입력값은 셸을 거치지 않고 인자 목록으로 넘긴다(260929). 전엔 f"... '{ssid}' '{psk}'" 를 os.system 에 넘겨서
+  # SSID·비밀번호에 ' 가 들어가면 따옴표가 닫히고 그 뒤가 root 명령으로 실행됐다(Kim's WiFi 같은 이름은 연결도 안 됐다).
+  # 비밀번호는 로그에 남기지 않는다
+  ssid = str(data.get('ssid', ''))
+  psk = str(data.get('psk', ''))
+  identity = str(data.get('identity', ''))
+  print(f"[wifi] ssid={ssid!r} identity={identity!r} psk={'set' if psk else 'none'}")
+  if ssid == "":
+    return JSONResponse(content={'result':'fail', 'data':'ssid is empty.'}, status_code=200)   # 전엔 정의 안 된 ex 를 불러 500
+  if psk == "":                 # open
+    args = ['open', ssid]
+  elif len(psk) < 8:
+    return JSONResponse(content={'result':'fail', 'data':'psk must be at least 8 digits.'}, status_code=200)
+  elif identity == "":          # wpa
+    args = ['wpa-psk', ssid, psk]
+  else:                         # wpa-e
+    args = ['wpa-enterprise', ssid, identity, psk]
+  try:
+    await asyncio.to_thread(subprocess.run, ['sudo', CONWIFI, *args], timeout=90)
+  except Exception as ex:
+    print(f'[wifi] conwifi error: {ex}')
   os.system('shutdown -r now &')
   return JSONResponse(content="ok", status_code=200)
 

@@ -604,3 +604,11 @@ grep -n "[가-힣]" ide/run_ide.py | grep -E "emit|JSONResponse"            # 0 
 - 브랜치 삭제 push 403. 정리는 GitHub 에서 사람이 한다.
 - 기기 SSH 불가. 기기에서만 되는 확인(`openpibo.__file__`, `iw reg get`, docs 빌드)은
   값을 받아서 반영한다. **추측해서 쓰지 말 것.**
+
+### WiFi 저장(`booting.py` `POST /wifi`, 260929)
+
+SSID·비밀번호·ID 는 `subprocess.run(['sudo', conwifi.sh, 종류, ssid, ...])` 인자 목록으로 넘긴다. 전엔
+`os.system(f"... '{ssid}' '{psk}'")` 라 `'` 가 들어가면 따옴표가 닫히고 그 뒤가 **root 명령으로 실행**됐다
+(8080 은 로그인 없이 받고 AP 모드에서도 열려 있다). `Kim's WiFi` 같은 이름은 연결도 안 됐다.
+SSID 가 비면 실패 안내를 돌려준다(전엔 정의 안 된 `ex` 로 500). 비밀번호는 로그에 남기지 않는다.
+**셸 문자열에 사용자 입력을 넣지 말 것** — `tools/lib.py` 의 espeak 도 같은 이유로 고쳤다
