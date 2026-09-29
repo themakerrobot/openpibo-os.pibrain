@@ -25,7 +25,7 @@ const translations = {
   nav_fullscreen: { ko: "전체화면", en: "Full screen" },
   nav_restore:    { ko: "초기화",   en: "Reset" },
   nav_poweroff:   { ko: "전원",     en: "Power" },
-  // v2 시안 (templates/index_v2.html)
+  // IDE 화면 (templates/index.html, 시안 B)
   v2_view:          { ko: "보기",     en: "View" },
   v2_more:          { ko: "더보기",   en: "More" },
   v2_fontsize:      { ko: "글자 크기", en: "Font size" },
@@ -33,8 +33,6 @@ const translations = {
   v2_language:      { ko: "언어",     en: "Language" },
   v2_no_file:       { ko: "열린 파일 없음", en: "No file open" },
   v2_prompt_ph:     { ko: "프로그램에 입력 보내기", en: "Send input to the program" },
-  v2_old_design:    { ko: "예전 화면으로", en: "Classic layout" },
-  v1_new_design:    { ko: "새 화면으로", en: "New layout" },
   v2_add:           { ko: "추가",     en: "New" },
   v2_brand:         { ko: "메이커",   en: "Maker" },
   v2_panel:         { ko: "패널 접기/펴기", en: "Toggle panel" },

@@ -5,7 +5,7 @@ PiBrain OS 리포. 기기의 `/home/pi/openpibo-os` 가 이 리포의 작업본�
 이 릴리스 계열은 **배포본 `260624v1` 을 기준으로 만들었다.** 그 시점 이후 `master` 에
 쌓여 있던 미배포 커밋 23개(랜딩 페이지, IDE UI 전면 개편 등)는 **가져오지 않았다.**
 화면은 260624 의 연장선이었으나 **260924 에 Pibo 의 화면 v2(시안 B)를 들였다** — 아래 '화면 v2'.
-예전 화면(v1)은 `?ui=v1` 로 남아 있다.
+예전 화면(v1)은 260929 에 지웠다.
 
 이 문서는 **PiBrain 값**으로 쓰여 있다. openpibo-os.pibo(Pibo) 와 구조가 비슷하지만
 하드웨어가 다르므로 그쪽 문서를 그대로 옮겨 쓰지 말 것. 다른 점은 아래 '파이보와 다른 점' 에 모아 뒀다.
@@ -208,8 +208,9 @@ grep -rn "circul.us" --include="*.py" --include="*.js" . | grep -v "docs/\|setup
 - `t()` 는 전역이다. 다른 스크립트 최상위에서 `t` 를 선언하지 말 것.
 - classifier(260924~)는 `data-key` 로 화면을 다시 그린다(`ko2en.js` 의 `setLanguage`). 상태에 따라 바뀌는 문구는
   `app.js` 가 `t()` 로 직접 쓴다. 옛 `data-key-attr`·`data-icon`·`setLabel` 은 옛 분류기와 함께 없어졌다
-- **수정 금지**: `ide/static/ko.js`, `en.js`, `customblock.js`, `disable-top-blocks.js` 의 한글
-  (Blockly 로케일·주석·API 값이다).
+- **수정 금지**: `customblock.js`, `disable-top-blocks.js` 의 한글 (Blockly 로케일·주석·API 값이다).
+  `customblock.js` 는 260929 에 `vision_resize` 툴팁 키 오타 하나만 고쳤다
+- **블록 문구 `ko.js`·`en.js`** 는 260929 에 정리했다(사용자 승인) — Pibo 와 **같은 파일**이다. 내용은 Pibo CLAUDE.md 'i18n'
 - `record`(실행 로그)는 번역을 타지 않고 터미널에 그대로 찍힌다. 언어중립으로 (`[exit]`).
 - **학생 프로그램의 stderr 는 stdout 에 합친다(260928).** `execute` 가 `stderr=STDOUT` 으로 띄우고 4KB 조각으로 읽는다
   (점진 UTF-8 디코더). 전에는 stderr 를 프로그램이 끝난 뒤에 읽어서 ① 무한 반복 안의 에러가 [정지] 전까지 안 보였고
@@ -225,7 +226,7 @@ grep -rn "circul.us" --include="*.py" --include="*.js" . | grep -v "docs/\|setup
 
 - `customblock.js` `customblock_callback.js` `customblock_toolbox.js` 는
   **셋 중 하나만 고쳐도 셋 다** 같은 번호로 올린다. 블록 정의·생성기·툴박스가 어긋나면 IDE 가 깨진다.
-- `ko.js` / `en.js` 는 `<script>` 태그가 아니라 `ide/static/index.js` 의 `const ver` 가 버전을 정한다.
+- `ko.js` / `en.js` 는 `<script>` 태그가 아니라 `ide/static/index.js` 의 `langFileVersion` 이 버전을 정한다.
   로케일을 고치면 **그 상수**를 올린다.
 - `tools/` `classifier/` 도 각자 템플릿의 `?ver` 를 쓴다. 고친 앱만 올리면 된다.
 
@@ -335,8 +336,8 @@ sudo raspi-config nonint get_wifi_country
 
 ## 화면 v2 (260924) — Pibo 시안 B 를 그대로
 
-**v2 가 기본이다.** 예전 화면(v1, `ide/templates/index.html`)은 주소 끝 `?ui=v1` 로 가고 `?ui=v2` 로 돌아온다
-(쿠키 `pibo_ui=v1`. 포트를 안 가려서 도구·분류기도 따라간다). v1 상단바의 마법봉 아이콘(`#new_ui_bt`)이 v2 로 가는 길이다.
+**유일한 화면이다.** 예전 화면(v1)과 `?ui=` · 쿠키 `pibo_ui` 전환은 260929 에 지웠다(Pibo 와 같이 — Pibo CLAUDE.md 'v1 삭제').
+`index_v2.html` 은 `ide/templates/index.html` 로 이름이 바뀌었다. `design/` 은 Pibo 와 같은 파일로 맞췄다(전엔 오래된 사본이었다).
 
 **원본은 Pibo 리포다.** 배치·색·동작 설명과 검증 기록은 openpibo-os.pibo 의 CLAUDE.md '화면 v2' 에 있다.
 여기서는 PiBrain 에서 다른 점만 적는다. 고칠 땐 **양쪽을 같이** 고칠 것.
@@ -347,20 +348,20 @@ sudo raspi-config nonint get_wifi_country
 | `design/fonts/` (Pretendard 보통·굵게 두 벌, SIL OFL) | Pibo `design/fonts/` | 없음. 원본 배포판 파일 그대로 — 이유는 Pibo CLAUDE.md '다듬기'. **파일은 `ide/static/fonts/` 에만** 있고 도구·분류기 서버가 IDE(80) 로 넘긴다(`SharedFonts`, 260929) |
 | `ide/static/pibo-ui.*`, `tools/static/pibo-ui.*`, `classifier/static/pibo-ui.*`, `*/static/fonts/` | `design/sync.sh` 가 만든 사본 | 직접 고치지 말 것. `bash design/sync.sh --check` |
 | `ide/static/launch.html` | Pibo | 도구 포트 **50040**, 제목 |
-| `ide/templates/index_v2.html` | Pibo | 브랜드 `PiBrain`(fa-brain), 패널 탭 [PiBrain], **배터리 칸 없음**, `?ver` |
+| `ide/templates/index.html` (전 `index_v2.html`) | Pibo | 브랜드 `PiBrain`(fa-brain), 패널 탭 [PiBrain], **배터리 칸 없음**, `?ver` |
 | `ide/static/v2/ide.css` `ide.js` `vendor/toolbox-search.*` | Pibo | 주석의 탭 이름만 |
-| `ide/static/index.js` | Pibo 를 기준으로 | H/W 검수(50050, 4초 뒤 열기) · `langFileVersion`(PiBrain `ko.js`/`en.js` 버전) 을 PiBrain 값으로 되살렸다 |
-| `ide/run_ide.py` | 항목별로 | gzip, `run_blocking`, 실행 로그 `record`/`record_add`, 저장 확인 `saved`, `/` 가 v2 기본. MCU 조회(`get_device`)는 안 가져왔다 |
+| `ide/static/index.js` | Pibo 를 기준으로 | H/W 검수(50050, 4초 뒤 열기). `langFileVersion` 은 260929 부터 Pibo 와 같다(`ko.js`·`en.js` 가 같은 파일) |
+| `ide/run_ide.py` | 항목별로 | gzip, `run_blocking`, 실행 로그 `record`/`record_add`, 저장 확인 `saved`, `/` 는 늘 `index.html`. MCU 조회(`get_device`)는 안 가져왔다 |
 | `ide/static/ko2en.js` | Pibo 의 새 키 53개를 앞에 끼움 | `v2_tab_robot` = PiBrain. 1·2행은 그대로(`global` 델타) |
 | `customblock.js` | | `color_type` **색 값만**(한글 줄 그대로) |
 | `customblock_toolbox.js` | | 기본 분류 8개의 `"colour"` 값만. **`global` 델타 파일이다** — merge 때 Collect 분류와 떨어져 있어 보통 자동으로 합쳐지지만 확인할 것 |
-| `jquery-3.7.1.min.js` | Pibo | 3.1.1 을 지우고 올렸다(v1·v2 둘 다) |
+| `jquery-3.7.1.min.js` | Pibo | 3.1.1 을 지우고 올렸다 |
 | `tools/templates/index.html` `static/index.css` | **PiBrain 전용**(Pibo 도구와 마크업이 다르다) | 새로 짰다 — 아래 '도구 화면' |
 
 ### 도구 화면 (260924)
 
 Pibo 도구와 기능·마크업이 달라(REST/SSE, 5탭) 키트의 `pb-v2` 층을 쓰지 않고 **같은 색 토큰으로 따로 짰다.**
-`body.v2-app` 이라 키트가 `pb-v2` 를 얹지 않는다. v1/v2 두 벌이 아니라 **한 벌**이다(`?ui=v1` 무관).
+`body.v2-app` 이라 키트가 `pb-v2` 를 얹지 않는다.
 
 - 상단바(노랑): 도구 · PiBrain | [IDE](`PiboUI.backToIDE`) · 화면 밝기(누를 때마다 부드럽게→밝게→어둡게, 쿠키 `pibo_theme`) · KO/EN
   - 도구 [카메라] 는 기기 LCD 로 보내고 웹은 [캡처] 때 한 장만 받는다(`/capture.jpg`, JPEG 바이트). 서버는 매 장을 JPEG 로 만들지 않고
@@ -380,12 +381,10 @@ Pibo 도구와 기능·마크업이 달라(REST/SSE, 5탭) 키트의 `pb-v2` 층
   배너 뜨고 사라짐
 
 - 기본 블록 테마(`index.js`)의 `colorTertiary` 오타가 `colourTertiary` 로 고쳐졌다(Pibo 에서 같이 옴)
-- 파이썬 편집기는 v2 전용 테마 `pibo-light`/`pibo-dark`. v1 은 예전대로 `cobalt`
-- v1 에는 [파이썬 코드]·실행 상태 칩이 없다(v2 에만 있다). v1 은 되돌아갈 길로만 둔다
-- 테스트할 땐: v1 을 볼 땐 쿠키 `pibo_ui=v1` 을 넣을 것. 쿠키 없이 v1 파일을 열면 `pibo-ui.js` 가 v2 로 판정한다
+- 파이썬 편집기는 v2 전용 테마 `pibo-light`/`pibo-dark`
 
 검증(컨테이너, 가짜 소켓): v2 동작 22/22, 기존 동작 27개 중 26(실패 1개는 테스트 탭이 뒤에 있어 늦게 뜬 것 —
-Pibo 에서도 같다), 560~1960px 한/영 상단바 넘침 0, 편집기 폭 0, pageerror 0. v1 은 도구·대화 열기·저장 확인까지 14항목.
+Pibo 에서도 같다), 560~1960px 한/영 상단바 넘침 0, 편집기 폭 0, pageerror 0. v1 삭제(260929) 뒤에도 같은 결과.
 **실기기로는 아직 안 봤다.**
 
 ## 파이보와 다른 점
@@ -455,7 +454,7 @@ Pibo 와 같다. Teachable Machine 계열(`vision_load_tm` `vision_predict_tm`
   PiBrain 파일은 Pibo 교체 직전과 공백만 달랐다
 - PiBrain 에서 바꾼 것: 화면 문구의 이름(PiBrain), `ko2en.js` 1·2행과 언어 저장 키 `classifier_language`
   (`global` 델타 그대로)
-- 블록 `[이미지 모델 설정하기]`: 폴더 `mymodel`, 이름 칸에 모델 이름(기본값 '모델 이름'), 두 번째 칸은 비워 둔다.
+- 블록 `[분류기 모델 … 불러오기]`(260929 전엔 '이미지 모델 설정하기'): 폴더 `mymodel`, 이름 칸에 모델 이름(기본값 '모델 이름'), 세 번째 칸은 비워 둔다.
   **예전 `model.keras` 는 못 읽는다**(불러오면 다시 학습하라는 오류). 의도한 호환 단절이다
 - 지운 것: `tf.min-3.11.0.js` · MobileNetV2 가중치 · `model.json` · `jszip` · `tfjs_to_keras.py`(`/convert`)
 - 사물 인식(`vision_detect`)은 **가져오지 않았다** — PiBrain 쪽(yolo26s)이 더 새 것이다
@@ -492,11 +491,6 @@ mediapipe 0.10.18 · numpy 1.26.4). 특징 코사인 이미지 0.96~0.98 · 손 
 
 ### 알면서 남겨 둔 것
 
-- `ide/static/ko.js` / `en.js` 에 지운 블록의 로케일 키가 남아 있다
-  (`SPEECH_STT` `SPEECH_TTS` `SPEECH_TTS_PLAY` `SPEECH_GTTS` `SPEECH_GTTS_PLAY`
-  `SPEECH_TRANSLATE` `SPEECH_GET_DIALOG` `SPEECH_LOAD_DIALOG` `SPEECH_RESET_DIALOG`
-  `VISION_CALL_AI_IMG` `VISION_CALL_AI_IMG_EXT` 와 각 `_TOOLTIP`).
-  참조하는 블록이 없어 동작에 영향이 없고, 위 '수정 금지' 규칙에 걸리므로 그대로 둔다.
 - `openpibo/vision_detect.py` 의 `pickle` · `openpibo_dlib_models` import 는 쓰이지 않는다.
   이번 작업 이전부터 그랬고, 모델 경로 등록 부작용이 있을 수 있어 건드리지 않았다.
 - `system/openpibo_python-*.whl` — 위 'openpibo 는 리포 소스로 임포트한다' 참고.

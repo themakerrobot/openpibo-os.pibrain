@@ -618,29 +618,24 @@ body.pb-refresh .pb-header {
   border-bottom: 1px solid rgba(0, 0, 0, .10);
 }
 
-/* tools 왼쪽 메뉴 라벨 — v1 에서는 숨긴다(아이콘 PNG 만) */
+/* tools 왼쪽 메뉴 라벨 — 기본은 숨기고 pb-v2 층이 보이게 한다 */
 .pb-navlabel { display: none; }
 
 /* ==========================================================================
-   v2 — body.pb-v2  (시안. 주소에 ?ui=v2 로 켜고 ?ui=v1 로 끈다)
+   v2 — body.pb-v2  (도구·분류기 화면. 260929 부터 이것 하나 — 예전 v1 은 지웠다)
    ==========================================================================
-   도구·분류기용. IDE v2 는 자체 화면(ide/templates/index_v2.html + ide/static/v2/)이라
-   이 층을 쓰지 않는다. 색 값은 ide/static/v2/ide.css 와 같다 — 한쪽을 고치면 같이 고칠 것.
-
-     바탕   노랑 헤더 · 흰 패널  →  짙은 남회색 틀(헤더·왼쪽 메뉴) · 바닥 위 카드
-     노랑   헤더 전체  →  브랜드 마크와 '주 동작'(실행 · AI 가르치기) 에만
-     청록   버튼 바탕  →  상태(선택·포커스·슬라이더)는 인디고. 앱의 청록 버튼은 옅은 인디고(tonal)
-     빨강   정지 · 등록 바탕  →  옅은 빨강(tonal)
-     제목   노랑 형광펜(.mark)  →  굵은 글자 + 작은 노랑 막대
+   도구·분류기용. 템플릿 <body> 에 pb-refresh 와 같이 붙어 있고, 그 위에 얹힌다.
+   IDE 는 자체 화면(ide/templates/index.html + ide/static/v2/)이라 이 층을 쓰지 않는다.
+   색 값은 ide/static/v2/ide.css 와 같다 — 한쪽을 고치면 같이 고칠 것.
+   상단바 노랑 · 주 동작 파랑 · 정지·지울 것 빨강 (자세한 건 루트 CLAUDE.md '화면 v2')
 
    화면 밝기 — html[data-theme] (pibo-ui.js 가 쿠키 pibo_theme 로 정한다. 기본 soft)
      light  흰 바탕
      soft   흰색 대신 옅은 회색. 오래된 노트북 패널에서 흰 바탕이 눈부신 걸 줄인다
      dark   #1d2025 계열 (순수 검정은 안 쓴다) */
 body.pb-v2 {
-  /* 색 — Ink & Amber (IDE v2 의 ide/static/v2/ide.css 와 같은 값)
-     틀 먹빛 남색 · 주 동작 앰버 · 상태 인디고. yellow 는 앰버, accent 는 인디고다 */
-  /* 상단바 = IDE v2(시안 B)와 같은 노랑 */
+  /* 색 — 시안 B (IDE 의 ide/static/v2/ide.css 와 같은 값)
+     상단바 노랑 · 주 동작 파랑(--v2-dark) · 정지·지울 것 빨강 · accent 파랑 */
   --v2-frame:     #fbc92d;
   --v2-frame-2:   rgba(61, 47, 18, .10);
   --v2-frame-3:   rgba(61, 47, 18, .16);
@@ -711,19 +706,6 @@ html[data-theme="dark"] body.pb-v2 {
   --v2-term: #11141b;
   --v2-shadow: rgba(0, 0, 0, .45); --v2-scrim: rgba(0, 0, 0, .6);
   color-scheme: dark;
-}
-/* 청록 틀안 — html[data-frame="teal"]. IDE v2 와 같은 값 */
-html[data-frame="teal"] body.pb-v2 {
-  --v2-frame: #0f4c55; --v2-frame-2: #16606b; --v2-frame-3: #1f7380; --v2-frame-line: #0a3a41;
-  --v2-frame-ink: #effafb; --v2-frame-dim: #a7d2d8;
-  --v2-accent: #0e8a9a; --v2-accent-t: #d9f0f2; --v2-accent-t2: #c3e6ea; --v2-accent-ink: #0a5560;
-  --v2-ring: rgba(14, 138, 154, .3); --v2-ring-soft: rgba(14, 138, 154, .22);
-}
-html[data-frame="teal"][data-theme="dark"] body.pb-v2 {
-  --v2-frame: #0b2c32; --v2-frame-2: #123c43; --v2-frame-3: #1a4d55; --v2-frame-line: #071d21;
-  --v2-frame-dim: #8fbfc5;
-  --v2-accent: #45c6d6; --v2-accent-t: #163a40; --v2-accent-t2: #1d4a51; --v2-accent-ink: #a6eaf2;
-  --v2-ring: rgba(69, 198, 214, .35); --v2-ring-soft: rgba(69, 198, 214, .25);
 }
 body.pb-v2 {
   /* 키트 토큰을 v2 값으로 */

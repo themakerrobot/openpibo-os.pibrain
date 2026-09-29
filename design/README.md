@@ -90,18 +90,18 @@ PiBrain 까지 더하면 사본이 여섯 벌이 된다. 그래서 한 파일로
 - 글꼴 · 크기 · 패딩은 건드리지 않는다. 한/영 전환 때 버튼 줄바꿈이 달라지지 않게 하려는 것이다
 - 빼는 것: 키트 버튼(`.pb-btn` `.pb-iconbtn` `.pb-seg`), IDE `[블록|파이썬]` 전환, `nav` 안의 버튼(tools 왼쪽 메뉴),
   키트 입력(`.pb-field`), 터미널(`.result` `.terminal`)
-- 되돌리려면 body 에서 `pb-refresh` 만 뺀다. PiBrain 은 켜기 전까지 영향이 없다
+- 도구·분류기는 이 층 위에 `pb-v2` 가 얹혀 있다(아래). 빼면 v2 모양이 같이 틀어진다
 
-## 화면 v2 (기본, 260924~)
+## 화면 v2 (260924~, 260929 부터 유일한 화면)
 
-색·배치를 새로 잡은 시안 B. **기본 화면이다** — 예전 화면은 `?ui=v1`(쿠키 `pibo_ui=v1`).
+색·배치를 새로 잡은 시안 B. 예전 화면(v1)과 `?ui=` · 쿠키 `pibo_ui` 전환, 틀색 시안(`?frame=teal`)은 260929 에 지웠다.
 자세한 건 루트 `CLAUDE.md` 의 '화면 v2'.
 
-- 도구·분류기: `body.pb-v2` (`pibo-ui.css` 맨 아래). 상단바 노랑(글씨 짙은 갈색) · 주 동작 파랑 #2563eb ·
+- 도구·분류기: `body.pb-v2` (`pibo-ui.css` 맨 아래, 템플릿 `<body>` 에 박혀 있다). 상단바 노랑(글씨 짙은 갈색) · 주 동작 파랑 #2563eb ·
   포커스·스위치도 파랑 · 지울 것 빨강
 - 화면 밝기 `html[data-theme]` = light / soft(기본) / dark. `PiboUI.setTheme()` · 쿠키 `pibo_theme`.
   도구·분류기 헤더에는 pibo-ui.js 가 밝기 버튼을 끼운다(누를 때마다 순환)
-- IDE: 별도 템플릿(`ide/templates/index_v2.html` + `ide/static/v2/`). 이 키트에서는 셸·모달·알림만 쓴다
+- IDE: 별도 템플릿(`ide/templates/index.html` + `ide/static/v2/`, `body.v2-app`). 이 키트에서는 셸·모달·알림만 쓴다
 
 ## 알아둘 것
 

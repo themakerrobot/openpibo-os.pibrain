@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PiBrain</title>
 <link rel="stylesheet" href="all.min.css">
-<link rel="stylesheet" href="pibo-ui.css?ver=260929v2">
+<link rel="stylesheet" href="pibo-ui.css?ver=260929v3">
 <link rel="shortcut icon" href="icon.png" type="image/x-icon">
 <style>
   /* 도구·분류기·대화를 새 탭으로 열 때 거치는 대기 페이지.
@@ -34,7 +34,7 @@
   .acts [hidden] { display: none; }
 </style>
 </head>
-<body class="pb">
+<body class="pb pb-v2">
 <header class="pb-header">
   <span class="pb-header__brand"><i class="fa-solid fa-robot"></i>&nbsp;Pibo</span>
 </header>
@@ -103,8 +103,6 @@
   $('icon').className = 'fa-solid ' + S.icon;
   if (key === 'llm') $('s2').children[1].textContent = t('s2_llm');
   var target = 'http://' + HOST + ':' + S.port + '/';
-  if (Q.get('ui') === 'v2') document.body.classList.add('pb-v2');
-  var UIQ = /^v[12]$/.test(Q.get('ui') || '') ? '?ui=' + Q.get('ui') : '';
 
   function step(n, state) {
     var li = $('s' + n); li.setAttribute('data-s', state);
@@ -147,7 +145,7 @@
     step(2, 'done'); step(3, 'now');
     $('bar').style.width = '100%';
     if (note) $('msg').textContent = note;
-    setTimeout(function () { location.replace(target + UIQ); }, note ? 1600 : 250);
+    setTimeout(function () { location.replace(target); }, note ? 1600 : 250);
   }
   function fail() {
     stopTimers();

@@ -1784,7 +1784,7 @@ Blockly.defineBlocksWithJsonArray(
       output: null,
       inputsInline: true,
       colour: color_type["vision"],
-      tooltip: '%{BKY_VISION_FLIP_TOOLTIP}',
+      tooltip: '%{BKY_VISION_RESIZE_TOOLTIP}',
       helpUrl: ''
     },
     {

@@ -13,9 +13,8 @@
      5) 서비스: PiboUI.openService('tools'|'classifier'|'llm')  이름 붙인 새 탭으로 연다
               PiboUI.backToIDE()                 도구 탭을 닫고 IDE 로
      6) 버튼 : PiboUI.busy(el, on)               아이콘만 스피너로. 라벨·크기는 그대로
-     7) 화면 : 기본 v2(도구·분류기는 body.pb-v2, IDE 는 index_v2.html). ?ui=v1 → 쿠키 pibo_ui=v1 로 예전 화면
-     8) 밝기 : PiboUI.setTheme('light'|'soft'|'dark') → html[data-theme] + 쿠키 pibo_theme (v2 만)
-     9) 틀색 : ?frame=teal|ink → html[data-frame] + 쿠키 pibo_frame (v2 만, 시안 비교용)
+     7) 화면 : 도구·분류기는 body.pb-v2 층(예전 v1 화면은 260929 에 지웠다). IDE 는 자체 CSS(body.v2-app)
+     8) 밝기 : PiboUI.setTheme('light'|'soft'|'dark') → html[data-theme] + 쿠키 pibo_theme
 
    원본은 design/pibo-ui.js 하나뿐이다. static/ 쪽 사본은 design/sync.sh 가 만든다.
    ========================================================================== */
@@ -40,38 +39,23 @@
     try { var s = localStorage.getItem('language'); if (s) return s; } catch (e) { /* 사생활 모드 */ }
     return (navigator.language || 'en').indexOf('ko') === 0 ? 'ko' : 'en';
   }
-  /* ── 화면 전환 ────────────────────────────────────────────────────────────
-     기본은 v2(260924~). ?ui=v1 로 예전 화면, ?ui=v2 로 돌아온다. 고른 값은 쿠키(pibo_ui)에
-     둔다 — 쿠키는 포트를 가리지 않아서 IDE(80)에서 고르면 도구(50000)·분류기(50010)도
-     같이 따라간다. IDE 는 서버가 이 쿠키를 보고 index.html / index_v2.html 을 고른다.
-     v2 전용 화면(body.v2-app)은 자체 CSS 를 쓰므로 pb-v2 층을 얹지 않는다. */
-  var UI = (function () {
-    var q = null;
-    try { q = new URLSearchParams(location.search).get('ui'); } catch (e) { /* 무시 */ }
-    try {
-      if (q === 'v1') document.cookie = 'pibo_ui=v1; path=/; max-age=31536000; SameSite=Lax';
-      else if (q === 'v2') document.cookie = 'pibo_ui=; path=/; max-age=0; SameSite=Lax';
-    } catch (e) { /* 무시 */ }
-    if (q === 'v1' || q === 'v2') return q;
-    var m = null;
-    try { m = document.cookie.match(/(?:^|;\s*)pibo_ui=(v[12])/); } catch (e) { /* 무시 */ }
-    return m ? m[1] : 'v2';
-  })();
-  if (UI === 'v2' && document.body && !document.body.classList.contains('v2-app')) {
+  /* ── 화면 ───────────────────────────────────────────────────────────────
+     화면은 하나다(시안 B). 예전 화면(v1)과 ?ui= · 쿠키 pibo_ui 전환은 260929 에 지웠다.
+     v2 전용 화면(body.v2-app: IDE)은 자체 CSS 를 쓰므로 pb-v2 층을 얹지 않는다. */
+  var UI = 'v2';   // PiboUI.ui 로 내보내던 값. 바깥 코드가 볼 수 있어 이름만 남겨 둔다
+  if (document.body && !document.body.classList.contains('v2-app')) {
     document.body.classList.add('pb-v2');
   }
 
   /* ── 화면 밝기 (v2) ────────────────────────────────────────────────────
      흰 바탕이 오래된 노트북 패널에서 눈부시다는 현장 의견으로 넣었다. 기본은 soft(옅은 회색).
-     쿠키라서 IDE 에서 고르면 도구·분류기도 같이 바뀐다. OS 가 어두운 모드면 dark 로 시작한다.
+     쿠키라서 IDE 에서 고르면 도구·분류기도 같이 바뀐다. 고른 적 없으면 soft(OS 설정과 무관).
      v2 IDE 는 <head> 의 짧은 스크립트가 같은 규칙으로 먼저 정한다(첫 페인트 번쩍임 방지). */
   var THEMES = ['light', 'soft', 'dark'];
   function getTheme() {
     var m = null;
     try { m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/); } catch (e) { /* 무시 */ }
-    if (m) return m[1];
-    try { if (window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark'; } catch (e) { /* 무시 */ }
-    return 'soft';
+    return m ? m[1] : 'soft';   // 고른 적 없으면 늘 부드럽게(OS 어두운 모드를 따르지 않는다, 260929)
   }
   function setTheme(t) {
     if (THEMES.indexOf(t) < 0) return;
@@ -95,26 +79,14 @@
       cyc.title = THEME_TEXT[t][L];
     }
   }
-  if (UI === 'v2') document.documentElement.setAttribute('data-theme', getTheme());
-  /* 틀 색 시안: ?frame=teal / ?frame=ink (쿠키 pibo_frame). 기본 ink(먹빛) */
-  (function () {
-    var q = null;
-    try { q = new URLSearchParams(location.search).get('frame'); } catch (e) { /* 무시 */ }
-    try {
-      if (q === 'teal') document.cookie = 'pibo_frame=teal; path=/; max-age=31536000; SameSite=Lax';
-      else if (q === 'ink') document.cookie = 'pibo_frame=; path=/; max-age=0; SameSite=Lax';
-    } catch (e) { /* 무시 */ }
-    var teal = q === 'teal' || (q !== 'ink' && /(?:^|;\s*)pibo_frame=teal/.test(document.cookie || ''));
-    if (UI === 'v2' && teal) document.documentElement.setAttribute('data-frame', 'teal');
-    else document.documentElement.removeAttribute('data-frame');
-  })();
+  document.documentElement.setAttribute('data-theme', getTheme());
   document.addEventListener('click', function (e) {
     var b = e.target.closest && e.target.closest('[data-theme-set]');
     if (b) setTheme(b.getAttribute('data-theme-set'));
   });
   /* 도구·분류기(pb-v2) 헤더에 밝기 버튼을 하나 끼운다. 누를 때마다 밝게 → 부드럽게 → 어둡게 */
   function addThemeButton() {
-    if (UI !== 'v2' || document.body.classList.contains('v2-app')) return;
+    if (document.body.classList.contains('v2-app')) return;
     var bar = document.querySelector('.pb-header .pb-iconbar');
     if (!bar || document.getElementById('pb_theme_bt')) return;
     var b = document.createElement('button');
@@ -345,7 +317,7 @@
   var TAB = { tools: 'pibo_tools', classifier: 'pibo_classifier', llm: 'pibo_llm' };
   function launchUrl(svc) {
     return 'http://' + location.hostname + '/static/launch.html?svc=' +
-           encodeURIComponent(svc) + '&lang=' + curLang() + '&ui=' + UI;
+           encodeURIComponent(svc) + '&lang=' + curLang();
   }
   function openService(svc) {
     var w = window.open(launchUrl(svc), TAB[svc] || ('pibo_' + svc));

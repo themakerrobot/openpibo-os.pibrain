@@ -127,10 +127,8 @@ async def get_directory(folderName: str):
 
 @app.get('/', response_class=HTMLResponse)
 async def read_root(request: Request):
-  # 기본은 v2(index_v2.html, 260924~). 예전 화면(index.html)은 ?ui=v1 또는 쿠키 pibo_ui=v1 일 때만
-  # 쿼리가 먼저, 없으면 쿠키 (pibo-ui.js 가 심는다)
-  ui = request.query_params.get('ui') or request.cookies.get('pibo_ui')
-  page = "index.html" if ui == 'v1' else "index_v2.html"
+  # 화면은 하나(시안 B). 예전 화면(v1)과 ?ui= · 쿠키 pibo_ui 전환은 260929 에 지웠다
+  page = "index.html"
   # 템플릿은 Jinja 문법을 안 쓴다. 파일을 그대로 보내면 starlette 버전과 무관하다.
   # 전에 쓰던 TemplateResponse(이름, {"request": ...}) 는 starlette 1.0 에서 받지 않아 첫 화면이 500 이 됐다
   # no-cache: FileResponse 는 Last-Modified 를 붙여 브라우저가 페이지를 그냥 캐시할 수 있다. 그러면 올린 ?ver 가 안 보인다

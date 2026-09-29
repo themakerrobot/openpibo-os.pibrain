@@ -456,7 +456,6 @@ Blockly.Msg['LANG_MS'] = "말레이어";
 Blockly.Msg["FLAG_EVENT"] = "%1 클릭했을때";
 Blockly.Msg["FLAG_EVENT_TOOLTIP"] = "코드를 실행합니다.";
 
-Blockly.Msg["AUDIO_MYAUDIO"] = "내오디오";
 Blockly.Msg["AUDIO_ANIMAL"] = "동물";
 Blockly.Msg["AUDIO_EFFECT"] = "효과음";
 Blockly.Msg["AUDIO_MUSIC"] = "음악";
@@ -610,38 +609,20 @@ Blockly.Msg["OLED_CLEAR_TOOLTIP"] = "화면을 초기화합니다.";
 Blockly.Msg["OLED_FILL"] = "채우기";
 Blockly.Msg["OLED_UNFILL"] = "채우기 없음";
 
-Blockly.Msg["SPEECH_STT"] = "%1 %2 %3 %4 초 동안 소리를 녹음하고 글자로 바꾸기";
-Blockly.Msg["SPEECH_STT_TOOLTIP"] = "(인터넷 필요!) 정해진 시간 동안 소리를 녹음하고 글자로 바꿉니다.";
-Blockly.Msg["SPEECH_TTS"] = "%1 %2 %3 %4 를 %8 목소리로 %5 %6.%7 에 저장하기";
-Blockly.Msg["SPEECH_TTS_TOOLTIP"] = "(인터넷 필요!) 입력한 글자를 소리 파일로 저장합니다.";
-Blockly.Msg["SPEECH_TTS_PLAY"] = "%1 %2 %3 %4 를 %5 목소리 %6 크기로 말하기";
-Blockly.Msg["SPEECH_TTS_PLAY_TOOLTIP"] = "(인터넷 필요!) 입력한 글자를 소리 파일로 재생합니다.";
-Blockly.Msg["SPEECH_GTTS"] = "%1 %2 %3 %8 %4 를 %5 %6.%7 에 저장하기";
-Blockly.Msg["SPEECH_GTTS_TOOLTIP"] = "(인터넷 필요!) 입력한 글자를 소리 파일로 저장합니다.(다국어)";
-Blockly.Msg["SPEECH_GTTS_PLAY"] = "%1 %2 %3 %5 %4 %6 크기로 말하기";
-Blockly.Msg["SPEECH_GTTS_PLAY_TOOLTIP"] = "(인터넷 필요!) 입력한 글자를 소리로 재생합니다.(다국어)";
 Blockly.Msg["SPEECH_OTTS"] = "%1 %2 %3 를 %4 목소리로 %5 %6.%7 에 저장하기(ondevice)";
-Blockly.Msg["SPEECH_OTTS_TOOLTIP"] = "입력한 글자를 소리 파일로 저장합니다.(내장)";
+Blockly.Msg["SPEECH_OTTS_TOOLTIP"] = "입력한 글자를 파이보 안에서 목소리로 만들어 파일로 저장합니다. 한국어·영어는 자동으로 알아봅니다.";
 Blockly.Msg["SPEECH_OTTS_PLAY"] = "%1 %2 %3 를 %4 목소리 %5 크기로 말하기(ondevice)";
-Blockly.Msg["SPEECH_OTTS_PLAY_TOOLTIP"] = "입력한 글자를 소리 파일로 재생합니다.(내장)";
+Blockly.Msg["SPEECH_OTTS_PLAY_TOOLTIP"] = "입력한 글자를 파이보 안에서 목소리로 만들어 말합니다. 한국어·영어는 자동으로 알아봅니다.";
 Blockly.Msg["SPEECH_ETTS"] = "%1 %2 %3 를 목소리 %4 %5.%6 에 저장하기(E-speak)";
-Blockly.Msg["SPEECH_ETTS_TOOLTIP"] = "입력한 글자를 소리 파일로 저장합니다.(E-speak)";
+Blockly.Msg["SPEECH_ETTS_TOOLTIP"] = "입력한 글자를 espeak 기계 목소리로 파일에 저장합니다.";
 Blockly.Msg["SPEECH_ETTS_PLAY"] = "%1 %2 %3 를 목소리 %4 크기로 말하기(E-speak)";
-Blockly.Msg["SPEECH_ETTS_PLAY_TOOLTIP"] = "입력한 글자를 목소리 파일로 재생합니다.(E-speak)";
-Blockly.Msg["SPEECH_TRANSLATE"] = "%1 %2 %3 %4 %5 로 번역하기";
-Blockly.Msg["SPEECH_TRANSLATE_TOOLTIP"] = "(인터넷 필요!) 글자를 다른 언어로 바꿉니다.";
-Blockly.Msg["SPEECH_GET_DIALOG"] = "%1 %2 %3 의 대답 구하기";
-Blockly.Msg["SPEECH_GET_DIALOG_TOOLTIP"] = "입력한 대화 내용에 대한 대답을 만듭니다.";
-Blockly.Msg["SPEECH_LOAD_DIALOG"] = "%1 %2 %3 %4.csv 대화 파일 설정하기";
-Blockly.Msg["SPEECH_LOAD_DIALOG_TOOLTIP"] = "csv 형식의 대화 파일을 설정합니다.";
-Blockly.Msg["SPEECH_RESET_DIALOG"] = "%1 %2 대화 파일 처음 상태로 되돌리기";
-Blockly.Msg["SPEECH_RESET_DIALOG_TOOLTIP"] = "대화 파일을 처음 상태로 돌립니다.";
+Blockly.Msg["SPEECH_ETTS_PLAY_TOOLTIP"] = "입력한 글자를 espeak 기계 목소리로 말합니다.";
 Blockly.Msg["SPEECH_START_LLM"] = "%1 %2 대화 서버 시작하기(LLM)";
 Blockly.Msg["SPEECH_START_LLM_TOOLTIP"] = "대화 서버를 시작합니다.";
 Blockly.Msg["SPEECH_CALL_LLM"] = "%1 %2 %3 대화하기, 역할 %4 (LLM)";
-Blockly.Msg["SPEECH_CALL_LLM_TOOLTIP"] = "대화 서버를 시작합니다.";
+Blockly.Msg["SPEECH_CALL_LLM_TOOLTIP"] = "대화 서버(LLM)에 글을 보내고 대답을 받습니다. 역할에는 파이보가 어떤 말투·역할로 대답할지 적습니다.";
 Blockly.Msg["SPEECH_STOP_LLM"] = "%1 %2 대화 서버 종료하기(LLM)";
-Blockly.Msg["SPEECH_STOP_LLM_TOOLTIP"] = "대화 서버를 시작합니다.";
+Blockly.Msg["SPEECH_STOP_LLM_TOOLTIP"] = "대화 서버를 끕니다.";
 
 Blockly.Msg["IMAEG_ANIMAL"] = "동물";
 Blockly.Msg["IMAEG_EXPRESSION"] = "표정";
@@ -666,7 +647,7 @@ Blockly.Msg["VISION_IMREAD_DYNAMIC_TOOLTIP"] = "선택한 이미지 파일을 �
 Blockly.Msg["VISION_IMREAD"] = "%1 %2 이미지 %3 %4.%5 불러오기";
 Blockly.Msg["VISION_IMREAD_TOOLTIP"] = "입력한 이미지 파일을 불러옵니다.";
 Blockly.Msg["VISION_CREATE_MATTE"] = "%1 %2 이미지 색상 %3 매트 만들기";
-Blockly.Msg["VISION_CREATE_MATTE_TOOLTIP"] = "입력한 이미지 파일을 불러옵니다.";
+Blockly.Msg["VISION_CREATE_MATTE_TOOLTIP"] = "고른 색으로 채운 빈 이미지를 만듭니다.";
 Blockly.Msg["VISION_IMWRITE"] = "%1 %2 이미지 %6 ⏵ %3 %4.%5 에 저장하기";
 Blockly.Msg["VISION_IMWRITE_TOOLTIP"] = "이미지를 파일로 저장합니다.";
 Blockly.Msg["VISION_IMSHOW_TO_IDE"] = "%1 %2 이미지 %3 IDE에 보여주기";
@@ -684,7 +665,7 @@ Blockly.Msg["VISION_TEXT_TOOLTIP"] = "이미지에 글자를 표시합니다.";
 Blockly.Msg["VISION_TRANSFER"] = "%1 %2 이미지 %3 %4 바꾸기";
 Blockly.Msg["VISION_TRANSFER_TOOLTIP"] = "이미지의 스타일을 바꿉니다.";
 Blockly.Msg["VISION_RESIZE"] = "%1 %2 이미지 %3 가로 %4 세로 %5 크기 바꾸기";
-Blockly.Msg["VISION_RESIZE_TOOLTIP"] = "이미지 크기를 바꾸기";
+Blockly.Msg["VISION_RESIZE_TOOLTIP"] = "이미지 크기를 바꿉니다.";
 
 Blockly.Msg["VISION_FACE_DETECT"] = "%1 %2 이미지 %3 얼굴 찾기";
 Blockly.Msg["VISION_FACE_DETECT_TOOLTIP"] = "이미지에서 얼굴을 찾습니다.";
@@ -700,7 +681,7 @@ Blockly.Msg["VISION_FACE_LANDMARK_VIS"] = "%1 %2 이미지 %3 얼굴랜드마크
 Blockly.Msg["VISION_FACE_LANDMARK_VIS_TOOLTIP"] = "이미지에서 얼굴의 랜드마크 표시합니다.";
 
 Blockly.Msg["VISION_FACEDB"] = "%1 %2 얼굴사전";
-Blockly.Msg["VISION_FACEDB_TOOLTIP"] = "이미지에서 얼굴을 이름으로 학습합니다.";
+Blockly.Msg["VISION_FACEDB_TOOLTIP"] = "얼굴 사전에 학습된 이름 목록을 가져옵니다.";
 Blockly.Msg["VISION_FACEDB_TRAIN"] = "%1 %2 이미지 %3 얼굴 %4 ⏵ 이름 %5 로 얼굴 사전에 학습하기";
 Blockly.Msg["VISION_FACEDB_TRAIN_TOOLTIP"] = "이미지에서 얼굴을 이름으로 학습합니다.";
 Blockly.Msg["VISION_FACEDB_DELETE"] = "%1 %2 이름 %3 얼굴 사전에서 지우기";
@@ -736,8 +717,6 @@ Blockly.Msg["VISION_POSE_VIS"] = "%1 %2 이미지 %3 포즈 데이터 %4 표시�
 Blockly.Msg["VISION_POSE_VIS_TOOLTIP"] = "이미지에서 사람의 포즈 데이터를 표시합니다.";
 Blockly.Msg["VISION_ANALYZE_POSE"] = "%1 %2 포즈 데이터 %3 %4 분석하기";
 Blockly.Msg["VISION_ANALYZE_POSE_TOOLTIP"] = "포즈 데이터를 분석해 정해진 포즈를 알아냅니다.";
-// Blockly.Msg["VISION_CLASSIFICATION"] = "%1 %2 이미지 %3 분류하기";
-// Blockly.Msg["VISION_CLASSIFICATION_TOOLTIP"] = "이미지를 분류합니다. (imagenet 1k)";
 Blockly.Msg["VISION_OBJECT_TRACKER_INIT"] = "%1 %2 이미지 %3 좌표 %4 %5, %6 %7 트래커 설정하기";
 Blockly.Msg["VISION_OBJECT_TRACKER_INIT_TOOLTIP"] = "이미지의 특정 위치에 트래커를 설정합니다.";
 Blockly.Msg["VISION_OBJECT_TRACK"] = "%1 %2 이미지 %3 추적하기";
@@ -757,39 +736,20 @@ Blockly.Msg["VISION_HAND_GESTURE_TOOLTIP"] = "이미지에서 손 동작을 인�
 Blockly.Msg["VISION_HAND_GESTURE_VIS"] = "%1 %2 이미지 %3 손 동작 %4 표시하기";
 Blockly.Msg["VISION_HAND_GESTURE_VIS_TOOLTIP"] = "이미지에서 손 동작을 표시합니다.";
 
-// Blockly.Msg["VISION_LOAD_TM"] = "%1 %2 티처블머신 %3 %4 %5 모델 설정하기";
-// Blockly.Msg["VISION_LOAD_TM_TOOLTIP"] = "티처블머신 모델을 설정합니다.";
-// Blockly.Msg["VISION_PREDICT_TM"] = "%1 %2 티처블머신으로 이미지 %3 분류하기";
-// Blockly.Msg["VISION_PREDICT_TM_TOOLTIP"] = "설정된 티처블머신 모델로 이미지를 분류합니다.";
-Blockly.Msg["VISION_LOAD_CF"] = "%1 %2 이미지 모델 %3 %4 %5 설정하기";
-Blockly.Msg["VISION_LOAD_CF_TOOLTIP"] = "이미지 분류 모델을 설정합니다.";
-Blockly.Msg["VISION_PREDICT_CF"] = "%1 %2 이미지 모델로 %3 분류하기";
-Blockly.Msg["VISION_PREDICT_CF_TOOLTIP"] = "설정된 이미지 모델로 이미지를 분류합니다.";
-Blockly.Msg["VISION_CALL_AI_IMG"] = "%1 %2 %3 이미지 변수 %5 의 인공지능 %4 사용하기";
-Blockly.Msg["VISION_CALL_AI_IMG_TOOLTIP"] = "(인터넷 필요!) 인공지능을 사용해 이미지 데이터를 분석합니다.";
-Blockly.Msg["VISION_CALL_AI_IMG_EXT"] = "%1 %2 %3 이미지 변수 %5 의 인공지능 %4 사용하기";
-Blockly.Msg["VISION_CALL_AI_IMG_EXT_TOOLTIP"] = "(인터넷 필요!) 인공지능을 사용해 이미지 데이터를 분석합니다.";
+Blockly.Msg["VISION_LOAD_CF"] = "%1 %2 분류기 모델 %3 %4 %5 불러오기";
+Blockly.Msg["VISION_LOAD_CF_TOOLTIP"] = "분류기 화면에서 가르치고 저장한 모델을 불러옵니다. 폴더는 mymodel, 칸에 모델 이름을 적습니다. (이미지·손·얼굴·포즈)";
+Blockly.Msg["VISION_PREDICT_CF"] = "%1 %2 분류기 모델로 %3 분류하기";
+Blockly.Msg["VISION_PREDICT_CF_TOOLTIP"] = "불러온 분류기 모델로 이미지를 분류해 가장 알맞은 이름을 돌려줍니다.";
 
 Blockly.Msg["VISION_CARTOON"] = '만화';
 Blockly.Msg["VISION_DETAIL"] = '상세한 이미지';
-Blockly.Msg["VISION_SKETCH_G"] = '스케치(흑백)';
 Blockly.Msg["VISION_SKETCH_C"] = '스케치(컬러)';
 
 Blockly.Msg["VISION_POSE_MOTION"] = '자세인식';
 Blockly.Msg["VISION_POSE_POSITION"] = '포즈좌표';
 Blockly.Msg["VISION_POSE_PERSON"] = '사람좌표';
 
-Blockly.Msg["VISION_NAME"] = '이름';
-Blockly.Msg["VISION_POSITION"] = '좌표';
 Blockly.Msg["VISION_ACC"] = '정확도';
-Blockly.Msg["VISION_DATA"] = '데이터';
-Blockly.Msg["VISION_TYPE"] = '종류';
-
-Blockly.Msg["VISION_CAPTION"] = '이미지캡션';
-Blockly.Msg["VISION_CAPTION_TAG"] = '이미지태그';
-Blockly.Msg["VISION_CAPTION_PLACE"] = '장소인식';
-Blockly.Msg["VISION_CAPTION_TIME"] = '시간인식';
-Blockly.Msg["VISION_CAPTION_WEATHER"] = '날씨인식';
 
 Blockly.Msg["VISION_VERTICAL"] = '상하';
 Blockly.Msg["VISION_HORIZONTAL"] = '좌우';
@@ -823,27 +783,8 @@ Blockly.Msg["UTILS_CALCULATE_ANGLE_TOOLTIP"] = "세 점 사이의 각도 구하�
 
 Blockly.Msg["UTILS_FILE"] = "파일";
 Blockly.Msg["UTILS_DIRECTORY"] = "디렉토리";
-Blockly.Msg["UTILS_STR"] = "문자형";
 Blockly.Msg["UTILS_INT"] = "정수형";
 Blockly.Msg["UTILS_FLOAT"] = "실수형";
-
-Blockly.Msg["CATLOGIC"] = "논리";
-Blockly.Msg["CATLOOPS"] = "반복";
-Blockly.Msg["CATMATH"] = "수학";
-Blockly.Msg["CATTEXT"] = "문자";
-Blockly.Msg["CATLISTS"] = "목록";
-Blockly.Msg["CATCOLOUR"] = "색상";
-Blockly.Msg["CATVARIABLES"] = "변수";
-Blockly.Msg["CATFUNCTIONS"] = "함수";
-Blockly.Msg["CATAUDIO"] = "소리";
-Blockly.Msg["CATCOLLECT"] = "수집";
-Blockly.Msg["CATDEVICE"] = "장치";
-Blockly.Msg["CATMOTION"] = "동작";
-Blockly.Msg["CATOLED"] = "화면";
-Blockly.Msg["CATSPEECH"] = "음성";
-Blockly.Msg["CATVISION"] = "시각";
-Blockly.Msg["CATUTILS"] = "도구";
-Blockly.Msg["INTERNET_CHECK_TOOLTIP"] = "(인터넷 연결)";
 
 return Blockly.Msg;
 }));
