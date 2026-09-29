@@ -145,12 +145,16 @@ function toggleCamera() {
   }
 }
 
+// [캡처]: JPEG 바이트로 한 장 받는다(260929, 전엔 base64 JSON). 앞 그림 주소는 풀어 준다
+let captureUrl = '';
 async function captureToWeb() {
-  const res = await fetch('/capture_frame').then(r => r.json());
-  if (res.frame) {
-    document.getElementById('cam-img').src             = 'data:image/jpeg;base64,' + res.frame;
-    document.getElementById('cam-wrap').style.display  = 'block';
-  }
+  const r = await fetch('/capture.jpg', { cache: 'no-store' });
+  if (r.status !== 200) return;
+  const url = URL.createObjectURL(await r.blob());
+  document.getElementById('cam-img').src             = url;
+  document.getElementById('cam-wrap').style.display  = 'block';
+  if (captureUrl) URL.revokeObjectURL(captureUrl);
+  captureUrl = url;
 }
 
 /* ── Vision ──────────────────────────────────────────────────*/

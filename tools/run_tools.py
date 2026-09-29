@@ -3,6 +3,7 @@ run_tools.py — Pibo Brain Tools Server (포트: 50040)
 """
 
 import os
+import re
 import asyncio
 import argparse
 import base64
@@ -13,7 +14,8 @@ import queue as _queue
 
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse, FileResponse
+from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse, FileResponse, RedirectResponse, Response
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -30,7 +32,8 @@ speech  = None
 vision_en     = False
 vision_task   = None
 vision_type   = 'camera'
-latest_frame  = None
+latest_proc   = None   # 마지막으로 처리한 그림(numpy). JPEG 로는 누가 달라고 할 때만 만든다
+latest_seq    = 0      # 새 그림이 올 때마다 1 씩 — /camera_stream 이 같은 그림을 다시 보내지 않게
 latest_result = ''
 latest_img    = None
 camera_lock   = asyncio.Lock()
@@ -100,9 +103,15 @@ def oled_show_img(img):
         except: pass
 
 # ── 유틸 ─────────────────────────────────────────────────────
+# 카메라 그림은 기기 LCD 로 간다. 웹은 [캡처] 할 때만 한 장 받는다(260929).
+# 전엔 카메라가 켜져 있는 동안 매 장(초당 약 5장)을 JPEG+base64 로 만들어 두었다 — 받는 사람이 없어도.
+def to_jpeg(img):
+    ret, buf = cv2.imencode('.jpg', cv2.resize(img, (320, 240)), [int(cv2.IMWRITE_JPEG_QUALITY), 80])
+    return buf.tobytes() if ret else None
+
 def to_base64(img):
-    ret, buf = cv2.imencode('.jpg', cv2.resize(img, (320, 240)))
-    return base64.b64encode(buf).decode('utf-8') if ret else None
+    b = to_jpeg(img)
+    return base64.b64encode(b).decode('utf-8') if b else None
 
 # ── 비전 처리 ─────────────────────────────────────────────────
 def process_frame(img, vtype):
@@ -161,7 +170,7 @@ def process_frame(img, vtype):
 
 # ── 비전 루프 ─────────────────────────────────────────────────
 async def vision_loop():
-    global latest_frame, latest_result, latest_img, vision_en
+    global latest_proc, latest_seq, latest_result, latest_img, vision_en
     while vision_en:
         try:
             img = await asyncio.to_thread(camera.read)
@@ -175,9 +184,8 @@ async def vision_loop():
             else:
                 proc_img = img
                 latest_result = ''
-            b64 = await asyncio.to_thread(to_base64, proc_img)
-            if b64:
-                latest_frame = b64
+            latest_proc = proc_img
+            latest_seq += 1
             if oled:
                 oled_show_img(proc_img)
             await asyncio.sleep(0.2)
@@ -288,9 +296,33 @@ async def lifespan(app: FastAPI):
         except: pass
 
 # ── App ──────────────────────────────────────────────────────
+# 글꼴은 IDE(80) 한 벌을 세 앱이 같이 쓴다(260929). 이 서버의 글꼴 주소는 IDE 주소로 영구 이동시킨다.
+# 브라우저 캐시는 호스트가 같으면 포트가 달라도 같이 쓰므로, 한 번 받으면 IDE·도구·분류기가 다시 받지 않는다.
+# 전엔 앱마다 사본이라 처음 열 때 앱마다 최대 1.3MB(Pretendard) + 아이콘 글꼴을 따로 받았다.
+# IDE 는 CORS 를 모두 허용한다(글꼴은 CORS 로 받는다). PIBO_IDE_PORT 는 시험용(기본 80)
+SHARED_FONT = re.compile(r'^/(static/fonts/Pretendard-[\w.-]+\.woff2|webfonts/fa-[\w.-]+\.(?:woff2|ttf))$')
+
+class SharedFonts:
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        m = SHARED_FONT.match(scope.get('path', '')) if scope['type'] == 'http' else None
+        if m:
+            port = int(os.environ.get('PIBO_IDE_PORT', 80))
+            host = (dict(scope.get('headers') or []).get(b'host', b'').decode('latin-1').rsplit(':', 1)[0]) or '127.0.0.1'
+            url = f"http://{host}{'' if port == 80 else f':{port}'}/{m.group(1)}"
+            await RedirectResponse(url, status_code=301, headers={'Cache-Control': 'public, max-age=604800'})(scope, receive, send)
+            return
+        await self.app(scope, receive, send)
+
+
 app = FastAPI(lifespan=lifespan)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True,
     allow_methods=["*"], allow_headers=["*"])
+# 첫 화면 JS·CSS 를 압축해서 보낸다(수업에서 여러 대가 한 공유기로 받는다)
+app.add_middleware(GZipMiddleware, minimum_size=1000)
+app.add_middleware(SharedFonts)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 # all.min.css 가 ../webfonts/ 를 찾는다. 없으면 아이콘이 빈칸으로 나온다(260924 전에는 그래서 이모지를 썼다)
 app.mount("/webfonts", StaticFiles(directory="webfonts"), name="webfonts")
@@ -313,20 +345,34 @@ async def camera_ctrl(d: str):
 
 @app.get('/camera_stream')
 async def camera_stream(request: Request):
+    # 화면에서는 안 쓴다(외부 도구용으로 남겨 둔다). 새 그림일 때만 보낸다 — 전엔 같은 그림을 0.1초마다 다시 보냈다
     async def gen():
+        sent = -1
         while True:
             if await request.is_disconnected(): break
-            if latest_frame:
-                yield f"data: {latest_frame}\n\n"
+            if latest_proc is not None and latest_seq != sent:
+                sent = latest_seq
+                b64 = await asyncio.to_thread(to_base64, latest_proc)
+                if b64:
+                    yield f"data: {b64}\n\n"
             await asyncio.sleep(0.1)
     return StreamingResponse(gen(), media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
+@app.get('/capture.jpg')
+async def capture_jpg():
+    """[캡처] — 지금 그림 한 장을 JPEG 바이트로(화면이 쓴다)"""
+    b = await asyncio.to_thread(to_jpeg, latest_proc) if latest_proc is not None else None
+    if not b:
+        return Response(status_code=204)
+    return Response(content=b, media_type='image/jpeg', headers={'Cache-Control': 'no-store'})
+
 @app.get('/capture_frame')
 async def capture_frame():
-    if latest_frame is None:
+    """예전 형식(base64 JSON). 외부 도구용으로 남겨 둔다"""
+    if latest_proc is None:
         return JSONResponse({"frame": None})
-    return JSONResponse({"frame": latest_frame})
+    return JSONResponse({"frame": await asyncio.to_thread(to_base64, latest_proc)})
 
 @app.get('/vision_result')
 async def vision_result():

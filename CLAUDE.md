@@ -344,7 +344,7 @@ sudo raspi-config nonint get_wifi_country
 | 파일 | 출처 | PiBrain 에서 바꾼 것 |
 |---|---|---|
 | `design/pibo-ui.css` `pibo-ui.js` `sync.sh` `README.md` `index.html` | Pibo `design/` (공용 키트) | 없음. **Pibo 쪽이 원본** — 거기서 고치고 `design/sync.sh ~/openpibo-os.pibrain` 으로 가져온다 |
-| `design/fonts/` (Pretendard 400~800, SIL OFL) | Pibo `design/fonts/` | 없음. 원본 배포판 파일 그대로 — 이유는 Pibo CLAUDE.md '다듬기' |
+| `design/fonts/` (Pretendard 보통·굵게 두 벌, SIL OFL) | Pibo `design/fonts/` | 없음. 원본 배포판 파일 그대로 — 이유는 Pibo CLAUDE.md '다듬기'. **파일은 `ide/static/fonts/` 에만** 있고 도구·분류기 서버가 IDE(80) 로 넘긴다(`SharedFonts`, 260929) |
 | `ide/static/pibo-ui.*`, `tools/static/pibo-ui.*`, `classifier/static/pibo-ui.*`, `*/static/fonts/` | `design/sync.sh` 가 만든 사본 | 직접 고치지 말 것. `bash design/sync.sh --check` |
 | `ide/static/launch.html` | Pibo | 도구 포트 **50040**, 제목 |
 | `ide/templates/index_v2.html` | Pibo | 브랜드 `PiBrain`(fa-brain), 패널 탭 [PiBrain], **배터리 칸 없음**, `?ver` |
@@ -363,6 +363,9 @@ Pibo 도구와 기능·마크업이 달라(REST/SSE, 5탭) 키트의 `pb-v2` 층
 `body.v2-app` 이라 키트가 `pb-v2` 를 얹지 않는다. v1/v2 두 벌이 아니라 **한 벌**이다(`?ui=v1` 무관).
 
 - 상단바(노랑): 도구 · PiBrain | [IDE](`PiboUI.backToIDE`) · 화면 밝기(누를 때마다 부드럽게→밝게→어둡게, 쿠키 `pibo_theme`) · KO/EN
+  - 도구 [카메라] 는 기기 LCD 로 보내고 웹은 [캡처] 때 한 장만 받는다(`/capture.jpg`, JPEG 바이트). 서버는 매 장을 JPEG 로 만들지 않고
+    누가 달라고 할 때만 만든다(260929, 전엔 초당 약 5장을 받는 사람이 없어도 base64 로 만들어 두었다). `/capture_frame`(base64 JSON)·
+    `/camera_stream`(새 그림일 때만) 은 외부 도구용으로 남겨 뒀다. 도구 서버도 gzip
   - 고른 적 없으면 늘 **부드럽게**(260929, OS 어두운 모드를 따르지 않는다). 파이썬 편집기 테마를 따로 고르면 기억하고
     바탕을 그 테마 색으로 고정한다 — Pibo CLAUDE.md '화면 밝기' 참고
 - 왼쪽 레일: 버튼 · LED · 카메라 · 음성 · LCD. 본문은 카드, 넓으면 여러 칸(`auto-fit, minmax(340px)`)

@@ -15,17 +15,14 @@
    맑은 고딕·Arial 로 떨어졌다. 파이보가 직접 보낸다(인터넷 불필요).
    원본 배포판의 KS X 1001 subset 을 **고치지 않고** 그대로 쓴다 — 우리가 subset 을 새로 만들면
    OFL 의 Reserved Font Name 때문에 이름을 Pretendard 로 둘 수 없다.
-   400~800 다섯 굵기. 브라우저는 화면에 쓰인 굵기만 받는다(굵기당 약 270KB, 처음 한 번). */
-@font-face { font-family: "Pretendard"; font-weight: 400; font-style: normal; font-display: swap;
+   파일은 두 굵기(보통 Regular 400 · 굵게 Bold 700)만 싣는다(260929). CSS 의 500 이하는 Regular, 600 이상은 Bold 로
+   그려진다(범위로 선언 — 브라우저가 가짜 굵기를 만들지 않는다). 다섯 벌(1.35MB)에서 두 벌(약 0.54MB)로.
+   파일은 IDE(80) 에만 있고 도구·분류기 서버는 IDE 주소로 넘긴다(run_tools / run_classify 의 SharedFonts) —
+   세 앱이 한 벌을 같이 캐시한다 */
+@font-face { font-family: "Pretendard"; font-weight: 100 549; font-style: normal; font-display: swap;
   src: local("Pretendard Regular"), url("fonts/Pretendard-Regular.subset.woff2") format("woff2"); }
-@font-face { font-family: "Pretendard"; font-weight: 500; font-style: normal; font-display: swap;
-  src: local("Pretendard Medium"), url("fonts/Pretendard-Medium.subset.woff2") format("woff2"); }
-@font-face { font-family: "Pretendard"; font-weight: 600; font-style: normal; font-display: swap;
-  src: local("Pretendard SemiBold"), url("fonts/Pretendard-SemiBold.subset.woff2") format("woff2"); }
-@font-face { font-family: "Pretendard"; font-weight: 700; font-style: normal; font-display: swap;
+@font-face { font-family: "Pretendard"; font-weight: 550 900; font-style: normal; font-display: swap;
   src: local("Pretendard Bold"), url("fonts/Pretendard-Bold.subset.woff2") format("woff2"); }
-@font-face { font-family: "Pretendard"; font-weight: 800; font-style: normal; font-display: swap;
-  src: local("Pretendard ExtraBold"), url("fonts/Pretendard-ExtraBold.subset.woff2") format("woff2"); }
 
 :root {
   /* ── 브랜드 색 ── 기존 값 그대로. 바꾸지 말 것 ───────────────────────── */
