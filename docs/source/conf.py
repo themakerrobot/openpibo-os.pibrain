@@ -83,7 +83,6 @@ exclude_patterns = []
 # 외부 글꼴·CDN 을 쓰지 않아 기기(AP 모드, 인터넷 없음)에서도 그대로 보인다
 html_theme = 'furo'
 html_title = 'PiBrain 도움말'
-html_logo = '_static/icon.png'
 html_theme_options = {
     'sidebar_hide_name': False,
     'navigation_with_keys': True,
@@ -93,8 +92,26 @@ html_theme_options = {
         'color-brand-visited': '#2563eb',
         'font-stack': '"Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, -apple-system, "Segoe UI", sans-serif',
         'font-stack--headings': 'var(--font-stack)',
+        'font-stack--monospace': '"D2Coding", "JetBrains Mono", Consolas, "SF Mono", ui-monospace, monospace',
+        'color-background-secondary': '#f5f6fa',
+        'color-sidebar-background': '#f5f6fa',
+        'color-sidebar-item-background--current': 'rgba(37, 99, 235, .08)',
+        'color-sidebar-link-text': '#4a5163',
+        'color-sidebar-link-text--top-level': '#4a5163',
+        'color-admonition-title--note': '#2563eb',
+        'color-admonition-title-background--note': 'rgba(37, 99, 235, .08)',
+        'color-admonition-title--tip': '#16a34a',
+        'color-admonition-title-background--tip': 'rgba(22, 163, 74, .08)',
     },
     'dark_css_variables': {
+        'color-background-primary': '#1a1e27',
+        'color-background-secondary': '#222733',
+        'color-sidebar-background': '#1f232d',
+        'color-sidebar-item-background--current': 'rgba(251, 201, 45, .10)',
+        'color-sidebar-link-text': '#b4bac8',
+        'color-sidebar-link-text--top-level': '#b4bac8',
+        'color-admonition-title--note': '#fbc92d',
+        'color-admonition-title-background--note': 'rgba(251, 201, 45, .10)',
         'color-brand-primary': '#fbc92d',
         'color-brand-content': '#fbc92d',
         'color-brand-visited': '#fbc92d',

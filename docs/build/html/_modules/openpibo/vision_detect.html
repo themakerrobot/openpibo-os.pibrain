@@ -4,7 +4,6 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><link rel="index" title="색인" href="../../genindex.html"><link rel="search" title="검색" href="../../search.html">
         <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/_modules/openpibo/vision_detect.html">
-        <link rel="prefetch" href="../../_static/icon.png" as="image">
 
     <link rel="shortcut icon" href="../../_static/icon.png"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
         <title>openpibo.vision_detect - PiBrain 도움말</title>
@@ -12,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
-    <link rel="stylesheet" type="text/css" href="../../_static/mycss.css?v=8aae1f7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mycss.css?v=108ee335" />
     
     
 
@@ -26,12 +25,30 @@
   --color-brand-visited: #2563eb;
   --font-stack: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-stack--headings: var(--font-stack);
+  --font-stack--monospace: "D2Coding", "JetBrains Mono", Consolas, "SF Mono", ui-monospace, monospace;
+  --color-background-secondary: #f5f6fa;
+  --color-sidebar-background: #f5f6fa;
+  --color-sidebar-item-background--current: rgba(37, 99, 235, .08);
+  --color-sidebar-link-text: #4a5163;
+  --color-sidebar-link-text--top-level: #4a5163;
+  --color-admonition-title--note: #2563eb;
+  --color-admonition-title-background--note: rgba(37, 99, 235, .08);
+  --color-admonition-title--tip: #16a34a;
+  --color-admonition-title-background--tip: rgba(22, 163, 74, .08);
   
   }
   @media not print {
     body[data-theme="dark"] {
       --color-code-background: #202020;
   --color-code-foreground: #d0d0d0;
+  --color-background-primary: #1a1e27;
+  --color-background-secondary: #222733;
+  --color-sidebar-background: #1f232d;
+  --color-sidebar-item-background--current: rgba(251, 201, 45, .10);
+  --color-sidebar-link-text: #b4bac8;
+  --color-sidebar-link-text--top-level: #b4bac8;
+  --color-admonition-title--note: #fbc92d;
+  --color-admonition-title-background--note: rgba(251, 201, 45, .10);
   --color-brand-primary: #fbc92d;
   --color-brand-content: #fbc92d;
   --color-brand-visited: #fbc92d;
@@ -41,6 +58,14 @@
       body:not([data-theme="light"]) {
         --color-code-background: #202020;
   --color-code-foreground: #d0d0d0;
+  --color-background-primary: #1a1e27;
+  --color-background-secondary: #222733;
+  --color-sidebar-background: #1f232d;
+  --color-sidebar-item-background--current: rgba(251, 201, 45, .10);
+  --color-sidebar-link-text: #b4bac8;
+  --color-sidebar-link-text--top-level: #b4bac8;
+  --color-admonition-title--note: #fbc92d;
+  --color-admonition-title-background--note: rgba(251, 201, 45, .10);
   --color-brand-primary: #fbc92d;
   --color-brand-content: #fbc92d;
   --color-brand-visited: #fbc92d;
@@ -195,9 +220,6 @@
     <div class="sidebar-container">
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
-  <div class="sidebar-logo-container">
-    <img class="sidebar-logo" src="../../_static/icon.png" alt="Logo"/>
-  </div>
   
   <span class="sidebar-brand-text">PiBrain 도움말</span>
   
@@ -219,19 +241,19 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">파이썬 (PYTHON)</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../libraries/audio.html">audio</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../libraries/collect.html">collect</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../libraries/device.html">device</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../libraries/usb_uart.html">usb_uart</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../libraries/motion.html">motion</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../libraries/oled.html">oled</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../libraries/pibo_graphics.html">pibo_graphics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../libraries/speech.html">speech</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_camera.html">vision_camera</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_detect.html">vision_detect</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_face.html">vision_face</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_classify.html">vision_classify</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../libraries/utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/audio.html">audio · 소리 재생·녹음</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/collect.html">collect · 위키백과·날씨·뉴스 (인터넷)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/device.html">device · LED·버튼</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/usb_uart.html">usb_uart · USB 시리얼</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/motion.html">motion · 모터·동작 (파이보용)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/oled.html">oled · LCD 화면</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/pibo_graphics.html">pibo_graphics · 거북이 그림</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/speech.html">speech · 목소리·대화·음성 인식</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_camera.html">vision_camera · 카메라·이미지</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_detect.html">vision_detect · 사물·QR·손·포즈 인식</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_face.html">vision_face · 얼굴 인식</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_classify.html">vision_classify · 분류기 모델</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/utils.html">utils · 그 밖의 도구</a></li>
 </ul>
 
 </div>
@@ -266,7 +288,7 @@
         <article role="main" id="furo-main-content">
           <h1>openpibo.vision_detect의 소스 코드</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""</span>
-<span class="sd">영상처리, 인공지능 비전 기술을 사용합니다.</span>
+<span class="sd">사물·QR코드·포즈·손동작·마커를 인식합니다.</span>
 
 <span class="sd">Class:</span>
 <span class="sd">:meth:`~openpibo.vision_detect.putTextPIL`</span>

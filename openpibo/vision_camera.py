@@ -1,5 +1,5 @@
 """
-영상처리, 인공지능 비전 기술을 사용합니다.
+카메라로 사진을 찍고 이미지를 편집합니다.
 
 Class:
 :obj:`~openpibo.vision_camera.Camera`
