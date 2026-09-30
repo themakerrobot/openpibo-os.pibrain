@@ -169,6 +169,19 @@ span 이 날아가면 시리얼이 영영 안 돌아온다.
 
 ---
 
+## 라이선스 (260930)
+
+**리포 전체가 AGPL-3.0 이다**(`LICENSE`, 사용자 결정). Pibo 와 같은 이유(사물 인식 가중치 `yolo11s.onnx` 가
+Ultralytics AGPL-3.0)이고 파일도 Pibo 와 같다 — 자세한 건 Pibo CLAUDE.md '라이선스'.
+
+- `LICENSE`(AGPL-3.0 전문, 고치지 말 것) · `THIRD_PARTY_NOTICES.md`(vendor·모델 표 — **넣거나 바꾸면 같이 고칠 것**) ·
+  `system/NOTICE-yolo11s.txt`(이미지 만들 때 `.model/object/` 에 — Pibo `.model` 을 그대로 넣으면 이미 있다)
+- IDE [더보기] → **소스 코드 · 라이선스 (AGPL-3.0)**(`#source_bt`, AGPL §13). 링크는 기기 버전의 마지막 `_` 뒤
+  (`YYMMDDvN` / `YYMMDDvN-gl`)를 태그로 본 GitHub 트리. 형식이 다르면 리포 첫 화면
+- 비상업·연구 전용 라이선스의 코드·모델은 넣지 말 것
+
+---
+
 ## 외부 의존
 
 자사 서버(`circul.us`)는 전부 내렸다. **다시 넣지 말 것.**
@@ -180,7 +193,7 @@ span 이 날아가면 시리얼이 영영 안 돌아온다.
 남은 것:
 
 - `Speech.tts` 는 `voice="espeak"` 만. 다른 값은 raise.
-- `SpeechOnDevice` — 온디바이스 ONNX TTS(Supertonic 3, `m1`~`m5`/`f1`~`f5`). STT 는 없다(마이크가 없다). 예전에 적혀 있던 faster-whisper STT 는 코드에 없다(260930 확인).
+- `SpeechOnDevice` — 온디바이스 ONNX TTS(Supertonic 3, `m1`~`m5`/`f1`~`f5`). STT 는 `SpeechToText`(Pibo 와 같음, 블록은 마이크가 없어 막음).
 - `Dialog` 는 `start_llm`/`call_llm`/`stop_llm` 만. `call_llm` 은 localhost:50020.
 - `collect.py` — 위키·기상청·JTBC 등. 자사 서버가 아니라 그대로 둔다. 다만 **한국 전용이라
   `global` 에서는 툴박스에 안 나온다.**
@@ -479,18 +492,24 @@ mediapipe 0.10.18 · numpy 1.26.4). 특징 코사인 이미지 0.96~0.98 · 손 
 
 **docs 를 다시 빌드해야 한다** — `vision_classify` API(`CustomClassifier.load`)가 바뀌었다. 기기에서 `make clean html` ('docs' 절). 아직 안 했다.
 
-### 마이크가 없다 — 되살리지 말 것
+### 마이크가 아직 없다 — 블록만 막아 둔다
 
-`openpibo/audio.py` 의 `Audio.record` 와 `openpibo/speech.py` 의 `SpeechOnDevice.stt` 는
-`arecord -D plug:dmic_sv` 를 쓴다. Pibo 의 2-mic HAT 장치명이다. **PiBrain 에는 마이크가 없어
-이 경로는 동작하지 않는다.** 라이브러리가 Pibo 와 공용이라 코드만 남아 있는 것이다.
+`openpibo/audio.py` 의 `Audio.record` 와 `openpibo/speech.py` 의 `Speech.stt` · `SpeechToText` 는
+`arecord -D plug:dmic_sv` 를 쓴다. Pibo 의 2-mic HAT 장치명이다. **PiBrain 에는 아직 마이크가 없어
+이 경로는 동작하지 않는다.** 나중에 Pibo 와 같은 마이크를 달 예정이라(260930 사용자) **소스는 Pibo 와 같게 넣어 두고
+블록만 막는다.**
 
-그래서 이렇게 막혀 있다. 전부 **의도한 것**이니 되살리지 말 것.
+- **STT 소스(260930)**: `openpibo/speech.py` 는 Pibo 와 설명문만 다르다(SenseVoice + silero VAD, 마이크 DC 제거까지 같음 —
+  Pibo CLAUDE.md '음성 인식 · TTS · 메모리'). 고치면 두 리포를 같이 고칠 것. 모델은 `.model/stt`(Pibo `.model` 그대로 넣으면 있다),
+  패키지 `sherpa-onnx`·`sherpa-onnx-core` 1.13.8 은 **마이크를 달 때 설치**(`pip install --no-deps`)
+- `speech_stt` 블록 — 정의(`customblock.js`)만 있고 생성기·툴박스는 주석(260930). 블록 문구(`ko.js`·`en.js`)는 이미 있다
+- **마이크를 달면**: 장치명이 `dmic_sv` 인지 먼저 확인(`arecord -L`), `speech_stt` · `audio_record` 의 생성기·툴박스 주석을
+  같이 걷어낸다(셋을 같이 — '자주 나는 실수'). Pibo 마이크처럼 DC 가 섞이는지는 그 마이크로 다시 볼 것
+
+지금 막혀 있는 것:
 
 - `audio_record` 블록 — 정의(`customblock.js`)만 있고 생성기·툴박스는 주석 처리.
   세 파일 모두에 이유를 주석으로 적어 뒀다.
-- STT 블록 없음. 이 base 에는 `speech_ostt` 자체가 없었고 새로 만들지도 않았다.
-  `SpeechOnDevice` 에도 `stt` 메서드가 없다.
 - 검수 보고서(`test/`)에 녹음 항목 없음. 스피커(`audio`)만 검사한다.
 - `tools` 에 녹음·STT 엔드포인트 없음.
 

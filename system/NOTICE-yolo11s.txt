@@ -1,0 +1,17 @@
+YOLO11s object detection weights (yolo11s.onnx)
+===============================================
+
+File      /home/pi/.model/object/yolo11s.onnx
+Author    Ultralytics (https://github.com/ultralytics/ultralytics)
+Source    Ultralytics YOLO11s COCO pretrained weights (yolo11s.pt, release
+          https://github.com/ultralytics/assets), exported to ONNX with the
+          ultralytics package: format=onnx, imgsz=320. No other change.
+License   GNU Affero General Public License v3.0 (AGPL-3.0)
+          https://github.com/ultralytics/ultralytics/blob/main/LICENSE
+          The ONNX file carries the same statement in its metadata
+          (license = "AGPL-3.0 License (https://ultralytics.com/license)").
+
+Corresponding source for the weights and the export tool:
+  https://github.com/ultralytics/ultralytics
+Source of the software that runs it on this device (openpibo-os, AGPL-3.0):
+  https://github.com/themakerrobot/openpibo-os.pibrain

@@ -1447,6 +1447,21 @@ let toolbox = (lang) => {
         "kind": "category",
         "name": translations['speech'][lang],
         "contents": [
+          // speech_stt — 마이크가 없어 막아 둔다(260930). 생성기(customblock_callback.js)와 같이 풀 것
+          // {
+          //   "kind": "block",
+          //   "type": "speech_stt",
+          //   "inputs":{
+          //     "timeout": {
+          //       "shadow": {
+          //         "type": "math_number",
+          //         "fields": {
+          //           "NUM": "5"
+          //         }
+          //       }
+          //     }
+          //   }
+          // },
           {
             "kind": "block",
             "type": "speech_otts",

@@ -1223,6 +1223,28 @@ Blockly.defineBlocksWithJsonArray(
       helpUrl: ''
     },
     {
+      // STT — PiBrain 은 아직 마이크가 없어 막아 둔다(260930). 정의만 두고 생성기·툴박스는 주석.
+      // Pibo 와 같은 마이크(2-mic HAT)를 달면 customblock_callback.js · customblock_toolbox.js 의 주석을 걷어낼 것
+      type: 'speech_stt',
+      message0: '%{BKY_SPEECH_STT}',
+      args0:
+        [
+          {
+            "type": "field_image",
+            "src": "svg/ear-listen-solid.svg",
+            "width": 27,
+            "height": 27
+          },
+          {"type":"input_dummy"},
+          {"type": "input_value", "name": "timeout", "check":"Number"},
+        ],
+      output: 'String',
+      inputsInline: true,
+      colour: color_type["speech"],
+      tooltip: '%{BKY_SPEECH_STT_TOOLTIP}',
+      helpUrl: ''
+    },
+    {
       type: 'speech_otts',
       message0: '%{BKY_SPEECH_OTTS}',
       args0:

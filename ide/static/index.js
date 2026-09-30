@@ -490,6 +490,11 @@ const countText = (sel, txt) => {
 socket.on("system", (data) => {
   $("#s_serial").text(data[0]);
   $("#s_os_version").text(data[1]);
+  // 소스 링크는 기기가 돌리는 태그로 (예: piBrain_260930v1 → 260930v1). 모르면 리포 첫 화면
+  const tag = String(data[1] || '').trim().split('_').pop();
+  if (/^\d{6}v\d+(-gl)?$/.test(tag)) {
+    $("#source_bt").attr("href", `https://github.com/themakerrobot/openpibo-os.pibrain/tree/${tag}`);
+  }
   $("#s_runtime").text(`${Math.floor(data[2] / 3600)} hours`);
   countText("#s_cpu_temp", data[3]);
   countText("#s_memory", `${Math.floor( (data[4] - data[5]) / data[4] * 100)} %`);

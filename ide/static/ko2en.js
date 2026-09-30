@@ -392,7 +392,9 @@ const translations = {
   err_create: { ko: (d) => `파일 생성 오류: ${d}`,     en: (d) => `Create error: ${d}` },
   err_mkdir:  { ko: (d) => `디렉토리 생성 오류: ${d}`, en: (d) => `Create folder error: ${d}` },
   err_save:   { ko: (d) => `파일 저장 오류: ${d}`,     en: (d) => `Save error: ${d}` },
-  err_run:    { ko: (d) => `실행 오류: ${d}`,          en: (d) => `Run error: ${d}` }
+  err_run:    { ko: (d) => `실행 오류: ${d}`,          en: (d) => `Run error: ${d}` },
+  // 260930 — AGPL-3.0 §13: 네트워크로 쓰는 사람에게 소스 위치를 알린다
+  v2_source:  { ko: "소스 코드 · 라이선스 (AGPL-3.0)", en: "Source code · License (AGPL-3.0)" }
 };
 
 // 키 → 현재 언어 문자열. 모르는 키(일반 문자열)는 그대로 반환.

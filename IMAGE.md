@@ -137,7 +137,7 @@ AP(핫스팟)는 국가 설정과 무관하다. `hotspot.sh` 가 2.4GHz 채널 1
 '파이썬 패키지 · 모델 폴더'). PiBrain 코드가 읽는 경로는 Pibo 의 부분집합이라 그대로 맞는다:
 `tts/assets/{onnx,voice_styles}` · `object/yolo11s.onnx` · `hand/*.task` · `face/{detection,age-gender,emotion,landmark}`.
 
-- `stt/`(약 230MB)는 PiBrain 이 안 쓴다(마이크 없음). 넣어 둬도 되고, 용량이 아까우면 지운 뒤 VERSION 을 다시 만든다
+- `stt/`(약 230MB)는 마이크를 달면 쓴다(STT 소스는 이미 들어 있다, 블록만 막힘). **지우지 말고 그대로 둔다**
 - `object/NOTICE-yolo11s.txt`(AGPL-3.0 고지)가 같이 들어가야 한다
 - `llm/llm-model.gguf` 는 `llama-server.service` 가 읽는다. **유닛의 모델 경로가 이 파일인지 확인 필요**(유닛은 리포 밖)
 
