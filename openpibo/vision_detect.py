@@ -1,5 +1,5 @@
 """
-영상처리, 인공지능 비전 기술을 사용합니다.
+사물·QR코드·포즈·손동작·마커를 인식합니다.
 
 Class:
 :meth:`~openpibo.vision_detect.putTextPIL`

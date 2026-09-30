@@ -1,5 +1,5 @@
 """
-영상처리, 인공지능 비전 기술을 사용합니다.
+분류기 화면에서 가르친 모델로 이미지를 분류합니다.
 
 Class:
 :obj:`~openpibo.vision_classify.TeachableMachine`
@@ -139,9 +139,9 @@ Functions:
     # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.
   """
 
-  def load(self, model_path, label_path=None):
+  def load(self, model_path):
     """
-    분류기 화면에서 저장한 모델을 불러옵니다.
+    분류기 화면에서 저장한 모델을 불러옵니다. 종류 이름은 모델 폴더 안에 들어 있습니다.
 
     example::
 
@@ -149,9 +149,6 @@ Functions:
       cf.load('과일')                   # /home/pi/mymodel/과일 과 같습니다
 
     :param str model_path: 모델 폴더 (``/home/pi/mymodel/<모델 이름>``) 또는 모델 이름
-
-    :param str label_path: 쓰지 않습니다. 종류 이름은 모델 폴더 안에 들어 있습니다.
-      (예전 블록과 모양을 맞추려고 남겨 둔 인자입니다)
     """
 
     self.close()

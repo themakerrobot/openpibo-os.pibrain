@@ -498,7 +498,7 @@ Pibo 와 같다. Teachable Machine 계열(`vision_load_tm` `vision_predict_tm`
   PiBrain 파일은 Pibo 교체 직전과 공백만 달랐다
 - PiBrain 에서 바꾼 것: 화면 문구의 이름(PiBrain), `ko2en.js` 1·2행과 언어 저장 키 `classifier_language`
   (`global` 델타 그대로)
-- 블록 `[분류기 모델 … 불러오기]`(260929 전엔 '이미지 모델 설정하기'): 폴더 `mymodel`, 이름 칸에 모델 이름(기본값 '모델 이름'). 라벨 칸은 260930v9 에 뺐다 — 예전 저장본은 불러올 때 걷어낸다(Pibo CLAUDE.md '분류기')
+- 블록 `[분류기 모델 … 불러오기]`(260929 전엔 '이미지 모델 설정하기'): 폴더 `mymodel`, 이름 칸에 모델 이름(기본값 '모델 이름'). 라벨 칸은 260930v9 에 뺐다 — 예전 저장본은 불러올 때 걷어낸다(Pibo CLAUDE.md '분류기'). 파이썬 `CustomClassifier.load(model_path)` 도 인자 하나(`label_path` 뺌)
   **예전 `model.keras` 는 못 읽는다**(불러오면 다시 학습하라는 오류). 의도한 호환 단절이다
 - 지운 것: `tf.min-3.11.0.js` · MobileNetV2 가중치 · `model.json` · `jszip` · `tfjs_to_keras.py`(`/convert`)
 - 사물 인식(`vision_detect`)은 260930 에 Pibo 의 onnxruntime 방식으로 바꿨다(위 '사물 인식' 참고)
@@ -660,6 +660,8 @@ grep -n "[가-힣]" ide/run_ide.py | grep -E "emit|JSONResponse"            # 0 
   (`docs/source/blocks/guide.md`)를 툴박스에서 다시 뽑는다(`docs/tools/gen_block_guide.py`, playwright 필요, 제품 이름은 원격 주소로 가른다)
 - **기기 밖(PC·컨테이너·웹 세션)에서 빌드한다.** `conf.py` 가 설치 안 된 하드웨어 패키지만 autodoc 용 가짜로 바꾼다. 파이썬은 `PY=`
 - 테마 Furo(MIT), `conf.py`·`mycss.css`·`build.sh`·`gen_block_guide.py` 는 **Pibo 와 같은 파일**(conf.py 는 `html_title`·`html_baseurl` 만 다르다)
+  글꼴은 IDE 와 같은 Pretendard 두 벌을 `source/_static/fonts/` 에 싣는다(8080 은 IDE 글꼴을 못 받는다 — 없으면 윈도에서 맑은 고딕으로 떨어져 촌스러웠다).
+  첫 화면은 카드 4개(`index.rst` 의 raw html), API 페이지 제목은 `모듈 · 한국어 설명`
 - 손으로 쓰는 페이지: `notes/piboMaker.md`(PiBrain 메이커 사용법, 캡처 `notes/images/*`), `notes/software.md`, `notes/hardware.md`
 - 확인은 autodoc 앵커로: `grep -c 'id="openpibo.speech.SpeechToText"' docs/build/html/libraries/speech.html`
 

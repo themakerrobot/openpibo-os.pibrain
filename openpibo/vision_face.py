@@ -1,5 +1,5 @@
 """
-영상처리, 인공지능 비전 기술을 사용합니다.
+얼굴을 찾고 나이·성별·감정을 분석하며, 얼굴을 학습해 누구인지 알아봅니다.
 
 Class:
 :meth:`~openpibo.vision_detect.putTextPIL`

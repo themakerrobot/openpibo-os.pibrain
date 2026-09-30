@@ -3,17 +3,16 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="색인" href="../genindex.html"><link rel="search" title="검색" href="../search.html"><link rel="next" title="vision_classify" href="vision_classify.html"><link rel="prev" title="vision_detect" href="vision_detect.html">
+<link rel="index" title="색인" href="../genindex.html"><link rel="search" title="검색" href="../search.html"><link rel="next" title="vision_classify · 분류기 모델" href="vision_classify.html"><link rel="prev" title="vision_detect · 사물·QR·손·포즈 인식" href="vision_detect.html">
         <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/libraries/vision_face.html">
-        <link rel="prefetch" href="../_static/icon.png" as="image">
 
     <link rel="shortcut icon" href="../_static/icon.png"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
-        <title>vision_face - PiBrain 도움말</title>
+        <title>vision_face · 얼굴 인식 - PiBrain 도움말</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=8aae1f7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=108ee335" />
     
     
 
@@ -27,12 +26,30 @@
   --color-brand-visited: #2563eb;
   --font-stack: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-stack--headings: var(--font-stack);
+  --font-stack--monospace: "D2Coding", "JetBrains Mono", Consolas, "SF Mono", ui-monospace, monospace;
+  --color-background-secondary: #f5f6fa;
+  --color-sidebar-background: #f5f6fa;
+  --color-sidebar-item-background--current: rgba(37, 99, 235, .08);
+  --color-sidebar-link-text: #4a5163;
+  --color-sidebar-link-text--top-level: #4a5163;
+  --color-admonition-title--note: #2563eb;
+  --color-admonition-title-background--note: rgba(37, 99, 235, .08);
+  --color-admonition-title--tip: #16a34a;
+  --color-admonition-title-background--tip: rgba(22, 163, 74, .08);
   
   }
   @media not print {
     body[data-theme="dark"] {
       --color-code-background: #202020;
   --color-code-foreground: #d0d0d0;
+  --color-background-primary: #1a1e27;
+  --color-background-secondary: #222733;
+  --color-sidebar-background: #1f232d;
+  --color-sidebar-item-background--current: rgba(251, 201, 45, .10);
+  --color-sidebar-link-text: #b4bac8;
+  --color-sidebar-link-text--top-level: #b4bac8;
+  --color-admonition-title--note: #fbc92d;
+  --color-admonition-title-background--note: rgba(251, 201, 45, .10);
   --color-brand-primary: #fbc92d;
   --color-brand-content: #fbc92d;
   --color-brand-visited: #fbc92d;
@@ -42,6 +59,14 @@
       body:not([data-theme="light"]) {
         --color-code-background: #202020;
   --color-code-foreground: #d0d0d0;
+  --color-background-primary: #1a1e27;
+  --color-background-secondary: #222733;
+  --color-sidebar-background: #1f232d;
+  --color-sidebar-item-background--current: rgba(251, 201, 45, .10);
+  --color-sidebar-link-text: #b4bac8;
+  --color-sidebar-link-text--top-level: #b4bac8;
+  --color-admonition-title--note: #fbc92d;
+  --color-admonition-title-background--note: rgba(251, 201, 45, .10);
   --color-brand-primary: #fbc92d;
   --color-brand-content: #fbc92d;
   --color-brand-visited: #fbc92d;
@@ -196,9 +221,6 @@
     <div class="sidebar-container">
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
-  <div class="sidebar-logo-container">
-    <img class="sidebar-logo" src="../_static/icon.png" alt="Logo"/>
-  </div>
   
   <span class="sidebar-brand-text">PiBrain 도움말</span>
   
@@ -220,19 +242,19 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">파이썬 (PYTHON)</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="audio.html">audio</a></li>
-<li class="toctree-l1"><a class="reference internal" href="collect.html">collect</a></li>
-<li class="toctree-l1"><a class="reference internal" href="device.html">device</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usb_uart.html">usb_uart</a></li>
-<li class="toctree-l1"><a class="reference internal" href="motion.html">motion</a></li>
-<li class="toctree-l1"><a class="reference internal" href="oled.html">oled</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pibo_graphics.html">pibo_graphics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="speech.html">speech</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vision_camera.html">vision_camera</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vision_detect.html">vision_detect</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">vision_face</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vision_classify.html">vision_classify</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="audio.html">audio · 소리 재생·녹음</a></li>
+<li class="toctree-l1"><a class="reference internal" href="collect.html">collect · 위키백과·날씨·뉴스 (인터넷)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="device.html">device · LED·버튼</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usb_uart.html">usb_uart · USB 시리얼</a></li>
+<li class="toctree-l1"><a class="reference internal" href="motion.html">motion · 모터·동작 (파이보용)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oled.html">oled · LCD 화면</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pibo_graphics.html">pibo_graphics · 거북이 그림</a></li>
+<li class="toctree-l1"><a class="reference internal" href="speech.html">speech · 목소리·대화·음성 인식</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vision_camera.html">vision_camera · 카메라·이미지</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vision_detect.html">vision_detect · 사물·QR·손·포즈 인식</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">vision_face · 얼굴 인식</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vision_classify.html">vision_classify · 분류기 모델</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils · 그 밖의 도구</a></li>
 </ul>
 
 </div>
@@ -272,8 +294,8 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="module-openpibo.vision_face">
-<span id="vision-face"></span><h1>vision_face<a class="headerlink" href="#module-openpibo.vision_face" title="Link to this heading">¶</a></h1>
-<p>영상처리, 인공지능 비전 기술을 사용합니다.</p>
+<span id="vision-face"></span><h1>vision_face · 얼굴 인식<a class="headerlink" href="#module-openpibo.vision_face" title="Link to this heading">¶</a></h1>
+<p>얼굴을 찾고 나이·성별·감정을 분석하며, 얼굴을 학습해 누구인지 알아봅니다.</p>
 <p>Class:
 <a class="reference internal" href="vision_detect.html#openpibo.vision_detect.putTextPIL" title="openpibo.vision_detect.putTextPIL"><code class="xref py py-meth docutils literal notranslate"><span class="pre">putTextPIL()</span></code></a>
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">Face</span></code></p>
@@ -629,7 +651,7 @@
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">vision_classify</div>
+                <div class="title">vision_classify · 분류기 모델</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -640,7 +662,7 @@
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">vision_detect</div>
+                <div class="title">vision_detect · 사물·QR·손·포즈 인식</div>
                 
               </div>
             </a>
@@ -674,7 +696,7 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">vision_face</a><ul>
+<li><a class="reference internal" href="#">vision_face · 얼굴 인식</a><ul>
 <li><a class="reference internal" href="#openpibo.vision_face.putTextPIL"><code class="docutils literal notranslate"><span class="pre">putTextPIL()</span></code></a></li>
 <li><a class="reference internal" href="#openpibo.vision_face.Face"><code class="docutils literal notranslate"><span class="pre">Face</span></code></a><ul>
 <li><a class="reference internal" href="#openpibo.vision_face.Face.detect_face"><code class="docutils literal notranslate"><span class="pre">Face.detect_face()</span></code></a></li>

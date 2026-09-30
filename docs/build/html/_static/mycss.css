@@ -1,20 +1,78 @@
-/* piBo 도움말 — Furo 위에 얹는 것만. 색 토큰은 conf.py 의 html_theme_options */
+/* piBo 도움말 — Furo 위에 얹는 것. 색 토큰은 conf.py 의 html_theme_options.
+   IDE(파이보 메이커)와 같은 느낌: Pretendard, 가는 노랑 띠, 파랑 링크, 옅은 청회색 면 */
 
-/* 왼쪽 위 이름 칸: IDE 상단바와 같은 노랑 */
-.sidebar-brand { background: #fbc92d; margin: -1rem -1rem 1rem; padding: 1rem; }
-.sidebar-brand-text { color: #3d2f12; font-weight: 700; }
-.sidebar-logo { max-width: 40px; }
-body[data-theme="dark"] .sidebar-brand { background: #2a2f3a; }
-body[data-theme="dark"] .sidebar-brand-text { color: #fbc92d; }
-@media (prefers-color-scheme: dark) {
-  body:not([data-theme="light"]) .sidebar-brand { background: #2a2f3a; }
-  body:not([data-theme="light"]) .sidebar-brand-text { color: #fbc92d; }
-}
+/* 글꼴: IDE 와 같은 원본 파일(고치지 않음, SIL OFL — fonts/LICENSE.txt). 인터넷 없이 된다 */
+@font-face { font-family: "Pretendard"; font-weight: 100 549; font-display: swap;
+  src: url("fonts/Pretendard-Regular.subset.woff2") format("woff2"); }
+@font-face { font-family: "Pretendard"; font-weight: 550 900; font-display: swap;
+  src: url("fonts/Pretendard-Bold.subset.woff2") format("woff2"); }
 
-/* 블록 가이드 표: 블록 칸은 줄바꿈 없이 읽히게 조금 넓게 */
-article table.docutils { width: 100%; }
-article table.docutils td:first-child { min-width: 16em; }
+body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 
-/* 화면 캡처는 테두리와 둥근 모서리 */
-article img { border: 1px solid var(--color-background-border); border-radius: 8px; }
-article .sidebar-logo, article img.no-frame { border: 0; }
+/* 맨 위 가는 노랑 띠 (IDE 상단바 색) */
+body::before { content: ""; position: fixed; inset: 0 0 auto 0; height: 4px; background: #fbc92d; z-index: 100; }
+
+/* ── 왼쪽 위 이름 ───────────────────────────────────────────── */
+.sidebar-brand { padding: 1.25rem 1rem .75rem; margin: 0; }
+.sidebar-brand-text { font-size: 1.15rem; font-weight: 700; letter-spacing: -.01em; color: var(--color-foreground-primary);
+  display: inline-flex; align-items: center; gap: .5rem; }
+.sidebar-brand-text::before { content: ""; width: 12px; height: 12px; border-radius: 4px; background: #fbc92d;
+  box-shadow: 0 0 0 3px rgba(251, 201, 45, .25); flex: none; }
+.sidebar-search-container { margin-top: .25rem; }
+.sidebar-tree .caption, .sidebar-tree :not(.caption) > .caption-text {
+  font-size: .72rem; letter-spacing: .06em; color: var(--color-foreground-muted); font-weight: 700; }
+.sidebar-tree .reference { border-radius: 8px; margin: 1px .5rem; padding-left: .75rem; }
+.sidebar-tree .reference:hover { background: var(--color-sidebar-item-background--hover); }
+.sidebar-tree .current-page > .reference, .sidebar-tree .current > .reference.current { color: var(--color-brand-primary); font-weight: 700;
+  background: var(--color-sidebar-item-background--current, rgba(37, 99, 235, .08)); }
+
+/* ── 본문 글자 ─────────────────────────────────────────────── */
+article[role="main"] { font-size: 1rem; line-height: 1.75; }
+article h1 { font-size: 2rem; font-weight: 800; letter-spacing: -.025em; line-height: 1.25; margin-bottom: 1rem; }
+article h2 { font-size: 1.45rem; font-weight: 700; letter-spacing: -.02em; margin-top: 2.75rem; }
+article h3 { font-size: 1.15rem; font-weight: 700; letter-spacing: -.01em; margin-top: 2rem; }
+article h1 + p, article h1 + section > p:first-child { font-size: 1.06rem; color: var(--color-foreground-secondary); }
+article p, article li { word-break: keep-all; overflow-wrap: anywhere; }
+article strong { font-weight: 700; }
+
+/* ── 표 ────────────────────────────────────────────────────── */
+article .table-wrapper { margin: 1.25rem 0; }
+article table.docutils { width: 100%; border: 1px solid var(--color-background-border); border-radius: 10px;
+  border-collapse: separate; border-spacing: 0; overflow: hidden; box-shadow: none; font-size: .94rem; }
+article table.docutils th { background: var(--color-background-secondary); font-weight: 700; text-align: left;
+  border: 0; border-bottom: 1px solid var(--color-background-border); padding: .6rem .8rem; }
+article table.docutils td { border: 0; border-top: 1px solid var(--color-background-border); padding: .55rem .8rem;
+  vertical-align: top; line-height: 1.6; }
+article table.docutils tr:first-child td { border-top: 0; }
+article table.docutils td:first-child { min-width: 9em; }
+article table.docutils code.literal { white-space: nowrap; }
+
+/* ── 캡처 ──────────────────────────────────────────────────── */
+article img { border: 1px solid var(--color-background-border); border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(15, 23, 42, .08); margin: .75rem 0 1.25rem; }
+article img.no-frame { border: 0; box-shadow: none; }
+
+/* ── 안내 상자 ─────────────────────────────────────────────── */
+.admonition { border-radius: 10px; border-left-width: 4px; box-shadow: none !important; font-size: .95rem; }
+.admonition > .admonition-title { font-weight: 700; }
+
+/* ── 코드 ──────────────────────────────────────────────────── */
+.highlight { border-radius: 10px; }
+code.literal { border-radius: 5px; padding: .1em .35em; font-size: .88em; }
+
+/* ── 첫 화면 카드 ──────────────────────────────────────────── */
+.pb-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem; margin: 1.5rem 0 2rem; }
+.pb-card { display: flex; flex-direction: column; gap: .35rem; padding: 1.1rem 1.15rem; border-radius: 14px;
+  border: 1px solid var(--color-background-border); background: var(--color-background-secondary);
+  text-decoration: none !important; color: var(--color-foreground-primary) !important;
+  transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease; }
+.pb-card:hover { transform: translateY(-2px); border-color: var(--color-brand-primary);
+  box-shadow: 0 8px 22px rgba(15, 23, 42, .08); }
+.pb-card b { font-size: 1.08rem; font-weight: 700; display: flex; align-items: center; gap: .5rem; }
+.pb-card b::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #fbc92d; flex: none; }
+.pb-card span { font-size: .9rem; line-height: 1.5; color: var(--color-foreground-secondary); }
+@media (max-width: 560px) { .pb-cards { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .pb-card { transition: none; } .pb-card:hover { transform: none; } }
+
+/* API 페이지: 클래스·메서드 이름 칸 */
+dl.py > dt { border-radius: 8px; }

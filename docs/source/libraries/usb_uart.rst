@@ -1,5 +1,5 @@
-usb_uart
-========
+usb_uart · USB 시리얼
+============================================================
 
 .. automodule:: openpibo.usb_uart
     :members:
