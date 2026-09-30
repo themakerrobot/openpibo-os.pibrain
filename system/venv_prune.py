@@ -14,6 +14,7 @@
               (0.10.18 에서 jax·jaxlib·scipy 를 지우고 얼굴·손·포즈·얼굴 메시가 그대로 도는 것을 확인했다).
               대신 pip check 가 'mediapipe requires jax' 를 알린다 — 알고 있는 것이다
   -y          --apply 에서 확인 질문을 건너뛴다
+  --check     지우지 않고 import 확인만 한다(실패가 있으면 종료 코드 1). venv_rebuild.sh 가 쓴다
 
 지키는 것
   - 가상환경 밖(apt 로 깐 시스템 패키지: gpiozero·lgpio·spidev·python-apt 등)은 건드리지 않는다
@@ -172,7 +173,15 @@ def main():
   ap.add_argument('--optional', action='store_true', help='pandas·scikit-learn·seaborn 도 지운다')
   ap.add_argument('--jax', action='store_true', help='jax·jaxlib 도 지운다 (mediapipe 는 안 쓴다)')
   ap.add_argument('-y', action='store_true', help='확인 질문 건너뛰기')
+  ap.add_argument('--check', action='store_true', help='import 확인만 (실패 시 종료 코드 1)')
   a = ap.parse_args()
+
+  if a.check:
+    bad, lite = smoke()
+    for m, e in bad:
+      print(f'  !! {m}: {e}')
+    print(f'  {len(SMOKE) - len(bad)}/{len(SMOKE)} 모듈 import 됨 · 분류기 추론기: {lite}')
+    sys.exit(1 if bad or 'tflite_runtime' not in lite else 0)
 
   repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
   dists = load_dists()
