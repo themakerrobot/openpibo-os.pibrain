@@ -446,6 +446,10 @@ Pibo 리포의 변경을 가져올 때 **항목마다 적용 여부를 먼저 �
   (코드는 늘 `yolo11s.onnx` 를 읽었다). `/home/pi/.model` 은 Pibo 것을 그대로 넣는다 — IMAGE.md '모델 폴더'
 - 라이선스: 이 가중치들은 Ultralytics 배포물(AGPL-3.0). Pibo CLAUDE.md '라이선스' 참고
 
+**파이썬 패키지 (260930)** — `requirements.txt`(새로 만듦, Pibo 와 같은 목록)가 리포 코드가 import 하는 것이다. 예전 OS 에서 올린 기기의
+안 쓰는 패키지(TF·torch·ultralytics·MeloTTS 잔재 등, site-packages 5.5GB 의 대부분)는 `system/venv_prune.py` 로 걷어낸다(Pibo 와 **같은 파일**).
+`ultralytics`·`torch` 는 이제 코드가 import 하지 않으므로 여기서 같이 빠진다. 사용법은 IMAGE.md '안 쓰는 패키지 걷어내기'
+
 ### PiBrain 전용 블록 — `device_pibrain_*`
 
 Pibo 의 `device_*` 블록은 MCU 시리얼 명령을 쓴다. PiBrain 은 MCU 가 없어 전부 막혀 있고,
