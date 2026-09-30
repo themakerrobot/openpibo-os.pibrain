@@ -58,7 +58,7 @@ JS = r"""async () => {
       let text = render(b);
       const m = /^make_bitmap_(\d+)x(\d+)$/.exec(it.type);
       if (m) { text = `${m[1]}×${m[2]} 점 그림 ${text}`.replace(/\s+\d+x\d+$/, '').trim(); tip = tip || `점을 눌러 그린 ${m[1]}×${m[2]} 그림을 이미지로 만듭니다(카메라 화면 크기로 키움).`; }
-      rows.push({ type: it.type, text, tip: clean(tip), value: !!b.outputConnection });
+      rows.push({ type: it.type, text, tip: clean(tip), value: !!b.outputConnection, item: it });
     }
     cats.push({ name: cat.name, icon, rows });
   }
@@ -66,15 +66,37 @@ JS = r"""async () => {
 }"""
 
 
-def md_escape(s):
-    return s.replace('|', '\\|')
+# 그림 그리기: IDE 와 같은 테마·렌더러·글꼴(Pretendard)로, 배경 없이 블록 하나씩
+JS_STAGE = r"""async () => {
+  await document.fonts.ready; await new Promise(r => setTimeout(r, 800));   // ide.js 가 블록 글꼴을 Pretendard 로 바꾼 뒤
+  const theme = workspace.getTheme(), renderer = workspace.getRenderer().name;
+  const st = document.createElement('style');
+  st.textContent = 'html,body{background:transparent!important;margin:0} #bw .blocklyMainBackground{fill:transparent!important;stroke:none!important} .blocklySvg,.injectionDiv,#bw{background:transparent!important;background-color:transparent!important}';
+  document.head.appendChild(st);
+  document.body.innerHTML = '<div id="bw" style="position:fixed;left:0;top:0;width:1800px;height:1100px"></div>';
+  window.__bw = Blockly.inject('bw', { renderer, theme, scrollbars: false, trashcan: false, sounds: false,
+    zoom: { startScale: 1, controls: false, wheel: false }, move: { scrollbars: false, drag: false, wheel: false } });
+  return true;
+}"""
+JS_DRAW = r"""(it) => {
+  const ws = window.__bw; ws.clear();
+  const b = Blockly.serialization.blocks.append(JSON.parse(JSON.stringify(it)), ws);
+  b.moveBy(40, 40);
+  const r = b.getSvgRoot().getBoundingClientRect();
+  return { x: r.x, y: r.y, w: r.width, h: r.height };
+}"""
+PAD = 4
 
 
 async def main():
+    img_dir = os.path.join(os.path.dirname(OUT), 'img')
+    os.makedirs(img_dir, exist_ok=True)
+    for f in glob.glob(os.path.join(img_dir, '*.png')):   # 없어진 블록 그림이 남지 않게
+        os.remove(f)
     exe = sorted(glob.glob('/opt/pw-browsers/chromium-*/chrome-linux/chrome'))
     async with async_playwright() as p:
         b = await p.chromium.launch(**({'executable_path': exe[0]} if exe else {}), args=['--no-proxy-server'])
-        ctx = await b.new_context()
+        ctx = await b.new_context(viewport={'width': 1800, 'height': 1100}, device_scale_factor=2)
         await ctx.add_init_script("try{localStorage.setItem('language','ko')}catch(e){}")
         await ctx.route('**/socket.io.min.js*', lambda r: r.fulfill(status=200, content_type='application/javascript',
                         body="window.io=function(){return {on(){},emit(){},connected:false}}"))
@@ -82,6 +104,22 @@ async def main():
         await pg.goto(URL)
         await pg.wait_for_function("typeof toolbox_dict !== 'undefined' && typeof Blockly !== 'undefined'", timeout=20000)
         cats = await pg.evaluate(JS)
+        await pg.evaluate(JS_STAGE)
+        for c in cats:
+            if c['name'] in BASIC:            # 기본 블록은 표에 안 넣으므로 그리지 않는다
+                continue
+            for r in c['rows']:
+                box = await pg.evaluate(JS_DRAW, r['item'])
+                clip = {'x': max(0, box['x'] - PAD), 'y': max(0, box['y'] - PAD), 'width': box['w'] + PAD * 2, 'height': box['h'] + PAD * 2}
+                path = os.path.join(img_dir, f"{r['type']}.png")
+                await pg.screenshot(path=path, clip=clip, omit_background=True)
+                r['w'] = round(clip['width'])
+                try:                                   # 256색으로 줄여 크기를 1/3 쯤으로(투명 유지)
+                    from PIL import Image
+                    im = Image.open(path)
+                    im.quantize(colors=256, method=Image.Quantize.FASTOCTREE).save(path, optimize=True)
+                except Exception:
+                    pass
         await b.close()
 
     basic = [c for c in cats if c['name'] in BASIC]
@@ -91,9 +129,8 @@ async def main():
     L = ['# 블록코딩', '',
          f'{PRODUCT} 메이커는 Blockly 기반의 블록 코딩을 지원합니다. 기본 블록 외에 {PRODUCT}{"을" if PRODUCT == "PiBrain" else "를"} 쉽게 쓸 수 있도록',
          '**openpibo** 파이썬 패키지와 이어진 블록이 있습니다. 블록 코드는 [파이썬 코드] 버튼으로 파이썬으로 볼 수 있습니다.', '',
-         '```{note}', '이 페이지는 IDE 툴박스에서 자동으로 만들었습니다(`docs/tools/gen_block_guide.py`). 블록 모양의 `[ ▾]` 는 고르는 칸,',
-         '`( )` 는 다른 블록이나 값을 끼우는 칸, `[ ]` 는 직접 적는 칸입니다. 모든 기능은 **' + PRODUCT + ' 안에서** 돌아가며 인터넷이 필요한 것은',
-         '[수집] 분류뿐입니다.', '```', '',
+         '```{note}', '이 페이지는 IDE 툴박스에서 자동으로 만들었습니다(`docs/tools/gen_block_guide.py`). 블록 그림은 툴박스에서 꺼냈을 때의 기본값입니다.',
+         '모든 기능은 **' + PRODUCT + ' 안에서** 돌아가며 인터넷이 필요한 것은 [수집] 분류뿐입니다.', '```', '',
          '## 블록 구성', '', '```', 'Blockly 기본 블록 (Blockly 공식 블록 — 설명은 블록에 마우스를 올리면 나옵니다)']
     for i, c in enumerate(basic):
         L.append(('└── ' if i == len(basic) - 1 else '├── ') + f"{c['name']} ({count(c)})")
@@ -101,11 +138,13 @@ async def main():
     for i, c in enumerate(custom):
         L.append(('└── ' if i == len(custom) - 1 else '├── ') + f"{c['name']} ({count(c)})")
     L += ['```', '', f'## {PRODUCT} 전용 블록', '']
+    # 블록마다 그림(원래 크기) + 그 아래 설명 한 줄. 표에 넣으면 칸이 좁아 긴 블록 글자가 작아졌다
     for c in custom:
-        L += [f"### {c['name']}", '', '| 블록 | 설명 |', '|---|---|']
+        L += [f"### {c['name']}", '']
         for r in c['rows']:
-            L.append(f"| {md_escape(r['text'])}{' ⟶ 값' if r['value'] else ''} | {md_escape(r['tip'])} |")
-        L.append('')
+            alt = r['text'].replace('"', "'")
+            L += [f'<img src="img/{r["type"]}.png" alt="{alt}" width="{r["w"]}" class="blk">', '',
+                  (r['tip'] or '') + (' *값을 돌려주는 블록*' if r['value'] else ''), '']
     open(OUT, 'w', encoding='utf-8').write('\n'.join(L).rstrip() + '\n')
     print(OUT, sum(len(c['rows']) for c in custom), 'blocks in', len(custom), 'categories')
 
