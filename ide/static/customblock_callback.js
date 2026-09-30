@@ -899,8 +899,7 @@ Blockly.Python.forBlock['vision_load_cf'] = function(block) {
 
   const dir = block.getFieldValue("dir");
   const modelpath = Blockly.Python.valueToCode(block, 'modelpath', Blockly.Python.ORDER_ATOMIC);
-  const labelpath = Blockly.Python.valueToCode(block, 'labelpath', Blockly.Python.ORDER_ATOMIC);
-  return `cf.load('${dir}'+${modelpath}, '${dir}'+${labelpath})\n`;
+  return `cf.load('${dir}'+${modelpath})\n`;
 }
 Blockly.Python.forBlock['vision_predict_cf'] = function(block) {
   Blockly.Python.definitions_['from_vision_import_CustomClassifier'] = 'from openpibo.vision_classify import CustomClassifier';
@@ -1049,6 +1048,15 @@ Blockly.Python.forBlock['utils_calculate_angle'] = function(block) {
     return st;
   }
 
+  // vision_load_cf 는 260930 전까지 이름 칸이 둘(모델·라벨)이었다. 라벨 칸은 코드에서 안 쓰였다.
+  // 없는 입력이 저장돼 있으면 Blockly 가 불러오다 멈추므로(MissingConnection) 불러오기 전에 걷어낸다
+  function dropLabel(st) {
+    if (!st || typeof st !== 'object') return;
+    if (st.type === 'vision_load_cf' && st.inputs) delete st.inputs.labelpath;
+    for (const name in (st.inputs || {})) { const slot = st.inputs[name]; if (slot) { dropLabel(slot.block); dropLabel(slot.shadow); } }
+    if (st.next) { dropLabel(st.next.block); dropLabel(st.next.shadow); }
+  }
+
   const load = Blockly.serialization.workspaces.load;
   Blockly.serialization.workspaces.load = function (state, workspace, opts) {
     try {
@@ -1057,6 +1065,11 @@ Blockly.Python.forBlock['utils_calculate_angle'] = function(block) {
       }
     } catch (e) {
       console.warn('legacy dict fix', e);
+    }
+    try {
+      if (state && state.blocks && Array.isArray(state.blocks.blocks)) state.blocks.blocks.forEach(dropLabel);
+    } catch (e) {
+      console.warn('legacy classifier fix', e);
     }
     return load.call(this, state, workspace, opts);
   };

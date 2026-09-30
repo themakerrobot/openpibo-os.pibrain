@@ -498,7 +498,7 @@ Pibo 와 같다. Teachable Machine 계열(`vision_load_tm` `vision_predict_tm`
   PiBrain 파일은 Pibo 교체 직전과 공백만 달랐다
 - PiBrain 에서 바꾼 것: 화면 문구의 이름(PiBrain), `ko2en.js` 1·2행과 언어 저장 키 `classifier_language`
   (`global` 델타 그대로)
-- 블록 `[분류기 모델 … 불러오기]`(260929 전엔 '이미지 모델 설정하기'): 폴더 `mymodel`, 이름 칸에 모델 이름(기본값 '모델 이름'), 세 번째 칸은 비워 둔다.
+- 블록 `[분류기 모델 … 불러오기]`(260929 전엔 '이미지 모델 설정하기'): 폴더 `mymodel`, 이름 칸에 모델 이름(기본값 '모델 이름'). 라벨 칸은 260930v9 에 뺐다 — 예전 저장본은 불러올 때 걷어낸다(Pibo CLAUDE.md '분류기')
   **예전 `model.keras` 는 못 읽는다**(불러오면 다시 학습하라는 오류). 의도한 호환 단절이다
 - 지운 것: `tf.min-3.11.0.js` · MobileNetV2 가중치 · `model.json` · `jszip` · `tfjs_to_keras.py`(`/convert`)
 - 사물 인식(`vision_detect`)은 260930 에 Pibo 의 onnxruntime 방식으로 바꿨다(위 '사물 인식' 참고)
