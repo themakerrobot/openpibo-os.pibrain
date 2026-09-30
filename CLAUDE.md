@@ -371,6 +371,12 @@ sudo raspi-config nonint get_wifi_country
 | `jquery-3.7.1.min.js` | Pibo | 3.1.1 을 지우고 올렸다 |
 | `tools/templates/index.html` `static/index.css` | **PiBrain 전용**(Pibo 도구와 마크업이 다르다) | 새로 짰다 — 아래 '도구 화면' |
 
+### 전체화면 (260930) — Pibo 와 같다
+
+키트(`pibo-ui.js`)가 IDE·도구·분류기의 전체화면 버튼을 맡는다. 탭을 바꾸면 브라우저가 풀고, 돌아오면 한 번 눌러 복귀.
+자세한 건 Pibo CLAUDE.md '전체화면'. PiBrain 에서 다른 점: **도구 머리줄에 버튼을 새로 넣었다**(`#fullscreen_bt`, [IDE] 옆,
+`tools/static/ko2en.js` 끝의 `nav_fullscreen`). IDE 는 Pibo 처럼 [더보기] 에서 상단바로 옮겼다.
+
 ### 도구 화면 (260924)
 
 Pibo 도구와 기능·마크업이 달라(REST/SSE, 5탭) 키트의 `pb-v2` 층을 쓰지 않고 **같은 색 토큰으로 따로 짰다.**

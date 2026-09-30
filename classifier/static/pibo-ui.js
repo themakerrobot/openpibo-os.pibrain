@@ -32,7 +32,8 @@
     restart:       { ko: '다시 켜기', en: 'Restart' },
     close:         { ko: '닫기', en: 'Close' },
     popup_blocked: { ko: '새 탭이 차단됐습니다. 이 주소의 팝업을 허용해 주세요.',
-                     en: 'The new tab was blocked. Please allow pop-ups for this address.' }
+                     en: 'The new tab was blocked. Please allow pop-ups for this address.' },
+    fs_tap:        { ko: '화면을 한 번 누르면 전체화면으로 돌아가요', en: 'Tap the screen once to return to full screen' }
   };
   function curLang() {
     try { if (typeof lang !== 'undefined' && lang) return lang; } catch (e) { /* 앱에 lang 없음 */ }
@@ -351,6 +352,7 @@
            encodeURIComponent(svc) + '&lang=' + curLang() + '&v=' + LAUNCH_VER;
   }
   function openService(svc) {
+    fsLeaving = Date.now();   // 새 탭으로 가며 풀리는 전체화면은 '사용자가 끈 것' 이 아니다
     var w = window.open(launchUrl(svc), TAB[svc] || ('pibo_' + svc));
     if (!w) { toast(tr('popup_blocked'), 'error', 6000); return null; }
     try { w.focus(); } catch (e) { /* 무시 */ }
@@ -388,14 +390,78 @@
     }
   }
 
+  /* ── 전체화면 (260930) ─────────────────────────────────────────────────
+     세 앱(IDE·도구·분류기)이 같은 코드를 쓴다. 버튼은 #fullscreen_bt(또는 [data-pb-fs]),
+     아이콘 칸은 그 안의 #fullscreen_txt(또는 [data-pb-fs-icon]).
+     탭을 바꾸면 브라우저가 전체화면을 푼다 — 막을 수 없다. 그래서 켜 둔 적이 있으면 쿠키 pibo_fs 에
+     기억해 두고(포트 무관이라 세 앱이 같이 본다), 다음에 화면을 아무 데나 한 번 누르면 다시 켠다.
+     브라우저는 사용자가 누를 때만 켜게 해 준다. 보이는 상태에서 끄면(Esc·버튼) 사용자가 끈 것으로 보고 기억을 지운다 */
+  var fsLeaving = 0;
+  var FS_OK = !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen);
+  function fsOn() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+  function fsWanted() { try { return /(?:^|;\s*)pibo_fs=1/.test(document.cookie); } catch (e) { return false; } }
+  function fsRemember(on) {
+    try { document.cookie = 'pibo_fs=' + (on ? '1' : '') + '; path=/; SameSite=Lax' + (on ? '' : '; max-age=0'); } catch (e) { /* 무시 */ }
+  }
+  function fsQuiet(p) { if (p && p.catch) p.catch(function () { /* 사용자 동작 없이 부르면 거절된다 */ }); }
+  function fsEnter() {
+    var el = document.documentElement, f = el.requestFullscreen || el.webkitRequestFullscreen;
+    if (f) { try { fsQuiet(f.call(el)); } catch (e) { /* 무시 */ } }
+  }
+  function fsExit() {
+    var f = document.exitFullscreen || document.webkitExitFullscreen;
+    if (f) { try { fsQuiet(f.call(document)); } catch (e) { /* 무시 */ } }
+  }
+  function fsButtons() { return document.querySelectorAll('#fullscreen_bt, [data-pb-fs]'); }
+  function fsSync() {
+    Array.prototype.forEach.call(fsButtons(), function (b) {
+      var icon = b.querySelector('#fullscreen_txt, [data-pb-fs-icon]');
+      var cls = fsOn() ? 'fa-solid fa-minimize' : 'fa-solid fa-maximize';
+      if (icon && icon.tagName === 'I') icon.className = cls;         // <i data-pb-fs-icon> 면 그 자신이 아이콘
+      else if (icon) icon.innerHTML = '<i class="' + cls + '"></i>';
+      b.setAttribute('aria-pressed', fsOn() ? 'true' : 'false');
+      if (!FS_OK) b.hidden = true;   // iPhone Safari 등 전체화면이 없는 브라우저
+    });
+  }
+  function fsToggle() { if (fsOn()) fsExit(); else fsEnter(); }
+  function fsChanged() {
+    fsSync();
+    if (fsOn()) { fsRemember(true); return; }
+    // 탭 전환으로 풀렸으면 곧 가려진다. 보이는 채로 풀렸으면 사용자가 끈 것
+    setTimeout(function () {
+      if (!fsOn() && document.visibilityState === 'visible' && Date.now() - fsLeaving > 2000) fsRemember(false);
+    }, 400);
+  }
+  function fsHint() {
+    if (FS_OK && fsWanted() && !fsOn() && document.visibilityState === 'visible') toast(tr('fs_tap'), 'info', 3000);
+  }
+  function initFullscreen() {
+    Array.prototype.forEach.call(fsButtons(), function (b) {
+      if (b._pbFs) return; b._pbFs = true;
+      b.addEventListener('click', function (e) { e.preventDefault(); fsToggle(); });
+    });
+    fsSync();
+    fsHint();
+  }
+  document.addEventListener('fullscreenchange', fsChanged);
+  document.addEventListener('webkitfullscreenchange', fsChanged);
+  document.addEventListener('visibilitychange', fsHint);
+  // 기억돼 있는데 꺼져 있으면: 화면을 처음 누를 때 다시 켠다(버튼 자체는 제 일을 하게 둔다)
+  document.addEventListener('pointerdown', function (e) {
+    if (!FS_OK || fsOn() || !fsWanted()) return;
+    if (e.target && e.target.closest && e.target.closest('#fullscreen_bt, [data-pb-fs]')) return;
+    fsEnter();
+  }, true);
+
   window.PiboUI = {
     toast: toast, banner: banner, hideBanner: hideBanner, watchSocket: watchSocket,
     openService: openService, backToIDE: backToIDE, restartSelf: restartSelf,
     busy: busy, text: tr, lang: curLang,
-    getTheme: getTheme, setTheme: setTheme, ui: UI, countTo: countTo
+    getTheme: getTheme, setTheme: setTheme, ui: UI, countTo: countTo,
+    fullscreen: fsToggle
   };
 
-  function initAll() { initShell(); addThemeButton(); syncThemeButtons(); }
+  function initAll() { initShell(); addThemeButton(); syncThemeButtons(); initFullscreen(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAll);
   else initAll();
 })();

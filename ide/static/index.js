@@ -1,35 +1,4 @@
-let fullscreen = false;
-
-const fullscreenTxt = document.getElementById('fullscreen_txt');
-const fullscreenBt = document.getElementById('fullscreen_bt');
-
-const updateIcon = () => {
-    fullscreenTxt.innerHTML = fullscreen
-        ? '<i class="fa-solid fa-minimize"></i>'
-        : '<i class="fa-solid fa-maximize"></i>';
-};
-
-updateIcon(); // 초기 아이콘 설정
-
-fullscreenBt.addEventListener('click', (e) => {
-    e.preventDefault(); // <a> 태그 기본 동작 방지
-
-    if (!fullscreen && document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen();
-        fullscreen = true;
-    } else if (fullscreen && document.exitFullscreen) {
-        document.exitFullscreen();
-        fullscreen = false;
-    }
-
-    updateIcon();
-});
-
-// 사용자가 ESC 등으로 fullscreen 종료했을 때 아이콘 동기화
-document.addEventListener('fullscreenchange', () => {
-    fullscreen = !!document.fullscreenElement;
-    updateIcon();
-});
+// 전체화면 버튼(#fullscreen_bt)은 pibo-ui.js 가 맡는다(260930) — 탭을 바꿔 풀린 전체화면을 한 번 눌러 되살린다
 
 // --- Get references to popup elements (using provided IDs) ---
 const alertPopup = document.getElementById('alertPopup');

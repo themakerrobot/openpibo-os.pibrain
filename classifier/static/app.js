@@ -865,16 +865,7 @@ language.value = lang;
 setLanguage(lang);
 language.addEventListener('change', () => { setLanguage(language.value); renderAll(); });
 
-// 전체화면
-const fsBtn = $('fullscreen_bt');
-function fsIcon() { $('fullscreen_txt').innerHTML = document.fullscreenElement ? '<i class="fa-solid fa-minimize"></i>' : '<i class="fa-solid fa-maximize"></i>'; }
-fsBtn.addEventListener('click', e => {
-  e.preventDefault();
-  if (!document.fullscreenElement && document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
-  else if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen();
-});
-document.addEventListener('fullscreenchange', fsIcon);
-fsIcon();
+// 전체화면 버튼(#fullscreen_bt)은 pibo-ui.js 가 맡는다(260930)
 
 $('logo_bt').addEventListener('click', () => { location.href = `http://${location.hostname}`; });
 $('ide_bt').addEventListener('click', () => PiboUI.backToIDE());

@@ -4,6 +4,7 @@ let lang = localStorage.getItem("tools_language") ? localStorage.getItem("tools_
 const T = {
   /* ── Header (260924 v2) ─────────────────────────────────── */
   title:             { ko: "도구",                 en: "Tools" },
+  nav_fullscreen:    { ko: "전체화면",              en: "Full screen" },
   theme_light:       { ko: "밝게",                 en: "Light" },
   theme_soft:        { ko: "부드럽게",              en: "Soft" },
   theme_dark:        { ko: "어둡게",               en: "Dark" },

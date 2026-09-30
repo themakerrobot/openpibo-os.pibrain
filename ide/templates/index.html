@@ -20,7 +20,7 @@
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
   <link rel="stylesheet" href="../static/codemirror.css" />
   <link rel="stylesheet" href="../static/jquery.jsonview.min.css" />
-  <link rel="stylesheet" href="../static/pibo-ui.css?ver=260930v2" />
+  <link rel="stylesheet" href="../static/pibo-ui.css?ver=260930v3" />
   <link rel="stylesheet" href="../static/v2/ide.css?ver=260930v1" />
   <link rel="shortcut icon" href="../static/icon.png?ver=240319v1" type="image/x-icon" />
 
@@ -62,6 +62,7 @@
         <a class="pb-iconbtn" id="llm_bt" title="Chat Bot"><i class="fa-solid fa-comment"></i><span class="pb-iconbtn__label" data-key="nav_llm"></span></a>
         <a class="pb-iconbtn" id="classifier_bt" title="Image Classifier"><i class="fa-solid fa-images"></i><span class="pb-iconbtn__label" data-key="nav_classifier"></span></a>
         <a class="pb-iconbtn" id="guide_bt" title="Guide"><i class="fa-solid fa-circle-question"></i><span class="pb-iconbtn__label" data-key="nav_guide"></span></a>
+        <a class="pb-iconbtn" id="fullscreen_bt" data-title-key="nav_fullscreen"><span id="fullscreen_txt"></span><span class="pb-iconbtn__label" data-key="nav_fullscreen"></span></a>
       </div>
       <details class="v2-menu" id="more_menu">
         <summary class="pb-iconbtn" data-title-key="v2_more"><i class="fa-solid fa-ellipsis"></i></summary>
@@ -88,7 +89,6 @@
             <span class="v2-switch__track"></span>
           </label>
           <hr>
-          <a class="v2-pop__item" id="fullscreen_bt"><span id="fullscreen_txt"></span><span data-key="nav_fullscreen"></span></a>
           <label class="v2-pop__item v2-pop__item--field"><i class="fa-solid fa-language"></i><span data-key="v2_language"></span>
             <select id="language" aria-label="language">
               <option value="ko">한국어</option>
@@ -297,8 +297,8 @@
     </div>
   </div>
 
-  <script src="../static/pibo-ui.js?ver=260930v2"></script>
-  <script src="../static/index.js?ver=260930v3"></script>
+  <script src="../static/pibo-ui.js?ver=260930v3"></script>
+  <script src="../static/index.js?ver=260930v4"></script>
   <script src="../static/v2/vendor/toolbox-search.js?ver=1.2.11"></script>
   <script src="../static/v2/ide.js?ver=260929v1"></script>
 </body>
