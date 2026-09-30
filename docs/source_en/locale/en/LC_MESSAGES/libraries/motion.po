@@ -1,0 +1,209 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026 THEMAKER. All rights reserved. openpibo-python-0.9.4.0
+# This file is distributed under the same license as the OPENPIBO package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: OPENPIBO \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-30 23:52+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+msgid "motion · Motors and motions (for piBo)"
+msgstr ""
+
+msgid "서보 모터를 제어하고, 모션을 생성합니다."
+msgstr "Controls the servo motors and creates motions."
+
+msgid "Class: :obj:`~openpibo.motion.Motion`"
+msgstr ""
+
+msgid "Functions: :meth:`~openpibo.motion.Motion.set_motor` :meth:`~openpibo.motion.Motion.set_motors` :meth:`~openpibo.motion.Motion.set_speed` :meth:`~openpibo.motion.Motion.set_speeds` :meth:`~openpibo.motion.Motion.set_acceleration` :meth:`~openpibo.motion.Motion.set_accelerations` :meth:`~openpibo.motion.Motion.get_motion` :meth:`~openpibo.motion.Motion.set_motion_raw` :meth:`~openpibo.motion.Motion.set_motion` :meth:`~openpibo.motion.Motion.set_mymotion` :meth:`~openpibo.motion.Motion.stop`"
+msgstr ""
+
+msgid "파이보의 움직임을 제어합니다."
+msgstr "Controls piBo's movement."
+
+msgid "example::"
+msgstr ""
+
+msgid "모터 1개를 특정 위치로 이동합니다."
+msgstr "Moves one motor to the given position."
+
+msgid "Parameters"
+msgstr ""
+
+msgid "모터 번호  0~9의 숫자가 들어갑니다. 해당 번호의 위치는 상단의 ``모터 번호당 위치`` 를 참고해주세요."
+msgstr "Motor number  A number from 0 to 9. For the position of each number, see ``모터 번호당 위치`` (position per motor number) above."
+
+msgid "모터 번호"
+msgstr "Motor number"
+
+msgid "0~9의 숫자가 들어갑니다. 해당 번호의 위치는 상단의 ``모터 번호당 위치`` 를 참고해주세요."
+msgstr "A number from 0 to 9. For the position of each number, see ``모터 번호당 위치`` (position per motor number) above."
+
+msgid "모터 각도  -80~80의 숫자가 들어갑니다. 자세한 범위는 상단의 ``모터 제한 각도`` 를 참고해주세요."
+msgstr "Motor angle  A number from -80 to 80. For the exact range, see ``모터 제한 각도`` (motor angle limits) above."
+
+msgid "모터 각도"
+msgstr "Motor angle"
+
+msgid "-80~80의 숫자가 들어갑니다. 자세한 범위는 상단의 ``모터 제한 각도`` 를 참고해주세요."
+msgstr "A number from -80 to 80. For the exact range, see ``모터 제한 각도`` (motor angle limits) above."
+
+msgid "전체 모터를 특정 위치로 이동합니다."
+msgstr "Moves all motors to the given positions."
+
+msgid "movetime이 짧을수록 모션을 취하는 속도가 빨라집니다. 만약 ``movetime`` 이 ``None`` 이라면, 속도는 이전 설정값으로 유지됩니다."
+msgstr "The shorter movetime is, the faster the motion. If ``movetime`` is ``None``, the speed stays at the previous setting."
+
+msgid "0-9번 모터 각도 배열"
+msgstr "Array of angles for motors 0-9"
+
+msgid "모터 이동 시간(ms)  50ms 단위, 모터가 정해진 위치까지 이동하는 시간  (모터 컨트롤러와의 overhead문제로 정밀하지는 않음)"
+msgstr "Motor move time (ms)  In units of 50ms; the time the motors take to reach the given positions  (not precise, due to overhead with the motor controller)"
+
+msgid "모터 이동 시간(ms)"
+msgstr "Motor move time (ms)"
+
+msgid "50ms 단위, 모터가 정해진 위치까지 이동하는 시간"
+msgstr "In units of 50ms; the time the motors take to reach the given positions"
+
+msgid "(모터 컨트롤러와의 overhead문제로 정밀하지는 않음)"
+msgstr "(not precise, due to overhead with the motor controller)"
+
+msgid "모터 1개의 속도를 설정합니다."
+msgstr "Sets the speed of one motor."
+
+msgid "모터 속도  0~255 사이 값입니다. 숫자가 클수록 속도가 빨라집니다."
+msgstr "Motor speed  A value from 0 to 255. The larger the number, the faster the speed."
+
+msgid "모터 속도"
+msgstr "Motor speed"
+
+msgid "0~255 사이 값입니다. 숫자가 클수록 속도가 빨라집니다."
+msgstr "A value from 0 to 255. The larger the number, the faster the speed."
+
+msgid "전체 모터의 속도를 설정합니다."
+msgstr "Sets the speed of all motors."
+
+msgid "0-9번 모터 속도 배열  배열 안의 각 가속도는 0~255 사이 정수입니다."
+msgstr "Array of speeds for motors 0-9  Each acceleration in the array is an integer from 0 to 255."
+
+msgid "0-9번 모터 속도 배열"
+msgstr "Array of speeds for motors 0-9"
+
+msgid "배열 안의 각 가속도는 0~255 사이 정수입니다."
+msgstr "Each acceleration in the array is an integer from 0 to 255."
+
+msgid "모터 1개의 가속도를 설정합니다."
+msgstr "Sets the acceleration of one motor."
+
+msgid "가속도를 설정하게 되면, 속도가 0에서 시작하여 설정된 속도까지 점점 빨라집니다. 그리고 점점 느려지다가 종료 지점에서 속도가 0이 됩니다."
+msgstr "When acceleration is set, the speed starts at 0 and gradually increases to the set speed. It then gradually slows down and reaches 0 at the end point."
+
+msgid "모터 속도  0~255 사이 값입니다. 숫자가 클수록 가속도가 커집니다."
+msgstr "Motor speed  A value from 0 to 255. The larger the number, the larger the acceleration."
+
+msgid "0~255 사이 값입니다. 숫자가 클수록 가속도가 커집니다."
+msgstr "A value from 0 to 255. The larger the number, the larger the acceleration."
+
+msgid "전체 모터의 가속도를 설정합니다."
+msgstr "Sets the acceleration of all motors."
+
+msgid "0-9번 모터 가속도 배열  배열 안의 각 가속도는 0~255 사이 정수입니다."
+msgstr "Array of accelerations for motors 0-9  Each acceleration in the array is an integer from 0 to 255."
+
+msgid "0-9번 모터 가속도 배열"
+msgstr "Array of accelerations for motors 0-9"
+
+msgid "모션 프로파일을 조회합니다."
+msgstr "Looks up the motion profile."
+
+msgid "``name`` 매개변수가 ``None`` 이면, 해당 모션 프로파일에 저장되어있는 모든 moiton 이름을 출력하고, ``None`` 이 아니면, 해당 이름의 모션에 대한 데이터를 출력합니다."
+msgstr "If the ``name`` parameter is ``None``, returns the names of all motions stored in the motion profile; if it is not ``None``, returns the data for the motion with that name."
+
+msgid "동작 이름  profile에 저장되어있는 동작의 이름입니다."
+msgstr "Motion name  The name of a motion stored in the profile."
+
+msgid "동작 이름"
+msgstr "Motion name"
+
+msgid "profile에 저장되어있는 동작의 이름입니다."
+msgstr "The name of a motion stored in the profile."
+
+msgid "사용할 모션 파일 경로  모션 파일 경로입니다. 입력하지 않으면 기본 모션 파일을 사용합니다."
+msgstr "Motion file path to use  Path to the motion file. If not given, the default motion file is used."
+
+msgid "사용할 모션 파일 경로"
+msgstr "Motion file path to use"
+
+msgid "모션 파일 경로입니다. 입력하지 않으면 기본 모션 파일을 사용합니다."
+msgstr "Path to the motion file. If not given, the default motion file is used."
+
+msgid "Returns"
+msgstr ""
+
+#, python-brace-format
+msgid "* ``name == None`` 인 경우::      # motion.get_motion()     # motion.get_motion(path='/home/pi/mymotion.json')      ['stop', 'stop_body', 'sleep', 'lookup', 'left', 'left_half',     'right', 'right_half', 'forward1', 'forward2', ...]  * ``name != None`` 인 경우::      # motion.get_motion('stop')     # motion.get_motion('stop', path='/home/pi/mymotion.json')      {       'comment': 'stop',       'init_def': 1,       'init': [0, 0, -70, -25, 0, 0, 0, 0, 70, 25]     }"
+msgstr "* When ``name == None``::      # motion.get_motion()     # motion.get_motion(path='/home/pi/mymotion.json')      ['stop', 'stop_body', 'sleep', 'lookup', 'left', 'left_half',     'right', 'right_half', 'forward1', 'forward2', ...]  * When ``name != None``::      # motion.get_motion('stop')     # motion.get_motion('stop', path='/home/pi/mymotion.json')      {       'comment': 'stop',       'init_def': 1,       'init': [0, 0, -70, -25, 0, 0, 0, 0, 70, 25]     }"
+
+msgid "``name == None`` 인 경우::"
+msgstr "When ``name == None``::"
+
+msgid "``name != None`` 인 경우::"
+msgstr "When ``name != None``::"
+
+msgid "모션 프로파일의 동작을 실행합니다."
+msgstr "Runs a motion from the motion profile."
+
+#, python-brace-format
+msgid "특정 동작을 위한 각 모터의 움직임이 기록된 데이터 입니다.  다음과 같은 양식을 따릅니다::    {     \"init_def\": 1     \"init\":[0,0,-70,-25,0,0,0,0,70,25],     \"pos\":[       {\"d\":[999,999,999,999, 30,999,999,999,999,999],\"seq\":500},       {\"d\":[999,999,999,999,-30,999,999,999,999,999],\"seq\":2000},       ...     ]   }  * ``init_def`` 는 초기동작의 유무입니다. * ``init`` 은 동작을 시작하기 전의 준비동작입니다. * ``pos`` 는 연속된 동작이 담긴 list 입니다.   **seq** 시간(ms)에 **d** 의 동작이 완료됨을 의미합니다."
+msgstr "Data recording the movement of each motor for a given motion.  It uses the following format::    {     \"init_def\": 1     \"init\":[0,0,-70,-25,0,0,0,0,70,25],     \"pos\":[       {\"d\":[999,999,999,999, 30,999,999,999,999,999],\"seq\":500},       {\"d\":[999,999,999,999,-30,999,999,999,999,999],\"seq\":2000},       ...     ]   }  * ``init_def`` indicates whether there is an initial pose. * ``init`` is the preparatory pose before the motion starts. * ``pos`` is a list of consecutive poses.   It means the pose **d** is completed at time **seq** (ms)."
+
+msgid "특정 동작을 위한 각 모터의 움직임이 기록된 데이터 입니다."
+msgstr "Data recording the movement of each motor for a given motion."
+
+msgid "다음과 같은 양식을 따릅니다::"
+msgstr "It uses the following format::"
+
+msgid "``init_def`` 는 초기동작의 유무입니다."
+msgstr "``init_def`` indicates whether there is an initial pose."
+
+msgid "``init`` 은 동작을 시작하기 전의 준비동작입니다."
+msgstr "``init`` is the preparatory pose before the motion starts."
+
+msgid "``pos`` 는 연속된 동작이 담긴 list 입니다. **seq** 시간(ms)에 **d** 의 동작이 완료됨을 의미합니다."
+msgstr "``pos`` is a list of consecutive poses. It means the pose **d** is completed at time **seq** (ms)."
+
+msgid "동작을 몇 번 반복할지 결정합니다."
+msgstr "Sets how many times to repeat the motion."
+
+msgid "``path`` 파일에 저장된 모션 프로파일의 모션을 실행합니다. ``path`` 를 설정하지 않으면, 기본 모션 프로파일이 적용됩니다."
+msgstr "Runs a motion from the motion profile stored in the ``path`` file. If ``path`` is not set, the default motion profile is used."
+
+msgid "동작 이름  모션 프로파일에 저장되어있는 동작의 이름입니다."
+msgstr "Motion name  The name of a motion stored in the motion profile."
+
+msgid "모션 프로파일에 저장되어있는 동작의 이름입니다."
+msgstr "The name of a motion stored in the motion profile."
+
+msgid "동작 반복 횟수"
+msgstr "Number of repetitions"
+
+msgid "``/home/pi/mymotion.json`` 파일에 저장된 모션 프로파일의 모션을 실행합니다."
+msgstr "Runs a motion from the motion profile stored in the ``/home/pi/mymotion.json`` file."
+
+msgid "수행 중인 동작을 정지합니다."
+msgstr "Stops the motion in progress."
+

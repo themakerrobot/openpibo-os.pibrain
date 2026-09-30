@@ -1,0 +1,755 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="vision_detect · Object, QR, hand and pose recognition" href="vision_detect.html"><link rel="prev" title="speech · Voice, speech recognition, chat" href="speech.html">
+        <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/libraries/vision_camera.html">
+
+    <link rel="shortcut icon" href="../_static/icon.png"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+        <title>vision_camera · Camera and images - PiBrain Help</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=03d1bc43" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  --color-brand-primary: #2563eb;
+  --color-brand-content: #2563eb;
+  --color-brand-visited: #2563eb;
+  --font-stack: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-stack--headings: var(--font-stack);
+  --font-stack--monospace: "D2Coding", "JetBrains Mono", Consolas, "SF Mono", ui-monospace, monospace;
+  --color-background-secondary: #f5f6fa;
+  --color-sidebar-background: #f5f6fa;
+  --color-sidebar-item-background--current: rgba(37, 99, 235, .08);
+  --color-sidebar-link-text: #4a5163;
+  --color-sidebar-link-text--top-level: #4a5163;
+  --color-admonition-title--note: #2563eb;
+  --color-admonition-title-background--note: rgba(37, 99, 235, .08);
+  --color-admonition-title--tip: #16a34a;
+  --color-admonition-title-background--tip: rgba(22, 163, 74, .08);
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-background-primary: #1a1e27;
+  --color-background-secondary: #222733;
+  --color-sidebar-background: #1f232d;
+  --color-sidebar-item-background--current: rgba(251, 201, 45, .10);
+  --color-sidebar-link-text: #b4bac8;
+  --color-sidebar-link-text--top-level: #b4bac8;
+  --color-admonition-title--note: #fbc92d;
+  --color-admonition-title-background--note: rgba(251, 201, 45, .10);
+  --color-brand-primary: #fbc92d;
+  --color-brand-content: #fbc92d;
+  --color-brand-visited: #fbc92d;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-background-primary: #1a1e27;
+  --color-background-secondary: #222733;
+  --color-sidebar-background: #1f232d;
+  --color-sidebar-item-background--current: rgba(251, 201, 45, .10);
+  --color-sidebar-link-text: #b4bac8;
+  --color-sidebar-link-text--top-level: #b4bac8;
+  --color-admonition-title--note: #fbc92d;
+  --color-admonition-title-background--note: rgba(251, 201, 45, .10);
+  --color-brand-primary: #fbc92d;
+  --color-brand-content: #fbc92d;
+  --color-brand-visited: #fbc92d;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">PiBrain Help</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  <span class="sidebar-brand-text">PiBrain Help</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../notes/piboMaker.html">PiBrain Maker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/software.html">Software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/hardware.html">Hardware</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Blocks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../blocks/guide.html">Block coding</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="audio.html">audio · Play and record sound</a></li>
+<li class="toctree-l1"><a class="reference internal" href="collect.html">collect · Wikipedia, weather, news (internet)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="device.html">device · LEDs and buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usb_uart.html">usb_uart · USB serial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="motion.html">motion · Motors and motions (for piBo)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oled.html">oled · LCD screen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pibo_graphics.html">pibo_graphics · Turtle graphics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="speech.html">speech · Voice, speech recognition, chat</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">vision_camera · Camera and images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vision_detect.html">vision_detect · Object, QR, hand and pose recognition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vision_face.html">vision_face · Face recognition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vision_classify.html">vision_classify · Classifier models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils · Other tools</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../_sources/libraries/vision_camera.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="module-openpibo.vision_camera">
+<span id="vision-camera-camera-and-images"></span><h1>vision_camera · Camera and images<a class="headerlink" href="#module-openpibo.vision_camera" title="Link to this heading">¶</a></h1>
+<p>Takes pictures with the camera and edits images.</p>
+<p>Class:
+<a class="reference internal" href="#openpibo.vision_camera.Camera" title="openpibo.vision_camera.Camera"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Camera</span></code></a></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">openpibo.vision_camera.</span></span><span class="sig-name descname"><span class="pre">Camera</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cam</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Functions:
+<a class="reference internal" href="#openpibo.vision_camera.Camera.imread" title="openpibo.vision_camera.Camera.imread"><code class="xref py py-meth docutils literal notranslate"><span class="pre">imread()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.read" title="openpibo.vision_camera.Camera.read"><code class="xref py py-meth docutils literal notranslate"><span class="pre">read()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.create_matte" title="openpibo.vision_camera.Camera.create_matte"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create_matte()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.imshow_to_ide" title="openpibo.vision_camera.Camera.imshow_to_ide"><code class="xref py py-meth docutils literal notranslate"><span class="pre">imshow_to_ide()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.resize" title="openpibo.vision_camera.Camera.resize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">resize()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.rotate" title="openpibo.vision_camera.Camera.rotate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">rotate()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.imwrite" title="openpibo.vision_camera.Camera.imwrite"><code class="xref py py-meth docutils literal notranslate"><span class="pre">imwrite()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.draw_bitmap" title="openpibo.vision_camera.Camera.draw_bitmap"><code class="xref py py-meth docutils literal notranslate"><span class="pre">draw_bitmap()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.rectangle" title="openpibo.vision_camera.Camera.rectangle"><code class="xref py py-meth docutils literal notranslate"><span class="pre">rectangle()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.circle" title="openpibo.vision_camera.Camera.circle"><code class="xref py py-meth docutils literal notranslate"><span class="pre">circle()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.line" title="openpibo.vision_camera.Camera.line"><code class="xref py py-meth docutils literal notranslate"><span class="pre">line()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.putTextPIL" title="openpibo.vision_camera.Camera.putTextPIL"><code class="xref py py-meth docutils literal notranslate"><span class="pre">putTextPIL()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.putText" title="openpibo.vision_camera.Camera.putText"><code class="xref py py-meth docutils literal notranslate"><span class="pre">putText()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.stylization" title="openpibo.vision_camera.Camera.stylization"><code class="xref py py-meth docutils literal notranslate"><span class="pre">stylization()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.detailEnhance" title="openpibo.vision_camera.Camera.detailEnhance"><code class="xref py py-meth docutils literal notranslate"><span class="pre">detailEnhance()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.pencilSketch" title="openpibo.vision_camera.Camera.pencilSketch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pencilSketch()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.edgePreservingFilter" title="openpibo.vision_camera.Camera.edgePreservingFilter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">edgePreservingFilter()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.flip" title="openpibo.vision_camera.Camera.flip"><code class="xref py py-meth docutils literal notranslate"><span class="pre">flip()</span></code></a></p>
+<blockquote>
+<div><p>Controls piBo’s camera.</p>
+<ul class="simple">
+<li><p>Provides basic camera functions such as taking, reading and writing pictures.</p></li>
+<li><p>Adds shapes/text to images.</p></li>
+<li><p>Transforms images.</p></li>
+</ul>
+<p>example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">openpibo.vision_camera</span><span class="w"> </span><span class="kn">import</span> <span class="n">Camera</span>
+
+<span class="n">camera</span> <span class="o">=</span> <span class="n">Camera</span><span class="p">()</span>
+<span class="c1"># 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
+</pre></div>
+</div>
+</div></blockquote>
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.release">
+<span class="sig-name descname"><span class="pre">release</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.release"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.release" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.imread">
+<span class="sig-name descname"><span class="pre">imread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.imread"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.imread" title="Link to this definition">¶</a></dt>
+<dd><p>Reads an image file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – Image file to use</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Image object of type <code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.read" title="Link to this definition">¶</a></dt>
+<dd><p>Captures an image with the camera. Changing the resolution may corrupt the image, so the default resolution is recommended.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Image object of type <code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.create_matte">
+<span class="sig-name descname"><span class="pre">create_matte</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(255,</span> <span class="pre">255,</span> <span class="pre">255)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.create_matte"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.create_matte" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.imshow">
+<span class="sig-name descname"><span class="pre">imshow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.imshow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.imshow" title="Link to this definition">¶</a></dt>
+<dd><p>Shows an image file in the Web IDE.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p></li>
+<li><p><strong>ratio</strong> (<em>float</em>) – Image resize ratio (network load when many are used at once)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.imshow_to_ide">
+<span class="sig-name descname"><span class="pre">imshow_to_ide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.imshow_to_ide"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.imshow_to_ide" title="Link to this definition">¶</a></dt>
+<dd><p>Shows an image file in the Web IDE.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p></li>
+<li><p><strong>ratio</strong> (<em>float</em>) – Image resize ratio (network load when many are used at once)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.resize">
+<span class="sig-name descname"><span class="pre">resize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.resize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.resize" title="Link to this definition">¶</a></dt>
+<dd><p>Resizes an OpenCV image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p></li>
+<li><p><strong>w</strong> (<em>int</em>) – Width of the resized image (in pixels).</p></li>
+<li><p><strong>h</strong> (<em>int</em>) – Height of the resized image (in pixels).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Resized <code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> image object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.rotate">
+<span class="sig-name descname"><span class="pre">rotate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.rotate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.rotate" title="Link to this definition">¶</a></dt>
+<dd><p>Rotates an image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p></li>
+<li><p><strong>degree</strong> (<em>int</em>) – Rotation angle</p></li>
+<li><p><strong>ratio</strong> (<em>float</em>) – Scale factor for shrinking or enlarging</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rotated <code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> image object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.imwrite">
+<span class="sig-name descname"><span class="pre">imwrite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.imwrite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.imwrite" title="Link to this definition">¶</a></dt>
+<dd><p>Saves an image to a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – Path of the file to save (jpg, png)</p></li>
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object to save</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.draw_bitmap">
+<span class="sig-name descname"><span class="pre">draw_bitmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(255,</span> <span class="pre">255,</span> <span class="pre">255)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.draw_bitmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.draw_bitmap" title="Link to this definition">¶</a></dt>
+<dd><p>Creates an image from bitmap (dot picture) data, enlarged to the camera image size.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>w</strong> (<em>int</em>) – Bitmap width</p></li>
+<li><p><strong>h</strong> (<em>int</em>) – Bitmap height</p></li>
+<li><p><strong>background</strong> (<em>tuple</em>) – Background color</p></li>
+<li><p><strong>pixel</strong> (<em>tuple</em>) – Bit color</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> image object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.rectangle">
+<span class="sig-name descname"><span class="pre">rectangle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(255,</span> <span class="pre">255,</span> <span class="pre">255)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tickness</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.rectangle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.rectangle" title="Link to this definition">¶</a></dt>
+<dd><p>Draws a rectangle on an image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p></li>
+<li><p><strong>p1</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – Top-left coordinates (x, y)</p></li>
+<li><p><strong>p2</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – Bottom-right coordinates (x, y)</p></li>
+<li><p><strong>colors</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>)</em>) – RGB value (r, g, b) or hex value ‘#ffffff’</p></li>
+<li><p><strong>tickness</strong> (<em>int</em>) – Thickness of the rectangle border (in pixels); -1 fills it</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.circle">
+<span class="sig-name descname"><span class="pre">circle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(255,</span> <span class="pre">255,</span> <span class="pre">255)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tickness</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.circle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.circle" title="Link to this definition">¶</a></dt>
+<dd><p>Draws a circle on an image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p></li>
+<li><p><strong>p</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – Top-left coordinates (x, y)</p></li>
+<li><p><strong>r</strong> (<em>int</em>) – Radius</p></li>
+<li><p><strong>colors</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>)</em>) – RGB value (r, g, b) or hex value ‘#ffffff’</p></li>
+<li><p><strong>tickness</strong> (<em>int</em>) – Thickness of the rectangle border (in pixels); -1 fills it</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.line">
+<span class="sig-name descname"><span class="pre">line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(255,</span> <span class="pre">255,</span> <span class="pre">255)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tickness</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.line"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.line" title="Link to this definition">¶</a></dt>
+<dd><p>Draws a straight line on an image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p></li>
+<li><p><strong>p1</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – Start coordinates (x, y)</p></li>
+<li><p><strong>p2</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – End coordinates (x, y)</p></li>
+<li><p><strong>colors</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>)</em>) – RGB value (r, g, b) or hex value ‘#ffffff’</p></li>
+<li><p><strong>tickness</strong> (<em>int</em>) – Line thickness (in pixels)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.putTextPIL">
+<span class="sig-name descname"><span class="pre">putTextPIL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(255,</span> <span class="pre">255,</span> <span class="pre">255)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.putTextPIL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.putTextPIL" title="Link to this definition">¶</a></dt>
+<dd><p>Writes text on an image. (Korean/English supported - uses pillow)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p></li>
+<li><p><strong>text</strong> (<em>str</em>) – Text to display</p></li>
+<li><p><strong>points</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – Top-left coordinates of the text block (x, y)</p></li>
+<li><p><strong>size</strong> (<em>int</em>) – Font size of the text</p></li>
+<li><p><strong>colors</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>)</em>) – Text color RGB value (b, g, r) or hex value ‘#ffffff’</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.putText">
+<span class="sig-name descname"><span class="pre">putText</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(255,</span> <span class="pre">255,</span> <span class="pre">255)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tickness</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.putText"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.putText" title="Link to this definition">¶</a></dt>
+<dd><p>Writes text on an image. (English only)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p></li>
+<li><p><strong>text</strong> (<em>str</em>) – Text to display</p></li>
+<li><p><strong>points</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – Bottom-left coordinates of the text block (x, y)</p></li>
+<li><p><strong>size</strong> (<em>int</em>) – Font size of the text</p></li>
+<li><p><strong>colors</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>)</em>) – Text color RGB value (r, g, b) or hex value ‘#ffffff’</p></li>
+<li><p><strong>tickness</strong> (<em>int</em>) – Text thickness</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.stylization">
+<span class="sig-name descname"><span class="pre">stylization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.stylization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.stylization" title="Link to this definition">¶</a></dt>
+<dd><p>Converts to a cartoon image. (opencv api) low speed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p></li>
+<li><p><strong>sigma_s</strong> (<em>float</em>) – Degree of blur preservation of the image (1-200)</p></li>
+<li><p><strong>sigma_r</strong> (<em>float</em>) – Degree of edge application of the image (0-1)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> image object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.detailEnhance">
+<span class="sig-name descname"><span class="pre">detailEnhance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.detailEnhance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.detailEnhance" title="Link to this definition">¶</a></dt>
+<dd><p>Converts to a cartoon image. (opencv api)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p></li>
+<li><p><strong>sigma_s</strong> (<em>float</em>) – Degree of blur preservation of the image (1-200)</p></li>
+<li><p><strong>sigma_r</strong> (<em>float</em>) – Degree of edge application of the image (0-1)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> image object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.pencilSketch">
+<span class="sig-name descname"><span class="pre">pencilSketch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shade_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.018</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.pencilSketch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.pencilSketch" title="Link to this definition">¶</a></dt>
+<dd><p>Converts to a sketch image.</p>
+<p>example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">img</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">camera</span><span class="o">.</span><span class="n">sketchize</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p></li>
+<li><p><strong>sigma_s</strong> (<em>float</em>) – Degree of blur preservation of the image (1-200)</p></li>
+<li><p><strong>sigma_r</strong> (<em>float</em>) – Degree of edge application of the image (0-1)</p></li>
+<li><p><strong>shade_factor</strong> (<em>float</em>) – Brightness level of the image (0-0.1)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> image object / grayscale, bgr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.edgePreservingFilter">
+<span class="sig-name descname"><span class="pre">edgePreservingFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.edgePreservingFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.edgePreservingFilter" title="Link to this definition">¶</a></dt>
+<dd><p>Converts to a blurred image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p></li>
+<li><p><strong>flags</strong> (<em>int</em>) – Filter type 1 (RECURS_FILTER) or 2 (NORMCONV_FILTER)</p></li>
+<li><p><strong>sigma_s</strong> (<em>float</em>) – Degree of blur preservation of the image (1-200)</p></li>
+<li><p><strong>sigma_r</strong> (<em>float</em>) – Degree of edge application of the image (0-1)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> image object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.flip">
+<span class="sig-name descname"><span class="pre">flip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.flip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.flip" title="Link to this definition">¶</a></dt>
+<dd><p>Converts to a vertically/horizontally flipped image</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p></li>
+<li><p><strong>flags</strong> (<em>int</em>) – 0: vertical flip, 1: horizontal flip, -1: vertical and horizontal flip</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> image object</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="vision_detect.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">vision_detect · Object, QR, hand and pose recognition</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="speech.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">speech · Voice, speech recognition, chat</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2026 THEMAKER. All rights reserved. openpibo-python-0.9.4.0
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">vision_camera · Camera and images</a><ul>
+<li><a class="reference internal" href="#openpibo.vision_camera.Camera"><code class="docutils literal notranslate"><span class="pre">Camera</span></code></a><ul>
+<li><a class="reference internal" href="#openpibo.vision_camera.Camera.release"><code class="docutils literal notranslate"><span class="pre">Camera.release()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_camera.Camera.imread"><code class="docutils literal notranslate"><span class="pre">Camera.imread()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_camera.Camera.read"><code class="docutils literal notranslate"><span class="pre">Camera.read()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_camera.Camera.create_matte"><code class="docutils literal notranslate"><span class="pre">Camera.create_matte()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_camera.Camera.imshow"><code class="docutils literal notranslate"><span class="pre">Camera.imshow()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_camera.Camera.imshow_to_ide"><code class="docutils literal notranslate"><span class="pre">Camera.imshow_to_ide()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_camera.Camera.resize"><code class="docutils literal notranslate"><span class="pre">Camera.resize()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_camera.Camera.rotate"><code class="docutils literal notranslate"><span class="pre">Camera.rotate()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_camera.Camera.imwrite"><code class="docutils literal notranslate"><span class="pre">Camera.imwrite()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_camera.Camera.draw_bitmap"><code class="docutils literal notranslate"><span class="pre">Camera.draw_bitmap()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_camera.Camera.rectangle"><code class="docutils literal notranslate"><span class="pre">Camera.rectangle()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_camera.Camera.circle"><code class="docutils literal notranslate"><span class="pre">Camera.circle()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_camera.Camera.line"><code class="docutils literal notranslate"><span class="pre">Camera.line()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_camera.Camera.putTextPIL"><code class="docutils literal notranslate"><span class="pre">Camera.putTextPIL()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_camera.Camera.putText"><code class="docutils literal notranslate"><span class="pre">Camera.putText()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_camera.Camera.stylization"><code class="docutils literal notranslate"><span class="pre">Camera.stylization()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_camera.Camera.detailEnhance"><code class="docutils literal notranslate"><span class="pre">Camera.detailEnhance()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_camera.Camera.pencilSketch"><code class="docutils literal notranslate"><span class="pre">Camera.pencilSketch()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_camera.Camera.edgePreservingFilter"><code class="docutils literal notranslate"><span class="pre">Camera.edgePreservingFilter()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_camera.Camera.flip"><code class="docutils literal notranslate"><span class="pre">Camera.flip()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=94e857c3"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/langswitch.js?v=16e9f8e1"></script>
+    </body>
+</html>

@@ -125,3 +125,4 @@ html_theme_options = {
 html_static_path = ['_static']
 html_favicon = '_static/icon.png'
 html_css_files = ['mycss.css']
+html_js_files = ['langswitch.js']   # 한국어 ↔ English 전환 링크(build/html ↔ build/en)

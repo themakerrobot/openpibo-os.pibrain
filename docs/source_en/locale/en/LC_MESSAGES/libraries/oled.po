@@ -1,0 +1,126 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026 THEMAKER. All rights reserved. openpibo-python-0.9.4.0
+# This file is distributed under the same license as the OPENPIBO package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: OPENPIBO \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-30 23:52+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+msgid "oled · LCD screen"
+msgstr ""
+
+msgid "LCD 화면에 문자나 이미지를 출력합니다."
+msgstr "Displays text or images on the LCD screen."
+
+msgid "Class: :obj:`~openpibo.oled.Oled` :obj:`~openpibo.oled.OledByPiBrain`"
+msgstr ""
+
+msgid "Functions: :meth:`~openpibo.oled.Oled.show` :meth:`~openpibo.oled.Oled.clear` :meth:`~openpibo.oled.Oled.set_font` :meth:`~openpibo.oled.Oled.draw_text` :meth:`~openpibo.oled.Oled.draw_image` :meth:`~openpibo.oled.Oled.draw_data` :meth:`~openpibo.oled.Oled.draw_rectangle` :meth:`~openpibo.oled.Oled.draw_ellipse` :meth:`~openpibo.oled.Oled.draw_line` :meth:`~openpibo.oled.Oled.invert` :meth:`~openpibo.oled.Oled.imshow`"
+msgstr ""
+
+msgid "OLED or LCD를 사용합니다."
+msgstr "Uses the OLED or LCD."
+
+msgid "oled 화면 표시합니다."
+msgstr "Shows the oled screen."
+
+msgid "**이 메소드를 사용하지 않으면 그림을 그려도 oled 화면에 아무것도 출력되지 않습니다.**"
+msgstr "**If you do not use this method, nothing is shown on the oled screen even if you draw.**"
+
+msgid "oled 화면 지웁니다."
+msgstr "Clears the oled screen."
+
+msgid "Parameters"
+msgstr ""
+
+msgid "image 초기화 여부"
+msgstr "Whether to reset the image"
+
+msgid "oled 초기화 여부"
+msgstr "Whether to reset the oled"
+
+msgid "화면 표시 여부"
+msgstr "Whether to show on the screen"
+
+msgid "``draw_text`` 폰트와 글자 크기를 설정합니다."
+msgstr "Sets the font and text size for ``draw_text``."
+
+msgid "폰트 파일 경로 (ttf, otf)"
+msgstr "Font file path (ttf, otf)"
+
+msgid "폰트 사이즈"
+msgstr "Font size"
+
+msgid "문자 (기본 폰트 - 한/영/중/일 지원) 를 표시합니다."
+msgstr "Displays text (default font - supports Korean/English/Chinese/Japanese)."
+
+msgid "문자열 좌측상단 좌표 (x, y)"
+msgstr "Top-left coordinates of the text (x, y)"
+
+msgid "문자열 내용"
+msgstr "Text content"
+
+msgid "이미지 파일을 그립니다. **128x64** 크기의 **png** 확장자만 허용됩니다."
+msgstr "Draws an image file. Only **png** files of size **128x64** are allowed."
+
+msgid "그림파일 경로"
+msgstr "Image file path"
+
+msgid "이미지 데이터 (cv2)를 그립니다."
+msgstr "Draws image data (cv2)."
+
+msgid "이미지 객체"
+msgstr "Image object"
+
+msgid "직사각형을 그립니다."
+msgstr "Draws a rectangle."
+
+msgid "사각형의 좌측상단 좌표, 사각형의 우측하단 좌표 (x1, y1, x2, y2)"
+msgstr "Top-left and bottom-right coordinates of the rectangle (x1, y1, x2, y2)"
+
+msgid "채움 여부"
+msgstr "Whether to fill"
+
+msgid "타원을 그립니다."
+msgstr "Draws an ellipse."
+
+msgid "타원에 외접하는 직사각형의 좌측상단 좌표, 우측하단 좌표 (x1, y1, x2, y2)"
+msgstr "Top-left and bottom-right coordinates of the rectangle circumscribing the ellipse (x1, y1, x2, y2)"
+
+msgid "직선을 그립니다."
+msgstr "Draws a straight line."
+
+msgid "선의 시작 좌표, 선의 끝 좌표 (x1, y1, x2, y2)"
+msgstr "Start and end coordinates of the line (x1, y1, x2, y2)"
+
+msgid "화면을 반전합니다."
+msgstr "Inverts the screen."
+
+msgid "이미지 데이터(cv2)를 바로 OLED에 표시합니다."
+msgstr "Shows image data (cv2) directly on the OLED."
+
+msgid "Functions: :meth:`~openpibo.oled.OledByPiBrain.show` :meth:`~openpibo.oled.OledByPiBrain.clear` :meth:`~openpibo.oled.OledByPiBrain.set_font` :meth:`~openpibo.oled.OledByPiBrain.draw_text` :meth:`~openpibo.oled.OledByPiBrain.draw_image` :meth:`~openpibo.oled.OledByPiBrain.draw_data` :meth:`~openpibo.oled.OledByPiBrain.draw_rectangle` :meth:`~openpibo.oled.OledByPiBrain.draw_ellipse` :meth:`~openpibo.oled.OledByPiBrain.draw_line` :meth:`~openpibo.oled.OledByPiBrain.imshow`"
+msgstr ""
+
+msgid "문자 (기본 폰트 - 한/영/중/일 지원)를 표시합니다."
+msgstr "Displays text (default font - supports Korean/English/Chinese/Japanese)."
+
+msgid "이미지 파일를 그립니다."
+msgstr "Draws an image file."
+
+msgid "이미지 데이터(cv2)를 그립니다."
+msgstr "Draws image data (cv2)."
+

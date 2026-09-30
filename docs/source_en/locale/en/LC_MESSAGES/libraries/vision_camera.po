@@ -1,0 +1,222 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026 THEMAKER. All rights reserved. openpibo-python-0.9.4.0
+# This file is distributed under the same license as the OPENPIBO package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: OPENPIBO \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-30 23:52+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+msgid "vision_camera · Camera and images"
+msgstr ""
+
+msgid "카메라로 사진을 찍고 이미지를 편집합니다."
+msgstr "Takes pictures with the camera and edits images."
+
+msgid "Class: :obj:`~openpibo.vision_camera.Camera`"
+msgstr ""
+
+msgid "Functions: :meth:`~openpibo.vision_camera.Camera.imread` :meth:`~openpibo.vision_camera.Camera.read` :meth:`~openpibo.vision_camera.Camera.create_matte` :meth:`~openpibo.vision_camera.Camera.imshow_to_ide` :meth:`~openpibo.vision_camera.Camera.resize` :meth:`~openpibo.vision_camera.Camera.rotate` :meth:`~openpibo.vision_camera.Camera.imwrite` :meth:`~openpibo.vision_camera.Camera.draw_bitmap` :meth:`~openpibo.vision_camera.Camera.rectangle` :meth:`~openpibo.vision_camera.Camera.circle` :meth:`~openpibo.vision_camera.Camera.line` :meth:`~openpibo.vision_camera.Camera.putTextPIL` :meth:`~openpibo.vision_camera.Camera.putText` :meth:`~openpibo.vision_camera.Camera.stylization` :meth:`~openpibo.vision_camera.Camera.detailEnhance` :meth:`~openpibo.vision_camera.Camera.pencilSketch` :meth:`~openpibo.vision_camera.Camera.edgePreservingFilter` :meth:`~openpibo.vision_camera.Camera.flip`"
+msgstr ""
+
+msgid "파이보의 카메라를 제어합니다."
+msgstr "Controls piBo's camera."
+
+msgid "사진 촬영, 읽기, 쓰기 등 카메라 기본 기능을 사용할 수 있습니다."
+msgstr "Provides basic camera functions such as taking, reading and writing pictures."
+
+msgid "이미지에 도형/글자를 추가할 수 있습니다."
+msgstr "Adds shapes/text to images."
+
+msgid "이미지를 변환할 수 있습니다."
+msgstr "Transforms images."
+
+msgid "example::"
+msgstr ""
+
+msgid "이미지 파일을 읽습니다."
+msgstr "Reads an image file."
+
+msgid "Parameters"
+msgstr ""
+
+msgid "사용할 이미지 파일"
+msgstr "Image file to use"
+
+msgid "Returns"
+msgstr ""
+
+msgid "``numpy.ndarray`` 타입 이미지 객체"
+msgstr "Image object of type ``numpy.ndarray``"
+
+msgid "카메라를 통해 이미지를 촬영합니다. 해상도 변경 시 이미지가 깨질 수 있으므로, 기본 해상도를 권장합니다."
+msgstr "Captures an image with the camera. Changing the resolution may corrupt the image, so the default resolution is recommended."
+
+msgid "이미지 파일을 Web IDE에 출력합니다."
+msgstr "Shows an image file in the Web IDE."
+
+msgid "이미지 객체"
+msgstr "Image object"
+
+msgid "이미지 사이즈 변환 비율 (다수 동시 사용시, 네트워크 부하)"
+msgstr "Image resize ratio (network load when many are used at once)"
+
+msgid "Opencv 이미지의 크기를 변환합니다."
+msgstr "Resizes an OpenCV image."
+
+msgid "변환될 이미지의 가로 크기입니다. (픽셀 단위)"
+msgstr "Width of the resized image (in pixels)."
+
+msgid "변환될 이미지의 세로 크기입니다. (픽셀 단위)"
+msgstr "Height of the resized image (in pixels)."
+
+msgid "크기 변환 후의 ``numpy.ndarray`` 이미지 객체"
+msgstr "Resized ``numpy.ndarray`` image object"
+
+msgid "이미지를 회전시킵니다."
+msgstr "Rotates an image."
+
+msgid "회전할 각도"
+msgstr "Rotation angle"
+
+msgid "축소 또는 확대할 비율"
+msgstr "Scale factor for shrinking or enlarging"
+
+msgid "회전한 ``numpy.ndarray`` 이미지 객체"
+msgstr "Rotated ``numpy.ndarray`` image object"
+
+msgid "이미지를 파일로 저장합니다."
+msgstr "Saves an image to a file."
+
+msgid "저장할 파일 경로(jpg, png)"
+msgstr "Path of the file to save (jpg, png)"
+
+msgid "저장할 이미지 객체"
+msgstr "Image object to save"
+
+msgid "비트맵(점 그림) 데이터를 이미지로 만듭니다. 카메라 화면 크기로 키웁니다."
+msgstr "Creates an image from bitmap (dot picture) data, enlarged to the camera image size."
+
+msgid "bitmap 가로 길이"
+msgstr "Bitmap width"
+
+msgid "bitmap 세로 길이"
+msgstr "Bitmap height"
+
+msgid "배경 색상"
+msgstr "Background color"
+
+msgid "비트 색상"
+msgstr "Bit color"
+
+msgid "``numpy.ndarray`` 이미지 객체"
+msgstr "``numpy.ndarray`` image object"
+
+msgid "이미지에 직사각형을 그립니다."
+msgstr "Draws a rectangle on an image."
+
+msgid "좌측상단 좌표 (x, y)"
+msgstr "Top-left coordinates (x, y)"
+
+msgid "우측하단 좌표 (x, y)"
+msgstr "Bottom-right coordinates (x, y)"
+
+msgid "RGB 값 (r, g, b) or 16진수 값 '#ffffff'"
+msgstr "RGB value (r, g, b) or hex value '#ffffff'"
+
+msgid "사각형 모서리의 두께 (픽셀 단위) -1 은 채움"
+msgstr "Thickness of the rectangle border (in pixels); -1 fills it"
+
+msgid "이미지에 원을을 그립니다."
+msgstr "Draws a circle on an image."
+
+msgid "반지름"
+msgstr "Radius"
+
+msgid "사각형 모서리의 두께 (픽셀 단위) -1은 채움"
+msgstr "Thickness of the rectangle border (in pixels); -1 fills it"
+
+msgid "이미지에 직선을 그립니다."
+msgstr "Draws a straight line on an image."
+
+msgid "시작 좌표 (x, y)"
+msgstr "Start coordinates (x, y)"
+
+msgid "끝 좌표 (x, y)"
+msgstr "End coordinates (x, y)"
+
+msgid "선의 두께 (픽셀 단위)"
+msgstr "Line thickness (in pixels)"
+
+msgid "이미지에 문자를 입력합니다. (한/영 가능 - pillow 이용)"
+msgstr "Writes text on an image. (Korean/English supported - uses pillow)"
+
+msgid "표시할 문자열"
+msgstr "Text to display"
+
+msgid "텍스트 블록 좌측상단 좌표 (x, y)"
+msgstr "Top-left coordinates of the text block (x, y)"
+
+msgid "표시할 글자의 크기"
+msgstr "Font size of the text"
+
+msgid "글자 색깔 RGB 값 (b, g, r) or 16진수 값 '#ffffff'"
+msgstr "Text color RGB value (b, g, r) or hex value '#ffffff'"
+
+msgid "이미지에 문자를 입력합니다. (영어만 가능)"
+msgstr "Writes text on an image. (English only)"
+
+msgid "텍스트 블록 좌측하단 좌표 (x, y)"
+msgstr "Bottom-left coordinates of the text block (x, y)"
+
+msgid "글자 색깔 RGB 값 (r, g, b) or 16진수 값 '#ffffff'"
+msgstr "Text color RGB value (r, g, b) or hex value '#ffffff'"
+
+msgid "글자 두께"
+msgstr "Text thickness"
+
+msgid "만화 이미지로 변환합니다. (opencv api) low speed"
+msgstr "Converts to a cartoon image. (opencv api) low speed"
+
+msgid "이미지의 blur 보존 정도 (1-200)"
+msgstr "Degree of blur preservation of the image (1-200)"
+
+msgid "이미지의 Edge 적용 정도 (0-1)"
+msgstr "Degree of edge application of the image (0-1)"
+
+msgid "만화 이미지로 변환합니다. (opencv api)"
+msgstr "Converts to a cartoon image. (opencv api)"
+
+msgid "스케치 이미지로 변환합니다."
+msgstr "Converts to a sketch image."
+
+msgid "이미지의 밝기 정도 (0-0.1)"
+msgstr "Brightness level of the image (0-0.1)"
+
+msgid "``numpy.ndarray`` 이미지 객체 / grayscale, bgr"
+msgstr "``numpy.ndarray`` image object / grayscale, bgr"
+
+msgid "흐림 이미지로 변환합니다."
+msgstr "Converts to a blurred image."
+
+msgid "필터 종류 1 (RECURS_FILTER) or 2 (NORMCONV_FILTER)"
+msgstr "Filter type 1 (RECURS_FILTER) or 2 (NORMCONV_FILTER)"
+
+msgid "상하/좌우 대칭 이미지로 변환합니다"
+msgstr "Converts to a vertically/horizontally flipped image"
+
+msgid "0: 상하 대칭, 1: 좌우 대칭, -1: 상하/좌우 대칭"
+msgstr "0: vertical flip, 1: horizontal flip, -1: vertical and horizontal flip"
+

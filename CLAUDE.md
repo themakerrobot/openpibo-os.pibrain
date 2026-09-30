@@ -498,7 +498,7 @@ Pibo 와 같다. Teachable Machine 계열(`vision_load_tm` `vision_predict_tm`
   PiBrain 파일은 Pibo 교체 직전과 공백만 달랐다
 - PiBrain 에서 바꾼 것: 화면 문구의 이름(PiBrain), `ko2en.js` 1·2행과 언어 저장 키 `classifier_language`
   (`global` 델타 그대로)
-- 블록 `[분류기 모델 … 불러오기]`(260929 전엔 '이미지 모델 설정하기'): 폴더 `mymodel`, 이름 칸에 모델 이름(기본값 '모델 이름'). 라벨 칸은 261001v1 에 뺐다 — 예전 저장본은 불러올 때 걷어낸다(Pibo CLAUDE.md '분류기'). 파이썬 `CustomClassifier.load(model_path)` 도 인자 하나(`label_path` 뺌). 표시는 `cf.draw(img)`·`predict(img, draw=True)`, 블록 `vision_predict_cf_vis`(261001v2, Pibo 와 같음)
+- 블록 `[분류기 모델 … 불러오기]`(260929 전엔 '이미지 모델 설정하기'): 폴더 `mymodel`, 이름 칸에 모델 이름(기본값 '모델 이름'). 라벨 칸은 261001v1 에 뺐다 — 예전 저장본은 불러올 때 걷어낸다(Pibo CLAUDE.md '분류기'). 파이썬 `CustomClassifier.load(model_path)` 도 인자 하나(`label_path` 뺌). 표시는 `cf.draw(img)`·`predict(img, draw=True)`, 블록 `vision_predict_cf_vis`(261001v1, Pibo 와 같음)
   **예전 `model.keras` 는 못 읽는다**(불러오면 다시 학습하라는 오류). 의도한 호환 단절이다
 - 지운 것: `tf.min-3.11.0.js` · MobileNetV2 가중치 · `model.json` · `jszip` · `tfjs_to_keras.py`(`/convert`)
 - 사물 인식(`vision_detect`)은 260930 에 Pibo 의 onnxruntime 방식으로 바꿨다(위 '사물 인식' 참고)
@@ -510,7 +510,7 @@ Pibo 와 같다. Teachable Machine 계열(`vision_load_tm` `vision_predict_tm`
 mediapipe 0.10.18 · numpy 1.26.4). 특징 코사인 이미지 0.96~0.98 · 손 0.99 · 포즈 0.99 · 얼굴 0.83~0.93.
 **PiBrain 실기기로는 아직 안 봤다.**
 
-**docs 를 다시 빌드해야 한다** — `vision_classify` API(`CustomClassifier.load`)가 바뀌었다. 기기에서 `make clean html` ('docs' 절). 아직 안 했다.
+docs 는 `CustomClassifier.load` 변경 뒤 다시 빌드했다(261001, 'docs' 절 — 기기 밖에서 `docs/build.sh`).
 
 ### 도구 이름을 파이보와 맞춤 (260930)
 
@@ -667,6 +667,16 @@ grep -n "[가-힣]" ide/run_ide.py | grep -E "emit|JSONResponse"            # 0 
   `<img width=…>` 를 Sphinx 그림으로 바꿔 `_images` 로 복사한다. 표에 넣었더니 칸이 좁아 긴 블록 글자가 작아져서 표를 뺐다
 - 손으로 쓰는 페이지: `notes/piboMaker.md`(PiBrain 메이커 사용법, 캡처 `notes/images/*`), `notes/software.md`, `notes/hardware.md`
 - 확인은 autodoc 앵커로: `grep -c 'id="openpibo.speech.SpeechToText"' docs/build/html/libraries/speech.html`
+- **영문 도움말(261001)** — 한 리포(main)에서 한/영 두 벌을 같이 빌드한다: `docs/build/html`(한국어) · `docs/build/en`(영문). `global` 에도 같은 `docs/build` 가 간다(델타 아님)
+  - `docs/index.html` 이 `?lang=en` 이면 `build/en/`, 아니면 `build/html/` 로 보낸다. IDE [도움말] 은 `:8080/?lang=<IDE 언어>` 를 연다(`index.js` 의 `guide_bt`) —
+    영문판은 `blang='en'` 이라 처음부터 영문 도움말. 두 벌 모두 사이드바의 `English`/`한국어` 링크(`_static/langswitch.js`, 주소의 `/html/`↔`/en/`)로 서로 오간다
+  - 페이지(`index.rst`·`notes/*`·`libraries/*.rst` 제목)는 **`source_en/` 에 영문으로 따로** 있다. 한국어 페이지를 고치면 영문도 고칠 것.
+    `source_en/conf.py` 는 `source/conf.py` 를 exec 해 물려받고 언어·제목·번역 위치만 바꾼다. 영문 캡처는 `source_en/notes/images/`(영문 UI 로 찍는다), 하드웨어 사진은 한국어 쪽 것을 같이 쓴다
+  - 블록 가이드는 `gen_block_guide.py --lang=en` 이 영문 툴박스(`en.js`)로 그려 `source_en/blocks/` 에 쓴다(`build.sh` 가 주소를 받으면 한·영 둘 다). [수집] 분류에는 '국내판 전용' 안내가 붙는다
+  - **파이썬 API 설명(docstring)은 코드를 두고 `.po` 로 번역한다** — `source_en/locale/en/LC_MESSAGES/libraries/<모듈>.po`. docstring 을 고치면
+    `python3 docs/tools/update_po.py`(babel, Sphinx 와 같이 깔림)로 `.po` 를 맞추고 빈 `msgstr`·`#, fuzzy` 를 채울 것. 안 채우면 그 문단만 한국어로 나온다.
+    `build.sh` 가 끝에 빈 개수를 알려 준다. collect 의 지역·뉴스 분류 이름과 예시 결과처럼 **함수에 넘기거나 돌려받는 값이 한국어인 곳은 번역에서도 한국어로 둔다**
+  - `.po` 두 리포가 거의 같다(PiBrain 486 문장 중 파이보와 다른 건 제목 몇 줄). 한쪽을 고치면 다른 쪽도 같은 문장을 고칠 것
 
 ## Claude Code 웹 세션 제약
 

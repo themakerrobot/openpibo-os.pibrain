@@ -1,0 +1,141 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026 THEMAKER. All rights reserved. openpibo-python-0.9.4.0
+# This file is distributed under the same license as the OPENPIBO package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: OPENPIBO \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-30 23:52+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+msgid "vision_classify · Classifier models"
+msgstr ""
+
+msgid "분류기 화면에서 가르친 모델로 이미지를 분류합니다."
+msgstr "Classifies images with a model taught in the classifier screen."
+
+msgid "Class: :obj:`~openpibo.vision_classify.TeachableMachine` :obj:`~openpibo.vision_classify.CustomClassifier`"
+msgstr ""
+
+msgid "TensorFlow 를 쓰지 않습니다. 이미지 모델은 TFLite 런타임(LiteRT / tflite_runtime)으로, 손·얼굴·포즈 모델은 MediaPipe 로 돌립니다."
+msgstr "Does not use TensorFlow. Image models run on the TFLite runtime (LiteRT / tflite_runtime); hand, face and pose models run on MediaPipe."
+
+msgid "Functions: :meth:`~openpibo.vision_classify.TeachableMachine.load` :meth:`~openpibo.vision_classify.TeachableMachine.predict`"
+msgstr ""
+
+msgid "파이보의 카메라 Teachable Machine 기능을 사용합니다."
+msgstr "Uses the Teachable Machine feature with piBo's camera."
+
+msgid "``이미지 프로젝트`` 의 ``표준 이미지 모델`` 을 사용합니다."
+msgstr "Uses the ``Standard image model`` of an ``Image project``."
+
+msgid "``Teachable Machine`` 에서 학습한 모델을 적용하여 추론할 수 있습니다."
+msgstr "Applies a model trained in ``Teachable Machine`` for inference."
+
+msgid "학습한 모델은 ``Tensorflow Lite`` 형태로 다운로드 해주세요."
+msgstr "Download the trained model in ``Tensorflow Lite`` format."
+
+msgid "example::"
+msgstr ""
+
+msgid "Tflite 모델로 불러옵니다. (부동소수점/양자화) 모두 가능"
+msgstr "Loads a Tflite model. Both (floating point/quantized) are supported"
+
+msgid "Parameters"
+msgstr ""
+
+msgid "Teachable Machine의 모델파일"
+msgstr "Teachable Machine model file"
+
+msgid "Teachable Machine의 라벨파일"
+msgstr "Teachable Machine label file"
+
+msgid "Tflite 모델로 추론합니다."
+msgstr "Runs inference with the Tflite model."
+
+msgid "이미지 객체"
+msgstr "Image object"
+
+msgid "Returns"
+msgstr ""
+
+msgid "가장 높은 확률을 가진 클래스 명, 결과(raw 데이터)"
+msgstr "Class name with the highest probability, result (raw data)"
+
+msgid "Functions: :meth:`~openpibo.vision_classify.CustomClassifier.load` :meth:`~openpibo.vision_classify.CustomClassifier.predict` :meth:`~openpibo.vision_classify.CustomClassifier.draw`"
+msgstr ""
+
+msgid "파이보의 분류기(classifier) 화면에서 학습한 모델을 사용합니다."
+msgstr "Uses a model trained in piBo's classifier screen."
+
+msgid "이미지 · 손 · 얼굴 · 포즈 네 가지로 가르칠 수 있습니다."
+msgstr "You can teach four kinds: image · hand · face · pose."
+
+msgid "분류기 화면에서 저장하면 ``/home/pi/mymodel/<모델 이름>/`` 폴더가 생깁니다. 그 폴더 이름(또는 경로)을 ``load`` 에 넘기면 됩니다."
+msgstr "Saving in the classifier screen creates the folder ``/home/pi/mymodel/<model name>/``. Pass that folder name (or path) to ``load``."
+
+msgid "예전 분류기의 keras 모델(``model.keras``)은 더 이상 쓸 수 없습니다. 다시 학습해 저장하세요."
+msgstr "Keras models (``model.keras``) from the old classifier can no longer be used. Train and save again."
+
+msgid "분류기 화면에서 저장한 모델을 불러옵니다. 종류 이름은 모델 폴더 안에 들어 있습니다."
+msgstr "Loads a model saved in the classifier screen. The class names are stored in the model folder."
+
+msgid "모델 폴더 (``/home/pi/mymodel/<모델 이름>``) 또는 모델 이름"
+msgstr "Model folder (``/home/pi/mymodel/<model name>``) or model name"
+
+msgid "불러온 모델로 분류합니다."
+msgstr "Classifies with the loaded model."
+
+msgid "이미지 객체 (카메라 이미지, BGR)"
+msgstr "Image object (camera image, BGR)"
+
+msgid "가장 높은 확률이 이 값보다 낮으면 이름 대신 ``None`` 을 돌려줍니다 (0~1)"
+msgstr "If the highest probability is lower than this value, ``None`` is returned instead of the name (0~1)"
+
+msgid "``True`` 면 분류하면서 ``img`` 에 바로 그립니다(:meth:`draw` 와 같음). 손·포즈는 점과 뼈대, 얼굴은 점, 그리고 모든 모델은 종류 이름과 확률"
+msgstr "If ``True``, draws directly on ``img`` while classifying (same as :meth:`draw`). Points and skeleton for hand and pose, points for face, and the class name and probability for all models"
+
+msgid "``(종류 이름, 종류별 확률)``  손·얼굴·포즈 모델은 화면에 손·얼굴·몸이 안 보이면 ``(None, None)`` 을 돌려줍니다."
+msgstr "``(class name, per-class probabilities)``  Hand, face and pose models return ``(None, None)`` if no hand, face or body is visible in the image."
+
+msgid "``(종류 이름, 종류별 확률)``"
+msgstr "``(class name, per-class probabilities)``"
+
+msgid "손·얼굴·포즈 모델은 화면에 손·얼굴·몸이 안 보이면 ``(None, None)`` 을 돌려줍니다."
+msgstr "Hand, face and pose models return ``(None, None)`` if no hand, face or body is visible in the image."
+
+msgid "바로 전 :meth:`predict` 가 본 것을 이미지에 그립니다. ``img`` 를 바로 고치고 그대로 돌려줍니다."
+msgstr "Draws what the previous :meth:`predict` saw onto the image. Modifies ``img`` in place and returns it."
+
+msgid "손 — 손마다 점 21개와 뼈대 · 포즈 — 점 33개와 뼈대 · 얼굴 — 얼굴 점"
+msgstr "Hand — 21 points and skeleton per hand · Pose — 33 points and skeleton · Face — face points"
+
+msgid "``label=True`` 면 종류 이름과 확률도 씁니다(이미지 모델은 이것만 그립니다)"
+msgstr "If ``label=True``, also writes the class name and probability (image models draw only this)"
+
+msgid "손·얼굴·몸이 안 보였으면 아무것도 그리지 않습니다"
+msgstr "Draws nothing if no hand, face or body was visible"
+
+msgid ":meth:`predict` 에 넣었던 이미지(크기가 같아야 점이 제자리에 찍힌다)"
+msgstr "Image passed to :meth:`predict` (must be the same size so the points land in the right place)"
+
+msgid "종류 이름·확률을 쓸지"
+msgstr "Whether to write the class name and probability"
+
+msgid "``img``"
+msgstr ""
+
+msgid "불러온 모델을 내려놓습니다. (다른 모델을 ``load`` 하면 알아서 부릅니다)"
+msgstr "Unloads the loaded model. (Called automatically when you ``load`` another model)"
+

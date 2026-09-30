@@ -1,0 +1,160 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026 THEMAKER. All rights reserved. openpibo-python-0.9.4.0
+# This file is distributed under the same license as the OPENPIBO package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: OPENPIBO \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-30 23:52+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+msgid "collect · Wikipedia, weather, news (internet)"
+msgstr ""
+
+msgid "인터넷에서 **위키 검색 정보, 날씨 정보, 뉴스 정보** 를 가져올 수 있습니다."
+msgstr "Fetches **Wikipedia search results, weather information, and news** from the internet."
+
+msgid "Class: :obj:`~openpibo.collect.Wikipedia` :obj:`~openpibo.collect.Weather` :obj:`~openpibo.collect.News`"
+msgstr ""
+
+msgid "Functions: :meth:`~openpibo.collect.Wikipedia.search` :meth:`~openpibo.collect.Wikipedia.search_s`"
+msgstr ""
+
+msgid "위키백과에서 단어를 검색합니다."
+msgstr "Searches Wikipedia for a word."
+
+msgid "example::"
+msgstr ""
+
+msgid "위키백과에서 ``search_text`` 를 검색합니다."
+msgstr "Searches Wikipedia for ``search_text``."
+
+msgid "Parameters"
+msgstr ""
+
+msgid "위키백과에서의 검색어"
+msgstr "Search term for Wikipedia"
+
+msgid "Returns"
+msgstr ""
+
+#, python-brace-format
+msgid "내용을 dictionary 배열 형태로 반환합니다.  대부분의 경우 '0'번 항목에 개요를 표시하고, 검색된 내용이 없을 경우 None을 반환합니다.  example::      ['0':{         'title': '명칭',          'content': \"한국어 ‘강아지’는 ‘개’에 어린 짐승을 뜻하는 ‘아지’가 붙은 말이다...\"     }, ... ]     or     None"
+msgstr "Returns the content as an array of dictionaries.  In most cases item '0' holds the summary. Returns None if nothing is found.  example::      ['0':{         'title': '명칭',          'content': \"한국어 ‘강아지’는 ‘개’에 어린 짐승을 뜻하는 ‘아지’가 붙은 말이다...\"     }, ... ]     or     None"
+
+msgid "내용을 dictionary 배열 형태로 반환합니다."
+msgstr "Returns the content as an array of dictionaries."
+
+msgid "대부분의 경우 '0'번 항목에 개요를 표시하고, 검색된 내용이 없을 경우 None을 반환합니다."
+msgstr "In most cases item '0' holds the summary. Returns None if nothing is found."
+
+msgid "위키백과에서 ``search_text`` 를 검색합니다. (block 전용)"
+msgstr "Searches Wikipedia for ``search_text``. (for blocks only)"
+
+msgid "search 함수의 반환 값의 content만 추출한 리스트를 반환합니다.  대부분의 경우 '0'번 항목에 개요를 표시하고, 검색된 내용이 없을 경우 None을 반환합니다.  example::      [         \"한국어 ‘강아지’는 ‘개’에 어린 짐승을 뜻하는 ‘아지’가 붙은 말이다...\",         ...     ]     or     None"
+msgstr "Returns a list containing only the content of the search function's return value.  In most cases item '0' holds the summary. Returns None if nothing is found.  example::      [         \"한국어 ‘강아지’는 ‘개’에 어린 짐승을 뜻하는 ‘아지’가 붙은 말이다...\",         ...     ]     or     None"
+
+msgid "search 함수의 반환 값의 content만 추출한 리스트를 반환합니다."
+msgstr "Returns a list containing only the content of the search function's return value."
+
+msgid "Functions: :meth:`~openpibo.collect.Weather.search` :meth:`~openpibo.collect.Weather.search_s`"
+msgstr ""
+
+msgid "종합 예보와 오늘/내일/모레의 날씨 정보를 검색합니다."
+msgstr "Searches for the general forecast and the weather for today/tomorrow/the day after tomorrow."
+
+msgid "날씨 정보를 검색할 수 있는 지역입니다."
+msgstr "Regions for which weather information can be searched."
+
+msgid "해당 지역(```search_region```)의 날씨 정보(종합예보, 오늘/내일/모레 날씨)를 가져옵니다."
+msgstr "Gets the weather information (general forecast, weather for today/tomorrow/the day after tomorrow) for the given region (```search_region```)."
+
+msgid "검색 가능한 지역 (default: 전국)  검색할 수 있는 지역은 다음과 같습니다::      '전국', '서울', '인천', '경기', '부산', '울산', '경남', '대구', '경북',     '광주', '전남', '전북', '대전', '세종', '충남', '충북', '강원', '제주'"
+msgstr "Searchable region (default: 전국 (nationwide))  The searchable regions are::      '전국', '서울', '인천', '경기', '부산', '울산', '경남', '대구', '경북',     '광주', '전남', '전북', '대전', '세종', '충남', '충북', '강원', '제주'"
+
+msgid "검색 가능한 지역 (default: 전국)"
+msgstr "Searchable region (default: 전국 (nationwide))"
+
+msgid "검색할 수 있는 지역은 다음과 같습니다::"
+msgstr "The searchable regions are::"
+
+#, python-brace-format
+msgid "종합예보와 오늘/내일/모레의 날씨 및 최저/최고기온을 반환합니다.  example::      {         'forecast': '내일 경기남부 가끔 비, 내일까지 바람 약간 강, 낮과 밤의 기온차 큼'         'today':         {             'weather': '전국 대체로 흐림',             'minimum_temp': '15.3 ~ 21.6',             'highst_temp': '23.1 ~ 27.6'         }         'tomorrow':         {             'weather': '전국 대체로 흐림',             'minimum_temp': '15.3 ~ 21.6',              'highst_temp': '23.1 ~ 27.6'         }         'after_tomorrow':         {             'weather': '전국 대체로 흐림',             'minimum_temp': '15.3 ~ 21.6',             'highst_temp': '23.1 ~ 27.6'         }     }     or None"
+msgstr "Returns the general forecast and the weather and minimum/maximum temperatures for today/tomorrow/the day after tomorrow.  example::      {         'forecast': '내일 경기남부 가끔 비, 내일까지 바람 약간 강, 낮과 밤의 기온차 큼'         'today':         {             'weather': '전국 대체로 흐림',             'minimum_temp': '15.3 ~ 21.6',             'highst_temp': '23.1 ~ 27.6'         }         'tomorrow':         {             'weather': '전국 대체로 흐림',             'minimum_temp': '15.3 ~ 21.6',              'highst_temp': '23.1 ~ 27.6'         }         'after_tomorrow':         {             'weather': '전국 대체로 흐림',             'minimum_temp': '15.3 ~ 21.6',             'highst_temp': '23.1 ~ 27.6'         }     }     or None"
+
+msgid "종합예보와 오늘/내일/모레의 날씨 및 최저/최고기온을 반환합니다."
+msgstr "Returns the general forecast and the weather and minimum/maximum temperatures for today/tomorrow/the day after tomorrow."
+
+msgid "검색할 내용 (default: forecast)  검색할 내용은 다음과 같습니다::      'forecast', 'today', 'tomorrow', 'after_tomorrow'"
+msgstr "Item to search (default: forecast)  The searchable items are::      'forecast', 'today', 'tomorrow', 'after_tomorrow'"
+
+msgid "검색할 내용 (default: forecast)"
+msgstr "Item to search (default: forecast)"
+
+msgid "검색할 내용은 다음과 같습니다::"
+msgstr "The searchable items are::"
+
+msgid "검색할 내용 (default: weather)  검색할 내용은 다음과 같습니다::      'weather', 'minimum_temp', 'highst_temp'      search_type이 forecast일 경우, search_item은 무시합니다."
+msgstr "Item to search (default: weather)  The searchable items are::      'weather', 'minimum_temp', 'highst_temp'      If search_type is forecast, search_item is ignored."
+
+msgid "검색할 내용 (default: weather)"
+msgstr "Item to search (default: weather)"
+
+#, python-brace-format
+msgid "파라미터에 따라, 종합예보 혹은 오늘/내일/모레의 날씨, 최저기온, 최고기온을 반환합니다. example::      {         'forecast': '내일 경기남부 가끔 비, 내일까지 바람 약간 강, 낮과 밤의 기온차 큼'         'today':         {             'weather': '전국 대체로 흐림',             'minimum_temp': '15.3 ~ 21.6',             'highst_temp': '23.1 ~ 27.6'         }         'tomorrow':         {             'weather': '전국 대체로 흐림',             'minimum_temp': '15.3 ~ 21.6',              'highst_temp': '23.1 ~ 27.6'         }         'after_tomorrow':         {             'weather': '전국 대체로 흐림',             'minimum_temp': '15.3 ~ 21.6',             'highst_temp': '23.1 ~ 27.6'         }     }     or None"
+msgstr "Depending on the parameters, returns the general forecast or the weather, minimum temperature, or maximum temperature for today/tomorrow/the day after tomorrow. example::      {         'forecast': '내일 경기남부 가끔 비, 내일까지 바람 약간 강, 낮과 밤의 기온차 큼'         'today':         {             'weather': '전국 대체로 흐림',             'minimum_temp': '15.3 ~ 21.6',             'highst_temp': '23.1 ~ 27.6'         }         'tomorrow':         {             'weather': '전국 대체로 흐림',             'minimum_temp': '15.3 ~ 21.6',              'highst_temp': '23.1 ~ 27.6'         }         'after_tomorrow':         {             'weather': '전국 대체로 흐림',             'minimum_temp': '15.3 ~ 21.6',             'highst_temp': '23.1 ~ 27.6'         }     }     or None"
+
+msgid "파라미터에 따라, 종합예보 혹은 오늘/내일/모레의 날씨, 최저기온, 최고기온을 반환합니다. example::"
+msgstr "Depending on the parameters, returns the general forecast or the weather, minimum temperature, or maximum temperature for today/tomorrow/the day after tomorrow. example::"
+
+msgid "Functions: :meth:`~openpibo.collect.News.search` :meth:`~openpibo.collect.News.search_s`"
+msgstr ""
+
+msgid "JTBC 뉴스 RSS 서비스를 사용해 뉴스 자료를 가져옵니다."
+msgstr "Fetches news using the JTBC News RSS service."
+
+msgid "뉴스 정보를 검색할 수 있는 주제입니다."
+msgstr "Topics for which news can be searched."
+
+msgid "해당 주제(```search_topic```)에 맞는 뉴스를 가져옵니다."
+msgstr "Gets news for the given topic (```search_topic```)."
+
+msgid "검색 가능한 뉴스 주제 (default: 뉴스랭킹)  검색할 수 있는 주제는 다음과 같습니다::      '속보', '정치', '경제', '사회', '국제', '문화', '연예', '스포츠',     '풀영상', '뉴스랭킹', '뉴스룸', '아침&', '썰전 라이브', '정치부회의'"
+msgstr "Searchable news topic (default: 뉴스랭킹 (news ranking))  The searchable topics are::      '속보', '정치', '경제', '사회', '국제', '문화', '연예', '스포츠',     '풀영상', '뉴스랭킹', '뉴스룸', '아침&', '썰전 라이브', '정치부회의'"
+
+msgid "검색 가능한 뉴스 주제 (default: 뉴스랭킹)"
+msgstr "Searchable news topic (default: 뉴스랭킹 (news ranking))"
+
+msgid "검색할 수 있는 주제는 다음과 같습니다::"
+msgstr "The searchable topics are::"
+
+#, python-brace-format
+msgid "title, link, description, pubDate 요소가 있는 dictionary 배열입니다.  example::      [         {             'title': '또 소방차 막은 불법주차, 이번엔 가차없이 밀어버렸다',              'link': 'https://news.jtbc.joins.com/article/article.aspx?...',             'description': '2019년 4월 소방당국의 불법주정차 강경대응 훈련 모습...,             'pubDate': '2021.09.03'         },      ]     or None"
+msgstr "An array of dictionaries with title, link, description, and pubDate elements.  example::      [         {             'title': '또 소방차 막은 불법주차, 이번엔 가차없이 밀어버렸다',              'link': 'https://news.jtbc.joins.com/article/article.aspx?...',             'description': '2019년 4월 소방당국의 불법주정차 강경대응 훈련 모습...,             'pubDate': '2021.09.03'         },      ]     or None"
+
+msgid "title, link, description, pubDate 요소가 있는 dictionary 배열입니다."
+msgstr "An array of dictionaries with title, link, description, and pubDate elements."
+
+msgid "검색할 내용 (default: title)  검색할 내용은 다음과 같습니다::      'title', 'link', 'description'"
+msgstr "Item to search (default: title)  The searchable items are::      'title', 'link', 'description'"
+
+msgid "검색할 내용 (default: title)"
+msgstr "Item to search (default: title)"
+
+msgid "title, link, description 중 선택한 요소의 리스트  example::      [         '또 소방차 막은 불법주차, 이번엔 가차없이 밀어버렸다',         ...     ]     or None"
+msgstr "A list of the selected element (title, link, or description)  example::      [         '또 소방차 막은 불법주차, 이번엔 가차없이 밀어버렸다',         ...     ]     or None"
+
+msgid "title, link, description 중 선택한 요소의 리스트"
+msgstr "A list of the selected element (title, link, or description)"
+

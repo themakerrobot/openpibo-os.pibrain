@@ -1,0 +1,161 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026 THEMAKER. All rights reserved. openpibo-python-0.9.4.0
+# This file is distributed under the same license as the OPENPIBO package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: OPENPIBO \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-30 23:52+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+msgid "vision_detect · Object, QR, hand and pose recognition"
+msgstr ""
+
+msgid "사물·QR코드·포즈·손동작·마커를 인식합니다."
+msgstr "Detects objects, QR codes, poses, hand gestures and markers."
+
+msgid "Class: :meth:`~openpibo.vision_detect.putTextPIL` :obj:`~openpibo.vision_detect.Detect`"
+msgstr ""
+
+msgid "이미지에 문자를 입력합니다. (한/영 가능 - pillow 이용)- COPY"
+msgstr "Writes text on an image. (Korean/English supported - uses pillow)- COPY"
+
+msgid "Parameters"
+msgstr ""
+
+msgid "이미지 객체"
+msgstr "Image object"
+
+msgid "표시할 문자열"
+msgstr "Text to display"
+
+msgid "텍스트 블록 좌측상단 좌표 (x, y)"
+msgstr "Top-left coordinates of the text block (x, y)"
+
+msgid "표시할 글자의 크기"
+msgstr "Font size of the text"
+
+msgid "글자 색깔 RGB 값 (b, g, r) or 16진수 값 '#ffffff'"
+msgstr "Text color RGB value (b, g, r) or hex value '#ffffff'"
+
+msgid "Functions: :meth:`~openpibo.vision_detect.Detect.load_hand_gesture_model` :meth:`~openpibo.vision_detect.Detect.detect_object` :meth:`~openpibo.vision_detect.Detect.detect_qr` :meth:`~openpibo.vision_detect.Detect.detect_pose` :meth:`~openpibo.vision_detect.Detect.analyze_pose` :meth:`~openpibo.vision_detect.Detect.classify_image` :meth:`~openpibo.vision_detect.Detect.object_tracker_init` :meth:`~openpibo.vision_detect.Detect.track_object` :meth:`~openpibo.vision_detect.Detect.detect_marker` :meth:`~openpibo.vision_detect.Detect.detect_marker_vis`"
+msgstr ""
+
+msgid "인식과 관련된 다양한 기능을 사용할 수 있는 클래스입니다."
+msgstr "A class that provides various detection functions."
+
+msgid "80개 class 안에서의 객체 인식 (YOLO, onnxruntime)"
+msgstr "Object detection among 80 classes (YOLO, onnxruntime)"
+
+msgid "QR/바코드 인식 (pyzbar)"
+msgstr "QR/barcode detection (pyzbar)"
+
+msgid "Pose 인식"
+msgstr "Pose detection"
+
+msgid "이미지 분류"
+msgstr "Image classification"
+
+msgid "example::"
+msgstr ""
+
+msgid "손동작 인식 모델을 불러옵니다."
+msgstr "Loads a hand gesture recognition model."
+
+msgid "손동작 인식 모델 경로"
+msgstr "Path of the hand gesture recognition model"
+
+msgid "손동작을 인식합니다."
+msgstr "Recognizes hand gestures."
+
+msgid "Returns"
+msgstr ""
+
+msgid "모델에 따른 손동작 인식 결과"
+msgstr "Hand gesture recognition result depending on the model"
+
+msgid "손동작 인식 결과를 표시합니다."
+msgstr "Displays the hand gesture recognition result."
+
+msgid "손동작 인식 결과"
+msgstr "Hand gesture recognition result"
+
+msgid "인식 모델을 불러옵니다."
+msgstr "Loads a detection model."
+
+msgid "사물인식 모델 경로"
+msgstr "Path of the object detection model"
+
+msgid "사물 인식 결과를 표시합니다."
+msgstr "Displays the object detection result."
+
+msgid "사물 인식 결과"
+msgstr "Object detection result"
+
+msgid "이미지 안의 QR코드 및 바코드를 인식합니다."
+msgstr "Detects QR codes and barcodes in an image."
+
+#, python-brace-format
+msgid "``{\"data\": 내용, \"type\": 바코드 / QR코드, \"position\":(startX,startY,endX,endY)}``"
+msgstr "``{\"data\": content, \"type\": barcode / QR code, \"position\":(startX,startY,endX,endY)}``"
+
+msgid "QR/바코드 결과를 표시합니다."
+msgstr "Displays the QR/barcode result."
+
+msgid "QR 인식 결과"
+msgstr "QR detection result"
+
+msgid "이미지 안의 Pose를 인식합니다."
+msgstr "Detects poses in an image."
+
+msgid "``인식한 결과``"
+msgstr "``detection result``"
+
+msgid "포즈를 표시 합니다."
+msgstr "Displays the pose."
+
+msgid "포즈 데이터"
+msgstr "Pose data"
+
+msgid "detect_pose 함수의 결과 값을 분석합니다."
+msgstr "Analyzes the result of the detect_pose function."
+
+msgid "``인식한 포즈 리스트 ['left_hand_up', 'right_hand_up', 'clap']``"
+msgstr "``list of detected poses ['left_hand_up', 'right_hand_up', 'clap']``"
+
+msgid "이미지 안의 사물 트래커를 설정합니다."
+msgstr "Sets up an object tracker in an image."
+
+msgid "이미지 안의 사물 트래커를 갱신합니다."
+msgstr "Updates the object tracker in an image."
+
+msgid "x1,y1,x2,y2 업데이트 된 사물 위치"
+msgstr "x1,y1,x2,y2 updated object position"
+
+msgid "마커 결과를 표시합니다."
+msgstr "Displays the marker result."
+
+msgid "마커 결과"
+msgstr "Marker result"
+
+msgid "이미지 안의 마커를 인식합니다. # cv2.aruco.DICT_4X4_50"
+msgstr "Detects markers in an image. # cv2.aruco.DICT_4X4_50"
+
+#, python-brace-format
+msgid "``[{\"id\": 마커번호, \"center\":  }, ...]``"
+msgstr "``[{\"id\": marker number, \"center\":  }, ...]``"
+
+msgid "마커 결과과"
+msgstr "Marker result"
+
