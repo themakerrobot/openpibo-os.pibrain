@@ -537,7 +537,9 @@ mediapipe 0.10.18 · numpy 1.26.4). 특징 코사인 이미지 0.96~0.98 · 손 
   (`audio.py` 의 `amixer -c MAX98357A`). NeoPixel 이 GPIO12 PWM 을 쓰므로 아날로그 소리로 돌아갈 수도 없다.
   Pi 4 의 I2S(PCM) 는 GPIO18(BCLK)·19(LRCLK)·20(DIN)·21(DOUT) 한 벌이라 마이크(→GPIO20)와 앰프(GPIO21←)가
   **클럭 두 선을 같이 쓴다.** 마이크 overlay 를 하나 더 얹으면 I2S 컨트롤러를 두 overlay 가 서로 잡으려 한다 →
-  재생·녹음을 한 사운드카드로 묶는 overlay/asound 설정이 필요하다(앰프+I2S 마이크 조합인 `googlevoicehat-soundcard` 가 후보, **확인 필요**).
+  재생·녹음을 한 사운드카드로 묶어야 한다. **Pibo 가 이미 `dtoverlay=googlevoicehat-soundcard`(앰프+I2S 마이크 한 카드, `sndrpigooglevoi`)로
+  마이크를 읽는다**(260930 기기 확인. 재생만 `asound.conf` 에서 `Headphones` 로 돌린다). PiBrain 은 `dtoverlay=max98357a` 를 이것으로 바꾸는 게 1안 —
+  카드 이름이 `MAX98357A` → `sndrpigooglevoi` 로 바뀌므로 `audio.py` 의 `amixer -c MAX98357A` 와 PiBrain `asound.conf` 를 같이 고칠 것.
   클럭이 같으므로 재생과 녹음을 동시에 할 때 샘플레이트가 같아야 한다(dmix/dsnoop 고정 레이트 + `plug` 변환, **확인 필요**)
   - 핀: 코드가 쓰는 PiBrain 핀은 버튼 4/17/27/26, LED 12, LCD SPI0(8~11)+DC 23. I2S 18~21 과 겹치지 않는다.
     단 Pibo 마이크 보드에 버튼·LED 같은 다른 부품이 있으면 그 핀(특히 17)과 겹치는지 보드 회로도로 확인할 것
