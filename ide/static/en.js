@@ -751,6 +751,8 @@ Blockly.Msg["VISION_HAND_GESTURE_VIS_TOOLTIP"] = "Show hand gesture in the image
 Blockly.Msg["VISION_LOAD_CF"] = "%1 %2 Load classifier model %3 %4";
 Blockly.Msg["VISION_LOAD_CF_TOOLTIP"] = "Load a model you taught and saved in the Classifier. Folder mymodel, then the model name. (image, hand, face, pose)";
 Blockly.Msg["VISION_PREDICT_CF"] = "%1 %2 Classify %3 with classifier model";
+Blockly.Msg["VISION_PREDICT_CF_VIS"] = "%1 %2 Draw what the classifier saw on image %3";
+Blockly.Msg["VISION_PREDICT_CF_VIS_TOOLTIP"] = "Draws what the last [Classify with classifier model] saw on that image: points and bones for hand and pose, points for face, plus the class name and probability.";
 Blockly.Msg["VISION_PREDICT_CF_TOOLTIP"] = "Classify the image with the loaded classifier model and return the best matching name. Hand, face and pose models return empty text when no hand, face or body is in view.";
 
 Blockly.Msg["VISION_CARTOON"] = 'cartoon';

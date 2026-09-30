@@ -909,6 +909,14 @@ Blockly.Python.forBlock['vision_predict_cf'] = function(block) {
   // 손·얼굴·포즈 모델은 손·얼굴·몸이 안 보이면 None 이다. 블록에서는 빈 글자로(출력에 'None' 이 찍히지 않게)
   return [`(cf.predict(${img})[0] or '')`, Blockly.Python.ORDER_ATOMIC];
 }
+Blockly.Python.forBlock['vision_predict_cf_vis'] = function(block) {
+  Blockly.Python.definitions_['from_vision_import_CustomClassifier'] = 'from openpibo.vision_classify import CustomClassifier';
+  Blockly.Python.definitions_['assign_cf'] = 'cf = CustomClassifier()';
+
+  // 바로 전 [분류기 모델로 … 분류하기] 가 본 손·얼굴·몸 점과 종류 이름을 그 이미지에 그린다
+  const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
+  return `cf.draw(${img})\n`;
+}
 
 // Utils
 Blockly.Python.forBlock['utils_sleep'] = function(block) {

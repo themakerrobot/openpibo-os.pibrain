@@ -123,6 +123,7 @@ class CustomClassifier:
 Functions:
 :meth:`~openpibo.vision_classify.CustomClassifier.load`
 :meth:`~openpibo.vision_classify.CustomClassifier.predict`
+:meth:`~openpibo.vision_classify.CustomClassifier.draw`
 
   파이보의 분류기(classifier) 화면에서 학습한 모델을 사용합니다.
 
@@ -177,12 +178,18 @@ Functions:
       )
     elif self.source in LANDMARK_SOURCES:
       self.extractor = LandmarkExtractor(self.source, extractor, self.variant)
+      # draw() 가 쓰도록 마지막으로 찾은 손·얼굴·몸 점을 남긴다(teachlab 코드는 고치지 않고 detect 만 감싼다)
+      detect = self.extractor.detect
+      def _keep(rgb):
+        self._last_result = detect(rgb)
+        return self._last_result
+      self.extractor.detect = _keep
     else:
       raise Exception(f'"{self.source}" 모델은 파이보에서 쓸 수 없습니다. (이미지·손·얼굴·포즈만 가능)')
 
     self.folder = folder
 
-  def predict(self, img, threshold=0.0):
+  def predict(self, img, threshold=0.0, draw=False):
     """
     불러온 모델로 분류합니다.
 
@@ -198,6 +205,9 @@ Functions:
 
     :param float threshold: 가장 높은 확률이 이 값보다 낮으면 이름 대신 ``None`` 을 돌려줍니다 (0~1)
 
+    :param bool draw: ``True`` 면 분류하면서 ``img`` 에 바로 그립니다(:meth:`draw` 와 같음).
+      손·포즈는 점과 뼈대, 얼굴은 점, 그리고 모든 모델은 종류 이름과 확률
+
     :returns: ``(종류 이름, 종류별 확률)``
 
       손·얼굴·포즈 모델은 화면에 손·얼굴·몸이 안 보이면 ``(None, None)`` 을 돌려줍니다.
@@ -209,17 +219,95 @@ Functions:
       raise ValueError('"img" must be a valid OpenCV image (np.ndarray).')
 
     rgb = _as_stream_rgb(img)
+    self._last_result = None
     if self.source == 'image':
       vec = self.extractor.embed_rgb(rgb, flip=False)
     else:
       vec = self.extractor.vector(rgb)
     if vec is None:
+      self._last_label = None
+      if draw:
+        self.draw(img)
       return None, None
 
     probs = self.classifier.predict_proba(vec)
     best = int(np.argmax(probs))
     name = self.classes[best] if probs[best] >= threshold else None
+    self._last_label = (name, float(probs[best]))
+    if draw:
+      self.draw(img)
     return name, probs
+
+  def draw(self, img, label=True):
+    """
+    바로 전 :meth:`predict` 가 본 것을 이미지에 그립니다. ``img`` 를 바로 고치고 그대로 돌려줍니다.
+
+    * 손 — 손마다 점 21개와 뼈대 · 포즈 — 점 33개와 뼈대 · 얼굴 — 얼굴 점
+    * ``label=True`` 면 종류 이름과 확률도 씁니다(이미지 모델은 이것만 그립니다)
+    * 손·얼굴·몸이 안 보였으면 아무것도 그리지 않습니다
+
+    example::
+
+      img = cm.read()
+      name, probs = cf.predict(img)
+      cf.draw(img)
+      cm.imwrite('/home/pi/result.jpg', img)
+
+      name, probs = cf.predict(img, draw=True)   # 분류하면서 바로 그리기
+
+    :param numpy.ndarray img: :meth:`predict` 에 넣었던 이미지(크기가 같아야 점이 제자리에 찍힌다)
+
+    :param bool label: 종류 이름·확률을 쓸지
+
+    :returns: ``img``
+    """
+
+    if not isinstance(img, np.ndarray) or img.ndim != 3 or img.shape[2] != 3:
+      raise ValueError('"img" must be a color OpenCV image (np.ndarray, BGR).')
+    h, w = img.shape[:2]
+    t = max(1, int(round(min(h, w) / 240)))          # 선 굵기: 320x240 에서 1, 640x480 에서 2
+    res = getattr(self, '_last_result', None)
+    pts_all = []
+
+    def xy(p):
+      return (int(round(p.x * w)), int(round(p.y * h)))
+
+    def skeleton(pts, edges):
+      for a, b in edges:
+        if a < len(pts) and b < len(pts):
+          cv2.line(img, pts[a], pts[b], DRAW_LINE, t + 1, cv2.LINE_AA)
+      for pt in pts:
+        cv2.circle(img, pt, 2 * t + 1, DRAW_DOT, -1, cv2.LINE_AA)
+        cv2.circle(img, pt, 2 * t + 1, DRAW_LINE, 1, cv2.LINE_AA)
+
+    if res is not None and getattr(self, 'source', None) == 'hand':
+      for hand in (res.hand_landmarks or []):
+        pts = [xy(p) for p in hand]
+        skeleton(pts, HAND_EDGES)
+        pts_all += pts
+    elif res is not None and getattr(self, 'source', None) == 'pose':
+      for body in (res.pose_landmarks or [])[:1]:
+        pts = [xy(p) for p in body]
+        skeleton(pts, POSE_EDGES)
+        pts_all += pts
+    elif res is not None and getattr(self, 'source', None) == 'face':
+      for face in (res.face_landmarks or [])[:1]:
+        pts = [xy(p) for p in face]
+        for pt in pts:
+          cv2.circle(img, pt, max(1, t - 1), DRAW_DOT, -1, cv2.LINE_AA)
+        pts_all += pts
+
+    last = getattr(self, '_last_label', None)
+    if label and last is not None:
+      name, prob = last
+      text = f'{name if name is not None else "?"} {prob * 100:.0f}%'
+      if pts_all:                                     # 점들 왼쪽 위에, 화면 밖으로 나가지 않게
+        x = max(0, min(p[0] for p in pts_all))
+        y = max(0, min(p[1] for p in pts_all) - 14 * t - 12)
+      else:
+        x, y = 6 * t, 6 * t
+      _put_label(img, text, (x, y), 12 * t + 8)
+    return img
 
   def close(self):
     """
@@ -268,6 +356,36 @@ def _extractor_path(folder, spec, source):
       if os.path.isfile(p):
         return p
   raise FileNotFoundError(f'특징 뽑는 모델 파일을 찾지 못했습니다: {spec.get("file") or default}')
+
+
+# draw() 색(BGR) — 선은 흰색, 점은 IDE 주 동작 파랑(#2563eb)
+DRAW_LINE = (255, 255, 255)
+DRAW_DOT = (235, 99, 37)
+
+# MediaPipe 손(21점)·포즈(33점) 랜드마크 번호로 이은 뼈대
+HAND_EDGES = ((0, 1), (1, 2), (2, 3), (3, 4), (0, 5), (5, 6), (6, 7), (7, 8), (5, 9), (9, 10), (10, 11), (11, 12),
+              (9, 13), (13, 14), (14, 15), (15, 16), (13, 17), (0, 17), (17, 18), (18, 19), (19, 20))
+POSE_EDGES = ((0, 1), (1, 2), (2, 3), (3, 7), (0, 4), (4, 5), (5, 6), (6, 8), (9, 10), (11, 12), (11, 13), (13, 15),
+              (15, 17), (15, 19), (15, 21), (17, 19), (12, 14), (14, 16), (16, 18), (16, 20), (16, 22), (18, 20),
+              (11, 23), (12, 24), (23, 24), (23, 25), (24, 26), (25, 27), (26, 28), (27, 29), (28, 30), (29, 31),
+              (30, 32), (27, 31), (28, 32))
+
+
+def _put_label(img, text, xy, size):
+  """파랑 바탕에 흰 글자(한글 가능). 글꼴은 openpibo_models 의 KDL.ttf, 없으면 PIL 기본 글꼴"""
+  from PIL import Image, ImageDraw, ImageFont
+  try:
+    import openpibo_models
+    font = ImageFont.truetype(openpibo_models.filepath('KDL.ttf'), size)
+  except Exception:
+    font = ImageFont.load_default()
+  pil = Image.fromarray(np.ascontiguousarray(img[:, :, ::-1]))
+  d = ImageDraw.Draw(pil)
+  x0, y0, x1, y1 = d.textbbox(xy, text, font=font)
+  pad = max(2, size // 6)
+  d.rounded_rectangle((x0 - pad, y0 - pad, x1 + pad, y1 + pad), radius=pad, fill=(37, 99, 235))
+  d.text(xy, text, font=font, fill=(255, 255, 255))
+  img[:] = np.asarray(pil)[:, :, ::-1]
 
 
 def _as_stream_rgb(img):
