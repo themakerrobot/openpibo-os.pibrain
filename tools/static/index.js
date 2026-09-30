@@ -136,6 +136,7 @@ function toggleCamera() {
     document.getElementById('btn-capture').disabled  = true;
     document.getElementById('cam-ph').textContent    = t('cam_off_msg');
     document.getElementById('cam-wrap').style.display = 'none';
+    document.getElementById('cam-ph').style.display   = '';
   } else {
     fetch('/camera?d=on');
     camOn = true;
@@ -153,6 +154,7 @@ async function captureToWeb() {
   const url = URL.createObjectURL(await r.blob());
   document.getElementById('cam-img').src             = url;
   document.getElementById('cam-wrap').style.display  = 'block';
+  document.getElementById('cam-ph').style.display    = 'none';   // 안내 글과 사진이 옆으로 나란히 갈라져 보였다
   if (captureUrl) URL.revokeObjectURL(captureUrl);
   captureUrl = url;
 }
