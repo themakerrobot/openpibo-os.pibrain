@@ -58,7 +58,7 @@ PiBrain OS 리포. 기기의 `/home/pi/openpibo-os` 가 이 리포의 작업본�
 |---|---|---|---|
 | 시스템/네트워크 | `booting.service` | `system/booting.py` | 8080 |
 | IDE | `ide.service` | `ide/run_ide.py` | 80 |
-| Tools | `tools.service` | `tools/run_tools.py` | 50040 |
+| Tools | `tools.service` | `tools/run_tools.py` | 50000 (260930 전엔 50040) |
 | Classifier | `classify.service` | `classifier/run_classify.py` | 50010 |
 | Chat Bot | `llama-server.service` | (외부) | 50020 |
 | H/W 검수 | 없음 — IDE 가 subprocess 로 띄운다 | `test/test.py` | 50050 |
@@ -360,7 +360,7 @@ sudo raspi-config nonint get_wifi_country
 | `design/pibo-ui.css` `pibo-ui.js` `sync.sh` `README.md` `index.html` | Pibo `design/` (공용 키트) | 없음. **Pibo 쪽이 원본** — 거기서 고치고 `design/sync.sh ~/openpibo-os.pibrain` 으로 가져온다 |
 | `design/fonts/` (Pretendard 보통·굵게 두 벌, SIL OFL) | Pibo `design/fonts/` | 없음. 원본 배포판 파일 그대로 — 이유는 Pibo CLAUDE.md '다듬기'. **파일은 `ide/static/fonts/` 에만** 있고 도구·분류기 서버가 IDE(80) 로 넘긴다(`SharedFonts`, 260929) |
 | `ide/static/pibo-ui.*`, `tools/static/pibo-ui.*`, `classifier/static/pibo-ui.*`, `*/static/fonts/` | `design/sync.sh` 가 만든 사본 | 직접 고치지 말 것. `bash design/sync.sh --check` |
-| `ide/static/launch.html` | Pibo | 도구 포트 **50040**, 제목 |
+| `ide/static/launch.html` | Pibo | 제목·브랜드만(도구 포트는 260930 부터 Pibo 와 같은 50000) |
 | `ide/templates/index.html` (전 `index_v2.html`) | Pibo | 브랜드 `PiBrain`(fa-brain), 패널 탭 [PiBrain], **배터리 칸 없음**, `?ver` |
 | `ide/static/v2/ide.css` `ide.js` `vendor/toolbox-search.*` | Pibo | 주석의 탭 이름만 |
 | `ide/static/index.js` | Pibo 를 기준으로 | H/W 검수(50050, 4초 뒤 열기). `langFileVersion` 은 260929 부터 Pibo 와 같다(`ko.js`·`en.js` 가 같은 파일) |

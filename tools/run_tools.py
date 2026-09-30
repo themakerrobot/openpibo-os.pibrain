@@ -1,5 +1,5 @@
 """
-run_tools.py — Pibo Brain Tools Server (포트: 50040)
+run_tools.py — Pibo Brain Tools Server (포트: 50000, Pibo 도구와 같다)
 """
 
 import os
@@ -513,6 +513,6 @@ async def oled_reset():
 if __name__ == '__main__':
     import uvicorn
     parser = argparse.ArgumentParser()
-    parser.add_argument('--port', default=50040)
+    parser.add_argument('--port', default=50000)
     args = parser.parse_args()
     uvicorn.run('run_tools:app', host='0.0.0.0', port=int(args.port), access_log=False)

@@ -65,7 +65,7 @@ sudo systemctl daemon-reload
 systemctl cat tools.service                    # WorkingDirectory 가 .../tools
 systemctl is-enabled tools.service             # disabled 여야 한다
 sudo systemctl start tools.service && sleep 2
-curl -s -o /dev/null -w '%{http_code}\n' http://localhost:50040/   # 200
+curl -s -o /dev/null -w '%{http_code}\n' http://localhost:50000/   # 200 (260930 전엔 50040)
 sudo systemctl stop tools.service
 ```
 

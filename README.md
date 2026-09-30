@@ -7,7 +7,7 @@ piBo 와 화면·분류기·라이브러리를 같이 씁니다([openpibo-os.pib
 | 폴더 | 내용 | 포트 |
 |---|---|---|
 | `ide/` | 블록·파이썬 IDE (FastAPI + socket.io) | 80 |
-| `tools/` | 버튼·LED·카메라·음성·LCD 도구 | 50040 |
+| `tools/` | 버튼·LED·카메라·음성·LCD 도구 | 50000 |
 | `classifier/` | AI 분류기 — 이미지·손·얼굴·포즈 가르치기 | 50010 |
 | `openpibo/` | 파이썬 라이브러리 | — |
 | `system/` | 부팅·WiFi·핫스팟·UART 스크립트 | 8080 |
