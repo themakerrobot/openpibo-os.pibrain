@@ -180,7 +180,7 @@ span 이 날아가면 시리얼이 영영 안 돌아온다.
 남은 것:
 
 - `Speech.tts` 는 `voice="espeak"` 만. 다른 값은 raise.
-- `SpeechOnDevice` — 온디바이스 ONNX TTS(`m1`~`m5`/`f1`~`f5`) + faster-whisper STT.
+- `SpeechOnDevice` — 온디바이스 ONNX TTS(Supertonic 3, `m1`~`m5`/`f1`~`f5`). STT 는 없다(마이크가 없다). 예전에 적혀 있던 faster-whisper STT 는 코드에 없다(260930 확인).
 - `Dialog` 는 `start_llm`/`call_llm`/`stop_llm` 만. `call_llm` 은 localhost:50020.
 - `collect.py` — 위키·기상청·JTBC 등. 자사 서버가 아니라 그대로 둔다. 다만 **한국 전용이라
   `global` 에서는 툴박스에 안 나온다.**
@@ -411,17 +411,15 @@ Pibo 리포의 변경을 가져올 때 **항목마다 적용 여부를 먼저 �
 | 라즈베리파이 보드 | Pi 4 · CYW43455 | **동일.** 무선·regdom 관련은 그대로 적용된다 |
 | 예제 | Pibo 구성 | 구성이 다르다. `collect.json` 은 `main` 에 있고 `global` 에서만 뺀다 |
 
-라이브러리에서 **PiBrain 쪽이 더 새 것**인 부분이 있다 (`SpeechOnDevice` 의 whisper STT).
-Pibo 파일로 덮어쓰면 퇴행한다.
+라이브러리는 파일마다 Pibo 와 다를 수 있으니 통째로 덮어쓰지 말고 diff 를 보고 옮길 것.
 
 **사물 인식은 260930 에 Pibo 와 같은 방식이 됐다** — `vision_detect` 가 ultralytics 를 import 하지 않고
 `openpibo/modules/yolo_onnx.py`(Pibo 와 **같은 파일**, 같이 고칠 것)로 onnxruntime 만 써서 돈다. torch 도 안 올라온다.
 - 예전 `YOLO(...).predict(conf=0.5, iou=0.4, imgsz=320)` 와 **같은 값**: coco128 128장, 640×480 로 줄여서
   yolo11s(고정 320) · yolo26s(동적 · end2end) 셋 다 128/128(컨테이너)
 - 모델은 처음 `detect_object` 를 부를 때 올린다. 경로는 그대로 `/home/pi/.model/object/yolo11s.onnx`
-- 문서엔 'yolo26s' 라고 적혀 왔는데 코드는 늘 `yolo11s.onnx` 를 읽었다. **기기 파일이 어느 쪽인지 확인 필요** —
-  `python3 -c "import onnxruntime as o; print(o.InferenceSession('/home/pi/.model/object/yolo11s.onnx').get_modelmeta().custom_metadata_map['description'])"`.
-  어느 쪽이든 읽힌다
+- **모델은 yolo11s 로 통일(260930)** — Pibo 와 같은 `yolo11s.onnx`(320 고정 export). 예전 문서의 'yolo26s' 는 틀린 표기였다
+  (코드는 늘 `yolo11s.onnx` 를 읽었다). `/home/pi/.model` 은 Pibo 것을 그대로 넣는다 — IMAGE.md '모델 폴더'
 - 라이선스: 이 가중치들은 Ultralytics 배포물(AGPL-3.0). Pibo CLAUDE.md '라이선스' 참고
 
 ### PiBrain 전용 블록 — `device_pibrain_*`

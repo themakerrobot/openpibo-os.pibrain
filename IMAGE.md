@@ -131,6 +131,27 @@ AP(핫스팟)는 국가 설정과 무관하다. `hotspot.sh` 가 2.4GHz 채널 1
 - TensorFlow 를 지우는 건 **위 확인이 끝난 뒤에만.** 사물 인식(`vision_detect`)은 260930 부터 ultralytics·torch 를
   import 하지 않는다(onnxruntime). 코드 쪽에서는 `ultralytics`·`torch` 를 지워도 된다 — 다른 데서 쓰는지 `pip show` 로 한 번 볼 것
 
+### 모델 폴더 `/home/pi/.model` (260930~, 이미지당 1회)
+
+**Pibo 이미지의 `/home/pi/.model` 을 그대로 넣는다**(구성·파일별 sha256 은 그 폴더의 `VERSION`, 만드는 법은 Pibo IMAGE.md
+'파이썬 패키지 · 모델 폴더'). PiBrain 코드가 읽는 경로는 Pibo 의 부분집합이라 그대로 맞는다:
+`tts/assets/{onnx,voice_styles}` · `object/yolo11s.onnx` · `hand/*.task` · `face/{detection,age-gender,emotion,landmark}`.
+
+- `stt/`(약 230MB)는 PiBrain 이 안 쓴다(마이크 없음). 넣어 둬도 되고, 용량이 아까우면 지운 뒤 VERSION 을 다시 만든다
+- `object/NOTICE-yolo11s.txt`(AGPL-3.0 고지)가 같이 들어가야 한다
+- `llm/llm-model.gguf` 는 `llama-server.service` 가 읽는다. **유닛의 모델 경로가 이 파일인지 확인 필요**(유닛은 리포 밖)
+
+```bash
+PY=/home/pi/.pyenv/bin/python3
+cd /home/pi/.model
+sed -n '/^## sha256/,$p' VERSION | tail -n +2 | sha256sum -c --quiet && echo "VERSION 과 같음"
+$PY -c "import onnxruntime as o; m=o.InferenceSession('/home/pi/.model/object/yolo11s.onnx').get_modelmeta().custom_metadata_map; print(m['description'][:30], m['imgsz'])"
+#   Ultralytics YOLO11s model trai [320, 320]
+$PY -c "import numpy as np; from openpibo.vision_detect import Detect; print(Detect().detect_object(np.zeros((480,640,3),'uint8')))"
+#   []
+$PY -c "from openpibo.speech import SpeechOnDevice; SpeechOnDevice(); print('tts ok')"
+```
+
 ### H/W 검수
 
 카드를 뜨기 전에 기준 기기를 한 번 통과시킨다.
