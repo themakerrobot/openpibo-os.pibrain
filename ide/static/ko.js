@@ -752,6 +752,8 @@ Blockly.Msg["VISION_HAND_GESTURE_VIS_TOOLTIP"] = "이미지에서 손 동작을 
 Blockly.Msg["VISION_LOAD_CF"] = "%1 %2 분류기 모델 %3 %4 불러오기";
 Blockly.Msg["VISION_LOAD_CF_TOOLTIP"] = "분류기 화면에서 가르치고 저장한 모델을 불러옵니다. 폴더는 mymodel, 칸에 모델 이름을 적습니다. (이미지·손·얼굴·포즈)";
 Blockly.Msg["VISION_PREDICT_CF"] = "%1 %2 분류기 모델로 %3 분류하기";
+Blockly.Msg["VISION_PREDICT_CF_VIS"] = "%1 %2 이미지 %3 에 분류기가 본 것 표시하기";
+Blockly.Msg["VISION_PREDICT_CF_VIS_TOOLTIP"] = "바로 전에 [분류기 모델로 … 분류하기] 가 본 것을 그 이미지에 그립니다. 손·포즈는 점과 뼈대, 얼굴은 점, 그리고 종류 이름과 확률을 씁니다.";
 Blockly.Msg["VISION_PREDICT_CF_TOOLTIP"] = "불러온 분류기 모델로 이미지를 분류해 가장 알맞은 이름을 돌려줍니다. 손·얼굴·포즈 모델은 화면에 손·얼굴·몸이 안 보이면 빈 글자를 돌려줍니다.";
 
 Blockly.Msg["VISION_CARTOON"] = '만화';

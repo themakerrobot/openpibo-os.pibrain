@@ -80,8 +80,10 @@ from openpibo.vision_classify import CustomClassifier
 camera = Camera()
 cf = CustomClassifier()
 cf.load('과일')                      # /home/pi/mymodel/과일
-name, probs = cf.predict(camera.read())
+img = camera.read()
+name, probs = cf.predict(img, draw=True)   # 손·얼굴·몸 점과 종류 이름을 img 에 그린다
 print(name)
+camera.imwrite('/home/pi/result.jpg', img)
 ```
 
 ```{note}

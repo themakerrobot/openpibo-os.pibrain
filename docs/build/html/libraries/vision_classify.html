@@ -369,7 +369,8 @@
 <dd><p>기반 클래스: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Functions:
 <a class="reference internal" href="#openpibo.vision_classify.CustomClassifier.load" title="openpibo.vision_classify.CustomClassifier.load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load()</span></code></a>
-<a class="reference internal" href="#openpibo.vision_classify.CustomClassifier.predict" title="openpibo.vision_classify.CustomClassifier.predict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">predict()</span></code></a></p>
+<a class="reference internal" href="#openpibo.vision_classify.CustomClassifier.predict" title="openpibo.vision_classify.CustomClassifier.predict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">predict()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_classify.CustomClassifier.draw" title="openpibo.vision_classify.CustomClassifier.draw"><code class="xref py py-meth docutils literal notranslate"><span class="pre">draw()</span></code></a></p>
 <blockquote>
 <div><p>파이보의 분류기(classifier) 화면에서 학습한 모델을 사용합니다.</p>
 <ul class="simple">
@@ -404,7 +405,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.vision_classify.CustomClassifier.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_classify.html#CustomClassifier.predict"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_classify.CustomClassifier.predict" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_classify.html#CustomClassifier.predict"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_classify.CustomClassifier.predict" title="Link to this definition">¶</a></dt>
 <dd><p>불러온 모델로 분류합니다.</p>
 <p>example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cm</span> <span class="o">=</span> <span class="n">Camera</span><span class="p">()</span>
@@ -419,12 +420,45 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>img</strong> (<em>numpy.ndarray</em>) – 이미지 객체 (카메라 이미지, BGR)</p></li>
 <li><p><strong>threshold</strong> (<em>float</em>) – 가장 높은 확률이 이 값보다 낮으면 이름 대신 <code class="docutils literal notranslate"><span class="pre">None</span></code> 을 돌려줍니다 (0~1)</p></li>
+<li><p><strong>draw</strong> (<em>bool</em>) – <code class="docutils literal notranslate"><span class="pre">True</span></code> 면 분류하면서 <code class="docutils literal notranslate"><span class="pre">img</span></code> 에 바로 그립니다(<a class="reference internal" href="#openpibo.vision_classify.CustomClassifier.draw" title="openpibo.vision_classify.CustomClassifier.draw"><code class="xref py py-meth docutils literal notranslate"><span class="pre">draw()</span></code></a> 와 같음).
+손·포즈는 점과 뼈대, 얼굴은 점, 그리고 모든 모델은 종류 이름과 확률</p></li>
 </ul>
 </dd>
 <dt class="field-even">반환<span class="colon">:</span></dt>
 <dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">(종류</span> <span class="pre">이름,</span> <span class="pre">종류별</span> <span class="pre">확률)</span></code></p>
 <p>손·얼굴·포즈 모델은 화면에 손·얼굴·몸이 안 보이면 <code class="docutils literal notranslate"><span class="pre">(None,</span> <span class="pre">None)</span></code> 을 돌려줍니다.</p>
 </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_classify.CustomClassifier.draw">
+<span class="sig-name descname"><span class="pre">draw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_classify.html#CustomClassifier.draw"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_classify.CustomClassifier.draw" title="Link to this definition">¶</a></dt>
+<dd><p>바로 전 <a class="reference internal" href="#openpibo.vision_classify.CustomClassifier.predict" title="openpibo.vision_classify.CustomClassifier.predict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">predict()</span></code></a> 가 본 것을 이미지에 그립니다. <code class="docutils literal notranslate"><span class="pre">img</span></code> 를 바로 고치고 그대로 돌려줍니다.</p>
+<ul class="simple">
+<li><p>손 — 손마다 점 21개와 뼈대 · 포즈 — 점 33개와 뼈대 · 얼굴 — 얼굴 점</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">label=True</span></code> 면 종류 이름과 확률도 씁니다(이미지 모델은 이것만 그립니다)</p></li>
+<li><p>손·얼굴·몸이 안 보였으면 아무것도 그리지 않습니다</p></li>
+</ul>
+<p>example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">img</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">name</span><span class="p">,</span> <span class="n">probs</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">cf</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">cm</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="s1">'/home/pi/result.jpg'</span><span class="p">,</span> <span class="n">img</span><span class="p">)</span>
+
+<span class="n">name</span><span class="p">,</span> <span class="n">probs</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">draw</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>   <span class="c1"># 분류하면서 바로 그리기</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – <a class="reference internal" href="#openpibo.vision_classify.CustomClassifier.predict" title="openpibo.vision_classify.CustomClassifier.predict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">predict()</span></code></a> 에 넣었던 이미지(크기가 같아야 점이 제자리에 찍힌다)</p></li>
+<li><p><strong>label</strong> (<em>bool</em>) – 종류 이름·확률을 쓸지</p></li>
+</ul>
+</dd>
+<dt class="field-even">반환<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">img</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -503,6 +537,7 @@
 <li><a class="reference internal" href="#openpibo.vision_classify.CustomClassifier"><code class="docutils literal notranslate"><span class="pre">CustomClassifier</span></code></a><ul>
 <li><a class="reference internal" href="#openpibo.vision_classify.CustomClassifier.load"><code class="docutils literal notranslate"><span class="pre">CustomClassifier.load()</span></code></a></li>
 <li><a class="reference internal" href="#openpibo.vision_classify.CustomClassifier.predict"><code class="docutils literal notranslate"><span class="pre">CustomClassifier.predict()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_classify.CustomClassifier.draw"><code class="docutils literal notranslate"><span class="pre">CustomClassifier.draw()</span></code></a></li>
 <li><a class="reference internal" href="#openpibo.vision_classify.CustomClassifier.close"><code class="docutils literal notranslate"><span class="pre">CustomClassifier.close()</span></code></a></li>
 </ul>
 </li>

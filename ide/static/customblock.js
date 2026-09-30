@@ -2673,6 +2673,26 @@ Blockly.defineBlocksWithJsonArray(
       helpUrl: ''
     },
     {
+      type: 'vision_predict_cf_vis',
+      message0: '%{BKY_VISION_PREDICT_CF_VIS}',
+      "args0": [
+        {
+          "type": "field_image",
+          "src": "svg/object-group-solid.svg",
+          "width": 27,
+          "height": 27
+        },
+        {"type":"input_dummy"},
+        {"type": "input_value", "name": "img", "check":"Array"}
+      ],
+      nextStatement: true,
+      previousStatement: true,
+      inputsInline: true,
+      colour: color_type["recognition"],
+      tooltip: '%{BKY_VISION_PREDICT_CF_VIS_TOOLTIP}',
+      helpUrl: ''
+    },
+    {
       type: 'utils_sleep',
       message0: '%{BKY_UTILS_SLEEP}',
       args0:

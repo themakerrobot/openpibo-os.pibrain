@@ -2495,6 +2495,17 @@ let toolbox = (lang) => {
               }
             }
           },
+          {
+            "kind": "block",
+            "type": "vision_predict_cf_vis",
+            "inputs":{
+              "img":{
+                "shadow": {
+                  "type": "variables_get",
+                }
+              }
+            }
+          },
         ],
         "colour": color_type["recognition"],
         "cssConfig": {

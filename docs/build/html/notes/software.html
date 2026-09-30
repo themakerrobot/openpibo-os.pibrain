@@ -364,8 +364,10 @@
 <span class="n">camera</span> <span class="o">=</span> <span class="n">Camera</span><span class="p">()</span>
 <span class="n">cf</span> <span class="o">=</span> <span class="n">CustomClassifier</span><span class="p">()</span>
 <span class="n">cf</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'과일'</span><span class="p">)</span>                      <span class="c1"># /home/pi/mymodel/과일</span>
-<span class="n">name</span><span class="p">,</span> <span class="n">probs</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">camera</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">name</span><span class="p">,</span> <span class="n">probs</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">draw</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>   <span class="c1"># 손·얼굴·몸 점과 종류 이름을 img 에 그린다</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+<span class="n">camera</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="s1">'/home/pi/result.jpg'</span><span class="p">,</span> <span class="n">img</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="admonition note">
