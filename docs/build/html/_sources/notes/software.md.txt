@@ -1,56 +1,89 @@
 # 소프트웨어
 
-교육용 파이보와 **openpibo-python** 패키지에 대한 가이드를 제공합니다.
-[Github](https://github.com/themakerrobot)
+PiBrain 의 기능은 **openpibo** 파이썬 패키지로 씁니다(파이보와 같은 패키지이고, PiBrain 전용 클래스가 따로 있습니다). 블록도 이 패키지를 부르는 파이썬 코드로 바뀌어 실행됩니다
+([파이썬 코드] 버튼으로 볼 수 있습니다). 소스는 [GitHub](https://github.com/themakerrobot/openpibo-os.pibrain) 에 있습니다(AGPL-3.0).
 
-## python package 구성
-
-파이보의 다양한 기능을 사용할 수 있는 Class가 저장된 파일입니다.
+## 패키지 구성
 
 ```
 openpibo
-├── audio.py
-├── collect.py
-├── device.py
-├── motion.py
-├── oled.py
-├── speech.py
-├── vision_camera.py
-├── vision_face.py
-├── vision_detect.py
-└── vision_classify.py
+├── audio.py            소리 재생·멈춤·녹음
+├── collect.py          위키백과·날씨·뉴스 (인터넷 필요)
+├── device.py           LED·버튼 (PiBrain 은 DeviceByPiBrain)
+├── motion.py           모터·동작 (파이보용 — PiBrain 에는 모터가 없습니다)
+├── oled.py             LCD 화면 (PiBrain 은 OledByPiBrain)
+├── pibo_graphics.py    화면용 그림 도구
+├── speech.py           목소리 만들기(TTS)·대화(LLM)·음성 인식(STT, 마이크를 달면)
+├── usb_uart.py         USB 시리얼
+├── utils.py            그 밖의 도구
+├── vision_camera.py    카메라·이미지 편집
+├── vision_detect.py    사물·QR·포즈·손동작·마커 인식
+├── vision_face.py      얼굴 찾기·분석·학습
+└── vision_classify.py  분류기 화면에서 가르친 모델 불러오기
 ```
 
-세부 가이드는 좌측 **BLOCK** **PYTHON** 카테고리를 참조하세요.
+클래스·메소드 설명은 왼쪽 **PYTHON** 을 보세요.
 
-## python 코드 작성
-
-audio 라이브러리를 통해, openpibo 패키지를 사용하는 방법을 설명합니다.
+## 파이썬 코드 작성
 
 ```python
-from openpibo.<라이브러리 명> import <클래스 명>
+from openpibo.<라이브러리 이름> import <클래스 이름>
 
-<인스턴스 명> = <클래스 명>()
-<인스턴스 명>.<메소드명>(<인자>)
+<인스턴스 이름> = <클래스 이름>()
+<인스턴스 이름>.<메소드 이름>(<인자>)
 ```
 
-예) audio 라이브러리의 Audio 클래스의 함수를 사용하는 방법은 다음과 같습니다.
+예) 소리를 재생하고 멈춥니다.
 
 ```python
 from openpibo.audio import Audio
+import time
 
-pibo_audio = Audio()
-
-# play 메소드: 오디오 파일을 재생합니다.
-pibo_audio.play('/home/pi/openpibo_files/audio/test.mp3')
-
-# stop 메소드: 재생 중인 오디오 파일을 중지합니다.
-pibo_audio.stop()
-
-# mute 메소드: 음소거 모드로 전환합니다.
-pibo_audio.mute(True)
-
-# pibo_audio 는 Audio 클래스의 인스턴스
+audio = Audio()
+audio.play('/home/pi/openpibo-files/audio/system/opening.mp3', volume=80)
+time.sleep(3)
+audio.stop()
 ```
 
-좌측 **PYTHON** 탭을 참고하시기 바랍니다.
+예) PiBrain 안에서 목소리를 만들어 말합니다(인터넷 불필요, 한국어·영어 자동).
+
+```python
+from openpibo.speech import SpeechOnDevice
+from openpibo.audio import Audio
+
+tts = SpeechOnDevice()
+tts.tts('안녕하세요! 나는 파이브레인이에요.', filename='/home/pi/hello.wav', voice='f1')
+Audio().play('/home/pi/hello.wav', background=False)
+```
+
+예) LED 를 주황색으로 켜고 LCD 에 글자를 띄웁니다.
+
+```python
+from openpibo.device import DeviceByPiBrain
+from openpibo.oled import OledByPiBrain
+
+device = DeviceByPiBrain()
+device.led_on(255, 140, 0)          # 또는 led_on_s("#ff8c00")
+
+lcd = OledByPiBrain()
+lcd.set_font(size=24)
+lcd.draw_text((10, 10), '안녕하세요!')
+lcd.show()
+```
+
+예) 분류기 화면에서 저장한 모델로 카메라 화면을 분류합니다.
+
+```python
+from openpibo.vision_camera import Camera
+from openpibo.vision_classify import CustomClassifier
+
+camera = Camera()
+cf = CustomClassifier()
+cf.load('과일')                      # /home/pi/mymodel/과일
+name, probs = cf.predict(camera.read())
+print(name)
+```
+
+```{note}
+IDE 에서 실행한 코드는 PiBrain 안에서 **root** 권한으로 돕니다(카메라·GPIO 등 하드웨어를 쓰기 위해서입니다).
+```

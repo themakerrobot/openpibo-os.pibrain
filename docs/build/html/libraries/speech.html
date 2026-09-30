@@ -1,65 +1,224 @@
+<!doctype html>
+<html class="no-js" lang="ko" data-content_root="../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="색인" href="../genindex.html"><link rel="search" title="검색" href="../search.html"><link rel="next" title="vision_camera" href="vision_camera.html"><link rel="prev" title="pibo_graphics" href="pibo_graphics.html">
+        <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/libraries/speech.html">
+        <link rel="prefetch" href="../_static/icon.png" as="image">
+
+    <link rel="shortcut icon" href="../_static/icon.png"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+        <title>speech - PiBrain 도움말</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=8aae1f7e" />
+    
+    
 
 
-<!DOCTYPE html>
-<html class="writer-html5" lang="ko" data-content_root="../">
-<head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>speech &mdash; OPENPIBO 0.9.4.0 문서</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=f3e80786" />
-
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  --color-brand-primary: #2563eb;
+  --color-brand-content: #2563eb;
+  --color-brand-visited: #2563eb;
+  --font-stack: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-stack--headings: var(--font-stack);
   
-    <link rel="shortcut icon" href="../_static/icon.png"/>
-    <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/libraries/speech.html" />
-      <script src="../_static/jquery.js?v=5d32c60e"></script>
-      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=8ab793d1"></script>
-      <script src="../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-      <script src="../_static/copybutton.js?v=f281be69"></script>
-      <script src="../_static/translations.js?v=afa94a99"></script>
-    <script src="../_static/js/theme.js"></script>
-    <link rel="index" title="색인" href="../genindex.html" />
-    <link rel="search" title="검색" href="../search.html" />
-    <link rel="next" title="vision_camera" href="vision_camera.html" />
-    <link rel="prev" title="pibo_graphics" href="pibo_graphics.html" /> 
-</head>
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #fbc92d;
+  --color-brand-content: #fbc92d;
+  --color-brand-visited: #fbc92d;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #fbc92d;
+  --color-brand-content: #fbc92d;
+  --color-brand-visited: #fbc92d;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
 
-          
-          
-          <a href="../index.html" class="icon icon-home">
-            OPENPIBO
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Notes</span></p>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">PiBrain 도움말</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/icon.png" alt="Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">PiBrain 도움말</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="검색" name="q" aria-label="검색">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">시작하기</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../notes/piboMaker.html">파이보 메이커</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/piboMaker.html">PiBrain 메이커</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notes/software.html">소프트웨어</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notes/hardware.html">하드웨어</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Block</span></p>
+<p class="caption" role="heading"><span class="caption-text">블록 (BLOCK)</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../blocks/guide.html">블록코딩</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Python</span></p>
+<p class="caption" role="heading"><span class="caption-text">파이썬 (PYTHON)</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="audio.html">audio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="collect.html">collect</a></li>
@@ -68,23 +227,7 @@
 <li class="toctree-l1"><a class="reference internal" href="motion.html">motion</a></li>
 <li class="toctree-l1"><a class="reference internal" href="oled.html">oled</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pibo_graphics.html">pibo_graphics</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">speech</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#openpibo.speech.Speech"><code class="docutils literal notranslate"><span class="pre">Speech</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#openpibo.speech.Speech.tts"><code class="docutils literal notranslate"><span class="pre">Speech.tts()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#openpibo.speech.SpeechOnDevice"><code class="docutils literal notranslate"><span class="pre">SpeechOnDevice</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#openpibo.speech.SpeechOnDevice.tts"><code class="docutils literal notranslate"><span class="pre">SpeechOnDevice.tts()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#openpibo.speech.Dialog"><code class="docutils literal notranslate"><span class="pre">Dialog</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#openpibo.speech.Dialog.start_llm"><code class="docutils literal notranslate"><span class="pre">Dialog.start_llm()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#openpibo.speech.Dialog.call_llm"><code class="docutils literal notranslate"><span class="pre">Dialog.call_llm()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#openpibo.speech.Dialog.stop_llm"><code class="docutils literal notranslate"><span class="pre">Dialog.stop_llm()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">speech</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vision_camera.html">vision_camera</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vision_detect.html">vision_detect</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vision_face.html">vision_face</a></li>
@@ -92,49 +235,66 @@
 <li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
 </ul>
 
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">OPENPIBO</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">speech</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/libraries/speech.rst.txt" rel="nofollow"> View page source</a>
-      </li>
-  </ul>
-  <hr/>
 </div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <section id="module-openpibo.speech">
-<span id="speech"></span><h1>speech<a class="headerlink" href="#module-openpibo.speech" title="Link to this heading"></a></h1>
-<p>음성 합성(TTS)과 온디바이스 LLM 대화 기능을 제공합니다.</p>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../_sources/libraries/speech.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="module-openpibo.speech">
+<span id="speech"></span><h1>speech<a class="headerlink" href="#module-openpibo.speech" title="Link to this heading">¶</a></h1>
+<p>음성 합성(TTS)·음성 인식(STT)과 온디바이스 LLM 대화 기능을 제공합니다.</p>
+<p>PiBrain 은 아직 마이크가 없다. STT(<code class="docutils literal notranslate"><span class="pre">Speech.stt</span></code> · <code class="docutils literal notranslate"><span class="pre">SpeechToText</span></code>)는 Pibo 와 같은 마이크
+(2-mic HAT, <code class="docutils literal notranslate"><span class="pre">arecord</span> <span class="pre">-D</span> <span class="pre">plug:dmic_sv</span></code>)를 달 때를 위해 넣어 둔 것이고, 블록은 막혀 있다.</p>
 <p>Class:
 <a class="reference internal" href="#openpibo.speech.Speech" title="openpibo.speech.Speech"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Speech</span></code></a>
 <a class="reference internal" href="#openpibo.speech.SpeechOnDevice" title="openpibo.speech.SpeechOnDevice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SpeechOnDevice</span></code></a>
+<a class="reference internal" href="#openpibo.speech.SpeechToText" title="openpibo.speech.SpeechToText"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SpeechToText</span></code></a>
 <a class="reference internal" href="#openpibo.speech.Dialog" title="openpibo.speech.Dialog"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Dialog</span></code></a></p>
 <dl class="py class">
 <dt class="sig sig-object py" id="openpibo.speech.Speech">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openpibo.speech.</span></span><span class="sig-name descname"><span class="pre">Speech</span></span><a class="reference internal" href="../_modules/openpibo/speech.html#Speech"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.Speech" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">openpibo.speech.</span></span><span class="sig-name descname"><span class="pre">Speech</span></span><a class="reference internal" href="../_modules/openpibo/speech.html#Speech"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.Speech" title="Link to this definition">¶</a></dt>
 <dd><p>기반 클래스: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Functions:
-<a class="reference internal" href="#openpibo.speech.Speech.tts" title="openpibo.speech.Speech.tts"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tts()</span></code></a></p>
+<a class="reference internal" href="#openpibo.speech.Speech.tts" title="openpibo.speech.Speech.tts"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tts()</span></code></a>
+<a class="reference internal" href="#openpibo.speech.Speech.stt" title="openpibo.speech.Speech.stt"><code class="xref py py-meth docutils literal notranslate"><span class="pre">stt()</span></code></a></p>
 <blockquote>
 <div><ul class="simple">
 <li><p>TTS (Text to Speech)</p></li>
+<li><p>STT (Speech to Text) — 기기 안에서 처리합니다 (<a class="reference internal" href="#openpibo.speech.SpeechToText" title="openpibo.speech.SpeechToText"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SpeechToText</span></code></a>)</p></li>
 </ul>
 <p>example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">openpibo.speech</span> <span class="kn">import</span> <span class="n">Speech</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">openpibo.speech</span><span class="w"> </span><span class="kn">import</span> <span class="n">Speech</span>
 
 <span class="n">speech</span> <span class="o">=</span> <span class="n">Speech</span><span class="p">()</span>
 <span class="c1"># 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
@@ -143,14 +303,15 @@
 </div></blockquote>
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.speech.Speech.tts">
-<span class="sig-name descname"><span class="pre">tts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tts.wav'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voice</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'espeak'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ko'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Speech.tts"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.Speech.tts" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">tts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tts.wav'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voice</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'espeak'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ko'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Speech.tts"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.Speech.tts" title="Link to this definition">¶</a></dt>
 <dd><p>TTS(Text to Speech)</p>
 <p>Text(문자)를 Speech(말)로 변환하여 파일로 저장합니다.</p>
 <p>espeak 로 기기 안에서 처리합니다. 서버를 쓰던 목소리(main/boy/girl/man1/
-woman1)와 gtts 는 제거됐습니다. 자연스러운 음성이 필요하면
-<a class="reference internal" href="#openpibo.speech.SpeechOnDevice" title="openpibo.speech.SpeechOnDevice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SpeechOnDevice</span></code></a> 를 쓰세요 (온디바이스 ONNX 모델).</p>
+woman1)는 제거됐습니다. 자연스러운 음성이 필요하면
+<a class="reference internal" href="#openpibo.speech.SpeechOnDevice" title="openpibo.speech.SpeechOnDevice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SpeechOnDevice</span></code></a> 를 쓰세요 — 온디바이스 ONNX 모델이고
+<code class="docutils literal notranslate"><span class="pre">lang='na'</span></code> 로 언어를 자동 판별합니다.</p>
 <p>example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">speech</span><span class="o">.</span><span class="n">tts</span><span class="p">(</span><span class="s1">&#39;안녕하세요! 만나서 반가워요!&#39;</span><span class="p">,</span> <span class="s1">&#39;/home/pi/tts.wav&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">speech</span><span class="o">.</span><span class="n">tts</span><span class="p">(</span><span class="s1">'안녕하세요! 만나서 반가워요!'</span><span class="p">,</span> <span class="s1">'/home/pi/tts.wav'</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
@@ -165,11 +326,37 @@ woman1)와 gtts 는 제거됐습니다. 자연스러운 음성이 필요하면
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.speech.Speech.stt">
+<span class="sig-name descname"><span class="pre">stt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'stream.wav'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Speech.stt"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.Speech.stt" title="Link to this definition">¶</a></dt>
+<dd><p>STT(Speech to Text)</p>
+<p>파이보 마이크로 듣고, 말이 끝나면 글자로 바꿉니다. 기기 안에서 처리합니다
+(<a class="reference internal" href="#openpibo.speech.SpeechToText" title="openpibo.speech.SpeechToText"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SpeechToText</span></code></a>, 한국어·영어 자동 판별).</p>
+<p><code class="docutils literal notranslate"><span class="pre">timeout</span></code> 은 최대로 기다리는 시간입니다. 말이 끝나면(약 0.8초 조용하면) 그 전에 멈춥니다.
+처음 부를 때 모델을 올리느라 몇 초 더 걸립니다.</p>
+<p>example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="n">speech</span><span class="o">.</span><span class="n">stt</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – 들은 소리를 저장할 경로 (<code class="docutils literal notranslate"><span class="pre">wav</span></code>). <code class="docutils literal notranslate"><span class="pre">None</span></code> 이면 저장하지 않습니다</p></li>
+<li><p><strong>timeout</strong> (<em>int</em>) – 최대 녹음 시간(초)</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – 사용하지 않습니다 (예전 코드와 모양을 맞추려고 남겨 둔 인자입니다)</p></li>
+</ul>
+</dd>
+<dt class="field-even">반환<span class="colon">:</span></dt>
+<dd class="field-even"><p>인식된 문자열. 아무 말도 없으면 빈 문자열</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="openpibo.speech.SpeechOnDevice">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openpibo.speech.</span></span><span class="sig-name descname"><span class="pre">SpeechOnDevice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">onnx_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'/home/pi/.model/tts/assets/onnx'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voice_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'/home/pi/.model/tts/assets/voice_styles'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#SpeechOnDevice"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.SpeechOnDevice" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">openpibo.speech.</span></span><span class="sig-name descname"><span class="pre">SpeechOnDevice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">onnx_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'/home/pi/.model/tts/assets/onnx'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voice_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'/home/pi/.model/tts/assets/voice_styles'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#SpeechOnDevice"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.SpeechOnDevice" title="Link to this definition">¶</a></dt>
 <dd><p>기반 클래스: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Functions:
 <a class="reference internal" href="#openpibo.speech.SpeechOnDevice.tts" title="openpibo.speech.SpeechOnDevice.tts"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tts()</span></code></a></p>
@@ -178,7 +365,7 @@ woman1)와 gtts 는 제거됐습니다. 자연스러운 음성이 필요하면
 <li><p>TTS (Text to Speech)</p></li>
 </ul>
 <p>example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">openpibo.speech</span> <span class="kn">import</span> <span class="n">SpeechOnDevice</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">openpibo.speech</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpeechOnDevice</span>
 
 <span class="n">speech_od</span> <span class="o">=</span> <span class="n">SpeechOnDevice</span><span class="p">()</span>
 <span class="c1"># 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
@@ -187,11 +374,11 @@ woman1)와 gtts 는 제거됐습니다. 자연스러운 음성이 필요하면
 </div></blockquote>
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.speech.SpeechOnDevice.tts">
-<span class="sig-name descname"><span class="pre">tts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'tts.wav'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'m1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'na'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/openpibo/speech.html#SpeechOnDevice.tts"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.SpeechOnDevice.tts" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">tts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'tts.wav'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'m1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'na'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/openpibo/speech.html#SpeechOnDevice.tts"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.SpeechOnDevice.tts" title="Link to this definition">¶</a></dt>
 <dd><p>TTS(Text to Speech) — 텍스트를 음성 파일로 변환합니다.</p>
 <blockquote>
 <div><p>example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tts</span><span class="o">.</span><span class="n">tts</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s1">&#39;안녕하세요! 만나서 반가워요!&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;/home/pi/tts.wav&#39;</span><span class="p">,</span> <span class="n">voice</span><span class="o">=</span><span class="s1">&#39;m1&#39;</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s1">&#39;na&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tts</span><span class="o">.</span><span class="n">tts</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s1">'안녕하세요! 만나서 반가워요!'</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">'/home/pi/tts.wav'</span><span class="p">,</span> <span class="n">voice</span><span class="o">=</span><span class="s1">'m1'</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s1">'na'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div></blockquote>
@@ -213,8 +400,102 @@ woman1)와 gtts 는 제거됐습니다. 자연스러운 음성이 필요하면
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="openpibo.speech.SpeechToText">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">openpibo.speech.</span></span><span class="sig-name descname"><span class="pre">SpeechToText</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/home/pi/.model/stt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#SpeechToText"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.SpeechToText" title="Link to this definition">¶</a></dt>
+<dd><p>기반 클래스: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Functions:
+<a class="reference internal" href="#openpibo.speech.SpeechToText.listen" title="openpibo.speech.SpeechToText.listen"><code class="xref py py-meth docutils literal notranslate"><span class="pre">listen()</span></code></a>
+<a class="reference internal" href="#openpibo.speech.SpeechToText.transcribe" title="openpibo.speech.SpeechToText.transcribe"><code class="xref py py-meth docutils literal notranslate"><span class="pre">transcribe()</span></code></a>
+<a class="reference internal" href="#openpibo.speech.SpeechToText.transcribe_file" title="openpibo.speech.SpeechToText.transcribe_file"><code class="xref py py-meth docutils literal notranslate"><span class="pre">transcribe_file()</span></code></a></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>STT (Speech to Text) — 기기 안에서 처리합니다. 인터넷이 필요 없습니다</p></li>
+</ul>
+<p>모델은 SenseVoiceSmall int8(한국어·영어·중국어·일본어·광둥어, 언어 자동 판별)이고,
+말이 시작하고 끝나는 곳은 silero VAD 로 찾습니다. 둘 다 sherpa-onnx 로 돌립니다.
+모델 파일은 <code class="docutils literal notranslate"><span class="pre">/home/pi/.model/stt</span></code> (<code class="docutils literal notranslate"><span class="pre">model.int8.onnx</span></code> <code class="docutils literal notranslate"><span class="pre">tokens.txt</span></code> <code class="docutils literal notranslate"><span class="pre">silero_vad.onnx</span></code>).</p>
+<p>파이보(Pi 4, 2GB)에서 5초 말을 약 1.3초에 받아 적고, 모델을 올리면 약 240MB 를 씁니다.</p>
+<p>example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">openpibo.speech</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpeechToText</span>
+
+<span class="n">stt</span> <span class="o">=</span> <span class="n">SpeechToText</span><span class="p">()</span>
+<span class="c1"># 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
+</pre></div>
+</div>
+</div></blockquote>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="openpibo.speech.SpeechToText.SAMPLE_RATE">
+<span class="sig-name descname"><span class="pre">SAMPLE_RATE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16000</span></span><a class="headerlink" href="#openpibo.speech.SpeechToText.SAMPLE_RATE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.speech.SpeechToText.transcribe">
+<span class="sig-name descname"><span class="pre">transcribe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">audio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#SpeechToText.transcribe"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.SpeechToText.transcribe" title="Link to this definition">¶</a></dt>
+<dd><p>소리(숫자 배열)를 글자로 바꿉니다.</p>
+<p>25초보다 길면 말 단위로 잘라 받아 적고 이어 붙입니다(통째로 넣으면 글자가 뒤섞입니다).</p>
+<p>example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="n">stt</span><span class="o">.</span><span class="n">transcribe</span><span class="p">(</span><span class="n">audio</span><span class="p">,</span> <span class="mi">16000</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>audio</strong> (<em>numpy.ndarray</em>) – -1~1 사이 float 소리. 두 채널이면 평균을 냅니다</p></li>
+<li><p><strong>sample_rate</strong> (<em>int</em>) – 샘플레이트 (16000 이 아니어도 됩니다)</p></li>
+</ul>
+</dd>
+<dt class="field-even">반환<span class="colon">:</span></dt>
+<dd class="field-even"><p>인식된 문자열</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.speech.SpeechToText.transcribe_file">
+<span class="sig-name descname"><span class="pre">transcribe_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#SpeechToText.transcribe_file"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.SpeechToText.transcribe_file" title="Link to this definition">¶</a></dt>
+<dd><p>소리 파일을 글자로 바꿉니다.</p>
+<p>example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="n">stt</span><span class="o">.</span><span class="n">transcribe_file</span><span class="p">(</span><span class="s1">'/home/pi/myaudio/hello.wav'</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – 소리 파일 경로 (wav 등 soundfile 이 읽는 형식)</p>
+</dd>
+<dt class="field-even">반환<span class="colon">:</span></dt>
+<dd class="field-even"><p>인식된 문자열</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.speech.SpeechToText.listen">
+<span class="sig-name descname"><span class="pre">listen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_silence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#SpeechToText.listen"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.SpeechToText.listen" title="Link to this definition">¶</a></dt>
+<dd><p>파이보 마이크로 듣고, 말이 끝나면 글자로 바꿉니다.</p>
+<p>말이 끝나고 <code class="docutils literal notranslate"><span class="pre">end_silence</span></code> 초 동안 조용하면 멈춥니다. <code class="docutils literal notranslate"><span class="pre">timeout</span></code> 초가 지나면 말하는 중이어도 멈춥니다.</p>
+<p>example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="n">stt</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<em>int</em>) – 최대 녹음 시간(초)</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – 들은 소리를 저장할 경로 (<code class="docutils literal notranslate"><span class="pre">wav</span></code>, 16kHz 한 채널). <code class="docutils literal notranslate"><span class="pre">None</span></code> 이면 저장하지 않습니다</p></li>
+<li><p><strong>end_silence</strong> (<em>float</em>) – 말이 끝났다고 볼 조용한 시간(초)</p></li>
+</ul>
+</dd>
+<dt class="field-even">반환<span class="colon">:</span></dt>
+<dd class="field-even"><p>인식된 문자열. 아무 말도 없으면 빈 문자열</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="openpibo.speech.Dialog">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openpibo.speech.</span></span><span class="sig-name descname"><span class="pre">Dialog</span></span><a class="reference internal" href="../_modules/openpibo/speech.html#Dialog"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.Dialog" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">openpibo.speech.</span></span><span class="sig-name descname"><span class="pre">Dialog</span></span><a class="reference internal" href="../_modules/openpibo/speech.html#Dialog"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.Dialog" title="Link to this definition">¶</a></dt>
 <dd><p>기반 클래스: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Functions:
 <a class="reference internal" href="#openpibo.speech.Dialog.start_llm" title="openpibo.speech.Dialog.start_llm"><code class="xref py py-meth docutils literal notranslate"><span class="pre">start_llm()</span></code></a>
@@ -227,7 +508,7 @@ woman1)와 gtts 는 제거됐습니다. 자연스러운 음성이 필요하면
 제거했습니다. <code class="docutils literal notranslate"><span class="pre">dialog.csv</span></code> 가 한글 전용이고, 나머지는 자사 서버·Google 에
 의존했습니다.</p>
 <p>example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">openpibo.speech</span> <span class="kn">import</span> <span class="n">Dialog</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">openpibo.speech</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dialog</span>
 
 <span class="n">dialog</span> <span class="o">=</span> <span class="n">Dialog</span><span class="p">()</span>
 <span class="c1"># 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
@@ -236,7 +517,7 @@ woman1)와 gtts 는 제거됐습니다. 자연스러운 음성이 필요하면
 </div></blockquote>
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.speech.Dialog.start_llm">
-<span class="sig-name descname"><span class="pre">start_llm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50020</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Dialog.start_llm"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.Dialog.start_llm" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">start_llm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50020</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Dialog.start_llm"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.Dialog.start_llm" title="Link to this definition">¶</a></dt>
 <dd><p>LLM 서비스를 시작합니다. (Chat 모드)</p>
 <p>example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dialog</span><span class="o">.</span><span class="n">start_llm</span><span class="p">()</span>
@@ -246,7 +527,7 @@ woman1)와 gtts 는 제거됐습니다. 자연스러운 음성이 필요하면
 
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.speech.Dialog.call_llm">
-<span class="sig-name descname"><span class="pre">call_llm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tokens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Dialog.call_llm"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.Dialog.call_llm" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">call_llm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tokens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Dialog.call_llm"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.Dialog.call_llm" title="Link to this definition">¶</a></dt>
 <dd><p>LLM 서버(OpenAI 호환 Chat Completions API)를 호출합니다.</p>
 <dl class="simple">
 <dt>예시:</dt><dd><p>dialog.call_llm(prompt=”안녕하세요”, system_prompt=”너는 내 스마트한 비서야”)</p>
@@ -267,7 +548,7 @@ woman1)와 gtts 는 제거됐습니다. 자연스러운 음성이 필요하면
 
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.speech.Dialog.stop_llm">
-<span class="sig-name descname"><span class="pre">stop_llm</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Dialog.stop_llm"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.Dialog.stop_llm" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">stop_llm</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Dialog.stop_llm"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.Dialog.stop_llm" title="Link to this definition">¶</a></dt>
 <dd><p>LLM 서비스를 중지합니다.</p>
 <p>example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dialog</span><span class="o">.</span><span class="n">stop_llm</span><span class="p">()</span>
@@ -279,35 +560,101 @@ woman1)와 gtts 는 제거됐습니다. 자연스러운 음성이 필요하면
 
 </section>
 
-
-           </div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="vision_camera.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">vision_camera</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="pibo_graphics.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">pibo_graphics</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2026 THEMAKER. All rights reserved. openpibo-python-0.9.4.0
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="pibo_graphics.html" class="btn btn-neutral float-left" title="pibo_graphics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="vision_camera.html" class="btn btn-neutral float-right" title="vision_camera" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
     </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">speech</a><ul>
+<li><a class="reference internal" href="#openpibo.speech.Speech"><code class="docutils literal notranslate"><span class="pre">Speech</span></code></a><ul>
+<li><a class="reference internal" href="#openpibo.speech.Speech.tts"><code class="docutils literal notranslate"><span class="pre">Speech.tts()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.speech.Speech.stt"><code class="docutils literal notranslate"><span class="pre">Speech.stt()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#openpibo.speech.SpeechOnDevice"><code class="docutils literal notranslate"><span class="pre">SpeechOnDevice</span></code></a><ul>
+<li><a class="reference internal" href="#openpibo.speech.SpeechOnDevice.tts"><code class="docutils literal notranslate"><span class="pre">SpeechOnDevice.tts()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#openpibo.speech.SpeechToText"><code class="docutils literal notranslate"><span class="pre">SpeechToText</span></code></a><ul>
+<li><a class="reference internal" href="#openpibo.speech.SpeechToText.SAMPLE_RATE"><code class="docutils literal notranslate"><span class="pre">SpeechToText.SAMPLE_RATE</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.speech.SpeechToText.transcribe"><code class="docutils literal notranslate"><span class="pre">SpeechToText.transcribe()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.speech.SpeechToText.transcribe_file"><code class="docutils literal notranslate"><span class="pre">SpeechToText.transcribe_file()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.speech.SpeechToText.listen"><code class="docutils literal notranslate"><span class="pre">SpeechToText.listen()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#openpibo.speech.Dialog"><code class="docutils literal notranslate"><span class="pre">Dialog</span></code></a><ul>
+<li><a class="reference internal" href="#openpibo.speech.Dialog.start_llm"><code class="docutils literal notranslate"><span class="pre">Dialog.start_llm()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.speech.Dialog.call_llm"><code class="docutils literal notranslate"><span class="pre">Dialog.call_llm()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.speech.Dialog.stop_llm"><code class="docutils literal notranslate"><span class="pre">Dialog.stop_llm()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2025 THEMAKER. All rights reserved. openpibo-python-0.9.4.0.</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
+          </div>
         </div>
       </div>
-    </section>
+      
+      
+    </aside>
   </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
-
-</body>
+</div><script src="../_static/documentation_options.js?v=c2df7122"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/translations.js?v=afa94a99"></script>
+    </body>
 </html>

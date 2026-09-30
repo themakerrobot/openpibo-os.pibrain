@@ -187,7 +187,7 @@ Functions:
 
   def draw_bitmap(self, w, h, val, background=(255,255,255), pixel=(0,0,0)):
     """
-    비트맨 데이터를 이미지로 생성성합니다.
+    비트맵(점 그림) 데이터를 이미지로 만듭니다. 카메라 화면 크기로 키웁니다.
 
     :param int w: bitmap 가로 길이
     :param int h: bitmap 세로 길이

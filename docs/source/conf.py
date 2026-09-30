@@ -15,10 +15,20 @@ import sys
 sys.path.insert(0, os.path.abspath('../..'))
 from openpibo import __version__ as VERSION
 
+# 기기 밖(PC·컨테이너)에서도 빌드되게, 설치 안 된 하드웨어·모델 패키지만 autodoc 용 가짜로 바꾼다.
+# 기기에는 다 있으므로 기기 빌드 결과는 그대로다
+import importlib.util
+autodoc_mock_imports = [m for m in (
+    'bs4', 'serial', 'openpibo_models', 'openpibo_dlib_models', 'openpibo_detect_models',
+    'board', 'busio', 'digitalio', 'adafruit_ssd1306', 'adafruit_rgb_display',
+    'soundfile', 'picamera2', 'libcamera', 'dlib', 'openvino', 'rpi_ws281x', 'RPi', 'pyzbar',
+    'mediapipe', 'onnxruntime', 'tflite_runtime', 'sherpa_onnx', 'requests', 'cv2', 'spidev',
+) if importlib.util.find_spec(m) is None]
+
 # -- Project information -----------------------------------------------------
 
 project = 'OPENPIBO'
-copyright = f'2025 THEMAKER. All rights reserved. openpibo-python-{VERSION}'
+copyright = f'2026 THEMAKER. All rights reserved. openpibo-python-{VERSION}'
 author = 'Circulus'
 
 # The full version, including alpha/beta/rc tags
@@ -39,8 +49,9 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinx_copybutton',
-    'sphinx_rtd_theme'
 ]
+autosectionlabel_prefix_document = True   # 페이지마다 같은 제목(도구 등)이 있어도 겹치지 않게
+
 source_suffix = {
     '.rst': 'restructuredtext',
     '.txt': 'markdown',
@@ -68,7 +79,27 @@ exclude_patterns = []
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
+# Furo(MIT) — 밝게·어둡게는 브라우저 설정을 따른다. 색은 IDE 와 같게(노랑 포인트, 파랑 링크).
+# 외부 글꼴·CDN 을 쓰지 않아 기기(AP 모드, 인터넷 없음)에서도 그대로 보인다
+html_theme = 'furo'
+html_title = 'PiBrain 도움말'
+html_logo = '_static/icon.png'
+html_theme_options = {
+    'sidebar_hide_name': False,
+    'navigation_with_keys': True,
+    'light_css_variables': {
+        'color-brand-primary': '#2563eb',
+        'color-brand-content': '#2563eb',
+        'color-brand-visited': '#2563eb',
+        'font-stack': '"Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, -apple-system, "Segoe UI", sans-serif',
+        'font-stack--headings': 'var(--font-stack)',
+    },
+    'dark_css_variables': {
+        'color-brand-primary': '#fbc92d',
+        'color-brand-content': '#fbc92d',
+        'color-brand-visited': '#fbc92d',
+    },
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

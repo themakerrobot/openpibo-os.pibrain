@@ -651,16 +651,17 @@ grep -n "[가-힣]" ide/run_ide.py | grep -E "emit|JSONResponse"            # 0 
 - 확인: `python3 -c "import openpibo; print(openpibo.__file__)"` →
   `/home/pi/openpibo-os/openpibo/__init__.py`
 
-## docs
+## docs — 태그 전에 빌드 (260930)
 
-`docs/build` 가 리포에 커밋돼 있고 기기의 `booting.py` 가 서빙한다.
-**라이브러리를 고치면 docs 를 다시 빌드해야 한다.** 안 하면 지워진 API 를 안내하는 문서가 배포된다.
+`docs/build` 가 리포에 커밋돼 있고 기기의 `booting.py`(8080)가 IDE [도움말] 로 보여 준다.
+**라이브러리·블록을 고치고 빌드하지 않으면 옛 문서가 배포된다**(260916v4 빌드가 260930 까지 그대로였다). **태그 찍기 전에 한 번 돌린다.**
 
-- `make html` 은 doctree 캐시 때문에 `.rst` mtime 만 보고 모듈 변경을 놓친다. **`make clean html`.**
-- 빌드는 **기기에서** 한다 (mediapipe·dlib 등 의존성이 거기 있다).
-  `git format-patch` 로 뽑아 PC 에서 `git am`.
-- 검증은 grep 이 아니라 autodoc 앵커로:
-  `grep -c 'id="openpibo.speech.Speech.stt"' docs/build/html/libraries/speech.html` → 0
+- `bash docs/build.sh [http://<IDE 주소>/]` — clean 빌드 + 페이지마다 API 가 비지 않았는지 확인. IDE 주소를 주면 블록 가이드
+  (`docs/source/blocks/guide.md`)를 툴박스에서 다시 뽑는다(`docs/tools/gen_block_guide.py`, playwright 필요, 제품 이름은 원격 주소로 가른다)
+- **기기 밖(PC·컨테이너·웹 세션)에서 빌드한다.** `conf.py` 가 설치 안 된 하드웨어 패키지만 autodoc 용 가짜로 바꾼다. 파이썬은 `PY=`
+- 테마 Furo(MIT), `conf.py`·`mycss.css`·`build.sh`·`gen_block_guide.py` 는 **Pibo 와 같은 파일**(conf.py 는 `html_title`·`html_baseurl` 만 다르다)
+- 손으로 쓰는 페이지: `notes/piboMaker.md`(PiBrain 메이커 사용법, 캡처 `notes/images/*`), `notes/software.md`, `notes/hardware.md`
+- 확인은 autodoc 앵커로: `grep -c 'id="openpibo.speech.SpeechToText"' docs/build/html/libraries/speech.html`
 
 ## Claude Code 웹 세션 제약
 
