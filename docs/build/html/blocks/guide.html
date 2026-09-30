@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=108ee335" />
+    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=732e5e1f" />
     
     
 
@@ -299,9 +299,8 @@
 <strong>openpibo</strong> 파이썬 패키지와 이어진 블록이 있습니다. 블록 코드는 [파이썬 코드] 버튼으로 파이썬으로 볼 수 있습니다.</p>
 <div class="admonition note">
 <p class="admonition-title">참고</p>
-<p>이 페이지는 IDE 툴박스에서 자동으로 만들었습니다(<code class="docutils literal notranslate"><span class="pre">docs/tools/gen_block_guide.py</span></code>). 블록 모양의 <code class="docutils literal notranslate"><span class="pre">[</span> <span class="pre">▾]</span></code> 는 고르는 칸,
-<code class="docutils literal notranslate"><span class="pre">(</span> <span class="pre">)</span></code> 는 다른 블록이나 값을 끼우는 칸, <code class="docutils literal notranslate"><span class="pre">[</span> <span class="pre">]</span></code> 는 직접 적는 칸입니다. 모든 기능은 <strong>PiBrain 안에서</strong> 돌아가며 인터넷이 필요한 것은
-[수집] 분류뿐입니다.</p>
+<p>이 페이지는 IDE 툴박스에서 자동으로 만들었습니다(<code class="docutils literal notranslate"><span class="pre">docs/tools/gen_block_guide.py</span></code>). 블록 그림은 툴박스에서 꺼냈을 때의 기본값입니다.
+모든 기능은 <strong>PiBrain 안에서</strong> 돌아가며 인터넷이 필요한 것은 [수집] 분류뿐입니다.</p>
 </div>
 <section id="id2">
 <h2>블록 구성<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
@@ -332,417 +331,318 @@ PiBrain 전용 블록
 <h2>PiBrain 전용 블록<a class="headerlink" href="#pibrain" title="Link to this heading">¶</a></h2>
 <section id="id3">
 <h3>시작<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>블록</p></th>
-<th class="head"><p>설명</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>클릭했을때</p></td>
-<td><p>코드를 실행합니다.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
+<a class="blk reference internal image-reference" href="../_images/flag_event.png"><img alt="클릭했을때" class="blk" src="../_images/flag_event.png" width="151" />
+</a>
+<p>코드를 실행합니다.</p>
 </section>
 <section id="id4">
 <h3>소리<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>블록</p></th>
-<th class="head"><p>설명</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>오디오 [폴더 선택 ▾] [파일 선택 ▾] ([80]) 크기로 재생하기</p></td>
-<td><p>음악 파일을 골라서 원하는 소리 크기로 재생합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>오디오 [폴더 선택 ▾] ([audio]) . [mp3 ▾] ([80]) 크기로 재생하기</p></td>
-<td><p>음악 파일 이름을 적어서 소리를 재생합니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>오디오 멈추기</p></td>
-<td><p>재생 중인 소리를 멈춥니다.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
+<a class="blk reference internal image-reference" href="../_images/audio_play_dynamic.png"><img alt="오디오 [폴더 선택 ▾] [파일 선택 ▾] ([80]) 크기로 재생하기" class="blk" src="../_images/audio_play_dynamic.png" width="560" />
+</a>
+<p>음악 파일을 골라서 원하는 소리 크기로 재생합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/audio_play.png"><img alt="오디오 [폴더 선택 ▾] ([audio]) . [mp3 ▾] ([80]) 크기로 재생하기" class="blk" src="../_images/audio_play.png" width="679" />
+</a>
+<p>음악 파일 이름을 적어서 소리를 재생합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/audio_stop.png"><img alt="오디오 멈추기" class="blk" src="../_images/audio_stop.png" width="175" />
+</a>
+<p>재생 중인 소리를 멈춥니다.</p>
 </section>
 <section id="id5">
 <h3>수집<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>블록</p></th>
-<th class="head"><p>설명</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>위키피디아에서 ([로봇]) 찾아보기 ⟶ 값</p></td>
-<td><p>(인터넷 필요!) 위키피디아에서 입력한 내용을 찾아줍니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>[서울 ▾] 날씨 예보 가져오기 ⟶ 값</p></td>
-<td><p>(인터넷 필요!) 선택한 지역의 날씨 정보를 가져옵니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>[서울 ▾] 날씨의 [오늘 ▾] [예보 ▾] 찾아보기 ⟶ 값</p></td>
-<td><p>(인터넷 필요!) 선택한 지역의 특정 날씨 정보를 찾아줍니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>[속보 ▾] 뉴스에서 [제목 ▾] 찾아보기 ⟶ 값</p></td>
-<td><p>(인터넷 필요!) 뉴스에서 입력한 내용을 검색합니다.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
+<a class="blk reference internal image-reference" href="../_images/wikipedia_search.png"><img alt="위키피디아에서 ([로봇]) 찾아보기" class="blk" src="../_images/wikipedia_search.png" width="426" />
+</a>
+<p>(인터넷 필요!) 위키피디아에서 입력한 내용을 찾아줍니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/weather_forecast.png"><img alt="[서울 ▾] 날씨 예보 가져오기" class="blk" src="../_images/weather_forecast.png" width="329" />
+</a>
+<p>(인터넷 필요!) 선택한 지역의 날씨 정보를 가져옵니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/weather_search.png"><img alt="[서울 ▾] 날씨의 [오늘 ▾] [예보 ▾] 찾아보기" class="blk" src="../_images/weather_search.png" width="470" />
+</a>
+<p>(인터넷 필요!) 선택한 지역의 특정 날씨 정보를 찾아줍니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/news_search.png"><img alt="[속보 ▾] 뉴스에서 [제목 ▾] 찾아보기" class="blk" src="../_images/news_search.png" width="407" />
+</a>
+<p>(인터넷 필요!) 뉴스에서 입력한 내용을 검색합니다. <em>값을 돌려주는 블록</em></p>
 </section>
 <section id="id6">
 <h3>장치<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>블록</p></th>
-<th class="head"><p>설명</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>버튼 [SW1 ▾] 확인하기 ⟶ 값</p></td>
-<td><p>버튼이 눌렸는지 확인합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>RGB ([0]) ([0]) ([0]) 불빛 바꾸기</p></td>
-<td><p>불빛의 색을 변경합니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>색상 ([변수 ▾]) 불빛 바꾸기</p></td>
-<td><p>색상 변수를 사용해 불빛의 색을 변경합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>불빛 끄기</p></td>
-<td><p>불빛을 끕니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>[USB0 ▾] 연결하기</p></td>
-<td><p>USB 장치 연결합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>USB 장치에 (값) 보내기</p></td>
-<td><p>USB 장치에 메시지를 보냅니다</p></td>
-</tr>
-<tr class="row-even"><td><p>USB 연결을 끊기</p></td>
-<td><p>USB 연결 해제합니다.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
+<a class="blk reference internal image-reference" href="../_images/device_pibrain_button.png"><img alt="버튼 [SW1 ▾] 확인하기" class="blk" src="../_images/device_pibrain_button.png" width="271" />
+</a>
+<p>버튼이 눌렸는지 확인합니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/device_pibrain_led_on.png"><img alt="RGB ([0]) ([0]) ([0]) 불빛 바꾸기" class="blk" src="../_images/device_pibrain_led_on.png" width="353" />
+</a>
+<p>불빛의 색을 변경합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/device_pibrain_led_colour_on.png"><img alt="색상 ([변수 ▾]) 불빛 바꾸기" class="blk" src="../_images/device_pibrain_led_colour_on.png" width="290" />
+</a>
+<p>색상 변수를 사용해 불빛의 색을 변경합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/device_pibrain_led_off.png"><img alt="불빛 끄기" class="blk" src="../_images/device_pibrain_led_off.png" width="138" />
+</a>
+<p>불빛을 끕니다.</p>
+<a class="blk reference internal image-reference" href="../_images/device_pibrain_uart_init.png"><img alt="[USB0 ▾] 연결하기" class="blk" src="../_images/device_pibrain_uart_init.png" width="236" />
+</a>
+<p>USB 장치 연결합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/device_pibrain_uart_send.png"><img alt="USB 장치에 (값) 보내기" class="blk" src="../_images/device_pibrain_uart_send.png" width="318" />
+</a>
+<p>USB 장치에 메시지를 보냅니다</p>
+<a class="blk reference internal image-reference" href="../_images/device_pibrain_uart_close.png"><img alt="USB 연결을 끊기" class="blk" src="../_images/device_pibrain_uart_close.png" width="203" />
+</a>
+<p>USB 연결 해제합니다.</p>
 </section>
 <section id="id7">
 <h3>화면<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>블록</p></th>
-<th class="head"><p>설명</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>화면 글자 크기 ([30]) 설정하기</p></td>
-<td><p>화면에 보이는 글자 크기를 설정합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>좌표 ([0]) ([0]) ([안녕하세요]) 화면에 저장하기</p></td>
-<td><p>화면에 글자를 저장합니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>이미지 [폴더 선택 ▾] [파일 선택 ▾] 화면에 저장하기</p></td>
-<td><p>화면에 선택한 이미지를 저장합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>이미지 [폴더 선택 ▾] ([sample]) . [jpg ▾] 화면에 저장하기</p></td>
-<td><p>화면에 입력한 이미지를 저장합니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>이미지 ([변수 ▾]) 화면에 저장하기</p></td>
-<td><p>화면에 이미지 변수를 저장합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>좌표 ([0]) ([0]) , ([0]) ([0]) 네모 [채우기 ▾] 화면에 저장하기</p></td>
-<td><p>화면에 네모를 저장합니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>좌표 ([0]) ([0]) , ([0]) ([0]) 원 [채우기 ▾] 화면에 저장하기</p></td>
-<td><p>화면에 원을 저장합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>좌표 ([0]) ([0]) , ([0]) ([0]) 선 화면에 저장하기</p></td>
-<td><p>화면에 선을 저장합니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>화면 반전하기</p></td>
-<td><p>화면의 색을 반전합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>화면 표시하기</p></td>
-<td><p>화면에 저장된 내용을 표시합니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>화면 지우기</p></td>
-<td><p>화면을 초기화합니다.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
+<a class="blk reference internal image-reference" href="../_images/oled_set_font.png"><img alt="화면 글자 크기 ([30]) 설정하기" class="blk" src="../_images/oled_set_font.png" width="320" />
+</a>
+<p>화면에 보이는 글자 크기를 설정합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/oled_draw_text.png"><img alt="좌표 ([0]) ([0]) ([안녕하세요]) 화면에 저장하기" class="blk" src="../_images/oled_draw_text.png" width="516" />
+</a>
+<p>화면에 글자를 저장합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/oled_draw_image_dynamic.png"><img alt="이미지 [폴더 선택 ▾] [파일 선택 ▾] 화면에 저장하기" class="blk" src="../_images/oled_draw_image_dynamic.png" width="503" />
+</a>
+<p>화면에 선택한 이미지를 저장합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/oled_draw_image.png"><img alt="이미지 [폴더 선택 ▾] ([sample]) . [jpg ▾] 화면에 저장하기" class="blk" src="../_images/oled_draw_image.png" width="623" />
+</a>
+<p>화면에 입력한 이미지를 저장합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/oled_draw_data.png"><img alt="이미지 ([변수 ▾]) 화면에 저장하기" class="blk" src="../_images/oled_draw_data.png" width="346" />
+</a>
+<p>화면에 이미지 변수를 저장합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/oled_draw_rectangle.png"><img alt="좌표 ([0]) ([0]) , ([0]) ([0]) 네모 [채우기 ▾] 화면에 저장하기" class="blk" src="../_images/oled_draw_rectangle.png" width="592" />
+</a>
+<p>화면에 네모를 저장합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/oled_draw_ellipse.png"><img alt="좌표 ([0]) ([0]) , ([0]) ([0]) 원 [채우기 ▾] 화면에 저장하기" class="blk" src="../_images/oled_draw_ellipse.png" width="573" />
+</a>
+<p>화면에 원을 저장합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/oled_draw_line.png"><img alt="좌표 ([0]) ([0]) , ([0]) ([0]) 선 화면에 저장하기" class="blk" src="../_images/oled_draw_line.png" width="472" />
+</a>
+<p>화면에 선을 저장합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/oled_invert.png"><img alt="화면 반전하기" class="blk" src="../_images/oled_invert.png" width="175" />
+</a>
+<p>화면의 색을 반전합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/oled_show.png"><img alt="화면 표시하기" class="blk" src="../_images/oled_show.png" width="175" />
+</a>
+<p>화면에 저장된 내용을 표시합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/oled_clear.png"><img alt="화면 지우기" class="blk" src="../_images/oled_clear.png" width="157" />
+</a>
+<p>화면을 초기화합니다.</p>
 </section>
 <section id="id8">
 <h3>음성<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>블록</p></th>
-<th class="head"><p>설명</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>([안녕하세요]) 를 [남성 1 ▾] 목소리로 [폴더 선택 ▾] ([tts]) . [mp3 ▾] 에 저장하기(ondevice)</p></td>
-<td><p>입력한 글자를 파이보 안에서 목소리로 만들어 파일로 저장합니다. 한국어·영어는 자동으로 알아봅니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>([안녕하세요]) 를 [남성 1 ▾] 목소리 ([80]) 크기로 말하기(ondevice)</p></td>
-<td><p>입력한 글자를 파이보 안에서 목소리로 만들어 말합니다. 한국어·영어는 자동으로 알아봅니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>([안녕하세요]) 를 목소리 [폴더 선택 ▾] ([tts]) . [mp3 ▾] 에 저장하기(E-speak)</p></td>
-<td><p>입력한 글자를 espeak 기계 목소리로 파일에 저장합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>([안녕하세요]) 를 목소리 ([80]) 크기로 말하기(E-speak)</p></td>
-<td><p>입력한 글자를 espeak 기계 목소리로 말합니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>대화 서버 시작하기(LLM)</p></td>
-<td><p>대화 서버를 시작합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>([안녕하세요]) 대화하기, 역할 (값) (LLM) ⟶ 값</p></td>
-<td><p>대화 서버(LLM)에 글을 보내고 대답을 받습니다. 역할에는 파이보가 어떤 말투·역할로 대답할지 적습니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>대화 서버 종료하기(LLM)</p></td>
-<td><p>대화 서버를 끕니다.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
+<a class="blk reference internal image-reference" href="../_images/speech_otts.png"><img alt="([안녕하세요]) 를 [남성 1 ▾] 목소리로 [폴더 선택 ▾] ([tts]) . [mp3 ▾] 에 저장하기(ondevice)" class="blk" src="../_images/speech_otts.png" width="984" />
+</a>
+<p>입력한 글자를 파이보 안에서 목소리로 만들어 파일로 저장합니다. 한국어·영어는 자동으로 알아봅니다.</p>
+<a class="blk reference internal image-reference" href="../_images/speech_otts_play.png"><img alt="([안녕하세요]) 를 [남성 1 ▾] 목소리 ([80]) 크기로 말하기(ondevice)" class="blk" src="../_images/speech_otts_play.png" width="705" />
+</a>
+<p>입력한 글자를 파이보 안에서 목소리로 만들어 말합니다. 한국어·영어는 자동으로 알아봅니다.</p>
+<a class="blk reference internal image-reference" href="../_images/speech_etts.png"><img alt="([안녕하세요]) 를 목소리 [폴더 선택 ▾] ([tts]) . [mp3 ▾] 에 저장하기(E-speak)" class="blk" src="../_images/speech_etts.png" width="858" />
+</a>
+<p>입력한 글자를 espeak 기계 목소리로 파일에 저장합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/speech_etts_play.png"><img alt="([안녕하세요]) 를 목소리 ([80]) 크기로 말하기(E-speak)" class="blk" src="../_images/speech_etts_play.png" width="598" />
+</a>
+<p>입력한 글자를 espeak 기계 목소리로 말합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/speech_start_llm.png"><img alt="대화 서버 시작하기(LLM)" class="blk" src="../_images/speech_start_llm.png" width="273" />
+</a>
+<p>대화 서버를 시작합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/speech_call_llm.png"><img alt="([안녕하세요]) 대화하기, 역할 (값) (LLM)" class="blk" src="../_images/speech_call_llm.png" width="525" />
+</a>
+<p>대화 서버(LLM)에 글을 보내고 대답을 받습니다. 역할에는 파이보가 어떤 말투·역할로 대답할지 적습니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/speech_stop_llm.png"><img alt="대화 서버 종료하기(LLM)" class="blk" src="../_images/speech_stop_llm.png" width="273" />
+</a>
+<p>대화 서버를 끕니다.</p>
 </section>
 <section id="id9">
 <h3>시각<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>블록</p></th>
-<th class="head"><p>설명</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>사진 찍기 ⟶ 값</p></td>
-<td><p>카메라로 사진을 찍습니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>이미지 [폴더 선택 ▾] [파일 선택 ▾] 불러오기 ⟶ 값</p></td>
-<td><p>선택한 이미지 파일을 불러옵니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>이미지 [폴더 선택 ▾] ([image]) . [jpg ▾] 불러오기 ⟶ 값</p></td>
-<td><p>입력한 이미지 파일을 불러옵니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>이미지 색상 ([변수 ▾]) 매트 만들기 ⟶ 값</p></td>
-<td><p>고른 색으로 채운 빈 이미지를 만듭니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>이미지 ([변수 ▾]) ⏵ [폴더 선택 ▾] ([image]) . [jpg ▾] 에 저장하기</p></td>
-<td><p>이미지를 파일로 저장합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>이미지 ([변수 ▾]) IDE에 보여주기</p></td>
-<td><p>이미지 변수를 IDE에서 보여줍니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>이미지 ([변수 ▾]) OLED에 보여주기</p></td>
-<td><p>이미지 변수를 OLED에서 보여줍니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 좌표 ([0]) ([0]) , ([0]) ([0]) 색상 ([변수 ▾]) 굵기 ([2]) 네모 그리기</p></td>
-<td><p>이미지에 네모를 그립니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>이미지 ([변수 ▾]) 좌표 ([0]) ([0]) 반지름 ([0]) 색상 ([변수 ▾]) 굵기 ([2]) 원 그리기</p></td>
-<td><p>이미지에 동그라미를 그립니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 좌표 ([0]) ([0]) ⏵ ([0]) ([0]) 색상 ([변수 ▾]) 굵기 ([2]) 선 그리기</p></td>
-<td><p>이미지에 선을 그립니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>이미지 ([변수 ▾]) 좌표 ([0]) ([0]) 크기 ([30]) 색상 ([변수 ▾]) ([안녕하세요]) 표시하기</p></td>
-<td><p>이미지에 글자를 표시합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>이미지 ([변수 ▾]) [만화 ▾] 바꾸기 ⟶ 값</p></td>
-<td><p>이미지의 스타일을 바꿉니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>이미지 ([변수 ▾]) 가로 ([100]) 세로 ([100]) 크기 바꾸기 ⟶ 값</p></td>
-<td><p>이미지 크기를 바꿉니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>6×8 점 그림 ⟶ 값</p></td>
-<td><p>점을 눌러 그린 6×8 그림을 이미지로 만듭니다(카메라 화면 크기로 키움).</p></td>
-</tr>
-<tr class="row-even"><td><p>8×4 점 그림 ⟶ 값</p></td>
-<td><p>점을 눌러 그린 8×4 그림을 이미지로 만듭니다(카메라 화면 크기로 키움).</p></td>
-</tr>
-<tr class="row-odd"><td><p>8×8 점 그림 ⟶ 값</p></td>
-<td><p>점을 눌러 그린 8×8 그림을 이미지로 만듭니다(카메라 화면 크기로 키움).</p></td>
-</tr>
-</tbody>
-</table>
-</div>
+<a class="blk reference internal image-reference" href="../_images/vision_read.png"><img alt="사진 찍기" class="blk" src="../_images/vision_read.png" width="146" />
+</a>
+<p>카메라로 사진을 찍습니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/vision_imread_dynamic.png"><img alt="이미지 [폴더 선택 ▾] [파일 선택 ▾] 불러오기" class="blk" src="../_images/vision_imread_dynamic.png" width="450" />
+</a>
+<p>선택한 이미지 파일을 불러옵니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/vision_imread.png"><img alt="이미지 [폴더 선택 ▾] ([image]) . [jpg ▾] 불러오기" class="blk" src="../_images/vision_imread.png" width="560" />
+</a>
+<p>입력한 이미지 파일을 불러옵니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/vision_create_matte.png"><img alt="이미지 색상 ([변수 ▾]) 매트 만들기" class="blk" src="../_images/vision_create_matte.png" width="359" />
+</a>
+<p>고른 색으로 채운 빈 이미지를 만듭니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/vision_imwrite.png"><img alt="이미지 ([변수 ▾]) ⏵ [폴더 선택 ▾] ([image]) . [jpg ▾] 에 저장하기" class="blk" src="../_images/vision_imwrite.png" width="694" />
+</a>
+<p>이미지를 파일로 저장합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/vision_imshow_to_ide.png"><img alt="이미지 ([변수 ▾]) IDE에 보여주기" class="blk" src="../_images/vision_imshow_to_ide.png" width="341" />
+</a>
+<p>이미지 변수를 IDE에서 보여줍니다.</p>
+<a class="blk reference internal image-reference" href="../_images/vision_imshow_to_oled.png"><img alt="이미지 ([변수 ▾]) OLED에 보여주기" class="blk" src="../_images/vision_imshow_to_oled.png" width="362" />
+</a>
+<p>이미지 변수를 OLED에서 보여줍니다.</p>
+<a class="blk reference internal image-reference" href="../_images/vision_rectangle.png"><img alt="이미지 ([변수 ▾]) 좌표 ([0]) ([0]) , ([0]) ([0]) 색상 ([변수 ▾]) 굵기 ([2]) 네모 그리기" class="blk" src="../_images/vision_rectangle.png" width="791" />
+</a>
+<p>이미지에 네모를 그립니다.</p>
+<a class="blk reference internal image-reference" href="../_images/vision_circle.png"><img alt="이미지 ([변수 ▾]) 좌표 ([0]) ([0]) 반지름 ([0]) 색상 ([변수 ▾]) 굵기 ([2]) 원 그리기" class="blk" src="../_images/vision_circle.png" width="773" />
+</a>
+<p>이미지에 동그라미를 그립니다.</p>
+<a class="blk reference internal image-reference" href="../_images/vision_line.png"><img alt="이미지 ([변수 ▾]) 좌표 ([0]) ([0]) ⏵ ([0]) ([0]) 색상 ([변수 ▾]) 굵기 ([2]) 선 그리기" class="blk" src="../_images/vision_line.png" width="788" />
+</a>
+<p>이미지에 선을 그립니다.</p>
+<a class="blk reference internal image-reference" href="../_images/vision_text.png"><img alt="이미지 ([변수 ▾]) 좌표 ([0]) ([0]) 크기 ([30]) 색상 ([변수 ▾]) ([안녕하세요]) 표시하기" class="blk" src="../_images/vision_text.png" width="844" />
+</a>
+<p>이미지에 글자를 표시합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/vision_transfer.png"><img alt="이미지 ([변수 ▾]) [만화 ▾] 바꾸기" class="blk" src="../_images/vision_transfer.png" width="355" />
+</a>
+<p>이미지의 스타일을 바꿉니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/vision_resize.png"><img alt="이미지 ([변수 ▾]) 가로 ([100]) 세로 ([100]) 크기 바꾸기" class="blk" src="../_images/vision_resize.png" width="540" />
+</a>
+<p>이미지 크기를 바꿉니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/make_bitmap_6x8.png"><img alt="6×8 점 그림" class="blk" src="../_images/make_bitmap_6x8.png" width="153" />
+</a>
+<p>점을 눌러 그린 6×8 그림을 이미지로 만듭니다(카메라 화면 크기로 키움). <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/make_bitmap_8x4.png"><img alt="8×4 점 그림" class="blk" src="../_images/make_bitmap_8x4.png" width="174" />
+</a>
+<p>점을 눌러 그린 8×4 그림을 이미지로 만듭니다(카메라 화면 크기로 키움). <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/make_bitmap_8x8.png"><img alt="8×8 점 그림" class="blk" src="../_images/make_bitmap_8x8.png" width="173" />
+</a>
+<p>점을 눌러 그린 8×8 그림을 이미지로 만듭니다(카메라 화면 크기로 키움). <em>값을 돌려주는 블록</em></p>
 </section>
 <section id="id10">
 <h3>인식<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h3>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>블록</p></th>
-<th class="head"><p>설명</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>이미지 ([변수 ▾]) 얼굴 찾기 ⟶ 값</p></td>
-<td><p>이미지에서 얼굴을 찾습니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 얼굴 ([변수 ▾]) 표시하기</p></td>
-<td><p>이미지에서 얼굴을 표시합니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>이미지 ([변수 ▾]) 얼굴 ([변수 ▾]) 분석하기(나이,성별,감정) ⟶ 값</p></td>
-<td><p>이미지에서 얼굴을 분석합니다.(나이,성별,감정)</p></td>
-</tr>
-<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 얼굴분석 ([변수 ▾]) 표시하기</p></td>
-<td><p>이미지에서 얼굴분석 결과 표시합니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>이미지 ([변수 ▾]) 얼굴 ([변수 ▾]) 랜드마크 찾기 ⟶ 값</p></td>
-<td><p>이미지에서 얼굴의 랜드마크를 찾습니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 얼굴랜드마크 ([변수 ▾]) 표시하기</p></td>
-<td><p>이미지에서 얼굴의 랜드마크 표시합니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>얼굴사전 ⟶ 값</p></td>
-<td><p>얼굴 사전에 학습된 이름 목록을 가져옵니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 얼굴 ([변수 ▾]) ⏵ 이름 ([pibo]) 로 얼굴 사전에 학습하기</p></td>
-<td><p>이미지에서 얼굴을 이름으로 학습합니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>이름 ([pibo]) 얼굴 사전에서 지우기</p></td>
-<td><p>학습된 얼굴 데이터에서 특정 이름을 삭제합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 얼굴 ([변수 ▾]) 얼굴 사전에서 확인하기 ⟶ 값</p></td>
-<td><p>이미지에서 얼굴이 누구인지 인식합니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>얼굴 사전 ⏵ [폴더 선택 ▾] ([facedb]) 저장하기</p></td>
-<td><p>학습된 얼굴 데이터를 파일로 저장합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>얼굴 사전 ⏴ [폴더 선택 ▾] ([facedb]) 불러오기</p></td>
-<td><p>저장된 얼굴 학습 파일을 불러옵니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>이미지 ([변수 ▾]) 얼굴 방향/거리 분석하기 ⟶ 값</p></td>
-<td><p>인식된 얼굴의 방향과 거리를 분석합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 얼굴 방향/거리 ([변수 ▾]) 표시하기</p></td>
-<td><p>인식된 얼굴의 방향과 거리를 표시합니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>사물인식 모델 [폴더 선택 ▾] ([yolo11s]) .onnx 불러오기</p></td>
-<td><p>사물인식 모델을 불러옵니다.(yolo)</p></td>
-</tr>
-<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 사물 찾기 ⟶ 값</p></td>
-<td><p>이미지에서 사물을 찾아냅니다. (80개 종류의 사물)</p></td>
-</tr>
-<tr class="row-even"><td><p>이미지 ([변수 ▾]) 사물 찾기(raw) ⟶ 값</p></td>
-<td><p>이미지에서 사물을 찾아냅니다. (80개 종류의 사물) - RAW</p></td>
-</tr>
-<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 사물 ([변수 ▾]) 표시하기</p></td>
-<td><p>이미지에서 사물을 표시합니다. (80개 종류의 사물)</p></td>
-</tr>
-<tr class="row-even"><td><p>이미지 ([변수 ▾]) QR코드 찾기 ⟶ 값</p></td>
-<td><p>이미지에서 QR코드를 찾아냅니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>이미지 ([변수 ▾]) QR코드 찾기(raw) ⟶ 값</p></td>
-<td><p>이미지에서 QR코드를 찾아냅니다.(RAW)</p></td>
-</tr>
-<tr class="row-even"><td><p>이미지 ([변수 ▾]) QR코드 ([변수 ▾]) 표시하기</p></td>
-<td><p>이미지에서 QR코드를 표시합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 포즈 데이터 찾기 ⟶ 값</p></td>
-<td><p>이미지에서 사람의 포즈 데이터를 가져옵니다. (17개 좌표)</p></td>
-</tr>
-<tr class="row-even"><td><p>이미지 ([변수 ▾]) 포즈 데이터 ([변수 ▾]) 표시하기</p></td>
-<td><p>이미지에서 사람의 포즈 데이터를 표시합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>포즈 데이터 ([변수 ▾]) [자세인식 ▾] 분석하기 ⟶ 값</p></td>
-<td><p>포즈 데이터를 분석해 정해진 포즈를 알아냅니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>이미지 ([변수 ▾]) 좌표 ([0]) ([0]) , ([0]) ([0]) 트래커 설정하기</p></td>
-<td><p>이미지의 특정 위치에 트래커를 설정합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 추적하기 ⟶ 값</p></td>
-<td><p>설정된 트래커로 이미지를 추적합니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>이미지 ([변수 ▾]) 추적 결과 ([변수 ▾]) 표시하기</p></td>
-<td><p>추적 결과를 표시합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>손 동작 모델 [gesture_recognizer ▾] 을 불러오기</p></td>
-<td><p>내장된 손 동작 모델을 불러옵니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>손 동작 모델 [폴더 선택 ▾] ([gesture_recognizer]) .task 불러오기</p></td>
-<td><p>손 동작 모델을 불러옵니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 손 동작 인식하기 ⟶ 값</p></td>
-<td><p>이미지에서 손 동작을 인식합니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>이미지 ([변수 ▾]) 손 동작 ([변수 ▾]) 표시하기</p></td>
-<td><p>이미지에서 손 동작을 표시합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 길이 ([5]) cm 마커 찾기 ⟶ 값</p></td>
-<td><p>이미지에서 마커를 인식합니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>이미지 ([변수 ▾]) 마커 ([변수 ▾]) 표시하기</p></td>
-<td><p>이미지에서 마커를 표시합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>분류기 모델 [폴더 선택 ▾] ([모델 이름]) 불러오기</p></td>
-<td><p>분류기 화면에서 가르치고 저장한 모델을 불러옵니다. 폴더는 mymodel, 칸에 모델 이름을 적습니다. (이미지·손·얼굴·포즈)</p></td>
-</tr>
-<tr class="row-even"><td><p>분류기 모델로 ([변수 ▾]) 분류하기 ⟶ 값</p></td>
-<td><p>불러온 분류기 모델로 이미지를 분류해 가장 알맞은 이름을 돌려줍니다. 손·얼굴·포즈 모델은 화면에 손·얼굴·몸이 안 보이면 빈 글자를 돌려줍니다.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
+<a class="blk reference internal image-reference" href="../_images/vision_face_detect.png"><img alt="이미지 ([변수 ▾]) 얼굴 찾기" class="blk" src="../_images/vision_face_detect.png" width="298" />
+</a>
+<p>이미지에서 얼굴을 찾습니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/vision_face_detect_vis.png"><img alt="이미지 ([변수 ▾]) 얼굴 ([변수 ▾]) 표시하기" class="blk" src="../_images/vision_face_detect_vis.png" width="419" />
+</a>
+<p>이미지에서 얼굴을 표시합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/vision_face_analyze.png"><img alt="이미지 ([변수 ▾]) 얼굴 ([변수 ▾]) 분석하기(나이,성별,감정)" class="blk" src="../_images/vision_face_analyze.png" width="563" />
+</a>
+<p>이미지에서 얼굴을 분석합니다.(나이,성별,감정) <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/vision_face_analyze_vis.png"><img alt="이미지 ([변수 ▾]) 얼굴분석 ([변수 ▾]) 표시하기" class="blk" src="../_images/vision_face_analyze_vis.png" width="455" />
+</a>
+<p>이미지에서 얼굴분석 결과 표시합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/vision_face_landmark.png"><img alt="이미지 ([변수 ▾]) 얼굴 ([변수 ▾]) 랜드마크 찾기" class="blk" src="../_images/vision_face_landmark.png" width="469" />
+</a>
+<p>이미지에서 얼굴의 랜드마크를 찾습니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/vision_face_landmark_vis.png"><img alt="이미지 ([변수 ▾]) 얼굴랜드마크 ([변수 ▾]) 표시하기" class="blk" src="../_images/vision_face_landmark_vis.png" width="492" />
+</a>
+<p>이미지에서 얼굴의 랜드마크 표시합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/vision_facedb.png"><img alt="얼굴사전" class="blk" src="../_images/vision_facedb.png" width="141" />
+</a>
+<p>얼굴 사전에 학습된 이름 목록을 가져옵니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/vision_facedb_train.png"><img alt="이미지 ([변수 ▾]) 얼굴 ([변수 ▾]) ⏵ 이름 ([pibo]) 로 얼굴 사전에 학습하기" class="blk" src="../_images/vision_facedb_train.png" width="747" />
+</a>
+<p>이미지에서 얼굴을 이름으로 학습합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/vision_facedb_delete.png"><img alt="이름 ([pibo]) 얼굴 사전에서 지우기" class="blk" src="../_images/vision_facedb_delete.png" width="410" />
+</a>
+<p>학습된 얼굴 데이터에서 특정 이름을 삭제합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/vision_facedb_recognize.png"><img alt="이미지 ([변수 ▾]) 얼굴 ([변수 ▾]) 얼굴 사전에서 확인하기" class="blk" src="../_images/vision_facedb_recognize.png" width="548" />
+</a>
+<p>이미지에서 얼굴이 누구인지 인식합니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/vision_facedb_save.png"><img alt="얼굴 사전 ⏵ [폴더 선택 ▾] ([facedb]) 저장하기" class="blk" src="../_images/vision_facedb_save.png" width="524" />
+</a>
+<p>학습된 얼굴 데이터를 파일로 저장합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/vision_facedb_load.png"><img alt="얼굴 사전 ⏴ [폴더 선택 ▾] ([facedb]) 불러오기" class="blk" src="../_images/vision_facedb_load.png" width="524" />
+</a>
+<p>저장된 얼굴 학습 파일을 불러옵니다.</p>
+<a class="blk reference internal image-reference" href="../_images/vision_face_mesh.png"><img alt="이미지 ([변수 ▾]) 얼굴 방향/거리 분석하기" class="blk" src="../_images/vision_face_mesh.png" width="421" />
+</a>
+<p>인식된 얼굴의 방향과 거리를 분석합니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/vision_face_mesh_vis.png"><img alt="이미지 ([변수 ▾]) 얼굴 방향/거리 ([변수 ▾]) 표시하기" class="blk" src="../_images/vision_face_mesh_vis.png" width="505" />
+</a>
+<p>인식된 얼굴의 방향과 거리를 표시합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/vision_object_load_ext.png"><img alt="사물인식 모델 [폴더 선택 ▾] ([yolo11s]) .onnx 불러오기" class="blk" src="../_images/vision_object_load_ext.png" width="594" />
+</a>
+<p>사물인식 모델을 불러옵니다.(yolo)</p>
+<a class="blk reference internal image-reference" href="../_images/vision_object.png"><img alt="이미지 ([변수 ▾]) 사물 찾기" class="blk" src="../_images/vision_object.png" width="298" />
+</a>
+<p>이미지에서 사물을 찾아냅니다. (80개 종류의 사물) <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/vision_object_raw.png"><img alt="이미지 ([변수 ▾]) 사물 찾기(raw)" class="blk" src="../_images/vision_object_raw.png" width="348" />
+</a>
+<p>이미지에서 사물을 찾아냅니다. (80개 종류의 사물) - RAW <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/vision_object_vis.png"><img alt="이미지 ([변수 ▾]) 사물 ([변수 ▾]) 표시하기" class="blk" src="../_images/vision_object_vis.png" width="419" />
+</a>
+<p>이미지에서 사물을 표시합니다. (80개 종류의 사물)</p>
+<a class="blk reference internal image-reference" href="../_images/vision_qr.png"><img alt="이미지 ([변수 ▾]) QR코드 찾기" class="blk" src="../_images/vision_qr.png" width="327" />
+</a>
+<p>이미지에서 QR코드를 찾아냅니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/vision_qr_raw.png"><img alt="이미지 ([변수 ▾]) QR코드 찾기(raw)" class="blk" src="../_images/vision_qr_raw.png" width="377" />
+</a>
+<p>이미지에서 QR코드를 찾아냅니다.(RAW) <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/vision_qr_vis.png"><img alt="이미지 ([변수 ▾]) QR코드 ([변수 ▾]) 표시하기" class="blk" src="../_images/vision_qr_vis.png" width="447" />
+</a>
+<p>이미지에서 QR코드를 표시합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/vision_pose.png"><img alt="이미지 ([변수 ▾]) 포즈 데이터 찾기" class="blk" src="../_images/vision_pose.png" width="359" />
+</a>
+<p>이미지에서 사람의 포즈 데이터를 가져옵니다. (17개 좌표) <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/vision_pose_vis.png"><img alt="이미지 ([변수 ▾]) 포즈 데이터 ([변수 ▾]) 표시하기" class="blk" src="../_images/vision_pose_vis.png" width="479" />
+</a>
+<p>이미지에서 사람의 포즈 데이터를 표시합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/vision_analyze_pose.png"><img alt="포즈 데이터 ([변수 ▾]) [자세인식 ▾] 분석하기" class="blk" src="../_images/vision_analyze_pose.png" width="453" />
+</a>
+<p>포즈 데이터를 분석해 정해진 포즈를 알아냅니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/vision_object_tracker_init.png"><img alt="이미지 ([변수 ▾]) 좌표 ([0]) ([0]) , ([0]) ([0]) 트래커 설정하기" class="blk" src="../_images/vision_object_tracker_init.png" width="600" />
+</a>
+<p>이미지의 특정 위치에 트래커를 설정합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/vision_object_track.png"><img alt="이미지 ([변수 ▾]) 추적하기" class="blk" src="../_images/vision_object_track.png" width="293" />
+</a>
+<p>설정된 트래커로 이미지를 추적합니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/vision_object_track_vis.png"><img alt="이미지 ([변수 ▾]) 추적 결과 ([변수 ▾]) 표시하기" class="blk" src="../_images/vision_object_track_vis.png" width="461" />
+</a>
+<p>추적 결과를 표시합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/vision_hand_gesture_load.png"><img alt="손 동작 모델 [gesture_recognizer ▾] 을 불러오기" class="blk" src="../_images/vision_hand_gesture_load.png" width="495" />
+</a>
+<p>내장된 손 동작 모델을 불러옵니다.</p>
+<a class="blk reference internal image-reference" href="../_images/vision_hand_gesture_load_ext.png"><img alt="손 동작 모델 [폴더 선택 ▾] ([gesture_recognizer]) .task 불러오기" class="blk" src="../_images/vision_hand_gesture_load_ext.png" width="689" />
+</a>
+<p>손 동작 모델을 불러옵니다.</p>
+<a class="blk reference internal image-reference" href="../_images/vision_hand_gesture.png"><img alt="이미지 ([변수 ▾]) 손 동작 인식하기" class="blk" src="../_images/vision_hand_gesture.png" width="359" />
+</a>
+<p>이미지에서 손 동작을 인식합니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/vision_hand_gesture_vis.png"><img alt="이미지 ([변수 ▾]) 손 동작 ([변수 ▾]) 표시하기" class="blk" src="../_images/vision_hand_gesture_vis.png" width="442" />
+</a>
+<p>이미지에서 손 동작을 표시합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/vision_marker_detect.png"><img alt="이미지 ([변수 ▾]) 길이 ([5]) cm 마커 찾기" class="blk" src="../_images/vision_marker_detect.png" width="427" />
+</a>
+<p>이미지에서 마커를 인식합니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/vision_marker_detect_vis.png"><img alt="이미지 ([변수 ▾]) 마커 ([변수 ▾]) 표시하기" class="blk" src="../_images/vision_marker_detect_vis.png" width="419" />
+</a>
+<p>이미지에서 마커를 표시합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/vision_load_cf.png"><img alt="분류기 모델 [폴더 선택 ▾] ([모델 이름]) 불러오기" class="blk" src="../_images/vision_load_cf.png" width="528" />
+</a>
+<p>분류기 화면에서 가르치고 저장한 모델을 불러옵니다. 폴더는 mymodel, 칸에 모델 이름을 적습니다. (이미지·손·얼굴·포즈)</p>
+<a class="blk reference internal image-reference" href="../_images/vision_predict_cf.png"><img alt="분류기 모델로 ([변수 ▾]) 분류하기" class="blk" src="../_images/vision_predict_cf.png" width="354" />
+</a>
+<p>불러온 분류기 모델로 이미지를 분류해 가장 알맞은 이름을 돌려줍니다. 손·얼굴·포즈 모델은 화면에 손·얼굴·몸이 안 보이면 빈 글자를 돌려줍니다. <em>값을 돌려주는 블록</em></p>
 </section>
 <section id="id11">
 <h3>도구<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h3>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>블록</p></th>
-<th class="head"><p>설명</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>([1]) 초 동안 기다리기</p></td>
-<td><p>정해진 시간 동안 멈춥니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>시간 값 가져오기 ⟶ 값</p></td>
-<td><p>현재 시간 값을 가져옵니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>현재 시간 확인하기 ⟶ 값</p></td>
-<td><p>지금의 시간을 확인합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>( ) 가 ( ) 에 있는지 확인하기 ⟶ 값</p></td>
-<td><p>항목이 리스트 안에 있는지 확인합니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>사전 ([변수 ▾]) 에서 키 ([키 이름]) 값 가져오기 ⟶ 값</p></td>
-<td><p>사전에서 정해진 키에 해당하는 값을 가져옵니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>사전 ([변수 ▾]) 에 { ([키 이름]) : ( ) } 추가하기</p></td>
-<td><p>사전에 정해진 키와 값을 추가합니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>빈 사전 만들기 ⟶ 값</p></td>
-<td><p>빈 사전을 만듭니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>리스트 ([변수 ▾]) [ ([0]) : ([0]) , ([0]) : ([0]) ] 값을 ([변수 ▾]) 에 저장하기</p></td>
-<td><p>리스트의 지정된 범위 값을 저장합니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>[파일 ▾] ([경로]) 있는지 확인하기 ⟶ 값</p></td>
-<td><p>파일이나 폴더가 있는지 확인합니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>([1]) 글자형으로 바꾸기 ⟶ 값</p></td>
-<td><p>변수의 타입을 글자형으로 바꿉니다.</p></td>
-</tr>
-<tr class="row-even"><td><p>([1]) [정수형 ▾] 숫자형으로 바꾸기 ⟶ 값</p></td>
-<td><p>변수의 타입을 숫자형(정수 또는 소수)으로 바꿉니다.</p></td>
-</tr>
-<tr class="row-odd"><td><p>([변수 ▾]) ⬉ ([변수 ▾]) ⬈ ([변수 ▾]) 각도 구하기 ⟶ 값</p></td>
-<td><p>세 점 사이의 각도 구하기</p></td>
-</tr>
-</tbody>
-</table>
-</div>
+<a class="blk reference internal image-reference" href="../_images/utils_sleep.png"><img alt="([1]) 초 동안 기다리기" class="blk" src="../_images/utils_sleep.png" width="253" />
+</a>
+<p>정해진 시간 동안 멈춥니다.</p>
+<a class="blk reference internal image-reference" href="../_images/utils_time.png"><img alt="시간 값 가져오기" class="blk" src="../_images/utils_time.png" width="207" />
+</a>
+<p>현재 시간 값을 가져옵니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/utils_current_time.png"><img alt="현재 시간 확인하기" class="blk" src="../_images/utils_current_time.png" width="225" />
+</a>
+<p>지금의 시간을 확인합니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/utils_include.png"><img alt="( ) 가 ( ) 에 있는지 확인하기" class="blk" src="../_images/utils_include.png" width="364" />
+</a>
+<p>항목이 리스트 안에 있는지 확인합니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/utils_dict_get.png"><img alt="사전 ([변수 ▾]) 에서 키 ([키 이름]) 값 가져오기" class="blk" src="../_images/utils_dict_get.png" width="516" />
+</a>
+<p>사전에서 정해진 키에 해당하는 값을 가져옵니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/utils_dict_set.png"><img alt="사전 ([변수 ▾]) 에 { ([키 이름]) : ( ) } 추가하기" class="blk" src="../_images/utils_dict_set.png" width="536" />
+</a>
+<p>사전에 정해진 키와 값을 추가합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/utils_dict_create.png"><img alt="빈 사전 만들기" class="blk" src="../_images/utils_dict_create.png" width="188" />
+</a>
+<p>빈 사전을 만듭니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/utils_array_slice_set.png"><img alt="리스트 ([변수 ▾]) [ ([0]) : ([0]) , ([0]) : ([0]) ] 값을 ([변수 ▾]) 에 저장하기" class="blk" src="../_images/utils_array_slice_set.png" width="707" />
+</a>
+<p>리스트의 지정된 범위 값을 저장합니다.</p>
+<a class="blk reference internal image-reference" href="../_images/utils_check_path.png"><img alt="[파일 ▾] ([경로]) 있는지 확인하기" class="blk" src="../_images/utils_check_path.png" width="407" />
+</a>
+<p>파일이나 폴더가 있는지 확인합니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/utils_typecast_string.png"><img alt="([1]) 글자형으로 바꾸기" class="blk" src="../_images/utils_typecast_string.png" width="269" />
+</a>
+<p>변수의 타입을 글자형으로 바꿉니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/utils_typecast_number.png"><img alt="([1]) [정수형 ▾] 숫자형으로 바꾸기" class="blk" src="../_images/utils_typecast_number.png" width="416" />
+</a>
+<p>변수의 타입을 숫자형(정수 또는 소수)으로 바꿉니다. <em>값을 돌려주는 블록</em></p>
+<a class="blk reference internal image-reference" href="../_images/utils_calculate_angle.png"><img alt="([변수 ▾]) ⬉ ([변수 ▾]) ⬈ ([변수 ▾]) 각도 구하기" class="blk" src="../_images/utils_calculate_angle.png" width="490" />
+</a>
+<p>세 점 사이의 각도 구하기 <em>값을 돌려주는 블록</em></p>
 </section>
 </section>
 </section>

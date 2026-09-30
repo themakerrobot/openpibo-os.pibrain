@@ -50,6 +50,7 @@ extensions = [
     'sphinx.ext.githubpages',
     'sphinx_copybutton',
 ]
+myst_enable_extensions = ['html_image']   # 블록 가이드의 <img width=…> 를 Sphinx 그림으로(파일이 _images 로 복사된다)
 autosectionlabel_prefix_document = True   # 페이지마다 같은 제목(도구 등)이 있어도 겹치지 않게
 
 source_suffix = {
