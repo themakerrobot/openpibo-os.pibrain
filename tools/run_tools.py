@@ -106,7 +106,12 @@ def oled_show_img(img):
 # 카메라 그림은 기기 LCD 로 간다. 웹은 [캡처] 할 때만 한 장 받는다(260929).
 # 전엔 카메라가 켜져 있는 동안 매 장(초당 약 5장)을 JPEG+base64 로 만들어 두었다 — 받는 사람이 없어도.
 def to_jpeg(img):
-    ret, buf = cv2.imencode('.jpg', cv2.resize(img, (320, 240)), [int(cv2.IMWRITE_JPEG_QUALITY), 80])
+    # 긴 변을 320 으로, 비율은 그대로. PiBrain 카메라는 세로(480x640)라 240x320 이 된다.
+    # 전엔 늘 320x240(가로)으로 줄여 웹에 보낸 사진이 옆으로 찌그러졌다(260930)
+    h, w = img.shape[:2]
+    s = 320 / max(h, w)
+    small = cv2.resize(img, (max(1, round(w * s)), max(1, round(h * s))), interpolation=cv2.INTER_AREA)
+    ret, buf = cv2.imencode('.jpg', small, [int(cv2.IMWRITE_JPEG_QUALITY), 80])
     return buf.tobytes() if ret else None
 
 def to_base64(img):
