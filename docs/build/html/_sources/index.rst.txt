@@ -3,12 +3,14 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-OPENPIBO PACKAGE for piBrain
+PiBrain 도움말
 ====================================
+
+PiBrain 메이커(IDE·도구·분류기·대화) 사용법, 블록 목록, ``openpibo`` 파이썬 API 를 안내합니다.
 
 .. toctree::
    :maxdepth: 1
-   :caption: Notes
+   :caption: 시작하기
 
    notes/piboMaker
    notes/software
@@ -16,13 +18,13 @@ OPENPIBO PACKAGE for piBrain
 
 .. toctree::
    :maxdepth: 1
-   :caption: Block
+   :caption: 블록 (BLOCK)
 
    blocks/guide
 
 .. toctree::
    :maxdepth: 1
-   :caption: Python
+   :caption: 파이썬 (PYTHON)
 
    libraries/audio
    libraries/collect
@@ -38,9 +40,8 @@ OPENPIBO PACKAGE for piBrain
    libraries/vision_classify
    libraries/utils
 
-Indices and tables
+찾아보기
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`

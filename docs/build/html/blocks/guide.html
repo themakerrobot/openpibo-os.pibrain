@@ -1,79 +1,224 @@
+<!doctype html>
+<html class="no-js" lang="ko" data-content_root="../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="색인" href="../genindex.html"><link rel="search" title="검색" href="../search.html"><link rel="next" title="audio" href="../libraries/audio.html"><link rel="prev" title="하드웨어" href="../notes/hardware.html">
+        <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/blocks/guide.html">
+        <link rel="prefetch" href="../_static/icon.png" as="image">
+
+    <link rel="shortcut icon" href="../_static/icon.png"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+        <title>블록코딩 - PiBrain 도움말</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=8aae1f7e" />
+    
+    
 
 
-<!DOCTYPE html>
-<html class="writer-html5" lang="ko" data-content_root="../">
-<head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>블록코딩 &mdash; OPENPIBO 0.9.4.0 문서</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=f3e80786" />
-
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  --color-brand-primary: #2563eb;
+  --color-brand-content: #2563eb;
+  --color-brand-visited: #2563eb;
+  --font-stack: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-stack--headings: var(--font-stack);
   
-    <link rel="shortcut icon" href="../_static/icon.png"/>
-    <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/blocks/guide.html" />
-      <script src="../_static/jquery.js?v=5d32c60e"></script>
-      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=8ab793d1"></script>
-      <script src="../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-      <script src="../_static/copybutton.js?v=f281be69"></script>
-      <script src="../_static/translations.js?v=afa94a99"></script>
-    <script src="../_static/js/theme.js"></script>
-    <link rel="index" title="색인" href="../genindex.html" />
-    <link rel="search" title="검색" href="../search.html" />
-    <link rel="next" title="audio" href="../libraries/audio.html" />
-    <link rel="prev" title="하드웨어" href="../notes/hardware.html" /> 
-</head>
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #fbc92d;
+  --color-brand-content: #fbc92d;
+  --color-brand-visited: #fbc92d;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #fbc92d;
+  --color-brand-content: #fbc92d;
+  --color-brand-visited: #fbc92d;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
 
-          
-          
-          <a href="../index.html" class="icon icon-home">
-            OPENPIBO
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Notes</span></p>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">PiBrain 도움말</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/icon.png" alt="Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">PiBrain 도움말</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="검색" name="q" aria-label="검색">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">시작하기</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../notes/piboMaker.html">파이보 메이커</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/piboMaker.html">PiBrain 메이커</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notes/software.html">소프트웨어</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notes/hardware.html">하드웨어</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Block</span></p>
+<p class="caption" role="heading"><span class="caption-text">블록 (BLOCK)</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">블록코딩</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id2">블록 구성</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">파이보 전용 블록</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id4">소리</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id5">수집</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id6">장치</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id7">동작</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id8">화면</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id9">음성</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id10">시각</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id11">도구</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">블록코딩</a></li>
 </ul>
-</li>
-</ul>
-</li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Python</span></p>
+<p class="caption" role="heading"><span class="caption-text">파이썬 (PYTHON)</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../libraries/audio.html">audio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../libraries/collect.html">collect</a></li>
@@ -90,221 +235,582 @@
 <li class="toctree-l1"><a class="reference internal" href="../libraries/utils.html">utils</a></li>
 </ul>
 
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">OPENPIBO</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">블록코딩</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/blocks/guide.md.txt" rel="nofollow"> View page source</a>
-      </li>
-  </ul>
-  <hr/>
 </div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <section id="id1">
-<h1>블록코딩<a class="headerlink" href="#id1" title="Link to this heading"></a></h1>
-<p>파이보메이커는 Blockly 기반의 플랫폼으로 기본 블록 외에도 파이보를 쉽게 이용할 수 있도록
-<strong>openpibo-python</strong> 패키지와 연계된 블록 코딩을 지원합니다.</p>
-<section id="id2">
-<h2>블록 구성<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Blockly 기본 블록
-├── 논리 : if-else 등 조건 관련 기능
-├── 반복 : for / while 등 반복 관련 기능
-├── 수학 : 숫자 / 연산 / 랜덤 관련 기능
-├── 문자 : 문자 / 입력 / 출력 등 관련 기능
-├── 목록 : list 관련 기능
-├── 색상 : 색상을 쉽게 선택할 수 있는 기능
-├── 변수 : 변수 정의/삭제/이름변경 기능
-└── 함수 : 함수 정의 / 호출 기능
+</div>
 
-파이보 전용 블록
-├── 소리 : 음악 재생/정지, 녹음 관련 기능
-├── 수집 : 위키피디아/날씨/뉴스 관련 기능
-├── 장치 : LED / 센서 등 관련 기능
-├── 동작 : 모터 제어/모션 생성 기능
-├── 화면 : OLED 화면 표시 관련 기능
-├── 음성 : 음성 합성/ 번역 / 대화 등 자연어 관련 기능
-├── 시각 : 이미지 촬영/편집/가공 및 인공지능 관련 기능
-└── 도구 : 기본 블록에 포함되지 않은 유용한 기능
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../_sources/blocks/guide.md.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="id1">
+<h1>블록코딩<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
+<p>PiBrain 메이커는 Blockly 기반의 블록 코딩을 지원합니다. 기본 블록 외에 PiBrain을 쉽게 쓸 수 있도록
+<strong>openpibo</strong> 파이썬 패키지와 이어진 블록이 있습니다. 블록 코드는 [파이썬 코드] 버튼으로 파이썬으로 볼 수 있습니다.</p>
+<div class="admonition note">
+<p class="admonition-title">참고</p>
+<p>이 페이지는 IDE 툴박스에서 자동으로 만들었습니다(<code class="docutils literal notranslate"><span class="pre">docs/tools/gen_block_guide.py</span></code>). 블록 모양의 <code class="docutils literal notranslate"><span class="pre">[</span> <span class="pre">▾]</span></code> 는 고르는 칸,
+<code class="docutils literal notranslate"><span class="pre">(</span> <span class="pre">)</span></code> 는 다른 블록이나 값을 끼우는 칸, <code class="docutils literal notranslate"><span class="pre">[</span> <span class="pre">]</span></code> 는 직접 적는 칸입니다. 모든 기능은 <strong>PiBrain 안에서</strong> 돌아가며 인터넷이 필요한 것은
+[수집] 분류뿐입니다.</p>
+</div>
+<section id="id2">
+<h2>블록 구성<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Blockly 기본 블록 (Blockly 공식 블록 — 설명은 블록에 마우스를 올리면 나옵니다)
+├── 논리 (7)
+├── 반복 (5)
+├── 수학 (13)
+├── 문자 (15)
+├── 목록 (12)
+├── 색상 (4)
+├── 변수 (만들면 생김)
+└── 함수 (만들면 생김)
+
+PiBrain 전용 블록
+├── 시작 (1)
+├── 소리 (3)
+├── 수집 (4)
+├── 장치 (7)
+├── 화면 (11)
+├── 음성 (7)
+├── 시각 (16)
+├── 인식 (35)
+└── 도구 (12)
 </pre></div>
 </div>
 </section>
+<section id="pibrain">
+<h2>PiBrain 전용 블록<a class="headerlink" href="#pibrain" title="Link to this heading">¶</a></h2>
 <section id="id3">
-<h2>파이보 전용 블록<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<h3>시작<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>블록</p></th>
+<th class="head"><p>설명</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>클릭했을때</p></td>
+<td><p>코드를 실행합니다.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="id4">
-<h3>소리<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">음악</span> <span class="n">재생하기</span> <span class="p">(</span><span class="n">파일</span> <span class="n">선택</span><span class="p">)</span>
-<span class="n">음악</span> <span class="n">재생하기</span> <span class="p">(</span><span class="n">파일</span> <span class="n">직접</span> <span class="n">입력</span><span class="p">)</span>
-<span class="n">재생</span> <span class="n">중인</span> <span class="n">오디오</span> <span class="n">정지하기</span>
-<span class="n">녹음</span> <span class="n">및</span> <span class="n">파일</span> <span class="n">저장하기</span>
-</pre></div>
+<h3>소리<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>블록</p></th>
+<th class="head"><p>설명</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>오디오 [폴더 선택 ▾] [파일 선택 ▾] ([80]) 크기로 재생하기</p></td>
+<td><p>음악 파일을 골라서 원하는 소리 크기로 재생합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>오디오 [폴더 선택 ▾] ([audio]) . [mp3 ▾] ([80]) 크기로 재생하기</p></td>
+<td><p>음악 파일 이름을 적어서 소리를 재생합니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>오디오 멈추기</p></td>
+<td><p>재생 중인 소리를 멈춥니다.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </section>
 <section id="id5">
-<h3>수집<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(인터넷!) 위키피디아에서 키워드 검색
-(인터넷!) 특정 지역 날씨 종합 예보 가져오기
-(인터넷!) 특정 지역 날씨 정보 검색하기
-(인터넷!) 키워드 별 뉴스 검색하기
-</pre></div>
+<h3>수집<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>블록</p></th>
+<th class="head"><p>설명</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>위키피디아에서 ([로봇]) 찾아보기 ⟶ 값</p></td>
+<td><p>(인터넷 필요!) 위키피디아에서 입력한 내용을 찾아줍니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>[서울 ▾] 날씨 예보 가져오기 ⟶ 값</p></td>
+<td><p>(인터넷 필요!) 선택한 지역의 날씨 정보를 가져옵니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>[서울 ▾] 날씨의 [오늘 ▾] [예보 ▾] 찾아보기 ⟶ 값</p></td>
+<td><p>(인터넷 필요!) 선택한 지역의 특정 날씨 정보를 찾아줍니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>[속보 ▾] 뉴스에서 [제목 ▾] 찾아보기 ⟶ 값</p></td>
+<td><p>(인터넷 필요!) 뉴스에서 입력한 내용을 검색합니다.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </section>
 <section id="id6">
-<h3>장치<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">눈</span> <span class="n">LED</span> <span class="n">켜기</span>
-<span class="n">눈</span> <span class="n">LED</span> <span class="n">켜기</span> <span class="p">(</span><span class="n">색상</span> <span class="n">변수</span> <span class="n">이용</span><span class="p">)</span>
-<span class="n">눈</span> <span class="n">LED</span> <span class="n">서서히</span> <span class="n">켜기</span> <span class="p">(</span><span class="n">색상</span> <span class="n">변수</span> <span class="n">이용</span><span class="p">)</span>
-<span class="n">눈</span> <span class="n">LED</span> <span class="n">끄기</span>
-<span class="n">아답터</span> <span class="n">체크하기</span>
-<span class="n">배터리</span> <span class="n">체크하기</span>
-<span class="n">시스템</span> <span class="n">메시지</span> <span class="n">체크하기</span>
-<span class="n">사람</span> <span class="n">체크하기</span>
-<span class="n">터치</span> <span class="n">체크하기</span>
-<span class="n">버튼</span> <span class="n">체크하기</span>
-<span class="n">버튼</span> <span class="n">체크하기</span><span class="p">(</span><span class="n">piBrain</span> <span class="o">-</span> <span class="n">SW1</span><span class="p">(</span><span class="n">bcm4</span><span class="p">),</span> <span class="n">SW2</span><span class="p">(</span><span class="n">bcm17</span><span class="p">),</span> <span class="n">SW3</span><span class="p">(</span><span class="n">bcm27</span><span class="p">))</span>
-</pre></div>
+<h3>장치<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>블록</p></th>
+<th class="head"><p>설명</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>버튼 [SW1 ▾] 확인하기 ⟶ 값</p></td>
+<td><p>버튼이 눌렸는지 확인합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>RGB ([0]) ([0]) ([0]) 불빛 바꾸기</p></td>
+<td><p>불빛의 색을 변경합니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>색상 ([변수 ▾]) 불빛 바꾸기</p></td>
+<td><p>색상 변수를 사용해 불빛의 색을 변경합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>불빛 끄기</p></td>
+<td><p>불빛을 끕니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>[USB0 ▾] 연결하기</p></td>
+<td><p>USB 장치 연결합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>USB 장치에 (값) 보내기</p></td>
+<td><p>USB 장치에 메시지를 보냅니다</p></td>
+</tr>
+<tr class="row-even"><td><p>USB 연결을 끊기</p></td>
+<td><p>USB 연결 해제합니다.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </section>
 <section id="id7">
-<h3>동작<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">모션</span> <span class="n">목록</span> <span class="n">가져오기</span><span class="p">(</span><span class="n">내장된</span> <span class="n">모션</span><span class="p">)</span>
-<span class="n">내</span> <span class="n">모션</span> <span class="n">목록</span> <span class="n">가져오기</span><span class="p">(</span><span class="n">사용자</span> <span class="n">정의</span> <span class="n">모션</span><span class="p">)</span>
-<span class="n">모션</span> <span class="n">지정한</span> <span class="n">횟수</span> <span class="n">만큼</span> <span class="n">실행하기</span> <span class="p">(</span><span class="n">모션</span> <span class="n">선택</span><span class="p">)</span>
-<span class="n">모션</span> <span class="n">지정한</span> <span class="n">횟수</span> <span class="n">만큼</span> <span class="n">실행하기</span> <span class="p">(</span><span class="n">모션</span> <span class="n">이름</span> <span class="n">직접</span> <span class="n">입력</span><span class="p">)</span>
-<span class="n">사용자</span> <span class="n">정의</span> <span class="n">모션</span> <span class="n">지정한</span> <span class="n">횟수만큼</span> <span class="n">실행하기</span>
-<span class="n">모션</span> <span class="n">초기화하기</span>
-<span class="n">모터를</span> <span class="n">특정</span> <span class="n">각도로</span> <span class="n">이동하기</span>
-<span class="n">모터의</span> <span class="n">속도를</span> <span class="n">설정하기</span>
-<span class="n">모터의</span> <span class="n">가속도를</span> <span class="n">설정하기</span>
-<span class="n">전체</span> <span class="n">모터</span> <span class="n">이동하기</span>
-</pre></div>
+<h3>화면<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>블록</p></th>
+<th class="head"><p>설명</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>화면 글자 크기 ([30]) 설정하기</p></td>
+<td><p>화면에 보이는 글자 크기를 설정합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>좌표 ([0]) ([0]) ([안녕하세요]) 화면에 저장하기</p></td>
+<td><p>화면에 글자를 저장합니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>이미지 [폴더 선택 ▾] [파일 선택 ▾] 화면에 저장하기</p></td>
+<td><p>화면에 선택한 이미지를 저장합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>이미지 [폴더 선택 ▾] ([sample]) . [jpg ▾] 화면에 저장하기</p></td>
+<td><p>화면에 입력한 이미지를 저장합니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>이미지 ([변수 ▾]) 화면에 저장하기</p></td>
+<td><p>화면에 이미지 변수를 저장합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>좌표 ([0]) ([0]) , ([0]) ([0]) 네모 [채우기 ▾] 화면에 저장하기</p></td>
+<td><p>화면에 네모를 저장합니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>좌표 ([0]) ([0]) , ([0]) ([0]) 원 [채우기 ▾] 화면에 저장하기</p></td>
+<td><p>화면에 원을 저장합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>좌표 ([0]) ([0]) , ([0]) ([0]) 선 화면에 저장하기</p></td>
+<td><p>화면에 선을 저장합니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>화면 반전하기</p></td>
+<td><p>화면의 색을 반전합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>화면 표시하기</p></td>
+<td><p>화면에 저장된 내용을 표시합니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>화면 지우기</p></td>
+<td><p>화면을 초기화합니다.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </section>
 <section id="id8">
-<h3>화면<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">OLED</span> <span class="n">글자</span> <span class="n">사이즈</span> <span class="n">설정하기</span>
-<span class="n">OLED</span> <span class="n">텍스트</span> <span class="n">저장하기</span>
-<span class="n">OLED</span> <span class="n">이미지</span> <span class="n">저장하기</span><span class="p">(</span><span class="n">파일</span> <span class="n">선택</span><span class="p">)</span>
-<span class="n">OLED</span> <span class="n">이미지</span> <span class="n">저장하기</span><span class="p">(</span><span class="n">파일</span> <span class="n">이름</span> <span class="n">직접</span> <span class="n">입력</span><span class="p">)</span>
-<span class="n">OLED</span> <span class="n">이미지</span> <span class="n">변수</span> <span class="n">저장하기</span>
-<span class="n">OLED</span> <span class="n">네모</span> <span class="n">저장하기</span>
-<span class="n">OLED</span> <span class="n">원</span> <span class="n">저장하기</span>
-<span class="n">OLED</span> <span class="n">선</span> <span class="n">저장하기</span>
-<span class="n">OLED</span> <span class="n">반전하기</span>
-<span class="n">OLED</span> <span class="n">표시하기</span>
-<span class="n">OLED</span> <span class="n">지우기</span>
-</pre></div>
+<h3>음성<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>블록</p></th>
+<th class="head"><p>설명</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>([안녕하세요]) 를 [남성 1 ▾] 목소리로 [폴더 선택 ▾] ([tts]) . [mp3 ▾] 에 저장하기(ondevice)</p></td>
+<td><p>입력한 글자를 파이보 안에서 목소리로 만들어 파일로 저장합니다. 한국어·영어는 자동으로 알아봅니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>([안녕하세요]) 를 [남성 1 ▾] 목소리 ([80]) 크기로 말하기(ondevice)</p></td>
+<td><p>입력한 글자를 파이보 안에서 목소리로 만들어 말합니다. 한국어·영어는 자동으로 알아봅니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>([안녕하세요]) 를 목소리 [폴더 선택 ▾] ([tts]) . [mp3 ▾] 에 저장하기(E-speak)</p></td>
+<td><p>입력한 글자를 espeak 기계 목소리로 파일에 저장합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>([안녕하세요]) 를 목소리 ([80]) 크기로 말하기(E-speak)</p></td>
+<td><p>입력한 글자를 espeak 기계 목소리로 말합니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>대화 서버 시작하기(LLM)</p></td>
+<td><p>대화 서버를 시작합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>([안녕하세요]) 대화하기, 역할 (값) (LLM) ⟶ 값</p></td>
+<td><p>대화 서버(LLM)에 글을 보내고 대답을 받습니다. 역할에는 파이보가 어떤 말투·역할로 대답할지 적습니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>대화 서버 종료하기(LLM)</p></td>
+<td><p>대화 서버를 끕니다.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </section>
 <section id="id9">
-<h3>음성<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(인터넷!) 녹음하고 음성인식하기
-(인터넷!) 문장을 음성 파일로 변환하고 저장합니다.
-(인터넷!) 문장을 음성 파일로 변환하고 저장합니다. (다국어 가능)
-(인터넷!) 문장 번역하기
-대답하기
-대화 파일 설정하기 (csv 형식의 대화 파일)
-대화 파일 초기화하기 (csv 형식의 대화 파일)
-</pre></div>
+<h3>시각<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>블록</p></th>
+<th class="head"><p>설명</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>사진 찍기 ⟶ 값</p></td>
+<td><p>카메라로 사진을 찍습니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>이미지 [폴더 선택 ▾] [파일 선택 ▾] 불러오기 ⟶ 값</p></td>
+<td><p>선택한 이미지 파일을 불러옵니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>이미지 [폴더 선택 ▾] ([image]) . [jpg ▾] 불러오기 ⟶ 값</p></td>
+<td><p>입력한 이미지 파일을 불러옵니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>이미지 색상 ([변수 ▾]) 매트 만들기 ⟶ 값</p></td>
+<td><p>고른 색으로 채운 빈 이미지를 만듭니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>이미지 ([변수 ▾]) ⏵ [폴더 선택 ▾] ([image]) . [jpg ▾] 에 저장하기</p></td>
+<td><p>이미지를 파일로 저장합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>이미지 ([변수 ▾]) IDE에 보여주기</p></td>
+<td><p>이미지 변수를 IDE에서 보여줍니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>이미지 ([변수 ▾]) OLED에 보여주기</p></td>
+<td><p>이미지 변수를 OLED에서 보여줍니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 좌표 ([0]) ([0]) , ([0]) ([0]) 색상 ([변수 ▾]) 굵기 ([2]) 네모 그리기</p></td>
+<td><p>이미지에 네모를 그립니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>이미지 ([변수 ▾]) 좌표 ([0]) ([0]) 반지름 ([0]) 색상 ([변수 ▾]) 굵기 ([2]) 원 그리기</p></td>
+<td><p>이미지에 동그라미를 그립니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 좌표 ([0]) ([0]) ⏵ ([0]) ([0]) 색상 ([변수 ▾]) 굵기 ([2]) 선 그리기</p></td>
+<td><p>이미지에 선을 그립니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>이미지 ([변수 ▾]) 좌표 ([0]) ([0]) 크기 ([30]) 색상 ([변수 ▾]) ([안녕하세요]) 표시하기</p></td>
+<td><p>이미지에 글자를 표시합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>이미지 ([변수 ▾]) [만화 ▾] 바꾸기 ⟶ 값</p></td>
+<td><p>이미지의 스타일을 바꿉니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>이미지 ([변수 ▾]) 가로 ([100]) 세로 ([100]) 크기 바꾸기 ⟶ 값</p></td>
+<td><p>이미지 크기를 바꿉니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>6×8 점 그림 ⟶ 값</p></td>
+<td><p>점을 눌러 그린 6×8 그림을 이미지로 만듭니다(카메라 화면 크기로 키움).</p></td>
+</tr>
+<tr class="row-even"><td><p>8×4 점 그림 ⟶ 값</p></td>
+<td><p>점을 눌러 그린 8×4 그림을 이미지로 만듭니다(카메라 화면 크기로 키움).</p></td>
+</tr>
+<tr class="row-odd"><td><p>8×8 점 그림 ⟶ 값</p></td>
+<td><p>점을 눌러 그린 8×8 그림을 이미지로 만듭니다(카메라 화면 크기로 키움).</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </section>
 <section id="id10">
-<h3>시각<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>촬영하기
-이미지 파일 불러오기(파일 선택)
-이미지 파일 불러오기(파일 이름 입력)
-이미지 데이터를 파일로 저장하기
-이미지 변수를 IDE 이미지 뷰어 표시하기
-이미지에 네모를 표시하기
-이미지에 원을 표시하기
-이미지에 직선을 표시하기
-이미지에 문자를 표시하기
-이미지의 스타일을 변환하기
-이미지에서 얼굴을 찾기
-이미지에서 얼굴 랜드마크를 찾기
-이미지에서 찾은 얼굴의 나이를 분석하기
-이미지에서 찾은 얼굴의 성별을 분석하기
-이미지에서 얼굴 학습하기
-학습된 얼굴에서 특정 얼굴을 삭제하기
-이미지에서 얼굴이 누군지 인식하기
-얼굴 데이터를 파일로 저장하기
-얼굴 학습 파일을 불러오기
-이미지에서 사물 찾기(80개 사물)
-이미지에서 QR 코드 찾기
-이미지에서 포즈 찾기
-포즈 데이터로 지정된 포즈를 분석하기
-이미지를 분류하기
-이미지 트래커 설정하기
-이미지 트래킹하기
-이미지 마커 인식하기
-티처블머신 모델 설정하기
-설정된 티처블머신 모델로 이미지를 분류하기
-(인터넷!) 인공지능 비전 분석하기(파일 선택)
-(인터넷!) 인공지능 비전 분석하기(이미지 변수)
-(인터넷!) 인공지능 비전 분석하기(이미지 변수-확장)
-</pre></div>
+<h3>인식<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>블록</p></th>
+<th class="head"><p>설명</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>이미지 ([변수 ▾]) 얼굴 찾기 ⟶ 값</p></td>
+<td><p>이미지에서 얼굴을 찾습니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 얼굴 ([변수 ▾]) 표시하기</p></td>
+<td><p>이미지에서 얼굴을 표시합니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>이미지 ([변수 ▾]) 얼굴 ([변수 ▾]) 분석하기(나이,성별,감정) ⟶ 값</p></td>
+<td><p>이미지에서 얼굴을 분석합니다.(나이,성별,감정)</p></td>
+</tr>
+<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 얼굴분석 ([변수 ▾]) 표시하기</p></td>
+<td><p>이미지에서 얼굴분석 결과 표시합니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>이미지 ([변수 ▾]) 얼굴 ([변수 ▾]) 랜드마크 찾기 ⟶ 값</p></td>
+<td><p>이미지에서 얼굴의 랜드마크를 찾습니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 얼굴랜드마크 ([변수 ▾]) 표시하기</p></td>
+<td><p>이미지에서 얼굴의 랜드마크 표시합니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>얼굴사전 ⟶ 값</p></td>
+<td><p>얼굴 사전에 학습된 이름 목록을 가져옵니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 얼굴 ([변수 ▾]) ⏵ 이름 ([pibo]) 로 얼굴 사전에 학습하기</p></td>
+<td><p>이미지에서 얼굴을 이름으로 학습합니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>이름 ([pibo]) 얼굴 사전에서 지우기</p></td>
+<td><p>학습된 얼굴 데이터에서 특정 이름을 삭제합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 얼굴 ([변수 ▾]) 얼굴 사전에서 확인하기 ⟶ 값</p></td>
+<td><p>이미지에서 얼굴이 누구인지 인식합니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>얼굴 사전 ⏵ [폴더 선택 ▾] ([facedb]) 저장하기</p></td>
+<td><p>학습된 얼굴 데이터를 파일로 저장합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>얼굴 사전 ⏴ [폴더 선택 ▾] ([facedb]) 불러오기</p></td>
+<td><p>저장된 얼굴 학습 파일을 불러옵니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>이미지 ([변수 ▾]) 얼굴 방향/거리 분석하기 ⟶ 값</p></td>
+<td><p>인식된 얼굴의 방향과 거리를 분석합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 얼굴 방향/거리 ([변수 ▾]) 표시하기</p></td>
+<td><p>인식된 얼굴의 방향과 거리를 표시합니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>사물인식 모델 [폴더 선택 ▾] ([yolo11s]) .onnx 불러오기</p></td>
+<td><p>사물인식 모델을 불러옵니다.(yolo)</p></td>
+</tr>
+<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 사물 찾기 ⟶ 값</p></td>
+<td><p>이미지에서 사물을 찾아냅니다. (80개 종류의 사물)</p></td>
+</tr>
+<tr class="row-even"><td><p>이미지 ([변수 ▾]) 사물 찾기(raw) ⟶ 값</p></td>
+<td><p>이미지에서 사물을 찾아냅니다. (80개 종류의 사물) - RAW</p></td>
+</tr>
+<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 사물 ([변수 ▾]) 표시하기</p></td>
+<td><p>이미지에서 사물을 표시합니다. (80개 종류의 사물)</p></td>
+</tr>
+<tr class="row-even"><td><p>이미지 ([변수 ▾]) QR코드 찾기 ⟶ 값</p></td>
+<td><p>이미지에서 QR코드를 찾아냅니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>이미지 ([변수 ▾]) QR코드 찾기(raw) ⟶ 값</p></td>
+<td><p>이미지에서 QR코드를 찾아냅니다.(RAW)</p></td>
+</tr>
+<tr class="row-even"><td><p>이미지 ([변수 ▾]) QR코드 ([변수 ▾]) 표시하기</p></td>
+<td><p>이미지에서 QR코드를 표시합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 포즈 데이터 찾기 ⟶ 값</p></td>
+<td><p>이미지에서 사람의 포즈 데이터를 가져옵니다. (17개 좌표)</p></td>
+</tr>
+<tr class="row-even"><td><p>이미지 ([변수 ▾]) 포즈 데이터 ([변수 ▾]) 표시하기</p></td>
+<td><p>이미지에서 사람의 포즈 데이터를 표시합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>포즈 데이터 ([변수 ▾]) [자세인식 ▾] 분석하기 ⟶ 값</p></td>
+<td><p>포즈 데이터를 분석해 정해진 포즈를 알아냅니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>이미지 ([변수 ▾]) 좌표 ([0]) ([0]) , ([0]) ([0]) 트래커 설정하기</p></td>
+<td><p>이미지의 특정 위치에 트래커를 설정합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 추적하기 ⟶ 값</p></td>
+<td><p>설정된 트래커로 이미지를 추적합니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>이미지 ([변수 ▾]) 추적 결과 ([변수 ▾]) 표시하기</p></td>
+<td><p>추적 결과를 표시합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>손 동작 모델 [gesture_recognizer ▾] 을 불러오기</p></td>
+<td><p>내장된 손 동작 모델을 불러옵니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>손 동작 모델 [폴더 선택 ▾] ([gesture_recognizer]) .task 불러오기</p></td>
+<td><p>손 동작 모델을 불러옵니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 손 동작 인식하기 ⟶ 값</p></td>
+<td><p>이미지에서 손 동작을 인식합니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>이미지 ([변수 ▾]) 손 동작 ([변수 ▾]) 표시하기</p></td>
+<td><p>이미지에서 손 동작을 표시합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>이미지 ([변수 ▾]) 길이 ([5]) cm 마커 찾기 ⟶ 값</p></td>
+<td><p>이미지에서 마커를 인식합니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>이미지 ([변수 ▾]) 마커 ([변수 ▾]) 표시하기</p></td>
+<td><p>이미지에서 마커를 표시합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>분류기 모델 [폴더 선택 ▾] ([모델 이름]) 불러오기</p></td>
+<td><p>분류기 화면에서 가르치고 저장한 모델을 불러옵니다. 폴더는 mymodel, 칸에 모델 이름을 적습니다. (이미지·손·얼굴·포즈)</p></td>
+</tr>
+<tr class="row-even"><td><p>분류기 모델로 ([변수 ▾]) 분류하기 ⟶ 값</p></td>
+<td><p>불러온 분류기 모델로 이미지를 분류해 가장 알맞은 이름을 돌려줍니다. 손·얼굴·포즈 모델은 화면에 손·얼굴·몸이 안 보이면 빈 글자를 돌려줍니다.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </section>
 <section id="id11">
-<h3>도구<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">일정시간</span> <span class="n">지연시키기</span>
-<span class="n">시간</span> <span class="n">값</span> <span class="n">알아오기</span>
-<span class="n">현재</span> <span class="n">시간</span> <span class="n">확인하기</span>
-<span class="n">항목이</span> <span class="n">리스트에</span> <span class="n">포함되는지</span> <span class="n">확인하기</span>
-<span class="n">딕셔너리의</span> <span class="n">해당</span> <span class="n">키</span> <span class="n">값</span> <span class="n">가져오기</span>
-<span class="n">딕셔너리의</span> <span class="n">해당</span> <span class="n">키</span> <span class="n">값</span> <span class="n">추가하기</span>
-<span class="n">빈</span> <span class="n">딕셔너리를</span> <span class="n">생성하기</span>
-<span class="n">파일</span> <span class="n">또는</span> <span class="n">폴더가</span> <span class="n">존재하는지</span> <span class="n">확인하기</span>
-<span class="n">변수의</span> <span class="n">타입을</span> <span class="n">문자형으로</span> <span class="n">바꾸기</span>
-<span class="n">변수의</span> <span class="n">타입을</span> <span class="n">정수형</span> <span class="n">또는</span> <span class="n">실수형으로</span> <span class="n">바꾸기</span>
-</pre></div>
+<h3>도구<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>블록</p></th>
+<th class="head"><p>설명</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>([1]) 초 동안 기다리기</p></td>
+<td><p>정해진 시간 동안 멈춥니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>시간 값 가져오기 ⟶ 값</p></td>
+<td><p>현재 시간 값을 가져옵니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>현재 시간 확인하기 ⟶ 값</p></td>
+<td><p>지금의 시간을 확인합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>( ) 가 ( ) 에 있는지 확인하기 ⟶ 값</p></td>
+<td><p>항목이 리스트 안에 있는지 확인합니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>사전 ([변수 ▾]) 에서 키 ([키 이름]) 값 가져오기 ⟶ 값</p></td>
+<td><p>사전에서 정해진 키에 해당하는 값을 가져옵니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>사전 ([변수 ▾]) 에 { ([키 이름]) : ( ) } 추가하기</p></td>
+<td><p>사전에 정해진 키와 값을 추가합니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>빈 사전 만들기 ⟶ 값</p></td>
+<td><p>빈 사전을 만듭니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>리스트 ([변수 ▾]) [ ([0]) : ([0]) , ([0]) : ([0]) ] 값을 ([변수 ▾]) 에 저장하기</p></td>
+<td><p>리스트의 지정된 범위 값을 저장합니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>[파일 ▾] ([경로]) 있는지 확인하기 ⟶ 값</p></td>
+<td><p>파일이나 폴더가 있는지 확인합니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>([1]) 글자형으로 바꾸기 ⟶ 값</p></td>
+<td><p>변수의 타입을 글자형으로 바꿉니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>([1]) [정수형 ▾] 숫자형으로 바꾸기 ⟶ 값</p></td>
+<td><p>변수의 타입을 숫자형(정수 또는 소수)으로 바꿉니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>([변수 ▾]) ⬉ ([변수 ▾]) ⬈ ([변수 ▾]) 각도 구하기 ⟶ 값</p></td>
+<td><p>세 점 사이의 각도 구하기</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </section>
 </section>
 </section>
 
-
-           </div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../libraries/audio.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">audio</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../notes/hardware.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">하드웨어</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2026 THEMAKER. All rights reserved. openpibo-python-0.9.4.0
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../notes/hardware.html" class="btn btn-neutral float-left" title="하드웨어" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../libraries/audio.html" class="btn btn-neutral float-right" title="audio" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
     </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">블록코딩</a><ul>
+<li><a class="reference internal" href="#id2">블록 구성</a></li>
+<li><a class="reference internal" href="#pibrain">PiBrain 전용 블록</a><ul>
+<li><a class="reference internal" href="#id3">시작</a></li>
+<li><a class="reference internal" href="#id4">소리</a></li>
+<li><a class="reference internal" href="#id5">수집</a></li>
+<li><a class="reference internal" href="#id6">장치</a></li>
+<li><a class="reference internal" href="#id7">화면</a></li>
+<li><a class="reference internal" href="#id8">음성</a></li>
+<li><a class="reference internal" href="#id9">시각</a></li>
+<li><a class="reference internal" href="#id10">인식</a></li>
+<li><a class="reference internal" href="#id11">도구</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2025 THEMAKER. All rights reserved. openpibo-python-0.9.4.0.</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
+          </div>
         </div>
       </div>
-    </section>
+      
+      
+    </aside>
   </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
-
-</body>
+</div><script src="../_static/documentation_options.js?v=c2df7122"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/translations.js?v=afa94a99"></script>
+    </body>
 </html>

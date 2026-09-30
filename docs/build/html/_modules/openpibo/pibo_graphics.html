@@ -1,62 +1,223 @@
+<!doctype html>
+<html class="no-js" lang="ko" data-content_root="../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="색인" href="../../genindex.html"><link rel="search" title="검색" href="../../search.html">
+        <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/_modules/openpibo/pibo_graphics.html">
+        <link rel="prefetch" href="../../_static/icon.png" as="image">
+
+    <link rel="shortcut icon" href="../../_static/icon.png"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+        <title>openpibo.pibo_graphics - PiBrain 도움말</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mycss.css?v=8aae1f7e" />
+    
+    
 
 
-<!DOCTYPE html>
-<html class="writer-html5" lang="ko" data-content_root="../../">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>openpibo.pibo_graphics &mdash; OPENPIBO 0.9.4.0 문서</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../../_static/mycss.css?v=f3e80786" />
-
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  --color-brand-primary: #2563eb;
+  --color-brand-content: #2563eb;
+  --color-brand-visited: #2563eb;
+  --font-stack: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-stack--headings: var(--font-stack);
   
-    <link rel="shortcut icon" href="../../_static/icon.png"/>
-    <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/_modules/openpibo/pibo_graphics.html" />
-      <script src="../../_static/jquery.js?v=5d32c60e"></script>
-      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=8ab793d1"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
-      <script src="../../_static/copybutton.js?v=f281be69"></script>
-      <script src="../../_static/translations.js?v=afa94a99"></script>
-    <script src="../../_static/js/theme.js"></script>
-    <link rel="index" title="색인" href="../../genindex.html" />
-    <link rel="search" title="검색" href="../../search.html" /> 
-</head>
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #fbc92d;
+  --color-brand-content: #fbc92d;
+  --color-brand-visited: #fbc92d;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #fbc92d;
+  --color-brand-content: #fbc92d;
+  --color-brand-visited: #fbc92d;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
 
-          
-          
-          <a href="../../index.html" class="icon icon-home">
-            OPENPIBO
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Notes</span></p>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">PiBrain 도움말</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../_static/icon.png" alt="Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">PiBrain 도움말</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="검색" name="q" aria-label="검색">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">시작하기</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../notes/piboMaker.html">파이보 메이커</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notes/piboMaker.html">PiBrain 메이커</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notes/software.html">소프트웨어</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notes/hardware.html">하드웨어</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Block</span></p>
+<p class="caption" role="heading"><span class="caption-text">블록 (BLOCK)</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../blocks/guide.html">블록코딩</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Python</span></p>
+<p class="caption" role="heading"><span class="caption-text">파이썬 (PYTHON)</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/audio.html">audio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/collect.html">collect</a></li>
@@ -73,53 +234,59 @@
 <li class="toctree-l1"><a class="reference internal" href="../../libraries/utils.html">utils</a></li>
 </ul>
 
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">OPENPIBO</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../index.html">모듈 코드</a></li>
-      <li class="breadcrumb-item active">openpibo.pibo_graphics</li>
-      <li class="wy-breadcrumbs-aside">
-      </li>
-  </ul>
-  <hr/>
 </div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <h1>openpibo.pibo_graphics의 소스 코드</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>openpibo.pibo_graphics의 소스 코드</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""</span>
 <span class="sd">Turtle package와 유사한 그래픽 위한 클래스 입니다.</span>
 <span class="sd">TEST</span>
 <span class="sd">기준: 240x320 (파이브레인)</span>
 
 <span class="sd">Class:</span>
 <span class="sd">:obj:`~openpibo.pibo_graphics.PiboGraphics`</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
-<span class="kn">import</span> <span class="nn">cv2</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">openpibo_models</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">openpibo_models</span>
 
 <div class="viewcode-block" id="PiboGraphics">
 <a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics">[문서]</a>
-<span class="k">class</span> <span class="nc">PiboGraphics</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">view_instance</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">240</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">320</span><span class="p">,</span>
-                 <span class="n">animation_delay</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">move_step_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">turn_step_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">icon_path</span><span class="o">=</span><span class="n">openpibo_models</span><span class="o">.</span><span class="n">filepath</span><span class="p">(</span><span class="s1">&#39;pibo_graphics.png&#39;</span><span class="p">)):</span>
-        <span class="k">if</span> <span class="n">view_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;view_instance cannot be None&quot;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PiboGraphics</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">view_instance</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">240</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">320</span><span class="p">,</span>
+                 <span class="n">animation_delay</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">move_step_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">turn_step_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">icon_path</span><span class="o">=</span><span class="n">openpibo_models</span><span class="o">.</span><span class="n">filepath</span><span class="p">(</span><span class="s1">'pibo_graphics.png'</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">view_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"view_instance cannot be None"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">view</span> <span class="o">=</span> <span class="n">view_instance</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">width</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">height</span>
@@ -150,59 +317,59 @@
         <span class="c1"># Initialize and show</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">show_initial</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_load_and_resize_icon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon_path</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Loads and resizes the icon.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_and_resize_icon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Loads and resizes the icon."""</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">icon_path</span><span class="p">):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: Icon file not found: &#39;</span><span class="si">{</span><span class="n">icon_path</span><span class="si">}</span><span class="s2">&#39;. Fallback icon.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Warning: Icon file not found: '</span><span class="si">{</span><span class="n">icon_path</span><span class="si">}</span><span class="s2">'. Fallback icon."</span><span class="p">)</span>
             <span class="k">return</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">loaded_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">icon_path</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_UNCHANGED</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">loaded_icon</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;imread failed&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">loaded_icon</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"imread failed"</span><span class="p">)</span>
             <span class="n">resized_icon</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">loaded_icon</span><span class="p">,</span> <span class="n">ICON_TARGET_SIZE</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_AREA</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">resized_icon</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unexpected channels&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">resized_icon</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Unexpected channels"</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">icon_orig</span> <span class="o">=</span> <span class="n">resized_icon</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">icon_loaded</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded &amp; resized &#39;</span><span class="si">{</span><span class="n">icon_path</span><span class="si">}</span><span class="s2">&#39; to </span><span class="si">{</span><span class="n">ICON_TARGET_SIZE</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Loaded &amp; resized '</span><span class="si">{</span><span class="n">icon_path</span><span class="si">}</span><span class="s2">' to </span><span class="si">{</span><span class="n">ICON_TARGET_SIZE</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error loading/resizing icon &#39;</span><span class="si">{</span><span class="n">icon_path</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. Fallback icon.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error loading/resizing icon '</span><span class="si">{</span><span class="n">icon_path</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. Fallback icon."</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">icon_orig</span> <span class="o">=</span> <span class="kc">None</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">icon_loaded</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">_add_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_tuple</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds a drawing command to the history.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_tuple</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Adds a drawing command to the history."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">command_tuple</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_redraw_from_history</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clears frame and redraws everything from history.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_redraw_from_history</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Clears frame and redraws everything from history."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">[:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">:</span>
             <span class="n">command</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">command</span> <span class="o">==</span> <span class="s1">&#39;line&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">command</span> <span class="o">==</span> <span class="s1">'line'</span><span class="p">:</span>
                     <span class="n">_</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">thickness</span> <span class="o">=</span> <span class="n">item</span>
                     <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">x1</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">y1</span><span class="p">))),</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">x2</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">y2</span><span class="p">))),</span> <span class="n">color</span><span class="p">,</span> <span class="n">thickness</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s1">&#39;circle&#39;</span><span class="p">:</span>
+                <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s1">'circle'</span><span class="p">:</span>
                      <span class="n">_</span><span class="p">,</span> <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">thickness</span> <span class="o">=</span> <span class="n">item</span>
                      <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">cx</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">cy</span><span class="p">))),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">r</span><span class="p">)),</span> <span class="n">color</span><span class="p">,</span> <span class="n">thickness</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s1">&#39;dot&#39;</span><span class="p">:</span>
+                <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s1">'dot'</span><span class="p">:</span>
                      <span class="n">_</span><span class="p">,</span> <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">item</span>
                      <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">cx</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">cy</span><span class="p">))),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">r</span><span class="p">)),</span> <span class="n">color</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
                 <span class="c1"># Add other shapes if implemented (e.g., ellipse for arcs)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error replaying history item </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error replaying history item </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 
-    <span class="k">def</span> <span class="nf">_update_display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Redraws everything and shows on OLED.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Redraws everything and shows on OLED."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_redraw_from_history</span><span class="p">()</span> <span class="c1"># Redraw path history first</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_draw_turtle_icon</span><span class="p">()</span>    <span class="c1"># Draw icon on top</span>
         <span class="k">try</span><span class="p">:</span>                        <span class="c1"># Show final frame</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">)</span>
             <span class="n">delay</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="k">if</span> <span class="n">initial</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">animation_delay</span>
             <span class="k">if</span> <span class="n">delay</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error during oled.imshow/sleep: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error during oled.imshow/sleep: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_draw_turtle_icon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Draws the icon onto self.frame (does not show).&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_draw_turtle_icon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Draws the icon onto self.frame (does not show)."""</span>
         <span class="c1"># This function now ONLY draws the icon, assuming frame is ready.</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">icon_loaded</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">icon_orig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Fallback: Draw a simple gray triangle</span>
@@ -247,7 +414,7 @@
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">blended</span> <span class="o">=</span> <span class="p">(</span><span class="n">bgr_icon</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">roi</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">))</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">[</span><span class="n">roi_y_start</span><span class="p">:</span><span class="n">roi_y_end</span><span class="p">,</span> <span class="n">roi_x_start</span><span class="p">:</span><span class="n">roi_x_end</span><span class="p">]</span> <span class="o">=</span> <span class="n">blended</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Alpha blending error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Alpha blending error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">icon_part</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span> <span class="c1"># BGR</span>
                  <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">[</span><span class="n">roi_y_start</span><span class="p">:</span><span class="n">roi_y_end</span><span class="p">,</span> <span class="n">roi_x_start</span><span class="p">:</span><span class="n">roi_x_end</span><span class="p">]</span> <span class="o">=</span> <span class="n">icon_part</span>
 
@@ -256,8 +423,8 @@
 
 <div class="viewcode-block" id="PiboGraphics.reset">
 <a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.reset">[문서]</a>
-    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show_initial</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clears screen and history, resets state.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show_initial</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Clears screen and history, resets state."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">/</span> <span class="mf">2.0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">/</span> <span class="mf">2.0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">angle_deg</span> <span class="o">=</span> <span class="mf">0.0</span>
@@ -266,50 +433,50 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pen_thickness</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># Clear history</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Turtle state and history reset.&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Turtle state and history reset."</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">show_initial</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_update_display</span><span class="p">(</span><span class="n">initial</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># Update display (clears frame, draws icon, shows)</span></div>
 
 
 <div class="viewcode-block" id="PiboGraphics.clear">
 <a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.clear">[문서]</a>
-    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clears drawing area (history), redraws icon, shows.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Clears drawing area (history), redraws icon, shows."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># Clear history</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_display</span><span class="p">()</span> <span class="c1"># Update display (clears frame, draws icon, shows)</span></div>
 
 
 <div class="viewcode-block" id="PiboGraphics.bgcolor">
 <a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.bgcolor">[문서]</a>
-    <span class="k">def</span> <span class="nf">bgcolor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets background color and clears screen/history.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bgcolor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Sets background color and clears screen/history."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span> <span class="c1"># clear handles history clear, redraw and show</span></div>
 
 
 <div class="viewcode-block" id="PiboGraphics.penup">
 <a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.penup">[문서]</a>
-    <span class="k">def</span> <span class="nf">penup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_down</span> <span class="o">=</span> <span class="kc">False</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">penup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_down</span> <span class="o">=</span> <span class="kc">False</span></div>
 
 <div class="viewcode-block" id="PiboGraphics.pendown">
 <a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.pendown">[문서]</a>
-    <span class="k">def</span> <span class="nf">pendown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_down</span> <span class="o">=</span> <span class="kc">True</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pendown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_down</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="PiboGraphics.pencolor">
 <a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.pencolor">[문서]</a>
-    <span class="k">def</span> <span class="nf">pencolor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_color</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="p">))</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pencolor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_color</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="PiboGraphics.pensize">
 <a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.pensize">[문서]</a>
-    <span class="k">def</span> <span class="nf">pensize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_thickness</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">width</span><span class="p">))</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pensize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_thickness</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">width</span><span class="p">))</span></div>
 
 
     <span class="c1"># --- Animated Methods ---</span>
 
 <div class="viewcode-block" id="PiboGraphics.forward">
 <a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.forward">[문서]</a>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distance</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Moves forward step-by-step, adding to history if pen down.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distance</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Moves forward step-by-step, adding to history if pen down."""</span>
         <span class="k">if</span> <span class="n">distance</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_display</span><span class="p">();</span> <span class="k">return</span>
 
         <span class="n">num_steps</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">distance</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">move_step_size</span><span class="p">)))</span>
@@ -327,7 +494,7 @@
                 <span class="c1"># Add line segment to history</span>
                 <span class="n">start_step</span> <span class="o">=</span> <span class="p">(</span><span class="n">current_x_start</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">dx_step</span><span class="p">,</span> <span class="n">current_y_start</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">dy_step</span><span class="p">)</span>
                 <span class="n">end_step</span> <span class="o">=</span> <span class="p">(</span><span class="n">next_x</span><span class="p">,</span> <span class="n">next_y</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_add_history</span><span class="p">((</span><span class="s1">&#39;line&#39;</span><span class="p">,</span> <span class="n">start_step</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">start_step</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">end_step</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">end_step</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_add_history</span><span class="p">((</span><span class="s1">'line'</span><span class="p">,</span> <span class="n">start_step</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">start_step</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">end_step</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">end_step</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
                                    <span class="bp">self</span><span class="o">.</span><span class="n">pen_color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_thickness</span><span class="p">))</span>
 
             <span class="c1"># Update position state for this step</span>
@@ -344,13 +511,13 @@
 
 <div class="viewcode-block" id="PiboGraphics.backward">
 <a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.backward">[문서]</a>
-    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distance</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="o">-</span><span class="n">distance</span><span class="p">)</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distance</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="o">-</span><span class="n">distance</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PiboGraphics.left">
 <a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.left">[문서]</a>
-    <span class="k">def</span> <span class="nf">left</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Turns left step-by-step, updating icon display.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">left</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Turns left step-by-step, updating icon display."""</span>
         <span class="k">if</span> <span class="n">angle</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_display</span><span class="p">();</span> <span class="k">return</span>
         <span class="n">num_steps</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">turn_step_size</span><span class="p">)))</span>
         <span class="n">step_angle</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span> <span class="o">/</span> <span class="n">num_steps</span>
@@ -364,13 +531,13 @@
 
 <div class="viewcode-block" id="PiboGraphics.right">
 <a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.right">[문서]</a>
-    <span class="k">def</span> <span class="nf">right</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="p">(</span><span class="o">-</span><span class="n">angle</span><span class="p">)</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">right</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="p">(</span><span class="o">-</span><span class="n">angle</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PiboGraphics.setheading">
 <a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.setheading">[문서]</a>
-    <span class="k">def</span> <span class="nf">setheading</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets absolute heading instantly, updates display.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setheading</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Sets absolute heading instantly, updates display."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">angle_deg</span> <span class="o">=</span> <span class="n">angle</span> <span class="o">%</span> <span class="mi">360</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_display</span><span class="p">()</span> <span class="c1"># Show icon in new orientation</span></div>
 
@@ -379,11 +546,11 @@
 
 <div class="viewcode-block" id="PiboGraphics.goto">
 <a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.goto">[문서]</a>
-    <span class="k">def</span> <span class="nf">goto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Goes instantly, adds line to history if pen down.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">goto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Goes instantly, adds line to history if pen down."""</span>
         <span class="n">new_x</span><span class="p">,</span> <span class="n">new_y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_down</span><span class="p">:</span>
-             <span class="bp">self</span><span class="o">.</span><span class="n">_add_history</span><span class="p">((</span><span class="s1">&#39;line&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">new_x</span><span class="p">,</span> <span class="n">new_y</span><span class="p">,</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">_add_history</span><span class="p">((</span><span class="s1">'line'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">new_x</span><span class="p">,</span> <span class="n">new_y</span><span class="p">,</span>
                                 <span class="bp">self</span><span class="o">.</span><span class="n">pen_color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_thickness</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">new_x</span><span class="p">,</span> <span class="n">new_y</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_display</span><span class="p">()</span> <span class="c1"># Show final result</span></div>
@@ -391,8 +558,8 @@
 
 <div class="viewcode-block" id="PiboGraphics.circle">
 <a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.circle">[문서]</a>
-    <span class="k">def</span> <span class="nf">circle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="mi">360</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds circle/arc to history if pen down.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">circle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="mi">360</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Adds circle/arc to history if pen down."""</span>
         <span class="c1"># This only adds the command, actual drawing happens in _redraw_from_history</span>
         <span class="c1"># For instant visual feedback, _update_display is called.</span>
         <span class="c1"># Note: Arc drawing based on extent is not implemented in redraw yet.</span>
@@ -400,32 +567,32 @@
             <span class="n">radius_int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">radius</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">radius_int</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                  <span class="k">if</span> <span class="n">extent</span> <span class="o">==</span> <span class="mi">360</span> <span class="ow">or</span> <span class="n">extent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                     <span class="bp">self</span><span class="o">.</span><span class="n">_add_history</span><span class="p">((</span><span class="s1">&#39;circle&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">radius_int</span><span class="p">,</span>
+                     <span class="bp">self</span><span class="o">.</span><span class="n">_add_history</span><span class="p">((</span><span class="s1">'circle'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">radius_int</span><span class="p">,</span>
                                         <span class="bp">self</span><span class="o">.</span><span class="n">pen_color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_thickness</span><span class="p">))</span>
                  <span class="k">else</span><span class="p">:</span>
-                     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Arc drawing (extent!=360) not fully supported in history redraw yet.&quot;</span><span class="p">)</span>
-                     <span class="c1"># Could add an &#39;arc&#39; command type if needed</span>
+                     <span class="nb">print</span><span class="p">(</span><span class="s2">"Warning: Arc drawing (extent!=360) not fully supported in history redraw yet."</span><span class="p">)</span>
+                     <span class="c1"># Could add an 'arc' command type if needed</span>
                      <span class="c1"># For now, maybe draw full circle or nothing</span>
-                     <span class="bp">self</span><span class="o">.</span><span class="n">_add_history</span><span class="p">((</span><span class="s1">&#39;circle&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">radius_int</span><span class="p">,</span>
+                     <span class="bp">self</span><span class="o">.</span><span class="n">_add_history</span><span class="p">((</span><span class="s1">'circle'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">radius_int</span><span class="p">,</span>
                                         <span class="bp">self</span><span class="o">.</span><span class="n">pen_color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_thickness</span><span class="p">))</span> <span class="c1"># Draw full circle for now</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_display</span><span class="p">()</span> <span class="c1"># Show result</span></div>
 
 
 <div class="viewcode-block" id="PiboGraphics.dot">
 <a class="viewcode-back" href="../../libraries/pibo_graphics.html#openpibo.pibo_graphics.PiboGraphics.dot">[문서]</a>
-    <span class="k">def</span> <span class="nf">dot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color_bgr</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds dot to history.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color_bgr</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Adds dot to history."""</span>
         <span class="n">dot_color</span> <span class="o">=</span> <span class="n">color_bgr</span> <span class="k">if</span> <span class="n">color_bgr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_color</span>
         <span class="n">dot_diameter</span> <span class="o">=</span> <span class="n">size</span> <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pen_thickness</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_thickness</span><span class="p">)</span>
         <span class="n">dot_radius</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">dot_diameter</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_add_history</span><span class="p">((</span><span class="s1">&#39;dot&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">dot_radius</span><span class="p">,</span> <span class="n">dot_color</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_history</span><span class="p">((</span><span class="s1">'dot'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">dot_radius</span><span class="p">,</span> <span class="n">dot_color</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_display</span><span class="p">()</span></div>
 </div>
 
 
 
 <span class="c1"># --- Example Usage ---</span>
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="n">oled_instance</span> <span class="o">=</span> <span class="n">Oled</span><span class="p">()</span>
 
     <span class="n">t</span> <span class="o">=</span> <span class="n">Turtle</span><span class="p">(</span><span class="n">oled_instance</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">DEFAULT_WIDTH</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">DEFAULT_HEIGHT</span><span class="p">,</span> <span class="n">animation_delay</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">move_step_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">turn_step_size</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
@@ -440,7 +607,7 @@
     <span class="n">curve_angle</span> <span class="o">=</span> <span class="mi">30</span>   <span class="c1"># 곡선을 그릴 때 꺾는 각도</span>
 
     <span class="c1"># --- P 그리기 ---</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Drawing: P&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Drawing: P"</span><span class="p">)</span>
     <span class="n">t</span><span class="o">.</span><span class="n">penup</span><span class="p">()</span>
     <span class="n">t</span><span class="o">.</span><span class="n">goto</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="mi">150</span><span class="p">)</span>
     <span class="n">t</span><span class="o">.</span><span class="n">pendown</span><span class="p">()</span>
@@ -463,7 +630,7 @@
     <span class="c1"># --- 우측에 I 그리기 ---</span>
     <span class="n">i_start_x</span> <span class="o">=</span> <span class="mi">50</span> <span class="o">+</span> <span class="n">letter_width_approx</span> <span class="o">+</span> <span class="n">letter_spacing</span> <span class="c1"># P 시작점 기준 계산</span>
     <span class="n">i_start_y</span> <span class="o">=</span> <span class="mi">150</span>  <span class="c1"># P와 같은 기준선</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Drawing I near (</span><span class="si">{</span><span class="n">i_start_x</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">i_start_y</span><span class="si">}</span><span class="s2">)...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Drawing I near (</span><span class="si">{</span><span class="n">i_start_x</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">i_start_y</span><span class="si">}</span><span class="s2">)..."</span><span class="p">)</span>
     <span class="n">t</span><span class="o">.</span><span class="n">penup</span><span class="p">()</span>
     <span class="n">t</span><span class="o">.</span><span class="n">goto</span><span class="p">(</span><span class="n">i_start_x</span><span class="p">,</span> <span class="n">i_start_y</span><span class="p">)</span>
     <span class="n">t</span><span class="o">.</span><span class="n">setheading</span><span class="p">(</span><span class="mi">90</span><span class="p">)</span> <span class="c1"># 위쪽(북쪽) 방향 설정</span>
@@ -475,7 +642,7 @@
     <span class="c1"># --- 아래 goto(50, 200) 위치에 B O 적기 ---</span>
 
     <span class="c1"># --- B 그리기 (수정: circle 대신 근사 사용) ---</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Drawing B at (50, 200)...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Drawing B at (50, 200)..."</span><span class="p">)</span>
     <span class="n">t</span><span class="o">.</span><span class="n">penup</span><span class="p">()</span>
     <span class="n">t</span><span class="o">.</span><span class="n">goto</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">150</span><span class="p">)</span> <span class="c1"># B 시작 위치 (좌하단 기준)</span>
     <span class="n">t</span><span class="o">.</span><span class="n">pendown</span><span class="p">()</span>
@@ -516,7 +683,7 @@
     <span class="n">o_start_x</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">+</span> <span class="n">letter_width_approx</span> <span class="o">+</span> <span class="n">letter_spacing</span> <span class="c1"># O를 그릴 X축 시작점 근처</span>
     <span class="n">o_start_y</span> <span class="o">=</span> <span class="mi">125</span> <span class="c1"># B와 같은 기준선</span>
     <span class="n">o_radius</span> <span class="o">=</span> <span class="n">letter_height</span> <span class="o">*</span> <span class="mf">0.6</span> <span class="o">/</span> <span class="mi">2</span> <span class="c1"># O는 약간 작게 (높이의 60% 지름)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Drawing O near (</span><span class="si">{</span><span class="n">o_start_x</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">o_start_y</span><span class="si">}</span><span class="s2">)...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Drawing O near (</span><span class="si">{</span><span class="n">o_start_x</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">o_start_y</span><span class="si">}</span><span class="s2">)..."</span><span class="p">)</span>
     <span class="n">t</span><span class="o">.</span><span class="n">penup</span><span class="p">()</span>
     <span class="c1"># O를 그리기 위해 원의 아래쪽 중앙점으로 이동</span>
     <span class="n">t</span><span class="o">.</span><span class="n">goto</span><span class="p">(</span><span class="n">o_start_x</span> <span class="o">+</span> <span class="n">o_radius</span><span class="p">,</span> <span class="n">o_start_y</span><span class="p">)</span>
@@ -528,37 +695,48 @@
     <span class="n">t</span><span class="o">.</span><span class="n">goto</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">280</span><span class="p">)</span>
     <span class="n">t</span><span class="o">.</span><span class="n">pendown</span><span class="p">()</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Finished drawing I, B, O.&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Finished drawing &#39;pibo&#39;&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Finished drawing I, B, O."</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Finished drawing 'pibo'"</span><span class="p">)</span>
     
     
 </pre></div>
-
-           </div>
-          </div>
-          <footer>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2025 THEMAKER. All rights reserved. openpibo-python-0.9.4.0.</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
-        </div>
+        </article>
       </div>
-    </section>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2026 THEMAKER. All rights reserved. openpibo-python-0.9.4.0
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
   </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
-
-</body>
+</div><script src="../../_static/documentation_options.js?v=c2df7122"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/translations.js?v=afa94a99"></script>
+    </body>
 </html>

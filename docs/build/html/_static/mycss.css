@@ -1,42 +1,20 @@
-/* mycss.css */
+/* piBo 도움말 — Furo 위에 얹는 것만. 색 토큰은 conf.py 의 html_theme_options */
 
-/* Adjusting sidebar width */
-.wy-nav-content {
-  max-width: calc(100vw - 300px);
-}
-
-/* Customizing sidebar background color */
-.wy-nav-side {
-  background-color: #f8f8f8;
-  border-right: 1px solid #ccc;
-}
-
-/* Customizing sidebar text color */
-.wy-nav-side a, .wy-nav-side a:hover {
-  color: #333; /* Dark grey text color */
+/* 왼쪽 위 이름 칸: IDE 상단바와 같은 노랑 */
+.sidebar-brand { background: #fbc92d; margin: -1rem -1rem 1rem; padding: 1rem; }
+.sidebar-brand-text { color: #3d2f12; font-weight: 700; }
+.sidebar-logo { max-width: 40px; }
+body[data-theme="dark"] .sidebar-brand { background: #2a2f3a; }
+body[data-theme="dark"] .sidebar-brand-text { color: #fbc92d; }
+@media (prefers-color-scheme: dark) {
+  body:not([data-theme="light"]) .sidebar-brand { background: #2a2f3a; }
+  body:not([data-theme="light"]) .sidebar-brand-text { color: #fbc92d; }
 }
 
-/* Customizing header background color */
-.wy-header {
-  /* Blue header background color */
-  background-color: #333;
-}
+/* 블록 가이드 표: 블록 칸은 줄바꿈 없이 읽히게 조금 넓게 */
+article table.docutils { width: 100%; }
+article table.docutils td:first-child { min-width: 16em; }
 
-/* Customizing header text color */
-.wy-breadcrumbs a, .wy-side-nav-search input, .wy-side-nav-search button {
-  color: #333; /* White text color */
-}
-
-/* Customizing link color */
-a.reference.external, .rst-content a:not(.headerlink) {
-  color: #007acc;
-}
-.wy-side-nav-search {
-  background-color: #f4d85a; /* Red background color */
-}
-.wy-nav-top {
-  background-color: #f4d85a;
-}
-.wy-nav-content-wrap {
-  background-color: #f8f8f8;
-}
+/* 화면 캡처는 테두리와 둥근 모서리 */
+article img { border: 1px solid var(--color-background-border); border-radius: 8px; }
+article .sidebar-logo, article img.no-frame { border: 0; }

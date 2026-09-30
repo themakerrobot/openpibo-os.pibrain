@@ -25,7 +25,7 @@ in each file are kept as they are.
 | TensorFlow Lite pose example (MoveNet helpers) | `openpibo/modules/pose/` | Apache-2.0 |
 | Adafruit CircuitPython display drivers | `openpibo/modules/oled/` | MIT |
 | Supertonic (Supertone) `py/helper.py` | `openpibo/modules/speech/mtts.py` | MIT |
-| Sphinx / Read the Docs theme, Lato, Roboto Slab, Font Awesome 4 | `docs/build/html/_static/` | MIT / SIL OFL 1.1 / Apache-2.0 |
+| Sphinx · Furo 테마 · sphinx-copybutton | `docs/build/html/_static/` | BSD-2-Clause / MIT / MIT |
 
 ## Installed on the device, outside this repository (`/home/pi/.model`)
 
