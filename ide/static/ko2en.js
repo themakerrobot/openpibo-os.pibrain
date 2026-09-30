@@ -62,7 +62,7 @@ const translations = {
     en: "Internet settings"
   },
   available_networks: {
-    ko: "사용 가능한 Wifi",
+    ko: "연결할 수 있는 WiFi",
     en: "Available networks"
   },
   manual_connection: {
@@ -150,8 +150,8 @@ const translations = {
     en: (oldname, newname) => {return `Are you sure you want to rename the file or folder ${oldname} to ${newname}?`}
   },
   confirm_restore: {
-    ko: "초기화하시겠습니까?\n초기화 후 종료합니다.",
-    en: "Are you sure you want to reset?\nAfter reset, power off"
+    ko: "공장 초기화를 할까요?\n내 코드·사진·소리·분류기 모델이 모두 지워지고, WiFi가 기본값(pibo)으로 돌아간 뒤 전원이 꺼집니다.\n되돌릴 수 없어요.",
+    en: "Factory reset?\nAll your code, pictures, sounds, classifier models will be deleted, WiFi goes back to the default (pibo), and the robot powers off.\nThis cannot be undone."
   },
   confirm_poweroff: {
     ko: "정말 종료하시겠습니까?",
@@ -178,12 +178,12 @@ const translations = {
     en: "Upload"
   },
   add_directory: {
-    ko: "새폴더",
-    en: "new folder"
+    ko: "새 폴더",
+    en: "New folder"
   },
   add_file: {
-    ko: "새파일",
-    en: "new file"
+    ko: "새 파일",
+    en: "New file"
   },
   python: {
     ko: "파이썬",
@@ -394,7 +394,25 @@ const translations = {
   err_save:   { ko: (d) => `파일 저장 오류: ${d}`,     en: (d) => `Save error: ${d}` },
   err_run:    { ko: (d) => `실행 오류: ${d}`,          en: (d) => `Run error: ${d}` },
   // 260930 — AGPL-3.0 §13: 네트워크로 쓰는 사람에게 소스 위치를 알린다
-  v2_source:  { ko: "소스 코드 · 라이선스 (AGPL-3.0)", en: "Source code · License (AGPL-3.0)" }
+  v2_source:  { ko: "소스 코드 · 라이선스 (AGPL-3.0)", en: "Source code · License (AGPL-3.0)" },
+  // 260930 — 상태 칸: 켜진 시간 단위(전엔 늘 'N hours'), 이름표·툴팁
+  v2_uptime:  { ko: (h, m) => h ? `${h}시간 ${m}분` : `${m}분`, en: (h, m) => h ? `${h} h ${m} min` : `${m} min` },
+  v2_mem:     { ko: "메모리", en: "RAM" },
+  v2_tip_temp:    { ko: "CPU 온도", en: "CPU temperature" },
+  v2_tip_mem:     { ko: "메모리 사용량", en: "Memory in use" },
+  v2_tip_uptime:  { ko: "켜진 지 얼마나 됐는지", en: "Time since power-on" },
+  v2_tip_version: { ko: "OS 버전", en: "OS version" },
+  v2_tip_serial:  { ko: "시리얼 번호 — 누르면 H/W 검수", en: "Serial number — click for H/W test" },
+  v2_tip_battery: { ko: "배터리", en: "Battery" },
+  // 260930 — [인터넷 설정] 안내(전엔 영어로만 나왔다)
+  wifi_scanning:    { ko: "WiFi를 찾는 중…", en: "Scanning…" },
+  wifi_none:        { ko: "찾은 WiFi가 없어요", en: "No networks found." },
+  wifi_scan_failed: { ko: "WiFi를 찾지 못했어요. 다시 해 보세요", en: "Scan failed. Please try again." },
+  wifi_manual:      { ko: "직접 입력", en: "Manual" },
+  wifi_connecting:  { ko: "연결하는 중…", en: "Connecting…" },
+  wifi_sent:        { ko: "연결을 요청했어요. 잠시 뒤 새 주소로 다시 들어오세요", en: "Connection request sent. Reconnect at the new address shortly." },
+  wifi_failed:      { ko: "연결 요청에 실패했어요", en: "Connection request failed." },
+  wifi_cancelled:   { ko: "연결을 취소했어요", en: "Connection cancelled." }
 };
 
 // 키 → 현재 언어 문자열. 모르는 키(일반 문자열)는 그대로 반환.

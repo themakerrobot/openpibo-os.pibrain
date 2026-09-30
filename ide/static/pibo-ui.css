@@ -1355,6 +1355,16 @@ body.pb-v2 .s-speak #volume { width: 80px; text-align: right; }
 body.pb-v2 .s-speak #volume + i { color: var(--v2-ink-3); font-size: 12px; }
 body.pb-v2 .s-speak select[name="s_voice_type"] { width: 160px; }
 body.pb-v2 .s-speak #s_tts_val { flex: 1 1 0; min-width: 0; }
+/* 말할 글자: 여러 줄 칸을 전체 폭으로(260930). 전엔 한 줄 입력칸이 버튼 옆에 끼어 약 100px 이었다 */
+body.pb-v2 .s-speak .s-text-row { align-items: flex-start; }
+body.pb-v2 .s-speak .s-text-row > .label { padding-top: 9px; }
+body.pb-v2 .s-speak textarea#s_tts_val {
+  min-height: 76px; resize: vertical; padding: 8px 10px; border: 1px solid var(--v2-line-2); border-radius: 8px;
+  background: var(--v2-raise); color: var(--v2-ink); font: 15px/1.5 var(--pb-font, inherit);
+}
+body.pb-v2 .s-speak textarea#s_tts_val:focus { outline: 2px solid var(--v2-accent); outline-offset: 1px; }
+body.pb-v2 .s-speak .s-count { margin-left: auto; font-size: 12px; color: var(--v2-ink-3); font-variant-numeric: tabular-nums; }
+body.pb-v2 .s-speak .s-count--full { color: var(--v2-red-ink, #b3261e); font-weight: 600; }
 /* 목소리: PiBrain 도구처럼 타일(select 는 v2 에서 숨기고 값만 맞춘다) */
 body.pb-v2 .s-speak .s-voice-row { align-items: flex-start; }
 body.pb-v2 .s-speak .s-voice-row > .label { padding-top: 9px; }

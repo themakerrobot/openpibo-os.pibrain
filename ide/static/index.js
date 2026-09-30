@@ -495,9 +495,10 @@ socket.on("system", (data) => {
   if (/^\d{6}v\d+(-gl)?$/.test(tag)) {
     $("#source_bt").attr("href", `https://github.com/themakerrobot/openpibo-os.pibrain/tree/${tag}`);
   }
-  $("#s_runtime").text(`${Math.floor(data[2] / 3600)} hours`);
+  const up = Math.floor(Number(data[2]) || 0);
+  $("#s_runtime").text(t("v2_uptime", Math.floor(up / 3600), Math.floor(up % 3600 / 60)));
   countText("#s_cpu_temp", data[3]);
-  countText("#s_memory", `${Math.floor( (data[4] - data[5]) / data[4] * 100)} %`);
+  countText("#s_memory", `${t("v2_mem")} ${Math.floor( (data[4] - data[5]) / data[4] * 100)}%`);
   $("#s_network").html(`<i class="fas fa-network-wired"></i> ${data[7]}, <i class="fa-solid fa-wifi"></i> ${data[6]}/${data[8]}`);
   $("#network_info").html(`<i class="fas fa-network-wired"></i> ${data[7]}, <i class="fa-solid fa-wifi"></i> ${data[6]}/${data[8]}`);
 });
@@ -1230,7 +1231,7 @@ $(document).keydown(async (evt) => {
 
     // Show Popup and Scan Networks
     $("#showNetwork").on("click", function() {
-        wifiListUl.empty().append('<li><span data-key="scanning">Scanning...</span></li>'); // Show scanning message
+        wifiListUl.empty().append($('<li>').append($('<span>').text(t('wifi_scanning'))));
         statusMessage.text('').removeClass('error'); // Clear previous status
         connectionForm.hide(); // Hide form until network is selected
         wifiPopup.show();
@@ -1270,12 +1271,12 @@ $(document).keydown(async (evt) => {
                     wifiListUl.append(listItem);
                 });
             } else {
-                wifiListUl.append('<li><span data-key="no_networks_found">No networks found.</span></li>');
+                wifiListUl.append($('<li>').append($('<span>').text(t('wifi_none'))));
             }
         }).fail(function(jqXHR, textStatus, errorThrown) {
-            wifiListUl.empty().append('<li><span data-key="scan_failed">Scan failed. Please try again.</span></li>');
+            wifiListUl.empty().append($('<li>').append($('<span>').text(t('wifi_scan_failed'))));
             console.error("Wi-Fi Scan failed:", textStatus, errorThrown);
-            statusMessage.text('Scan failed').addClass('error');
+            statusMessage.text(t('wifi_scan_failed')).addClass('error');
         });
     });
 
@@ -1304,7 +1305,7 @@ $(document).keydown(async (evt) => {
         e.preventDefault();
         connectionForm.show();
         ssidInput.val('').prop('readonly', false).focus(); // Clear, enable, focus SSID
-        securityTypeDisplay.text('Manual'); // Indicate manual setup
+        securityTypeDisplay.text(t('wifi_manual'));
         securityTypeHidden.val('custom'); // Or appropriate value
         identityFieldDiv.removeClass('hidden'); // Show all fields for manual
         passwordFieldDiv.removeClass('hidden');
@@ -1317,7 +1318,7 @@ $(document).keydown(async (evt) => {
     // Handle Form Submission (Connect button)
     connectionForm.on("submit", async function(event) {
         event.preventDefault(); // Prevent default form submission
-        statusMessage.text('Connecting...').removeClass('error'); // Show status
+        statusMessage.text(t('wifi_connecting')).removeClass('error');
 
         const ssid = ssidInput.val().trim();
         const psk = pskInput.val().trim(); // Assume password is in psk field
@@ -1354,16 +1355,16 @@ $(document).keydown(async (evt) => {
                 timeout: 20000 // Add timeout
             }).done(function(response) {
                  // Assuming success means connection attempt was accepted by backend
-                 statusMessage.text('Connection request sent successfully.').removeClass('error');
+                 statusMessage.text(t('wifi_sent')).removeClass('error');
                  console.log("Connection request success:", response);
                  // Optionally close popup after a delay
                  setTimeout(function() { wifiPopup.hide(); }, 2000);
             }).fail(function(jqXHR, textStatus, errorThrown) {
-                statusMessage.text('Connection request failed.').addClass('error');
+                statusMessage.text(t('wifi_failed')).addClass('error');
                 console.error("Connection request failed:", textStatus, errorThrown, jqXHR.responseText);
             });
         } else {
-             statusMessage.text('Connection cancelled.').removeClass('error');
+             statusMessage.text(t('wifi_cancelled')).removeClass('error');
         }
     });
 
@@ -1420,7 +1421,7 @@ const setLanguage = (langCode) => {
     }
   });
 
-  const langFileVersion = '260930v1';
+  const langFileVersion = '260930v2';
   const langFile = `../static/${langCode}.js?ver=${langFileVersion}`;
   const prevKoScript = document.querySelector(`script[src*="../static/ko.js?ver=${langFileVersion}"]`);
   if (prevKoScript) {

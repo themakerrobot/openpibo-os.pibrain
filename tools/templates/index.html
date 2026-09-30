@@ -13,7 +13,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="shortcut icon" href="/static/icon.png" type="image/x-icon"/>
   <link rel="stylesheet" href="/static/all.min.css"/>
-  <link rel="stylesheet" href="/static/pibo-ui.css?ver=260930v1"/>
+  <link rel="stylesheet" href="/static/pibo-ui.css?ver=260930v2"/>
   <link rel="stylesheet" href="/static/index.css?ver=260924v3"/>
   <title>Tools for PiBrain</title>
   <script>/* 화면 밝기를 첫 페인트 전에 (쿠키 pibo_theme, 기본 soft) */
@@ -146,16 +146,16 @@
   <div class="card">
     <h2 class="card-title" data-key="voice_select">목소리 선택</h2>
     <div class="voice-grid">
-      <button class="voice-btn active" onclick="setVoice('m1',this)"><i class="fa-solid fa-person"></i>k0</button>
-      <button class="voice-btn" onclick="setVoice('m2',this)"><i class="fa-solid fa-person"></i>k1</button>
-      <button class="voice-btn" onclick="setVoice('m3',this)"><i class="fa-solid fa-person"></i>k2</button>
-      <button class="voice-btn" onclick="setVoice('m4',this)"><i class="fa-solid fa-person"></i>k3</button>
-      <button class="voice-btn" onclick="setVoice('m5',this)"><i class="fa-solid fa-person"></i>k4</button>
-      <button class="voice-btn" onclick="setVoice('f1',this)"><i class="fa-solid fa-person-dress"></i>k5</button>
-      <button class="voice-btn" onclick="setVoice('f2',this)"><i class="fa-solid fa-person-dress"></i>k6</button>
-      <button class="voice-btn" onclick="setVoice('f3',this)"><i class="fa-solid fa-person-dress"></i>k7</button>
-      <button class="voice-btn" onclick="setVoice('f4',this)"><i class="fa-solid fa-person-dress"></i>k8</button>
-      <button class="voice-btn" onclick="setVoice('f5',this)"><i class="fa-solid fa-person-dress"></i>k9</button>
+      <button class="voice-btn active" onclick="setVoice('m1',this)"><i class="fa-solid fa-person"></i><span data-key="voice_m1">남성 1</span></button>
+      <button class="voice-btn" onclick="setVoice('m2',this)"><i class="fa-solid fa-person"></i><span data-key="voice_m2">남성 2</span></button>
+      <button class="voice-btn" onclick="setVoice('m3',this)"><i class="fa-solid fa-person"></i><span data-key="voice_m3">남성 3</span></button>
+      <button class="voice-btn" onclick="setVoice('m4',this)"><i class="fa-solid fa-person"></i><span data-key="voice_m4">남성 4</span></button>
+      <button class="voice-btn" onclick="setVoice('m5',this)"><i class="fa-solid fa-person"></i><span data-key="voice_m5">남성 5</span></button>
+      <button class="voice-btn" onclick="setVoice('f1',this)"><i class="fa-solid fa-person-dress"></i><span data-key="voice_f1">여성 1</span></button>
+      <button class="voice-btn" onclick="setVoice('f2',this)"><i class="fa-solid fa-person-dress"></i><span data-key="voice_f2">여성 2</span></button>
+      <button class="voice-btn" onclick="setVoice('f3',this)"><i class="fa-solid fa-person-dress"></i><span data-key="voice_f3">여성 3</span></button>
+      <button class="voice-btn" onclick="setVoice('f4',this)"><i class="fa-solid fa-person-dress"></i><span data-key="voice_f4">여성 4</span></button>
+      <button class="voice-btn" onclick="setVoice('f5',this)"><i class="fa-solid fa-person-dress"></i><span data-key="voice_f5">여성 5</span></button>
     </div>
   </div>
   <div class="card">
@@ -178,8 +178,9 @@
 
   <div class="card">
     <h2 class="card-title" data-key="lcd_text_title">텍스트 출력</h2>
-    <label class="form-label" for="lcd-text" data-key="lcd_text_label">출력할 텍스트 (줄바꿈 지원)</label>
-    <textarea id="lcd-text" data-key="lcd_ph" placeholder="여기에 출력할 내용을 입력하세요..." oninput="updateLcdPreview()">안녕하세요!\n파이브레인입니다.</textarea>
+    <label class="form-label" for="lcd-text" data-key="lcd_text_label">출력할 글자 (Enter 로 줄바꿈)</label>
+    <textarea id="lcd-text" data-key="lcd_ph" placeholder="여기에 출력할 내용을 입력하세요..." oninput="updateLcdPreview()">안녕하세요!
+파이브레인입니다.</textarea>
 
     <div class="field-grid">
       <label><span data-key="font_size">폰트 크기</span><input type="number" id="lcd-size" value="24" min="8" max="80" step="2" oninput="updateLcdPreview()"/></label>
@@ -199,9 +200,9 @@
   <div class="card">
     <h2 class="card-title" data-key="system_title">시스템</h2>
     <p class="card-desc" data-key="lcd_reset_desc" data-html>
-      network_disp.py를 재시작합니다.<br>카메라가 꺼진 상태에서만 동작합니다.
+      LCD를 처음 화면(IP 주소 표시)으로 되돌립니다.<br>카메라가 꺼져 있을 때만 됩니다.
     </p>
-    <button class="btn btn-danger" onclick="resetOled()"><i class="fa-solid fa-rotate"></i><span data-key="lcd_reset_btn">LCD 초기화 (network_disp 재시작)</span></button>
+    <button class="btn" onclick="resetOled()"><i class="fa-solid fa-rotate"></i><span data-key="lcd_reset_btn">LCD 처음 화면으로</span></button>
     <div class="result-box" id="oled-reset-status" data-key="waiting">대기 중...</div>
   </div>
 </section>
@@ -209,8 +210,8 @@
 </main>
 </div>
 
-<script src="/static/ko2en.js?ver=260924v1"></script>
-<script src="/static/pibo-ui.js?ver=260930v1"></script>
+<script src="/static/ko2en.js?ver=260930v1"></script>
+<script src="/static/pibo-ui.js?ver=260930v2"></script>
 <script src="/static/index.js?ver=260929v1"></script>
 </body>
 </html>

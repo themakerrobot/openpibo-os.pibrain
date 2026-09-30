@@ -907,7 +907,8 @@ Blockly.Python.forBlock['vision_predict_cf'] = function(block) {
   Blockly.Python.definitions_['assign_cf'] = 'cf = CustomClassifier()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
-  return [`cf.predict(${img})[0]`, Blockly.Python.ORDER_ATOMIC];
+  // 손·얼굴·포즈 모델은 손·얼굴·몸이 안 보이면 None 이다. 블록에서는 빈 글자로(출력에 'None' 이 찍히지 않게)
+  return [`(cf.predict(${img})[0] or '')`, Blockly.Python.ORDER_ATOMIC];
 }
 
 // Utils

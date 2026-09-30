@@ -492,6 +492,13 @@ mediapipe 0.10.18 · numpy 1.26.4). 특징 코사인 이미지 0.96~0.98 · 손 
 
 **docs 를 다시 빌드해야 한다** — `vision_classify` API(`CustomClassifier.load`)가 바뀌었다. 기기에서 `make clean html` ('docs' 절). 아직 안 했다.
 
+### 도구 이름을 파이보와 맞춤 (260930)
+
+- 목소리 `k0`~`k9` → `남성 1`~`여성 5`(도구 `voice_*`, IDE 블록 `VOICE_*`). 값은 그대로
+- 비전 기능 이름을 파이보 도구와 같게: 윤곽선·흐리게·만화·선명하게·얼굴분석·얼굴 특징점·사물인식·손동작인식·포즈인식·마커인식
+- LCD: 개발용 문구(`network_disp.py 재시작`)를 [LCD 처음 화면으로] 로, 빨간 버튼 → 보통 버튼. 글자 칸은 Enter 로 줄바꿈(`\n` 도 그대로 된다)
+- IDE 쪽 다듬기(상태 칸·툴박스·블록 문구·인터넷 설정·초기화 확인창)는 파이보와 같다 — Pibo CLAUDE.md '다듬기 (260930)'
+
 ### 마이크가 아직 없다 — 블록만 막아 둔다
 
 `openpibo/audio.py` 의 `Audio.record` 와 `openpibo/speech.py` 의 `Speech.stt` · `SpeechToText` 는

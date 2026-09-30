@@ -20,17 +20,17 @@
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
   <link rel="stylesheet" href="../static/codemirror.css" />
   <link rel="stylesheet" href="../static/jquery.jsonview.min.css" />
-  <link rel="stylesheet" href="../static/pibo-ui.css?ver=260930v1" />
-  <link rel="stylesheet" href="../static/v2/ide.css?ver=260929v2" />
+  <link rel="stylesheet" href="../static/pibo-ui.css?ver=260930v2" />
+  <link rel="stylesheet" href="../static/v2/ide.css?ver=260930v1" />
   <link rel="shortcut icon" href="../static/icon.png?ver=240319v1" type="image/x-icon" />
 
-  <script src="../static/ko2en.js?ver=260930v1"></script>
+  <script src="../static/ko2en.js?ver=260930v2"></script>
   <script src="../static/blockly_compressed.js?ver=240319v1"></script>
   <script src="../static/blocks_compressed.js?ver=240319v1"></script>
   <script src="../static/python_compressed.js?ver=240319v1"></script>
-  <script src="../static/customblock.js?ver=260930v1"></script>
-  <script src="../static/customblock_callback.js?ver=260930v1"></script>
-  <script src="../static/customblock_toolbox.js?ver=260930v1"></script>
+  <script src="../static/customblock.js?ver=260930v2"></script>
+  <script src="../static/customblock_callback.js?ver=260930v2"></script>
+  <script src="../static/customblock_toolbox.js?ver=260930v2"></script>
   <script src="../static/jquery-3.7.1.min.js"></script>
   <script src="../static/field-bitmap.js"></script>
   <script src="../static/jquery.jsonview.min.js"></script>
@@ -126,11 +126,11 @@
 
           <div class="v2-stats">
             <a class="v2-stat v2-stat--wide" id="showNetwork"><span id="s_network"></span><span class="v2-stat__more"><span data-key="v2_settings"></span> ›</span></a>
-            <span class="v2-stat"><i class="fa-solid fa-temperature-half"></i><span id="s_cpu_temp"></span></span>
-            <span class="v2-stat"><i class="fa-solid fa-memory"></i><span id="s_memory"></span></span>
-            <span class="v2-stat"><i class="fa-solid fa-clock"></i><span id="s_runtime"></span></span>
-            <span class="v2-stat"><i class="fa-solid fa-brain"></i><span id="s_os_version"></span></span>
-            <a class="v2-stat" id="usedata_bt" title="H/W Test"><i class="fa-solid fa-tag"></i><span id="s_serial"></span></a>
+            <span class="v2-stat" data-title-key="v2_tip_temp"><i class="fa-solid fa-temperature-half"></i><span id="s_cpu_temp"></span></span>
+            <span class="v2-stat" data-title-key="v2_tip_mem"><i class="fa-solid fa-memory"></i><span id="s_memory"></span></span>
+            <span class="v2-stat" data-title-key="v2_tip_uptime"><i class="fa-solid fa-clock"></i><span id="s_runtime"></span></span>
+            <span class="v2-stat" data-title-key="v2_tip_version"><i class="fa-solid fa-brain"></i><span id="s_os_version"></span></span>
+            <a class="v2-stat" id="usedata_bt" data-title-key="v2_tip_serial"><i class="fa-solid fa-tag"></i><span id="s_serial"></span></a>
           </div>
 
           <div class="v2-term">
@@ -297,8 +297,8 @@
     </div>
   </div>
 
-  <script src="../static/pibo-ui.js?ver=260930v1"></script>
-  <script src="../static/index.js?ver=260930v2"></script>
+  <script src="../static/pibo-ui.js?ver=260930v2"></script>
+  <script src="../static/index.js?ver=260930v3"></script>
   <script src="../static/v2/vendor/toolbox-search.js?ver=1.2.11"></script>
   <script src="../static/v2/ide.js?ver=260929v1"></script>
 </body>

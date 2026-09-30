@@ -608,6 +608,17 @@ Blockly.Msg["OLED_CLEAR_TOOLTIP"] = "Clear the OLED screen.";
 Blockly.Msg["OLED_FILL"] = "Fill";
 Blockly.Msg["OLED_UNFILL"] = "Unfill";
 
+// 260930 — 목소리 이름(전엔 k0~k9). 도구 [음성] 과 같은 이름
+Blockly.Msg["VOICE_M1"] = "Male 1";
+Blockly.Msg["VOICE_M2"] = "Male 2";
+Blockly.Msg["VOICE_M3"] = "Male 3";
+Blockly.Msg["VOICE_M4"] = "Male 4";
+Blockly.Msg["VOICE_M5"] = "Male 5";
+Blockly.Msg["VOICE_F1"] = "Female 1";
+Blockly.Msg["VOICE_F2"] = "Female 2";
+Blockly.Msg["VOICE_F3"] = "Female 3";
+Blockly.Msg["VOICE_F4"] = "Female 4";
+Blockly.Msg["VOICE_F5"] = "Female 5";
 Blockly.Msg["SPEECH_STT"] = "%1 %2 Listen for up to %3 seconds and convert to text";
 Blockly.Msg["SPEECH_STT_TOOLTIP"] = "Listen with the robot microphone and turn speech into text when you stop talking. Runs on the robot; Korean and English are detected automatically. The first call takes a few extra seconds to get ready.";
 Blockly.Msg["SPEECH_OTTS"] = "%1 %2 Save %3 with %4 voice to %5 %6.%7";
@@ -740,7 +751,7 @@ Blockly.Msg["VISION_HAND_GESTURE_VIS_TOOLTIP"] = "Show hand gesture in the image
 Blockly.Msg["VISION_LOAD_CF"] = "%1 %2 Load classifier model %3 %4 %5";
 Blockly.Msg["VISION_LOAD_CF_TOOLTIP"] = "Load a model you taught and saved in the Classifier. Folder mymodel, then the model name. (image, hand, face, pose)";
 Blockly.Msg["VISION_PREDICT_CF"] = "%1 %2 Classify %3 with classifier model";
-Blockly.Msg["VISION_PREDICT_CF_TOOLTIP"] = "Classify the image with the loaded classifier model and return the best matching name.";
+Blockly.Msg["VISION_PREDICT_CF_TOOLTIP"] = "Classify the image with the loaded classifier model and return the best matching name. Hand, face and pose models return empty text when no hand, face or body is in view.";
 
 Blockly.Msg["VISION_CARTOON"] = 'cartoon';
 Blockly.Msg["VISION_DETAIL"] = 'detail';
