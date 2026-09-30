@@ -1,0 +1,198 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026 THEMAKER. All rights reserved. openpibo-python-0.9.4.0
+# This file is distributed under the same license as the OPENPIBO package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: OPENPIBO \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-30 23:52+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+msgid "vision_face · Face recognition"
+msgstr ""
+
+msgid "얼굴을 찾고 나이·성별·감정을 분석하며, 얼굴을 학습해 누구인지 알아봅니다."
+msgstr "Finds faces, analyzes age, gender and emotion, and learns faces to recognize who they are."
+
+msgid "Class: :meth:`~openpibo.vision_detect.putTextPIL` :obj:`~openpibo.vision_detect.Face`"
+msgstr ""
+
+msgid "이미지에 문자를 입력합니다. (한/영 가능 - pillow 이용)- COPY"
+msgstr "Writes text on an image. (Korean/English supported - uses pillow)- COPY"
+
+msgid "Parameters"
+msgstr ""
+
+msgid "이미지 객체"
+msgstr "Image object"
+
+msgid "표시할 문자열"
+msgstr "Text to display"
+
+msgid "텍스트 블록 좌측상단 좌표 (x, y)"
+msgstr "Top-left coordinates of the text block (x, y)"
+
+msgid "표시할 글자의 크기"
+msgstr "Font size of the text"
+
+msgid "글자 색깔 RGB 값 (b, g, r) or 16진수 값 '#ffffff'"
+msgstr "Text color RGB value (b, g, r) or hex value '#ffffff'"
+
+msgid "Functions: :meth:`~openpibo.vision_detect.Face.detect` :meth:`~openpibo.vision_detect.Face.get_ageGender` :meth:`~openpibo.vision_detect.Face.get_age` :meth:`~openpibo.vision_detect.Face.get_gender` :meth:`~openpibo.vision_detect.Face.init_db` :meth:`~openpibo.vision_detect.Face.train_face` :meth:`~openpibo.vision_detect.Face.delete_face` :meth:`~openpibo.vision_detect.Face.recognize` :meth:`~openpibo.vision_detect.Face.get_db` :meth:`~openpibo.vision_detect.Face.save_db` :meth:`~openpibo.vision_detect.Face.load_db`"
+msgstr ""
+
+msgid "얼굴과 관련된 다양한 기능을 수행하는 클래스입니다. 다음 기능을 수행할 수 있습니다."
+msgstr "A class that performs various face-related functions. It can do the following."
+
+msgid "얼굴을 탐색합니다."
+msgstr "Detects faces."
+
+msgid "얼굴을 학습/저장/삭제합니다."
+msgstr "Learns/saves/deletes faces."
+
+msgid "학습된 얼굴을 인식합니다."
+msgstr "Recognizes learned faces."
+
+msgid "얼굴로 나이/성별/감정을 추정합니다."
+msgstr "Estimates age/gender/emotion from a face."
+
+msgid "얼굴 데이터베이스"
+msgstr "Face database"
+
+msgid "인스턴스 변수 **facedb** 를 의미하며, 여기에서 얼굴 데이터를 등록하고 불러오고 삭제합니다."
+msgstr "Refers to the instance variable **facedb**, where face data is registered, loaded and deleted."
+
+msgid "얼굴 데이터베이스의 포맷은 이중 list ``[[], []]`` 이며, 첫 번째 list에는 얼굴의 이름이, 두 번째 list에는 학습된 얼굴 데이터가 인코딩되어 들어갑니다."
+msgstr "The face database format is a nested list ``[[], []]``; the first list holds the face names and the second list holds the encoded learned face data."
+
+msgid "또한 파일로 저장하여 인스턴스가 삭제된 후에도 얼굴 정보를 남겨둘 수 있습니다."
+msgstr "It can also be saved to a file so the face information is kept after the instance is deleted."
+
+msgid "example::"
+msgstr ""
+
+msgid "Returns"
+msgstr ""
+
+msgid "인식된 얼굴들의 (x, y, w, h) 배열 입니다.  list 타입으로, 이미지 하나에 얼굴이 여러 개 인식된 경우 인식된 얼굴의 좌표가 모두 입력됩니다.  example::    [(10, 10, 40, 50), (120, 30, 160, 70), (130, 140, 200, 260)]"
+msgstr "Array of (x, y, w, h) of the detected faces.  It is a list; if several faces are detected in one image, the coordinates of all detected faces are included.  example::    [(10, 10, 40, 50), (120, 30, 160, 70), (130, 140, 200, 260)]"
+
+msgid "인식된 얼굴들의 (x, y, w, h) 배열 입니다."
+msgstr "Array of (x, y, w, h) of the detected faces."
+
+msgid "list 타입으로, 이미지 하나에 얼굴이 여러 개 인식된 경우 인식된 얼굴의 좌표가 모두 입력됩니다."
+msgstr "It is a list; if several faces are detected in one image, the coordinates of all detected faces are included."
+
+msgid "얼굴 box 표시합니다."
+msgstr "Draws face boxes."
+
+msgid "얼굴 좌표 (x1,y1,x2,y2) 리스트"
+msgstr "List of face coordinates (x1,y1,x2,y2)"
+
+msgid "얼굴의 랜드마크를 탐색합니다."
+msgstr "Detects facial landmarks."
+
+msgid "얼굴 좌표 (x1,y1,x2,y2)"
+msgstr "Face coordinates (x1,y1,x2,y2)"
+
+msgid "좌표 리스트"
+msgstr "List of coordinates"
+
+msgid "얼굴의 나이, 성별, 감정을 추정합니다."
+msgstr "Estimates the age, gender and emotion of a face."
+
+msgid "얼굴의 좌표 (x, y, w, h)"
+msgstr "Face coordinates (x, y, w, h)"
+
+#, python-brace-format
+msgid "{age: 0~100, gender: Male 또는 Female, emotions: ``neutral``, ``happy``, ``sad``, ``surprise``, ``anger``, box:좌표}"
+msgstr "{age: 0~100, gender: Male or Female, emotions: ``neutral``, ``happy``, ``sad``, ``surprise``, ``anger``, box:coordinates}"
+
+msgid "얼굴 분석 결과"
+msgstr "Face analysis result"
+
+msgid "얼굴 데이터베이스를 초기화합니다."
+msgstr "Initializes the face database."
+
+msgid "초기화된 데이터베이스는 빈 이중 list ``[[], []]`` 입니다."
+msgstr "The initialized database is an empty nested list ``[[], []]``."
+
+msgid "얼굴을 학습하여 얼굴 데이터베이스에 저장합니다."
+msgstr "Learns a face and saves it to the face database."
+
+msgid "디텍팅한 얼굴의 사각형 좌측상단, 우측하단 포인트 (x1, y1, x2, y2)"
+msgstr "Top-left and bottom-right points of the detected face rectangle (x1, y1, x2, y2)"
+
+msgid "디텍팅한 얼굴에 붙일 이름"
+msgstr "Name to give the detected face"
+
+msgid "등록된 얼굴을 삭제합니다."
+msgstr "Deletes a registered face."
+
+msgid "삭제할 얼굴의 이름"
+msgstr "Name of the face to delete"
+
+msgid "``True`` / ``False``"
+msgstr ""
+
+msgid "등록된 얼굴을 인식합니다."
+msgstr "Recognizes registered faces."
+
+#, python-brace-format
+msgid "``{\"name\": 이름, \"score\": 오차도}``  얼굴이 비슷할수록 오차도가 낮게 측정됩니다.  오차도가 0.4 이하일 때 동일인으로 판정합니다."
+msgstr "``{\"name\": name, \"score\": error}``  The more similar the faces, the lower the error.  Faces with an error of 0.4 or less are judged to be the same person."
+
+#, python-brace-format
+msgid "``{\"name\": 이름, \"score\": 오차도}``"
+msgstr "``{\"name\": name, \"score\": error}``"
+
+msgid "얼굴이 비슷할수록 오차도가 낮게 측정됩니다."
+msgstr "The more similar the faces, the lower the error."
+
+msgid "오차도가 0.4 이하일 때 동일인으로 판정합니다."
+msgstr "Faces with an error of 0.4 or less are judged to be the same person."
+
+msgid "사용 중인 얼굴 데이터베이스를 확인합니다."
+msgstr "Checks the face database in use."
+
+msgid "**facedb** (``list(list, list)`` 타입)  example::    [     ['honggildong'],     [array([-0.06423206,  0.12474005,  0.0511112 , -0.05676335, -0.07211345,             -0.03123881, -0.04119622, -0.12800875,  0.11717855, -0.11079554,              0.22952782, -0.02007426, -0.17457265, -0.13562854, -0.04972655,              0.15810637, -0.12785575, -0.16479518, -0.07002968, -0.00208595,              0.169218  ,  0.03144928, -0.01074579,  0.04103286, -0.09245337,             ...             -0.00706697,  0.06025593, -0.0049719 ])]   ]"
+msgstr "**facedb** (type ``list(list, list)``)  example::    [     ['honggildong'],     [array([-0.06423206,  0.12474005,  0.0511112 , -0.05676335, -0.07211345,             -0.03123881, -0.04119622, -0.12800875,  0.11717855, -0.11079554,              0.22952782, -0.02007426, -0.17457265, -0.13562854, -0.04972655,              0.15810637, -0.12785575, -0.16479518, -0.07002968, -0.00208595,              0.169218  ,  0.03144928, -0.01074579,  0.04103286, -0.09245337,             ...             -0.00706697,  0.06025593, -0.0049719 ])]   ]"
+
+msgid "**facedb** (``list(list, list)`` 타입)"
+msgstr "**facedb** (type ``list(list, list)``)"
+
+msgid "얼굴 데이터베이스를 파일로 저장합니다."
+msgstr "Saves the face database to a file."
+
+msgid "저장할 얼굴 데이터베이스 파일의 경로입니다."
+msgstr "Path of the face database file to save."
+
+msgid "얼굴 데이터베이스 파일을 불러옵니다."
+msgstr "Loads a face database file."
+
+msgid "불러 올 ``facedb`` 파일의 경로입니다."
+msgstr "Path of the ``facedb`` file to load."
+
+msgid "(내부 함수) 얼굴 랜드마크 데이터를 통해 얼굴 방향 계산"
+msgstr "(Internal function) Calculates face direction from facial landmark data"
+
+msgid "Calculate angle between two lines defined by three points."
+msgstr ""
+
+msgid "Draw connections between landmarks based on Mediapipe's face mesh."
+msgstr ""
+
+msgid "Detect mesh and return distance, direction, and image with landmarks."
+msgstr ""
+

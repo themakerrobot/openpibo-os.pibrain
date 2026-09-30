@@ -82,3 +82,10 @@ code.literal { border-radius: 5px; padding: .1em .35em; font-size: .88em; }
 
 /* API 페이지: 클래스·메서드 이름 칸 */
 dl.py > dt { border-radius: 8px; }
+
+/* 한국어 ↔ English 전환 (langswitch.js) */
+.pb-lang { display: inline-block; margin: 0 1rem .5rem; padding: .15rem .65rem; font-size: .8rem; font-weight: 700;
+  border: 1px solid var(--color-background-border); border-radius: 99px; color: var(--color-foreground-secondary) !important;
+  text-decoration: none !important; }
+.pb-lang:hover { border-color: var(--color-brand-primary); color: var(--color-brand-primary) !important; }
+.pb-lang--top { margin: 0 .5rem 0 0; }

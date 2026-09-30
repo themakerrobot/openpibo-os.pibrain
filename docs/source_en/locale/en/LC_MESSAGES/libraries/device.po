@@ -1,0 +1,228 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026 THEMAKER. All rights reserved. openpibo-python-0.9.4.0
+# This file is distributed under the same license as the OPENPIBO package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: OPENPIBO \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-30 23:52+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+msgid "device · LEDs and buttons"
+msgstr ""
+
+msgid "MCU를 제어하여, 부품을 제어합니다."
+msgstr "Controls the MCU to control components."
+
+msgid "Class: :obj:`~openpibo.device.Device` :obj:`~openpibo.device.DeviceByPiBrain`"
+msgstr ""
+
+msgid "Functions: :data:`~openpibo.device.Device.code_list` :meth:`~openpibo.device.Device.send_cmd` :meth:`~openpibo.device.Device.send_raw` :meth:`~openpibo.device.Device.eye_on` :meth:`~openpibo.device.Device.eye_on_s` :meth:`~openpibo.device.Device.eye_off` :meth:`~openpibo.device.Device.get_battery` :meth:`~openpibo.device.Device.get_dc` :meth:`~openpibo.device.Device.get_system` :meth:`~openpibo.device.Device.get_pir` :meth:`~openpibo.device.Device.get_touch` :meth:`~openpibo.device.Device.get_button`"
+msgstr ""
+
+msgid "메인컨트롤러를 제어하여 파이보의 여러가지 상태를 체크하거나, 눈 색깔을 변경합니다."
+msgstr "Controls the main controller to check piBo's various states or change the eye color."
+
+msgid "example::"
+msgstr ""
+
+msgid "메시지 상세 설명::"
+msgstr "Message details::"
+
+msgid "Device에 메시지 코드/데이터를 전송합니다. 입력된 메시지는 ``#code:data!`` 의 포맷으로 변경되어 전달됩니다. 메시지 상세 설명은 위에서 확인할 수 있습니다."
+msgstr "Sends a message code/data to the Device. The input message is converted to the ``#code:data!`` format before being sent. See above for message details."
+
+msgid "Parameters"
+msgstr ""
+
+msgid "메시지 코드  * 10 : VERSION * 11 : HALT * 14 : DC_CONN * 15 : BATTERY * 17 : REBOOT * 20 : NEOPIXEL * 21 : NEOPIXEL_FADE * 22 : NEOPIXEL_BRIGHTNESS * 23 : NEOPIXEL_EACH * 24 : NEOPIXEL_FADE_EACH * 25 : NEOPIXEL_LOOP * 26 : NEOPIXEL_OFFSET_SET * 27 : NEOPIXEL_OFFSET_GET * 28 : NEOPIXEL_EACH_ORG * 30 : PIR * 40 : SYSTEM"
+msgstr "Message code  * 10 : VERSION * 11 : HALT * 14 : DC_CONN * 15 : BATTERY * 17 : REBOOT * 20 : NEOPIXEL * 21 : NEOPIXEL_FADE * 22 : NEOPIXEL_BRIGHTNESS * 23 : NEOPIXEL_EACH * 24 : NEOPIXEL_FADE_EACH * 25 : NEOPIXEL_LOOP * 26 : NEOPIXEL_OFFSET_SET * 27 : NEOPIXEL_OFFSET_GET * 28 : NEOPIXEL_EACH_ORG * 30 : PIR * 40 : SYSTEM"
+
+msgid "메시지 코드"
+msgstr "Message code"
+
+msgid "10 : VERSION"
+msgstr ""
+
+msgid "11 : HALT"
+msgstr ""
+
+msgid "14 : DC_CONN"
+msgstr ""
+
+msgid "15 : BATTERY"
+msgstr ""
+
+msgid "17 : REBOOT"
+msgstr ""
+
+msgid "20 : NEOPIXEL"
+msgstr ""
+
+msgid "21 : NEOPIXEL_FADE"
+msgstr ""
+
+msgid "22 : NEOPIXEL_BRIGHTNESS"
+msgstr ""
+
+msgid "23 : NEOPIXEL_EACH"
+msgstr ""
+
+msgid "24 : NEOPIXEL_FADE_EACH"
+msgstr ""
+
+msgid "25 : NEOPIXEL_LOOP"
+msgstr ""
+
+msgid "26 : NEOPIXEL_OFFSET_SET"
+msgstr ""
+
+msgid "27 : NEOPIXEL_OFFSET_GET"
+msgstr ""
+
+msgid "28 : NEOPIXEL_EACH_ORG"
+msgstr ""
+
+msgid "30 : PIR"
+msgstr ""
+
+msgid "40 : SYSTEM"
+msgstr ""
+
+msgid "메시지  ``code`` 의 값에 따라 데이터의 형식이 다릅니다. code에 따라 data가 요구되지 않을 수도 있습니다.  example::    device.send_cmd(20, '255,255,255')   device.send_cmd(21, '255,255,255,10')   device.send_cmd(22, '64')   device.send_cmd(23, '255,255,255,255,255,255')   device.send_cmd(24, '255,255,255,255,255,255,10')   device.send_cmd(25, '2')   device.send_cmd(26, '255,255,255,255,255,255')   device.send_cmd(28, '255,255,255,255,255,255')   device.send_cmd(30, 'on')  **자세한 설명은 상단 \"메시지 상세 설명\" 참고하시기 바랍니다**"
+msgstr "Message  The data format depends on the value of ``code``. Depending on the code, data may not be required.  example::    device.send_cmd(20, '255,255,255')   device.send_cmd(21, '255,255,255,10')   device.send_cmd(22, '64')   device.send_cmd(23, '255,255,255,255,255,255')   device.send_cmd(24, '255,255,255,255,255,255,10')   device.send_cmd(25, '2')   device.send_cmd(26, '255,255,255,255,255,255')   device.send_cmd(28, '255,255,255,255,255,255')   device.send_cmd(30, 'on')  **For details, see \"Message details\" above**"
+
+msgid "메시지"
+msgstr "Message"
+
+msgid "``code`` 의 값에 따라 데이터의 형식이 다릅니다. code에 따라 data가 요구되지 않을 수도 있습니다."
+msgstr "The data format depends on the value of ``code``. Depending on the code, data may not be required."
+
+msgid "**자세한 설명은 상단 \"메시지 상세 설명\" 참고하시기 바랍니다**"
+msgstr "**For details, see \"Message details\" above**"
+
+msgid "returns str"
+msgstr ""
+
+msgid "Device로부터 받은 응답"
+msgstr "Response received from the Device"
+
+msgid "Device에 실제 메시지를 전송하고 응답을 받습니다. 메시지 상세 설명은 위에서 확인할 수 있습니다."
+msgstr "Sends the actual message to the Device and receives the response. See above for message details."
+
+msgid "실제 전달되는 메시지  Device에 전송되는 메시지의 포맷은 ``#code:data!`` 입니다. 해당 메시지를 메인 컨트롤러에 전송합니다.  **자세한 설명은 상단 \"메시지 상세 설명\" 참고하시기 바랍니다**"
+msgstr "Actual message sent  The format of the message sent to the Device is ``#code:data!``. The message is sent to the main controller.  **For details, see \"Message details\" above**"
+
+msgid "실제 전달되는 메시지"
+msgstr "Actual message sent"
+
+msgid "Device에 전송되는 메시지의 포맷은 ``#code:data!`` 입니다. 해당 메시지를 메인 컨트롤러에 전송합니다."
+msgstr "The format of the message sent to the Device is ``#code:data!``. The message is sent to the main controller."
+
+msgid "Returns"
+msgstr ""
+
+msgid "LED를 켭니다."
+msgstr "Turns on the LED."
+
+msgid "* RGB (0~255 숫자) * (R, G, B) -> 양쪽 눈 함께 제어 * (R,G,B,R,G,B) -> 양쪽 눈 각각 제어"
+msgstr "* RGB (0~255 numbers) * (R, G, B) -> controls both eyes together * (R,G,B,R,G,B) -> controls each eye separately"
+
+msgid "RGB (0~255 숫자)"
+msgstr "RGB (0~255 numbers)"
+
+msgid "(R, G, B) -> 양쪽 눈 함께 제어"
+msgstr "(R, G, B) -> controls both eyes together"
+
+msgid "(R,G,B,R,G,B) -> 양쪽 눈 각각 제어"
+msgstr "(R,G,B,R,G,B) -> controls each eye separately"
+
+msgid "* interval (RGB 값이 1씩 바뀌는 시간) * 0 이면 off"
+msgstr "* interval (time for the RGB value to change by 1) * off if 0"
+
+msgid "interval (RGB 값이 1씩 바뀌는 시간)"
+msgstr "interval (time for the RGB value to change by 1)"
+
+msgid "0 이면 off"
+msgstr "off if 0"
+
+msgid "* RGB 16진수 문자 리스트 ['#ffffff', '#ffffff']"
+msgstr "* List of RGB hex strings ['#ffffff', '#ffffff']"
+
+msgid "RGB 16진수 문자 리스트 ['#ffffff', '#ffffff']"
+msgstr "List of RGB hex strings ['#ffffff', '#ffffff']"
+
+msgid "LED를 끕니다."
+msgstr "Turns off the LED."
+
+msgid "배터리 정보를 요청합니다."
+msgstr "Requests battery information."
+
+msgid "값만 가져올지 메시지 전체를 가져올지 선택"
+msgstr "Whether to get only the value or the whole message"
+
+msgid "배터리 정보 응답"
+msgstr "Battery information response"
+
+msgid "DC커넥터 정보를 요청합니다."
+msgstr "Requests DC connector information."
+
+msgid "DC커넥터 연결 정보 응답"
+msgstr "DC connector connection information response"
+
+msgid "시스템 메시지를 요청합니다."
+msgstr "Requests the system message."
+
+msgid "가져올 값 선택 ('pir'|'touch'|'dc'|'button'|'all')"
+msgstr "Value to get ('pir'|'touch'|'dc'|'button'|'all')"
+
+msgid "시스템 메시지 정보 응답 (pir-touch-dc-button)"
+msgstr "System message information response (pir-touch-dc-button)"
+
+msgid "시스템 메시지를 요청합니다. (pir)"
+msgstr "Requests the system message. (pir)"
+
+msgid "시스템 메시지 정보 응답에서 pir 값 추출"
+msgstr "pir value extracted from the system message information response"
+
+msgid "시스템 메시지를 요청합니다. (touch)"
+msgstr "Requests the system message. (touch)"
+
+msgid "시스템 메시지 정보 응답에서 touch 값 추출"
+msgstr "touch value extracted from the system message information response"
+
+msgid "시스템 메시지를 요청합니다. (button)"
+msgstr "Requests the system message. (button)"
+
+msgid "시스템 메시지 정보 응답에서 button 값 추출"
+msgstr "button value extracted from the system message information response"
+
+msgid "Functions: :meth:`~openpibo.device.DeviceByPiBrain.get_button` :meth:`~openpibo.device.DeviceByPiBrain.led_on` :meth:`~openpibo.device.DeviceByPiBrain.led_on_s` :meth:`~openpibo.device.DeviceByPiBrain.led_off`"
+msgstr ""
+
+msgid "버튼 눌림을 체크 합니다."
+msgstr "Checks whether a button is pressed."
+
+msgid "버튼 번호 (1 ~ 4)"
+msgstr "Button number (1 ~ 4)"
+
+msgid "``on`` 또는 ``off``"
+msgstr "``on`` or ``off``"
+
+msgid "R, G, B (0~255 숫자)"
+msgstr "R, G, B (0~255 numbers)"
+
+msgid "RGB 16진수 문자 #ffffff"
+msgstr "RGB hex string #ffffff"
+

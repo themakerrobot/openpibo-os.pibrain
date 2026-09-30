@@ -235,4 +235,5 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/windows,linux,macos,visualstudiocode,python
+# End of https://www.toptal.com/developers/gitignore/api/windows,linux,macos,visualstudiocode,python# 영문 도움말 번역: .po 만 커밋한다(.mo 는 Sphinx 가 빌드 때 만든다)
+docs/source_en/locale/**/*.mo

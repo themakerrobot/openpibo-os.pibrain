@@ -1,0 +1,66 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026 THEMAKER. All rights reserved. openpibo-python-0.9.4.0
+# This file is distributed under the same license as the OPENPIBO package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: OPENPIBO \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-30 23:52+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+msgid "usb_uart · USB serial"
+msgstr ""
+
+msgid "USB UART 통신을 위한 클래스 입니다."
+msgstr "Class for USB UART communication."
+
+msgid "Class: :obj:`~openpibo.usb_uart.UsbUart`"
+msgstr ""
+
+msgid "USB UART 통신을 위한 클래스입니다."
+msgstr "Class for USB UART communication."
+
+msgid "Parameters"
+msgstr ""
+
+msgid "USB 디바이스 이름 (기본값: '/dev/ttyUSB0')"
+msgstr "USB device name (default: '/dev/ttyUSB0')"
+
+msgid "통신 속도 (baud rate, 기본값: 9600)"
+msgstr "Communication speed (baud rate, default: 9600)"
+
+msgid "읽기 타임아웃 (초, 기본값: 1)"
+msgstr "Read timeout (seconds, default: 1)"
+
+msgid "UART로 데이터를 전송합니다."
+msgstr "Sends data over UART."
+
+msgid "전송할 데이터 (문자열)"
+msgstr "Data to send (string)"
+
+msgid "Returns"
+msgstr ""
+
+msgid "전송한 바이트 수"
+msgstr "Number of bytes sent"
+
+msgid "UART로부터 모든 데이터를 읽어 문자열로 반환합니다."
+msgstr "Reads all data from UART and returns it as a string."
+
+msgid "수신된 문자열 데이터 (데이터가 없으면 빈 문자열 반환)"
+msgstr "Received string data (returns an empty string if there is no data)"
+
+msgid "UART 연결을 종료합니다."
+msgstr "Closes the UART connection."
+

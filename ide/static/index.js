@@ -219,7 +219,7 @@ hwtest_bt.addEventListener("click", async function () {
 });
 
 document.getElementById("guide_bt").addEventListener("click", function () {
-  window.open(`http://${location.hostname}:8080`, "pibo_guide");
+  window.open(`http://${location.hostname}:8080/?lang=${lang === "en" ? "en" : "ko"}`, "pibo_guide");
 });
 
 document.getElementById("restore_bt").addEventListener("click", async function () {
@@ -1390,7 +1390,7 @@ const setLanguage = (langCode) => {
     }
   });
 
-  const langFileVersion = '261001v2';
+  const langFileVersion = '261001v1';
   const langFile = `../static/${langCode}.js?ver=${langFileVersion}`;
   const prevKoScript = document.querySelector(`script[src*="../static/ko.js?ver=${langFileVersion}"]`);
   if (prevKoScript) {

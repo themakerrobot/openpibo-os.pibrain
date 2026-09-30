@@ -1,0 +1,886 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
+        <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/_modules/openpibo/vision_camera.html">
+
+    <link rel="shortcut icon" href="../../_static/icon.png"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+        <title>openpibo.vision_camera - PiBrain Help</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mycss.css?v=03d1bc43" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  --color-brand-primary: #2563eb;
+  --color-brand-content: #2563eb;
+  --color-brand-visited: #2563eb;
+  --font-stack: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-stack--headings: var(--font-stack);
+  --font-stack--monospace: "D2Coding", "JetBrains Mono", Consolas, "SF Mono", ui-monospace, monospace;
+  --color-background-secondary: #f5f6fa;
+  --color-sidebar-background: #f5f6fa;
+  --color-sidebar-item-background--current: rgba(37, 99, 235, .08);
+  --color-sidebar-link-text: #4a5163;
+  --color-sidebar-link-text--top-level: #4a5163;
+  --color-admonition-title--note: #2563eb;
+  --color-admonition-title-background--note: rgba(37, 99, 235, .08);
+  --color-admonition-title--tip: #16a34a;
+  --color-admonition-title-background--tip: rgba(22, 163, 74, .08);
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-background-primary: #1a1e27;
+  --color-background-secondary: #222733;
+  --color-sidebar-background: #1f232d;
+  --color-sidebar-item-background--current: rgba(251, 201, 45, .10);
+  --color-sidebar-link-text: #b4bac8;
+  --color-sidebar-link-text--top-level: #b4bac8;
+  --color-admonition-title--note: #fbc92d;
+  --color-admonition-title-background--note: rgba(251, 201, 45, .10);
+  --color-brand-primary: #fbc92d;
+  --color-brand-content: #fbc92d;
+  --color-brand-visited: #fbc92d;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-background-primary: #1a1e27;
+  --color-background-secondary: #222733;
+  --color-sidebar-background: #1f232d;
+  --color-sidebar-item-background--current: rgba(251, 201, 45, .10);
+  --color-sidebar-link-text: #b4bac8;
+  --color-sidebar-link-text--top-level: #b4bac8;
+  --color-admonition-title--note: #fbc92d;
+  --color-admonition-title-background--note: rgba(251, 201, 45, .10);
+  --color-brand-primary: #fbc92d;
+  --color-brand-content: #fbc92d;
+  --color-brand-visited: #fbc92d;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">PiBrain Help</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  <span class="sidebar-brand-text">PiBrain Help</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notes/piboMaker.html">PiBrain Maker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notes/software.html">Software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notes/hardware.html">Hardware</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Blocks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../blocks/guide.html">Block coding</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/audio.html">audio · Play and record sound</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/collect.html">collect · Wikipedia, weather, news (internet)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/device.html">device · LEDs and buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/usb_uart.html">usb_uart · USB serial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/motion.html">motion · Motors and motions (for piBo)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/oled.html">oled · LCD screen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/pibo_graphics.html">pibo_graphics · Turtle graphics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/speech.html">speech · Voice, speech recognition, chat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_camera.html">vision_camera · Camera and images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_detect.html">vision_detect · Object, QR, hand and pose recognition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_face.html">vision_face · Face recognition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/vision_classify.html">vision_classify · Classifier models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries/utils.html">utils · Other tools</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for openpibo.vision_camera</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""</span>
+<span class="sd">카메라로 사진을 찍고 이미지를 편집합니다.</span>
+
+<span class="sd">Class:</span>
+<span class="sd">:obj:`~openpibo.vision_camera.Camera`</span>
+<span class="sd">"""</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span><span class="o">,</span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span><span class="p">,</span><span class="n">ImageDraw</span><span class="p">,</span><span class="n">ImageFont</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">picamera2</span><span class="w"> </span><span class="kn">import</span> <span class="n">Picamera2</span>
+<span class="c1">#from libcamera import Transform</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">openpibo_models</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">'LIBCAMERA_LOG_LEVELS'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'3'</span>
+
+<div class="viewcode-block" id="Camera">
+<a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Camera</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""</span>
+<span class="sd">Functions:</span>
+<span class="sd">:meth:`~openpibo.vision_camera.Camera.imread`</span>
+<span class="sd">:meth:`~openpibo.vision_camera.Camera.read`</span>
+<span class="sd">:meth:`~openpibo.vision_camera.Camera.create_matte`</span>
+<span class="sd">:meth:`~openpibo.vision_camera.Camera.imshow_to_ide`</span>
+<span class="sd">:meth:`~openpibo.vision_camera.Camera.resize`</span>
+<span class="sd">:meth:`~openpibo.vision_camera.Camera.rotate`</span>
+<span class="sd">:meth:`~openpibo.vision_camera.Camera.imwrite`</span>
+<span class="sd">:meth:`~openpibo.vision_camera.Camera.draw_bitmap`</span>
+<span class="sd">:meth:`~openpibo.vision_camera.Camera.rectangle`</span>
+<span class="sd">:meth:`~openpibo.vision_camera.Camera.circle`</span>
+<span class="sd">:meth:`~openpibo.vision_camera.Camera.line`</span>
+<span class="sd">:meth:`~openpibo.vision_camera.Camera.putTextPIL`</span>
+<span class="sd">:meth:`~openpibo.vision_camera.Camera.putText`</span>
+<span class="sd">:meth:`~openpibo.vision_camera.Camera.stylization`</span>
+<span class="sd">:meth:`~openpibo.vision_camera.Camera.detailEnhance`</span>
+<span class="sd">:meth:`~openpibo.vision_camera.Camera.pencilSketch`</span>
+<span class="sd">:meth:`~openpibo.vision_camera.Camera.edgePreservingFilter`</span>
+<span class="sd">:meth:`~openpibo.vision_camera.Camera.flip`</span>
+
+<span class="sd">  파이보의 카메라를 제어합니다.</span>
+
+<span class="sd">  * 사진 촬영, 읽기, 쓰기 등 카메라 기본 기능을 사용할 수 있습니다.</span>
+<span class="sd">  * 이미지에 도형/글자를 추가할 수 있습니다.</span>
+<span class="sd">  * 이미지를 변환할 수 있습니다.</span>
+
+<span class="sd">  example::</span>
+
+<span class="sd">    from openpibo.vision_camera import Camera</span>
+
+<span class="sd">    camera = Camera()</span>
+<span class="sd">    # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
+<span class="sd">  """</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cam</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Camera 클래스를 초기화합니다.</span>
+<span class="sd">    """</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="mi">480</span><span class="p">,</span> <span class="mi">640</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">setUseOptimized</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">setNumThreads</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">getNumberOfCPUs</span><span class="p">())</span>
+    <span class="n">cap</span> <span class="o">=</span> <span class="n">Picamera2</span><span class="p">()</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">cap</span><span class="o">.</span><span class="n">create_still_configuration</span><span class="p">(</span>
+              <span class="n">main</span><span class="o">=</span><span class="p">{</span>
+                <span class="s1">'size'</span><span class="p">:</span> <span class="p">(</span><span class="mi">1280</span><span class="p">,</span> <span class="mi">960</span><span class="p">),</span>
+                <span class="s1">'format'</span><span class="p">:</span> <span class="s1">'RGB888'</span>
+              <span class="p">},</span>
+              <span class="c1">#transform=Transform(hflip=False, vflip=False),</span>
+              <span class="n">buffer_count</span><span class="o">=</span><span class="mi">2</span>
+            <span class="p">)</span>
+
+    <span class="n">cap</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">cap</span><span class="o">.</span><span class="n">set_controls</span><span class="p">({</span><span class="s1">'AwbEnable'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">'AwbMode'</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span>
+    <span class="n">cap</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cap</span> <span class="o">=</span> <span class="n">cap</span>
+
+
+<div class="viewcode-block" id="Camera.release">
+<a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.release">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">cap</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">cap</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">cap</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Camera.imread">
+<a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.imread">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">imread</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    이미지 파일을 읽습니다.</span>
+
+<span class="sd">    :param str filename: 사용할 이미지 파일</span>
+<span class="sd">    :returns: ``numpy.ndarray`` 타입 이미지 객체</span>
+<span class="sd">    """</span>
+
+    <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Camera.read">
+<a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.read">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    카메라를 통해 이미지를 촬영합니다.</span>
+<span class="sd">    해상도 변경 시 이미지가 깨질 수 있으므로, 기본 해상도를 권장합니다.</span>
+
+<span class="sd">    :returns: ``numpy.ndarray`` 타입 이미지 객체</span>
+<span class="sd">    """</span>
+
+    <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cap</span><span class="o">.</span><span class="n">capture_array</span><span class="p">(),</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)),</span><span class="n">cv2</span><span class="o">.</span><span class="n">ROTATE_90_COUNTERCLOCKWISE</span><span class="p">)</span></div>
+
+    <span class="c1"># return cv2.rotate(self.cap.capture_array(),cv2.ROTATE_90_COUNTERCLOCKWISE)</span>
+    <span class="c1">#return self.cap.capture_array()</span>
+
+<div class="viewcode-block" id="Camera.create_matte">
+<a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.create_matte">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">create_matte</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
+      <span class="n">colors</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">7</span><span class="p">],</span> <span class="mi">16</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">],</span> <span class="mi">16</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="mi">16</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">tuple</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">colors</span><span class="si">}</span><span class="s1">" must be tuple type'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'len(</span><span class="si">{</span><span class="n">colors</span><span class="si">}</span><span class="s1">) must be 3'</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">colors</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Camera.imshow">
+<a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.imshow">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">imshow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    이미지 파일을 Web IDE에 출력합니다.</span>
+
+<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
+<span class="sd">    :param float ratio: 이미지 사이즈 변환 비율 (다수 동시 사용시, 네트워크 부하)</span>
+<span class="sd">    """</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">imshow_to_ide</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">ratio</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Camera.imshow_to_ide">
+<a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.imshow_to_ide">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">imshow_to_ide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="mf">0.25</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    이미지 파일을 Web IDE에 출력합니다.</span>
+
+<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
+<span class="sd">    :param float ratio: 이미지 사이즈 변환 비율 (다수 동시 사용시, 네트워크 부하)</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
+
+    <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">fx</span><span class="o">=</span><span class="n">ratio</span><span class="p">,</span> <span class="n">fy</span><span class="o">=</span><span class="n">ratio</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_AREA</span><span class="p">)</span>
+    <span class="c1"># curl -X 'POST' -so /dev/null 'http://0.0.0.0/show' -H 'accept: application/json' -H 'Content-Type: multipart/form-data' -F 'data=@{filename};type=image/png'</span>
+    <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">'http://0.0.0.0/show'</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">'accept'</span><span class="p">:</span> <span class="s1">'application/json'</span><span class="p">},</span> <span class="n">files</span><span class="o">=</span><span class="p">{</span><span class="s1">'data'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'filename'</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imencode</span><span class="p">(</span><span class="s1">'.jpg'</span><span class="p">,</span> <span class="n">img</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(),</span> <span class="s1">'image/png'</span><span class="p">)})</span></div>
+
+
+<div class="viewcode-block" id="Camera.resize">
+<a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.resize">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">resize</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Opencv 이미지의 크기를 변환합니다.</span>
+
+<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
+<span class="sd">    :param int w: 변환될 이미지의 가로 크기입니다. (픽셀 단위)</span>
+<span class="sd">    :param int h: 변환될 이미지의 세로 크기입니다. (픽셀 단위)</span>
+<span class="sd">    :returns: 크기 변환 후의 ``numpy.ndarray`` 이미지 객체</span>
+<span class="sd">    """</span>
+
+    <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Camera.rotate">
+<a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.rotate">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="mf">0.9</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    이미지를 회전시킵니다.</span>
+
+<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
+<span class="sd">    :param int degree: 회전할 각도</span>
+<span class="sd">    :param float ratio: 축소 또는 확대할 비율</span>
+<span class="sd">    :returns: 회전한 ``numpy.ndarray`` 이미지 객체</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">degree</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="n">degree</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">360</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">degree</span><span class="si">}</span><span class="s1"> must be integer type and -360~360'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">float</span> <span class="ow">or</span> <span class="n">ratio</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">ratio</span><span class="si">}</span><span class="s1"> must be float type and 0~1.0'</span><span class="p">)</span>
+
+    <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">getRotationMatrix2D</span><span class="p">((</span><span class="n">cols</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">rows</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="n">degree</span><span class="p">,</span> <span class="n">ratio</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">warpAffine</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="p">(</span><span class="n">cols</span><span class="p">,</span><span class="n">rows</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Camera.imwrite">
+<a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.imwrite">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">imwrite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    이미지를 파일로 저장합니다.</span>
+
+<span class="sd">    :param str filename: 저장할 파일 경로(jpg, png)</span>
+<span class="sd">    :param numpy.ndarray img: 저장할 이미지 객체</span>
+<span class="sd">    """</span>
+
+    <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">img</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Camera.draw_bitmap">
+<a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.draw_bitmap">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">draw_bitmap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="n">pixel</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    비트맵(점 그림) 데이터를 이미지로 만듭니다. 카메라 화면 크기로 키웁니다.</span>
+
+<span class="sd">    :param int w: bitmap 가로 길이</span>
+<span class="sd">    :param int h: bitmap 세로 길이</span>
+<span class="sd">    :param tuple background: 배경 색상</span>
+<span class="sd">    :param tuple pixel: 비트 색상</span>
+<span class="sd">    :returns: ``numpy.ndarray`` 이미지 객체</span>
+<span class="sd">    """</span>
+    <span class="c1"># 1. 문자열을 정수 리스트로 변환</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">','</span><span class="p">)]</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"val 인자는 쉼표로 구분된 정수 문자열이어야 합니다."</span><span class="p">)</span>
+    
+    <span class="c1"># 2. w*h 크기에 맞는 값인지 확인</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">!=</span> <span class="n">w</span> <span class="o">*</span> <span class="n">h</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"val의 길이가 w*h와 일치하지 않습니다: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="n">w</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">h</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    
+    <span class="c1"># 3. 1차원 리스트를 2차원 배열로 변환 (행: h, 열: w)</span>
+    <span class="n">bitmap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
+    
+    <span class="c1"># 4. 작은 크기의 이미지 생성 (배경색으로 채움)</span>
+    <span class="n">small_img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">background</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+    <span class="n">small_img</span><span class="p">[</span><span class="n">bitmap</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pixel</span>  <span class="c1"># bitmap 값이 1인 부분에 pixel 색상 적용</span>
+    
+    <span class="c1"># 5. 각 픽셀을 복제할 배수 계산 (정수 배수)</span>
+    <span class="c1"># 결과는 카메라 그림과 같은 크기(가로 self.width x 세로 self.height). 전엔 가로·세로를 바꿔 써서</span>
+    <span class="c1"># 파이보는 세로 480x640, PiBrain 은 가로 640x480 이 나왔다(LCD·OLED 는 다시 늘려 그려서 티가 안 났다, 260930)</span>
+    <span class="n">scale_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">//</span> <span class="n">h</span>  <span class="c1"># 세로 복제 횟수</span>
+    <span class="n">scale_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">//</span> <span class="n">w</span>  <span class="c1"># 가로 복제 횟수</span>
+    
+    <span class="c1"># 6. np.repeat를 이용하여 픽셀 복제 (각 픽셀을 scale_y x scale_x 블록으로 확장)</span>
+    <span class="n">replicated_img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">small_img</span><span class="p">,</span> <span class="n">scale_y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">scale_x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1"># 7. 복제 결과가 정확히 카메라 그림 크기가 아닐 수 있으므로, 부족한 부분은 배경색으로 채우고</span>
+    <span class="c1">#    넘치는 부분은 자른다.</span>
+    <span class="n">rep_h</span><span class="p">,</span> <span class="n">rep_w</span> <span class="o">=</span> <span class="n">replicated_img</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">rep_h</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="ow">or</span> <span class="n">rep_w</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">:</span>
+      <span class="n">pad_bottom</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">-</span> <span class="n">rep_h</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+      <span class="n">pad_right</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="n">rep_w</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+      <span class="n">final_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">copyMakeBorder</span><span class="p">(</span><span class="n">replicated_img</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">pad_bottom</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">pad_right</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">BORDER_CONSTANT</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">background</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">final_img</span> <span class="o">=</span> <span class="n">replicated_img</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">]</span>
+    
+    <span class="k">return</span> <span class="n">final_img</span></div>
+
+
+<div class="viewcode-block" id="Camera.rectangle">
+<a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.rectangle">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">rectangle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="n">tickness</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    이미지에 직사각형을 그립니다.</span>
+
+<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
+<span class="sd">    :param tuple(int, int) p1: 좌측상단 좌표 (x, y)</span>
+<span class="sd">    :param tuple(int, int) p2: 우측하단 좌표 (x, y)</span>
+<span class="sd">    :param tuple(int, int, int) colors: RGB 값 (r, g, b) or 16진수 값 '#ffffff'</span>
+<span class="sd">    :param int tickness: 사각형 모서리의 두께 (픽셀 단위) -1 은 채움</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">tuple</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">p1</span><span class="si">}</span><span class="s1">" must be tuple type'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'len(</span><span class="si">{</span><span class="n">p1</span><span class="si">}</span><span class="s1">) must be 2'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">tuple</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">p2</span><span class="si">}</span><span class="s1">" must be tuple type'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'len(</span><span class="si">{</span><span class="n">p2</span><span class="si">}</span><span class="s1">) must be 2'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
+      <span class="n">colors</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">7</span><span class="p">],</span> <span class="mi">16</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">],</span> <span class="mi">16</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="mi">16</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">tuple</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">colors</span><span class="si">}</span><span class="s1">" must be tuple type'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'len(</span><span class="si">{</span><span class="n">colors</span><span class="si">}</span><span class="s1">) must be 3'</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">tickness</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Camera.circle">
+<a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.circle">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">circle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="n">tickness</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    이미지에 원을을 그립니다.</span>
+
+<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
+<span class="sd">    :param tuple(int, int) p: 좌측상단 좌표 (x, y)</span>
+<span class="sd">    :param int r: 반지름</span>
+<span class="sd">    :param tuple(int, int, int) colors: RGB 값 (r, g, b) or 16진수 값 '#ffffff'</span>
+<span class="sd">    :param int tickness: 사각형 모서리의 두께 (픽셀 단위) -1은 채움</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">tuple</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s1">" must be tuple type'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'len(</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s1">) must be 2'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'len(</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s1">) must be Integer type'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
+      <span class="n">colors</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">7</span><span class="p">],</span> <span class="mi">16</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">],</span> <span class="mi">16</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="mi">16</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">tuple</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">colors</span><span class="si">}</span><span class="s1">" must be tuple type'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'len(</span><span class="si">{</span><span class="n">colors</span><span class="si">}</span><span class="s1">) must be 3'</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">tickness</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Camera.line">
+<a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.line">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="n">tickness</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    이미지에 직선을 그립니다.</span>
+
+<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
+<span class="sd">    :param tuple(int, int) p1: 시작 좌표 (x, y)</span>
+<span class="sd">    :param tuple(int, int) p2: 끝 좌표 (x, y)</span>
+<span class="sd">    :param tuple(int, int, int) colors: RGB 값 (r, g, b) or 16진수 값 '#ffffff'</span>
+<span class="sd">    :param int tickness: 선의 두께 (픽셀 단위)</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">tuple</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">p1</span><span class="si">}</span><span class="s1">" must be tuple type'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'len(</span><span class="si">{</span><span class="n">p1</span><span class="si">}</span><span class="s1">) must be 2'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">tuple</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">p2</span><span class="si">}</span><span class="s1">" must be tuple type'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'len(</span><span class="si">{</span><span class="n">p2</span><span class="si">}</span><span class="s1">) must be 2'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
+      <span class="n">colors</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">7</span><span class="p">],</span> <span class="mi">16</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">],</span> <span class="mi">16</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="mi">16</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">tuple</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">colors</span><span class="si">}</span><span class="s1">" must be tuple type'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'len(</span><span class="si">{</span><span class="n">colors</span><span class="si">}</span><span class="s1">) must be 3'</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">tickness</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Camera.putTextPIL">
+<a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.putTextPIL">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">putTextPIL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">)):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    이미지에 문자를 입력합니다. (한/영 가능 - pillow 이용)</span>
+
+<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
+<span class="sd">    :param str text: 표시할 문자열</span>
+<span class="sd">    :param tuple(int, int) points: 텍스트 블록 좌측상단 좌표 (x, y)</span>
+<span class="sd">    :param int size: 표시할 글자의 크기</span>
+<span class="sd">    :param tuple(int, int, int) colors: 글자 색깔 RGB 값 (b, g, r) or 16진수 값 '#ffffff'</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">tuple</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">points</span><span class="si">}</span><span class="s1">" must be tuple type'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'len(</span><span class="si">{</span><span class="n">points</span><span class="si">}</span><span class="s1">) must be 2'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
+      <span class="n">colors</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">7</span><span class="p">],</span> <span class="mi">16</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">],</span> <span class="mi">16</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="mi">16</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">tuple</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">colors</span><span class="si">}</span><span class="s1">" must be tuple type'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'len(</span><span class="si">{</span><span class="n">colors</span><span class="si">}</span><span class="s1">) must be 3'</span><span class="p">)</span>
+
+    <span class="n">font</span> <span class="o">=</span> <span class="n">ImageFont</span><span class="o">.</span><span class="n">truetype</span><span class="p">(</span><span class="n">openpibo_models</span><span class="o">.</span><span class="n">filepath</span><span class="p">(</span><span class="s2">"KDL.ttf"</span><span class="p">),</span> <span class="n">size</span><span class="p">)</span>
+    <span class="n">pil</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>  <span class="c1"># CV to PIL</span>
+    <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">pil</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="n">font</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">colors</span><span class="p">)</span>  <span class="c1"># putText</span>
+    <span class="n">img</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pil</span><span class="p">)</span>  <span class="c1"># PIL to CV</span>
+    <span class="k">return</span> <span class="n">img</span></div>
+
+
+<div class="viewcode-block" id="Camera.putText">
+<a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.putText">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">putText</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="n">tickness</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    이미지에 문자를 입력합니다. (영어만 가능)</span>
+
+<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
+<span class="sd">    :param str text: 표시할 문자열</span>
+<span class="sd">    :param tuple(int, int) points: 텍스트 블록 좌측하단 좌표 (x, y)</span>
+<span class="sd">    :param int size: 표시할 글자의 크기</span>
+<span class="sd">    :param tuple(int, int, int) colors: 글자 색깔 RGB 값 (r, g, b) or 16진수 값 '#ffffff'</span>
+<span class="sd">    :param int tickness: 글자 두께</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">tuple</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">points</span><span class="si">}</span><span class="s1">" must be tuple type'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'len(</span><span class="si">{</span><span class="n">points</span><span class="si">}</span><span class="s1">) must be 2'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
+      <span class="n">colors</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">7</span><span class="p">],</span> <span class="mi">16</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">],</span> <span class="mi">16</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="mi">16</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">tuple</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">colors</span><span class="si">}</span><span class="s1">" must be tuple type'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'len(</span><span class="si">{</span><span class="n">colors</span><span class="si">}</span><span class="s1">) must be 3'</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">tickness</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Camera.stylization">
+<a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.stylization">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">stylization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">sigma_s</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">sigma_r</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    만화 이미지로 변환합니다. (opencv api) low speed</span>
+
+<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
+<span class="sd">    :param float sigma_s: 이미지의 blur 보존 정도 (1-200)</span>
+<span class="sd">    :param float sigma_r: 이미지의 Edge 적용 정도 (0-1)</span>
+<span class="sd">    :returns: ``numpy.ndarray`` 이미지 객체</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">stylization</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">sigma_s</span><span class="o">=</span><span class="n">sigma_s</span><span class="p">,</span> <span class="n">sigma_r</span><span class="o">=</span><span class="n">sigma_r</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Camera.detailEnhance">
+<a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.detailEnhance">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">detailEnhance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">sigma_s</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">sigma_r</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    만화 이미지로 변환합니다. (opencv api)</span>
+
+<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
+<span class="sd">    :param float sigma_s: 이미지의 blur 보존 정도 (1-200)</span>
+<span class="sd">    :param float sigma_r: 이미지의 Edge 적용 정도 (0-1)</span>
+<span class="sd">    :returns: ``numpy.ndarray`` 이미지 객체</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">detailEnhance</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">sigma_s</span><span class="o">=</span><span class="n">sigma_s</span><span class="p">,</span> <span class="n">sigma_r</span><span class="o">=</span><span class="n">sigma_r</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Camera.pencilSketch">
+<a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.pencilSketch">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">pencilSketch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">sigma_s</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">sigma_r</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">shade_factor</span><span class="o">=</span><span class="mf">0.018</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    스케치 이미지로 변환합니다.</span>
+
+<span class="sd">    example::</span>
+
+<span class="sd">      img = camera.read()</span>
+<span class="sd">      camera.sketchize(img)</span>
+
+<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
+
+<span class="sd">    :param float sigma_s: 이미지의 blur 보존 정도 (1-200)</span>
+
+<span class="sd">    :param float sigma_r: 이미지의 Edge 적용 정도 (0-1)</span>
+
+<span class="sd">    :param float shade_factor: 이미지의 밝기 정도 (0-0.1)</span>
+
+<span class="sd">    :returns: ``numpy.ndarray`` 이미지 객체 / grayscale, bgr</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">pencilSketch</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">sigma_s</span><span class="o">=</span><span class="n">sigma_s</span><span class="p">,</span> <span class="n">sigma_r</span><span class="o">=</span><span class="n">sigma_r</span><span class="p">,</span> <span class="n">shade_factor</span><span class="o">=</span><span class="n">shade_factor</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Camera.edgePreservingFilter">
+<a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.edgePreservingFilter">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">edgePreservingFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sigma_s</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">sigma_r</span><span class="o">=</span><span class="mf">0.4</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    흐림 이미지로 변환합니다.</span>
+
+<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
+<span class="sd">    :param int flags: 필터 종류 1 (RECURS_FILTER) or 2 (NORMCONV_FILTER)</span>
+<span class="sd">    :param float sigma_s: 이미지의 blur 보존 정도 (1-200)</span>
+<span class="sd">    :param float sigma_r: 이미지의 Edge 적용 정도 (0-1)</span>
+<span class="sd">    :returns: ``numpy.ndarray`` 이미지 객체</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">edgePreservingFilter</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">,</span> <span class="n">sigma_s</span><span class="o">=</span><span class="n">sigma_s</span><span class="p">,</span> <span class="n">sigma_r</span><span class="o">=</span><span class="n">sigma_r</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Camera.flip">
+<a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.flip">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">flip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    상하/좌우 대칭 이미지로 변환합니다</span>
+
+<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
+<span class="sd">    :param int flags: 0: 상하 대칭, 1: 좌우 대칭, -1: 상하/좌우 대칭</span>
+<span class="sd">    :returns: ``numpy.ndarray`` 이미지 객체</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">flags</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2026 THEMAKER. All rights reserved. openpibo-python-0.9.4.0
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../_static/documentation_options.js?v=94e857c3"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/langswitch.js?v=16e9f8e1"></script>
+    </body>
+</html>
