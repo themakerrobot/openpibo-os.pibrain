@@ -498,7 +498,7 @@ Pibo 와 같다. Teachable Machine 계열(`vision_load_tm` `vision_predict_tm`
   PiBrain 파일은 Pibo 교체 직전과 공백만 달랐다
 - PiBrain 에서 바꾼 것: 화면 문구의 이름(PiBrain), `ko2en.js` 1·2행과 언어 저장 키 `classifier_language`
   (`global` 델타 그대로)
-- 블록 `[분류기 모델 … 불러오기]`(260929 전엔 '이미지 모델 설정하기'): 폴더 `mymodel`, 이름 칸에 모델 이름(기본값 '모델 이름'), 세 번째 칸은 비워 둔다.
+- 블록 `[분류기 모델 … 불러오기]`(260929 전엔 '이미지 모델 설정하기'): 폴더 `mymodel`, 이름 칸에 모델 이름(기본값 '모델 이름'). 라벨 칸은 260930v9 에 뺐다 — 예전 저장본은 불러올 때 걷어낸다(Pibo CLAUDE.md '분류기')
   **예전 `model.keras` 는 못 읽는다**(불러오면 다시 학습하라는 오류). 의도한 호환 단절이다
 - 지운 것: `tf.min-3.11.0.js` · MobileNetV2 가중치 · `model.json` · `jszip` · `tfjs_to_keras.py`(`/convert`)
 - 사물 인식(`vision_detect`)은 260930 에 Pibo 의 onnxruntime 방식으로 바꿨다(위 '사물 인식' 참고)
@@ -528,10 +528,23 @@ mediapipe 0.10.18 · numpy 1.26.4). 특징 코사인 이미지 0.96~0.98 · 손 
 
 - **STT 소스(260930)**: `openpibo/speech.py` 는 Pibo 와 설명문만 다르다(SenseVoice + silero VAD, 마이크 DC 제거까지 같음 —
   Pibo CLAUDE.md '음성 인식 · TTS · 메모리'). 고치면 두 리포를 같이 고칠 것. 모델은 `.model/stt`(Pibo `.model` 그대로 넣으면 있다),
-  패키지 `sherpa-onnx`·`sherpa-onnx-core` 1.13.8 은 **마이크를 달 때 설치**(`pip install --no-deps`)
+  패키지 `sherpa-onnx`·`sherpa-onnx-core` 1.13.8 은 `pip install --no-deps` 로 설치(마이크보다 먼저 깔아도 된다)
 - `speech_stt` 블록 — 정의(`customblock.js`)만 있고 생성기·툴박스는 주석(260930). 블록 문구(`ko.js`·`en.js`)는 이미 있다
 - **마이크를 달면**: 장치명이 `dmic_sv` 인지 먼저 확인(`arecord -L`), `speech_stt` · `audio_record` 의 생성기·툴박스 주석을
   같이 걷어낸다(셋을 같이 — '자주 나는 실수'). Pibo 마이크처럼 DC 가 섞이는지는 그 마이크로 다시 볼 것
+- **⚠ Pibo 마이크를 그대로 꽂으면 안 될 수 있다 — I2S 를 스피커와 나눠 써야 한다(260930 코드 확인).**
+  Pibo 는 스피커가 아날로그(`amixer -c Headphones`)라 I2S 에는 마이크 하나뿐이다. PiBrain 은 스피커가 **MAX98357A(I2S)** 다
+  (`audio.py` 의 `amixer -c MAX98357A`). NeoPixel 이 GPIO12 PWM 을 쓰므로 아날로그 소리로 돌아갈 수도 없다.
+  Pi 4 의 I2S(PCM) 는 GPIO18(BCLK)·19(LRCLK)·20(DIN)·21(DOUT) 한 벌이라 마이크(→GPIO20)와 앰프(GPIO21←)가
+  **클럭 두 선을 같이 쓴다.** 마이크 overlay 를 하나 더 얹으면 I2S 컨트롤러를 두 overlay 가 서로 잡으려 한다 →
+  재생·녹음을 한 사운드카드로 묶어야 한다. **Pibo 가 이미 `dtoverlay=googlevoicehat-soundcard`(앰프+I2S 마이크 한 카드, `sndrpigooglevoi`)로
+  마이크를 읽는다**(260930 기기 확인. 재생만 `asound.conf` 에서 `Headphones` 로 돌린다). PiBrain 은 `dtoverlay=max98357a` 를 이것으로 바꾸는 게 1안 —
+  카드 이름이 `MAX98357A` → `sndrpigooglevoi` 로 바뀌므로 `audio.py` 의 `amixer -c MAX98357A` 와 PiBrain `asound.conf` 를 같이 고칠 것.
+  클럭이 같으므로 재생과 녹음을 동시에 할 때 샘플레이트가 같아야 한다(dmix/dsnoop 고정 레이트 + `plug` 변환, **확인 필요**)
+  - 핀: 코드가 쓰는 PiBrain 핀은 버튼 4/17/27/26, LED 12, LCD SPI0(8~11)+DC 23. I2S 18~21 과 겹치지 않는다.
+    단 Pibo 마이크 보드에 버튼·LED 같은 다른 부품이 있으면 그 핀(특히 17)과 겹치는지 보드 회로도로 확인할 것
+  - 마이크 전원 전압은 보드 데이터시트로 확인(I2S MEMS 마이크는 보통 3.3V 계열 — 5V 를 넣지 말 것)
+- sherpa-onnx 는 마이크 없이 먼저 깔아도 된다 — `SpeechToText().transcribe_file()` 은 마이크를 안 쓴다. 블록은 마이크가 될 때까지 막아 둔다
 
 지금 막혀 있는 것:
 

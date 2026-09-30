@@ -46,7 +46,7 @@ openvino==2024.5.0              # 얼굴 분석
 
 # ── 음성 ─────────────────────────────────────────────────────────
 soundfile==0.13.1
-# STT(SenseVoice + VAD) — PiBrain 은 마이크를 붙일 때 설치한다(지금 블록은 꺼 둠, 260930 기기에는 없다)
+# STT(SenseVoice + VAD) — PiBrain 은 마이크가 아직 없어 블록은 꺼 둠. 패키지는 먼저 깔아 둬도 된다(transcribe_file 은 마이크 불필요)
 sherpa-onnx==1.13.8             # 자기 전용 onnxruntime(sherpa-onnx-core)을 따로 싣는다
 sherpa-onnx-core==1.13.8
 

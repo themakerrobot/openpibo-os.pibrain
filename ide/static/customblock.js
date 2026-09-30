@@ -2644,8 +2644,7 @@ Blockly.defineBlocksWithJsonArray(
               [ 'mymodel', '/home/pi/mymodel/' ],
             ]
           },
-          {"type": "input_value", "name": "modelpath", "check":"String"},
-          {"type": "input_value", "name": "labelpath", "check":"String"}
+          {"type": "input_value", "name": "modelpath", "check":"String"}
         ],
       nextStatement: true,
       previousStatement: true,
