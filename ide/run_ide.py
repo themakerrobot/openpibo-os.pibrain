@@ -1,4 +1,5 @@
 import os
+import codecs
 import sys
 import asyncio
 import shutil
@@ -12,9 +13,9 @@ from fastapi import FastAPI, Request, UploadFile, File, Form, Body, Depends
 from fastapi.responses import HTMLResponse, FileResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi_socketio import SocketManager
 from starlette.websockets import WebSocketDisconnect
-from fastapi.templating import Jinja2Templates
 from contextlib import asynccontextmanager
 
 @asynccontextmanager
@@ -25,7 +26,6 @@ async def lifespan(app: FastAPI):
 try:
   app = FastAPI(lifespan=lifespan)
   socket_manager = SocketManager(app=app, mount_location='/socket.io')
-  templates = Jinja2Templates(directory="templates")
 
   app.mount("/static", StaticFiles(directory="static"), name="static")
   app.mount("/svg", StaticFiles(directory="svg"), name="svg")
@@ -40,6 +40,9 @@ app.add_middleware(
   allow_methods=["*"],
   allow_headers=["*"],
 )
+# 정적 파일(blockly·codemirror·index.js 등)을 압축해서 보낸다. ?ver 를 올릴 때마다
+# 교실 전체가 다시 받으므로 전송량이 제일 크게 줄어드는 곳이다. 1KB 미만은 그대로 보낸다
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 codeExec = {
   'python': 'python3',
@@ -62,6 +65,17 @@ codeText = ''
 codePath = ''
 
 mutex = asyncio.Lock()
+TEMPLATE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
+# 실행 로그는 모아서 보낸다. 줄마다 보내면 print 루프가 소켓 프레임을 줄 수만큼 만든다
+LOG_FLUSH_SEC = 0.05
+
+async def run_blocking(fn, *args):
+  # 동기 호출(subprocess)을 이벤트 루프 밖에서 돌린다.
+  # 루프 안에서 돌리면 그동안 IDE 전체(실행 출력·저장·파일 목록)가 멈춘다
+  return await asyncio.get_running_loop().run_in_executor(None, fn, *args)
+
+def get_system_info():
+  return subprocess.check_output(['/home/pi/openpibo-os/system/system.sh'], timeout=5).decode().strip().split(',')
 
 def is_protect(p):
   for protected_path in protectList:
@@ -113,7 +127,12 @@ async def get_directory(folderName: str):
 
 @app.get('/', response_class=HTMLResponse)
 async def read_root(request: Request):
-  return templates.TemplateResponse("index.html", {"request": request})
+  # 화면은 하나(시안 B). 예전 화면(v1)과 ?ui= · 쿠키 pibo_ui 전환은 260929 에 지웠다
+  page = "index.html"
+  # 템플릿은 Jinja 문법을 안 쓴다. 파일을 그대로 보내면 starlette 버전과 무관하다.
+  # 전에 쓰던 TemplateResponse(이름, {"request": ...}) 는 starlette 1.0 에서 받지 않아 첫 화면이 500 이 됐다
+  # no-cache: FileResponse 는 Last-Modified 를 붙여 브라우저가 페이지를 그냥 캐시할 수 있다. 그러면 올린 ?ver 가 안 보인다
+  return FileResponse(os.path.join(TEMPLATE_DIR, page), media_type="text/html", headers={"Cache-Control": "no-cache"})
 
 @app.get("/download")
 async def download_item(filename: str):
@@ -195,11 +214,16 @@ async def handle_connection(sid, *args, **kwargs):
 async def handle_init(sid):
   global codeText, codePath
   try:
-    system_info = subprocess.check_output(['/home/pi/openpibo-os/system/system.sh']).decode().strip().split(',')
+    system_info = await run_blocking(get_system_info)
     await app.sio.emit('system', system_info)
   except Exception as err:
     print(err)
     await app.sio.emit('update', {'dialog': 'err_init_sysfile'})
+
+  # 실행 중에 새로 붙은 화면(새로고침 등)은 지금까지의 출력을 한 번 통째로 받는다.
+  # 이후로는 다른 화면과 똑같이 늘어난 부분(record_add)만 받는다
+  if ps and ps.returncode is None:
+    await app.sio.emit('update', {'record': record}, to=sid)
 
   try:
     with open(codePath, 'r') as f:
@@ -409,7 +433,7 @@ async def handle_restore(sid):
         os.system(f'{ENV_PATH}/python3 /home/pi/openpibo-os/system/clear_disp.py')
         subprocess.Popen(['shutdown', '-h', 'now'])
     except Exception as e:
-        await sio.emit('update', {'dialog': 'err_init', 'detail': str(e)}, room=sid)
+        await app.sio.emit('update', {'dialog': 'err_init', 'detail': str(e)}, to=sid)
 
 @app.sio.on('add_file')
 async def handle_add_file(sid, p):
@@ -461,20 +485,29 @@ async def handle_save(sid, d):
     with open(codePath, 'w') as f:
       f.write(codeText)
     shutil.chown(os.path.dirname(codePath), user='pi', group='pi')
+    # 다 썼다는 확인. 클라이언트는 이걸 받아야 미저장 표시를 지운다
+    await app.sio.emit('update', {'saved': codePath})
   except Exception as err:
     await app.sio.emit('update', {'dialog': 'err_save', 'detail': str(err)})
 
 async def execute(EXEC, codepath):
+  # 실행 로그 프로토콜
+  #   {'record': 전체}      — 시작할 때(그리고 실행 중에 붙은 화면에) 한 번. 터미널을 갈아끼운다
+  #   {'record_add': 조각}  — 그 뒤로는 늘어난 부분만. 터미널에 이어 붙인다
+  # 예전에는 줄마다 전체를 다시 보내서 2000줄이면 39KB 출력에 39MB가 나갔다
+  # stderr 는 stdout 에 합친다(STDOUT). 따로 두고 끝에 읽으면 무한 반복 안의 에러가 정지할 때까지 안 보이고,
+  # stderr 파이프(64KB)가 차면 학생 프로그램이 거기서 멈췄다. 합치면 찍힌 순서 그대로 나온다
   global record, ps
   async with mutex:
     record = f'[{datetime.datetime.now()}]: \n\n'
     await app.sio.emit('update', {'record': record})
+    files_before = read_directory(PATH)
     if EXEC == 'python3':
       ps = await asyncio.create_subprocess_exec(
         f"{ENV_PATH}/{EXEC}", '-u', codepath,
         cwd=PATH,
         stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.STDOUT,
         stdin=asyncio.subprocess.PIPE
       )
     else:
@@ -482,27 +515,56 @@ async def execute(EXEC, codepath):
         EXEC, codepath,
         cwd=PATH,
         stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.STDOUT,
         stdin=asyncio.subprocess.PIPE
       )
-    while True:
-      line = await ps.stdout.readline()
-      if not line:
-        break
-      record += line.decode()
-      await app.sio.emit('update', {'record': record})
+    loop = asyncio.get_running_loop()
+    pending = []
+    last_flush = loop.time() - LOG_FLUSH_SEC   # 첫 줄은 기다리지 않고 바로 보낸다
 
-    err = await ps.stderr.read()
-    if err:
-      record += f'\n{err.decode()}'
-      await app.sio.emit('update', {'record': record})
+    async def flush():
+      nonlocal pending, last_flush
+      if pending:
+        chunk = ''.join(pending)
+        pending = []
+        await app.sio.emit('update', {'record_add': chunk})
+      last_flush = loop.time()
+
+    # 줄 단위(readline)가 아니라 조각 단위로 읽는다. readline 은 64KB(StreamReader 기본 한도)보다 긴 줄에서
+    # 예외를 내 실행이 중간에 끊겼다(print('x' * 100000) 같은 것). 한글이 조각 경계에서 잘리지 않게
+    # 점진 디코더를 쓴다. 줄바꿈 없는 input() 안내문도 바로 보인다
+    decoder = codecs.getincrementaldecoder('utf-8')(errors='replace')
+    while True:
+      try:
+        # 모아 둔 게 있으면 LOG_FLUSH_SEC 안에 다음 조각이 안 와도 보낸다.
+        # read 는 기다리는 중에 취소돼도 버퍼를 소비하지 않아 잃는 게 없다
+        data = await asyncio.wait_for(ps.stdout.read(4096), timeout=LOG_FLUSH_SEC if pending else None)
+      except asyncio.TimeoutError:
+        await flush()
+        continue
+      if not data:
+        break
+      text = decoder.decode(data)
+      if not text:
+        continue
+      record += text
+      pending.append(text)
+      if loop.time() - last_flush >= LOG_FLUSH_SEC:
+        await flush()
+    text = decoder.decode(b'', final=True)
+    if text:
+      record += text
+      pending.append(text)
+    await flush()
 
     await ps.wait()
     ps = None  # 프로세스가 종료되었으므로 ps를 None으로 설정
     record += "\n[exit]"
-    await app.sio.emit('update', {'record': record, 'exit': True})
+    await app.sio.emit('update', {'record_add': "\n[exit]", 'exit': True})
+    # 실행 중에 파일이 생기거나 지워졌을 때만 목록을 다시 보낸다 (사진 저장·녹음 등)
     directory_data = read_directory(PATH)
-    await app.sio.emit('update_file_manager', {'data': directory_data})
+    if directory_data != files_before:
+      await app.sio.emit('update_file_manager', {'data': directory_data})
 
 # execute 핸들러 수정
 @app.sio.on('execute')
@@ -571,7 +633,7 @@ async def handle_prompt(sid, s):
 async def periodic_system_update():
   while True:
     try:
-      system_info = subprocess.check_output(['/home/pi/openpibo-os/system/system.sh']).decode().strip().split(',')
+      system_info = await run_blocking(get_system_info)
       await app.sio.emit('system', system_info)
     except Exception as err:
       await app.sio.emit('update', {'dialog': 'err_init_sysfile'})

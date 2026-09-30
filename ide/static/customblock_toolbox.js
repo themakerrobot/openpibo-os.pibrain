@@ -23,7 +23,7 @@ let toolbox = (lang) => {
       },
       { // Logic
         "kind": "category",
-        "colour": '#B098CB',
+        "colour": '#5566D9',
         "name": translations['logic'][lang],
         "cssConfig": {
           "icon": "customIcon fa fa-bars-staggered"
@@ -62,7 +62,7 @@ let toolbox = (lang) => {
       },
       { // Loops
         "kind": "category",
-        "colour": '#85B687',
+        "colour": '#2E9E6B',
         "name": translations['loops'][lang],
         "cssConfig": {
           "icon": "customIcon fa fa-arrows-spin"
@@ -129,7 +129,7 @@ let toolbox = (lang) => {
       },
       { // Math
         "kind": "category",
-        "colour": '#2196F3',
+        "colour": '#7A56C9',
         "name": translations['math'][lang],
         "cssConfig": {
           "icon": "customIcon fa fa-square-root-variable"
@@ -333,7 +333,7 @@ let toolbox = (lang) => {
       },
       { // Text
         "kind": "category",
-        "colour": '#FFAA08',
+        "colour": '#C2477B',
         "name": translations['text'][lang],
         "cssConfig": {
           "icon": "customIcon fa fa-t"
@@ -563,7 +563,7 @@ let toolbox = (lang) => {
       },
       { // Lists
         "kind": "category",
-        "colour": '#4DB6AC',
+        "colour": '#D15A3A',
         "name": translations['lists'][lang],
         "cssConfig": {
           "icon": "customIcon fa fa-list"
@@ -573,7 +573,7 @@ let toolbox = (lang) => {
             "kind": "block",
             "type": "lists_create_with",
             "extraState": {
-              "itemCount": "0"
+              "itemCount": 0
             }
           },
           {
@@ -685,7 +685,7 @@ let toolbox = (lang) => {
       },
       { // Colour
         "kind": "category",
-        "colour": '#DFADB2',
+        "colour": '#B34FB8',
         "name": translations['colour'][lang],
         "cssConfig": {
           "icon": "customIcon fa fa-palette"
@@ -767,7 +767,7 @@ let toolbox = (lang) => {
       },
       { // Variables
         "kind": "category",
-        "colour": '#EF9A9A',
+        "colour": '#D9772B',
         "name": translations['variables'][lang],
         "contents": [],
         "custom": "VARIABLE",
@@ -778,7 +778,7 @@ let toolbox = (lang) => {
       },
       { // Functions
         "kind": "category",
-        "colour": '#C7BCB8',
+        "colour": '#6C7A8C',
         "name": translations['functions'][lang],
         "contents": [],
         "custom": "PROCEDURE",
@@ -1411,6 +1411,21 @@ let toolbox = (lang) => {
         "kind": "category",
         "name": translations['speech'][lang],
         "contents": [
+          // speech_stt — 마이크가 없어 막아 둔다(260930). 생성기(customblock_callback.js)와 같이 풀 것
+          // {
+          //   "kind": "block",
+          //   "type": "speech_stt",
+          //   "inputs":{
+          //     "timeout": {
+          //       "shadow": {
+          //         "type": "math_number",
+          //         "fields": {
+          //           "NUM": "5"
+          //         }
+          //       }
+          //     }
+          //   }
+          // },
           {
             "kind": "block",
             "type": "speech_otts",
@@ -2422,11 +2437,13 @@ let toolbox = (lang) => {
             "kind": "block",
             "type": "vision_load_cf",
             "inputs":{
+              // 분류기에서 저장한 모델 폴더 이름 (/home/pi/mymodel/<이름>). 종류 이름은
+              // 모델 폴더 안에 들어 있어서 두 번째 칸(라벨)은 비워 둔다
               "modelpath":{
                 "shadow": {
                   "type": "text",
                   "fields": {
-                    "TEXT": "model.keras"
+                    "TEXT": translations['cf_model_default'][lang]
                   }
                 }
               },
@@ -2434,7 +2451,7 @@ let toolbox = (lang) => {
                 "shadow": {
                   "type": "text",
                   "fields": {
-                    "TEXT": "labels.txt"
+                    "TEXT": ""
                   }
                 }
               },

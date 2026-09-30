@@ -22,15 +22,9 @@ from .data import Person
 from .data import person_from_keypoints_with_scores
 import numpy as np
 
-# pylint: disable=g-import-not-at-top
-try:
-  # Import TFLite interpreter from tflite_runtime package if it's available.
-  from tflite_runtime.interpreter import Interpreter
-except ImportError:
-  # If not, fallback to use the TFLite interpreter from the full TF package.
-  import tensorflow as tf
-  Interpreter = tf.lite.Interpreter
-# pylint: enable=g-import-not-at-top
+# TFLite 런타임만 쓴다 (LiteRT → tflite_runtime). TensorFlow 로 대신 돌리던 분기는 뺐다
+from ..teachlab import load_interpreter
+Interpreter = load_interpreter()
 
 
 class Movenet(object):

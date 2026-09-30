@@ -1,14 +1,14 @@
 const color_type={
-  "start":    "#E5B900",
-  "audio":    "#7dc37D",
-  "collect":  "#7d7db3",
-  "device":   "#d3b28d",
-  "motion":   "#d38d62",
-  "oled":     "#8da2c3",
-  "speech":   "#8dc3d2",
-  "vision":   "#a39c7D",
-  "recognition": "#6E92B7",
-  "utils":    "#CC9988"
+  "start":    "#E8A30C",
+  "audio":    "#8C5BD6",
+  "collect":  "#3C7DD9",
+  "device":   "#1C9AA6",
+  "motion":   "#2F7FD1",
+  "oled":     "#1B8FB5",
+  "speech":   "#7B61D1",
+  "vision":   "#1E9C75",
+  "recognition": "#D14A63",
+  "utils":    "#58677A"
 };
 
 Blockly.defineBlocksWithJsonArray(
@@ -1223,6 +1223,28 @@ Blockly.defineBlocksWithJsonArray(
       helpUrl: ''
     },
     {
+      // STT — PiBrain 은 아직 마이크가 없어 막아 둔다(260930). 정의만 두고 생성기·툴박스는 주석.
+      // Pibo 와 같은 마이크(2-mic HAT)를 달면 customblock_callback.js · customblock_toolbox.js 의 주석을 걷어낼 것
+      type: 'speech_stt',
+      message0: '%{BKY_SPEECH_STT}',
+      args0:
+        [
+          {
+            "type": "field_image",
+            "src": "svg/ear-listen-solid.svg",
+            "width": 27,
+            "height": 27
+          },
+          {"type":"input_dummy"},
+          {"type": "input_value", "name": "timeout", "check":"Number"},
+        ],
+      output: 'String',
+      inputsInline: true,
+      colour: color_type["speech"],
+      tooltip: '%{BKY_SPEECH_STT_TOOLTIP}',
+      helpUrl: ''
+    },
+    {
       type: 'speech_otts',
       message0: '%{BKY_SPEECH_OTTS}',
       args0:
@@ -1237,16 +1259,16 @@ Blockly.defineBlocksWithJsonArray(
           {"type": "input_value", "name": "text", "check":"String"},
           {"type": "field_dropdown", "name":"voice",
             "options":[
-              [ 'k0', 'm1' ],
-              [ 'k1', 'm2' ],
-              [ 'k2', 'm3' ],
-              [ 'k3', 'm4' ],
-              [ 'k4', 'm5' ],
-              [ 'k5', 'f1' ],
-              [ 'k6', 'f2' ],
-              [ 'k7', 'f3' ],
-              [ 'k8', 'f4' ],
-              [ 'k9', 'f5' ],
+              [ '%{BKY_VOICE_M1}', 'm1' ],
+              [ '%{BKY_VOICE_M2}', 'm2' ],
+              [ '%{BKY_VOICE_M3}', 'm3' ],
+              [ '%{BKY_VOICE_M4}', 'm4' ],
+              [ '%{BKY_VOICE_M5}', 'm5' ],
+              [ '%{BKY_VOICE_F1}', 'f1' ],
+              [ '%{BKY_VOICE_F2}', 'f2' ],
+              [ '%{BKY_VOICE_F3}', 'f3' ],
+              [ '%{BKY_VOICE_F4}', 'f4' ],
+              [ '%{BKY_VOICE_F5}', 'f5' ],
             ]
           },
           {"type": "field_dropdown", "name":"dir",
@@ -1285,16 +1307,16 @@ Blockly.defineBlocksWithJsonArray(
           {"type": "input_value", "name": "text", "check":"String"},
           {"type": "field_dropdown", "name":"voice",
             "options":[
-              [ 'k0', 'm1' ],
-              [ 'k1', 'm2' ],
-              [ 'k2', 'm3' ],
-              [ 'k3', 'm4' ],
-              [ 'k4', 'm5' ],
-              [ 'k5', 'f1' ],
-              [ 'k6', 'f2' ],
-              [ 'k7', 'f3' ],
-              [ 'k8', 'f4' ],
-              [ 'k9', 'f5' ],
+              [ '%{BKY_VOICE_M1}', 'm1' ],
+              [ '%{BKY_VOICE_M2}', 'm2' ],
+              [ '%{BKY_VOICE_M3}', 'm3' ],
+              [ '%{BKY_VOICE_M4}', 'm4' ],
+              [ '%{BKY_VOICE_M5}', 'm5' ],
+              [ '%{BKY_VOICE_F1}', 'f1' ],
+              [ '%{BKY_VOICE_F2}', 'f2' ],
+              [ '%{BKY_VOICE_F3}', 'f3' ],
+              [ '%{BKY_VOICE_F4}', 'f4' ],
+              [ '%{BKY_VOICE_F5}', 'f5' ],
             ]
           },
           {"type": "input_value", "name": "volume", "check":"Number"}
@@ -1784,7 +1806,7 @@ Blockly.defineBlocksWithJsonArray(
       output: null,
       inputsInline: true,
       colour: color_type["vision"],
-      tooltip: '%{BKY_VISION_FLIP_TOOLTIP}',
+      tooltip: '%{BKY_VISION_RESIZE_TOOLTIP}',
       helpUrl: ''
     },
     {
@@ -2787,8 +2809,7 @@ Blockly.defineBlocksWithJsonArray(
           },
           {"type":"input_dummy"},
         ],
-        nextStatement: true,
-        previousStatement: true,
+        output: null,   // 값 블록: [변수 = 빈 사전]. 전엔 위아래로 끼우는 모양이라 코드 생성이 실패했다
         inputsInline: true,
         colour: color_type["utils"],
         tooltip: '%{BKY_UTILS_DICT_CREATE_TOOLTIP}',

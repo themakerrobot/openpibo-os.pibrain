@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pibo UI Kit</title>
+<link rel="stylesheet" href="../ide/static/all.min.css">
+<link rel="stylesheet" href="pibo-ui.css">
+<style>
+  body { margin:0; background:#fafafa; font-family: var(--pb-font); color: var(--pb-text); }
+  .doc { max-width: 1000px; margin: 0 auto; padding: 0 20px 80px; }
+  .doc h1 { font-size: 26px; margin: 28px 0 4px; }
+  .doc h2 { font-size: 19px; margin: 40px 0 6px; padding-bottom: 6px;
+            border-bottom: 2px solid #1a1a1a; }
+  .doc h3 { font-size: 15px; margin: 22px 0 6px; color: var(--mid-gray); }
+  .doc p  { margin: 0 0 10px; color: #333; }
+  .lead   { font-size: 16px; color: #555; }
+  .demo   { background:#fff; border:1px solid #e3e3e3; border-radius:10px;
+            padding:16px; margin:10px 0; display:flex; gap:10px;
+            align-items:center; flex-wrap:wrap; }
+  .demo.col { display:block; }
+  code, .k { font:13px var(--pb-mono); background:#eee; padding:1px 5px; border-radius:3px; }
+  table { border-collapse:collapse; width:100%; font-size:13.5px; margin:8px 0 14px; }
+  th,td { border:1px solid #ddd; padding:6px 9px; text-align:left; vertical-align:top; }
+  th { background:#efefef; }
+  .sw { display:flex; gap:8px; flex-wrap:wrap; }
+  .sw div { width:116px; }
+  .sw i  { display:block; height:52px; border-radius:8px; border:1px solid rgba(0,0,0,.15); }
+  .sw b  { display:block; font-size:12px; margin-top:4px; }
+  .sw s  { display:block; font:11px var(--pb-mono); color:#777; text-decoration:none; }
+  .no { color:#b3261e; font-weight:700; }
+  .yes{ color:#1a7f37; font-weight:700; }
+</style>
+</head>
+<body class="pb">
+
+<!-- 실제 컴포넌트로 만든 헤더 -->
+<header class="pb-header">
+  <span class="pb-header__brand"><i class="fa-solid fa-code"></i> Pibo UI Kit</span>
+  <div class="pb-iconbar">
+    <a class="pb-iconbtn" href="#색"><i class="fa-solid fa-palette"></i><span class="pb-iconbtn__label">색</span></a>
+    <a class="pb-iconbtn" href="#버튼"><i class="fa-solid fa-hand-pointer"></i><span class="pb-iconbtn__label">버튼</span></a>
+    <a class="pb-iconbtn" href="#쓰는법"><i class="fa-solid fa-circle-question"></i><span class="pb-iconbtn__label">쓰는 법</span></a>
+  </div>
+</header>
+
+<div class="doc">
+
+<h1>Pibo UI Kit</h1>
+<p class="lead">Pibo 와 PiBrain 의 IDE · Tools · Classifier 가 같이 쓰는 스타일 한 벌.
+빌드 없이 <code>&lt;link&gt;</code> 한 줄. 지금 배색과 분위기를 그대로 유지한다.</p>
+
+<div class="pb-note pb-note--warn">
+  <b>이 키트가 바꾸는 것은 색이 아니라 위계다</b>
+  노랑·청록·빨강 값은 기존 그대로 쓴다. 다만 <b>노랑을 아껴 쓴다</b> —
+  헤더와 '지금 눌러야 할 버튼 하나'에만. 그래야 노랑이 강조로 작동한다.
+  지금은 헤더도 버튼도 입력창도 전부 노랑이라 강조할 것이 남아 있지 않다.
+</div>
+
+<h2 id="색">1 &nbsp; 색</h2>
+<p>세 앱이 이미 같은 변수 9개를 각자 선언하고 있었다. 이 키트는 그걸 한 파일로 합친 것이다.</p>
+<div class="sw">
+  <div><i style="background:var(--yellow)"></i><b>--yellow</b><s>#f4de3d</s></div>
+  <div><i style="background:var(--dark-yellow)"></i><b>--dark-yellow</b><s>#f4d85a</s></div>
+  <div><i style="background:var(--light-yellow)"></i><b>--light-yellow</b><s>rgb(248,242,172)</s></div>
+  <div><i style="background:var(--teal)"></i><b>--teal</b><s>#13bfd5</s></div>
+  <div><i style="background:var(--dark-teal)"></i><b>--dark-teal</b><s>#11abbf</s></div>
+  <div><i style="background:var(--red)"></i><b>--red</b><s>#f16449</s></div>
+  <div><i style="background:var(--dark-red)"></i><b>--dark-red</b><s>#d85a41</s></div>
+  <div><i style="background:var(--light-green)"></i><b>--light-green</b><s>#edf5e0</s></div>
+  <div><i style="background:var(--mid-gray)"></i><b>--mid-gray</b><s>#6c6c6c</s></div>
+</div>
+
+<div class="pb-note pb-note--danger">
+  <b>고치면서 발견한 어긋남</b>
+  <code>--teal</code> 이 ide·classifier 는 <code>#13bfd5</code>(19,191,213) 인데
+  tools 만 <code>rgb(18,189,212)</code> 다. 1씩 다르다. 눈에는 안 보이지만
+  세 파일에 손으로 복사해 온 결과다. 이 키트는 <code>#13bfd5</code> 로 통일한다.
+</div>
+
+<h3>컴포넌트는 브랜드 색을 직접 쓰지 않는다</h3>
+<p>역할 토큰을 거쳐 쓴다. 나중에 배색을 바꿀 때 한 줄만 고치면 된다.</p>
+<table>
+<tr><th style="width:26%">역할 토큰</th><th style="width:26%">지금 값</th><th>쓰는 곳</th></tr>
+<tr><td><code>--pb-brand</code></td><td>--yellow</td><td>헤더 띠, 상태바. 정체성</td></tr>
+<tr><td><code>--pb-accent</code></td><td>--yellow</td><td><b>한 화면에 하나.</b> 지금 눌러야 할 버튼</td></tr>
+<tr><td><code>--pb-danger</code></td><td>--red</td><td>초기화·종료처럼 되돌릴 수 없는 것</td></tr>
+<tr><td><code>--pb-info</code></td><td>--teal</td><td>안내 표시. 동작 버튼에는 쓰지 않는다</td></tr>
+<tr><td><code>--pb-surface</code></td><td>#f7f7f7</td><td>툴바·패널 바닥</td></tr>
+<tr><td><code>--pb-focus</code></td><td>#0b63c4</td><td>키보드 포커스 링. 흰 배경 대비 6.4:1</td></tr>
+</table>
+
+<h2 id="버튼">2 &nbsp; 버튼 — 네 단계뿐</h2>
+<div class="demo">
+  <button class="pb-btn pb-btn--accent"><i class="fa-solid fa-play"></i> 실행</button>
+  <button class="pb-btn"><i class="fa-solid fa-floppy-disk"></i> 저장</button>
+  <button class="pb-btn"><i class="fa-solid fa-folder-open"></i> 불러오기</button>
+  <button class="pb-btn" disabled><i class="fa-solid fa-stop"></i> 정지</button>
+  <span class="pb-div"></span>
+  <button class="pb-btn pb-btn--ghost">가 14</button>
+  <button class="pb-btn pb-btn--ghost" aria-pressed="true"><i class="fa-solid fa-circle-half-stroke"></i></button>
+  <span class="pb-div"></span>
+  <button class="pb-btn pb-btn--danger"><i class="fa-solid fa-eraser"></i> 공장초기화</button>
+</div>
+<table>
+<tr><th style="width:20%">단계</th><th style="width:26%">클래스</th><th>언제</th></tr>
+<tr><td>accent</td><td><code>.pb-btn--accent</code></td><td>지금 눌러야 할 것. <b>화면에 하나만</b></td></tr>
+<tr><td>default</td><td><code>.pb-btn</code></td><td>보통 동작</td></tr>
+<tr><td>ghost</td><td><code>.pb-btn--ghost</code></td><td>보조·토글. 켜짐은 <code>aria-pressed="true"</code></td></tr>
+<tr><td>danger</td><td><code>.pb-btn--danger</code></td><td>되돌릴 수 없는 것. 반드시 확인창과 함께</td></tr>
+</table>
+<p><span class="no">하지 말 것</span> — 다섯 번째 단계를 만들지 말 것. 색을 하나 더 쓰고 싶으면
+위계가 잘못 잡힌 것이다.</p>
+
+<h3>세그먼트 · 입력</h3>
+<div class="demo">
+  <span class="pb-seg">
+    <button aria-selected="true">블록</button><button>파이썬</button>
+  </span>
+  <span class="pb-div"></span>
+  <span><label class="pb-label" for="f1">파일 이름</label>
+  <input class="pb-field" id="f1" value="my_robot.json" size="18"></span>
+  <span><label class="pb-label" for="f2">목소리</label>
+  <select class="pb-field" id="f2"><option>m1</option><option>k0</option></select></span>
+</div>
+
+<h2>3 &nbsp; 아이콘 버튼 — 글자 라벨을 반드시 같이</h2>
+<div class="pb-note pb-note--warn">
+  <b>태블릿에는 hover 가 없다</b>
+  지금 IDE 헤더 아이콘에는 <code>title</code> 이 이미 붙어 있다
+  (<code>templates/index.html:51-70</code>). 그런데 터치 기기에서는 툴팁이 뜨지 않는다.
+  게다가 <code>title</code> 값이 영문 하드코딩이라 <code>ko2en.js</code> 번역을 타지 않는다.
+</div>
+<div class="demo" style="background:linear-gradient(var(--yellow),var(--dark-yellow))">
+  <a class="pb-iconbtn"><i class="fa-solid fa-microchip"></i><span class="pb-iconbtn__label">도구</span></a>
+  <a class="pb-iconbtn"><i class="fa-solid fa-comment"></i><span class="pb-iconbtn__label">대화</span></a>
+  <a class="pb-iconbtn"><i class="fa-solid fa-images"></i><span class="pb-iconbtn__label">분류기</span></a>
+  <a class="pb-iconbtn"><i class="fa-solid fa-circle-question"></i><span class="pb-iconbtn__label">도움말</span></a>
+  <a class="pb-iconbtn"><i class="fa-solid fa-maximize"></i><span class="pb-iconbtn__label">전체화면</span></a>
+  <a class="pb-iconbtn pb-iconbtn--danger"><i class="fa-solid fa-ellipsis"></i><span class="pb-iconbtn__label">더보기</span></a>
+</div>
+<p>전원·공장초기화는 <b>더보기 안으로</b> 넣는다. 지금은 도움말·전체화면과 같은 크기로
+나란히 있어서 태블릿 오탭 한 번이면 닿는다. 확인창은 있지만, 확인창은 마지막 방어선이지
+첫 방어선이 아니다.</p>
+
+<h2>4 &nbsp; 알림 · 배지 · 터미널</h2>
+<div class="demo col">
+  <div class="pb-note pb-note--info"><b>안내</b>AP 모드에서는 인터넷이 없습니다.</div>
+  <div class="pb-note pb-note--warn"><b>주의</b>실행하면 도구·분류기가 종료됩니다.</div>
+  <div class="pb-note pb-note--danger"><b>공장초기화</b>저장한 프로그램·녹음·학습모델이
+    모두 지워집니다. 되돌릴 수 없습니다. 초기화 후 로봇이 꺼집니다.</div>
+</div>
+<div class="demo">
+  <span class="pb-badge pb-badge--on"><i class="fa-solid fa-wifi"></i> pibo</span>
+  <span class="pb-badge">43.8&deg;C</span>
+  <span class="pb-badge pb-badge--off">정지됨</span>
+  <span class="pb-badge pb-badge--danger">배터리 13%</span>
+</div>
+<div class="demo col">
+  <div class="pb-term">[2026-09-22 10:14:02]:
+
+1 x 1 = 1
+1 x 2 = 2
+
+[exit]</div>
+</div>
+
+<h2>5 &nbsp; 치수</h2>
+<table>
+<tr><th style="width:24%">토큰</th><th style="width:16%">값</th><th>규칙</th></tr>
+<tr><td><code>--pb-tap</code></td><td>44px</td><td>누를 수 있는 것의 최소 높이·너비.
+  <b>절대 내리지 말 것.</b> 손가락이 작은 아이일수록 더 필요하다</td></tr>
+<tr><td><code>--pb-radius</code></td><td>10px</td><td>버튼·패널</td></tr>
+<tr><td><code>--pb-gap</code></td><td>10px</td><td>나란한 컨트롤 사이</td></tr>
+</table>
+<p><span class="no">하지 말 것</span> — <code>&amp;nbsp;&amp;nbsp;</code> 로 간격을 주지 말 것.
+지금 <code>index.html</code> 이 그렇게 하고 있는데, 간격이 글자 크기에 끌려다니고
+터치 타겟이 글리프 크기 그대로 남는다. <code>gap</code> 을 쓸 것.</p>
+
+<h2>6 &nbsp; 글자</h2>
+<p><code>--pb-font</code> 는 앱(ide·tools·classifier)이 원래 쓰던 스택과 같다. 키트 컴포넌트가
+앱 본문과 다른 글꼴로 튀지 않게 하려는 것이다.</p>
+<div class="pb-note pb-note--danger">
+  <b>키트는 앱 본문 글꼴을 바꾸지 않는다</b>
+  한때 <code>system-ui</code> 스택을 <code>.pb</code>(= body)에 걸었더니 파일 목록·경로·상태바까지
+  앱 전체가 16px Helvetica/맑은 고딕 → 15px system-ui 로 바뀌었다. 지금 <code>.pb</code> 는 범위 표시일
+  뿐이고, 글꼴은 키트 컴포넌트에만 건다. 글꼴을 바꾸려면 <code>--pb-font</code> 만 고친다.
+</div>
+<div class="pb-note">
+  <b>알고 있는 문제 (고치려면 따로 결정)</b>
+  ① 앱 스택은 Helvetica 가 앞이라 라틴과 한글이 다른 글꼴로 그려진다. "맑은 고딕" 은 윈도우 전용이다.<br>
+  ② <code>"Noto Sans Regular"</code> 가 앱 CSS 에 쓰였지만 어디에도 로드되어 있지 않다(항상 폴백).<br>
+  ③ <code>html { font-size: 10px }</code> 는 브라우저 글자 크기 설정을 무력화한다.
+</div>
+
+<h2 id="쓰는법">7 &nbsp; 쓰는 법</h2>
+<h3>원본은 하나</h3>
+<p><code>design/pibo-ui.css</code> 뿐이다. 각 앱의 <code>static/</code> 에 있는 사본은
+<code>design/sync.sh</code> 가 복사한다. <b><code>static/pibo-ui.css</code> 를 직접 고치지 말 것</b> —
+다음 sync 에 덮인다.</p>
+<pre style="background:#f4f4f4;padding:10px 12px;border-radius:6px;font:13px var(--pb-mono);overflow:auto">./design/sync.sh                     # 이 리포의 ide·tools·classifier 로 복사
+./design/sync.sh ~/openpibo-os.pibrain   # PiBrain 체크아웃으로도 복사
+./design/sync.sh --check             # 어긋난 사본이 있는지만 확인 (CI·커밋 전)</pre>
+
+<h3>앱에 붙이기</h3>
+<pre style="background:#f4f4f4;padding:10px 12px;border-radius:6px;font:13px var(--pb-mono);overflow:auto">&lt;link rel="stylesheet" href="../static/pibo-ui.css?ver=YYMMDDvN"&gt;
+&lt;body class="pb"&gt;</pre>
+<p><code>class="pb"</code> 가 있는 안에서만 적용된다. 기존 <code>index.css</code> 와 같이 두고
+화면 단위로 천천히 옮겨도 충돌하지 않는다. <b>한 번에 다 갈아엎지 않아도 된다.</b></p>
+
+<h3>PiBrain</h3>
+<p>같은 파일을 그대로 복사해 쓴다. 화면이 세로로 길고 OLED 가 크다는 차이는
+<code>--pb-tap</code> 같은 토큰만 덮어써서 맞춘다 — 컴포넌트 CSS 는 건드리지 않는다.</p>
+<pre style="background:#f4f4f4;padding:10px 12px;border-radius:6px;font:13px var(--pb-mono);overflow:auto">/* pibrain 쪽 index.css 맨 위 */
+:root { --pb-tap: 52px; --pb-fs: 16px; }</pre>
+
+<h2>8 &nbsp; 체크리스트</h2>
+<table>
+<tr><th style="width:8%"></th><th>화면을 하나 만들 때</th></tr>
+<tr><td class="yes">✓</td><td>노랑을 쓴 곳이 헤더 + 주 동작 버튼 하나뿐인가</td></tr>
+<tr><td class="yes">✓</td><td>누를 수 있는 것이 전부 44px 이상인가</td></tr>
+<tr><td class="yes">✓</td><td>아이콘만 있는 버튼에 글자 라벨이 붙어 있는가</td></tr>
+<tr><td class="yes">✓</td><td>되돌릴 수 없는 동작이 결과를 문장으로 말하는가</td></tr>
+<tr><td class="yes">✓</td><td>상태를 색으로만 구분하지 않는가 (글자·아이콘도 같이)</td></tr>
+<tr><td class="yes">✓</td><td>키보드 Tab 으로 포커스 링이 보이는가</td></tr>
+<tr><td class="yes">✓</td><td>한글·영문 양쪽에서 줄이 안 깨지는가</td></tr>
+</table>
+
+</div>
+
+<div class="pb-statusbar">
+  <span><i class="fa-solid fa-robot"></i> Pibo UI Kit</span>
+  <span><i class="fa-solid fa-code-branch"></i> design/pibo-ui.css</span>
+  <span style="margin-left:auto">Circulus Inc.</span>
+</div>
+</body></html>

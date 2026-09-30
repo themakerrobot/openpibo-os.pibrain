@@ -4,8 +4,8 @@ PiBrain OS 리포. 기기의 `/home/pi/openpibo-os` 가 이 리포의 작업본�
 
 이 릴리스 계열은 **배포본 `260624v1` 을 기준으로 만들었다.** 그 시점 이후 `master` 에
 쌓여 있던 미배포 커밋 23개(랜딩 페이지, IDE UI 전면 개편 등)는 **가져오지 않았다.**
-화면은 260624 의 연장선이다. 예외는 Tools 하나로, 260624 의 IDE 헤더에 자리만
-잡혀 있던 것을 채웠다.
+화면은 260624 의 연장선이었으나 **260924 에 Pibo 의 화면 v2(시안 B)를 들였다** — 아래 '화면 v2'.
+예전 화면(v1)은 260929 에 지웠다.
 
 이 문서는 **PiBrain 값**으로 쓰여 있다. openpibo-os.pibo(Pibo) 와 구조가 비슷하지만
 하드웨어가 다르므로 그쪽 문서를 그대로 옮겨 쓰지 말 것. 다른 점은 아래 '파이보와 다른 점' 에 모아 뒀다.
@@ -58,7 +58,7 @@ PiBrain OS 리포. 기기의 `/home/pi/openpibo-os` 가 이 리포의 작업본�
 |---|---|---|---|
 | 시스템/네트워크 | `booting.service` | `system/booting.py` | 8080 |
 | IDE | `ide.service` | `ide/run_ide.py` | 80 |
-| Tools | `tools.service` | `tools/run_tools.py` | 50040 |
+| Tools | `tools.service` | `tools/run_tools.py` | 50000 (260930 전엔 50040) |
 | Classifier | `classify.service` | `classifier/run_classify.py` | 50010 |
 | Chat Bot | `llama-server.service` | (외부) | 50020 |
 | H/W 검수 | 없음 — IDE 가 subprocess 로 띄운다 | `test/test.py` | 50050 |
@@ -169,6 +169,19 @@ span 이 날아가면 시리얼이 영영 안 돌아온다.
 
 ---
 
+## 라이선스 (260930)
+
+**리포 전체가 AGPL-3.0 이다**(`LICENSE`, 사용자 결정). Pibo 와 같은 이유(사물 인식 가중치 `yolo11s.onnx` 가
+Ultralytics AGPL-3.0)이고 파일도 Pibo 와 같다 — 자세한 건 Pibo CLAUDE.md '라이선스'.
+
+- `LICENSE`(AGPL-3.0 전문, 고치지 말 것) · `THIRD_PARTY_NOTICES.md`(vendor·모델 표 — **넣거나 바꾸면 같이 고칠 것**) ·
+  `system/NOTICE-yolo11s.txt`(이미지 만들 때 `.model/object/` 에 — Pibo `.model` 을 그대로 넣으면 이미 있다)
+- IDE [더보기] → **소스 코드 · 라이선스 (AGPL-3.0)**(`#source_bt`, AGPL §13). 링크는 기기 버전의 마지막 `_` 뒤
+  (`YYMMDDvN` / `YYMMDDvN-gl`)를 태그로 본 GitHub 트리. 형식이 다르면 리포 첫 화면
+- 비상업·연구 전용 라이선스의 코드·모델은 넣지 말 것
+
+---
+
 ## 외부 의존
 
 자사 서버(`circul.us`)는 전부 내렸다. **다시 넣지 말 것.**
@@ -180,7 +193,7 @@ span 이 날아가면 시리얼이 영영 안 돌아온다.
 남은 것:
 
 - `Speech.tts` 는 `voice="espeak"` 만. 다른 값은 raise.
-- `SpeechOnDevice` — 온디바이스 ONNX TTS(`m1`~`m5`/`f1`~`f5`) + faster-whisper STT.
+- `SpeechOnDevice` — 온디바이스 ONNX TTS(Supertonic 3, `m1`~`m5`/`f1`~`f5`). STT 는 `SpeechToText`(Pibo 와 같음, 블록은 마이크가 없어 막음).
 - `Dialog` 는 `start_llm`/`call_llm`/`stop_llm` 만. `call_llm` 은 localhost:50020.
 - `collect.py` — 위키·기상청·JTBC 등. 자사 서버가 아니라 그대로 둔다. 다만 **한국 전용이라
   `global` 에서는 툴박스에 안 나온다.**
@@ -206,11 +219,17 @@ grep -rn "circul.us" --include="*.py" --include="*.js" . | grep -v "docs/\|setup
   `grep -n "[가-힣]" ide/run_ide.py` 는 주석·docstring 만 나와야 한다. 정확한 검사는
   `grep -n "[가-힣]" ide/run_ide.py | grep -E "emit|JSONResponse"` → 0.
 - `t()` 는 전역이다. 다른 스크립트 최상위에서 `t` 를 선언하지 말 것.
-- classifier 는 `data-key` / `data-key-attr` / `data-icon` 로 화면을 다시 그린다.
-  상태에 따라 문구가 바뀌는 버튼은 `setLabel(el, icon, key)` 로 키를 남겨야 언어 전환이 따라온다.
-- **수정 금지**: `ide/static/ko.js`, `en.js`, `customblock.js`, `disable-top-blocks.js` 의 한글
-  (Blockly 로케일·주석·API 값이다).
+- classifier(260924~)는 `data-key` 로 화면을 다시 그린다(`ko2en.js` 의 `setLanguage`). 상태에 따라 바뀌는 문구는
+  `app.js` 가 `t()` 로 직접 쓴다. 옛 `data-key-attr`·`data-icon`·`setLabel` 은 옛 분류기와 함께 없어졌다
+- **수정 금지**: `customblock.js`, `disable-top-blocks.js` 의 한글 (Blockly 로케일·주석·API 값이다).
+  `customblock.js` 는 260929 에 `vision_resize` 툴팁 키 오타 하나만 고쳤다
+- **블록 문구 `ko.js`·`en.js`** 는 260929 에 정리했다(사용자 승인) — Pibo 와 **같은 파일**이다. 내용은 Pibo CLAUDE.md 'i18n'
 - `record`(실행 로그)는 번역을 타지 않고 터미널에 그대로 찍힌다. 언어중립으로 (`[exit]`).
+- **학생 프로그램의 stderr 는 stdout 에 합친다(260928).** `execute` 가 `stderr=STDOUT` 으로 띄우고 4KB 조각으로 읽는다
+  (점진 UTF-8 디코더). 전에는 stderr 를 프로그램이 끝난 뒤에 읽어서 ① 무한 반복 안의 에러가 [정지] 전까지 안 보였고
+  ② stderr 가 약 1MB 쌓이면 프로그램이 멈췄다(실측: 20초 넘게 안 끝남 → 지금 0.2초). 줄 단위(`readline`)도 버렸다 —
+  64KB 넘는 한 줄(`print('x'*100000)`)에서 예외로 실행이 끊겼고, 줄바꿈 없는 `input('이름? ')` 안내문이 안 보였다
+- **학생 코드는 root 로 돈다 — 의도한 것이다.** GPIO 등 하드웨어 접근 때문. `pi` 권한으로 내리지 말 것
 
 ---
 
@@ -220,7 +239,7 @@ grep -rn "circul.us" --include="*.py" --include="*.js" . | grep -v "docs/\|setup
 
 - `customblock.js` `customblock_callback.js` `customblock_toolbox.js` 는
   **셋 중 하나만 고쳐도 셋 다** 같은 번호로 올린다. 블록 정의·생성기·툴박스가 어긋나면 IDE 가 깨진다.
-- `ko.js` / `en.js` 는 `<script>` 태그가 아니라 `ide/static/index.js` 의 `const ver` 가 버전을 정한다.
+- `ko.js` / `en.js` 는 `<script>` 태그가 아니라 `ide/static/index.js` 의 `langFileVersion` 이 버전을 정한다.
   로케일을 고치면 **그 상수**를 올린다.
 - `tools/` `classifier/` 도 각자 템플릿의 `?ver` 를 쓴다. 고친 앱만 올리면 된다.
 
@@ -238,6 +257,7 @@ git ls-tree -r HEAD | grep 100755 | awk '{print $4}'
 system/booting.py  system/clear_disp.py  system/conwifi.sh  system/hotspot.sh
 system/init  system/network_disp.py  system/system.sh
 system/setup_country.sh  system/setup_openpibo_src.sh  test/test
+design/sync.sh
 ```
 
 `system/wifi.py` `system/uart_ctrl.py` 는 import 전용이라 644 다.
@@ -327,6 +347,71 @@ sudo raspi-config nonint get_wifi_country
 
 ---
 
+## 화면 v2 (260924) — Pibo 시안 B 를 그대로
+
+**유일한 화면이다.** 예전 화면(v1)과 `?ui=` · 쿠키 `pibo_ui` 전환은 260929 에 지웠다(Pibo 와 같이 — Pibo CLAUDE.md 'v1 삭제').
+`index_v2.html` 은 `ide/templates/index.html` 로 이름이 바뀌었다. `design/` 은 Pibo 와 같은 파일로 맞췄다(전엔 오래된 사본이었다).
+
+**원본은 Pibo 리포다.** 배치·색·동작 설명과 검증 기록은 openpibo-os.pibo 의 CLAUDE.md '화면 v2' 에 있다.
+여기서는 PiBrain 에서 다른 점만 적는다. 고칠 땐 **양쪽을 같이** 고칠 것.
+
+| 파일 | 출처 | PiBrain 에서 바꾼 것 |
+|---|---|---|
+| `design/pibo-ui.css` `pibo-ui.js` `sync.sh` `README.md` `index.html` | Pibo `design/` (공용 키트) | 없음. **Pibo 쪽이 원본** — 거기서 고치고 `design/sync.sh ~/openpibo-os.pibrain` 으로 가져온다 |
+| `design/fonts/` (Pretendard 보통·굵게 두 벌, SIL OFL) | Pibo `design/fonts/` | 없음. 원본 배포판 파일 그대로 — 이유는 Pibo CLAUDE.md '다듬기'. **파일은 `ide/static/fonts/` 에만** 있고 도구·분류기 서버가 IDE(80) 로 넘긴다(`SharedFonts`, 260929) |
+| `ide/static/pibo-ui.*`, `tools/static/pibo-ui.*`, `classifier/static/pibo-ui.*`, `*/static/fonts/` | `design/sync.sh` 가 만든 사본 | 직접 고치지 말 것. `bash design/sync.sh --check` |
+| `ide/static/launch.html` | Pibo | 제목·브랜드만(도구 포트는 260930 부터 Pibo 와 같은 50000) |
+| `ide/templates/index.html` (전 `index_v2.html`) | Pibo | 브랜드 `PiBrain`(fa-brain), 패널 탭 [PiBrain], **배터리 칸 없음**, `?ver` |
+| `ide/static/v2/ide.css` `ide.js` `vendor/toolbox-search.*` | Pibo | 주석의 탭 이름만 |
+| `ide/static/index.js` | Pibo 를 기준으로 | H/W 검수(50050, 4초 뒤 열기). `langFileVersion` 은 260929 부터 Pibo 와 같다(`ko.js`·`en.js` 가 같은 파일) |
+| `ide/run_ide.py` | 항목별로 | gzip, `run_blocking`, 실행 로그 `record`/`record_add`, 저장 확인 `saved`, `/` 는 늘 `index.html`. MCU 조회(`get_device`)는 안 가져왔다 |
+| `ide/static/ko2en.js` | Pibo 의 새 키 53개를 앞에 끼움 | `v2_tab_robot` = PiBrain. 1·2행은 그대로(`global` 델타) |
+| `customblock.js` | | `color_type` **색 값만**(한글 줄 그대로) |
+| `customblock_toolbox.js` | | 기본 분류 8개의 `"colour"` 값만. **`global` 델타 파일이다** — merge 때 Collect 분류와 떨어져 있어 보통 자동으로 합쳐지지만 확인할 것 |
+| `jquery-3.7.1.min.js` | Pibo | 3.1.1 을 지우고 올렸다 |
+| `tools/templates/index.html` `static/index.css` | **PiBrain 전용**(Pibo 도구와 마크업이 다르다) | 새로 짰다 — 아래 '도구 화면' |
+
+### 전체화면 (260930) — Pibo 와 같다
+
+키트(`pibo-ui.js`)가 IDE·도구·분류기의 전체화면 버튼을 맡는다. 탭을 바꾸면 브라우저가 풀고, 돌아오면 한 번 눌러 복귀.
+자세한 건 Pibo CLAUDE.md '전체화면'. PiBrain 에서 다른 점: **도구 머리줄에 버튼을 새로 넣었다**(`#fullscreen_bt`, [IDE] 옆,
+`tools/static/ko2en.js` 끝의 `nav_fullscreen`). IDE 는 Pibo 처럼 [더보기] 에서 상단바로 옮겼다.
+
+도구·분류기를 IDE 안 iframe 으로 합치는 안(C)은 **하지 않는다**(260930, 사용자 결정). 근거(숨긴 iframe 에서 카메라가 안 멈춤·학습이 멈춤·서비스가 안 꺼짐 등)는
+Pibo CLAUDE.md 'iframe 으로 합치기(안 C)' 에 있다. PiBrain 도 같다.
+
+### 도구 화면 (260924)
+
+Pibo 도구와 기능·마크업이 달라(REST/SSE, 5탭) 키트의 `pb-v2` 층을 쓰지 않고 **같은 색 토큰으로 따로 짰다.**
+`body.v2-app` 이라 키트가 `pb-v2` 를 얹지 않는다.
+
+- 상단바(노랑): 도구 · PiBrain | [IDE](`PiboUI.backToIDE`) · 화면 밝기(누를 때마다 부드럽게→밝게→어둡게, 쿠키 `pibo_theme`) · KO/EN
+  - 도구 [카메라] 는 기기 LCD 로 보내고 웹은 [캡처] 때 한 장만 받는다(`/capture.jpg`, JPEG 바이트). 서버는 매 장을 JPEG 로 만들지 않고
+    누가 달라고 할 때만 만든다(260929, 전엔 초당 약 5장을 받는 사람이 없어도 base64 로 만들어 두었다). `/capture_frame`(base64 JSON)·
+    `/camera_stream`(새 그림일 때만) 은 외부 도구용으로 남겨 뒀다. 도구 서버도 gzip
+  - 고른 적 없으면 늘 **부드럽게**(260929, OS 어두운 모드를 따르지 않는다). 파이썬 편집기 테마를 따로 고르면 기억하고
+    바탕을 그 테마 색으로 고정한다 — Pibo CLAUDE.md '화면 밝기' 참고
+- 왼쪽 레일: 버튼 · LED · 카메라 · 음성 · LCD. 본문은 카드, 넓으면 여러 칸(`auto-fit, minmax(340px)`)
+- 색은 `tools/static/index.css` 의 `--c-*` — **IDE `v2/ide.css` 와 같은 값.** 같이 고칠 것
+- 이모지를 Font Awesome 아이콘으로 바꿨다. 그러려고 `tools/webfonts/`(fa-solid·brands)를 두고
+  `run_tools.py` 에 `/webfonts` 를 마운트했다. 전에는 마운트가 없어 아이콘이 빈칸이라 이모지를 썼다
+- `ko2en.js` 의 문구에서 이모지·✓ 를 뺐다. 1·2행은 그대로(`global` 델타)
+- 버튼 안 아이콘을 지우지 않게 카메라 버튼은 라벨 `<span>` 만 바꾼다(`setCamLabel`)
+- 서비스 꺼짐: `/health` 를 5초마다 보고 두 번 연속 실패하면 배너 + [다시 켜기](`launch.html` 로 다시 연다).
+  다른 도구를 켜거나 IDE 에서 코드를 실행하면 `tools.service` 가 꺼지기 때문이다
+- id·onclick·API 는 그대로다. 검증: 5탭 × 한/영 × 부드럽게/어둡게 pageerror 0, 가로 스크롤 0(420px 포함),
+  배너 뜨고 사라짐
+
+- 기본 블록 테마(`index.js`)의 `colorTertiary` 오타가 `colourTertiary` 로 고쳐졌다(Pibo 에서 같이 옴)
+- 파이썬 편집기는 v2 전용 테마 `pibo-light`/`pibo-dark`
+- **움직임(260929)** — Pibo CLAUDE.md '화면 v2 → 움직임' 과 같다. PiBrain 에 들어간 것: IDE(상태 숫자 올라감·연결 점 숨쉬기·
+  [PiBrain|파일] 탭 떠오르기·파일 목록 빈 줄·대화상자 등장), 분류기(결과 막대·숫자, 카메라 HUD, 보관함 빈 카드, 탭 전환),
+  대기 페이지(배경·진행 링, 밝기 따름, 상단 이름 Pibo → PiBrain). 도구는 마크업이 달라 안 넣었다
+
+검증(컨테이너, 가짜 소켓): v2 동작 22/22, 기존 동작 27개 중 26(실패 1개는 테스트 탭이 뒤에 있어 늦게 뜬 것 —
+Pibo 에서도 같다), 560~1960px 한/영 상단바 넘침 0, 편집기 폭 0, pageerror 0. v1 삭제(260929) 뒤에도 같은 결과.
+**실기기로는 아직 안 봤다.**
+
 ## 파이보와 다른 점
 
 Pibo 리포의 변경을 가져올 때 **항목마다 적용 여부를 먼저 판단한다.** 소스를 통째로 덮어쓰지 말 것.
@@ -340,16 +425,24 @@ Pibo 리포의 변경을 가져올 때 **항목마다 적용 여부를 먼저 �
 | IDE 블록 | `device_eye_*` `device_get_*` | **`device_pibrain_*` 별도 세트.** 아래 참고 |
 | MCU | 있음 (`send_raw`, 펌웨어 버전) | **없음.** 검수 보고서에 Firmware 행이 없다 |
 | 배터리 | 게이지 있음 | 없음 |
-| 진입 UI | IDE 헤더·푸터 | 동일. 랜딩 페이지는 쓰지 않는다 |
-| Tools | socket.io + 모션 편집기·시뮬레이터 | REST/SSE. 버튼·LED·카메라·TTS·LCD 5개 패널. 컨셉만 같다 |
-| Classifier | 단순 UI | keras 변환이 있다. ko2en 키셋을 따로 만들었다 |
+| 진입 UI | IDE v2(노랑 상단바 + 왼쪽 패널) | 동일(260924~). 패널 탭 이름만 [PiBrain], 배터리 칸 없음. 랜딩 페이지는 쓰지 않는다 |
+| Tools | socket.io + 모션 편집기·시뮬레이터 | REST/SSE. 버튼·LED·카메라·TTS·LCD 5개 패널. 컨셉만 같다. 화면은 v2 색으로 따로 짰다(260924) |
+| Classifier | teach-lab 방식(260924) | 같다(260924~). 언어 저장 키만 `classifier_language` |
 | 마이크 | 2-mic HAT (`arecord -D plug:dmic_sv`) | **없음.** 녹음·STT 경로 전부 무관 |
 | UART | 없음 | `system/uart_ctrl.py`, `openpibo/usb_uart.py` |
 | 라즈베리파이 보드 | Pi 4 · CYW43455 | **동일.** 무선·regdom 관련은 그대로 적용된다 |
 | 예제 | Pibo 구성 | 구성이 다르다. `collect.json` 은 `main` 에 있고 `global` 에서만 뺀다 |
 
-라이브러리에서 **PiBrain 쪽이 더 새 것**인 부분이 있다 (`SpeechOnDevice` 의 whisper STT,
-`vision_detect` 의 yolo26s). Pibo 파일로 덮어쓰면 퇴행한다.
+라이브러리는 파일마다 Pibo 와 다를 수 있으니 통째로 덮어쓰지 말고 diff 를 보고 옮길 것.
+
+**사물 인식은 260930 에 Pibo 와 같은 방식이 됐다** — `vision_detect` 가 ultralytics 를 import 하지 않고
+`openpibo/modules/yolo_onnx.py`(Pibo 와 **같은 파일**, 같이 고칠 것)로 onnxruntime 만 써서 돈다. torch 도 안 올라온다.
+- 예전 `YOLO(...).predict(conf=0.5, iou=0.4, imgsz=320)` 와 **같은 값**: coco128 128장, 640×480 로 줄여서
+  yolo11s(고정 320) · yolo26s(동적 · end2end) 셋 다 128/128(컨테이너)
+- 모델은 처음 `detect_object` 를 부를 때 올린다. 경로는 그대로 `/home/pi/.model/object/yolo11s.onnx`
+- **모델은 yolo11s 로 통일(260930)** — Pibo 와 같은 `yolo11s.onnx`(320 고정 export). 예전 문서의 'yolo26s' 는 틀린 표기였다
+  (코드는 늘 `yolo11s.onnx` 를 읽었다). `/home/pi/.model` 은 Pibo 것을 그대로 넣는다 — IMAGE.md '모델 폴더'
+- 라이선스: 이 가중치들은 Ultralytics 배포물(AGPL-3.0). Pibo CLAUDE.md '라이선스' 참고
 
 ### PiBrain 전용 블록 — `device_pibrain_*`
 
@@ -372,23 +465,67 @@ Pibo 와 같다. Teachable Machine 계열(`vision_load_tm` `vision_predict_tm`
 `vision_classification`)은 **양쪽 리포 모두 정의·생성기·툴박스에서 비활성**이고,
 살아 있는 것은 `vision_load_cf` / `vision_predict_cf`(`CustomClassifier`) 뿐이다.
 
-기기 안에서 한 바퀴가 돈다 — classifier 앱이 학습하고 `model.json` · `weights.bin` ·
-`labels.txt` 로 내보내면, `CustomClassifier.load(model_path, label_path)` 가 그걸 읽는다.
 `openpibo/vision_classify.py` 에 `class TeachableMachine` 이 남아 있는 것도 Pibo 와 같다.
 라이브러리 코드일 뿐 블록으로 노출되지 않는다.
 
-### 마이크가 없다 — 되살리지 말 것
+### 분류기 (260924) — Pibo 와 같은 teach-lab 방식
 
-`openpibo/audio.py` 의 `Audio.record` 와 `openpibo/speech.py` 의 `SpeechOnDevice.stt` 는
-`arecord -D plug:dmic_sv` 를 쓴다. Pibo 의 2-mic HAT 장치명이다. **PiBrain 에는 마이크가 없어
-이 경로는 동작하지 않는다.** 라이브러리가 Pibo 와 공용이라 코드만 남아 있는 것이다.
+**TensorFlow 를 쓰지 않는다.** 예전(TF.js 3.11 MobileNetV2 → keras 변환 → TF 추론)을 통째로 바꿨다.
+**원본은 Pibo 리포다** — 구조·검증·가져온 코드(teach-lab)의 규칙은 openpibo-os.pibo CLAUDE.md '분류기' 에 있다.
+고칠 땐 양쪽을 같이 고칠 것.
 
-그래서 이렇게 막혀 있다. 전부 **의도한 것**이니 되살리지 말 것.
+| 단계 | 어디서 | 무엇으로 |
+|---|---|---|
+| 카메라 | PiBrain → 태블릿 | socket.io `camera_image`, 320×240 JPEG |
+| 특징 뽑기·학습 | 태블릿 브라우저 | MediaPipe wasm(`classifier/static/vendor/tasks-vision`) + TF.js 작은 MLP |
+| 저장 | PiBrain | `POST /api/models` → `/home/pi/mymodel/<이름>/` |
+| 추론 | PiBrain | `CustomClassifier` — LiteRT/tflite_runtime(이미지) · MediaPipe(손·얼굴·포즈) + numpy |
+
+- 입력 4가지: 이미지 / 손(한·두 손) / 얼굴 / 포즈(상반신·전신). 학습·시험·보관함 세 탭
+- 가져온 파일: `classifier/` 전부, `openpibo/vision_classify.py`, `openpibo/modules/teachlab/`,
+  `openpibo/modules/pose/movenet.py`(TensorFlow 대체 분기를 `load_interpreter()` 로). 교체 직전의
+  PiBrain 파일은 Pibo 교체 직전과 공백만 달랐다
+- PiBrain 에서 바꾼 것: 화면 문구의 이름(PiBrain), `ko2en.js` 1·2행과 언어 저장 키 `classifier_language`
+  (`global` 델타 그대로)
+- 블록 `[분류기 모델 … 불러오기]`(260929 전엔 '이미지 모델 설정하기'): 폴더 `mymodel`, 이름 칸에 모델 이름(기본값 '모델 이름'), 세 번째 칸은 비워 둔다.
+  **예전 `model.keras` 는 못 읽는다**(불러오면 다시 학습하라는 오류). 의도한 호환 단절이다
+- 지운 것: `tf.min-3.11.0.js` · MobileNetV2 가중치 · `model.json` · `jszip` · `tfjs_to_keras.py`(`/convert`)
+- 사물 인식(`vision_detect`)은 260930 에 Pibo 의 onnxruntime 방식으로 바꿨다(위 '사물 인식' 참고)
+- 기기 런타임(`tflite-runtime`·`mediapipe`)은 **PiBrain 기기에서 확인 전** — IMAGE.md '분류기 런타임 확인'
+- PiBrain 카메라가 좌우 반전 없이 들어오는지 **확인 필요.** 브라우저·파이썬 모두 뒤집지 않는다는 전제다
+
+검증(컨테이너, 가짜 카메라 + headless Chromium): 학습·저장·시험·보관함 e2e 25/25.
+브라우저가 저장한 네 모델을 **PiBrain 의 `openpibo`** 로 추론한 답 8/8 일치(tflite-runtime 2.14.0 ·
+mediapipe 0.10.18 · numpy 1.26.4). 특징 코사인 이미지 0.96~0.98 · 손 0.99 · 포즈 0.99 · 얼굴 0.83~0.93.
+**PiBrain 실기기로는 아직 안 봤다.**
+
+**docs 를 다시 빌드해야 한다** — `vision_classify` API(`CustomClassifier.load`)가 바뀌었다. 기기에서 `make clean html` ('docs' 절). 아직 안 했다.
+
+### 도구 이름을 파이보와 맞춤 (260930)
+
+- 목소리 `k0`~`k9` → `남성 1`~`여성 5`(도구 `voice_*`, IDE 블록 `VOICE_*`). 값은 그대로
+- 비전 기능 이름을 파이보 도구와 같게: 윤곽선·흐리게·만화·선명하게·얼굴분석·얼굴 특징점·사물인식·손동작인식·포즈인식·마커인식
+- LCD: 개발용 문구(`network_disp.py 재시작`)를 [LCD 처음 화면으로] 로, 빨간 버튼 → 보통 버튼. 글자 칸은 Enter 로 줄바꿈(`\n` 도 그대로 된다)
+- IDE 쪽 다듬기(상태 칸·툴박스·블록 문구·인터넷 설정·초기화 확인창)는 파이보와 같다 — Pibo CLAUDE.md '다듬기 (260930)'
+
+### 마이크가 아직 없다 — 블록만 막아 둔다
+
+`openpibo/audio.py` 의 `Audio.record` 와 `openpibo/speech.py` 의 `Speech.stt` · `SpeechToText` 는
+`arecord -D plug:dmic_sv` 를 쓴다. Pibo 의 2-mic HAT 장치명이다. **PiBrain 에는 아직 마이크가 없어
+이 경로는 동작하지 않는다.** 나중에 Pibo 와 같은 마이크를 달 예정이라(260930 사용자) **소스는 Pibo 와 같게 넣어 두고
+블록만 막는다.**
+
+- **STT 소스(260930)**: `openpibo/speech.py` 는 Pibo 와 설명문만 다르다(SenseVoice + silero VAD, 마이크 DC 제거까지 같음 —
+  Pibo CLAUDE.md '음성 인식 · TTS · 메모리'). 고치면 두 리포를 같이 고칠 것. 모델은 `.model/stt`(Pibo `.model` 그대로 넣으면 있다),
+  패키지 `sherpa-onnx`·`sherpa-onnx-core` 1.13.8 은 **마이크를 달 때 설치**(`pip install --no-deps`)
+- `speech_stt` 블록 — 정의(`customblock.js`)만 있고 생성기·툴박스는 주석(260930). 블록 문구(`ko.js`·`en.js`)는 이미 있다
+- **마이크를 달면**: 장치명이 `dmic_sv` 인지 먼저 확인(`arecord -L`), `speech_stt` · `audio_record` 의 생성기·툴박스 주석을
+  같이 걷어낸다(셋을 같이 — '자주 나는 실수'). Pibo 마이크처럼 DC 가 섞이는지는 그 마이크로 다시 볼 것
+
+지금 막혀 있는 것:
 
 - `audio_record` 블록 — 정의(`customblock.js`)만 있고 생성기·툴박스는 주석 처리.
   세 파일 모두에 이유를 주석으로 적어 뒀다.
-- STT 블록 없음. 이 base 에는 `speech_ostt` 자체가 없었고 새로 만들지도 않았다.
-  `SpeechOnDevice` 에도 `stt` 메서드가 없다.
 - 검수 보고서(`test/`)에 녹음 항목 없음. 스피커(`audio`)만 검사한다.
 - `tools` 에 녹음·STT 엔드포인트 없음.
 
@@ -400,11 +537,6 @@ Pibo 와 같다. Teachable Machine 계열(`vision_load_tm` `vision_predict_tm`
 
 ### 알면서 남겨 둔 것
 
-- `ide/static/ko.js` / `en.js` 에 지운 블록의 로케일 키가 남아 있다
-  (`SPEECH_STT` `SPEECH_TTS` `SPEECH_TTS_PLAY` `SPEECH_GTTS` `SPEECH_GTTS_PLAY`
-  `SPEECH_TRANSLATE` `SPEECH_GET_DIALOG` `SPEECH_LOAD_DIALOG` `SPEECH_RESET_DIALOG`
-  `VISION_CALL_AI_IMG` `VISION_CALL_AI_IMG_EXT` 와 각 `_TOOLTIP`).
-  참조하는 블록이 없어 동작에 영향이 없고, 위 '수정 금지' 규칙에 걸리므로 그대로 둔다.
 - `openpibo/vision_detect.py` 의 `pickle` · `openpibo_dlib_models` import 는 쓰이지 않는다.
   이번 작업 이전부터 그랬고, 모델 경로 등록 부작용이 있을 수 있어 건드리지 않았다.
 - `system/openpibo_python-*.whl` — 위 'openpibo 는 리포 소스로 임포트한다' 참고.
@@ -422,6 +554,23 @@ classifier 언어 토글, 검수 보고서 구조, Tools 서비스.
 `audio_record` 블록 노출(마이크 없음 — 위 항목 참고).
 
 ---
+
+## IDE 서버·블록 메모 (260924)
+
+- **첫 화면은 `FileResponse` 로 템플릿 파일을 그대로 보낸다** (`ide/run_ide.py` 의 `/`, `tools/run_tools.py` 의 `/`).
+  템플릿에 Jinja 문법이 없어서다. 전에 쓰던 `TemplateResponse(이름, {"request": ...})` 는 starlette 1.0 부터
+  받지 않아 첫 화면이 500 이 된다(컨테이너 starlette 1.7 에서 확인). 템플릿에 Jinja 를 쓰게 되면
+  `TemplateResponse(request, 이름)` 새 순서로 쓸 것
+- `restore` 의 `except` 는 `app.sio.emit(..., to=sid)`. 전엔 정의 안 된 `sio` 를 불러 오류 안내가 안 나갔다
+- **`utils_dict_create` 는 값 블록이다(260924v3).** 전엔 위아래로 끼우는 모양인데 생성기가 값을 돌려줘서
+  코드 생성이 실패했다(`[변수 = 빈 사전]` 을 만들 수 없었다). 예전 모양으로 저장된 파일은 불러오면
+  중간에서 멈추므로 `customblock_callback.js` 끝에서 `Blockly.serialization.workspaces.load` 를 감싸
+  문장 자리의 그 블록만 걷어낸다(하는 일이 없던 블록이라 프로그램은 같다). 그 IIFE 앞 `;` 는 지우지 말 것 —
+  바로 위 `forBlock[...] = function(){...}` 에 세미콜론이 없어 괄호가 그 함수 호출로 붙는다
+- 파일은 확장자와 상관없이 **지금 모드(블록/파이썬)로 열린다.** `.json` 을 파이썬 편집기로 열어 고치고 닫을 수
+  있어서 일부러 그대로 둔다(권장 사용법은 아님)
+- `static/socket.io.min.js`(vendor)는 보안 컨텍스트(`localhost`·https)에서 `navigator.userAgentData.toLowerCase`
+  로 죽어 `io` 가 없어진다. 기기는 `http://<IP>` 라 해당 없음. **컨테이너 테스트는 `127.0.0.1` 말고 IP 주소로 열 것**
 
 ## 자주 나는 실수
 
@@ -445,9 +594,13 @@ classifier 언어 토글, 검수 보고서 구조, Tools 서비스.
 python3 -m py_compile ide/run_ide.py system/booting.py system/wifi.py test/test.py \
         openpibo/speech.py openpibo/vision_detect.py openpibo/__init__.py
 node --check ide/static/index.js ide/static/ko2en.js
+node --check ide/static/v2/ide.js design/pibo-ui.js
+bash design/sync.sh --check | grep -v ' ok'                                  # 키트 사본이 원본과 같은가
 node --check ide/static/customblock.js ide/static/customblock_callback.js ide/static/customblock_toolbox.js
 node --check tools/static/index.js tools/static/ko2en.js
-node --check classifier/static/index.js classifier/static/ko2en.js
+node --check classifier/static/ko2en.js
+node --check --input-type=module < classifier/static/app.js
+python3 -m py_compile classifier/run_classify.py openpibo/vision_classify.py openpibo/modules/teachlab/*.py
 bash -n system/*.sh
 python3 -c "import json,glob; [json.load(open(f)) for f in glob.glob('examples/*.json')]"
 
@@ -491,3 +644,11 @@ grep -n "[가-힣]" ide/run_ide.py | grep -E "emit|JSONResponse"            # 0 
 - 브랜치 삭제 push 403. 정리는 GitHub 에서 사람이 한다.
 - 기기 SSH 불가. 기기에서만 되는 확인(`openpibo.__file__`, `iw reg get`, docs 빌드)은
   값을 받아서 반영한다. **추측해서 쓰지 말 것.**
+
+### WiFi 저장(`booting.py` `POST /wifi`, 260929)
+
+SSID·비밀번호·ID 는 `subprocess.run(['sudo', conwifi.sh, 종류, ssid, ...])` 인자 목록으로 넘긴다. 전엔
+`os.system(f"... '{ssid}' '{psk}'")` 라 `'` 가 들어가면 따옴표가 닫히고 그 뒤가 **root 명령으로 실행**됐다
+(8080 은 로그인 없이 받고 AP 모드에서도 열려 있다). `Kim's WiFi` 같은 이름은 연결도 안 됐다.
+SSID 가 비면 실패 안내를 돌려준다(전엔 정의 안 된 `ex` 로 500). 비밀번호는 로그에 남기지 않는다.
+**셸 문자열에 사용자 입력을 넣지 말 것** — `tools/lib.py` 의 espeak 도 같은 이유로 고쳤다
