@@ -531,9 +531,10 @@ html[data-theme="dark"] .cm-s-pibo-light .CodeMirror-gutters { border-right-colo
 
 .v2-app .blocklyPath { stroke-width: 1px; }
 .v2-app .blocklyMainBackground { fill: var(--c-work) !important; stroke: none !important; }
-/* 블록 글자: 예전 20px 은 빽빽했다. 18px (작업판 기본 배율이 1 보다 작아 화면에서는 더 작게 보인다) */
+/* 블록 글자: 예전 20px 은 빽빽했다. 18px (작업판 기본 배율이 1 보다 작아 화면에서는 더 작게 보인다)
+   굵기는 보통(Regular). 굵게(Bold)는 기본 배율 0.7 에서 약 12.6px 이 돼 획 많은 한글(했·때·력)이 뭉쳐 번져 보였다(260930) */
 .v2-app .blocklyText {
-  font-family: var(--font) !important; font-size: 18px !important; font-weight: 700 !important;
+  font-family: var(--font) !important; font-size: 18px !important; font-weight: 500 !important;
   white-space: nowrap !important; overflow: visible !important;
 }
 .v2-app .blocklyFlyoutBackground { fill: var(--c-bg) !important; fill-opacity: .98 !important; }
