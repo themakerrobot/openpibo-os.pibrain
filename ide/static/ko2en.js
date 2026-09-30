@@ -162,11 +162,11 @@ const translations = {
     en: "Are you sure you want to restart?"
   },
   check_newfolder_name: {
-    ko: "새폴더의 이름을 입력하세요.",
+    ko: "새 폴더의 이름을 입력하세요.",
     en: "Enter a name for the new folder."
   },
   check_newfile_name: {
-    ko: "새파일의 이름을 입력하세요.",
+    ko: "새 파일의 이름을 입력하세요.",
     en: "Enter a name for the new file."
   },
   name_size_limit: {
@@ -342,7 +342,7 @@ const translations = {
     en: "c"
   },
   confirm_block_file: {
-    ko: "파일을 선택하거나, 새파일을 생성하세요.",
+    ko: "파일을 고르거나 새 파일을 만드세요.",
     en: "Select a file or create a new one."
   },
   file_number_limit: {

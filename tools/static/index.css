@@ -127,7 +127,7 @@ body.tl {
 .tab.active {
   display: grid; gap: 14px; align-items: start;
   grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  max-width: 1180px;
+  max-width: 1180px; margin: 0 auto;   /* 넓은 화면에서 카드가 왼쪽으로 쏠리지 않게 가운데로 */
 }
 
 /* ── 카드 ────────────────────────────────────────────────────────────── */
