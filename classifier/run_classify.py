@@ -114,8 +114,14 @@ sio = SocketManager(app=app, mount_location='/socket.io')
 # 카메라
 # ---------------------------------
 def to_jpeg(im):
-  # 640x480 → 320x240. openpibo.vision_classify 도 추론할 때 같은 크기로 줄인다
-  ret, buffer = cv2.imencode('.jpg', cv2.resize(im, (320, 240)), [cv2.IMWRITE_JPEG_QUALITY, JPEG_QUALITY])
+  # 짧은 변을 240 으로, 비율은 그대로 — openpibo.vision_classify._as_stream_rgb 와 같은 식이라야 학습·추론 그림이 같다.
+  # 파이보 640x480 → 320x240(예전과 같음), PiBrain 480x640(세로) → 240x320.
+  # 전엔 늘 320x240 으로 줄여 PiBrain 세로 그림이 찌그러진 채 학습됐다(추론은 안 찌그러짐, 260930)
+  h, w = im.shape[:2]
+  s = 240 / min(h, w)
+  if s < 1:
+    im = cv2.resize(im, (int(round(w * s)), int(round(h * s))))
+  ret, buffer = cv2.imencode('.jpg', im, [cv2.IMWRITE_JPEG_QUALITY, JPEG_QUALITY])
   if not ret:
     return None
   return buffer.tobytes()

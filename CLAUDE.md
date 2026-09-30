@@ -472,6 +472,11 @@ Pibo 와 같다. Teachable Machine 계열(`vision_load_tm` `vision_predict_tm`
 
 ### 분류기 (260924) — Pibo 와 같은 teach-lab 방식
 
+**카메라는 세로다.** 카메라를 시계 반대 방향 90° 돌려 달았고 `vision_camera.Camera.read()` 가 되돌려 세로 480x640 을 준다(LCD 240x320 과 같은 3:4).
+그래서 그림을 줄이는 곳은 전부 **비율을 지킨다**(260930): 분류기 스트림 `to_jpeg`(240x320), 도구 [웹에 표시] `to_jpeg`(240x320), 화면의 카메라 칸도 세로.
+전엔 둘 다 320x240 으로 줄여 찌그러졌고, 분류기는 학습(찌그러짐)과 추론(안 찌그러짐) 그림이 달랐다. 그 전에 학습한 모델은 다시 학습할 것.
+`Camera.draw_bitmap` 도 카메라 그림과 같은 480x640 으로 만든다(전엔 640x480, LCD 는 다시 늘려 그려서 같아 보였다)
+
 **TensorFlow 를 쓰지 않는다.** 예전(TF.js 3.11 MobileNetV2 → keras 변환 → TF 추론)을 통째로 바꿨다.
 **원본은 Pibo 리포다** — 구조·검증·가져온 코드(teach-lab)의 규칙은 openpibo-os.pibo CLAUDE.md '분류기' 에 있다.
 고칠 땐 양쪽을 같이 고칠 것.

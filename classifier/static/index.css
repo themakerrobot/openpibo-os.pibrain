@@ -115,8 +115,9 @@ body[data-tab="store"] .pb-resizer { display: none !important; }
 }
 .stage {
   position: relative;
-  aspect-ratio: 4 / 3;
-  width: min(100%, calc((100dvh - 150px) * 4 / 3));
+  /* 비율은 받은 그림을 따른다(app.js 가 --ar-w/--ar-h 를 단다). 파이보 4:3 가로, PiBrain 3:4 세로 */
+  aspect-ratio: var(--ar-w, 4) / var(--ar-h, 3);
+  width: min(100%, calc((100dvh - 150px) * var(--ar-w, 4) / var(--ar-h, 3)));
   background: #2b2b2b;
   border-radius: 12px;
   overflow: hidden;

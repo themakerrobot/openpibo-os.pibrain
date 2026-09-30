@@ -230,11 +230,14 @@ function onFrame() {
 
 function frameThumb(src) {
   if (src === 'image') return thumbFrom(cropCv, 96);
+  // 긴 변 96, 비율은 그림 그대로(세로 카메라면 72x96)
+  const cw = cam.naturalWidth || 4, chh = cam.naturalHeight || 3, k = 96 / Math.max(cw, chh);
+  const tw = Math.round(cw * k), th = Math.round(chh * k);
   const cv = document.createElement('canvas');
-  cv.width = 96; cv.height = 72;
+  cv.width = tw; cv.height = th;
   const c = cv.getContext('2d');
-  c.drawImage(cam, 0, 0, 96, 72);
-  c.drawImage(overlay, 0, 0, 96, 72);
+  c.drawImage(cam, 0, 0, tw, th);
+  c.drawImage(overlay, 0, 0, tw, th);
   return cv.toDataURL('image/jpeg', 0.7);
 }
 
@@ -252,7 +255,12 @@ function showFrame(data) {
   cam.src = url;
 }
 cam.addEventListener('load', () => {
-  $('stage').classList.add('has-frame');
+  const st = $('stage');
+  st.classList.add('has-frame');
+  // 칸 비율을 그림에 맞춘다(세로 카메라면 세로 칸)
+  if (cam.naturalWidth && st.style.getPropertyValue('--ar-w') !== String(cam.naturalWidth)) {
+    st.style.setProperty('--ar-w', cam.naturalWidth); st.style.setProperty('--ar-h', cam.naturalHeight);
+  }
   onFrame();
   frameBusy = false;
   if (pendingFrame) { const b = pendingFrame; pendingFrame = null; showFrame(b); }
