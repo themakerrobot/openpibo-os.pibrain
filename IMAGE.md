@@ -131,6 +131,49 @@ AP(핫스팟)는 국가 설정과 무관하다. `hotspot.sh` 가 2.4GHz 채널 1
 - TensorFlow 를 지우는 건 **위 확인이 끝난 뒤에만.** 사물 인식(`vision_detect`)은 260930 부터 ultralytics·torch 를
   import 하지 않는다(onnxruntime). 코드 쪽에서는 `ultralytics`·`torch` 를 지워도 된다 — 다른 데서 쓰는지 `pip show` 로 한 번 볼 것
 
+### 안 쓰는 패키지 걷어내기 — `system/venv_prune.py` (260930~, 이미지당 1회)
+
+예전 OS 에서 올려 온 기기에는 지금 코드가 안 쓰는 패키지가 수 GB 남아 있다(260930 두 기기 모두 site-packages 5.5~5.6GB:
+TensorFlow·torch·ultralytics, MeloTTS 시험 잔재(gruut·unidic·mecab·jieba·transformers·gradio …), 문서 도구(sphinx) 등).
+**코드가 import 하지 않으므로 메모리는 태그만 올려도 줄어든다.** 이건 SD 카드 용량과 이미지 크기를 줄이는 작업이다.
+
+`venv_prune.py` 는 '리포 코드가 import 하는 패키지(스크립트의 `ROOTS` + `requirements.txt`)와 그것들이 요구하는 것'만 남기고
+나머지를 지울 목록으로 뽑는다. 기기에 **지금 깔린 것의 메타데이터로** 계산하므로 기기마다 목록이 달라도 된다.
+
+```bash
+PY=/home/pi/.pyenv/bin/python3
+sudo systemctl stop tools.service classify.service llama-server.service   # 도구가 떠 있으면 먼저 끈다
+
+# 1) 목록만 본다 — 아무것도 안 바꾼다. 맨 위에 개수·용량, 아래에 큰 것부터
+sudo $PY /home/pi/openpibo-os/system/venv_prune.py | head -40
+
+# 2) 지운다. 지우기 전 목록을 /home/pi/venv_backup_<날짜>.txt 로 남기고, 지운 뒤 pip check 와 import 확인을 돌린다
+sudo $PY /home/pi/openpibo-os/system/venv_prune.py --apply
+#    import 확인 끝줄이 'N/N 모듈 import 됨 · 분류기 추론기: tflite_runtime.interpreter' 여야 한다
+
+# 3) 서비스 다시 켜고 IDE·도구·분류기를 한 번씩 열어 본다
+sudo systemctl restart ide.service booting.service
+```
+
+되돌리기(인터넷 필요): `sudo $PY -m pip install -r /home/pi/venv_backup_<날짜>.txt`
+
+선택 항목 — 기본으로는 **남긴다**:
+
+| 옵션 | 지우는 것 | 이유 |
+|---|---|---|
+| `--optional` | `pandas` `scikit-learn` `seaborn` (약 140MB) | 리포 코드는 안 쓰지만 수업 자료(파이썬 모드)에서 쓸 수 있다 |
+| `--jax` | `jax` `jaxlib` `ml-dtypes` `opt-einsum` (약 265MB, `--optional` 과 같이 주면 scipy 약 130MB 도) | mediapipe 0.10.18 이 요구 목록에 적었지만 **불러오지 않는다.** jax·jaxlib·scipy 를 지우고 얼굴·손·포즈 랜드마커와 얼굴 메시(`FACEMESH_TESSELATION`)가 그대로 도는 것을 확인했다(컨테이너, mediapipe 0.10.18·numpy 1.26.4). 대신 `pip check` 가 `mediapipe requires jax` 를 알린다 — 알고 있는 것이다 |
+
+알아 둘 것:
+- **가상환경 밖은 건드리지 않는다.** `/home/pi/.pyenv` 는 시스템 패키지를 보는 가상환경이라 `gpiozero` `lgpio` `spidev` `python-apt` 등
+  apt 패키지가 목록에 같이 보이지만(크기 0) 지울 대상에서 뺀다
+- 남기는 것 중 눈여겨볼 것: `lxml`(뉴스 블록), `tflite-runtime`(분류기·movenet — 없으면 TensorFlow 를 찾는다), `openvino`(얼굴 분석),
+  `av`(picamera2 가 요구), `matplotlib`(mediapipe 가 실제로 불러온다), `sympy`(onnxruntime 이 요구), `uvicorn[standard]`(uvloop·httptools·websockets —
+  socket.io 웹소켓)
+- `openpibo-face-models`(약 90MB)는 **지운다.** 얼굴 모델은 `/home/pi/.model/face` 에서 읽는다(`vision_face.py`). 이름은 예전 `setup.py` 에만 남아 있다
+- `openpibo-detect-models`(약 80MB)는 `movenet_lightning.tflite` 하나 때문에 남는다. 그 파일을 `/home/pi/.model` 로 옮기면 뺄 수 있다(아직 안 함)
+- 새 기능이 패키지를 쓰게 되면 스크립트의 `ROOTS` 와 `requirements.txt` 에 **둘 다** 넣을 것(Pibo·PiBrain 같은 파일, 원본은 openpibo-os.pibo)
+
 ### 모델 폴더 `/home/pi/.model` (260930~, 이미지당 1회)
 
 **Pibo 이미지의 `/home/pi/.model` 을 그대로 넣는다**(구성·파일별 sha256 은 그 폴더의 `VERSION`, 만드는 법은 Pibo IMAGE.md

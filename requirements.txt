@@ -1,0 +1,61 @@
+# openpibo-os.pibrain — 기기 파이썬(/home/pi/.pyenv/bin/python3)이 쓰는 패키지 (260930)
+#
+# 리포 코드가 직접 import 하는 것만 적었다. 버전은 기기 pip 목록(260930 PiBrain 기기)과 같다. openpibo-os.pibo 의 requirements.txt 와 같은 목록이다.
+# 나머지는 이것들이 끌고 오는 의존이다. 안 쓰는 패키지 걷어내기는 system/venv_prune.py.
+#
+# 설치:  /home/pi/.pyenv/bin/python3 -m pip install -r requirements.txt
+# 정리:  sudo /home/pi/.pyenv/bin/python3 system/venv_prune.py   (안 쓰는 패키지 목록 → --apply 로 지움)
+# 확인:  /home/pi/.pyenv/bin/python3 -m pip check
+#
+# 파이썬 밖(apt 등)으로 필요한 것:
+#   sox(play — Audio.play, 녹음 변환) · alsa-utils(arecord — 녹음, STT) · espeak(Speech.tts, 도구 기계음)
+#   libzbar0(pyzbar — QR) · network-manager(nmcli — WiFi·AP) · iw
+#   llama.cpp 빌드(/home/pi/.llama.cpp, llama-server — 대화)
+# 모델 파일은 pip 가 아니라 /home/pi/.model 에 둔다(목록·sha256 은 그 폴더의 VERSION)
+
+# ── 서버 (IDE · 도구 · 분류기 · booting) ─────────────────────────
+fastapi==0.115.4
+starlette==0.41.2
+uvicorn[standard]==0.32.0        # standard: uvloop·httptools·websockets (socket.io 웹소켓) — 기기에 이미 깔려 있다
+fastapi-socketio==0.0.10
+python-socketio==5.11.4
+python-multipart==0.0.20        # UploadFile(파일 올리기)
+Jinja2==3.1.4                   # booting.py 의 Jinja2Templates
+requests==2.32.3
+
+# ── 하드웨어 ─────────────────────────────────────────────────────
+RPi.GPIO==0.7.1
+rpi-lgpio==0.6
+rpi-ws281x==5.0.0
+pyserial==3.5
+Adafruit-Blinka==8.56.0         # board · busio · digitalio
+adafruit-circuitpython-ssd1306==2.12.19
+adafruit-circuitpython-rgb-display==3.13
+picamera2==0.3.21
+
+# ── 영상 · 인식 ──────────────────────────────────────────────────
+numpy==1.26.4                   # 2.x 로 올리지 말 것 — tflite-runtime·mediapipe·openvino 가 1.x 기준
+pillow==11.0.0
+opencv-contrib-python==4.11.0.86   # 마커(aruco)·트래커가 contrib 에 있다
+pyzbar==0.1.9
+dlib==19.24.6
+mediapipe==0.10.18
+tflite-runtime==2.14.0          # 분류기 이미지·movenet. 지우면 TensorFlow 로 떨어진다
+onnxruntime==1.20.1             # 사물 인식(YOLO) · TTS
+openvino==2024.5.0              # 얼굴 분석
+
+# ── 음성 ─────────────────────────────────────────────────────────
+soundfile==0.13.1
+# STT(SenseVoice + VAD) — PiBrain 은 마이크를 붙일 때 설치한다(지금 블록은 꺼 둠, 260930 기기에는 없다)
+sherpa-onnx==1.13.8             # 자기 전용 onnxruntime(sherpa-onnx-core)을 따로 싣는다
+sherpa-onnx-core==1.13.8
+
+# ── 수집 블록 (위키백과 · 날씨 · 뉴스) ───────────────────────────
+beautifulsoup4==4.12.3
+lxml==5.3.0                     # 뉴스 BeautifulSoup(..., 'xml')
+
+# ── 데이터 (모션·글꼴·얼굴·검출 기본 파일) ─────────────────
+# openpibo-face-models 는 안 쓴다(얼굴 모델은 /home/pi/.model/face). system/venv_prune.py 가 지운다
+openpibo-models==0.4.9
+openpibo-detect-models==0.4.4
+openpibo-dlib-models==0.4.2
