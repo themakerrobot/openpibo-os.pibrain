@@ -609,6 +609,8 @@ Blockly.Msg["OLED_CLEAR_TOOLTIP"] = "화면을 초기화합니다.";
 Blockly.Msg["OLED_FILL"] = "채우기";
 Blockly.Msg["OLED_UNFILL"] = "채우기 없음";
 
+Blockly.Msg["SPEECH_STT"] = "%1 %2 %3 초 동안 듣고 글자로 바꾸기";
+Blockly.Msg["SPEECH_STT_TOOLTIP"] = "파이보 마이크로 듣고, 말이 끝나면 글자로 바꿉니다. 기기 안에서 처리하고 한국어·영어는 자동으로 알아봅니다. 처음 한 번은 준비하느라 몇 초 더 걸립니다.";
 Blockly.Msg["SPEECH_OTTS"] = "%1 %2 %3 를 %4 목소리로 %5 %6.%7 에 저장하기(ondevice)";
 Blockly.Msg["SPEECH_OTTS_TOOLTIP"] = "입력한 글자를 파이보 안에서 목소리로 만들어 파일로 저장합니다. 한국어·영어는 자동으로 알아봅니다.";
 Blockly.Msg["SPEECH_OTTS_PLAY"] = "%1 %2 %3 를 %4 목소리 %5 크기로 말하기(ondevice)";

@@ -608,6 +608,8 @@ Blockly.Msg["OLED_CLEAR_TOOLTIP"] = "Clear the OLED screen.";
 Blockly.Msg["OLED_FILL"] = "Fill";
 Blockly.Msg["OLED_UNFILL"] = "Unfill";
 
+Blockly.Msg["SPEECH_STT"] = "%1 %2 Listen for up to %3 seconds and convert to text";
+Blockly.Msg["SPEECH_STT_TOOLTIP"] = "Listen with the robot microphone and turn speech into text when you stop talking. Runs on the robot; Korean and English are detected automatically. The first call takes a few extra seconds to get ready.";
 Blockly.Msg["SPEECH_OTTS"] = "%1 %2 Save %3 with %4 voice to %5 %6.%7";
 Blockly.Msg["SPEECH_OTTS_TOOLTIP"] = "Make speech on the robot and save it to a file. Korean and English are detected automatically.";
 Blockly.Msg["SPEECH_OTTS_PLAY"] = "%1 %2 Say %3 with %4 voice at %5 volume";
