@@ -377,6 +377,9 @@ sudo raspi-config nonint get_wifi_country
 자세한 건 Pibo CLAUDE.md '전체화면'. PiBrain 에서 다른 점: **도구 머리줄에 버튼을 새로 넣었다**(`#fullscreen_bt`, [IDE] 옆,
 `tools/static/ko2en.js` 끝의 `nav_fullscreen`). IDE 는 Pibo 처럼 [더보기] 에서 상단바로 옮겼다.
 
+도구·분류기를 IDE 안 iframe 으로 합치는 안(C)은 보류다. 걸리는 것(숨긴 iframe 에서 카메라가 안 멈춤·학습이 멈춤·서비스가 안 꺼짐 등)은
+Pibo CLAUDE.md 'iframe 으로 합치기(안 C)'. PiBrain 도 같다.
+
 ### 도구 화면 (260924)
 
 Pibo 도구와 기능·마크업이 달라(REST/SSE, 5탭) 키트의 `pb-v2` 층을 쓰지 않고 **같은 색 토큰으로 따로 짰다.**
