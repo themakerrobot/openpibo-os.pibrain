@@ -411,8 +411,18 @@ Pibo 리포의 변경을 가져올 때 **항목마다 적용 여부를 먼저 �
 | 라즈베리파이 보드 | Pi 4 · CYW43455 | **동일.** 무선·regdom 관련은 그대로 적용된다 |
 | 예제 | Pibo 구성 | 구성이 다르다. `collect.json` 은 `main` 에 있고 `global` 에서만 뺀다 |
 
-라이브러리에서 **PiBrain 쪽이 더 새 것**인 부분이 있다 (`SpeechOnDevice` 의 whisper STT,
-`vision_detect` 의 yolo26s). Pibo 파일로 덮어쓰면 퇴행한다.
+라이브러리에서 **PiBrain 쪽이 더 새 것**인 부분이 있다 (`SpeechOnDevice` 의 whisper STT).
+Pibo 파일로 덮어쓰면 퇴행한다.
+
+**사물 인식은 260930 에 Pibo 와 같은 방식이 됐다** — `vision_detect` 가 ultralytics 를 import 하지 않고
+`openpibo/modules/yolo_onnx.py`(Pibo 와 **같은 파일**, 같이 고칠 것)로 onnxruntime 만 써서 돈다. torch 도 안 올라온다.
+- 예전 `YOLO(...).predict(conf=0.5, iou=0.4, imgsz=320)` 와 **같은 값**: coco128 128장, 640×480 로 줄여서
+  yolo11s(고정 320) · yolo26s(동적 · end2end) 셋 다 128/128(컨테이너)
+- 모델은 처음 `detect_object` 를 부를 때 올린다. 경로는 그대로 `/home/pi/.model/object/yolo11s.onnx`
+- 문서엔 'yolo26s' 라고 적혀 왔는데 코드는 늘 `yolo11s.onnx` 를 읽었다. **기기 파일이 어느 쪽인지 확인 필요** —
+  `python3 -c "import onnxruntime as o; print(o.InferenceSession('/home/pi/.model/object/yolo11s.onnx').get_modelmeta().custom_metadata_map['description'])"`.
+  어느 쪽이든 읽힌다
+- 라이선스: 이 가중치들은 Ultralytics 배포물(AGPL-3.0). Pibo CLAUDE.md '라이선스' 참고
 
 ### PiBrain 전용 블록 — `device_pibrain_*`
 
@@ -460,7 +470,7 @@ Pibo 와 같다. Teachable Machine 계열(`vision_load_tm` `vision_predict_tm`
 - 블록 `[분류기 모델 … 불러오기]`(260929 전엔 '이미지 모델 설정하기'): 폴더 `mymodel`, 이름 칸에 모델 이름(기본값 '모델 이름'), 세 번째 칸은 비워 둔다.
   **예전 `model.keras` 는 못 읽는다**(불러오면 다시 학습하라는 오류). 의도한 호환 단절이다
 - 지운 것: `tf.min-3.11.0.js` · MobileNetV2 가중치 · `model.json` · `jszip` · `tfjs_to_keras.py`(`/convert`)
-- 사물 인식(`vision_detect`)은 **가져오지 않았다** — PiBrain 쪽(yolo26s)이 더 새 것이다
+- 사물 인식(`vision_detect`)은 260930 에 Pibo 의 onnxruntime 방식으로 바꿨다(위 '사물 인식' 참고)
 - 기기 런타임(`tflite-runtime`·`mediapipe`)은 **PiBrain 기기에서 확인 전** — IMAGE.md '분류기 런타임 확인'
 - PiBrain 카메라가 좌우 반전 없이 들어오는지 **확인 필요.** 브라우저·파이썬 모두 뒤집지 않는다는 전제다
 

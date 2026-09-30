@@ -12,7 +12,7 @@ from pyzbar import pyzbar
 import mediapipe as mp
 from mediapipe.tasks import python as mp_python
 from mediapipe.tasks.python import vision as mp_vision
-from ultralytics import YOLO
+from .modules.yolo_onnx import YoloOnnx
 from .modules.pose.movenet import Movenet
 from .modules.pose.utils import visualize_pose
 from .modules.card.decode_card import get_card
@@ -27,7 +27,10 @@ os.environ['LIBCAMERA_LOG_LEVELS'] = '3'
 
 # ✅ 추가: TensorFlow 내부 디버그 메시지 완전 차단
 logging.getLogger("tensorflow").setLevel(logging.ERROR)
-logging.getLogger("ultralytics").setLevel(logging.ERROR)
+
+# 기본 사물 인식 모델 (COCO 80종). 입력이 동적이면 320 으로 돌린다
+OBJECT_MODEL = '/home/pi/.model/object/yolo11s.onnx'
+OBJECT_IMGSZ = 320
 
 def putTextPIL(img, text, points, size=30, colors=(255,255,255)):
   """
@@ -79,7 +82,7 @@ Functions:
 
   인식과 관련된 다양한 기능을 사용할 수 있는 클래스입니다.
 
-  * 90개 class 안에서의 객체 인식 (MobileNet V2)
+  * 80개 class 안에서의 객체 인식 (YOLO, onnxruntime)
   * QR/바코드 인식 (pyzbar)
   * Pose 인식
   * 이미지 분류
@@ -111,7 +114,9 @@ Functions:
     #                    openpibo_detect_models.filepath("frozen_inference_graph.pb"),
     #                    openpibo_detect_models.filepath("ssd_mobilenet_v2_coco_2018_03_29.pbtxt")
     #                )
-    self.object_detector = YOLO("/home/pi/.model/object/yolo11s.onnx", task="detect")
+    # 사물 인식 모델은 처음 detect_object 를 부를 때 올린다 (QR·마커만 쓰면 메모리를 안 쓴다)
+    self.object_detector = None
+    self.object_model_path = OBJECT_MODEL
     self.pose_detector = Movenet(openpibo_detect_models.filepath("movenet_lightning.tflite"))
 
     # marker
@@ -206,8 +211,9 @@ Functions:
     :param str modelpath: 사물인식 모델 경로
     """
 
-    del self.object_detector
-    self.object_detector = YOLO(modelpath, task="detect")
+    self.object_detector = None
+    self.object_detector = YoloOnnx(modelpath, imgsz=OBJECT_IMGSZ)
+    self.object_model_path = modelpath
 
   def detect_object(self, img):
     """
@@ -219,26 +225,16 @@ Functions:
     if not isinstance(img, np.ndarray):
       raise ValueError('"img" must be a valid OpenCV image (np.ndarray).')
 
-    # Run inference. You can adjust conf=0.5, iou=0.4, imgsz=320 to mirror your old code
-    results = self.object_detector.predict(img, conf=0.5, iou=0.4, imgsz=320, verbose=False, device='cpu')
+    if self.object_detector is None:
+      self.object_detector = YoloOnnx(self.object_model_path, imgsz=OBJECT_IMGSZ)
 
-    # YOLO returns a list of Results objects; we’ll just process the first
+    # ultralytics predict(conf=0.5, iou=0.4, imgsz=320) 와 같은 결과
+    # (coco128 128장 일치 확인 — yolo11s·yolo26s, 고정 320·동적·end2end 모두)
+    boxes, scores, classes = self.object_detector(img, conf=0.5, iou=0.4)
     data = []
-    if len(results) > 0:
-      # Each `results[0]` has .boxes attribute containing all detections
-      for box in results[0].boxes:
-        cls_id = int(box.cls[0])   # class index
-        score = float(box.conf[0]) # confidence score
-        # box.xyxy gives (x1, y1, x2, y2)
-        x1, y1, x2, y2 = map(int, box.xyxy[0])
-        if isinstance(self.object_detector.names, dict):
-          obj_name = self.object_detector.names.get(cls_id, "Unknown")
-        else:
-          obj_name = self.object_detector.names[cls_id]
-
-        # Only add detections above 50% confidence if you want to mirror your old filter
-        if score >= 0.5:
-          data.append({ "name": obj_name, "score": int(score * 100), "box": (x1, y1, x2, y2) })
+    for (x1, y1, x2, y2), score, cls_id in zip(boxes, scores, classes):
+      data.append({ "name": self.object_detector.name_of(cls_id), "score": int(score * 100),
+                    "box": (int(x1), int(y1), int(x2), int(y2)) })
     return data
 
   def detect_object_vis(self, img, items):

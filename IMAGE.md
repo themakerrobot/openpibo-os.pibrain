@@ -128,8 +128,8 @@ AP(핫스팟)는 국가 설정과 무관하다. `hotspot.sh` 가 2.4GHz 채널 1
 
 - `tflite_runtime`·`ai_edge_litert` 가 둘 다 없고 TensorFlow 도 없으면 분류기(이미지)와 movenet 이 못 뜬다
 - `mediapipe` 가 없으면 손·얼굴·포즈 모델만 못 쓴다(이미지 모델은 된다)
-- TensorFlow 를 지우는 건 **위 확인이 끝난 뒤에만.** PiBrain 의 사물 인식(`vision_detect`, yolo26s)은
-  Pibo 와 코드가 다르다 — 무엇을 import 하는지 먼저 볼 것(Pibo 처럼 torch·ultralytics 를 걷어낼 수 있는지는 별개)
+- TensorFlow 를 지우는 건 **위 확인이 끝난 뒤에만.** 사물 인식(`vision_detect`)은 260930 부터 ultralytics·torch 를
+  import 하지 않는다(onnxruntime). 코드 쪽에서는 `ultralytics`·`torch` 를 지워도 된다 — 다른 데서 쓰는지 `pip show` 로 한 번 볼 것
 
 ### H/W 검수
 
