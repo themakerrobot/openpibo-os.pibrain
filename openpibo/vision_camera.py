@@ -213,21 +213,23 @@ Functions:
     small_img[bitmap == 1] = pixel  # bitmap 값이 1인 부분에 pixel 색상 적용
     
     # 5. 각 픽셀을 복제할 배수 계산 (정수 배수)
-    scale_y = self.width // h  # 세로 복제 횟수
-    scale_x = self.height // w  # 가로 복제 횟수
+    # 결과는 카메라 그림과 같은 크기(가로 self.width x 세로 self.height). 전엔 가로·세로를 바꿔 써서
+    # 파이보는 세로 480x640, PiBrain 은 가로 640x480 이 나왔다(LCD·OLED 는 다시 늘려 그려서 티가 안 났다, 260930)
+    scale_y = self.height // h  # 세로 복제 횟수
+    scale_x = self.width // w  # 가로 복제 횟수
     
     # 6. np.repeat를 이용하여 픽셀 복제 (각 픽셀을 scale_y x scale_x 블록으로 확장)
     replicated_img = np.repeat(np.repeat(small_img, scale_y, axis=0), scale_x, axis=1)
     
-    # 7. 복제 결과가 정확히 480x640이 아닐 수 있으므로, 부족한 부분은 배경색으로 채우고
+    # 7. 복제 결과가 정확히 카메라 그림 크기가 아닐 수 있으므로, 부족한 부분은 배경색으로 채우고
     #    넘치는 부분은 자른다.
     rep_h, rep_w = replicated_img.shape[:2]
-    if rep_h < self.width or rep_w < self.height:
-      pad_bottom = self.width - rep_h
-      pad_right = self.height - rep_w
+    if rep_h < self.height or rep_w < self.width:
+      pad_bottom = max(self.height - rep_h, 0)
+      pad_right = max(self.width - rep_w, 0)
       final_img = cv2.copyMakeBorder(replicated_img, 0, pad_bottom, 0, pad_right, cv2.BORDER_CONSTANT, value=background)
     else:
-      final_img = replicated_img[:self.width, :self.height]
+      final_img = replicated_img[:self.height, :self.width]
     
     return final_img
 
