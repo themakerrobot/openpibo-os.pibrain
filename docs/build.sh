@@ -30,4 +30,7 @@ for f in build/html/libraries/*.html; do
   [ "$n" -gt 0 ] || fail=1
 done
 [ "$fail" = 0 ] || { echo "!! API 가 빈 페이지가 있다"; exit 1; }
+# 빌드 결과가 git 에 안 올라가는 파일이 없는지(.gitignore 의 build/ 에 걸려 새 파일이 빠진 적 있다, 261001)
+ign=$(git -C .. ls-files --others --ignored --exclude-standard docs/build | wc -l)
+[ "$ign" = 0 ] || { echo "!! docs/build 에 git 이 무시하는 파일 $ign 개 — .gitignore 의 !docs/build/ 를 확인할 것"; exit 1; }
 echo "끝: docs/build/html ($(git -C .. describe --tags --always 2>/dev/null || echo '?'))"

@@ -63,6 +63,8 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
+# 도움말 빌드 결과는 리포에 커밋한다(기기 booting.py 가 그대로 보여 준다) — 위 build/ 에서 뺀다
+!docs/build/
 develop-eggs/
 dist/
 downloads/
