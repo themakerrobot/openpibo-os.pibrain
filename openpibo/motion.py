@@ -196,7 +196,7 @@ Functions:
 
     :param list speeds: 0-9번 모터 속도 배열
 
-      배열 안의 각 가속도는 0~255 사이 정수입니다.
+      배열 안의 각 속도는 0~255 사이 정수입니다.
     """
 
     if len(speeds) != 10:
@@ -217,7 +217,7 @@ Functions:
 
     :param int n: 모터 번호
 
-    :param int accel: 모터 속도
+    :param int accel: 모터 가속도
 
       0~255 사이 값입니다.
       숫자가 클수록 가속도가 커집니다.
