@@ -59,8 +59,12 @@ function toggleLang() {
 
 /* ── Tab switching ───────────────────────────────────────────*/
 let btnSrc = null;
+let curTab = 'buttons';
 
 function switchTab(name, btn) {
+  // 카메라 메뉴를 떠나면 카메라를 끈다(261001). 켜 둔 채 다른 메뉴로 가면 LCD 를 계속 차지하고 CPU 를 쓴다
+  if (curTab === 'camera' && name !== 'camera' && camOn) toggleCamera();
+  curTab = name;
   document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
@@ -287,6 +291,11 @@ async function resetOled() {
   document.getElementById('oled-reset-status').textContent =
     res.ok ? t('lcd_reset_done') : `${t('error_prefix')}${res.error || ''}`;
 }
+
+/* 브라우저 탭을 바꾸거나 태블릿 화면이 꺼져도 카메라를 끈다(261001). 돌아와서 다시 켜려면 [카메라 켜기] */
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && camOn) toggleCamera();
+});
 
 /* ── Cleanup on leave ────────────────────────────────────────*/
 window.addEventListener('beforeunload', () => {
