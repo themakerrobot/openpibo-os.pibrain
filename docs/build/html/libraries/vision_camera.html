@@ -479,7 +479,7 @@
 <li><p><strong>img</strong> (<em>numpy.ndarray</em>) – 이미지 객체</p></li>
 <li><p><strong>p1</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – 좌측상단 좌표 (x, y)</p></li>
 <li><p><strong>p2</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – 우측하단 좌표 (x, y)</p></li>
-<li><p><strong>colors</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>)</em>) – RGB 값 (r, g, b) or 16진수 값 ‘#ffffff’</p></li>
+<li><p><strong>colors</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>)</em>) – BGR 값 (b, g, r) or 16진수 값 ‘#rrggbb’</p></li>
 <li><p><strong>tickness</strong> (<em>int</em>) – 사각형 모서리의 두께 (픽셀 단위) -1 은 채움</p></li>
 </ul>
 </dd>
@@ -489,15 +489,15 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.vision_camera.Camera.circle">
 <span class="sig-name descname"><span class="pre">circle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(255,</span> <span class="pre">255,</span> <span class="pre">255)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tickness</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.circle"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.circle" title="Link to this definition">¶</a></dt>
-<dd><p>이미지에 원을을 그립니다.</p>
+<dd><p>이미지에 원을 그립니다.</p>
 <dl class="field-list simple">
 <dt class="field-odd">매개변수<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>img</strong> (<em>numpy.ndarray</em>) – 이미지 객체</p></li>
 <li><p><strong>p</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – 좌측상단 좌표 (x, y)</p></li>
 <li><p><strong>r</strong> (<em>int</em>) – 반지름</p></li>
-<li><p><strong>colors</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>)</em>) – RGB 값 (r, g, b) or 16진수 값 ‘#ffffff’</p></li>
-<li><p><strong>tickness</strong> (<em>int</em>) – 사각형 모서리의 두께 (픽셀 단위) -1은 채움</p></li>
+<li><p><strong>colors</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>)</em>) – BGR 값 (b, g, r) or 16진수 값 ‘#rrggbb’</p></li>
+<li><p><strong>tickness</strong> (<em>int</em>) – 원 테두리의 두께 (픽셀 단위) -1은 채움</p></li>
 </ul>
 </dd>
 </dl>
@@ -513,7 +513,7 @@
 <li><p><strong>img</strong> (<em>numpy.ndarray</em>) – 이미지 객체</p></li>
 <li><p><strong>p1</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – 시작 좌표 (x, y)</p></li>
 <li><p><strong>p2</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – 끝 좌표 (x, y)</p></li>
-<li><p><strong>colors</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>)</em>) – RGB 값 (r, g, b) or 16진수 값 ‘#ffffff’</p></li>
+<li><p><strong>colors</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>)</em>) – BGR 값 (b, g, r) or 16진수 값 ‘#rrggbb’</p></li>
 <li><p><strong>tickness</strong> (<em>int</em>) – 선의 두께 (픽셀 단위)</p></li>
 </ul>
 </dd>
@@ -531,7 +531,7 @@
 <li><p><strong>text</strong> (<em>str</em>) – 표시할 문자열</p></li>
 <li><p><strong>points</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – 텍스트 블록 좌측상단 좌표 (x, y)</p></li>
 <li><p><strong>size</strong> (<em>int</em>) – 표시할 글자의 크기</p></li>
-<li><p><strong>colors</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>)</em>) – 글자 색깔 RGB 값 (b, g, r) or 16진수 값 ‘#ffffff’</p></li>
+<li><p><strong>colors</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>)</em>) – 글자 색깔 BGR 값 (b, g, r) or 16진수 값 ‘#rrggbb’</p></li>
 </ul>
 </dd>
 </dl>
@@ -548,7 +548,7 @@
 <li><p><strong>text</strong> (<em>str</em>) – 표시할 문자열</p></li>
 <li><p><strong>points</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – 텍스트 블록 좌측하단 좌표 (x, y)</p></li>
 <li><p><strong>size</strong> (<em>int</em>) – 표시할 글자의 크기</p></li>
-<li><p><strong>colors</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>)</em>) – 글자 색깔 RGB 값 (r, g, b) or 16진수 값 ‘#ffffff’</p></li>
+<li><p><strong>colors</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>)</em>) – 글자 색깔 BGR 값 (b, g, r) or 16진수 값 ‘#rrggbb’</p></li>
 <li><p><strong>tickness</strong> (<em>int</em>) – 글자 두께</p></li>
 </ul>
 </dd>

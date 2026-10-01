@@ -323,7 +323,7 @@
 <span class="sd">  :param str text: 표시할 문자열</span>
 <span class="sd">  :param tuple(int, int) points: 텍스트 블록 좌측상단 좌표 (x, y)</span>
 <span class="sd">  :param int size: 표시할 글자의 크기</span>
-<span class="sd">  :param tuple(int, int, int) colors: 글자 색깔 RGB 값 (b, g, r) or 16진수 값 '#ffffff'</span>
+<span class="sd">  :param tuple(int, int, int) colors: 글자 색깔 BGR 값 (b, g, r) or 16진수 값 '#rrggbb'</span>
 <span class="sd">  """</span>
   <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>

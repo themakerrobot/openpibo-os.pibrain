@@ -44,7 +44,9 @@ def main():
             if os.path.exists(po_path):
                 with open(po_path, 'rb') as f:
                     catalog = read_po(f, locale='en')
+                created = catalog.creation_date
                 catalog.update(template, update_header_comment=False)
+                catalog.creation_date = created      # 날짜만 바뀐 diff 가 매번 생기지 않게
             else:
                 catalog = template
                 catalog.locale = 'en'
