@@ -476,6 +476,7 @@ Pibo 리포의 변경을 가져올 때 **항목마다 적용 여부를 먼저 �
 
 **파이썬 패키지 (260930)** — `requirements.txt`(새로 만듦, Pibo 와 같은 목록)가 리포 코드가 import 하는 것이다. 예전 OS 에서 올린 기기의
 안 쓰는 패키지(TF·torch·ultralytics·MeloTTS 잔재 등, site-packages 5.5GB 의 대부분)는 `system/venv_prune.py` 로 걷어낸다(Pibo 와 **같은 파일**).
+기기 상태(261001, `fc1a8f31`): `venv_prune.py` 가 **지울 것 0개**(남김 111개) — 이미 정리돼 있다. 남은 선택 항목은 `--optional`(pandas·scikit-learn·seaborn 약 143MB)과 `--jax`(약 265MB)
 `ultralytics`·`torch` 는 이제 코드가 import 하지 않으므로 여기서 같이 빠진다. 사용법은 IMAGE.md '안 쓰는 패키지 걷어내기'
 
 ### PiBrain 전용 블록 — `device_pibrain_*`
