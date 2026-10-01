@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OPENPIBO \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-30 23:52+0000\n"
+"POT-Creation-Date: 2026-10-01 00:04+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -49,68 +49,8 @@ msgstr ""
 msgid "메시지 코드  * 10 : VERSION * 11 : HALT * 14 : DC_CONN * 15 : BATTERY * 17 : REBOOT * 20 : NEOPIXEL * 21 : NEOPIXEL_FADE * 22 : NEOPIXEL_BRIGHTNESS * 23 : NEOPIXEL_EACH * 24 : NEOPIXEL_FADE_EACH * 25 : NEOPIXEL_LOOP * 26 : NEOPIXEL_OFFSET_SET * 27 : NEOPIXEL_OFFSET_GET * 28 : NEOPIXEL_EACH_ORG * 30 : PIR * 40 : SYSTEM"
 msgstr "Message code  * 10 : VERSION * 11 : HALT * 14 : DC_CONN * 15 : BATTERY * 17 : REBOOT * 20 : NEOPIXEL * 21 : NEOPIXEL_FADE * 22 : NEOPIXEL_BRIGHTNESS * 23 : NEOPIXEL_EACH * 24 : NEOPIXEL_FADE_EACH * 25 : NEOPIXEL_LOOP * 26 : NEOPIXEL_OFFSET_SET * 27 : NEOPIXEL_OFFSET_GET * 28 : NEOPIXEL_EACH_ORG * 30 : PIR * 40 : SYSTEM"
 
-msgid "메시지 코드"
-msgstr "Message code"
-
-msgid "10 : VERSION"
-msgstr ""
-
-msgid "11 : HALT"
-msgstr ""
-
-msgid "14 : DC_CONN"
-msgstr ""
-
-msgid "15 : BATTERY"
-msgstr ""
-
-msgid "17 : REBOOT"
-msgstr ""
-
-msgid "20 : NEOPIXEL"
-msgstr ""
-
-msgid "21 : NEOPIXEL_FADE"
-msgstr ""
-
-msgid "22 : NEOPIXEL_BRIGHTNESS"
-msgstr ""
-
-msgid "23 : NEOPIXEL_EACH"
-msgstr ""
-
-msgid "24 : NEOPIXEL_FADE_EACH"
-msgstr ""
-
-msgid "25 : NEOPIXEL_LOOP"
-msgstr ""
-
-msgid "26 : NEOPIXEL_OFFSET_SET"
-msgstr ""
-
-msgid "27 : NEOPIXEL_OFFSET_GET"
-msgstr ""
-
-msgid "28 : NEOPIXEL_EACH_ORG"
-msgstr ""
-
-msgid "30 : PIR"
-msgstr ""
-
-msgid "40 : SYSTEM"
-msgstr ""
-
 msgid "메시지  ``code`` 의 값에 따라 데이터의 형식이 다릅니다. code에 따라 data가 요구되지 않을 수도 있습니다.  example::    device.send_cmd(20, '255,255,255')   device.send_cmd(21, '255,255,255,10')   device.send_cmd(22, '64')   device.send_cmd(23, '255,255,255,255,255,255')   device.send_cmd(24, '255,255,255,255,255,255,10')   device.send_cmd(25, '2')   device.send_cmd(26, '255,255,255,255,255,255')   device.send_cmd(28, '255,255,255,255,255,255')   device.send_cmd(30, 'on')  **자세한 설명은 상단 \"메시지 상세 설명\" 참고하시기 바랍니다**"
 msgstr "Message  The data format depends on the value of ``code``. Depending on the code, data may not be required.  example::    device.send_cmd(20, '255,255,255')   device.send_cmd(21, '255,255,255,10')   device.send_cmd(22, '64')   device.send_cmd(23, '255,255,255,255,255,255')   device.send_cmd(24, '255,255,255,255,255,255,10')   device.send_cmd(25, '2')   device.send_cmd(26, '255,255,255,255,255,255')   device.send_cmd(28, '255,255,255,255,255,255')   device.send_cmd(30, 'on')  **For details, see \"Message details\" above**"
-
-msgid "메시지"
-msgstr "Message"
-
-msgid "``code`` 의 값에 따라 데이터의 형식이 다릅니다. code에 따라 data가 요구되지 않을 수도 있습니다."
-msgstr "The data format depends on the value of ``code``. Depending on the code, data may not be required."
-
-msgid "**자세한 설명은 상단 \"메시지 상세 설명\" 참고하시기 바랍니다**"
-msgstr "**For details, see \"Message details\" above**"
 
 msgid "returns str"
 msgstr ""
@@ -123,12 +63,6 @@ msgstr "Sends the actual message to the Device and receives the response. See ab
 
 msgid "실제 전달되는 메시지  Device에 전송되는 메시지의 포맷은 ``#code:data!`` 입니다. 해당 메시지를 메인 컨트롤러에 전송합니다.  **자세한 설명은 상단 \"메시지 상세 설명\" 참고하시기 바랍니다**"
 msgstr "Actual message sent  The format of the message sent to the Device is ``#code:data!``. The message is sent to the main controller.  **For details, see \"Message details\" above**"
-
-msgid "실제 전달되는 메시지"
-msgstr "Actual message sent"
-
-msgid "Device에 전송되는 메시지의 포맷은 ``#code:data!`` 입니다. 해당 메시지를 메인 컨트롤러에 전송합니다."
-msgstr "The format of the message sent to the Device is ``#code:data!``. The message is sent to the main controller."
 
 msgid "Returns"
 msgstr ""
@@ -225,4 +159,70 @@ msgstr "R, G, B (0~255 numbers)"
 
 msgid "RGB 16진수 문자 #ffffff"
 msgstr "RGB hex string #ffffff"
+
+#~ msgid "메시지 코드"
+#~ msgstr "Message code"
+
+#~ msgid "10 : VERSION"
+#~ msgstr ""
+
+#~ msgid "11 : HALT"
+#~ msgstr ""
+
+#~ msgid "14 : DC_CONN"
+#~ msgstr ""
+
+#~ msgid "15 : BATTERY"
+#~ msgstr ""
+
+#~ msgid "17 : REBOOT"
+#~ msgstr ""
+
+#~ msgid "20 : NEOPIXEL"
+#~ msgstr ""
+
+#~ msgid "21 : NEOPIXEL_FADE"
+#~ msgstr ""
+
+#~ msgid "22 : NEOPIXEL_BRIGHTNESS"
+#~ msgstr ""
+
+#~ msgid "23 : NEOPIXEL_EACH"
+#~ msgstr ""
+
+#~ msgid "24 : NEOPIXEL_FADE_EACH"
+#~ msgstr ""
+
+#~ msgid "25 : NEOPIXEL_LOOP"
+#~ msgstr ""
+
+#~ msgid "26 : NEOPIXEL_OFFSET_SET"
+#~ msgstr ""
+
+#~ msgid "27 : NEOPIXEL_OFFSET_GET"
+#~ msgstr ""
+
+#~ msgid "28 : NEOPIXEL_EACH_ORG"
+#~ msgstr ""
+
+#~ msgid "30 : PIR"
+#~ msgstr ""
+
+#~ msgid "40 : SYSTEM"
+#~ msgstr ""
+
+#~ msgid "메시지"
+#~ msgstr "Message"
+
+#~ msgid "``code`` 의 값에 따라 데이터의 형식이 다릅니다. code에 따라 data가 요구되지 않을 수도 있습니다."
+#~ msgstr "The data format depends on the value of ``code``. Depending on the code, data may not be required."
+
+#~ msgid "**자세한 설명은 상단 \"메시지 상세 설명\" 참고하시기 바랍니다**"
+#~ msgstr "**For details, see \"Message details\" above**"
+
+#~ msgid "실제 전달되는 메시지"
+#~ msgstr "Actual message sent"
+
+#~ msgid "Device에 전송되는 메시지의 포맷은 ``#code:data!`` 입니다. 해당 메시지를 메인 컨트롤러에 전송합니다."
+#~ msgstr "The format of the message sent to the Device is ``#code:data!``. The message is sent to the main controller."
 

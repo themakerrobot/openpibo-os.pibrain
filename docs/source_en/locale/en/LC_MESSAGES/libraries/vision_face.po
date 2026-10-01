@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OPENPIBO \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-30 23:52+0000\n"
+"POT-Creation-Date: 2026-10-01 00:04+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -88,12 +88,6 @@ msgstr ""
 msgid "인식된 얼굴들의 (x, y, w, h) 배열 입니다.  list 타입으로, 이미지 하나에 얼굴이 여러 개 인식된 경우 인식된 얼굴의 좌표가 모두 입력됩니다.  example::    [(10, 10, 40, 50), (120, 30, 160, 70), (130, 140, 200, 260)]"
 msgstr "Array of (x, y, w, h) of the detected faces.  It is a list; if several faces are detected in one image, the coordinates of all detected faces are included.  example::    [(10, 10, 40, 50), (120, 30, 160, 70), (130, 140, 200, 260)]"
 
-msgid "인식된 얼굴들의 (x, y, w, h) 배열 입니다."
-msgstr "Array of (x, y, w, h) of the detected faces."
-
-msgid "list 타입으로, 이미지 하나에 얼굴이 여러 개 인식된 경우 인식된 얼굴의 좌표가 모두 입력됩니다."
-msgstr "It is a list; if several faces are detected in one image, the coordinates of all detected faces are included."
-
 msgid "얼굴 box 표시합니다."
 msgstr "Draws face boxes."
 
@@ -153,24 +147,11 @@ msgstr "Recognizes registered faces."
 msgid "``{\"name\": 이름, \"score\": 오차도}``  얼굴이 비슷할수록 오차도가 낮게 측정됩니다.  오차도가 0.4 이하일 때 동일인으로 판정합니다."
 msgstr "``{\"name\": name, \"score\": error}``  The more similar the faces, the lower the error.  Faces with an error of 0.4 or less are judged to be the same person."
 
-#, python-brace-format
-msgid "``{\"name\": 이름, \"score\": 오차도}``"
-msgstr "``{\"name\": name, \"score\": error}``"
-
-msgid "얼굴이 비슷할수록 오차도가 낮게 측정됩니다."
-msgstr "The more similar the faces, the lower the error."
-
-msgid "오차도가 0.4 이하일 때 동일인으로 판정합니다."
-msgstr "Faces with an error of 0.4 or less are judged to be the same person."
-
 msgid "사용 중인 얼굴 데이터베이스를 확인합니다."
 msgstr "Checks the face database in use."
 
 msgid "**facedb** (``list(list, list)`` 타입)  example::    [     ['honggildong'],     [array([-0.06423206,  0.12474005,  0.0511112 , -0.05676335, -0.07211345,             -0.03123881, -0.04119622, -0.12800875,  0.11717855, -0.11079554,              0.22952782, -0.02007426, -0.17457265, -0.13562854, -0.04972655,              0.15810637, -0.12785575, -0.16479518, -0.07002968, -0.00208595,              0.169218  ,  0.03144928, -0.01074579,  0.04103286, -0.09245337,             ...             -0.00706697,  0.06025593, -0.0049719 ])]   ]"
 msgstr "**facedb** (type ``list(list, list)``)  example::    [     ['honggildong'],     [array([-0.06423206,  0.12474005,  0.0511112 , -0.05676335, -0.07211345,             -0.03123881, -0.04119622, -0.12800875,  0.11717855, -0.11079554,              0.22952782, -0.02007426, -0.17457265, -0.13562854, -0.04972655,              0.15810637, -0.12785575, -0.16479518, -0.07002968, -0.00208595,              0.169218  ,  0.03144928, -0.01074579,  0.04103286, -0.09245337,             ...             -0.00706697,  0.06025593, -0.0049719 ])]   ]"
-
-msgid "**facedb** (``list(list, list)`` 타입)"
-msgstr "**facedb** (type ``list(list, list)``)"
 
 msgid "얼굴 데이터베이스를 파일로 저장합니다."
 msgstr "Saves the face database to a file."
@@ -195,4 +176,22 @@ msgstr ""
 
 msgid "Detect mesh and return distance, direction, and image with landmarks."
 msgstr ""
+
+#~ msgid "인식된 얼굴들의 (x, y, w, h) 배열 입니다."
+#~ msgstr "Array of (x, y, w, h) of the detected faces."
+
+#~ msgid "list 타입으로, 이미지 하나에 얼굴이 여러 개 인식된 경우 인식된 얼굴의 좌표가 모두 입력됩니다."
+#~ msgstr "It is a list; if several faces are detected in one image, the coordinates of all detected faces are included."
+
+#~ msgid "``{\"name\": 이름, \"score\": 오차도}``"
+#~ msgstr "``{\"name\": name, \"score\": error}``"
+
+#~ msgid "얼굴이 비슷할수록 오차도가 낮게 측정됩니다."
+#~ msgstr "The more similar the faces, the lower the error."
+
+#~ msgid "오차도가 0.4 이하일 때 동일인으로 판정합니다."
+#~ msgstr "Faces with an error of 0.4 or less are judged to be the same person."
+
+#~ msgid "**facedb** (``list(list, list)`` 타입)"
+#~ msgstr "**facedb** (type ``list(list, list)``)"
 

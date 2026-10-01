@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OPENPIBO \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-30 23:52+0000\n"
+"POT-Creation-Date: 2026-10-01 00:04+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -109,12 +109,6 @@ msgstr "If ``True``, draws directly on ``img`` while classifying (same as :meth:
 msgid "``(종류 이름, 종류별 확률)``  손·얼굴·포즈 모델은 화면에 손·얼굴·몸이 안 보이면 ``(None, None)`` 을 돌려줍니다."
 msgstr "``(class name, per-class probabilities)``  Hand, face and pose models return ``(None, None)`` if no hand, face or body is visible in the image."
 
-msgid "``(종류 이름, 종류별 확률)``"
-msgstr "``(class name, per-class probabilities)``"
-
-msgid "손·얼굴·포즈 모델은 화면에 손·얼굴·몸이 안 보이면 ``(None, None)`` 을 돌려줍니다."
-msgstr "Hand, face and pose models return ``(None, None)`` if no hand, face or body is visible in the image."
-
 msgid "바로 전 :meth:`predict` 가 본 것을 이미지에 그립니다. ``img`` 를 바로 고치고 그대로 돌려줍니다."
 msgstr "Draws what the previous :meth:`predict` saw onto the image. Modifies ``img`` in place and returns it."
 
@@ -138,4 +132,10 @@ msgstr ""
 
 msgid "불러온 모델을 내려놓습니다. (다른 모델을 ``load`` 하면 알아서 부릅니다)"
 msgstr "Unloads the loaded model. (Called automatically when you ``load`` another model)"
+
+#~ msgid "``(종류 이름, 종류별 확률)``"
+#~ msgstr "``(class name, per-class probabilities)``"
+
+#~ msgid "손·얼굴·포즈 모델은 화면에 손·얼굴·몸이 안 보이면 ``(None, None)`` 을 돌려줍니다."
+#~ msgstr "Hand, face and pose models return ``(None, None)`` if no hand, face or body is visible in the image."
 
