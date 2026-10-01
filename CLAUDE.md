@@ -556,7 +556,9 @@ docs 는 `CustomClassifier.load` 변경 뒤 다시 빌드했다(261001, 'docs' �
 
 - **STT 소스(260930)**: `openpibo/speech.py` 는 Pibo 와 설명문만 다르다(SenseVoice + silero VAD, 마이크 DC 제거까지 같음 —
   Pibo CLAUDE.md '음성 인식 · TTS · 메모리'). 고치면 두 리포를 같이 고칠 것. 모델은 `.model/stt`(Pibo `.model` 그대로 넣으면 있다),
-  패키지 `sherpa-onnx`·`sherpa-onnx-core` 1.13.8 은 `pip install --no-deps` 로 설치(마이크보다 먼저 깔아도 된다)
+  패키지 `sherpa-onnx`·`sherpa-onnx-core` 1.13.8 은 `pip install` 로 설치(마이크보다 먼저 깔아도 된다)
+  - **기기에 설치함(261001)**: `pip check` 깨진 것 없음, numpy 1.26.4·onnxruntime 1.20.1 그대로, `.model/stt` 세 파일 있음(model.int8.onnx 239MB),
+    `SpeechToText()` 모델 적재 확인. 마이크가 없어 `listen` 은 아직 못 봤다
 - `speech_stt` 블록 — 정의(`customblock.js`)만 있고 생성기·툴박스는 주석(260930). 블록 문구(`ko.js`·`en.js`)는 이미 있다
 - **마이크를 달면**: 장치명이 `dmic_sv` 인지 먼저 확인(`arecord -L`), `speech_stt` · `audio_record` 의 생성기·툴박스 주석을
   같이 걷어낸다(셋을 같이 — '자주 나는 실수'). Pibo 마이크처럼 DC 가 섞이는지는 그 마이크로 다시 볼 것
