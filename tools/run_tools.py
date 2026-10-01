@@ -212,9 +212,16 @@ async def toggle_camera(on: bool):
         elif not on and vision_en:
             vision_en = False
             if vision_task:
-                vision_task.cancel()
-                try: await vision_task
-                except asyncio.CancelledError: pass
+                # cancel() 은 to_thread 로 도는 camera.read/process_frame 스레드를 멈추지 못한다. 그대로 release 하면
+                # 다른 스레드가 capture_array 하는 도중에 cap.stop()/close() 가 겹친다(261001). 루프가 지금 장을 끝내고
+                # vision_en 을 보고 스스로 나오길 기다린다. 얼굴 분석처럼 한 장이 오래 걸리면 5초에서 끊는다
+                try:
+                    await asyncio.wait_for(asyncio.shield(vision_task), timeout=5)
+                except asyncio.TimeoutError:
+                    print('[camera] vision loop did not stop in 5s — cancel')
+                    vision_task.cancel()
+                    try: await vision_task
+                    except asyncio.CancelledError: pass
                 vision_task = None
             if camera:
                 await asyncio.to_thread(camera.release)
@@ -325,8 +332,22 @@ class SharedFonts:
 app = FastAPI(lifespan=lifespan)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True,
     allow_methods=["*"], allow_headers=["*"])
-# 첫 화면 JS·CSS 를 압축해서 보낸다(수업에서 여러 대가 한 공유기로 받는다)
-app.add_middleware(GZipMiddleware, minimum_size=1000)
+# 첫 화면 JS·CSS 를 압축해서 보낸다(수업에서 여러 대가 한 공유기로 받는다).
+# SSE(/button_stream·/camera_stream)는 빼야 한다 — 기기의 starlette 0.41.2 GZipMiddleware 는 text/event-stream 도 압축하는데,
+# 압축기가 작은 이벤트를 모아 두고 스트림이 끝날 때까지 내보내지 않아 [버튼] 화면이 끝내 안 바뀌었다(261001 재현: 30개 이벤트가
+# 2조각으로, 3초 뒤 한꺼번에). starlette 0.45 부터는 GZip 이 스스로 뺀다
+class GZipExceptSSE:
+    def __init__(self, app):
+        self.app = app
+        self.gzip = GZipMiddleware(app, minimum_size=1000)
+
+    async def __call__(self, scope, receive, send):
+        if scope['type'] == 'http' and scope.get('path', '').endswith('_stream'):
+            await self.app(scope, receive, send)
+        else:
+            await self.gzip(scope, receive, send)
+
+app.add_middleware(GZipExceptSSE)
 app.add_middleware(SharedFonts)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 # all.min.css 가 ../webfonts/ 를 찾는다. 없으면 아이콘이 빈칸으로 나온다(260924 전에는 그래서 이모지를 썼다)
@@ -395,21 +416,33 @@ async def set_vision_type(t: str, ml: float = 5.0):
     return JSONResponse({"ok": True, "type": t})
 
 # ── LED ──────────────────────────────────────────────────────
-@app.get('/led')
-async def led_ctrl(r: int = 0, g: int = 0, b: int = 0):
+# rpi_ws281x 의 show() 는 앞 DMA 전송이 끝나길 기다린다. 이벤트 루프에서 직접 부르면 그게 멈췄을 때 서버 전체(버튼·카메라·
+# /health)가 같이 멈춘다(261001). 스레드에서 부르고 2초면 끊어 오류를 돌려준다. 동시에 둘이 쓰지 않게 잠근다
+led_lock = threading.Lock()
+
+def _led(fn, *a):
+    if device is None:
+        raise RuntimeError('device not ready')
+    with led_lock:
+        fn(*a)
+
+async def led_call(fn, *a):
     try:
-        device.led_on(r, g, b)
+        await asyncio.wait_for(asyncio.to_thread(_led, fn, *a), timeout=2)
         return JSONResponse({"ok": True})
+    except asyncio.TimeoutError:
+        print('[led] show() did not return in 2s')
+        return JSONResponse({"ok": False, "error": "led timeout"})
     except Exception as e:
         return JSONResponse({"ok": False, "error": str(e)})
 
+@app.get('/led')
+async def led_ctrl(r: int = 0, g: int = 0, b: int = 0):
+    return await led_call(lambda *c: device.led_on(*c), r, g, b)
+
 @app.get('/led_off')
 async def led_off():
-    try:
-        device.led_off()
-        return JSONResponse({"ok": True})
-    except Exception as e:
-        return JSONResponse({"ok": False, "error": str(e)})
+    return await led_call(lambda: device.led_off())
 
 # ── 버튼 ─────────────────────────────────────────────────────
 @app.get('/button_stream')

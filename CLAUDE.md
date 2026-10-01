@@ -431,6 +431,18 @@ Pibo 도구와 기능·마크업이 달라(REST/SSE, 5탭) 키트의 `pb-v2` 층
   다른 도구를 켜거나 IDE 에서 코드를 실행하면 `tools.service` 가 꺼지기 때문이다
 - id·onclick·API 는 그대로다. 검증: 5탭 × 한/영 × 부드럽게/어둡게 pageerror 0, 가로 스크롤 0(420px 포함),
   배너 뜨고 사라짐
+- **현장 버그 3개 (261001)** — "버튼이 안 잡힌다 · 카메라가 다른 탭에서도 켜져 있다 · 카메라를 끈 뒤 LED 가 안 된다"
+  - **버튼: gzip 이 SSE 를 막았다.** 기기의 starlette **0.41.2** `GZipMiddleware` 는 `text/event-stream` 도 압축하고, 압축기가 작은 이벤트를
+    모아 두고 스트림이 끝날 때까지 안 내보낸다(재현: 이벤트 30개가 2조각으로, 3초 뒤 한꺼번에). 260929 에 gzip 을 넣은 뒤로 [버튼] 이 죽어 있었다.
+    `GZipExceptSSE` 가 `*_stream` 경로만 gzip 을 건너뛴다. starlette 0.45+ 는 스스로 뺀다 — **컨테이너 starlette 1.7 로는 재현이 안 되니
+    시험은 기기 버전(fastapi 0.115.4 · starlette 0.41.2)으로 할 것**
+  - **카메라 자동 끄기**: [카메라] 메뉴를 떠나거나(`switchTab`) 탭이 가려지면(`visibilitychange`) 끈다. 다시 켜는 건 사람이 [카메라 켜기]
+  - **카메라 끌 때 read 와 release 가 겹쳤다.** `vision_task.cancel()` 은 `to_thread` 로 도는 `camera.read` 스레드를 못 멈춰서, 그 스레드가
+    `capture_array` 하는 중에 `cap.stop()/close()` 가 돌았다(가짜 카메라로 5번 중 4번). 이제 루프가 지금 장을 끝내고 나오길 기다린 뒤(최대 5초) release
+  - **LED: 원인 확인 필요.** 코드로는 카메라·LCD 쪽이 GPIO12(PWM)·DMA 10 을 건드리는 곳을 못 찾았다. 대신 `show()` 가 멈춰도 서버 전체가 같이
+    멈추지 않게 LED 호출을 스레드 + 2초 제한으로 바꿨다(`led timeout` 오류로 돌려준다). 기기에서 볼 것: 도구를 끄고 LED·카메라·network_disp 를
+    단독으로 차례로 돌려 어느 단계에서 끊기는지, `pinctrl get 12` 가 PWM0(a0)인지
+  - 검증(컨테이너, 기기 버전 fastapi·starlette + 가짜 하드웨어, 실제 `run_tools.py` + 브라우저): 새 코드 9/9, 예전 코드는 버튼 2개·카메라 끄기 2개 실패
 
 - 기본 블록 테마(`index.js`)의 `colorTertiary` 오타가 `colourTertiary` 로 고쳐졌다(Pibo 에서 같이 옴)
 - 파이썬 편집기는 v2 전용 테마 `pibo-light`/`pibo-dark`
