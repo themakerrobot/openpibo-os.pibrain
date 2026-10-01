@@ -240,7 +240,7 @@ Functions:
     :param numpy.ndarray img: 이미지 객체
     :param tuple(int, int) p1: 좌측상단 좌표 (x, y)
     :param tuple(int, int) p2: 우측하단 좌표 (x, y)
-    :param tuple(int, int, int) colors: RGB 값 (r, g, b) or 16진수 값 '#ffffff'
+    :param tuple(int, int, int) colors: BGR 값 (b, g, r) or 16진수 값 '#rrggbb'
     :param int tickness: 사각형 모서리의 두께 (픽셀 단위) -1 은 채움
     """
 
@@ -272,13 +272,13 @@ Functions:
 
   def circle(self, img, p, r, colors=(255,255,255), tickness=1):
     """
-    이미지에 원을을 그립니다.
+    이미지에 원을 그립니다.
 
     :param numpy.ndarray img: 이미지 객체
     :param tuple(int, int) p: 좌측상단 좌표 (x, y)
     :param int r: 반지름
-    :param tuple(int, int, int) colors: RGB 값 (r, g, b) or 16진수 값 '#ffffff'
-    :param int tickness: 사각형 모서리의 두께 (픽셀 단위) -1은 채움
+    :param tuple(int, int, int) colors: BGR 값 (b, g, r) or 16진수 값 '#rrggbb'
+    :param int tickness: 원 테두리의 두께 (픽셀 단위) -1은 채움
     """
 
     if not type(img) is np.ndarray:
@@ -311,7 +311,7 @@ Functions:
     :param numpy.ndarray img: 이미지 객체
     :param tuple(int, int) p1: 시작 좌표 (x, y)
     :param tuple(int, int) p2: 끝 좌표 (x, y)
-    :param tuple(int, int, int) colors: RGB 값 (r, g, b) or 16진수 값 '#ffffff'
+    :param tuple(int, int, int) colors: BGR 값 (b, g, r) or 16진수 값 '#rrggbb'
     :param int tickness: 선의 두께 (픽셀 단위)
     """
 
@@ -349,7 +349,7 @@ Functions:
     :param str text: 표시할 문자열
     :param tuple(int, int) points: 텍스트 블록 좌측상단 좌표 (x, y)
     :param int size: 표시할 글자의 크기
-    :param tuple(int, int, int) colors: 글자 색깔 RGB 값 (b, g, r) or 16진수 값 '#ffffff'
+    :param tuple(int, int, int) colors: 글자 색깔 BGR 값 (b, g, r) or 16진수 값 '#rrggbb'
     """
     if not type(img) is np.ndarray:
       raise Exception('"img" must be image data from opencv')
@@ -383,7 +383,7 @@ Functions:
     :param str text: 표시할 문자열
     :param tuple(int, int) points: 텍스트 블록 좌측하단 좌표 (x, y)
     :param int size: 표시할 글자의 크기
-    :param tuple(int, int, int) colors: 글자 색깔 RGB 값 (r, g, b) or 16진수 값 '#ffffff'
+    :param tuple(int, int, int) colors: 글자 색깔 BGR 값 (b, g, r) or 16진수 값 '#rrggbb'
     :param int tickness: 글자 두께
     """
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OPENPIBO \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-01 00:04+0000\n"
+"POT-Creation-Date: 2026-10-01 00:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -76,12 +76,6 @@ msgstr "Sets the speed of all motors."
 msgid "0-9번 모터 속도 배열  배열 안의 각 속도는 0~255 사이 정수입니다."
 msgstr "Array of speeds for motors 0-9  Each speed in the array is an integer from 0 to 255."
 
-msgid "0-9번 모터 속도 배열"
-msgstr "Array of speeds for motors 0-9"
-
-msgid "배열 안의 각 속도는 0~255 사이 정수입니다."
-msgstr "Each speed in the array is an integer from 0 to 255."
-
 msgid "모터 1개의 가속도를 설정합니다."
 msgstr "Sets the acceleration of one motor."
 
@@ -90,12 +84,6 @@ msgstr "When acceleration is set, the speed starts at 0 and gradually increases 
 
 msgid "모터 가속도  0~255 사이 값입니다. 숫자가 클수록 가속도가 커집니다."
 msgstr "Motor acceleration  A value from 0 to 255. The larger the number, the larger the acceleration."
-
-msgid "모터 가속도"
-msgstr "Motor acceleration"
-
-msgid "0~255 사이 값입니다. 숫자가 클수록 가속도가 커집니다."
-msgstr "A value from 0 to 255. The larger the number, the larger the acceleration."
 
 msgid "전체 모터의 가속도를 설정합니다."
 msgstr "Sets the acceleration of all motors."
@@ -155,4 +143,16 @@ msgstr "Runs a motion from the motion profile stored in the ``/home/pi/mymotion.
 
 msgid "수행 중인 동작을 정지합니다."
 msgstr "Stops the motion in progress."
+
+#~ msgid "0-9번 모터 속도 배열"
+#~ msgstr "Array of speeds for motors 0-9"
+
+#~ msgid "배열 안의 각 속도는 0~255 사이 정수입니다."
+#~ msgstr "Each speed in the array is an integer from 0 to 255."
+
+#~ msgid "모터 가속도"
+#~ msgstr "Motor acceleration"
+
+#~ msgid "0~255 사이 값입니다. 숫자가 클수록 가속도가 커집니다."
+#~ msgstr "A value from 0 to 255. The larger the number, the larger the acceleration."
 

@@ -563,7 +563,7 @@
 <span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
 <span class="sd">    :param tuple(int, int) p1: 좌측상단 좌표 (x, y)</span>
 <span class="sd">    :param tuple(int, int) p2: 우측하단 좌표 (x, y)</span>
-<span class="sd">    :param tuple(int, int, int) colors: RGB 값 (r, g, b) or 16진수 값 '#ffffff'</span>
+<span class="sd">    :param tuple(int, int, int) colors: BGR 값 (b, g, r) or 16진수 값 '#rrggbb'</span>
 <span class="sd">    :param int tickness: 사각형 모서리의 두께 (픽셀 단위) -1 은 채움</span>
 <span class="sd">    """</span>
 
@@ -598,13 +598,13 @@
 <a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.circle">[docs]</a>
   <span class="k">def</span><span class="w"> </span><span class="nf">circle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="n">tickness</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    이미지에 원을을 그립니다.</span>
+<span class="sd">    이미지에 원을 그립니다.</span>
 
 <span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
 <span class="sd">    :param tuple(int, int) p: 좌측상단 좌표 (x, y)</span>
 <span class="sd">    :param int r: 반지름</span>
-<span class="sd">    :param tuple(int, int, int) colors: RGB 값 (r, g, b) or 16진수 값 '#ffffff'</span>
-<span class="sd">    :param int tickness: 사각형 모서리의 두께 (픽셀 단위) -1은 채움</span>
+<span class="sd">    :param tuple(int, int, int) colors: BGR 값 (b, g, r) or 16진수 값 '#rrggbb'</span>
+<span class="sd">    :param int tickness: 원 테두리의 두께 (픽셀 단위) -1은 채움</span>
 <span class="sd">    """</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -640,7 +640,7 @@
 <span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
 <span class="sd">    :param tuple(int, int) p1: 시작 좌표 (x, y)</span>
 <span class="sd">    :param tuple(int, int) p2: 끝 좌표 (x, y)</span>
-<span class="sd">    :param tuple(int, int, int) colors: RGB 값 (r, g, b) or 16진수 값 '#ffffff'</span>
+<span class="sd">    :param tuple(int, int, int) colors: BGR 값 (b, g, r) or 16진수 값 '#rrggbb'</span>
 <span class="sd">    :param int tickness: 선의 두께 (픽셀 단위)</span>
 <span class="sd">    """</span>
 
@@ -681,7 +681,7 @@
 <span class="sd">    :param str text: 표시할 문자열</span>
 <span class="sd">    :param tuple(int, int) points: 텍스트 블록 좌측상단 좌표 (x, y)</span>
 <span class="sd">    :param int size: 표시할 글자의 크기</span>
-<span class="sd">    :param tuple(int, int, int) colors: 글자 색깔 RGB 값 (b, g, r) or 16진수 값 '#ffffff'</span>
+<span class="sd">    :param tuple(int, int, int) colors: 글자 색깔 BGR 값 (b, g, r) or 16진수 값 '#rrggbb'</span>
 <span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
@@ -718,7 +718,7 @@
 <span class="sd">    :param str text: 표시할 문자열</span>
 <span class="sd">    :param tuple(int, int) points: 텍스트 블록 좌측하단 좌표 (x, y)</span>
 <span class="sd">    :param int size: 표시할 글자의 크기</span>
-<span class="sd">    :param tuple(int, int, int) colors: 글자 색깔 RGB 값 (r, g, b) or 16진수 값 '#ffffff'</span>
+<span class="sd">    :param tuple(int, int, int) colors: 글자 색깔 BGR 값 (b, g, r) or 16진수 값 '#rrggbb'</span>
 <span class="sd">    :param int tickness: 글자 두께</span>
 <span class="sd">    """</span>
 

@@ -40,7 +40,7 @@ def putTextPIL(img, text, points, size=30, colors=(255,255,255)):
   :param str text: 표시할 문자열
   :param tuple(int, int) points: 텍스트 블록 좌측상단 좌표 (x, y)
   :param int size: 표시할 글자의 크기
-  :param tuple(int, int, int) colors: 글자 색깔 RGB 값 (b, g, r) or 16진수 값 '#ffffff'
+  :param tuple(int, int, int) colors: 글자 색깔 BGR 값 (b, g, r) or 16진수 값 '#rrggbb'
   """
   if not type(img) is np.ndarray:
     raise Exception('"img" must be image data from opencv')
