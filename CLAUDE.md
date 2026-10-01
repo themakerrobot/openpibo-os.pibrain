@@ -51,6 +51,27 @@ PiBrain OS 리포. 기기의 `/home/pi/openpibo-os` 가 이 리포의 작업본�
   - `git diff --name-status main global` 이 `GLOBAL_DELTA.md` 의 표와 일치하는가 (모드 차이 0줄)
   - 실행비트 목록이 아래와 같은가
   - `head -n2` 로 `global` 의 `ko2en.js` 3종이 `blang = 'en'` 인가
+- **공식 버전 태그만 남긴다(261001, 사용자 결정).** 개발 중에 기기 시험용으로 찍은 태그는 다음 공식 버전이 나오면 **사람이** 지운다
+  (날짜가 달라도 마찬가지). 남기는 것은 공식 릴리스(`261001v1`·`261001v1-gl` 부터)와 그 전 배포 이력(`260624v1`, `250709v*` 등)
+  - 시험 태그도 형식은 같다(`YYMMDDvN` / `-gl`). 공식인지는 태그 이름으로 구분하지 않으니, 지울 때 목록을 사람이 정한다
+  - 지운 태그로 받은 기기는 같은 버전을 다시 받을 수 없고, IDE 의 소스 링크는 리포 첫 화면으로 간다. 현장 기기는 공식 태그로만 올릴 것
+
+### 태그 지우기 전 확인
+
+`-gl` 태그의 커밋은 보통 **`global` 브랜치에서만** 도달한다. **`global` 브랜치는 남겨둘 것.**
+main 에도 global 에도 없는 커밋을 가리키는 태그를 지우면 그 커밋이 unreachable 이 되어 GC 로 사라진다
+(261001 확인: 파이보 `260914v7-ph` 의 `9ed9a84` 가 그렇다 — 아래에서 두 줄 다 안 나오는 태그).
+
+```bash
+git fetch origin main global --tags
+for t in <지울 태그들>; do
+  c=$(git rev-parse $t^{commit})
+  git merge-base --is-ancestor $c origin/main && echo "$t: main"
+  git merge-base --is-ancestor $c origin/global && echo "$t: global"
+done
+git push origin :<태그> ...     # 원격 삭제 (웹 세션은 403 — 사람이)
+git tag -d <태그> ...           # 로컬 삭제
+```
 
 ---
 
