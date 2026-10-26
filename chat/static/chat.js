@@ -1,12 +1,21 @@
-/* 대화 웹 (run_chat.py, 50030)
+/* 대화 웹 (run_chat.py, 50030) — 도구 없이 대화만, 대답은 흘려 받는다. [소리로 말하기] 면 로봇이 말한다
    문구는 IDE 의 ko2en.js(전역 translations · t · lang)를 같이 쓴다. 키는 chat_* */
 (function () {
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
   var tr = function (k, a, b) { return (typeof t === 'function') ? t(k, a, b) : k; };
-  var log = $('log'), text = $('text'), sendBt = $('send_bt'), moveBt = $('move_bt');
-  var st = { warm: 'idle', llm: 'down', tools: true, allowed: true, device: 'pibo' };
-  var waiting = false, failCount = 0;
+  var log = $('log'), text = $('text'), sendBt = $('send_bt');
+  var speakCk = $('speak'), voiceSel = $('voice');
+  var st = { warm: 'idle', llm: 'down', voice: 'off' };
+  var waiting = null, failCount = 0;                       // waiting = 지금 받는 중인 AbortController
+  var VOICES = ['m1', 'm2', 'm3', 'm4', 'm5', 'f1', 'f2', 'f3', 'f4', 'f5'];
+
+  function store(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* 사생활 모드 */ } }
+  function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function post(url, body) {
+    return fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body || {}) });
+  }
 
   /* ── 언어 ─────────────────────────────────────────────────────────── */
   function applyLanguage() {
@@ -15,14 +24,16 @@
     });
     text.placeholder = tr('chat_placeholder');
     document.title = tr('chat_title');
+    renderVoices();
     renderTry();
     renderStatus();
-    syncMove();
+    renderVoiceState();
   }
   var langSel = $('language');
   try { langSel.value = lang; } catch (e) { /* ko2en.js 를 못 받음 */ }
   langSel.addEventListener('change', function () {
-    try { lang = langSel.value; localStorage.setItem('language', lang); } catch (e) { /* 무시 */ }
+    try { lang = langSel.value; } catch (e) { /* 무시 */ }
+    store('language', langSel.value);
     applyLanguage();
   });
 
@@ -40,76 +51,92 @@
     scrollDown();
     return row;
   }
-  function toolChips(row, tools) {
-    if (!tools || !tools.length) return;
-    var box = document.createElement('div');
-    box.className = 'msg__tools';
-    tools.forEach(function (x) {
-      var c = document.createElement('span');
-      var bad = /^실패/.test(String(x.result || ''));
-      c.className = 'tool' + (bad ? ' tool--bad' : '');
-      var args = x.args && Object.keys(x.args).length ? JSON.stringify(x.args) : '';
-      c.innerHTML = '<i class="fa-solid fa-screwdriver-wrench"></i><b></b><span></span>';
-      c.querySelector('b').textContent = x.name + (args ? ' ' + args : '');
-      c.querySelector('span').textContent = (x.result ? ' → ' + x.result : '') + ' · ' + x.sec + tr('chat_sec');
-      box.appendChild(c);
-    });
-    row.appendChild(box);
-  }
-  function meta(row, sec) {
+  function meta(row, d) {
     var m = document.createElement('div');
     m.className = 'msg__meta';
-    m.textContent = sec + tr('chat_sec');
+    m.textContent = d.sec + tr('chat_sec') + (d.speak ? ' · ' + tr('chat_speaking') : '');
     row.appendChild(m);
   }
 
-  /* ── 보내기 ───────────────────────────────────────────────────────── */
-  function setWaiting(on) {
-    waiting = on;
-    sendBt.disabled = on || st.warm !== 'ready';
-    if (window.PiboUI) PiboUI.busy(sendBt, on);
+  /* ── 보내기 (흘려 받기) ───────────────────────────────────────────── */
+  function setWaiting(ctrl) {
+    waiting = ctrl;
+    var icon = sendBt.querySelector('i'), label = sendBt.querySelector('span');
+    icon.className = 'fa-solid ' + (ctrl ? 'fa-stop' : 'fa-paper-plane');
+    label.textContent = tr(ctrl ? 'chat_stop' : 'chat_send');
+    sendBt.classList.toggle('pb-btn--danger', !!ctrl);
+    sendBt.classList.toggle('pb-btn--accent', !ctrl);
+    renderStatus();
   }
   function send(msg) {
     msg = (msg || '').trim();
     if (!msg || waiting || st.warm !== 'ready') return;
     bubble('me', msg);
+    showHush(false);                                        // 앞 대답 말하기는 서버가 멈춘다
     text.value = ''; autosize();
-    var row = bubble('bot', null);
-    var body = row.firstChild;
+    var row = bubble('bot', null), body = row.firstChild;
     row.classList.add('msg--wait');
-    var t0 = Date.now();
     body.innerHTML = '<span class="dots"><i></i><i></i><i></i></span><span class="wait-sec"></span>';
+    var t0 = Date.now(), got = '', ended = false;
     var tick = setInterval(function () {
-      body.querySelector('.wait-sec').textContent = Math.floor((Date.now() - t0) / 1000) + tr('chat_sec');
+      var w = body.querySelector('.wait-sec');
+      if (w) w.textContent = Math.floor((Date.now() - t0) / 1000) + tr('chat_sec');
     }, 500);
-    setWaiting(true);
-    fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-                         body: JSON.stringify({ text: msg }) })
-      .then(function (r) { return r.json(); })
-      .then(function (d) {
-        clearInterval(tick);
-        row.classList.remove('msg--wait');
-        if (d.error) {
-          row.classList.add('msg--err');
-          body.textContent = tr(d.error);
-        } else {
-          body.textContent = d.reply || '…';
-          if (d.switched) refreshStatus();
+    var ctrl = new AbortController();
+    setWaiting(ctrl);
+    function finish(d) {
+      if (ended) return; ended = true;
+      clearInterval(tick);
+      row.classList.remove('msg--wait');
+      if (d && d.error) {
+        row.classList.add('msg--err');
+        body.textContent = tr(d.error);
+      } else if (!got) {
+        body.textContent = '…';
+      }
+      meta(row, { sec: d && d.sec != null ? d.sec : ((Date.now() - t0) / 1000).toFixed(1), speak: d && d.speak });
+      if (d && d.speak) showHush(true);
+      setWaiting(null); scrollDown(); text.focus();
+    }
+    function onLine(line) {
+      if (!line.trim()) return;
+      var d; try { d = JSON.parse(line); } catch (e) { return; }
+      if (d.d != null) {
+        if (!got) { body.textContent = ''; row.classList.remove('msg--wait'); }
+        got += d.d;
+        body.textContent = got.replace(/^\s+/, '');
+        scrollDown();
+      } else if (d.done || d.error) finish(d);
+    }
+    post('/api/chat', { text: msg, speak: speakCk.checked, voice: voiceSel.value })
+      .then(function (r) {
+        if (!r.ok && r.headers.get('content-type') && r.headers.get('content-type').indexOf('json') >= 0) {
+          return r.json().then(finish);
         }
-        toolChips(row, d.tools);
-        meta(row, d.sec != null ? d.sec : ((Date.now() - t0) / 1000).toFixed(1));
-      }, function () {
-        clearInterval(tick);
-        row.classList.remove('msg--wait'); row.classList.add('msg--err');
-        body.textContent = tr('chat_err_conn');
+        var reader = r.body.getReader(), dec = new TextDecoder(), buf = '';
+        ctrl.signal.addEventListener('abort', function () { reader.cancel().catch(function () {}); });
+        function pump() {
+          return reader.read().then(function (x) {
+            if (x.done) { if (buf) onLine(buf); return finish(null); }
+            buf += dec.decode(x.value, { stream: true });
+            var lines = buf.split('\n'); buf = lines.pop();
+            lines.forEach(onLine);
+            return pump();
+          });
+        }
+        return pump();
       })
-      .then(function () { setWaiting(false); scrollDown(); text.focus(); });
+      .catch(function () { if (ctrl.signal.aborted) finish(null); else finish({ error: 'chat_err_conn' }); });
   }
-  $('form').addEventListener('submit', function (e) { e.preventDefault(); send(text.value); });
+  $('form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (waiting) { waiting.abort(); return; }               // [멈추기]
+    send(text.value);
+  });
   text.addEventListener('keydown', function (e) {
     // 한글 조합 중 Enter 는 글자를 마치는 것이라 보내지 않는다
     if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && e.keyCode !== 229) {
-      e.preventDefault(); send(text.value);
+      e.preventDefault(); if (!waiting) send(text.value);
     }
   });
   function autosize() { text.style.height = 'auto'; text.style.height = Math.min(text.scrollHeight, 140) + 'px'; }
@@ -118,10 +145,7 @@
   /* ── 해 볼 말 ─────────────────────────────────────────────────────── */
   function renderTry() {
     var box = $('try'); box.innerHTML = '';
-    var keys = st.device === 'pibrain'
-      ? ['chat_try_hello', 'chat_try_led', 'chat_try_see', 'chat_try_school']
-      : ['chat_try_hello', 'chat_try_dance', 'chat_try_eye', 'chat_try_see'];
-    keys.forEach(function (k) {
+    ['chat_try_hello', 'chat_try_dino', 'chat_try_school', 'chat_try_english'].forEach(function (k) {
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'pb-btn pb-btn--sm';
       b.textContent = tr(k);
@@ -130,24 +154,47 @@
     });
   }
 
-  /* ── 움직이기 · 새 대화 ───────────────────────────────────────────── */
-  function syncMove() {
-    moveBt.hidden = !st.tools;
-    moveBt.setAttribute('aria-pressed', st.allowed ? 'true' : 'false');
-    moveBt.title = tr(st.allowed ? 'chat_move_on' : 'chat_move_off');
-    moveBt.querySelector('i').className = 'fa-solid ' + (st.allowed ? 'fa-person-running' : 'fa-comment-slash');
+  /* ── 소리로 말하기 ────────────────────────────────────────────────── */
+  function renderVoices() {
+    var keep = voiceSel.value || load('chat_voice') || 'f1';
+    voiceSel.innerHTML = '';
+    VOICES.forEach(function (v) {
+      var o = document.createElement('option');
+      o.value = v;
+      o.textContent = tr(v[0] === 'm' ? 'chat_voice_m' : 'chat_voice_f') + ' ' + v[1];
+      voiceSel.appendChild(o);
+    });
+    voiceSel.value = keep;
   }
-  moveBt.addEventListener('click', function () {
-    fetch('/api/tools', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ on: !st.allowed }) })
-      .then(function (r) { return r.json(); })
-      .then(function (d) { st.allowed = d.allowed; syncMove(); bubble('bot', d.reply); },
-            function () { if (window.PiboUI) PiboUI.toast(tr('chat_err_conn'), 'error'); });
+  function renderVoiceState() {
+    voiceSel.disabled = !speakCk.checked;
+    var s = speakCk.checked ? st.voice : 'off';
+    $('voice_st').textContent = s === 'loading' ? tr('chat_voice_loading') : s === 'error' ? tr('chat_voice_error') : '';
+    $('voice_st').dataset.state = s;
+  }
+  function showHush(on) { $('hush_bt').hidden = !on; }
+  speakCk.checked = load('chat_speak') === '1';
+  speakCk.addEventListener('change', function () {
+    store('chat_speak', speakCk.checked ? '1' : '0');
+    if (speakCk.checked) {
+      post('/api/voice/warm').then(function (r) { return r.json(); })
+        .then(function (d) { st.voice = d.voice; renderVoiceState(); }, function () { /* 다음 상태 확인 */ });
+    } else {
+      post('/api/voice/stop').catch(function () {}); showHush(false);
+    }
+    renderVoiceState();
   });
+  voiceSel.addEventListener('change', function () { store('chat_voice', voiceSel.value); });
+  $('hush_bt').addEventListener('click', function () {
+    post('/api/voice/stop').catch(function () {}); showHush(false);
+  });
+
+  /* ── 새 대화 ──────────────────────────────────────────────────────── */
   $('new_bt').addEventListener('click', function () {
-    fetch('/api/reset', { method: 'POST' }).catch(function () { /* 꺼져 있으면 기록도 없다 */ });
+    if (waiting) waiting.abort();
+    post('/api/reset').catch(function () { /* 꺼져 있으면 기록도 없다 */ });
     Array.prototype.slice.call(log.querySelectorAll('.msg')).forEach(function (m) { m.remove(); });
-    $('empty').hidden = false;
+    $('empty').hidden = false; showHush(false);
     text.focus();
   });
 
@@ -165,22 +212,20 @@
       s = ' ' + Math.floor((Date.now() - warmT0) / 1000) + tr('chat_sec');
     } else warmT0 = 0;
     var failed = key === 'chat_st_error' || key === 'chat_st_failed';
-    el.dataset.state = key ? (failed ? 'error' : 'busy') : (st.tools ? 'ready' : 'notools');
-    $('retry_bt').hidden = key !== 'chat_st_failed';
-    $('status_txt').textContent = key ? tr(key) : (st.tools ? '' : tr('chat_st_notools'));
+    el.dataset.state = key ? (failed ? 'error' : 'busy') : 'ready';
+    $('status_txt').textContent = key ? tr(key) : '';
     $('status_sec').textContent = s;
-    el.hidden = !key && st.tools;
-    sendBt.disabled = waiting || st.warm !== 'ready';
+    $('retry_bt').hidden = key !== 'chat_st_failed';
+    el.hidden = !key;
+    sendBt.disabled = !waiting && st.warm !== 'ready';
   }
   function refreshStatus() {
     return fetch('/api/status', { cache: 'no-store' })
       .then(function (r) { return r.json(); })
       .then(function (d) {
-        var dev = st.device;
         st = d; failCount = 0;
         if (window.PiboUI) PiboUI.hideBanner('svc');
-        if (dev !== d.device) renderTry();
-        renderStatus(); syncMove();
+        renderStatus(); renderVoiceState();
       }, function () {
         // 서비스가 꺼짐(다른 도구를 켰거나 IDE 에서 코드를 실행)
         if (++failCount === 3 && window.PiboUI) {
@@ -192,11 +237,10 @@
   }
   setInterval(refreshStatus, 2000);
   setInterval(function () { if (st.warm === 'warming') renderStatus(); }, 1000);
-
   $('retry_bt').addEventListener('click', function () {
     var bt = $('retry_bt');
     if (window.PiboUI) PiboUI.busy(bt, true);
-    fetch('/api/llm/restart', { method: 'POST' })
+    post('/api/llm/restart')
       .then(function () { st.llm = 'down'; renderStatus(); }, function () { /* 다음 상태 확인이 보여 준다 */ })
       .then(function () { if (window.PiboUI) PiboUI.busy(bt, false); });
   });
@@ -211,6 +255,7 @@
   });
 
   applyLanguage();
+  if (speakCk.checked) speakCk.dispatchEvent(new Event('change'));
   refreshStatus();
   text.focus();
 })();

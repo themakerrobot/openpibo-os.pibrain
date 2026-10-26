@@ -1,138 +1,117 @@
 """대화 웹 (IDE [대화], 50030)
 
-llama-server(50020) 의 대화 모델과 도구 호출로 이야기하는 웹 화면이다. IDE 가 /llm?enable=on 때 직접 띄운다
+llama-server(50020) 의 대화 모델과 글자로 이야기하는 웹 화면이다. IDE 가 /llm?enable=on 때 직접 띄운다
 (H/W 검수처럼 systemd 유닛이 아니다 — 유닛 파일은 리포 밖이라 이미지 작업이 되므로).
 
-  브라우저 ── POST /api/chat ──▶ 이 서버 ── /v1/chat/completions ──▶ llama-server :50020
-                                   └ 모델이 부른 도구를 openpibo 로 실행하고 결과를 다시 모델에
+  브라우저 ── POST /api/chat ──▶ 이 서버 ── /v1/chat/completions (stream) ──▶ llama-server :50020
+            ◀── 한 줄씩(JSON) ───┘
 
-llama-server 기본 웹 화면은 시스템 글과 도구 목록을 보내지 않아 도구가 안 됐다. 이 서버가 대신 붙인다.
+**도구는 쓰지 않는다(261026, 사용자 결정).** 도구 호출 방식은 한 차례에 모델을 두 번 부르고(도구 판단 → 결과로 다시 묻기)
+매번 도구 목록 약 1천 토큰을 붙여서 파이보에서 15~44초가 걸렸다(차례마다 늘었다). 지금은 한 차례에 한 번만 묻고,
+요청 모양이 늘 같아(시스템 글 + 대화가 뒤에만 붙음) 서버가 앞부분을 다시 쓰고 새로 한 말만 읽는다.
 
-pibo_chat.py · tools.py 는 학습 PC(openpibo-chat)의 파일을 **그대로** 가져온 것이다. 시스템 글과 도구 목록이
-학습 때와 글자까지 같아야 하므로 이 두 파일은 고치지 말고 PC 쪽 새 판으로 통째로 바꿀 것.
-기기마다 다른 것(PiBrain 은 모터·배터리가 없고 눈 대신 LED)은 아래 run_tool 이 맡는다.
+대답을 로봇이 소리로도 말할 수 있다(화면의 [소리로 말하기] 체크, 261026). 기기 안 TTS(SpeechOnDevice, Supertonic 3 int8,
+목소리 m1~m5·f1~f5, lang='na' 자동)로 만들고 Audio.play 로 튼다. 목소리 모델은 체크를 켤 때 한 번 올린다(약 330MB, 몇 초).
 
-  python3 run_chat.py [--device pibo|pibrain] [--port 50030] [--llm http://127.0.0.1:50020] [--fake]
+  python3 run_chat.py [--port 50030] [--llm http://127.0.0.1:50020]
 """
 import os
 import re
-import sys
 import json
 import time
 import asyncio
 import argparse
-import subprocess
 import threading
+import subprocess
 import urllib.error
 import urllib.request
 
 from fastapi import FastAPI, Body
-from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, BASE_DIR)
-import pibo_chat  # noqa: E402  (tools.py 를 같이 읽는다)
-from tools import check_call  # noqa: E402
-
-DEVICE = 'pibo'
 LLM = 'http://127.0.0.1:50020'
+SERVICE = 'llama-server.service'
 
-#: 이 기기에 없는 도구를 모델이 부르면 모델에 다시 묻지 않고 이 말로 대답한다.
-#: 실패 결과를 모델에 넘기면 그다음 말은 학습한 적 없는 상황이라 어떻게 나올지 모른다
-NO_TOOL = {
-  'set_motion': '저는 지금 몸을 움직일 수는 없어요.',
-  'get_battery': '저는 배터리를 확인할 수 없어요.',
-}
-
-
-class Unsupported(Exception):
-  def __init__(self, name):
-    super().__init__(name)
-    self.name = name
+#: 학습 때의 시스템 글(학습 PC openpibo-chat 의 tools.SYSTEM 과 글자까지 같게). 모델을 새로 학습하면(모델 이름 등) 같이 바꿀 것
+SYSTEM = ("너는 초등학생부터 고등학생까지와 이야기하는 교육용 로봇 파이보야. "
+          "친구처럼 친근한 존댓말로 짧게 말해. 이모지나 기호는 쓰지 말고, 정말 모르는 건 모른다고 해.")
+#: 기억하는 주고받기. 넘으면 앞쪽 절반을 한꺼번에 버린다 — 한 번에 하나씩 밀어내면 앞부분이 매 차례 바뀌어
+#: 서버가 대화 전체를 다시 읽는다(파이보에서 읽기 초당 약 14토큰)
+MAX_TURNS = 6
+MAX_TOKENS = 200
 
 
-# ── 도구 실행 (기기별) ─────────────────────────────────────────────────────
-# pibo_chat.run_calls 는 모듈 전역 run_tool 을 부르므로 그 이름을 바꿔 끼운다(파일은 그대로 둔다)
-_orig_run_tool = pibo_chat.run_tool
-_cam = None
-_det = None
-_cam_lock = threading.Lock()
-events = []           # 지금 차례에 실행한 도구 (화면에 보여 준다)
-
-
-def find_objects():
-  """pibo_chat.find_objects 는 부를 때마다 Camera()·Detect() 를 새로 만든다. Picamera2 는 한 프로세스에서
-  두 번 열 수 없어 두 번째부터 실패하고, YOLO 도 매번 다시 올라온다. 한 번 열어 계속 쓴다"""
-  global _cam, _det
-  with _cam_lock:
-    if _cam is None:
-      from openpibo.vision_camera import Camera
-      _cam = Camera()
-    if _det is None:
-      from openpibo.vision_detect import Detect
-      _det = Detect()
-    img = _cam.read()
-    items = _det.detect_object(img)
-  return pibo_chat.korean_names(i.get('name') if isinstance(i, dict) else i for i in items or [])
-
-
-def run_tool(name, args):
-  t = time.time()
-  try:
-    result = _run_tool(name, args)
-  except Unsupported:
-    events.append({'name': name, 'args': args, 'result': '실패: 이 기기에 없는 기능', 'sec': 0})
-    raise
-  events.append({'name': name, 'args': args, 'result': result, 'sec': round(time.time() - t, 1)})
-  return result
-
-
-def _run_tool(name, args):
-  if DEVICE != 'pibrain' or pibo_chat.FAKE:
-    return _orig_run_tool(name, args)
-  problem = check_call(name, args)
-  if problem:
-    return f'실패: {problem}'
-  if name == 'set_motion':
-    if args.get('name') == 'stop':      # "멈춰" — 움직이는 게 없으니 할 일이 없다
-      return '완료'
-    raise Unsupported(name)
-  if name == 'get_battery':
-    raise Unsupported(name)
-  try:
-    if name in ('eye_on', 'eye_off'):
-      if 'led' not in pibo_chat._parts:
-        from openpibo.device import DeviceByPiBrain
-        pibo_chat._parts['led'] = DeviceByPiBrain()
-      led = pibo_chat._parts['led']
-      if name == 'eye_on':
-        led.led_on(args['r'], args['g'], args['b'])
-      else:
-        led.led_off()
-      return '완료'
-  except Exception as exc:  # noqa: BLE001 — 대화가 멈추지 않게
-    return f'실패: {exc}'
-  return _orig_run_tool(name, args)
-
-
-pibo_chat.run_tool = run_tool
-pibo_chat.find_objects = find_objects
-
-
-# ── 대화 상태 ──────────────────────────────────────────────────────────────
+# ── 상태 ──────────────────────────────────────────────────────────────────
 state = {
   'llm': 'down',        # down / loading / ready — llama-server /health, failed — 서비스가 죽음
-  'warm': 'idle',       # idle / warming / ready / error — 도구 목록 미리 읽기
+  'warm': 'idle',       # idle / warming / ready / error — 시스템 글 미리 읽기
   'warm_sec': 0,
-  'tools': True,        # 서버가 도구 호출을 받는지(옛 llama-server·--jinja 없음이면 False)
-  'allowed': True,      # "대화만 하자" 로 끈 상태면 False
   'error': '',
 }
-history = []
+history = []          # [{'role': 'user'|'assistant', 'content': ...}, ...]
 turn_lock = threading.Lock()
+
+
+# ── 소리로 말하기 ─────────────────────────────────────────────────────────
+VOICES = ('m1', 'm2', 'm3', 'm4', 'm5', 'f1', 'f2', 'f3', 'f4', 'f5')
+TTS_WAV = '/tmp/pibo_chat_tts.wav'
+voice = {'state': 'off', 'error': ''}      # off / loading / ready / error
+_tts = {'speech': None, 'audio': None}
+_tts_lock = threading.Lock()               # 올리기·만들기·틀기는 한 번에 하나
+_say_seq = [0]                             # 새 대답이 오면 앞의 말은 버린다
+
+
+def voice_warm():
+  """목소리 모델을 올린다(한 번만). 두 번 불러도 한 번만 올라간다"""
+  with _tts_lock:
+    if _tts['speech'] is not None:
+      voice['state'] = 'ready'
+      return True
+    voice['state'], voice['error'] = 'loading', ''
+    try:
+      from openpibo.speech import SpeechOnDevice
+      from openpibo.audio import Audio
+      _tts['speech'], _tts['audio'] = SpeechOnDevice(), Audio()
+      voice['state'] = 'ready'
+      return True
+    except Exception as exc:  # noqa: BLE001 — 대화는 계속 된다
+      voice['state'], voice['error'] = 'error', str(exc)
+      print(f'[chat] 목소리 모델 오류: {exc}', flush=True)
+      return False
+
+
+def voice_stop():
+  _say_seq[0] += 1
+  if _tts['audio'] is not None:
+    try:
+      _tts['audio'].stop()
+    except Exception:  # noqa: BLE001
+      pass
+
+
+def say(text, who):
+  """대답 하나를 만들어 튼다(백그라운드). 만드는 동안 새 대답이 오면 버린다"""
+  seq = _say_seq[0]
+  text = re.sub(r'\s+', ' ', text).strip()
+  if not text or not voice_warm():
+    return
+  with _tts_lock:
+    if seq != _say_seq[0]:
+      return
+    try:
+      t = time.time()
+      _tts['speech'].tts(text=text, filename=TTS_WAV, voice=who, lang='na')
+      if seq != _say_seq[0]:
+        return
+      _tts['audio'].play(filename=TTS_WAV)
+      print(f'  (목소리 {who} 만들기 {time.time() - t:.1f}초)', flush=True)
+    except Exception as exc:  # noqa: BLE001
+      voice['error'] = str(exc)
+      print(f'[chat] 말하기 오류: {exc}', flush=True)
 
 
 def llm_health():
@@ -145,9 +124,6 @@ def llm_health():
     return 'down'
 
 
-SERVICE = 'llama-server.service'
-
-
 def service_failed():
   """llama-server 서비스가 실패로 멈췄는지. 50020 을 다른 서버가 쥐고 있으면 켜자마자 죽고(18ms),
   systemd 가 5번 다시 켜 보다 포기한다. 그러면 기다려도 안 뜨므로 화면에 알린다. systemctl 이 없으면(PC) False"""
@@ -157,10 +133,14 @@ def service_failed():
     return False
 
 
+def post(body, timeout=300):
+  req = urllib.request.Request(f'{LLM}/v1/chat/completions', json.dumps(body).encode(),
+                               {'Content-Type': 'application/json'})
+  return urllib.request.urlopen(req, timeout=timeout)
+
+
 def warm_loop():
-  """서버가 뜨기를 기다렸다가 시스템 글과 도구 목록(약 1천 토큰)을 미리 읽힌다(파이보에서 40~70초).
-  도구를 안 받는 서버(--jinja 없는 옛 llama-server)면 도구 없이 대화만 한다.
-  서버가 다시 시작되면(IDE 가 끄고 켬) 다시 읽힌다."""
+  """서버가 뜨기를 기다렸다가 시스템 글을 미리 읽힌다(짧아서 몇 초). 서버가 다시 시작되면 다시 읽힌다"""
   while True:
     h = llm_health()
     state['llm'] = 'failed' if h == 'down' and service_failed() else h
@@ -173,49 +153,96 @@ def warm_loop():
       with turn_lock:
         state['warm'], state['error'] = 'warming', ''
         t = time.time()
-        msgs = [{'role': 'system', 'content': pibo_chat.SYSTEM},
-                {'role': 'user', 'content': '안녕'}]
         try:
-          pibo_chat.ask(LLM, msgs, True, max_tokens=1, timeout=900)
-          state['tools'] = True
-        except urllib.error.HTTPError:
-          # 도구 목록을 거절하는 서버 — 도구 없이 다시
-          try:
-            pibo_chat.ask(LLM, msgs, False, max_tokens=1, timeout=900)
-            state['tools'] = False
-          except OSError as exc:
-            state['warm'], state['error'] = 'error', str(exc)
-        except OSError as exc:
-          state['warm'], state['error'] = 'error', str(exc)
-        if state['warm'] == 'warming':
+          with post({'messages': [{'role': 'system', 'content': SYSTEM}, {'role': 'user', 'content': '안녕'}],
+                     'max_tokens': 1}, timeout=900) as r:
+            r.read()
           state['warm'], state['warm_sec'] = 'ready', round(time.time() - t, 1)
           history.clear()
+        except OSError as exc:
+          state['warm'], state['error'] = 'error', str(exc)
     time.sleep(3)
 
 
-def do_turn(text):
-  """한 차례. 돌려주는 것: {reply, tools:[...], sec, switched}"""
-  t = time.time()
-  del events[:]
-  if state['tools']:
-    was = state['allowed']
-    state['allowed'] = pibo_chat.tool_switch(text, was)
-    if was != state['allowed']:
-      # 끄고 켜는 말은 모델에 보내지 않고(보내면 "움직여도 돼"에 춤을 춤) 정해진 말로 대답, 기억을 비운다
-      history.clear()
-      return {'reply': pibo_chat.SWITCH_REPLY[state['allowed']], 'tools': [], 'switched': True,
-              'sec': round(time.time() - t, 1)}
+def trim_history():
+  turns = sum(1 for m in history if m['role'] == 'user')
+  if turns > MAX_TURNS:
+    users = [i for i, m in enumerate(history) if m['role'] == 'user']
+    del history[:users[turns - MAX_TURNS // 2]]
+
+
+def chat_stream(text, speak_as, ctl):
+  """한 차례(스레드에서 돈다). 한 줄에 JSON 하나: {"d": 글 조각} … 마지막에 {"done": true, "sec", "read", "said"} 또는 {"error": 키}.
+  ctl['cancel'] 이 서면 멈춘다(브라우저가 끊음 — [멈추기]·탭 닫기). 받던 연결은 chat_async 가 닫는다"""
+  t0 = time.time()
+  trim_history()
+  msgs = [{'role': 'system', 'content': SYSTEM}] + history + [{'role': 'user', 'content': text}]
+  body = {'messages': msgs, 'temperature': 0.6, 'max_tokens': MAX_TOKENS, 'stream': True}
+  reply, timings = '', {}
   try:
-    reply = pibo_chat.turn(LLM, history, text, state['tools'], state['allowed'])
-  except Unsupported as exc:
-    reply = NO_TOOL.get(exc.name, '그건 지금 할 수 없어요.')
-    history.append({'role': 'assistant', 'content': reply})
-  except OSError as exc:              # 서버 오류(HTTPError 포함)·연결 끊김
-    body = exc.read().decode('utf-8', 'ignore')[:300] if hasattr(exc, 'read') else ''
-    print(f'[chat] 서버 오류: {exc} {body}', flush=True)
+    with post(body) as r:
+      ctl['resp'] = r
+      for raw in r:
+        if ctl['cancel']:
+          break
+        line = raw.decode('utf-8', 'ignore').strip()
+        if not line.startswith('data:'):
+          continue
+        data = line[5:].strip()
+        if data == '[DONE]':
+          break
+        try:
+          obj = json.loads(data)
+        except ValueError:
+          continue
+        timings = obj.get('timings') or timings
+        choices = obj.get('choices') or []
+        delta = (choices[0].get('delta') or {}) if choices else {}
+        piece = delta.get('content') or ''      # 생각(reasoning_content)은 보내지 않는다
+        if piece:
+          reply += piece
+          yield json.dumps({'d': piece}, ensure_ascii=False) + '\n'
+  except (OSError, ValueError, AttributeError) as exc:
+    if ctl['cancel']:                      # 우리가 닫은 것
+      return
+    detail = exc.read().decode('utf-8', 'ignore')[:300] if hasattr(exc, 'read') else ''
+    print(f'[chat] 서버 오류: {exc} {detail}', flush=True)
     history.clear()
-    return {'reply': '', 'error': 'chat_err_server', 'tools': list(events), 'sec': round(time.time() - t, 1)}
-  return {'reply': reply, 'tools': list(events), 'sec': round(time.time() - t, 1)}
+    yield json.dumps({'error': 'chat_err_server'}) + '\n'
+    return
+  if ctl['cancel']:
+    return                                 # 끊긴 대답은 기억하지 않는다
+  reply = reply.strip()
+  history.extend([{'role': 'user', 'content': text}, {'role': 'assistant', 'content': reply}])
+  read_n, said_n = timings.get('prompt_n', 0), timings.get('predicted_n', 0)
+  print(f"  (읽기 {read_n}토큰 {timings.get('prompt_ms', 0) / 1000:.1f}초, "
+        f"말하기 {said_n}토큰 {timings.get('predicted_ms', 0) / 1000:.1f}초, 모두 {time.time() - t0:.1f}초)", flush=True)
+  if speak_as and reply:
+    threading.Thread(target=say, args=(reply, speak_as), daemon=True).start()
+  yield json.dumps({'done': True, 'sec': round(time.time() - t0, 1), 'read': read_n, 'said': said_n,
+                    'speak': bool(speak_as and reply)}) + '\n'
+
+
+async def chat_async(text, speak_as):
+  """chat_stream 을 스레드에서 한 줄씩 받아 넘긴다. 브라우저가 끊으면 starlette 가 여기를 취소한다 →
+  llama-server 연결을 닫아 생성을 멈추게 하고 잠금을 푼다. 전엔 [멈추기] 뒤에도 모델이 끝까지 만들었다"""
+  ctl = {'cancel': False, 'resp': None}
+  gen = chat_stream(text, speak_as, ctl)
+  try:
+    while True:
+      item = await asyncio.to_thread(next, gen, None)
+      if item is None:
+        break
+      yield item
+  finally:
+    ctl['cancel'] = True
+    r = ctl['resp']
+    if r is not None:
+      try:
+        r.close()
+      except Exception:  # noqa: BLE001 — 다른 스레드가 읽는 중이어도 닫기만 하면 된다
+        pass
+    turn_lock.release()
 
 
 # ── 웹 ─────────────────────────────────────────────────────────────────────
@@ -238,10 +265,24 @@ class SharedFonts:
     await self.app(scope, receive, send)
 
 
+class GZipExceptStream:
+  """대답은 흘려 보내야 한다. starlette GZipMiddleware 는 흘려 보내는 응답을 모아 버리므로(PiBrain 도구 버튼이
+  이것 때문에 안 됐다, 261001) /api/chat 만 빼고 압축한다"""
+  def __init__(self, app):
+    self.app = app
+    self.gzip = GZipMiddleware(app, minimum_size=1000)
+
+  async def __call__(self, scope, receive, send):
+    if scope['type'] == 'http' and scope.get('path') == '/api/chat':
+      await self.app(scope, receive, send)
+    else:
+      await self.gzip(scope, receive, send)
+
+
 app = FastAPI()
 app.mount('/static', StaticFiles(directory=os.path.join(BASE_DIR, 'static')), name='static')
 app.add_middleware(CORSMiddleware, allow_origins=['*'], allow_methods=['*'], allow_headers=['*'])
-app.add_middleware(GZipMiddleware, minimum_size=1000)
+app.add_middleware(GZipExceptStream)
 app.add_middleware(SharedFonts)
 
 
@@ -252,7 +293,7 @@ async def index():
 
 @app.get('/api/status')
 async def status():
-  return dict(state, device=DEVICE, busy=turn_lock.locked())
+  return dict(state, busy=turn_lock.locked(), voice=voice['state'])
 
 
 @app.post('/api/chat')
@@ -264,36 +305,44 @@ async def chat(body: dict = Body(...)):
     return JSONResponse({'error': 'chat_err_not_ready'}, status_code=503)
   if not turn_lock.acquire(blocking=False):
     return JSONResponse({'error': 'chat_err_busy'}, status_code=409)
-  try:
-    return await asyncio.to_thread(do_turn, text)
-  finally:
-    turn_lock.release()
-
-
-@app.post('/api/tools')
-async def set_tools(body: dict = Body(...)):
-  """화면의 [움직이기] 스위치. 말로 바꾸는 것("대화만 하자")과 같다"""
-  state['allowed'] = bool(body.get('on'))
-  history.clear()
-  return {'allowed': state['allowed'], 'reply': pibo_chat.SWITCH_REPLY[state['allowed']]}
+  voice_stop()                          # 앞 대답을 아직 말하고 있으면 멈춘다
+  speak_as = None
+  if body.get('speak'):
+    speak_as = body.get('voice') if body.get('voice') in VOICES else 'm1'
+  return StreamingResponse(chat_async(text, speak_as), media_type='application/x-ndjson',
+                           headers={'Cache-Control': 'no-cache', 'X-Accel-Buffering': 'no'})
 
 
 @app.post('/api/llm/restart')
 async def llm_restart():
   """[다시 켜기] — 실패로 멈춘 서비스를 다시 켠다. 50020 을 쥔 다른 서버가 있으면 또 실패한다"""
-  def go():
+  try:
     subprocess.run(['systemctl', 'reset-failed', SERVICE], timeout=10)
     subprocess.run(['systemctl', 'start', SERVICE], timeout=30)
-  try:
-    await asyncio.to_thread(go)
   except (OSError, subprocess.SubprocessError) as exc:
     return JSONResponse({'ok': False, 'error': str(exc)}, status_code=500)
   state['llm'] = 'down'
   return {'ok': True}
 
 
+@app.post('/api/voice/warm')
+async def voice_warm_api():
+  """[소리로 말하기] 를 켤 때 — 목소리 모델을 미리 올린다(백그라운드)"""
+  if voice['state'] in ('off', 'error'):
+    voice['state'] = 'loading'
+    threading.Thread(target=voice_warm, daemon=True).start()
+  return {'voice': voice['state']}
+
+
+@app.post('/api/voice/stop')
+async def voice_stop_api():
+  voice_stop()
+  return {'ok': True}
+
+
 @app.post('/api/reset')
 async def reset():
+  voice_stop()
   history.clear()
   return {'ok': True}
 
@@ -301,12 +350,10 @@ async def reset():
 if __name__ == '__main__':
   p = argparse.ArgumentParser()
   p.add_argument('--port', type=int, default=50030)
-  p.add_argument('--device', choices=['pibo', 'pibrain'], default=DEVICE)
   p.add_argument('--llm', default=LLM)
-  p.add_argument('--fake', action='store_true', help='로봇 없이 도구를 부른 척만 (시험용)')
+  p.add_argument('--device', default='pibo', help='쓰지 않는다(도구를 뺀 뒤로 기기 차이 없음). IDE 가 넘기므로 받기만 한다')
   args = p.parse_args()
-  DEVICE, LLM = args.device, args.llm.rstrip('/')
-  pibo_chat.FAKE = args.fake
+  LLM = args.llm.rstrip('/')
   threading.Thread(target=warm_loop, daemon=True).start()
 
   import uvicorn
