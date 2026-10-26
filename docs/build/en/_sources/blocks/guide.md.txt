@@ -307,9 +307,9 @@ Analyze face direction/distance in the image. *returns a value*
 
 Show face direction/distance in the image
 
-<img src="img/vision_object_load_ext.png" alt="Load Object detection model [Select folder ▾] ([model]) .onnx" width="707" class="blk">
+<img src="img/vision_object_load_ext.png" alt="Load Object detection model [Select folder ▾] ([pibo-job1]) .onnx" width="737" class="blk">
 
-Loads an object detection model. Type the name of a model folder from easydetect (model.onnx, labels.txt, model.json).
+Loads an object detection model. Type the name of a model file from easydetect (such as pibo-job1.onnx) without .onnx. Its class names and threshold are inside the file.
 
 <img src="img/vision_object.png" alt="Find objects in the image ([item ▾])" width="391" class="blk">
 

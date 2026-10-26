@@ -12,7 +12,7 @@ from pyzbar import pyzbar
 import mediapipe as mp
 from mediapipe.tasks import python as mp_python
 from mediapipe.tasks.python import vision as mp_vision
-from .modules.dfine_onnx import DfineOnnx
+from .modules.ed_onnx import EdOnnx
 from .modules.pose.movenet import Movenet
 from .modules.pose.utils import visualize_pose
 from .modules.card.decode_card import get_card
@@ -28,9 +28,9 @@ os.environ['LIBCAMERA_LOG_LEVELS'] = '3'
 # ✅ 추가: TensorFlow 내부 디버그 메시지 완전 차단
 logging.getLogger("tensorflow").setLevel(logging.ERROR)
 
-# 기본 사물 인식 모델 폴더 (D-FINE, COCO 80종 — model.onnx·labels.txt·model.json). 261026, easydetect-lab 지시서.
-# 다른 기본 모델을 쓰려면 이 한 줄만 바꾼다. 학생·선생님 모델은 load_object_model(폴더) 로 고른다
-OBJECT_MODEL = '/home/pi/.model/object/dfine-s-320'
+# 기본 사물 인식 모델 (easydetect ed-s 320, COCO 80종 — 이름·conf 가 파일 안에 있다). 261026, easydetect-lab 지시서.
+# 다른 기본 모델을 쓰려면 이 한 줄만 바꾼다. lab 에서 받은 모델(pibo-job<번호>.onnx)은 load_object_model(파일) 로 고른다
+OBJECT_MODEL = '/home/pi/.model/object/ed-s-320.onnx'
 
 def putTextPIL(img, text, points, size=30, colors=(255,255,255)):
   """
@@ -82,7 +82,7 @@ Functions:
 
   인식과 관련된 다양한 기능을 사용할 수 있는 클래스입니다.
 
-  * 사물 인식 (D-FINE, 기본 COCO 80개 class · easydetect 모델 폴더, onnxruntime)
+  * 사물 인식 (easydetect ed, 기본 COCO 80개 class · lab 에서 학습한 모델, onnxruntime)
   * QR/바코드 인식 (pyzbar)
   * Pose 인식
   * 이미지 분류
@@ -208,17 +208,16 @@ Functions:
     """
     사물 인식 모델을 불러옵니다.
 
-    easydetect 모델 폴더(easydetect lab 의 'Pibo로 보내기' zip 을 푼 폴더 — ``model.onnx`` ``labels.txt``
-    ``model.json`` 이 들어 있음)를 고릅니다. 폴더 안의 ``model.onnx`` 경로를 줘도 됩니다.
-    클래스 이름은 ``labels.txt`` 를 쓰며 한글일 수 있습니다.
-    모델을 못 쓰면(폴더·파일이 없음, onnxruntime 1.13 미만, 읽기 실패) 이유가 담긴 오류가 납니다.
+    easydetect 모델 파일(``.onnx``)을 고릅니다. easydetect lab 의 'Pibo로 보내기' 로 받은
+    ``pibo-job<번호>.onnx`` 가 그대로 쓰입니다. 클래스 이름과 확신 기준은 파일 안에 들어 있고, 이름은 한글일 수 있습니다.
+    모델을 못 쓰면(파일이 없음, onnxruntime 1.13 미만, 읽기 실패) 이유가 담긴 오류가 납니다.
 
     example::
 
-      detect.load_object_model('/home/pi/mymodel/fruit')     # easydetect 모델 폴더
-      detect.load_object_model()                             # 기본 모델(COCO)로 돌아가기
+      detect.load_object_model('/home/pi/code/pibo-job3.onnx')   # lab 에서 받은 모델
+      detect.load_object_model()                                  # 기본 모델(COCO)로 돌아가기
 
-    :param str modelpath: 사물 인식 모델 폴더 (또는 그 안의 ``model.onnx``). 없으면 기본 모델
+    :param str modelpath: 사물 인식 모델 파일(``.onnx``). 없으면 기본 모델
     """
 
     # 이전 모델의 ONNX Runtime 세션을 먼저 놓는다(파이보 램 2GB — 바꿀 때마다 쌓이지 않게)
@@ -227,7 +226,7 @@ Functions:
     self.object_detector = None
     # 경로를 먼저 바꾼다 — 못 열면 오류가 나고, 다음 detect_object 도 예전 모델로 몰래 돌지 않고 같은 오류를 낸다
     self.object_model_path = modelpath or OBJECT_MODEL
-    self.object_detector = DfineOnnx(self.object_model_path)
+    self.object_detector = EdOnnx(self.object_model_path)
 
   def detect_object(self, img):
     """
@@ -240,9 +239,9 @@ Functions:
       raise ValueError('"img" must be a valid OpenCV image (np.ndarray).')
 
     if self.object_detector is None:
-      self.object_detector = DfineOnnx(self.object_model_path)
+      self.object_detector = EdOnnx(self.object_model_path)
 
-    # conf 는 모델의 model.json(없으면 0.5), iou 는 0.7 로 DfineOnnx 가 정한다 — 여기서 넘기는 값은 쓰이지 않는다
+    # conf 는 파일 안의 easydetect.conf(없으면 0.5), iou 는 0.7 로 EdOnnx 가 정한다 — 여기서 넘기는 값은 쓰이지 않는다
     boxes, scores, classes = self.object_detector(img, conf=0.5, iou=0.4)
     data = []
     for (x1, y1, x2, y2), score, cls_id in zip(boxes, scores, classes):

@@ -55,8 +55,8 @@ msgstr ""
 msgid "인식과 관련된 다양한 기능을 사용할 수 있는 클래스입니다."
 msgstr "A class that provides various detection functions."
 
-msgid "사물 인식 (D-FINE, 기본 COCO 80개 class · easydetect 모델 폴더, onnxruntime)"
-msgstr "Object detection (D-FINE, 80 COCO classes by default · easydetect model folders, onnxruntime)"
+msgid "사물 인식 (easydetect ed, 기본 COCO 80개 class · lab 에서 학습한 모델, onnxruntime)"
+msgstr "Object detection (easydetect ed, 80 COCO classes by default · models trained in the lab, onnxruntime)"
 
 msgid "QR/바코드 인식 (pyzbar)"
 msgstr "QR/barcode detection (pyzbar)"
@@ -94,11 +94,11 @@ msgstr "Hand gesture recognition result"
 msgid "사물 인식 모델을 불러옵니다."
 msgstr "Loads an object detection model."
 
-msgid "easydetect 모델 폴더(easydetect lab 의 'Pibo로 보내기' zip 을 푼 폴더 — ``model.onnx`` ``labels.txt`` ``model.json`` 이 들어 있음)를 고릅니다. 폴더 안의 ``model.onnx`` 경로를 줘도 됩니다. 클래스 이름은 ``labels.txt`` 를 쓰며 한글일 수 있습니다. 모델을 못 쓰면(폴더·파일이 없음, onnxruntime 1.13 미만, 읽기 실패) 이유가 담긴 오류가 납니다."
-msgstr "Picks an easydetect model folder (the unzipped 'Send to Pibo' zip from the easydetect lab — it holds ``model.onnx`` ``labels.txt`` ``model.json``). The path of the ``model.onnx`` inside it works too. Class names come from ``labels.txt`` and may be Korean. If the model cannot be used (missing folder or file, onnxruntime older than 1.13, a file that does not load), an error says why."
+msgid "easydetect 모델 파일(``.onnx``)을 고릅니다. easydetect lab 의 'Pibo로 보내기' 로 받은 ``pibo-job<번호>.onnx`` 가 그대로 쓰입니다. 클래스 이름과 확신 기준은 파일 안에 들어 있고, 이름은 한글일 수 있습니다. 모델을 못 쓰면(파일이 없음, onnxruntime 1.13 미만, 읽기 실패) 이유가 담긴 오류가 납니다."
+msgstr "Picks an easydetect model file (``.onnx``). The ``pibo-job<number>.onnx`` from 'Send to Pibo' in the easydetect lab works as it is. The class names and the score threshold are inside the file; the names may be Korean. If the model cannot be used (missing file, onnxruntime older than 1.13, a file that does not load), an error says why."
 
-msgid "사물 인식 모델 폴더 (또는 그 안의 ``model.onnx``). 없으면 기본 모델"
-msgstr "Object detection model folder (or the ``model.onnx`` inside it). Left out, the default model"
+msgid "사물 인식 모델 파일(``.onnx``). 없으면 기본 모델"
+msgstr "Object detection model file (``.onnx``). Left out, the default model"
 
 msgid "사물 인식 결과를 표시합니다."
 msgstr "Displays the object detection result."

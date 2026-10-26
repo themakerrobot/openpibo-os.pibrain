@@ -1,25 +1,27 @@
 # -*- coding: utf-8 -*-
-"""D-FINE ONNX 사물 인식 — easydetect 모델 폴더를 onnxruntime 으로 돌린다 (261026).
+"""easydetect ed 사물 인식 — ``.onnx`` 파일 하나를 onnxruntime 으로 돌린다 (261026).
 
-모델 폴더 (easydetect-lab 의 'Pibo로 보내기' zip 을 푼 것, 또는 기본 COCO 폴더
-``/home/pi/.model/object/dfine-s-320/``)::
+모델은 **파일 하나**다. 기본 COCO 모델 ``/home/pi/.model/object/ed-s-320.onnx`` 와 easydetect-lab 의
+'Pibo로 보내기' 로 받은 ``pibo-job<번호>.onnx`` 를 같은 방법으로 읽는다.
 
-  <폴더>/model.onnx   ONNX opset 17, 입력 크기 고정(보통 320)
-         labels.txt   클래스 이름, 한 줄에 하나, 번호 순서 (한글일 수 있음)
-         model.json   {"imgsz": 320, "queries": 100, "names": [...], "conf": 0.45 또는 null}
-         detect.py    openpibo 는 **읽지도 실행하지도 않는다** — 결과를 비교하는 기준일 뿐이다
+- ONNX opset 17, 입력 크기는 파일마다 고정이다. **크기는 파일에서 읽는다**(320 이든 640 이든 막지 않는다)
+- 파일 안(ONNX metadata, ``session.get_modelmeta().custom_metadata_map``)에 든 것:
 
-계산은 easydetect-lab ``docs/pibo-integration.md`` 5절, 곧 폴더의 ``detect.py`` 의
-``preprocess``·``postprocess``·``drop_duplicates`` 와 같다. 한쪽만 고치면 lab 과 점수가 달라진다.
+  ``easydetect.names``  클래스 이름 JSON ``{"0": "person", "1": "컵"}`` (한글 가능). 없으면 이름 대신 번호
+  ``easydetect.conf``   이 모델의 확신 기준(문자열 숫자, 예 ``"0.45"``). 없으면 0.5
+
+계산은 easydetect-lab ``docs/pibo-integration.md`` 4절, 곧 lab 의 ``pibo/detect.py`` 의
+``preprocess``·``postprocess``·``drop_duplicates`` 와 같다(그 파일은 불러오지 않고 내용만 맞춘다).
+한쪽만 고치면 lab 과 점수가 달라진다.
 
 - 입력: BGR → RGB, **비율 유지 없이** S×S 로 resize(letterbox 없음), /255, NCHW float32
 - 출력 둘을 마지막 차원으로 가른다: boxes (1,Q,4) cx cy w h (0~1 비율), scores (1,Q,C).
-  클래스가 4개라 둘 다 4 면 출력 이름 `boxes` 로 가른다(lab export 는 boxes 가 먼저라 detect.py 와 같은 결과)
+  클래스가 4개라 둘 다 4 면 출력 이름 ``boxes`` 로 가른다(lab export 는 boxes 가 먼저라 detect.py 와 같은 결과)
 - scores 가 0~1 밖이면 아직 로짓이라 sigmoid 를 한 번만 한다
 - 질의마다 최고 클래스·점수 → ``score >= conf`` → 점수순 → 원래 그림 픽셀로 → 그림 안으로 자름
-- NMS 는 없다. 클래스와 상관없이 IoU 0.7 넘게 겹친 아래 순위 상자만 지운다
+- NMS 는 없다. 클래스와 상관없이 IoU 0.7 넘게 겹친 뒤쪽 상자만 지운다
 
-conf 는 만들 때 주지 않으면 ``model.json`` 의 ``conf``(null 이면 0.5)이고, iou 는 0.7 이다.
+conf 는 만들 때 주지 않으면 파일 안의 ``easydetect.conf``(없으면 0.5)이고, iou 는 0.7 이다.
 둘 다 **부를 때 넘기는 값보다 우선한다** — openpibo 는 늘 0.5·0.4 를 넘기는데, lab 이 모델마다 고른
 conf 를 지켜야 하고, iou 0.4 는 말 위의 사람처럼 실제로 겹친 다른 물체를 지운다.
 """
@@ -31,7 +33,9 @@ import cv2
 import numpy as np
 
 ORT_MIN = (1, 13)   # opset 17
-CONF = 0.5          # model.json 의 conf 가 null 일 때
+NAMES_KEY = 'easydetect.names'
+CONF_KEY = 'easydetect.conf'
+CONF = 0.5          # 파일 안에 conf 가 없을 때
 IOU = 0.7
 MAX_DET = 300
 
@@ -51,38 +55,6 @@ def _ort():
     raise RuntimeError('onnxruntime {} 은(는) 사물 인식 모델(ONNX opset 17)을 못 읽습니다. '
                        '{}.{} 이상이 필요합니다: pip3 install -U onnxruntime'.format(ver, *ORT_MIN))
   return ort
-
-
-def model_files(path):
-  """모델 경로 → (model.onnx 경로, 폴더). 못 찾으면 이유를 담은 FileNotFoundError.
-
-  - 폴더: ``<폴더>/model.onnx``
-  - ``.onnx`` 파일: 그 파일, 이름표·model.json 은 같은 폴더에서
-  - ``<이름>.onnx`` 가 없고 ``<이름>`` 폴더가 있으면 그 폴더 — IDE 블록 [사물인식 모델 … .onnx 불러오기] 는
-    적은 이름 뒤에 ``.onnx`` 를 붙여 넘기므로, 폴더 이름을 적어도 읽힌다
-  """
-  p = os.path.expanduser(str(path or ''))
-  if p.endswith('.onnx') and not os.path.isfile(p) and os.path.isdir(p[:-5]):
-    p = p[:-5]
-  if os.path.isdir(p):
-    onnx = os.path.join(p, 'model.onnx')
-    if not os.path.isfile(onnx):
-      raise FileNotFoundError('사물 인식 모델 폴더에 model.onnx 가 없습니다: {}'.format(p))
-    return onnx, p
-  if os.path.isfile(p):
-    if not p.endswith('.onnx'):
-      raise ValueError('사물 인식 모델은 model.onnx 가 든 폴더 또는 .onnx 파일이어야 합니다: {}'.format(p))
-    return p, os.path.dirname(os.path.abspath(p))
-  raise FileNotFoundError('사물 인식 모델을 찾지 못했습니다: {} '
-                          '(model.onnx·labels.txt·model.json 이 든 폴더)'.format(p))
-
-
-def read_labels(path):
-  """클래스 이름, 한 줄에 하나, 번호 순서 (detect.py 의 read_labels 와 같다)"""
-  if not os.path.exists(path):
-    return []
-  with open(path, encoding='utf-8') as f:
-    return [line.strip() for line in f.read().splitlines()]
 
 
 def preprocess(img, size):
@@ -142,44 +114,53 @@ def postprocess(boxes, scores, shape, conf=CONF, iou=IOU, max_det=MAX_DET):
   return np.concatenate([xyxy, best.astype(np.float32)[:, None], cls.astype(np.float32)[:, None]], axis=1)
 
 
-class DfineOnnx:
-  """D-FINE 모델 폴더를 onnxruntime(CPU)으로 돌린다.
+class EdOnnx:
+  """easydetect ed 모델 파일(``.onnx``)을 onnxruntime(CPU)으로 돌린다.
 
   example::
 
-    det = DfineOnnx('/home/pi/.model/object/dfine-s-320')
+    det = EdOnnx('/home/pi/.model/object/ed-s-320.onnx')
     boxes, scores, classes = det(img)        # 원래 픽셀 x1 y1 x2 y2, 점수 높은 순
-    det.name_of(classes[0])                  # labels.txt 의 이름
+    det.name_of(classes[0])                  # 파일 안의 이름
   """
 
-  def __init__(self, model_dir, threads=4, conf=None, iou=IOU):
-    onnx, folder = model_files(model_dir)
+  def __init__(self, model_path, threads=4, conf=None, iou=IOU):
+    path = os.path.expanduser(str(model_path or ''))
+    if not os.path.isfile(path):
+      raise FileNotFoundError('사물 인식 모델 파일을 찾지 못했습니다: {} (easydetect 의 .onnx 파일)'.format(path))
     ort = _ort()
-    self.path = folder
-    self.model_conf = None
-    try:
-      with open(os.path.join(folder, 'model.json'), encoding='utf-8') as f:
-        self.model_conf = float(json.load(f)['conf'])
-    except (OSError, ValueError, KeyError, TypeError):
-      pass
-    self.conf = float(conf) if conf is not None else (self.model_conf if self.model_conf is not None else CONF)
-    self.iou = float(iou) if iou is not None else None
-    self.names = read_labels(os.path.join(folder, 'labels.txt'))
+    self.path = path
     opt = ort.SessionOptions()
     if threads:
       opt.intra_op_num_threads = int(threads)
     try:
-      self.session = ort.InferenceSession(onnx, opt, providers=['CPUExecutionProvider'])
+      self.session = ort.InferenceSession(path, opt, providers=['CPUExecutionProvider'])
     except Exception as exc:
       raise RuntimeError('사물 인식 모델을 읽지 못했습니다: {} (onnxruntime {}, 모델은 ONNX opset 17): {}'.format(
-        onnx, getattr(ort, '__version__', '?'), exc)) from exc
+        path, getattr(ort, '__version__', '?'), exc)) from exc
     inp = self.session.get_inputs()[0]
     self.input_name = inp.name
     shape = inp.shape
     self.size = int(max(shape[2], shape[3])) if len(shape) == 4 and \
       isinstance(shape[2], int) and isinstance(shape[3], int) else 320
-    names = [o.name for o in self.session.get_outputs()]
-    self.box_index = names.index('boxes') if 'boxes' in names else None
+    outs = [o.name for o in self.session.get_outputs()]
+    self.box_index = outs.index('boxes') if 'boxes' in outs else None
+
+    meta = self.session.get_modelmeta().custom_metadata_map or {}
+    self.names = []
+    if meta.get(NAMES_KEY):
+      try:
+        table = json.loads(meta[NAMES_KEY])
+        self.names = [str(table.get(str(i), i)) for i in range(len(table))]
+      except (ValueError, AttributeError):
+        self.names = []
+    self.model_conf = None
+    try:
+      self.model_conf = float(meta[CONF_KEY])
+    except (KeyError, TypeError, ValueError):
+      pass
+    self.conf = float(conf) if conf is not None else (self.model_conf if self.model_conf is not None else CONF)
+    self.iou = float(iou) if iou is not None else None
 
   def __call__(self, img, conf=None, iou=None):
     """BGR 그림 → (boxes (N,4) x1 y1 x2 y2 픽셀, scores (N,), classes (N,) int), 점수 높은 순.

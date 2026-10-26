@@ -303,9 +303,9 @@ USB 연결 해제합니다.
 
 인식된 얼굴의 방향과 거리를 표시합니다.
 
-<img src="img/vision_object_load_ext.png" alt="사물인식 모델 [폴더 선택 ▾] ([model]) .onnx 불러오기" width="584" class="blk">
+<img src="img/vision_object_load_ext.png" alt="사물인식 모델 [폴더 선택 ▾] ([pibo-job1]) .onnx 불러오기" width="615" class="blk">
 
-사물인식 모델을 불러옵니다. easydetect 에서 받은 모델 폴더(model.onnx·labels.txt·model.json)의 이름을 적습니다.
+사물인식 모델을 불러옵니다. easydetect 에서 받은 모델 파일(pibo-job1.onnx 등)의 이름을 .onnx 빼고 적습니다. 이름과 기준은 파일 안에 들어 있습니다.
 
 <img src="img/vision_object.png" alt="이미지 ([변수 ▾]) 사물 찾기" width="298" class="blk">
 

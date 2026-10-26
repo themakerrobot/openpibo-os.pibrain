@@ -216,7 +216,7 @@ IDE [대화] 가 llama-server 기본 웹 화면 대신 대화 웹(`chat/run_chat
 ## 라이선스 (260930)
 
 **리포 전체가 AGPL-3.0 이다**(`LICENSE`, 사용자 결정). 이유·파일은 Pibo 와 같다 — 자세한 건 Pibo CLAUDE.md '라이선스'.
-261026 에 사물 인식을 D-FINE(Apache-2.0)으로 바꾸고 예전 모델(Ultralytics, AGPL)의 코드·파일·고지를 지웠지만 리포 라이선스는 그대로 둔다.
+261026 에 사물 인식을 easydetect ed(Apache-2.0)로 바꾸고 예전 모델(Ultralytics, AGPL)의 코드·파일·고지를 지웠지만 리포 라이선스는 그대로 둔다.
 
 - `LICENSE`(AGPL-3.0 전문, 고치지 말 것) · `THIRD_PARTY_NOTICES.md`(vendor·모델 표 — **넣거나 바꾸면 같이 고칠 것**) ·
   (`.model/object/` 의 모델 고지는 THIRD_PARTY_NOTICES 표 — 따로 복사할 고지 파일은 없다)
@@ -493,12 +493,13 @@ Pibo 리포의 변경을 가져올 때 **항목마다 적용 여부를 먼저 �
 
 라이브러리는 파일마다 Pibo 와 다를 수 있으니 통째로 덮어쓰지 말고 diff 를 보고 옮길 것.
 
-**사물 인식은 Pibo 와 같은 D-FINE 모델 폴더다(261026)** — `openpibo/modules/dfine_onnx.py`(Pibo 와 **같은 파일**, 같이 고칠 것)로 onnxruntime 만 쓴다.
+**사물 인식은 Pibo 와 같은 easydetect ed 모델 파일이다(261026)** — `openpibo/modules/ed_onnx.py`(Pibo 와 **같은 파일**, 같이 고칠 것)로 onnxruntime 만 쓴다.
 자세한 건 Pibo CLAUDE.md '사물 인식'. 요점:
-- 기본 `/home/pi/.model/object/dfine-s-320/`(`vision_detect.py` 의 `OBJECT_MODEL` 한 줄). lab 의 'Pibo로 보내기' 폴더는 `load_object_model(폴더)`·블록으로 고른다
-- 폴더의 `detect.py` 는 불러오지 않는다(비교 기준일 뿐). 못 쓰면 이유를 담은 오류(다른 모델로 바꾸지 않는다)
+- 기본 `/home/pi/.model/object/ed-s-320.onnx`(`vision_detect.py` 의 `OBJECT_MODEL` 한 줄). lab 의 'Pibo로 보내기' `pibo-job<번호>.onnx` 는 `load_object_model(파일)`·블록으로 고른다.
+  이름·conf 는 파일 안 메타데이터(`easydetect.names`·`easydetect.conf`), 입력 크기도 파일에서 읽는다
+- lab `pibo/detect.py` 는 불러오지 않는다(비교 기준일 뿐). 못 쓰면 이유를 담은 오류(다른 모델로 바꾸지 않는다)
 - 예전 사물 인식 모델의 코드·가중치·고지는 지웠다. `/home/pi/.model` 은 Pibo 것을 그대로 넣는다 — IMAGE.md '모델 폴더'.
-  **기본 폴더가 기기에 없으면 사물 인식이 오류로 멈추니 코드보다 먼저 넣을 것**
+  **기본 파일이 기기에 없으면 사물 인식이 오류로 멈추니 코드보다 먼저 넣을 것**
 - 도구 [카메라] 는 `detect_object_vis`(PIL)라 한글 이름이 그대로 그려진다
 
 **파이썬 패키지 (260930)** — `requirements.txt`(새로 만듦, Pibo 와 같은 목록)가 리포 코드가 import 하는 것이다. 예전 OS 에서 올린 기기의
