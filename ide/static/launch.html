@@ -114,7 +114,8 @@
                   name: { ko: '도구', en: 'Tools' },               icon: 'fa-microchip' },
     classifier: { port: 50010, on: '/classifier?enable=on', check: 'port',   limit: 60,
                   name: { ko: '분류기', en: 'Image Classifier' },   icon: 'fa-images' },
-    llm:        { port: 50020, on: '/llm?enable=on',        check: 'health', limit: 240,
+    // 대화: 대화 웹(chat/run_chat.py, 50030)이 열리면 바로 간다. 모델 준비(1~2분)는 대화 화면이 보여 준다(261026)
+    llm:        { port: 50030, on: '/llm?enable=on',        check: 'port',   limit: 60,
                   name: { ko: '대화', en: 'Chat' },                icon: 'fa-comment' }
   };
   var key = Q.get('svc'), S = SVC[key];

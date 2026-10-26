@@ -1,7 +1,7 @@
 #!/bin/bash
 # design/pibo-ui.css, pibo-ui.js 를 각 앱의 static/ 으로, fonts/ 는 IDE 의 static/fonts/ 로만 복사한다.
 #
-#   ./design/sync.sh                      # 이 리포 (ide, tools, classifier)
+#   ./design/sync.sh                      # 이 리포 (ide, tools, classifier, chat)
 #   ./design/sync.sh ~/openpibo-os.pibrain    # 다른 체크아웃에도
 #   ./design/sync.sh --check              # 복사만 확인. 어긋나면 종료코드 1
 #
@@ -44,7 +44,7 @@ one() {   # one <원본> <사본>
 }
 
 for root in "${ROOTS[@]}"; do
-  for app in ide tools classifier; do
+  for app in ide tools classifier chat; do
     d="$root/$app/static"
     [ -d "$d" ] || continue
     for SRC in "${SRCS[@]}"; do one "$SRC" "$d/$(basename "$SRC")"; done

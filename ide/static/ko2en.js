@@ -412,7 +412,34 @@ const translations = {
   wifi_connecting:  { ko: "연결하는 중…", en: "Connecting…" },
   wifi_sent:        { ko: "연결을 요청했어요. 잠시 뒤 새 주소로 다시 들어오세요", en: "Connection request sent. Reconnect at the new address shortly." },
   wifi_failed:      { ko: "연결 요청에 실패했어요", en: "Connection request failed." },
-  wifi_cancelled:   { ko: "연결을 취소했어요", en: "Connection cancelled." }
+  wifi_cancelled:   { ko: "연결을 취소했어요", en: "Connection cancelled." },
+  // 261026 — 대화 웹(chat/, 50030). 대화 화면이 IDE 의 이 파일을 같이 읽는다(영문판 델타를 늘리지 않으려고)
+  chat_title:       { ko: "대화", en: "Chat" },
+  chat_move:        { ko: "움직이기", en: "Move" },
+  chat_move_on:     { ko: "움직이기 켬 — 누르면 대화만 해요", en: "Moving on — tap to only talk" },
+  chat_move_off:    { ko: "대화만 하는 중 — 누르면 다시 움직여요", en: "Talking only — tap to move again" },
+  chat_new:         { ko: "새 대화", en: "New chat" },
+  chat_fullscreen:  { ko: "전체화면", en: "Full screen" },
+  chat_send:        { ko: "보내기", en: "Send" },
+  chat_placeholder: { ko: "하고 싶은 말을 적어 보세요 (Enter 보내기, Shift+Enter 줄바꿈)", en: "Type a message (Enter to send, Shift+Enter for a new line)" },
+  chat_empty:       { ko: "말을 걸어 보세요", en: "Say something" },
+  chat_try_hello:   { ko: "안녕! 너는 누구야?", en: "Hi! Who are you?" },
+  chat_try_dance:   { ko: "춤춰 줘", en: "Dance for me" },
+  chat_try_eye:     { ko: "눈을 파랗게 해 줘", en: "Make your eyes blue" },
+  chat_try_led:     { ko: "불빛을 파랗게 해 줘", en: "Turn the light blue" },
+  chat_try_see:     { ko: "앞에 뭐가 있어?", en: "What is in front of you?" },
+  chat_try_school:  { ko: "학교에서 친구랑 싸웠어", en: "I had a fight with my friend at school" },
+  chat_sec:         { ko: "초", en: "s" },
+  chat_st_down:     { ko: "대화 모델을 켜는 중…", en: "Starting the chat model…" },
+  chat_st_loading:  { ko: "대화 모델을 불러오는 중…", en: "Loading the chat model…" },
+  chat_st_warming:  { ko: "처음 한 번 준비하는 중이에요 (1분쯤 걸려요)", en: "Getting ready for the first time (about a minute)" },
+  chat_st_error:    { ko: "대화 모델을 준비하지 못했어요. 탭을 닫고 다시 열어 주세요", en: "Could not prepare the chat model. Close this tab and open it again." },
+  chat_st_notools:  { ko: "지금 대화 모델 서버는 도구를 쓸 수 없어 말로만 대화해요", en: "The chat model server cannot use tools, so it can only talk." },
+  chat_err_conn:    { ko: "대화 서버에 연결하지 못했어요", en: "Could not reach the chat server." },
+  chat_err_server:  { ko: "잠깐 문제가 생겼어요. 한 번만 다시 말해 줄래요?", en: "Something went wrong. Could you say that again?" },
+  chat_err_busy:    { ko: "앞의 대답을 만드는 중이에요. 잠시 뒤에 보내 주세요", en: "Still answering the last message. Please wait a moment." },
+  chat_err_not_ready: { ko: "아직 준비 중이에요. 잠시 뒤에 보내 주세요", en: "Still getting ready. Please wait a moment." },
+  chat_err_empty:   { ko: "보낼 말이 없어요", en: "Nothing to send." }
 };
 
 // 키 → 현재 언어 문자열. 모르는 키(일반 문자열)는 그대로 반환.

@@ -199,6 +199,19 @@ span 이 날아가면 시리얼이 영영 안 돌아온다.
 
 ---
 
+## 대화 웹 (261026) — IDE [대화]
+
+**파이보와 같은 코드다. 원본은 파이보 리포**(`openpibo-os.pibo/CLAUDE.md` '대화 웹' 절에 구조·이유·시험이 있다). `chat/` 를 통째로 복사해 왔다.
+IDE [대화] 가 llama-server 기본 웹 화면 대신 대화 웹(`chat/run_chat.py`, 50030)을 연다 — 기본 화면은 시스템 글·도구 목록을 보내지 않아 도구가 안 됐다.
+
+- IDE 가 `/llm` 때 직접 띄운다(`CHAT_DEVICE = 'pibrain'` → `--device pibrain`). 끄기: `/llm?enable=off` · [도구][분류기][H/W 검수] 켜기 · 코드 실행 · [정지]
+- **PiBrain 차이**(`run_chat.py` 의 `run_tool`): `eye_on/off` → `DeviceByPiBrain.led_on/led_off`(WS2812), `set_motion`·`get_battery` 는
+  실행하지 않고 정해진 말로 대답(모터·배터리 없음), "멈춰"는 할 일이 없어 '완료'. 사물 찾기(`find_objects`)·날씨는 그대로
+- `chat/pibo_chat.py`·`chat/tools.py` 는 학습 PC 파일 그대로 — 고치지 말 것. 모델은 파이보·PiBrain 공통으로 가고, 기기와 별개인 모델 이름을 붙여
+  자기소개에서 몸 정보를 뺄 예정(PC 재학습, 이름 미정)
+- 문구는 IDE `ko2en.js` 끝의 `chat_*` 키를 대화 화면이 같이 읽는다(영문판 델타 안 늘림)
+- 기기의 `llama-server.service` 가 옛 llama.cpp 면 도구 없이 대화만 한다(상태 줄 안내). **실기기로는 아직 안 봤다**
+
 ## 라이선스 (260930)
 
 **리포 전체가 AGPL-3.0 이다**(`LICENSE`, 사용자 결정). Pibo 와 같은 이유(사물 인식 가중치 `yolo11s.onnx` 가
