@@ -433,6 +433,8 @@ const translations = {
   chat_st_down:     { ko: "대화 모델을 켜는 중…", en: "Starting the chat model…" },
   chat_st_loading:  { ko: "대화 모델을 불러오는 중…", en: "Loading the chat model…" },
   chat_st_warming:  { ko: "처음 한 번 준비하는 중이에요 (1분쯤 걸려요)", en: "Getting ready for the first time (about a minute)" },
+  chat_st_failed:   { ko: "대화 모델 서버를 켜지 못했어요. 다른 대화 모델 서버가 켜져 있으면 끄고 다시 켜 보세요", en: "Could not start the chat model server. If another one is running, stop it and try again." },
+  chat_retry:       { ko: "다시 켜기", en: "Try again" },
   chat_st_error:    { ko: "대화 모델을 준비하지 못했어요. 탭을 닫고 다시 열어 주세요", en: "Could not prepare the chat model. Close this tab and open it again." },
   chat_st_notools:  { ko: "지금 대화 모델 서버는 도구를 쓸 수 없어 말로만 대화해요", en: "The chat model server cannot use tools, so it can only talk." },
   chat_err_conn:    { ko: "대화 서버에 연결하지 못했어요", en: "Could not reach the chat server." },
