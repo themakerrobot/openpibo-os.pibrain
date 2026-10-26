@@ -12,7 +12,7 @@ from pyzbar import pyzbar
 import mediapipe as mp
 from mediapipe.tasks import python as mp_python
 from mediapipe.tasks.python import vision as mp_vision
-from .modules.yolo_onnx import YoloOnnx
+from .modules.object_model import open_detector, release
 from .modules.pose.movenet import Movenet
 from .modules.pose.utils import visualize_pose
 from .modules.card.decode_card import get_card
@@ -28,9 +28,11 @@ os.environ['LIBCAMERA_LOG_LEVELS'] = '3'
 # ✅ 추가: TensorFlow 내부 디버그 메시지 완전 차단
 logging.getLogger("tensorflow").setLevel(logging.ERROR)
 
-# 기본 사물 인식 모델 (COCO 80종). 입력이 동적이면 320 으로 돌린다
+# 기본 사물 인식 모델 (COCO 80종). YOLO .onnx 파일 또는 easydetect 모델 폴더(model.onnx·labels.txt·model.json·detect.py).
+# COCO D-FINE 폴더가 올라오면 이 한 줄만 '/home/pi/.model/object/dfine-s-320' 으로 바꾼다(261026, easydetect-lab 지시서).
+# 폴더를 못 쓰면(없음·onnxruntime 1.13 미만) 로그를 남기고 yolo11s 로 돌아간다(modules/object_model.py 의 FALLBACK)
 OBJECT_MODEL = '/home/pi/.model/object/yolo11s.onnx'
-OBJECT_IMGSZ = 320
+OBJECT_IMGSZ = 320   # YOLO 모델 입력이 동적일 때만 쓴다. easydetect 폴더는 모델의 입력 크기를 쓴다
 
 def putTextPIL(img, text, points, size=30, colors=(255,255,255)):
   """
@@ -82,7 +84,7 @@ Functions:
 
   인식과 관련된 다양한 기능을 사용할 수 있는 클래스입니다.
 
-  * 80개 class 안에서의 객체 인식 (YOLO, onnxruntime)
+  * 사물 인식 (기본: COCO 80개 class, YOLO11s · easydetect 모델 폴더도 사용 가능, onnxruntime)
   * QR/바코드 인식 (pyzbar)
   * Pose 인식
   * 이미지 분류
@@ -95,7 +97,7 @@ Functions:
     # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.
   """
 
-  def __init__(self):
+  def __init__(self, object_model=None):
     #self.object_class = ['background', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',
     #                     'bus', 'train', 'truck', 'boat', 'traffic light', 'fire hydrant',
     #                     'None', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog',
@@ -116,7 +118,7 @@ Functions:
     #                )
     # 사물 인식 모델은 처음 detect_object 를 부를 때 올린다 (QR·마커만 쓰면 메모리를 안 쓴다)
     self.object_detector = None
-    self.object_model_path = OBJECT_MODEL
+    self.object_model_path = object_model or OBJECT_MODEL
     self.pose_detector = Movenet(openpibo_detect_models.filepath("movenet_lightning.tflite"))
 
     # marker
@@ -204,16 +206,29 @@ Functions:
       # 첫 번째 랜드마크 근처에 손 라벨(Right or Left / Gesture) 표시
       putTextPIL(img, f'{name}/{score}', (hpoints[0][0], hpoints[0][1] - 50), 30, (255, 0, 0))
 
-  def load_object_model(self, modelpath='/home/pi/.model/object/yolo11s.onnx'):
+  def load_object_model(self, modelpath=None):
     """
-     인식 모델을 불러옵니다.
+    사물 인식 모델을 불러옵니다.
 
-    :param str modelpath: 사물인식 모델 경로
+    YOLO ONNX 파일(``.onnx``) 또는 easydetect 모델 폴더(easydetect lab 의 'Pibo로 보내기' zip 을 푼 폴더 —
+    ``model.onnx`` ``labels.txt`` ``model.json`` ``detect.py`` 가 들어 있음)를 고를 수 있습니다.
+    폴더 모델의 클래스 이름은 ``labels.txt`` 를 쓰며 한글일 수 있습니다.
+    모델을 못 쓰면(파일·폴더가 없음, onnxruntime 1.13 미만 등) 이유를 출력하고 기본 모델(yolo11s)로 돌아갑니다.
+
+    example::
+
+      detect.load_object_model('/home/pi/mymodel/fruit')     # easydetect 모델 폴더
+      detect.load_object_model()                             # 기본 모델로 돌아가기
+
+    :param str modelpath: 사물 인식 모델 경로 (``.onnx`` 파일 또는 모델 폴더). 없으면 기본 모델
     """
 
+    # 이전 모델의 ONNX Runtime 세션을 먼저 놓는다(파이보 램 2GB — 바꿀 때마다 쌓이지 않게)
+    release(self.object_detector)
     self.object_detector = None
-    self.object_detector = YoloOnnx(modelpath, imgsz=OBJECT_IMGSZ)
-    self.object_model_path = modelpath
+    path = modelpath or OBJECT_MODEL
+    self.object_detector = open_detector(path, imgsz=OBJECT_IMGSZ)
+    self.object_model_path = path
 
   def detect_object(self, img):
     """
@@ -226,14 +241,16 @@ Functions:
       raise ValueError('"img" must be a valid OpenCV image (np.ndarray).')
 
     if self.object_detector is None:
-      self.object_detector = YoloOnnx(self.object_model_path, imgsz=OBJECT_IMGSZ)
+      self.object_detector = open_detector(self.object_model_path, imgsz=OBJECT_IMGSZ)
 
-    # ultralytics predict(conf=0.5, iou=0.4, imgsz=320) 와 같은 결과
+    # YOLO: ultralytics predict(conf=0.5, iou=0.4, imgsz=320) 와 같은 결과
     # (coco128 128장 일치 확인 — yolo11s·yolo26s, 고정 320·동적·end2end 모두)
+    # easydetect 폴더: Detector 가 conf(model.json)·iou 0.7 을 고정하므로 여기서 넘기는 값은 쓰이지 않는다
     boxes, scores, classes = self.object_detector(img, conf=0.5, iou=0.4)
     data = []
     for (x1, y1, x2, y2), score, cls_id in zip(boxes, scores, classes):
-      data.append({ "name": self.object_detector.name_of(cls_id), "score": int(score * 100),
+      # 점수(%)는 반올림한다 — easydetect-lab·detect.py 가 보여 주는 소수 둘째 자리(:.2f)와 같게(261026, 전엔 버림)
+      data.append({ "name": self.object_detector.name_of(cls_id), "score": int(round(round(float(score), 2) * 100)),
                     "box": (int(x1), int(y1), int(x2), int(y2)) })
     return data
 

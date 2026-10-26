@@ -55,8 +55,8 @@ msgstr ""
 msgid "인식과 관련된 다양한 기능을 사용할 수 있는 클래스입니다."
 msgstr "A class that provides various detection functions."
 
-msgid "80개 class 안에서의 객체 인식 (YOLO, onnxruntime)"
-msgstr "Object detection among 80 classes (YOLO, onnxruntime)"
+msgid "사물 인식 (기본: COCO 80개 class, YOLO11s · easydetect 모델 폴더도 사용 가능, onnxruntime)"
+msgstr "Object detection (default: 80 COCO classes, YOLO11s · easydetect model folders also work, onnxruntime)"
 
 msgid "QR/바코드 인식 (pyzbar)"
 msgstr "QR/barcode detection (pyzbar)"
@@ -91,11 +91,14 @@ msgstr "Displays the hand gesture recognition result."
 msgid "손동작 인식 결과"
 msgstr "Hand gesture recognition result"
 
-msgid "인식 모델을 불러옵니다."
-msgstr "Loads a detection model."
+msgid "사물 인식 모델을 불러옵니다."
+msgstr "Loads an object detection model."
 
-msgid "사물인식 모델 경로"
-msgstr "Path of the object detection model"
+msgid "YOLO ONNX 파일(``.onnx``) 또는 easydetect 모델 폴더(easydetect lab 의 'Pibo로 보내기' zip 을 푼 폴더 — ``model.onnx`` ``labels.txt`` ``model.json`` ``detect.py`` 가 들어 있음)를 고를 수 있습니다. 폴더 모델의 클래스 이름은 ``labels.txt`` 를 쓰며 한글일 수 있습니다. 모델을 못 쓰면(파일·폴더가 없음, onnxruntime 1.13 미만 등) 이유를 출력하고 기본 모델(yolo11s)로 돌아갑니다."
+msgstr "Takes a YOLO ONNX file (``.onnx``) or an easydetect model folder (the unzipped 'Send to Pibo' zip from the easydetect lab — it holds ``model.onnx`` ``labels.txt`` ``model.json`` ``detect.py``). A folder model takes its class names from ``labels.txt``, which may be Korean. If the model cannot be used (missing file or folder, onnxruntime older than 1.13, etc.), the reason is printed and the default model (yolo11s) is used instead."
+
+msgid "사물 인식 모델 경로 (``.onnx`` 파일 또는 모델 폴더). 없으면 기본 모델"
+msgstr "Path of the object detection model (an ``.onnx`` file or a model folder). Left out, the default model"
 
 msgid "사물 인식 결과를 표시합니다."
 msgstr "Displays the object detection result."

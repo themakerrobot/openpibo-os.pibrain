@@ -500,6 +500,8 @@ Pibo 리포의 변경을 가져올 때 **항목마다 적용 여부를 먼저 �
 - 모델은 처음 `detect_object` 를 부를 때 올린다. 경로는 그대로 `/home/pi/.model/object/yolo11s.onnx`
 - **모델은 yolo11s 로 통일(260930)** — Pibo 와 같은 `yolo11s.onnx`(320 고정 export). 예전 문서의 'yolo26s' 는 틀린 표기였다
   (코드는 늘 `yolo11s.onnx` 를 읽었다). `/home/pi/.model` 은 Pibo 것을 그대로 넣는다 — IMAGE.md '모델 폴더'
+- **easydetect 모델 폴더(261026)** — Pibo 와 같은 코드(`modules/object_model.py` 같은 파일). 자세한 건 Pibo CLAUDE.md '사물 인식 → easydetect 모델 폴더'.
+  기본값은 yolo11s, D-FINE 으로 바꿀 땐 `vision_detect.py` 의 `OBJECT_MODEL` 한 줄. 도구 [카메라] 는 `detect_object_vis`(PIL)라 한글 이름이 그대로 그려진다
 - 라이선스: 이 가중치들은 Ultralytics 배포물(AGPL-3.0). Pibo CLAUDE.md '라이선스' 참고
 
 **파이썬 패키지 (260930)** — `requirements.txt`(새로 만듦, Pibo 와 같은 목록)가 리포 코드가 import 하는 것이다. 예전 OS 에서 올린 기기의
