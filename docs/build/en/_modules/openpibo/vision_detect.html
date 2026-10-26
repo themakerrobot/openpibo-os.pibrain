@@ -301,7 +301,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">mediapipe</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mp</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">mediapipe.tasks</span><span class="w"> </span><span class="kn">import</span> <span class="n">python</span> <span class="k">as</span> <span class="n">mp_python</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">mediapipe.tasks.python</span><span class="w"> </span><span class="kn">import</span> <span class="n">vision</span> <span class="k">as</span> <span class="n">mp_vision</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.modules.yolo_onnx</span><span class="w"> </span><span class="kn">import</span> <span class="n">YoloOnnx</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.modules.object_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">open_detector</span><span class="p">,</span> <span class="n">release</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.modules.pose.movenet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Movenet</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.modules.pose.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">visualize_pose</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.modules.card.decode_card</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_card</span>
@@ -317,9 +317,11 @@
 <span class="c1"># ✅ 추가: TensorFlow 내부 디버그 메시지 완전 차단</span>
 <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"tensorflow"</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
 
-<span class="c1"># 기본 사물 인식 모델 (COCO 80종). 입력이 동적이면 320 으로 돌린다</span>
+<span class="c1"># 기본 사물 인식 모델 (COCO 80종). YOLO .onnx 파일 또는 easydetect 모델 폴더(model.onnx·labels.txt·model.json·detect.py).</span>
+<span class="c1"># COCO D-FINE 폴더가 올라오면 이 한 줄만 '/home/pi/.model/object/dfine-s-320' 으로 바꾼다(261026, easydetect-lab 지시서).</span>
+<span class="c1"># 폴더를 못 쓰면(없음·onnxruntime 1.13 미만) 로그를 남기고 yolo11s 로 돌아간다(modules/object_model.py 의 FALLBACK)</span>
 <span class="n">OBJECT_MODEL</span> <span class="o">=</span> <span class="s1">'/home/pi/.model/object/yolo11s.onnx'</span>
-<span class="n">OBJECT_IMGSZ</span> <span class="o">=</span> <span class="mi">320</span>
+<span class="n">OBJECT_IMGSZ</span> <span class="o">=</span> <span class="mi">320</span>   <span class="c1"># YOLO 모델 입력이 동적일 때만 쓴다. easydetect 폴더는 모델의 입력 크기를 쓴다</span>
 
 <div class="viewcode-block" id="putTextPIL">
 <a class="viewcode-back" href="../../libraries/vision_detect.html#openpibo.vision_detect.putTextPIL">[docs]</a>
@@ -376,7 +378,7 @@
 
 <span class="sd">  인식과 관련된 다양한 기능을 사용할 수 있는 클래스입니다.</span>
 
-<span class="sd">  * 80개 class 안에서의 객체 인식 (YOLO, onnxruntime)</span>
+<span class="sd">  * 사물 인식 (기본: COCO 80개 class, YOLO11s · easydetect 모델 폴더도 사용 가능, onnxruntime)</span>
 <span class="sd">  * QR/바코드 인식 (pyzbar)</span>
 <span class="sd">  * Pose 인식</span>
 <span class="sd">  * 이미지 분류</span>
@@ -389,7 +391,7 @@
 <span class="sd">    # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
 <span class="sd">  """</span>
 
-  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_model</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="c1">#self.object_class = ['background', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',</span>
     <span class="c1">#                     'bus', 'train', 'truck', 'boat', 'traffic light', 'fire hydrant',</span>
     <span class="c1">#                     'None', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog',</span>
@@ -410,7 +412,7 @@
     <span class="c1">#                )</span>
     <span class="c1"># 사물 인식 모델은 처음 detect_object 를 부를 때 올린다 (QR·마커만 쓰면 메모리를 안 쓴다)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">object_detector</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">object_model_path</span> <span class="o">=</span> <span class="n">OBJECT_MODEL</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">object_model_path</span> <span class="o">=</span> <span class="n">object_model</span> <span class="ow">or</span> <span class="n">OBJECT_MODEL</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">pose_detector</span> <span class="o">=</span> <span class="n">Movenet</span><span class="p">(</span><span class="n">openpibo_detect_models</span><span class="o">.</span><span class="n">filepath</span><span class="p">(</span><span class="s2">"movenet_lightning.tflite"</span><span class="p">))</span>
 
     <span class="c1"># marker</span>
@@ -509,16 +511,29 @@
 
 <div class="viewcode-block" id="Detect.load_object_model">
 <a class="viewcode-back" href="../../libraries/vision_detect.html#openpibo.vision_detect.Detect.load_object_model">[docs]</a>
-  <span class="k">def</span><span class="w"> </span><span class="nf">load_object_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelpath</span><span class="o">=</span><span class="s1">'/home/pi/.model/object/yolo11s.onnx'</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">load_object_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelpath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">     인식 모델을 불러옵니다.</span>
+<span class="sd">    사물 인식 모델을 불러옵니다.</span>
 
-<span class="sd">    :param str modelpath: 사물인식 모델 경로</span>
+<span class="sd">    YOLO ONNX 파일(``.onnx``) 또는 easydetect 모델 폴더(easydetect lab 의 'Pibo로 보내기' zip 을 푼 폴더 —</span>
+<span class="sd">    ``model.onnx`` ``labels.txt`` ``model.json`` ``detect.py`` 가 들어 있음)를 고를 수 있습니다.</span>
+<span class="sd">    폴더 모델의 클래스 이름은 ``labels.txt`` 를 쓰며 한글일 수 있습니다.</span>
+<span class="sd">    모델을 못 쓰면(파일·폴더가 없음, onnxruntime 1.13 미만 등) 이유를 출력하고 기본 모델(yolo11s)로 돌아갑니다.</span>
+
+<span class="sd">    example::</span>
+
+<span class="sd">      detect.load_object_model('/home/pi/mymodel/fruit')     # easydetect 모델 폴더</span>
+<span class="sd">      detect.load_object_model()                             # 기본 모델로 돌아가기</span>
+
+<span class="sd">    :param str modelpath: 사물 인식 모델 경로 (``.onnx`` 파일 또는 모델 폴더). 없으면 기본 모델</span>
 <span class="sd">    """</span>
 
+    <span class="c1"># 이전 모델의 ONNX Runtime 세션을 먼저 놓는다(파이보 램 2GB — 바꿀 때마다 쌓이지 않게)</span>
+    <span class="n">release</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object_detector</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">object_detector</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">object_detector</span> <span class="o">=</span> <span class="n">YoloOnnx</span><span class="p">(</span><span class="n">modelpath</span><span class="p">,</span> <span class="n">imgsz</span><span class="o">=</span><span class="n">OBJECT_IMGSZ</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">object_model_path</span> <span class="o">=</span> <span class="n">modelpath</span></div>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">modelpath</span> <span class="ow">or</span> <span class="n">OBJECT_MODEL</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">object_detector</span> <span class="o">=</span> <span class="n">open_detector</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">imgsz</span><span class="o">=</span><span class="n">OBJECT_IMGSZ</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">object_model_path</span> <span class="o">=</span> <span class="n">path</span></div>
 
 
 <div class="viewcode-block" id="Detect.detect_object">
@@ -534,14 +549,16 @@
       <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'"img" must be a valid OpenCV image (np.ndarray).'</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">object_detector</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">object_detector</span> <span class="o">=</span> <span class="n">YoloOnnx</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object_model_path</span><span class="p">,</span> <span class="n">imgsz</span><span class="o">=</span><span class="n">OBJECT_IMGSZ</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">object_detector</span> <span class="o">=</span> <span class="n">open_detector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object_model_path</span><span class="p">,</span> <span class="n">imgsz</span><span class="o">=</span><span class="n">OBJECT_IMGSZ</span><span class="p">)</span>
 
-    <span class="c1"># ultralytics predict(conf=0.5, iou=0.4, imgsz=320) 와 같은 결과</span>
+    <span class="c1"># YOLO: ultralytics predict(conf=0.5, iou=0.4, imgsz=320) 와 같은 결과</span>
     <span class="c1"># (coco128 128장 일치 확인 — yolo11s·yolo26s, 고정 320·동적·end2end 모두)</span>
+    <span class="c1"># easydetect 폴더: Detector 가 conf(model.json)·iou 0.7 을 고정하므로 여기서 넘기는 값은 쓰이지 않는다</span>
     <span class="n">boxes</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">classes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">object_detector</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">conf</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">iou</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">),</span> <span class="n">score</span><span class="p">,</span> <span class="n">cls_id</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">boxes</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">classes</span><span class="p">):</span>
-      <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span> <span class="s2">"name"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">object_detector</span><span class="o">.</span><span class="n">name_of</span><span class="p">(</span><span class="n">cls_id</span><span class="p">),</span> <span class="s2">"score"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">score</span> <span class="o">*</span> <span class="mi">100</span><span class="p">),</span>
+      <span class="c1"># 점수(%)는 반올림한다 — easydetect-lab·detect.py 가 보여 주는 소수 둘째 자리(:.2f)와 같게(261026, 전엔 버림)</span>
+      <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span> <span class="s2">"name"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">object_detector</span><span class="o">.</span><span class="n">name_of</span><span class="p">(</span><span class="n">cls_id</span><span class="p">),</span> <span class="s2">"score"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">score</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)),</span>
                     <span class="s2">"box"</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x1</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y1</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">x2</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y2</span><span class="p">))</span> <span class="p">})</span>
     <span class="k">return</span> <span class="n">data</span></div>
 
