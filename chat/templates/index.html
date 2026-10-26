@@ -8,7 +8,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
   <link rel="stylesheet" href="../static/pibo-ui.css?ver=261026v1" />
-  <link rel="stylesheet" href="../static/chat.css?ver=261026v3" />
+  <link rel="stylesheet" href="../static/chat.css?ver=261026v4" />
   <link rel="shortcut icon" href="../static/icon.png?ver=240319v1" type="image/x-icon" />
   <!-- 문구는 IDE 의 ko2en.js 를 같이 쓴다(영문판 델타 파일을 늘리지 않으려고). IDE(80)는 늘 떠 있다 -->
   <script>(function () { var p = new URLSearchParams(location.search).get('ide') || 80;   /* ?ide= 는 시험용 */
@@ -48,6 +48,7 @@
     <div class="chat-voice">
       <label class="chat-speak"><input type="checkbox" id="speak"><i class="fa-solid fa-volume-high"></i><span data-key="chat_speak"></span></label>
       <select class="pb-field pb-field--sm" id="voice" aria-label="voice"></select>
+      <label class="chat-vol" id="vol_box"><i class="fa-solid fa-volume-low"></i><input type="range" id="vol" min="0" max="100" step="10" aria-label="volume"><b id="vol_val"></b></label>
       <span class="chat-voice__st" id="voice_st"></span>
       <button type="button" class="pb-btn pb-btn--sm pb-btn--ghost" id="hush_bt" hidden><i class="fa-solid fa-volume-xmark"></i><span data-key="chat_hush"></span></button>
     </div>
@@ -58,6 +59,6 @@
   </main>
 
   <script src="../static/pibo-ui.js?ver=261026v1"></script>
-  <script src="../static/chat.js?ver=261026v3"></script>
+  <script src="../static/chat.js?ver=261026v4"></script>
 </body>
 </html>

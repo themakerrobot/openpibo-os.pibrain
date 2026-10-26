@@ -11,7 +11,7 @@ llama-server(50020) 의 대화 모델과 글자로 이야기하는 웹 화면이
 요청 모양이 늘 같아(시스템 글 + 대화가 뒤에만 붙음) 서버가 앞부분을 다시 쓰고 새로 한 말만 읽는다.
 
 대답을 로봇이 소리로도 말할 수 있다(화면의 [소리로 말하기] 체크, 261026). 기기 안 TTS(SpeechOnDevice, Supertonic 3 int8,
-목소리 m1~m5·f1~f5, lang='na' 자동)로 만들고 Audio.play 로 튼다. 목소리 모델은 체크를 켤 때 한 번 올린다(약 330MB, 몇 초).
+목소리 m1~m5·f1~f5, lang='na' 자동)로 만들고 Audio.play(볼륨 0~100)로 튼다. 목소리 모델은 체크를 켤 때 한 번 올린다(약 330MB, 몇 초).
 
   python3 run_chat.py [--port 50030] [--llm http://127.0.0.1:50020]
 """
@@ -93,7 +93,7 @@ def voice_stop():
       pass
 
 
-def say(text, who):
+def say(text, who, vol=80):
   """대답 하나를 만들어 튼다(백그라운드). 만드는 동안 새 대답이 오면 버린다"""
   seq = _say_seq[0]
   text = re.sub(r'\s+', ' ', text).strip()
@@ -107,7 +107,7 @@ def say(text, who):
       _tts['speech'].tts(text=text, filename=TTS_WAV, voice=who, lang='na')
       if seq != _say_seq[0]:
         return
-      _tts['audio'].play(filename=TTS_WAV)
+      _tts['audio'].play(filename=TTS_WAV, volume=vol)
       print(f'  (목소리 {who} 만들기 {time.time() - t:.1f}초)', flush=True)
     except Exception as exc:  # noqa: BLE001
       voice['error'] = str(exc)
@@ -171,7 +171,7 @@ def trim_history():
     del history[:users[turns - MAX_TURNS // 2]]
 
 
-def chat_stream(text, speak_as, ctl):
+def chat_stream(text, speak_as, ctl, vol=80):
   """한 차례(스레드에서 돈다). 한 줄에 JSON 하나: {"d": 글 조각} … 마지막에 {"done": true, "sec", "read", "said"} 또는 {"error": 키}.
   ctl['cancel'] 이 서면 멈춘다(브라우저가 끊음 — [멈추기]·탭 닫기). 받던 연결은 chat_async 가 닫는다"""
   t0 = time.time()
@@ -218,16 +218,16 @@ def chat_stream(text, speak_as, ctl):
   print(f"  (읽기 {read_n}토큰 {timings.get('prompt_ms', 0) / 1000:.1f}초, "
         f"말하기 {said_n}토큰 {timings.get('predicted_ms', 0) / 1000:.1f}초, 모두 {time.time() - t0:.1f}초)", flush=True)
   if speak_as and reply:
-    threading.Thread(target=say, args=(reply, speak_as), daemon=True).start()
+    threading.Thread(target=say, args=(reply, speak_as, vol), daemon=True).start()
   yield json.dumps({'done': True, 'sec': round(time.time() - t0, 1), 'read': read_n, 'said': said_n,
                     'speak': bool(speak_as and reply)}) + '\n'
 
 
-async def chat_async(text, speak_as):
+async def chat_async(text, speak_as, vol=80):
   """chat_stream 을 스레드에서 한 줄씩 받아 넘긴다. 브라우저가 끊으면 starlette 가 여기를 취소한다 →
   llama-server 연결을 닫아 생성을 멈추게 하고 잠금을 푼다. 전엔 [멈추기] 뒤에도 모델이 끝까지 만들었다"""
   ctl = {'cancel': False, 'resp': None}
-  gen = chat_stream(text, speak_as, ctl)
+  gen = chat_stream(text, speak_as, ctl, vol)
   try:
     while True:
       item = await asyncio.to_thread(next, gen, None)
@@ -309,7 +309,11 @@ async def chat(body: dict = Body(...)):
   speak_as = None
   if body.get('speak'):
     speak_as = body.get('voice') if body.get('voice') in VOICES else 'm1'
-  return StreamingResponse(chat_async(text, speak_as), media_type='application/x-ndjson',
+  try:
+    vol = min(100, max(0, int(body.get('volume', 80))))   # Audio.play 가 실제 40~100% 로 편다
+  except (TypeError, ValueError):
+    vol = 80
+  return StreamingResponse(chat_async(text, speak_as, vol), media_type='application/x-ndjson',
                            headers={'Cache-Control': 'no-cache', 'X-Accel-Buffering': 'no'})
 
 

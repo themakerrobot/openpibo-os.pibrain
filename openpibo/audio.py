@@ -46,7 +46,7 @@ Functions:
     if type(volume2) is not float or (volume2 < 0.0 or volume2 > 3.0):
       raise Exception(f'"{volume2}" is float(0.0~1.5)')
 
-    volume = int(volume/2) + 40 # 실제 50 - 100%로 설정, 0-50%는 소리가 너무 작음
+    volume = 40 + volume * 60 // 100   # 0~100 을 실제 40~100% 로 편다(40% 아래는 소리가 너무 작음). 전엔 /2+40 이라 최대 90% 였다(261026)
     #cmd = f'amixer -q -c Headphones sset Headphone {volume}%;'
     #cmd = f'amixer -q -c Headphones sset PCM {volume}%;'
     cmd = f'amixer -q -c MAX98357A sset PCM {volume}%;'

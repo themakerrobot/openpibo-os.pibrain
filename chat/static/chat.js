@@ -5,7 +5,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var tr = function (k, a, b) { return (typeof t === 'function') ? t(k, a, b) : k; };
   var log = $('log'), text = $('text'), sendBt = $('send_bt');
-  var speakCk = $('speak'), voiceSel = $('voice');
+  var speakCk = $('speak'), voiceSel = $('voice'), volIn = $('vol');
   var st = { warm: 'idle', llm: 'down', voice: 'off' };
   var waiting = null, failCount = 0;                       // waiting = 지금 받는 중인 AbortController
   var VOICES = ['m1', 'm2', 'm3', 'm4', 'm5', 'f1', 'f2', 'f3', 'f4', 'f5'];
@@ -108,7 +108,7 @@
         scrollDown();
       } else if (d.done || d.error) finish(d);
     }
-    post('/api/chat', { text: msg, speak: speakCk.checked, voice: voiceSel.value })
+    post('/api/chat', { text: msg, speak: speakCk.checked, voice: voiceSel.value, volume: Number(volIn.value) })
       .then(function (r) {
         if (!r.ok && r.headers.get('content-type') && r.headers.get('content-type').indexOf('json') >= 0) {
           return r.json().then(finish);
@@ -168,6 +168,8 @@
   }
   function renderVoiceState() {
     voiceSel.disabled = !speakCk.checked;
+    volIn.disabled = !speakCk.checked;
+    $('vol_box').classList.toggle('is-off', !speakCk.checked);
     var s = speakCk.checked ? st.voice : 'off';
     $('voice_st').textContent = s === 'loading' ? tr('chat_voice_loading') : s === 'error' ? tr('chat_voice_error') : '';
     $('voice_st').dataset.state = s;
@@ -185,6 +187,10 @@
     renderVoiceState();
   });
   voiceSel.addEventListener('change', function () { store('chat_voice', voiceSel.value); });
+  // 볼륨 0~100 (Audio.play 가 실제 PCM 40~100% 로 편다). 다음 대답부터 적용
+  volIn.value = load('chat_volume') || '80';
+  $('vol_val').textContent = volIn.value;
+  volIn.addEventListener('input', function () { $('vol_val').textContent = volIn.value; store('chat_volume', volIn.value); });
   $('hush_bt').addEventListener('click', function () {
     post('/api/voice/stop').catch(function () {}); showHush(false);
   });
