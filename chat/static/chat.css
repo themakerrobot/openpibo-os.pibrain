@@ -64,6 +64,10 @@ main.chat {
 .chat-speak { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-weight: 600; user-select: none; }
 .chat-speak input { width: 18px; height: 18px; margin: 0; accent-color: var(--v2-dark); cursor: pointer; }
 .chat-voice select:disabled { opacity: .5; }
+.chat-vol { display: inline-flex; align-items: center; gap: 6px; }
+.chat-vol input { width: 110px; accent-color: var(--v2-dark); }
+.chat-vol b { min-width: 2.2em; font-variant-numeric: tabular-nums; font-weight: 600; }
+.chat-vol.is-off { opacity: .5; }
 .chat-voice__st { font-size: 13px; color: var(--v2-ink-3); }
 .chat-voice__st[data-state="error"] { color: var(--v2-red-ink); }
 
