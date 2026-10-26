@@ -155,7 +155,8 @@
   var warmT0 = 0;
   function renderStatus() {
     var el = $('status'), key = '', s = '';
-    if (st.llm !== 'ready') key = st.llm === 'loading' ? 'chat_st_loading' : 'chat_st_down';
+    if (st.llm === 'failed') key = 'chat_st_failed';
+    else if (st.llm !== 'ready') key = st.llm === 'loading' ? 'chat_st_loading' : 'chat_st_down';
     else if (st.warm === 'warming') key = 'chat_st_warming';
     else if (st.warm === 'error') key = 'chat_st_error';
     else if (st.warm !== 'ready') key = 'chat_st_loading';
@@ -163,7 +164,9 @@
       if (!warmT0) warmT0 = Date.now();
       s = ' ' + Math.floor((Date.now() - warmT0) / 1000) + tr('chat_sec');
     } else warmT0 = 0;
-    el.dataset.state = key ? (key === 'chat_st_error' ? 'error' : 'busy') : (st.tools ? 'ready' : 'notools');
+    var failed = key === 'chat_st_error' || key === 'chat_st_failed';
+    el.dataset.state = key ? (failed ? 'error' : 'busy') : (st.tools ? 'ready' : 'notools');
+    $('retry_bt').hidden = key !== 'chat_st_failed';
     $('status_txt').textContent = key ? tr(key) : (st.tools ? '' : tr('chat_st_notools'));
     $('status_sec').textContent = s;
     el.hidden = !key && st.tools;
@@ -189,6 +192,14 @@
   }
   setInterval(refreshStatus, 2000);
   setInterval(function () { if (st.warm === 'warming') renderStatus(); }, 1000);
+
+  $('retry_bt').addEventListener('click', function () {
+    var bt = $('retry_bt');
+    if (window.PiboUI) PiboUI.busy(bt, true);
+    fetch('/api/llm/restart', { method: 'POST' })
+      .then(function () { st.llm = 'down'; renderStatus(); }, function () { /* 다음 상태 확인이 보여 준다 */ })
+      .then(function () { if (window.PiboUI) PiboUI.busy(bt, false); });
+  });
 
   /* ── 머리줄 ───────────────────────────────────────────────────────── */
   $('ide_bt').addEventListener('click', function () { PiboUI.backToIDE(); });

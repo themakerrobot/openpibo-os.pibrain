@@ -21,6 +21,7 @@ import json
 import time
 import asyncio
 import argparse
+import subprocess
 import threading
 import urllib.error
 import urllib.request
@@ -123,7 +124,7 @@ pibo_chat.find_objects = find_objects
 
 # ── 대화 상태 ──────────────────────────────────────────────────────────────
 state = {
-  'llm': 'down',        # down / loading / ready — llama-server /health
+  'llm': 'down',        # down / loading / ready — llama-server /health, failed — 서비스가 죽음
   'warm': 'idle',       # idle / warming / ready / error — 도구 목록 미리 읽기
   'warm_sec': 0,
   'tools': True,        # 서버가 도구 호출을 받는지(옛 llama-server·--jinja 없음이면 False)
@@ -144,13 +145,25 @@ def llm_health():
     return 'down'
 
 
+SERVICE = 'llama-server.service'
+
+
+def service_failed():
+  """llama-server 서비스가 실패로 멈췄는지. 50020 을 다른 서버가 쥐고 있으면 켜자마자 죽고(18ms),
+  systemd 가 5번 다시 켜 보다 포기한다. 그러면 기다려도 안 뜨므로 화면에 알린다. systemctl 이 없으면(PC) False"""
+  try:
+    return subprocess.run(['systemctl', 'is-failed', '--quiet', SERVICE], timeout=5).returncode == 0
+  except (OSError, subprocess.SubprocessError):
+    return False
+
+
 def warm_loop():
   """서버가 뜨기를 기다렸다가 시스템 글과 도구 목록(약 1천 토큰)을 미리 읽힌다(파이보에서 40~70초).
   도구를 안 받는 서버(--jinja 없는 옛 llama-server)면 도구 없이 대화만 한다.
   서버가 다시 시작되면(IDE 가 끄고 켬) 다시 읽힌다."""
   while True:
     h = llm_health()
-    state['llm'] = h
+    state['llm'] = 'failed' if h == 'down' and service_failed() else h
     if h != 'ready':
       if state['warm'] == 'ready':
         state['warm'] = 'idle'
@@ -263,6 +276,20 @@ async def set_tools(body: dict = Body(...)):
   state['allowed'] = bool(body.get('on'))
   history.clear()
   return {'allowed': state['allowed'], 'reply': pibo_chat.SWITCH_REPLY[state['allowed']]}
+
+
+@app.post('/api/llm/restart')
+async def llm_restart():
+  """[다시 켜기] — 실패로 멈춘 서비스를 다시 켠다. 50020 을 쥔 다른 서버가 있으면 또 실패한다"""
+  def go():
+    subprocess.run(['systemctl', 'reset-failed', SERVICE], timeout=10)
+    subprocess.run(['systemctl', 'start', SERVICE], timeout=30)
+  try:
+    await asyncio.to_thread(go)
+  except (OSError, subprocess.SubprocessError) as exc:
+    return JSONResponse({'ok': False, 'error': str(exc)}, status_code=500)
+  state['llm'] = 'down'
+  return {'ok': True}
 
 
 @app.post('/api/reset')

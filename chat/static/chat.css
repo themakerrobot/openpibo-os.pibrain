@@ -17,6 +17,7 @@ main.chat {
 .chat-status[data-state="notools"] { background: var(--v2-sunken); color: var(--v2-ink-2); }
 .chat-status:not([data-state="busy"]) > i { display: none; }
 #status_sec { font-variant-numeric: tabular-nums; opacity: .8; }
+#retry_bt { margin-left: auto; }
 
 /* 대화 기록 */
 .chat-log {
