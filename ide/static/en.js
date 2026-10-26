@@ -710,7 +710,7 @@ Blockly.Msg["VISION_FACE_MESH_VIS"] = "%1 %2 Show face direction/distance %4 in 
 Blockly.Msg["VISION_FACE_MESH_VIS_TOOLTIP"] = "Show face direction/distance in the image";
 
 Blockly.Msg["VISION_OBJECT_LOAD_EXT"] = "%1 %2 Load Object detection model %3 %4.onnx" ;
-Blockly.Msg["VISION_OBJECT_LOAD_EXT_TOOLTIP"] = "Loads an object detection model. Type the name of a model folder from easydetect (model.onnx, labels.txt, model.json).";
+Blockly.Msg["VISION_OBJECT_LOAD_EXT_TOOLTIP"] = "Loads an object detection model. Type the name of a model file from easydetect (such as pibo-job1.onnx) without .onnx. Its class names and threshold are inside the file.";
 Blockly.Msg["VISION_OBJECT"] = "%1 %2 Find objects in the image %3";
 Blockly.Msg["VISION_OBJECT_TOOLTIP"] = "Find objects in the image.";
 Blockly.Msg["VISION_OBJECT_RAW"] = "%1 %2 Find objects in the image %3 (Raw)";

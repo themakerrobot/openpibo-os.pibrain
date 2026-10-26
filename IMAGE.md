@@ -195,17 +195,17 @@ sudo rm -rf /home/pi/.pyenv.old                                  # 잘 되면 �
 
 **Pibo 이미지의 `/home/pi/.model` 을 그대로 넣는다**(구성·파일별 sha256 은 그 폴더의 `VERSION`, 만드는 법은 Pibo IMAGE.md
 '파이썬 패키지 · 모델 폴더'). PiBrain 코드가 읽는 경로는 Pibo 의 부분집합이라 그대로 맞는다:
-`tts/assets/{onnx,voice_styles}` · `object/dfine-s-320/` · `hand/*.task` · `face/{detection,age-gender,emotion,landmark}`.
+`tts/assets/{onnx,voice_styles}` · `object/ed-s-320.onnx` · `hand/*.task` · `face/{detection,age-gender,emotion,landmark}`.
 
 - `stt/`(약 230MB)는 마이크를 달면 쓴다(STT 소스는 이미 들어 있다, 블록만 막힘). **지우지 말고 그대로 둔다**
-- `object/` 에는 `dfine-s-320/` 폴더만 있어야 한다(261026 에 예전 사물 인식 가중치·고지 파일을 지웠다)
+- `object/` 에는 `ed-s-320.onnx` 하나만 있어야 한다(261026 에 예전 사물 인식 가중치·고지 파일을 지웠다)
 - `llm/llm-model.gguf` 는 `llama-server.service` 가 읽는다. **유닛의 모델 경로가 이 파일인지 확인 필요**(유닛은 리포 밖)
 
 ```bash
 PY=/home/pi/.pyenv/bin/python3
 cd /home/pi/.model
 sed -n '/^## sha256/,$p' VERSION | tail -n +2 | sha256sum -c --quiet && echo "VERSION 과 같음"
-ls /home/pi/.model/object/dfine-s-320/          # detect.py labels.txt model.json model.onnx
+ls -la /home/pi/.model/object/                   # ed-s-320.onnx 하나
 $PY -c "import numpy as np; from openpibo.vision_detect import Detect; print(Detect().detect_object(np.zeros((480,640,3),'uint8')))"
 #   []
 $PY -c "from openpibo.speech import SpeechOnDevice; SpeechOnDevice(); print('tts ok')"
