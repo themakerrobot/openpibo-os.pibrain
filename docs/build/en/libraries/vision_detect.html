@@ -334,7 +334,7 @@
 <blockquote>
 <div><p>A class that provides various detection functions.</p>
 <ul class="simple">
-<li><p>Object detection (default: 80 COCO classes, YOLO11s · easydetect model folders also work, onnxruntime)</p></li>
+<li><p>Object detection (D-FINE, 80 COCO classes by default · easydetect model folders, onnxruntime)</p></li>
 <li><p>QR/barcode detection (pyzbar)</p></li>
 <li><p>Pose detection</p></li>
 <li><p>Image classification</p></li>
@@ -390,15 +390,15 @@
 <dt class="sig sig-object py" id="openpibo.vision_detect.Detect.load_object_model">
 <span class="sig-name descname"><span class="pre">load_object_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_detect.html#Detect.load_object_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_detect.Detect.load_object_model" title="Link to this definition">¶</a></dt>
 <dd><p>Loads an object detection model.</p>
-<p>Takes a YOLO ONNX file (<code class="docutils literal notranslate"><span class="pre">.onnx</span></code>) or an easydetect model folder (the unzipped ‘Send to Pibo’ zip from the easydetect lab — it holds <code class="docutils literal notranslate"><span class="pre">model.onnx</span></code> <code class="docutils literal notranslate"><span class="pre">labels.txt</span></code> <code class="docutils literal notranslate"><span class="pre">model.json</span></code> <code class="docutils literal notranslate"><span class="pre">detect.py</span></code>). A folder model takes its class names from <code class="docutils literal notranslate"><span class="pre">labels.txt</span></code>, which may be Korean. If the model cannot be used (missing file or folder, onnxruntime older than 1.13, etc.), the reason is printed and the default model (yolo11s) is used instead.</p>
+<p>Picks an easydetect model folder (the unzipped ‘Send to Pibo’ zip from the easydetect lab — it holds <code class="docutils literal notranslate"><span class="pre">model.onnx</span></code> <code class="docutils literal notranslate"><span class="pre">labels.txt</span></code> <code class="docutils literal notranslate"><span class="pre">model.json</span></code>). The path of the <code class="docutils literal notranslate"><span class="pre">model.onnx</span></code> inside it works too. Class names come from <code class="docutils literal notranslate"><span class="pre">labels.txt</span></code> and may be Korean. If the model cannot be used (missing folder or file, onnxruntime older than 1.13, a file that does not load), an error says why.</p>
 <p>example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">detect</span><span class="o">.</span><span class="n">load_object_model</span><span class="p">(</span><span class="s1">'/home/pi/mymodel/fruit'</span><span class="p">)</span>     <span class="c1"># easydetect 모델 폴더</span>
-<span class="n">detect</span><span class="o">.</span><span class="n">load_object_model</span><span class="p">()</span>                             <span class="c1"># 기본 모델로 돌아가기</span>
+<span class="n">detect</span><span class="o">.</span><span class="n">load_object_model</span><span class="p">()</span>                             <span class="c1"># 기본 모델(COCO)로 돌아가기</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>modelpath</strong> (<em>str</em>) – Path of the object detection model (an <code class="docutils literal notranslate"><span class="pre">.onnx</span></code> file or a model folder). Left out, the default model</p>
+<dd class="field-odd"><p><strong>modelpath</strong> (<em>str</em>) – Object detection model folder (or the <code class="docutils literal notranslate"><span class="pre">model.onnx</span></code> inside it). Left out, the default model</p>
 </dd>
 </dl>
 </dd></dl>

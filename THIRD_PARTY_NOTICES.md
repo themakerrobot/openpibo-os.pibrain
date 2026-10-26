@@ -31,7 +31,8 @@ in each file are kept as they are.
 
 | Model | Folder | License | Notice file on the device |
 |---|---|---|---|
-| Ultralytics YOLO11s (ONNX, 320) | `object/` | AGPL-3.0 | `object/NOTICE-yolo11s.txt` (from `system/NOTICE-yolo11s.txt`) |
+| D-FINE-S COCO (easydetect export, ONNX, 320) | `object/dfine-s-320/` | Apache-2.0 (easydetect · D-FINE; weights license to be confirmed on the HF model card) | `detect.py` header (Apache-2.0) |
+| Models trained in the easydetect lab (D-FINE) | wherever the user puts them | Apache-2.0 code; weights belong to whoever trained them | — |
 | Supertonic 3 TTS (int8 conversion) | `tts/assets/` | OpenRAIL-M | `LICENSE-OpenRAIL-M.txt`, `MODIFICATIONS.md` |
 | SenseVoiceSmall int8 (sherpa-onnx export) + silero VAD — used once a microphone is fitted | `stt/` | FunASR model license / MIT | `LICENSE-SenseVoice` |
 | Gemma 3 1B (GGUF) | `llm/` | Gemma Terms of Use | — |

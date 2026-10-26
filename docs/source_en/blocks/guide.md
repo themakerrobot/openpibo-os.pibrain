@@ -307,9 +307,9 @@ Analyze face direction/distance in the image. *returns a value*
 
 Show face direction/distance in the image
 
-<img src="img/vision_object_load_ext.png" alt="Load Object detection model [Select folder ▾] ([yolo11s]) .onnx" width="717" class="blk">
+<img src="img/vision_object_load_ext.png" alt="Load Object detection model [Select folder ▾] ([model]) .onnx" width="707" class="blk">
 
-Load Object detection model
+Loads an object detection model. Type the name of a model folder from easydetect (model.onnx, labels.txt, model.json).
 
 <img src="img/vision_object.png" alt="Find objects in the image ([item ▾])" width="391" class="blk">
 

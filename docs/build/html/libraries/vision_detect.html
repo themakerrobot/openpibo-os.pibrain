@@ -334,7 +334,7 @@
 <blockquote>
 <div><p>인식과 관련된 다양한 기능을 사용할 수 있는 클래스입니다.</p>
 <ul class="simple">
-<li><p>사물 인식 (기본: COCO 80개 class, YOLO11s · easydetect 모델 폴더도 사용 가능, onnxruntime)</p></li>
+<li><p>사물 인식 (D-FINE, 기본 COCO 80개 class · easydetect 모델 폴더, onnxruntime)</p></li>
 <li><p>QR/바코드 인식 (pyzbar)</p></li>
 <li><p>Pose 인식</p></li>
 <li><p>이미지 분류</p></li>
@@ -390,18 +390,18 @@
 <dt class="sig sig-object py" id="openpibo.vision_detect.Detect.load_object_model">
 <span class="sig-name descname"><span class="pre">load_object_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_detect.html#Detect.load_object_model"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_detect.Detect.load_object_model" title="Link to this definition">¶</a></dt>
 <dd><p>사물 인식 모델을 불러옵니다.</p>
-<p>YOLO ONNX 파일(<code class="docutils literal notranslate"><span class="pre">.onnx</span></code>) 또는 easydetect 모델 폴더(easydetect lab 의 ‘Pibo로 보내기’ zip 을 푼 폴더 —
-<code class="docutils literal notranslate"><span class="pre">model.onnx</span></code> <code class="docutils literal notranslate"><span class="pre">labels.txt</span></code> <code class="docutils literal notranslate"><span class="pre">model.json</span></code> <code class="docutils literal notranslate"><span class="pre">detect.py</span></code> 가 들어 있음)를 고를 수 있습니다.
-폴더 모델의 클래스 이름은 <code class="docutils literal notranslate"><span class="pre">labels.txt</span></code> 를 쓰며 한글일 수 있습니다.
-모델을 못 쓰면(파일·폴더가 없음, onnxruntime 1.13 미만 등) 이유를 출력하고 기본 모델(yolo11s)로 돌아갑니다.</p>
+<p>easydetect 모델 폴더(easydetect lab 의 ‘Pibo로 보내기’ zip 을 푼 폴더 — <code class="docutils literal notranslate"><span class="pre">model.onnx</span></code> <code class="docutils literal notranslate"><span class="pre">labels.txt</span></code>
+<code class="docutils literal notranslate"><span class="pre">model.json</span></code> 이 들어 있음)를 고릅니다. 폴더 안의 <code class="docutils literal notranslate"><span class="pre">model.onnx</span></code> 경로를 줘도 됩니다.
+클래스 이름은 <code class="docutils literal notranslate"><span class="pre">labels.txt</span></code> 를 쓰며 한글일 수 있습니다.
+모델을 못 쓰면(폴더·파일이 없음, onnxruntime 1.13 미만, 읽기 실패) 이유가 담긴 오류가 납니다.</p>
 <p>example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">detect</span><span class="o">.</span><span class="n">load_object_model</span><span class="p">(</span><span class="s1">'/home/pi/mymodel/fruit'</span><span class="p">)</span>     <span class="c1"># easydetect 모델 폴더</span>
-<span class="n">detect</span><span class="o">.</span><span class="n">load_object_model</span><span class="p">()</span>                             <span class="c1"># 기본 모델로 돌아가기</span>
+<span class="n">detect</span><span class="o">.</span><span class="n">load_object_model</span><span class="p">()</span>                             <span class="c1"># 기본 모델(COCO)로 돌아가기</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">매개변수<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>modelpath</strong> (<em>str</em>) – 사물 인식 모델 경로 (<code class="docutils literal notranslate"><span class="pre">.onnx</span></code> 파일 또는 모델 폴더). 없으면 기본 모델</p>
+<dd class="field-odd"><p><strong>modelpath</strong> (<em>str</em>) – 사물 인식 모델 폴더 (또는 그 안의 <code class="docutils literal notranslate"><span class="pre">model.onnx</span></code>). 없으면 기본 모델</p>
 </dd>
 </dl>
 </dd></dl>

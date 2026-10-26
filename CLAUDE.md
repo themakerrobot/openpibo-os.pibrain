@@ -215,11 +215,11 @@ IDE [대화] 가 llama-server 기본 웹 화면 대신 대화 웹(`chat/run_chat
 
 ## 라이선스 (260930)
 
-**리포 전체가 AGPL-3.0 이다**(`LICENSE`, 사용자 결정). Pibo 와 같은 이유(사물 인식 가중치 `yolo11s.onnx` 가
-Ultralytics AGPL-3.0)이고 파일도 Pibo 와 같다 — 자세한 건 Pibo CLAUDE.md '라이선스'.
+**리포 전체가 AGPL-3.0 이다**(`LICENSE`, 사용자 결정). 이유·파일은 Pibo 와 같다 — 자세한 건 Pibo CLAUDE.md '라이선스'.
+261026 에 사물 인식을 D-FINE(Apache-2.0)으로 바꾸고 예전 모델(Ultralytics, AGPL)의 코드·파일·고지를 지웠지만 리포 라이선스는 그대로 둔다.
 
 - `LICENSE`(AGPL-3.0 전문, 고치지 말 것) · `THIRD_PARTY_NOTICES.md`(vendor·모델 표 — **넣거나 바꾸면 같이 고칠 것**) ·
-  `system/NOTICE-yolo11s.txt`(이미지 만들 때 `.model/object/` 에 — Pibo `.model` 을 그대로 넣으면 이미 있다)
+  (`.model/object/` 의 모델 고지는 THIRD_PARTY_NOTICES 표 — 따로 복사할 고지 파일은 없다)
 - IDE [더보기] → **소스 코드 · 라이선스 (AGPL-3.0)**(`#source_bt`, AGPL §13). 링크는 기기 버전의 마지막 `_` 뒤
   (`YYMMDDvN` / `YYMMDDvN-gl`)를 태그로 본 GitHub 트리. 형식이 다르면 리포 첫 화면
 - 비상업·연구 전용 라이선스의 코드·모델은 넣지 말 것
@@ -493,16 +493,13 @@ Pibo 리포의 변경을 가져올 때 **항목마다 적용 여부를 먼저 �
 
 라이브러리는 파일마다 Pibo 와 다를 수 있으니 통째로 덮어쓰지 말고 diff 를 보고 옮길 것.
 
-**사물 인식은 260930 에 Pibo 와 같은 방식이 됐다** — `vision_detect` 가 ultralytics 를 import 하지 않고
-`openpibo/modules/yolo_onnx.py`(Pibo 와 **같은 파일**, 같이 고칠 것)로 onnxruntime 만 써서 돈다. torch 도 안 올라온다.
-- 예전 `YOLO(...).predict(conf=0.5, iou=0.4, imgsz=320)` 와 **같은 값**: coco128 128장, 640×480 로 줄여서
-  yolo11s(고정 320) · yolo26s(동적 · end2end) 셋 다 128/128(컨테이너)
-- 모델은 처음 `detect_object` 를 부를 때 올린다. 경로는 그대로 `/home/pi/.model/object/yolo11s.onnx`
-- **모델은 yolo11s 로 통일(260930)** — Pibo 와 같은 `yolo11s.onnx`(320 고정 export). 예전 문서의 'yolo26s' 는 틀린 표기였다
-  (코드는 늘 `yolo11s.onnx` 를 읽었다). `/home/pi/.model` 은 Pibo 것을 그대로 넣는다 — IMAGE.md '모델 폴더'
-- **easydetect 모델 폴더(261026)** — Pibo 와 같은 코드(`modules/object_model.py` 같은 파일). 자세한 건 Pibo CLAUDE.md '사물 인식 → easydetect 모델 폴더'.
-  기본값은 yolo11s, D-FINE 으로 바꿀 땐 `vision_detect.py` 의 `OBJECT_MODEL` 한 줄. 도구 [카메라] 는 `detect_object_vis`(PIL)라 한글 이름이 그대로 그려진다
-- 라이선스: 이 가중치들은 Ultralytics 배포물(AGPL-3.0). Pibo CLAUDE.md '라이선스' 참고
+**사물 인식은 Pibo 와 같은 D-FINE 모델 폴더다(261026)** — `openpibo/modules/dfine_onnx.py`(Pibo 와 **같은 파일**, 같이 고칠 것)로 onnxruntime 만 쓴다.
+자세한 건 Pibo CLAUDE.md '사물 인식'. 요점:
+- 기본 `/home/pi/.model/object/dfine-s-320/`(`vision_detect.py` 의 `OBJECT_MODEL` 한 줄). lab 의 'Pibo로 보내기' 폴더는 `load_object_model(폴더)`·블록으로 고른다
+- 폴더의 `detect.py` 는 불러오지 않는다(비교 기준일 뿐). 못 쓰면 이유를 담은 오류(다른 모델로 바꾸지 않는다)
+- 예전 사물 인식 모델의 코드·가중치·고지는 지웠다. `/home/pi/.model` 은 Pibo 것을 그대로 넣는다 — IMAGE.md '모델 폴더'.
+  **기본 폴더가 기기에 없으면 사물 인식이 오류로 멈추니 코드보다 먼저 넣을 것**
+- 도구 [카메라] 는 `detect_object_vis`(PIL)라 한글 이름이 그대로 그려진다
 
 **파이썬 패키지 (260930)** — `requirements.txt`(새로 만듦, Pibo 와 같은 목록)가 리포 코드가 import 하는 것이다. 예전 OS 에서 올린 기기의
 안 쓰는 패키지(TF·torch·ultralytics·MeloTTS 잔재 등, site-packages 5.5GB 의 대부분)는 `system/venv_prune.py` 로 걷어낸다(Pibo 와 **같은 파일**).
