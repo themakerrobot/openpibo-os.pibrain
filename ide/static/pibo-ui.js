@@ -346,7 +346,7 @@
   var TAB = { tools: 'pibo_tools', classifier: 'pibo_classifier', llm: 'pibo_llm' };
   // launch.html 은 ?ver 없이 열려 브라우저가 옛 판을 쓸 수 있다(포트가 바뀌면 옛 포트를 기다린다).
   // 대기 페이지를 고치면 이 번호를 올릴 것
-  var LAUNCH_VER = '260930v1';
+  var LAUNCH_VER = '261026v1';
   function launchUrl(svc) {
     return 'http://' + location.hostname + '/static/launch.html?svc=' +
            encodeURIComponent(svc) + '&lang=' + curLang() + '&v=' + LAUNCH_VER;

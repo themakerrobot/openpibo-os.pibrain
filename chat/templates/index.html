@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <title>piBo Chat</title>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
+  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261026v1" />
+  <link rel="stylesheet" href="../static/chat.css?ver=261026v1" />
+  <link rel="shortcut icon" href="../static/icon.png?ver=240319v1" type="image/x-icon" />
+  <!-- 문구는 IDE 의 ko2en.js 를 같이 쓴다(영문판 델타 파일을 늘리지 않으려고). IDE(80)는 늘 떠 있다 -->
+  <script>(function () { var p = new URLSearchParams(location.search).get('ide') || 80;   /* ?ide= 는 시험용 */
+    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261026v1"><\/script>'); })();</script>
+</head>
+
+<body class="pb pb-shell pb-refresh pb-v2">
+  <script>/* 화면 밝기를 첫 페인트 전에 (규칙은 pibo-ui.js 의 getTheme 과 같다. 고른 적 없으면 soft) */
+  (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
+    document.documentElement.setAttribute('data-theme', m ? m[1] : 'soft'); } catch (e) {} })();</script>
+  <header class="pb-header">
+    <span class="pb-header__brand"><i class="fa-solid fa-comment"></i>&nbsp;<span data-key="chat_title"></span></span>
+    <div class="pb-iconbar">
+      <button type="button" class="pb-iconbtn" id="move_bt" aria-pressed="true"><i class="fa-solid fa-person-running"></i><span class="pb-iconbtn__label" data-key="chat_move"></span></button>
+      <button type="button" class="pb-iconbtn" id="new_bt"><i class="fa-solid fa-rotate-left"></i><span class="pb-iconbtn__label" data-key="chat_new"></span></button>
+      <button type="button" class="pb-iconbtn" id="ide_bt" title="IDE"><i class="fa-solid fa-code"></i><span class="pb-iconbtn__label">IDE</span></button>
+      <a class="pb-iconbtn" id="fullscreen_bt" title="Full Screen"><span id="fullscreen_txt"></span><span class="pb-iconbtn__label" data-key="chat_fullscreen"></span></a>
+      <select class="pb-field pb-field--sm" id="language" aria-label="language">
+        <option value="ko">한국어</option>
+        <option value="en">English</option>
+      </select>
+      <a id="logo_bt"><img src="../static/themaker.png" style="height:22px" alt="" /></a>
+    </div>
+  </header>
+
+  <main class="chat">
+    <div class="chat-status" id="status" data-state="down">
+      <i class="fa-solid fa-spinner fa-spin"></i><span id="status_txt"></span><span id="status_sec"></span>
+    </div>
+    <div class="chat-log" id="log" aria-live="polite">
+      <div class="chat-empty" id="empty">
+        <i class="fa-solid fa-comments"></i>
+        <p data-key="chat_empty"></p>
+        <div class="chat-try" id="try"></div>
+      </div>
+    </div>
+    <form class="chat-input" id="form" autocomplete="off">
+      <textarea class="pb-field" id="text" rows="1" maxlength="500"></textarea>
+      <button type="submit" class="pb-btn pb-btn--accent" id="send_bt"><i class="fa-solid fa-paper-plane"></i><span data-key="chat_send"></span></button>
+    </form>
+  </main>
+
+  <script src="../static/pibo-ui.js?ver=261026v1"></script>
+  <script src="../static/chat.js?ver=261026v1"></script>
+</body>
+</html>
