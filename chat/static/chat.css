@@ -14,7 +14,6 @@ main.chat {
 }
 .chat-status[hidden] { display: none; }
 .chat-status[data-state="error"] { background: var(--v2-red-t); color: var(--v2-red-ink); }
-.chat-status[data-state="notools"] { background: var(--v2-sunken); color: var(--v2-ink-2); }
 .chat-status:not([data-state="busy"]) > i { display: none; }
 #status_sec { font-variant-numeric: tabular-nums; opacity: .8; }
 #retry_bt { margin-left: auto; }
@@ -44,17 +43,6 @@ main.chat {
 .msg--err .msg__body { background: var(--v2-red-t); color: var(--v2-red-ink); border-color: transparent; }
 .msg__meta { margin-top: 3px; font-size: 12px; color: var(--v2-ink-3); font-variant-numeric: tabular-nums; }
 
-/* 도구 실행 칩 */
-.msg__tools { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-.tool {
-  display: inline-flex; align-items: center; gap: 6px; max-width: 100%;
-  padding: 4px 10px; border-radius: 999px; font-size: 12.5px;
-  background: var(--v2-tint); color: var(--v2-tint-ink);
-}
-.tool > b { font-weight: 700; overflow-wrap: anywhere; }
-.tool > span { overflow-wrap: anywhere; }
-.tool--bad { background: var(--v2-red-t); color: var(--v2-red-ink); }
-
 /* 기다리는 동안 */
 .dots { display: inline-flex; gap: 4px; vertical-align: middle; }
 .dots > i { width: 7px; height: 7px; border-radius: 50%; background: var(--v2-ink-3); animation: chat-dot 1s infinite ease-in-out; }
@@ -71,11 +59,18 @@ main.chat {
 }
 .chat-input .pb-btn { height: 44px; }
 
-#move_bt[aria-pressed="false"] { color: var(--v2-red-ink); }
+/* 소리로 말하기 */
+.chat-voice { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding-top: 6px; font-size: 14px; color: var(--v2-ink-2); }
+.chat-speak { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-weight: 600; user-select: none; }
+.chat-speak input { width: 18px; height: 18px; margin: 0; accent-color: var(--v2-dark); cursor: pointer; }
+.chat-voice select:disabled { opacity: .5; }
+.chat-voice__st { font-size: 13px; color: var(--v2-ink-3); }
+.chat-voice__st[data-state="error"] { color: var(--v2-red-ink); }
 
 @media (max-width: 600px) {
   .msg { max-width: 92%; }
   #send_bt > span { display: none; }
+  .chat-voice { font-size: 13px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .msg, .dots > i { animation: none; }

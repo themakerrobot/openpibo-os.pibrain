@@ -8,11 +8,11 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
   <link rel="stylesheet" href="../static/pibo-ui.css?ver=261026v1" />
-  <link rel="stylesheet" href="../static/chat.css?ver=261026v2" />
+  <link rel="stylesheet" href="../static/chat.css?ver=261026v3" />
   <link rel="shortcut icon" href="../static/icon.png?ver=240319v1" type="image/x-icon" />
   <!-- 문구는 IDE 의 ko2en.js 를 같이 쓴다(영문판 델타 파일을 늘리지 않으려고). IDE(80)는 늘 떠 있다 -->
   <script>(function () { var p = new URLSearchParams(location.search).get('ide') || 80;   /* ?ide= 는 시험용 */
-    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261026v2"><\/script>'); })();</script>
+    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261026v3"><\/script>'); })();</script>
 </head>
 
 <body class="pb pb-shell pb-refresh pb-v2">
@@ -22,7 +22,6 @@
   <header class="pb-header">
     <span class="pb-header__brand"><i class="fa-solid fa-comment"></i>&nbsp;<span data-key="chat_title"></span></span>
     <div class="pb-iconbar">
-      <button type="button" class="pb-iconbtn" id="move_bt" aria-pressed="true"><i class="fa-solid fa-person-running"></i><span class="pb-iconbtn__label" data-key="chat_move"></span></button>
       <button type="button" class="pb-iconbtn" id="new_bt"><i class="fa-solid fa-rotate-left"></i><span class="pb-iconbtn__label" data-key="chat_new"></span></button>
       <button type="button" class="pb-iconbtn" id="ide_bt" title="IDE"><i class="fa-solid fa-code"></i><span class="pb-iconbtn__label">IDE</span></button>
       <a class="pb-iconbtn" id="fullscreen_bt" title="Full Screen"><span id="fullscreen_txt"></span><span class="pb-iconbtn__label" data-key="chat_fullscreen"></span></a>
@@ -46,6 +45,12 @@
         <div class="chat-try" id="try"></div>
       </div>
     </div>
+    <div class="chat-voice">
+      <label class="chat-speak"><input type="checkbox" id="speak"><i class="fa-solid fa-volume-high"></i><span data-key="chat_speak"></span></label>
+      <select class="pb-field pb-field--sm" id="voice" aria-label="voice"></select>
+      <span class="chat-voice__st" id="voice_st"></span>
+      <button type="button" class="pb-btn pb-btn--sm pb-btn--ghost" id="hush_bt" hidden><i class="fa-solid fa-volume-xmark"></i><span data-key="chat_hush"></span></button>
+    </div>
     <form class="chat-input" id="form" autocomplete="off">
       <textarea class="pb-field" id="text" rows="1" maxlength="500"></textarea>
       <button type="submit" class="pb-btn pb-btn--accent" id="send_bt"><i class="fa-solid fa-paper-plane"></i><span data-key="chat_send"></span></button>
@@ -53,6 +58,6 @@
   </main>
 
   <script src="../static/pibo-ui.js?ver=261026v1"></script>
-  <script src="../static/chat.js?ver=261026v2"></script>
+  <script src="../static/chat.js?ver=261026v3"></script>
 </body>
 </html>
