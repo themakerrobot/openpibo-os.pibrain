@@ -41,7 +41,7 @@ pyzbar==0.1.9
 dlib==19.24.6
 mediapipe==0.10.18
 tflite-runtime==2.14.0          # 분류기 이미지·movenet. 지우면 TensorFlow 로 떨어진다
-onnxruntime==1.20.1             # 사물 인식(YOLO) · TTS
+onnxruntime==1.20.1             # 사물 인식(D-FINE) · TTS
 openvino==2024.5.0              # 얼굴 분석
 
 # ── 음성 ─────────────────────────────────────────────────────────
