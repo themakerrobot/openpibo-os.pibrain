@@ -994,9 +994,12 @@ body.pb-v2 nav button > .pb-navlabel { order: 2; }
 body.pb-v2 nav button:hover { background: var(--v2-hover); color: var(--v2-ink); }
 body.pb-v2 nav button.menu-selected { background: var(--v2-accent-t); color: var(--v2-accent-ink); position: relative; box-shadow: none; }
 body.pb-v2 nav button.menu-selected > i { color: var(--v2-accent-ink); }
-/* 본문 폭: PiBrain 도구와 같게 가운데 최대 1180px · 바깥 16 · 카드 사이 12 (전엔 왼쪽 33 · 오른쪽 48 로 치우쳤다) */
+/* 본문 폭: 바깥 16 · 카드 사이 12, 가운데 정렬. 폭은 탭마다 — [동작] 은 화면 전체(로봇 사진·표가 넓을수록 편하다),
+   [카메라] 는 최대 1600px(화면 칸이 커지되 1080 높이에 들어오게), [음성] 은 PiBrain 도구와 같게 1180px(입력 칸이 너무 길어지지 않게) */
 body.pb-v2 main > div.content.pb-pane { border: 0; border-radius: 0; background: var(--v2-canvas); padding: var(--sp-4); }
-body.pb-v2 main > div.content.pb-pane > div.wrapper { max-width: 1180px; margin: 0 auto; padding: 0; box-sizing: border-box; }
+body.pb-v2 main > div.content.pb-pane > div.wrapper { margin: 0 auto; padding: 0; box-sizing: border-box; }
+body.pb-v2 main > div.content.pb-pane #article_vision { max-width: 1600px; margin-left: auto; margin-right: auto; }
+body.pb-v2 main > div.content.pb-pane #article_speech { max-width: 1180px; margin-left: auto; margin-right: auto; }
 body.pb-v2 .pb-navlabel { display: block; }
 
 /* tools 카드(section) — 그림자 대신 선, 제목은 형광펜 대신 굵은 글자 */
@@ -1394,6 +1397,8 @@ body.pb-v2 .v-pos input[type="range"] { flex: 1 1 0; width: auto !important; acc
 /* 비전 기능: select 대신 타일(누르면 select 값을 바꿔 원래 흐름 그대로 서버에 보낸다) */
 body.pb-v2 .v-func { display: none; }
 body.pb-v2 #v_tiles { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; margin: 10px 0 12px; }
+/* 넓은 화면은 5칸 고정 — 15개가 3줄로 딱 맞는다(auto-fill 이면 1920 에서 7칸 + 마지막 줄 1개) */
+@media (min-width: 1200px) { body.pb-v2 #v_tiles { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
 body.pb-v2 #v_tiles .v-tile {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 64px; padding: 8px 4px;
   border-radius: var(--r-ctl); border: 1px solid var(--v2-line-2); background: var(--v2-raise) !important; color: var(--v2-ink-2);
