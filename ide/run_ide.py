@@ -5,6 +5,7 @@ import asyncio
 import shutil
 import base64
 import datetime
+import signal
 import subprocess
 from pathlib import Path
 from typing import List, Union
@@ -60,6 +61,19 @@ protectList = [
 ENV_PATH = '/home/pi/.pyenv/bin'
 record = ''
 ps = None
+ps_pgid = None   # 학생 프로그램의 프로세스 묶음. 하위 프로세스(배경 소리 등)까지 같이 끄려고 따로 띄운다
+
+
+def kill_run():
+  """실행 중인 학생 프로그램과 그 하위 프로세스(배경 소리·os.system 으로 띄운 것 등)를 함께 끈다(261027).
+  전엔 본체만 껐는데, 남은 하위 프로세스가 출력 통로를 쥐고 있어 실행이 '실행 중' 에서 안 끝나고 다음 실행이 막혔다"""
+  global ps_pgid
+  if ps_pgid:
+    try:
+      os.killpg(ps_pgid, signal.SIGKILL)
+    except (ProcessLookupError, PermissionError):
+      pass
+    ps_pgid = None
 PATH = '/home/pi/code'
 codeText = ''
 codePath = ''
@@ -68,6 +82,9 @@ mutex = asyncio.Lock()
 TEMPLATE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 # 실행 로그는 모아서 보낸다. 줄마다 보내면 print 루프가 소켓 프레임을 줄 수만큼 만든다
 LOG_FLUSH_SEC = 0.05
+# 학생 프로그램 본체가 끝난 뒤 남은 출력을 이만큼 더 기다린다. 그동안 새 출력이 없으면 끝난 것으로 본다 —
+# 배경 소리(Audio.play) 같은 하위 프로세스가 출력 통로를 물려받아 쥐고 있어도 [exit] 가 바로 뜨게(261027)
+EXIT_DRAIN_SEC = 0.3
 
 async def run_blocking(fn, *args):
   # 동기 호출(subprocess)을 이벤트 루프 밖에서 돌린다.
@@ -525,7 +542,7 @@ async def execute(EXEC, codepath):
   # 예전에는 줄마다 전체를 다시 보내서 2000줄이면 39KB 출력에 39MB가 나갔다
   # stderr 는 stdout 에 합친다(STDOUT). 따로 두고 끝에 읽으면 무한 반복 안의 에러가 정지할 때까지 안 보이고,
   # stderr 파이프(64KB)가 차면 학생 프로그램이 거기서 멈췄다. 합치면 찍힌 순서 그대로 나온다
-  global record, ps
+  global record, ps, ps_pgid
   async with mutex:
     record = f'[{datetime.datetime.now()}]: \n\n'
     await app.sio.emit('update', {'record': record})
@@ -536,7 +553,8 @@ async def execute(EXEC, codepath):
         cwd=PATH,
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.STDOUT,
-        stdin=asyncio.subprocess.PIPE
+        stdin=asyncio.subprocess.PIPE,
+        start_new_session=True
       )
     else:
       ps = await asyncio.create_subprocess_exec(
@@ -544,8 +562,10 @@ async def execute(EXEC, codepath):
         cwd=PATH,
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.STDOUT,
-        stdin=asyncio.subprocess.PIPE
+        stdin=asyncio.subprocess.PIPE,
+        start_new_session=True
       )
+    ps_pgid = ps.pid
     loop = asyncio.get_running_loop()
     pending = []
     last_flush = loop.time() - LOG_FLUSH_SEC   # 첫 줄은 기다리지 않고 바로 보낸다
@@ -566,9 +586,18 @@ async def execute(EXEC, codepath):
       try:
         # 모아 둔 게 있으면 LOG_FLUSH_SEC 안에 다음 조각이 안 와도 보낸다.
         # read 는 기다리는 중에 취소돼도 버퍼를 소비하지 않아 잃는 게 없다
-        data = await asyncio.wait_for(ps.stdout.read(4096), timeout=LOG_FLUSH_SEC if pending else None)
+        # 본체가 끝났으면 EXIT_DRAIN_SEC 만 더 기다린다(하위 프로세스가 통로를 쥐고 있으면 EOF 가 안 온다)
+        if pending:
+          wait = LOG_FLUSH_SEC
+        elif ps.returncode is not None:
+          wait = EXIT_DRAIN_SEC
+        else:
+          wait = 0.5    # 본체가 끝났는지 이 간격으로 본다
+        data = await asyncio.wait_for(ps.stdout.read(4096), timeout=wait)
       except asyncio.TimeoutError:
         await flush()
+        if wait == EXIT_DRAIN_SEC:
+          break
         continue
       if not data:
         break
@@ -609,8 +638,8 @@ async def handle_execute(sid, d):
       return
     codeText = d['codetext']
     codePath = d['codepath']
+    kill_run()
     if ps and ps.returncode is None:
-      ps.kill()
       await ps.wait()
     os.makedirs(os.path.dirname(codePath), exist_ok=True)
     with open(codePath, 'w') as f:
@@ -630,8 +659,8 @@ async def handle_executeb(sid, d):
   subprocess.Popen(['systemctl', 'stop', 'classify.service'])
   subprocess.Popen(['systemctl', 'stop', 'tools.service'])
   try:
+    kill_run()
     if ps and ps.returncode is None:
-      ps.kill()
       await ps.wait()
     os.makedirs(os.path.dirname(d['codepath']), exist_ok=True)
     with open(d['codepath'], 'w') as f:
@@ -644,13 +673,13 @@ async def handle_executeb(sid, d):
 # stop 핸들러 수정
 @app.sio.on('stop')
 async def handle_stop(sid):
-  global ps
+  global ps, ps_pgid
   subprocess.Popen(['pkill', 'play'])
   subprocess.Popen(['pkill', 'llama-server'])
   stop_chat()
   #subprocess.Popen(['servo', 'init'])
+  kill_run()
   if ps and ps.returncode is None:
-    ps.kill()
     await ps.wait()
 
 @app.sio.on('prompt')
