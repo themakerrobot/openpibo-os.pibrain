@@ -4,10 +4,9 @@
      dark  → Furo '어둡게'
    Furo 는 localStorage.theme 을 본문 맨 앞에서 읽으므로, 그보다 먼저(<head>, _templates/base.html) 넣는다.
    도움말의 밝기 버튼(Furo)을 누르면 쿠키도 바꿔 IDE 에서도 같은 밝기가 된다.
-   사이드바에 IDE 로 돌아가는 작은 링크를 단다(langswitch.js 의 언어 링크 옆) */
+   상단바의 [IDE] 링크를 이 기기의 IDE(80) 주소로 맞춘다 */
 (function () {
   'use strict';
-  var PRODUCT = 'PiBrain';
   var m = null;
   try { m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/); } catch (e) { /* 무시 */ }
   var cur = m ? m[1] : 'soft';
@@ -29,14 +28,10 @@
     }, 0);
   });
 
-  function addIdeLink() {
-    var brand = document.querySelector('.sidebar-brand');
-    if (!brand || document.querySelector('.pb-ide')) return;
-    var a = document.createElement('a');
-    a.className = 'pb-lang pb-ide';
-    a.href = 'http://' + location.hostname + '/';
-    a.textContent = PRODUCT + ' IDE';
-    brand.insertAdjacentElement('afterend', a);
+  // 상단바(_templates/base.html)의 [IDE] — 도움말은 8080, IDE 는 같은 기기의 80
+  function fixIdeLink() {
+    var a = document.querySelector('.pb-topbar__ide');
+    if (a && location.hostname) a.href = 'http://' + location.hostname + '/';
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', addIdeLink); else addIdeLink();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fixIdeLink); else fixIdeLink();
 })();

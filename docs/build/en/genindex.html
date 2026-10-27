@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
-    <link rel="stylesheet" type="text/css" href="_static/mycss.css?v=d358c342" />
+    <link rel="stylesheet" type="text/css" href="_static/mycss.css?v=7ee82345" />
     
     
 
@@ -97,11 +97,39 @@
 </style><script src="_static/pibotheme.js"></script>
 </head>
   <body>
-    
+    <header class="pb-topbar" role="banner">
+  <label class="pb-topbar__btn pb-topbar__m" for="__navigation" aria-label="Menu">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </label>
+  <a class="pb-topbar__brand" href="index.html">
+    <svg class="pb-topbar__icon" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4.5A2.6 2.6 0 0 0 6.4 6 2.8 2.8 0 0 0 4 9.2a3 3 0 0 0 .3 4.9A2.9 2.9 0 0 0 7 18.2a2.7 2.7 0 0 0 4 1.3z"/><path d="M13 4.5A2.6 2.6 0 0 1 17.6 6 2.8 2.8 0 0 1 20 9.2a3 3 0 0 1-.3 4.9 2.9 2.9 0 0 1-2.7 4.1 2.7 2.7 0 0 1-4 1.3z"/><path d="M8 10.5c1 0 1.8.6 2 1.5M16 10.5c-1 0-1.8.6-2 1.5M7.5 15c.9-.2 1.7.1 2.2.8M16.5 15c-.9-.2-1.7.1-2.2.8"/></g></svg>
+    <b>PiBrain</b><span class="pb-topbar__app">Help</span>
+  </a>
+  <div class="pb-topbar__right">
+    <a class="pb-topbar__btn pb-topbar__ide" href="/" title="PiBrain IDE">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 7 3.5 12l5 5M15.5 7l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>IDE</span>
+    </a>
+    <select class="pb-topbar__lang" aria-label="Language" hidden>
+      <option value="ko">한국어</option>
+      <option value="en" selected>English</option>
+    </select>
+    <button class="theme-toggle pb-topbar__btn pb-topbar__m" aria-label="Brightness">
+      <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+      <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+      <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+      <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+    </button>
+    <label class="pb-topbar__btn pb-topbar__m pb-topbar__notoc" for="__toc" aria-label="Contents">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h11M4 12h16M4 18h11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </label>
+  </div>
+</header>
+
     <script>
       document.body.dataset.theme = localStorage.getItem("theme") || "auto";
     </script>
     
+
 
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="svg-toc" viewBox="0 0 24 24">
@@ -1031,6 +1059,6 @@
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
-    <script src="_static/langswitch.js?v=16e9f8e1"></script>
+    <script src="_static/langswitch.js?v=f4280283"></script>
     </body>
 </html>

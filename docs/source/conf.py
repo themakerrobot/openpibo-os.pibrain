@@ -141,5 +141,5 @@ html_theme_options = {
 html_static_path = ['_static']
 html_favicon = '_static/icon.png'
 html_css_files = ['mycss.css']
-html_js_files = ['langswitch.js']   # 한국어 ↔ English 전환 링크(build/html ↔ build/en)
-# _static/pibotheme.js(밝기·IDE 링크)는 html_js_files 가 아니라 _templates/base.html 이 <head> 에서 싣는다(먼저 돌아야 해서)
+html_js_files = ['langswitch.js']   # 상단바 언어 select: 한국어 ↔ English(build/html ↔ build/en). 상단바는 _templates/base.html
+# _static/pibotheme.js(밝기·상단바 IDE 링크)는 html_js_files 가 아니라 _templates/base.html 이 <head> 에서 싣는다(먼저 돌아야 해서)
