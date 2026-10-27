@@ -61,11 +61,19 @@ body { height: auto; min-height: 100%; }
 /* 사이드바·목차가 막대 밑으로 들어가지 않게 */
 .sidebar-sticky, .toc-sticky { top: 48px; height: calc(100vh - 48px); }
 html { scroll-padding-top: 56px; }
+/* 목차로 옮기면 제목이 막대 아래 64px(56 + 8)에 오게(261027v4). Furo 는 :target 에 2.5rem 을 더 줘서 제목이 96px 에 왔고,
+   오른쪽 목차 표시는 '막대 아래 + 2.5rem'(89px) 위로 올라온 절만 지금 절로 쳐서 바로 앞 절이 칠해졌다 */
+:target, section > span:target { scroll-margin-top: 8px; }
 /* 넓은 화면의 오른쪽 목차는 서랍이 아니라 칸이라 막대 아래로(Furo 는 늘 z-index 50). 82em 이하는 서랍이라 그대로 위 */
 @media (min-width: 82.01em) { .toc-drawer { z-index: 20; } }
 /* 이름은 상단바가 보이므로 사이드바 맨 위 이름은 숨긴다(검색칸부터) */
 .sidebar-brand { display: none; }
-.sidebar-search-container { margin-top: .75rem; }
+/* 검색칸: 막대·사이드바 가장자리에 붙지 않는 둥근 칸(261027v4 — 전엔 위아래 선만 있는 띠였다) */
+.sidebar-search-container { margin: 12px 12px 4px; background: transparent; }
+.sidebar-search { border: 1px solid var(--color-sidebar-search-border); border-radius: 8px; background: var(--color-sidebar-search-background); }
+.sidebar-search:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, .2); }
+.sidebar-search-container:before { left: 12px; z-index: 11; }
+body[data-theme="dark"] .sidebar-search:focus { border-color: #7aa7ff; box-shadow: 0 0 0 3px rgba(122, 167, 255, .3); }
 
 @media (max-width: 63em) {
   .mobile-header { display: none !important; }
@@ -75,7 +83,7 @@ html { scroll-padding-top: 56px; }
   .pb-topbar__brand { padding-left: 4px; -webkit-box-flex: 1; flex: 1 1 auto; }
   .sidebar-sticky, .toc-sticky { top: 0; height: 100vh; }
   .sidebar-brand { display: block; }   /* 서랍을 열면 막대가 덮이므로 이름을 다시 보인다 */
-  .sidebar-search-container { margin-top: .25rem; }
+  .sidebar-search-container { margin-top: 4px; }
 }
 @media (max-width: 480px) {
   .pb-topbar__btn { padding: 0 8px; }
@@ -105,7 +113,6 @@ html[data-pb-theme="soft"] body[data-theme="light"] {
   display: inline-flex; align-items: center; gap: .5rem; }
 .sidebar-brand-text::before { content: ""; width: 12px; height: 12px; border-radius: 4px; background: #fbc92d;
   box-shadow: 0 0 0 3px rgba(251, 201, 45, .25); flex: none; }
-.sidebar-search-container { margin-top: .25rem; }
 .sidebar-tree .caption, .sidebar-tree :not(.caption) > .caption-text {
   font-size: .72rem; letter-spacing: .06em; color: var(--color-foreground-muted); font-weight: 700; }
 .sidebar-tree .reference { border-radius: 8px; margin: 1px .5rem; padding-left: .75rem; }

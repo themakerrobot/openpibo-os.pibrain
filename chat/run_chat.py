@@ -63,6 +63,7 @@ voice = {'state': 'off', 'error': ''}      # off / loading / ready / error
 _tts = {'speech': None, 'audio': None}
 _tts_lock = threading.Lock()               # 올리기·만들기·틀기는 한 번에 하나
 _say_seq = [0]                             # 새 대답이 오면 앞의 말은 버린다
+_speaking = [False]                        # 대답을 말하는 중(만들기·틀기) — /api/status 의 speaking. 화면이 '말하는 중' 표시를 지운다(261027v4)
 
 
 def voice_warm():
@@ -86,6 +87,7 @@ def voice_warm():
 
 def voice_stop():
   _say_seq[0] += 1
+  _speaking[0] = False
   if _tts['audio'] is not None:
     try:
       _tts['audio'].stop()
@@ -96,22 +98,27 @@ def voice_stop():
 def say(text, who, vol=80):
   """대답 하나를 만들어 튼다(백그라운드). 만드는 동안 새 대답이 오면 버린다"""
   seq = _say_seq[0]
-  text = re.sub(r'\s+', ' ', text).strip()
-  if not text or not voice_warm():
-    return
-  with _tts_lock:
-    if seq != _say_seq[0]:
+  try:
+    text = re.sub(r'\s+', ' ', text).strip()
+    if not text or not voice_warm():
       return
-    try:
-      t = time.time()
-      _tts['speech'].tts(text=text, filename=TTS_WAV, voice=who, lang='na')
+    with _tts_lock:
       if seq != _say_seq[0]:
         return
-      _tts['audio'].play(filename=TTS_WAV, volume=vol)
-      print(f'  (목소리 {who} 만들기 {time.time() - t:.1f}초)', flush=True)
-    except Exception as exc:  # noqa: BLE001
-      voice['error'] = str(exc)
-      print(f'[chat] 말하기 오류: {exc}', flush=True)
+      try:
+        t = time.time()
+        _tts['speech'].tts(text=text, filename=TTS_WAV, voice=who, lang='na')
+        if seq != _say_seq[0]:
+          return
+        print(f'  (목소리 {who} 만들기 {time.time() - t:.1f}초)', flush=True)
+        # 다 틀 때까지 기다린다(이 함수는 스레드) — 끝난 때를 알아야 '말하는 중' 을 지운다. voice_stop 의 Audio.stop 이 끊으면 바로 돌아온다
+        _tts['audio'].play(filename=TTS_WAV, volume=vol, background=False)
+      except Exception as exc:  # noqa: BLE001
+        voice['error'] = str(exc)
+        print(f'[chat] 말하기 오류: {exc}', flush=True)
+  finally:
+    if seq == _say_seq[0]:
+      _speaking[0] = False
 
 
 def llm_health():
@@ -218,6 +225,7 @@ def chat_stream(text, speak_as, ctl, vol=80):
   print(f"  (읽기 {read_n}토큰 {timings.get('prompt_ms', 0) / 1000:.1f}초, "
         f"말하기 {said_n}토큰 {timings.get('predicted_ms', 0) / 1000:.1f}초, 모두 {time.time() - t0:.1f}초)", flush=True)
   if speak_as and reply:
+    _speaking[0] = True                    # done 을 보내기 전에 — 화면이 바로 묻는 상태에도 '말하는 중'
     threading.Thread(target=say, args=(reply, speak_as, vol), daemon=True).start()
   yield json.dumps({'done': True, 'sec': round(time.time() - t0, 1), 'read': read_n, 'said': said_n,
                     'speak': bool(speak_as and reply)}) + '\n'
@@ -318,7 +326,7 @@ async def index():
 
 @app.get('/api/status')
 async def status():
-  return dict(state, busy=turn_lock.locked(), voice=voice['state'])
+  return dict(state, busy=turn_lock.locked(), voice=voice['state'], speaking=_speaking[0])
 
 
 @app.post('/api/chat')

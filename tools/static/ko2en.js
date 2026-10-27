@@ -126,6 +126,14 @@ const T = {
   tts_err_voice:     { ko: "쓸 수 없는 목소리예요.", en: "This voice is not available." },
   err_lcd_not_ready: { ko: "LCD가 아직 준비되지 않았어요.", en: "The LCD is not ready yet." },
   err_camera_on:     { ko: "카메라를 먼저 꺼 주세요.", en: "Turn off the camera first." },
+
+  /* ── 261027v4 — 화면 검토 때 더한 키 ────────────────────────── */
+  // 말할 글자·LCD 글자 칸의 처음 글자(언어를 바꾸면 사용자가 고치지 않은 경우에만 따라 바뀐다)
+  tts_sample:        { ko: "안녕하세요! 저는 파이브레인이에요. 만나서 반가워요.", en: "Hello! I am PiBrain. Nice to meet you." },
+  lcd_sample:        { ko: "안녕하세요!\n파이브레인이에요.", en: "Hello!\nI am PiBrain." },
+  // 상단바 연결 칩(파이보 도구의 '로봇 연결됨' 과 같은 모양). /health 로 판단
+  conn_ready:        { ko: "PiBrain 연결됨", en: "PiBrain connected" },
+  conn_wait:         { ko: "연결 중…", en: "Connecting…" },
 };
 
 /**

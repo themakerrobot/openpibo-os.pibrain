@@ -54,13 +54,15 @@
   li i.pending { font-size: 8px; opacity: .45; }   /* fa-regular 글꼴은 기기에 없다. solid 원을 작게 */
   li[data-s="now"]  { color: var(--v2-ink); }
   li[data-s="done"] { color: var(--v2-green-ink); }   /* 4.6:1 이상 */
+  li[data-s="fail"] { color: var(--v2-red-ink); }
+  li[data-s="fail"] i { color: var(--v2-red); }
   li .sec { margin-left: auto; font: 700 13px var(--pb-mono); color: var(--v2-ink-2); }
   .bar { height: 6px; border-radius: 3px; background: var(--v2-sunken); overflow: hidden; margin: 4px 0 14px; }
   .bar > div { height: 100%; width: 0; background: var(--v2-accent); transition: width .4s ease; }   /* 진행은 강조 파랑(노랑은 상단바만) */
   body[data-state="fail"] .bar > div { background: var(--v2-red); }
   body[data-state="done"] .bar > div { background: var(--v2-green); }
   .msg { min-height: 20px; font: 14px/1.5 var(--font-ui); color: var(--v2-ink-2); margin: 0 0 14px; }
-  .msg.err { color: var(--v2-red-ink); font-weight: 700; }
+  .msg.err { color: var(--v2-ink); }   /* 실패는 제목·빨간 단계·막대가 알린다. 여기는 할 일만 */
   body[data-state="fail"] .ring > i { color: var(--v2-red); }
   .acts { display: flex; justify-content: flex-end; gap: 8px; }
   .acts [hidden] { display: none; }
@@ -94,10 +96,10 @@
            || ((navigator.language || '').indexOf('ko') === 0 ? 'ko' : 'en')) === 'ko' ? 'ko' : 'en';
   document.documentElement.lang = L;
   var T = {
-    s1:      { ko: '켜는 중…',                    en: 'Starting…' },
-    s2:      { ko: '준비될 때까지 기다리는 중…',    en: 'Waiting until it is ready…' },
-    s2_llm:  { ko: '대화 모델 준비 중…',           en: 'Loading the chat model…' },
-    s3:      { ko: '여는 중…',                    en: 'Opening…' },
+    // 단계 이름은 끝나도 바뀌지 않는 명사로(261027v4). 진행·끝·실패는 앞의 아이콘이 보여 준다
+    s1:      { ko: '켜기 요청',                   en: 'Request' },
+    s2:      { ko: '준비 확인',                   en: 'Check ready' },
+    s3:      { ko: '열기',                        en: 'Open' },
     close:   { ko: '닫기',                        en: 'Close' },
     retry:   { ko: '다시 시도',                   en: 'Try again' },
     title:   { ko: '{0} 켜는 중…',                en: 'Starting {0}…' },
@@ -105,8 +107,9 @@
     llmslow: { ko: '대화 모델은 크기가 커서 1~2분 걸릴 수 있어요.', en: 'The chat model is large and can take a minute or two.' },
     cors:    { ko: '준비됐는지 확인하지 못했지만 열어 볼게요. 아직 준비 중이면 잠시 뒤 새로고침해 주세요.',
                en: 'Could not confirm it is ready. Opening it anyway. If it is still loading, refresh in a moment.' },
-    fail:    { ko: '{0}를 켜지 못했어요. PiBrain이 켜져 있고 같은 WiFi에 있는지 확인한 뒤 다시 시도해 주세요.',
-               en: 'Could not start {0}. Check that PiBrain is on and on the same WiFi, then try again.' },
+    // 제목이 이미 '{0}를 켜지 못했어요' 라 안내만(261027v4)
+    fail:    { ko: 'PiBrain이 켜져 있고 같은 WiFi에 있는지 확인한 뒤 다시 시도해 주세요.',
+               en: 'Check that PiBrain is on and on the same WiFi, then try again.' },
     bad:     { ko: '알 수 없는 도구예요.', en: 'Unknown tool.' },
     fail_title: { ko: '{0}를 켜지 못했어요', en: 'Could not start {0}' }
   };
@@ -137,13 +140,13 @@
   setTitle(t('title', name));
   $('app_name').textContent = name; $('app_name').hidden = false;
   $('icon').className = 'fa-solid ' + S.icon;
-  if (key === 'llm') $('s2').children[1].textContent = t('s2_llm');
   var target = 'http://' + HOST + ':' + S.port + '/';
 
   function step(n, state) {
     var li = $('s' + n); li.setAttribute('data-s', state);
     li.firstElementChild.className = state === 'done' ? 'fa-solid fa-circle-check'
                                    : state === 'now'  ? 'fa-solid fa-spinner fa-spin'
+                                   : state === 'fail' ? 'fa-solid fa-circle-xmark'
                                    : 'fa-solid fa-circle pending';
   }
   function withTimeout(ms) {
@@ -187,9 +190,10 @@
   function fail() {
     stopTimers();
     document.body.dataset.state = 'fail';
-    step(2, 'idle');
+    step(2, 'fail');                       // 기다리다 한도를 넘긴 단계
+    $('bar').style.width = '100%';
     setTitle(t('fail_title', name));
-    $('msg').textContent = t('fail', name); $('msg').className = 'msg err';
+    $('msg').textContent = t('fail'); $('msg').className = 'msg err';
     $('retry').hidden = false; $('retry').focus();
   }
   function start() {

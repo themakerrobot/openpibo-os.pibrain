@@ -7,13 +7,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
-  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261027v3" />
-  <link rel="stylesheet" href="../static/index.css?ver=261027v3" />
+  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261027v4" />
+  <link rel="stylesheet" href="../static/index.css?ver=261027v4" />
   <link rel="shortcut icon" href="../static/icon.png?ver=240319v1" type="image/x-icon" />
 
   <script src="../static/socket.io.min.js"></script>
   <script src="../static/vendor/tfjs/tf.min.js"></script>
-  <script src="../static/ko2en.js?ver=261027v3"></script>
+  <script src="../static/ko2en.js?ver=261027v4"></script>
 </head>
 
 <body class="pb pb-shell pb-refresh pb-v2" data-tab="learn">
@@ -24,7 +24,7 @@
     <span class="pb-header__brand"><i class="fa-solid fa-brain"></i><b>PiBrain</b><span class="pb-header__app" data-key="title"></span></span>
     <div class="pb-seg cls-tabs" id="tabs" role="tablist">
       <button type="button" data-tab="learn" role="tab"><i class="fa-solid fa-graduation-cap"></i><span data-key="tab_learn"></span></button>
-      <button type="button" data-tab="test" role="tab"><i class="fa-solid fa-vial"></i><span data-key="tab_test"></span></button>
+      <button type="button" data-tab="test" role="tab"><i class="fa-solid fa-flask"></i><span data-key="tab_test"></span></button>
       <button type="button" data-tab="store" role="tab"><i class="fa-solid fa-box-archive"></i><span data-key="tab_store"></span></button>
     </div>
     <div class="pb-iconbar">
@@ -123,13 +123,13 @@
             <p><i class="fa-solid fa-circle-check"></i> <code id="saved_path"></code></p>
             <p class="muted" id="saved_block"></p>
             <code class="code" id="saved_code"></code>
-            <button type="button" class="pb-btn pb-btn--sm" id="goto_test"><i class="fa-solid fa-vial"></i><span data-key="st_test"></span></button>
+            <button type="button" class="pb-btn pb-btn--sm" id="goto_test"><i class="fa-solid fa-flask"></i><span data-key="st_test"></span></button>
           </div>
         </div>
       </section>
 
       <section class="only-test">
-        <div class="pb-empty" id="test_empty"><i class="fa-solid fa-vial" aria-hidden="true"></i><p data-key="test_empty"></p></div>
+        <div class="pb-empty" id="test_empty"><i class="fa-solid fa-flask" aria-hidden="true"></i><p data-key="test_empty"></p></div>
         <div id="test_live" hidden>
           <p class="test-name"><b id="test_name"></b> <span class="muted" id="test_src"></span></p>
           <div class="answer" id="test_answer">—</div>
@@ -157,7 +157,7 @@
     </div>
   </div>
 
-  <script src="../static/pibo-ui.js?ver=261027v3"></script>
-  <script type="module" src="../static/app.js?ver=261027v3"></script>
+  <script src="../static/pibo-ui.js?ver=261027v4"></script>
+  <script type="module" src="../static/app.js?ver=261027v4"></script>
 </body>
 </html>

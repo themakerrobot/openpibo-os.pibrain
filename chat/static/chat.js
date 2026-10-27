@@ -58,10 +58,26 @@
     scrollDown();
     return row;
   }
+  // '· 말하는 중' 은 지금 말하는 대답 하나에만 붙인다(261027v4 — 전엔 지난 대답마다 남았다).
+  // 서버 상태(speaking=false)·[그만 말하기]·[새 대화]·다음 말 보내기·소리 끄기 때 지운다
+  var speakingTag = null, speakingAt = 0;
+  function clearSpeaking() {
+    if (speakingTag && speakingTag.parentNode) speakingTag.parentNode.removeChild(speakingTag);
+    speakingTag = null;
+    showHush(false);
+  }
   function meta(row, d) {
     var m = document.createElement('div');
     m.className = 'msg__meta';
-    m.textContent = d.sec + tr('chat_sec') + (d.speak ? ' · ' + tr('chat_speaking') : '');
+    m.textContent = d.sec + tr('chat_sec');
+    if (d.speak) {
+      clearSpeaking();
+      speakingTag = document.createElement('span');
+      speakingTag.className = 'msg__speaking';
+      speakingTag.textContent = ' · ' + tr('chat_speaking');
+      m.appendChild(speakingTag);
+      speakingAt = Date.now();
+    }
     row.appendChild(m);
   }
 
@@ -79,7 +95,7 @@
     msg = (msg || '').trim();
     if (!msg || waiting || st.warm !== 'ready') return;
     bubble('me', msg);
-    showHush(false);                                        // 앞 대답 말하기는 서버가 멈춘다
+    clearSpeaking();                                        // 앞 대답 말하기는 서버가 멈춘다
     text.value = ''; autosize();
     var row = bubble('bot', null), body = row.firstChild;
     row.classList.add('msg--wait');
@@ -187,7 +203,7 @@
     store('chat_speak', speakCk.checked ? '1' : '0');
     // 켤 때 목소리 모델을 미리 올리지 않는다 — 처음 소리로 말할 때 서버가 올린다(LLM 과 같이 메모리에 오래 두지 않게, 261027)
     if (!speakCk.checked) {
-      post('/api/voice/stop').catch(function () {}); showHush(false);
+      post('/api/voice/stop').catch(function () {}); clearSpeaking();
     }
     renderVoiceState();
   });
@@ -197,7 +213,7 @@
   $('vol_val').textContent = volIn.value;
   volIn.addEventListener('input', function () { $('vol_val').textContent = volIn.value; store('chat_volume', volIn.value); });
   $('hush_bt').addEventListener('click', function () {
-    post('/api/voice/stop').catch(function () {}); showHush(false);
+    post('/api/voice/stop').catch(function () {}); clearSpeaking();
   });
 
   /* ── 새 대화 ──────────────────────────────────────────────────────── */
@@ -205,6 +221,7 @@
     if (waiting) waiting.abort();
     post('/api/reset').catch(function () { /* 꺼져 있으면 기록도 없다 */ });
     Array.prototype.slice.call(log.querySelectorAll('.msg')).forEach(function (m) { m.remove(); });
+    speakingTag = null;                                    // 말풍선과 같이 지워졌다
     $('empty').hidden = false; showHush(false);
     text.focus();
   });
@@ -231,10 +248,13 @@
     sendBt.disabled = !waiting && st.warm !== 'ready';
   }
   function refreshStatus() {
+    var asked = Date.now();
     return fetch('/api/status', { cache: 'no-store' })
       .then(function (r) { return r.json(); })
       .then(function (d) {
         st = d; failCount = 0;
+        // 말하기가 끝났으면 표시를 지운다. 대답이 끝나기 전에 물은 답은 믿지 않는다(그때는 아직 말하기 전). speaking 이 없는 옛 서버면 그대로 둔다
+        if (speakingTag && d.speaking === false && asked > speakingAt) clearSpeaking();
         if (window.PiboUI) PiboUI.hideBanner('svc');
         renderStatus(); renderVoiceState();
       }, function () {

@@ -238,7 +238,9 @@ const translations = {
   v2_code_editor:   { ko: "파이썬 편집기", en: "Python editor" },
   chat_voice_label: { ko: "목소리", en: "Voice" },
   chat_volume_label: { ko: "음량", en: "Volume" },
-  v2_folder_empty:  { ko: "이 폴더는 비어 있어요. [추가]로 새 파일을 만들거나 올려 보세요.", en: "This folder is empty. Use [Add] to create or upload a file." }
+  v2_folder_empty:  { ko: "이 폴더는 비어 있어요. [추가]로 새 파일을 만들거나 올려 보세요.", en: "This folder is empty. Use [Add] to create or upload a file." },
+  // 261027v4 — 되돌릴 수 없는 확인창의 버튼 이름(동사)
+  ok_delete:        { ko: "지우기", en: "Delete" }
 };
 
 // 키 → 현재 언어 문자열. 모르는 키(일반 문자열)는 그대로 반환.

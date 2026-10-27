@@ -7,12 +7,12 @@
         <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/blocks/guide.html">
 
     <link rel="shortcut icon" href="../_static/icon.png"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
-        <title>블록코딩 - 도움말 · PiBrain</title>
+        <title>블록 코딩 - 도움말 · PiBrain</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=7ee82345" />
+    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=4e20442a" />
     
     
 
@@ -240,7 +240,7 @@
 <label class="overlay sidebar-overlay" for="__navigation"></label>
 <label class="overlay toc-overlay" for="__toc"></label>
 
-<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+<a class="skip-to-content muted-link" href="#furo-main-content">본문으로 건너뛰기</a>
 
 
 
@@ -289,7 +289,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">블록 (BLOCK)</span></p>
 <ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">블록코딩</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">블록 코딩</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">파이썬 (PYTHON)</span></p>
 <ul>
@@ -322,7 +322,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
           </svg>
-          <span>Back to top</span>
+          <span>맨 위로</span>
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
@@ -345,37 +345,89 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="id1">
-<h1>블록코딩<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
+<h1>블록 코딩<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
 <p>PiBrain 메이커는 Blockly 기반의 블록 코딩을 지원합니다. 기본 블록 외에 PiBrain을 쉽게 쓸 수 있도록
 <strong>openpibo</strong> 파이썬 패키지와 이어진 블록이 있습니다. 블록 코드는 [파이썬 코드] 버튼으로 파이썬으로 볼 수 있습니다.</p>
 <div class="admonition note">
 <p class="admonition-title">참고</p>
-<p>이 페이지는 IDE 툴박스에서 자동으로 만들었습니다(<code class="docutils literal notranslate"><span class="pre">docs/tools/gen_block_guide.py</span></code>). 블록 그림은 툴박스에서 꺼냈을 때의 기본값입니다.
-모든 기능은 <strong>PiBrain 안에서</strong> 돌아가며 인터넷이 필요한 것은 [수집] 분류뿐입니다.</p>
+<p>모든 기능은 <strong>PiBrain 안에서</strong> 돌아가며 인터넷이 필요한 것은 [수집] 분류뿐입니다.</p>
 </div>
 <section id="id2">
 <h2>블록 구성<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Blockly 기본 블록 (Blockly 공식 블록 — 설명은 블록에 마우스를 올리면 나옵니다)
-├── 논리 (7)
-├── 반복 (5)
-├── 수학 (13)
-├── 문자 (15)
-├── 목록 (12)
-├── 색상 (4)
-├── 변수 (만들면 생김)
-└── 함수 (만들면 생김)
-
-PiBrain 전용 블록
-├── 시작 (1)
-├── 소리 (3)
-├── 수집 (4)
-├── 장치 (7)
-├── 화면 (11)
-├── 음성 (7)
-├── 시각 (16)
-├── 인식 (36)
-└── 기타 (12)
-</pre></div>
+<p><strong>Blockly 기본 블록</strong> — 설명은 블록에 마우스를 올리면 나옵니다.</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>분류</p></th>
+<th class="head"><p>블록 수</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>논리</p></td>
+<td><p>7</p></td>
+</tr>
+<tr class="row-odd"><td><p>반복</p></td>
+<td><p>5</p></td>
+</tr>
+<tr class="row-even"><td><p>수학</p></td>
+<td><p>13</p></td>
+</tr>
+<tr class="row-odd"><td><p>문자</p></td>
+<td><p>15</p></td>
+</tr>
+<tr class="row-even"><td><p>목록</p></td>
+<td><p>12</p></td>
+</tr>
+<tr class="row-odd"><td><p>색상</p></td>
+<td><p>4</p></td>
+</tr>
+<tr class="row-even"><td><p>변수</p></td>
+<td><p>만들면 생김</p></td>
+</tr>
+<tr class="row-odd"><td><p>함수</p></td>
+<td><p>만들면 생김</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>PiBrain 전용 블록</strong></p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>분류</p></th>
+<th class="head"><p>블록 수</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>시작</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>소리</p></td>
+<td><p>3</p></td>
+</tr>
+<tr class="row-even"><td><p>수집</p></td>
+<td><p>4</p></td>
+</tr>
+<tr class="row-odd"><td><p>장치</p></td>
+<td><p>7</p></td>
+</tr>
+<tr class="row-even"><td><p>화면</p></td>
+<td><p>11</p></td>
+</tr>
+<tr class="row-odd"><td><p>음성</p></td>
+<td><p>7</p></td>
+</tr>
+<tr class="row-even"><td><p>시각</p></td>
+<td><p>16</p></td>
+</tr>
+<tr class="row-odd"><td><p>인식</p></td>
+<td><p>36</p></td>
+</tr>
+<tr class="row-even"><td><p>기타</p></td>
+<td><p>12</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </section>
 <section id="pibrain">
@@ -709,7 +761,7 @@ PiBrain 전용 블록
           <a class="next-page" href="../libraries/audio.html">
               <div class="page-info">
                 <div class="context">
-                  <span>Next</span>
+                  <span>다음</span>
                 </div>
                 <div class="title">audio · 소리 재생·녹음</div>
               </div>
@@ -719,7 +771,7 @@ PiBrain 전용 블록
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
-                  <span>Previous</span>
+                  <span>이전</span>
                 </div>
                 
                 <div class="title">하드웨어</div>
@@ -729,19 +781,12 @@ PiBrain 전용 블록
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
-            <div class="copyright">
-                Copyright &#169; 2026 THEMAKER. All rights reserved. openpibo-python-0.9.4.0
-            </div>
-            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-            
-            <a href="https://github.com/pradyunsg/furo">Furo</a>
-            
+            <div class="copyright">Copyright &#169; 2026 THEMAKER. All rights reserved. openpibo-python-0.9.4.0</div>
+            <a href="https://www.sphinx-doc.org/">Sphinx</a>와 <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>의 <a href="https://github.com/pradyunsg/furo">Furo</a>로 만들었습니다.
           </div>
-          <div class="right-details">
-            
-          </div>
+          <div class="right-details"></div>
         </div>
-        
+
       </footer>
     </div>
     <aside class="toc-drawer">
@@ -750,13 +795,13 @@ PiBrain 전용 블록
       <div class="toc-sticky toc-scroll">
         <div class="toc-title-container">
           <span class="toc-title">
-            On this page
+            이 페이지 목차
           </span>
         </div>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">블록코딩</a><ul>
+<li><a class="reference internal" href="#">블록 코딩</a><ul>
 <li><a class="reference internal" href="#id2">블록 구성</a></li>
 <li><a class="reference internal" href="#pibrain">PiBrain 전용 블록</a><ul>
 <li><a class="reference internal" href="#id3">시작</a></li>

@@ -67,7 +67,7 @@ const translations = {
   train_fail:       { ko: "배우다가 멈췄어요. 다시 해 보세요.", en: "Training stopped. Try again." },
   stale:            { ko: "예시나 종류가 바뀌었어요. 다시 가르쳐야 반영돼요.", en: "Examples or classes changed. Train again to apply." },
   confusion:        { ko: "헷갈린 표", en: "Confusion table" },
-  confusion_hint:   { ko: "줄: 실제 · 칸: AI 답", en: "Row: actual · Column: AI answer" },
+  confusion_hint:   { ko: "(줄 = 실제, 칸 = AI 답)", en: "(rows: actual, columns: AI answer)" },
   live_title:       { ko: "지금 보이는 것",           en: "Live" },
 
   // 저장
@@ -109,6 +109,10 @@ const translations = {
   // 261028 — 접근성 이름·툴팁(data-aria-key / data-title-key)
   language:         { ko: "언어",                     en: "Language" },
   resize:           { ko: "크기 조절",                en: "Resize" },
+  // 261027v4 — 화면 검토
+  go_train:         { ko: "학습하러 가기",            en: "Go to training" },
+  test_empty_none:  { ko: "모델을 학습해서 저장하면 여기서 시험할 수 있어요.", en: "Train and save a model to test it here." },
+  st_more:          { ko: "더 보기",                  en: "More" },
 };
 
 const t = (key, ...args) => {

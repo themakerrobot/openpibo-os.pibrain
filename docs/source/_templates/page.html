@@ -1,0 +1,47 @@
+{#- Furo 의 page.html 위에 얹는 것(261027v4).
+    바닥글의 'Made with Sphinx and @pradyunsg's Furo' 는 번역 카탈로그로는 낱말 순서를 바꿀 수 없어서 바닥글 블록만 다시 쓴다.
+    다음·이전·목차 같은 짧은 문구는 locale/ko/LC_MESSAGES/sphinx.po 가 번역한다. 영문 도움말은 Furo 원래 문구 그대로 -#}
+{% extends "!page.html" %}
+{% block footer %}
+        <div class="related-pages">
+          {% if next -%}
+            <a class="next-page" href="{{ next.link }}">
+              <div class="page-info">
+                <div class="context">
+                  <span>{{ _("Next") }}</span>
+                </div>
+                <div class="title">{{ next.title }}</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          {%- endif %}
+          {% if prev -%}
+            <a class="prev-page" href="{{ prev.link }}">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>{{ _("Previous") }}</span>
+                </div>
+                {% if prev.link == pathto(master_doc) %}
+                <div class="title">{{ _("Home") }}</div>
+                {% else %}
+                <div class="title">{{ prev.title }}</div>
+                {% endif %}
+              </div>
+            </a>
+          {%- endif %}
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            {%- if show_copyright %}
+            <div class="copyright">Copyright &#169; {{ copyright|e }}</div>
+            {%- endif %}
+            {%- if language == 'en' %}
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s <a href="https://github.com/pradyunsg/furo">Furo</a>
+            {%- else %}
+            <a href="https://www.sphinx-doc.org/">Sphinx</a>와 <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>의 <a href="https://github.com/pradyunsg/furo">Furo</a>로 만들었습니다.
+            {%- endif %}
+          </div>
+          <div class="right-details"></div>
+        </div>
+{% endblock footer %}
