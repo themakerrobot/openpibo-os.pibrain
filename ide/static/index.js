@@ -49,7 +49,9 @@ async function alert_popup(message) {
 }
 
 // --- confirm_popup Function (수정됨) ---
-async function confirm_popup(message) {
+// opts(261027v4): { danger: true } 면 확인 버튼이 빨강(ide.css .is-danger)이고 처음 포커스가 [취소]다.
+// { okLabel: '지우기' } 면 확인 버튼에 그 동사를 쓴다. 닫을 때 원래대로 되돌린다
+async function confirm_popup(message, opts = {}) {
   console.log("await confirm_popup: 함수 시작, 메시지:", message); // 디버깅 로그
   return new Promise((resolve) => {
     hidePopups(); // 다른 팝업 숨기기
@@ -68,9 +70,12 @@ async function confirm_popup(message) {
     console.log("await confirm_popup: 요소 찾음:", { popupElement, msgElement, okButton, cancelButton }); // 디버깅 로그
 
     msgElement.textContent = message;
+    const okText = okButton.querySelector('[data-key]') || okButton;
+    okText.textContent = opts.okLabel || t('confirm');
+    okButton.classList.toggle('is-danger', !!opts.danger);
     popupElement.style.display = 'flex'; // 팝업 표시
     console.log("await confirm_popup: 팝업 표시됨. 사용자 입력 대기 중..."); // 디버깅 로그
-    okButton.focus();
+    (opts.danger ? cancelButton : okButton).focus();
 
     // --- 이벤트 핸들러 정의 ---
     const okHandler = function () {
@@ -91,6 +96,8 @@ async function confirm_popup(message) {
       console.log("await confirm_popup: 리스너 정리 및 팝업 숨김"); // 디버깅 로그
       okButton.removeEventListener('click', okHandler);
       cancelButton.removeEventListener('click', cancelHandler);
+      okText.textContent = t('confirm');
+      okButton.classList.remove('is-danger');
       hidePopups();
     };
 
@@ -223,13 +230,13 @@ document.getElementById("guide_bt").addEventListener("click", function () {
 });
 
 document.getElementById("restore_bt").addEventListener("click", async function () {
-  if (await confirm_popup(translations["confirm_restore"][lang])) {
+  if (await confirm_popup(translations["confirm_restore"][lang], { danger: true, okLabel: t("nav_restore") })) {
     socket.emit("restore");
   }
 });
 
 document.getElementById("poweroff_bt").addEventListener("click", async function () {
-  if (await confirm_popup(translations["confirm_poweroff"][lang])) {
+  if (await confirm_popup(translations["confirm_poweroff"][lang], { danger: true, okLabel: t("nav_poweroff") })) {
       socket.emit("poweroff");
   }
 });
@@ -319,7 +326,7 @@ socket.on("update", async (data) => {
       if (codetype == "block") {
         try {
           Blockly.serialization.workspaces.load(JSON.parse(data["code"]), workspace);
-          workspace.scrollCenter();
+          scrollToContent();
           if (data["code"] != "{}" && 'blocks' in JSON.parse(data["code"])) {
             for (jdata of JSON.parse(data["code"])["blocks"]["blocks"]) {
               findBlocks({ block: jdata })
@@ -391,6 +398,25 @@ socket.on("update", async (data) => {
   }
 });
 
+// 블록 파일을 열 때 보이는 자리(261027v4). 화면에 다 들어가면 예전처럼 가운데로 맞추고, 화면보다 큰 프로그램은
+// 가운데로 맞추면 왼쪽 위가 툴박스·확대 버튼 밑으로 잘리므로 내용의 왼쪽 위가 보이는 칸 24px 안쪽에 오게 한다(축마다).
+// workspace.scroll(x, y) 의 x·y 는 Blockly 의 scrollX·scrollY(= -보이는 칸 왼쪽·위, 픽셀)다
+function scrollToContent() {
+  try {
+    Blockly.svgResize(workspace);
+    const mm = workspace.getMetricsManager();
+    const c = mm.getContentMetrics(), v = mm.getViewMetrics();
+    const PAD = 24;
+    const fitW = c.width + 2 * PAD <= v.width, fitH = c.height + 2 * PAD <= v.height;
+    if (!v.width || !v.height || !c.width || (fitW && fitH)) { workspace.scrollCenter(); return; }
+    const left = fitW ? c.left + c.width / 2 - v.width / 2 : c.left - PAD;
+    const top = fitH ? c.top + c.height / 2 - v.height / 2 : c.top - PAD;
+    workspace.scroll(-left, -top);
+  } catch (e) {
+    workspace.scrollCenter();
+  }
+}
+
 function findBlocks(data) {
   if (data && typeof data === 'object') {
     if ('block' in data) {
@@ -430,7 +456,6 @@ socket.on("init", (d) => {
       });
 
       Blockly.serialization.workspaces.load(JSON.parse(d["codetext"]), workspace);
-      workspace.scrollCenter();
       if (d["codetext"] != "{}" && 'blocks' in JSON.parse(d["codetext"])) {
         for (jdata of JSON.parse(d["codetext"])["blocks"]["blocks"]) {
           findBlocks({ block: jdata })
@@ -453,7 +478,7 @@ socket.on("init", (d) => {
       $("#codeDiv").hide();
       $("#blocklyDiv").show();
       setLanguage(lang);
-      Blockly.svgResize(workspace);
+      scrollToContent();   // 보이게 한 뒤에 잰다(숨긴 채로는 크기가 0)
     }
   }
 
@@ -477,10 +502,17 @@ socket.on("system", (data) => {
   }
   const up = Math.floor(Number(data[2]) || 0);
   $("#s_runtime").text(t("v2_uptime", Math.floor(up / 3600), Math.floor(up % 3600 / 60)));
-  countText("#s_cpu_temp", data[3]);
+  countText("#s_cpu_temp", String(data[3] || '').replace(/'C$/, '°C'));   // 기기는 48.2'C 로 보낸다
   countText("#s_memory", `${t("v2_mem")} ${Math.floor( (data[4] - data[5]) / data[4] * 100)}%`);
-  $("#s_network").html(`<i class="fas fa-network-wired"></i> ${data[7]}, <i class="fa-solid fa-wifi"></i> ${data[6]}/${data[8]}`);
-  $("#network_info").html(`<i class="fas fa-network-wired"></i> ${data[7]}, <i class="fa-solid fa-wifi"></i> ${data[6]}/${data[8]}`);
+  // 연결된 것만 보인다: 유선 IP · WiFi IP/SSID. 둘 다 없으면 '–' (261027v4 — 전엔 빈 값도 ', ' 와 함께 찍었다)
+  const esc = (v) => $('<span>').text(String(v)).html();
+  const wired = String(data[7] || '').trim(), wifi = String(data[6] || '').trim(), ssid = String(data[8] || '').trim();
+  const net = [];
+  if (wired) net.push(`<i class="fas fa-network-wired"></i> ${esc(wired)}`);
+  if (wifi) net.push(`<i class="fa-solid fa-wifi"></i> ${esc(wifi)}${ssid ? '/' + esc(ssid) : ''}`);
+  const netHtml = net.length ? net.join('<span class="v2-net-sep"></span>') : '<i class="fa-solid fa-wifi"></i> –';
+  $("#s_network").html(netHtml);
+  $("#network_info").html(netHtml);
 });
 
 socket.on("update_battery", (data) => {
@@ -715,7 +747,7 @@ socket.on("update_file_manager", (d) => {
                 BLOCK_PATH = "";
                 saveBlock = "{}";
                 Blockly.serialization.workspaces.load(JSON.parse(saveBlock), workspace);
-                workspace.scrollCenter();
+                scrollToContent();
               }
               socket.emit('rename', { oldpath: CURRENT_DIR.join("/") + "/" + name, newpath: CURRENT_DIR.join("/") + "/" + newname });
             })
@@ -731,7 +763,7 @@ socket.on("update_file_manager", (d) => {
               let idx = $(this).closest('tr').index();
               //let type = $(`#fm_table tr:eq(${idx}) td:eq(0)`).html();
               let name = $(`#fm_table tr:eq(${idx}) td:eq(1)`).text();
-              if (await confirm_popup(translations['confirm_delete_file'][lang](`${CURRENT_DIR.join("/")}/${name}`))) {
+              if (await confirm_popup(translations['confirm_delete_file'][lang](`${CURRENT_DIR.join("/")}/${name}`), { danger: true, okLabel: t("ok_delete") })) {
                 if (isPathOrInside($("#codepath").text(), CURRENT_DIR.join("/") + "/" + name)) {
                   $("#codepath").text("");
                 }
@@ -744,7 +776,7 @@ socket.on("update_file_manager", (d) => {
                   BLOCK_PATH = "";
                   saveBlock = "{}";
                   Blockly.serialization.workspaces.load(JSON.parse(saveBlock), workspace);
-                  workspace.scrollCenter();
+                  scrollToContent();
                 }
                 socket.emit('delete', CURRENT_DIR.join("/") + "/" + name);
               }
@@ -1258,9 +1290,8 @@ $(document).keydown(async (evt) => {
     wifiListUl.on('click', '.network-item', function() {
         const ssid = $(this).data('ssid');
         const security = $(this).data('security');
-        // Highlight selected item (optional)
-        $(this).siblings().css('background-color', ''); // Reset others
-        $(this).css('background-color', '#e0e0ff'); // Highlight selected
+        // 고른 줄 표시는 클래스로(261027v4 — 전엔 인라인 #e0e0ff 라 어둡게에서 글자가 안 보였다). 색은 ide.css 의 .is-selected
+        $(this).addClass('is-selected').siblings().removeClass('is-selected');
         updateFormForNetwork(ssid, security);
     });
 
@@ -1284,7 +1315,7 @@ $(document).keydown(async (evt) => {
         identityFieldDiv.removeClass('hidden'); // Show all fields for manual
         passwordFieldDiv.removeClass('hidden');
         statusMessage.text('').removeClass('error');
-        wifiListUl.find('.network-item').css('background-color', ''); // Deselect list item
+        wifiListUl.find('.network-item').removeClass('is-selected'); // Deselect list item
      });
 
 

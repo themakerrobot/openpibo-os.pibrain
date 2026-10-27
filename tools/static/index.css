@@ -95,8 +95,9 @@ button, input, textarea, select { font: inherit; color: inherit; }
 
 .tl-main { flex: 1 1 auto; min-width: 0; overflow-y: auto; padding: var(--sp-4); background: var(--c-bg); }
 .tab { display: none; }
+/* 본문 폭: 파이보 도구와 같게 가운데 최대 1180px · 바깥 16 · 카드 사이 12 */
 .tab.active {
-  display: grid; gap: 14px; align-items: start;
+  display: grid; gap: var(--sp-3); align-items: start;
   grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
   max-width: 1180px; margin: 0 auto;   /* 넓은 화면에서 카드가 왼쪽으로 쏠리지 않게 가운데로 */
 }
@@ -129,7 +130,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .btn-primary { background: var(--c-dark); color: var(--c-on-dark); box-shadow: var(--c-btn-sh); }   /* macOS 식 질감 */
 .btn-primary:hover:not(:disabled) { background: var(--c-dark-hov); }
 .btn-danger { background: var(--c-red-t); color: var(--c-red-ink); box-shadow: inset 0 0 0 1px var(--v2-red-t2); }
-.btn-danger:hover:not(:disabled) { background: var(--c-red); color: #fff; }
+.btn-danger:hover:not(:disabled) { background: var(--c-red); color: var(--v2-on-red); }
 .btn-sm { height: var(--ctl-sm); padding: 0 12px; font-size: var(--fs-sm); }
 .btn-grow { flex: 1 1 auto; }
 .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
@@ -140,6 +141,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
   font-size: var(--fs-sm); color: var(--c-ink-2); min-height: var(--ctl-md); word-break: break-all;
 }
 .log-box { min-height: 72px; max-height: 180px; overflow-y: auto; }
+.tl .pb-result { margin-top: 12px; }   /* 비전 결과 = 키트 .pb-result(파이보 도구 [카메라] 결과와 같은 칸) */
 .log-box .log-time { color: var(--c-sel-ink); font-weight: var(--fw-b); margin-right: 6px; }
 
 .tl input[type=number], .tl textarea {
@@ -197,6 +199,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
 }
 .swatch:hover { background: var(--c-hover); }
 .swatch > i { width: 20px; height: 20px; border-radius: 50%; background: var(--sw); box-shadow: inset 0 0 0 1px rgba(0,0,0,.2); }
+.swatch[aria-pressed="true"] { background: var(--c-sel); color: var(--c-sel-ink); box-shadow: inset 0 0 0 1px var(--c-accent); }   /* 지금 RGB 와 같은 색 = '고른 것' */
 
 /* ── 카메라 · 비전 ───────────────────────────────────────────────────── */
 /* 카메라 칸 = 키트 .pb-stage(파이보 도구·분류기와 같은 바탕·빈 화면 안내). 바탕·모서리는 키트가 */

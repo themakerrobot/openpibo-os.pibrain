@@ -44,7 +44,15 @@ function applyLang() {
   /* Result / status placeholders — only reset if still showing placeholder */
   const vr = document.getElementById('vision-result');
   const isPlaceholder = (el, keys) => keys.some(k => el.textContent === (T[k].ko || '') || el.textContent === (T[k].en || ''));
-  if (isPlaceholder(vr, ['result_ph', 'no_result'])) vr.textContent = t('result_ph');
+  if (isPlaceholder(vr, ['result_ph', 'no_result'])) setVisionResult('');
+
+  /* 말할 글자·LCD 글자: 비어 있거나 처음 글자(어느 언어든) 그대로면 지금 언어의 처음 글자로. 사용자가 고친 글자는 그대로 둔다 */
+  [['tts-text', 'tts_sample'], ['lcd-text', 'lcd_sample']].forEach(([id, key]) => {
+    const el = document.getElementById(id);
+    if (!el.value || el.value === T[key].ko || el.value === T[key].en) el.value = t(key);
+  });
+  updateLcdPreview();
+  syncConn();
 
   const ts = document.getElementById('tts-status');
   if (isPlaceholder(ts, ['waiting'])) ts.textContent = t('waiting');
@@ -92,6 +100,8 @@ function startButtonStream() {
       if (on) {
         const time = new Date().toLocaleTimeString();
         const log = document.getElementById('btn-log');
+        // 첫 기록이면 '기다리는 중…' 안내를 지우고 data-key 도 뗀다(언어를 바꿀 때 기록이 안내로 덮이지 않게)
+        if (log.hasAttribute('data-key')) { log.removeAttribute('data-key'); log.innerHTML = ''; }
         log.innerHTML =
           `<span class="log-time">${time}</span>${t('btn_pressed', k)}<br>` +
           log.innerHTML;
@@ -114,6 +124,13 @@ function syncLed(ch, val) {
   el.style.boxShadow   = R + G + B > 0 ? `0 0 24px rgba(${R},${G},${B},0.5)` : 'none';
   document.getElementById('led-picker').value  =
     '#' + [R, G, B].map(v => v.toString(16).padStart(2, '0')).join('');
+  markSwatch();
+}
+
+/* 빠른 색: 지금 RGB 와 같은 색 칸을 '고른 것'(옅은 파랑)으로 */
+function markSwatch() {
+  const cur = `${R},${G},${B}`;
+  document.querySelectorAll('.swatch[data-rgb]').forEach(b => b.setAttribute('aria-pressed', b.dataset.rgb === cur ? 'true' : 'false'));
 }
 
 function applyColorPicker(hex) {
@@ -134,6 +151,8 @@ function setCamLabel(key) {
   const span = document.querySelector('#btn-cam > span');
   span.setAttribute('data-key', key);
   span.textContent = t(key);
+  // [카메라 켜기] 만 꽉 찬 주 동작. 켜진 뒤의 [카메라 끄기] 는 보조 버튼
+  document.getElementById('btn-cam').classList.toggle('btn-primary', key === 'cam_on_btn');
 }
 
 function toggleCamera() {
@@ -177,8 +196,15 @@ function resetVision() {
   document.querySelectorAll('.vbtn').forEach(b => b.classList.remove('active'));
   document.querySelector('.vbtn').classList.add('active');
   clearInterval(resultInterval);
-  document.getElementById('vision-result').textContent = t('result_ph');
+  setVisionResult('');
   document.getElementById('marker-row').style.display  = 'none';
+}
+
+/* 결과 칸(키트 .pb-result). 빈 결과면 안내 글(data-empty — 흐린 보통 글꼴) */
+function setVisionResult(text) {
+  const el = document.getElementById('vision-result');
+  el.textContent = text || t('result_ph');
+  el.toggleAttribute('data-empty', !text);
 }
 
 function setVision(type, btn) {
@@ -193,11 +219,13 @@ function setVision(type, btn) {
   if (!noResult.includes(type)) {
     resultInterval = setInterval(() => {
       fetch('/vision_result').then(r => r.json()).then(d => {
-        document.getElementById('vision-result').textContent = d.result || t('no_result');
+        const el = document.getElementById('vision-result');
+        el.textContent = d.result || t('no_result');
+        el.toggleAttribute('data-empty', !d.result);
       });
     }, 500);
   } else {
-    document.getElementById('vision-result').textContent = t('result_ph');
+    setVisionResult('');
   }
 }
 
@@ -332,6 +360,14 @@ document.getElementById('theme_bt').addEventListener('click', () => {
 /* ── 서비스 꺼짐 ──────────────────────────────────────────────
    다른 도구를 켜거나 IDE 에서 코드를 실행하면 tools.service 가 꺼진다. /health 가 두 번 연속
    실패하면 배너로 알리고 [다시 켜기] 를 준다(launch.html 로 다시 연다). 살아나면 배너를 닫는다 */
+/* 상단바 연결 칩(키트 .pb-conn — 파이보 도구의 '로봇 연결됨' 과 같은 모양). /health 가 답하면 연결됨 */
+let connOk = false;
+function syncConn() {
+  const c = document.getElementById('conn_chip');
+  if (!c) return;
+  c.dataset.state = connOk ? 'on' : 'off';
+  c.dataset.label = t(connOk ? 'conn_ready' : 'conn_wait');
+}
 (function watchHealth() {
   let fails = 0, shown = false;
   async function tick() {
@@ -341,6 +377,7 @@ document.getElementById('theme_bt').addEventListener('click', () => {
       ok = (await fetch('/health', { cache: 'no-store', signal: c.signal })).ok;
       clearTimeout(tm);
     } catch (e) { ok = false; }
+    if (ok || fails >= 1) { connOk = ok; syncConn(); }   // 한 번 실패는 넘긴다(배너와 같은 기준)
     if (ok) {
       fails = 0;
       if (shown) { PiboUI.hideBanner('svc'); shown = false; }
@@ -356,10 +393,11 @@ document.getElementById('theme_bt').addEventListener('click', () => {
     }
   }
   setInterval(tick, 5000);
+  tick();
 })();
 
 /* ── Init ────────────────────────────────────────────────────*/
 document.addEventListener('DOMContentLoaded', () => {
   applyLang();
-  updateLcdPreview();
+  markSwatch();
 });

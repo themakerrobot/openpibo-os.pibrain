@@ -4,34 +4,37 @@ PiBrain Maker uses Blockly for block coding. Besides the standard blocks there a
 the **openpibo** Python package. The [Python code] button shows the Python code your blocks make.
 
 ```{note}
-This page is generated from the IDE toolbox (`docs/tools/gen_block_guide.py`). Each picture shows the block as it comes out of the toolbox.
 Everything runs **inside PiBrain**. Only the [Collect] category needs the internet, and it is only in the Korean edition.
 ```
 
 ## Categories
 
-```
-Standard Blockly blocks (hover over a block to see what it does)
-├── Logic (7)
-├── Loops (5)
-├── Math (13)
-├── Text (15)
-├── Lists (12)
-├── Color (4)
-├── Variables (appear when you make one)
-└── Functions (appear when you make one)
+**Standard Blockly blocks** — Hover over a block to see what it does.
 
-PiBrain blocks
-├── Start (1)
-├── Audio (3)
-├── Collect (4)
-├── Device (7)
-├── Display (11)
-├── Speech (7)
-├── Vision (16)
-├── Recognition (36)
-└── Utilities (12)
-```
+| Category | Blocks |
+|---|---|
+| Logic | 7 |
+| Loops | 5 |
+| Math | 13 |
+| Text | 15 |
+| Lists | 12 |
+| Color | 4 |
+| Variables | appear when you make one |
+| Functions | appear when you make one |
+
+**PiBrain blocks**
+
+| Category | Blocks |
+|---|---|
+| Start | 1 |
+| Audio | 3 |
+| Collect | 4 |
+| Device | 7 |
+| Display | 11 |
+| Speech | 7 |
+| Vision | 16 |
+| Recognition | 36 |
+| Utilities | 12 |
 
 ## PiBrain blocks
 

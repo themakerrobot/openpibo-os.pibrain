@@ -35,7 +35,7 @@ main.chat {
 .msg--bot { align-self: flex-start; align-items: flex-start; }
 .msg__body {
   padding: 10px 14px; border-radius: 16px; line-height: 1.55;
-  white-space: pre-wrap; word-break: break-word; font-size: 15.5px;
+  white-space: pre-wrap; word-break: keep-all; overflow-wrap: break-word; overflow-wrap: anywhere; font-size: 15.5px;   /* 한글은 낱말 단위로 줄바꿈, 너무 긴 낱말만 자른다(261027v4). anywhere 를 모르는 Safari 14 는 break-word */
 }
 .msg--me  .msg__body { background: var(--v2-accent); color: var(--v2-on-accent); border-bottom-right-radius: 4px; }   /* 강조 파랑(어둡게에서도) */
 .msg--bot .msg__body { background: var(--v2-raise); color: var(--v2-ink); border: 1px solid var(--v2-line);

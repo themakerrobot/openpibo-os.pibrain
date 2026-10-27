@@ -99,7 +99,7 @@ body[data-tab="store"] .pb-resizer { display: none !important; }
   touch-action: none;                 /* 누르고 있는 동안 스크롤로 빼앗기지 않게 */
 }
 .cls-hold.is-on {
-  background: var(--v2-red); border-color: transparent; color: #fff;
+  background: var(--v2-red); border-color: transparent; color: var(--v2-on-red);
   animation: cls-pulse 0.9s ease-in-out infinite;
 }
 @keyframes cls-pulse { 50% { box-shadow: 0 0 0 5px rgba(214, 57, 63, .25); } }
@@ -227,9 +227,30 @@ body[data-tab="store"] .pb-resizer { display: none !important; }
 .store-meta { font-size: 12px; color: var(--pb-text-dim); }
 .chips { display: flex; flex-wrap: wrap; gap: 4px; }
 .chip { background: var(--pb-surface-2); border-radius: 999px; padding: 3px 9px; font-size: 12px; }
-.store-code { background: var(--pb-surface); border-radius: 6px; padding: 5px 8px; overflow-x: auto; white-space: nowrap; }
-.store-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.store-card { position: relative; }
+/* 코드 줄은 한 줄로 자르고(…) 전체는 title 로 */
+.store-code { display: block; background: var(--pb-surface); border-radius: 6px; padding: 5px 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* 버튼: [시험](주) · [이어서 배우기] · [⋯](이름 바꾸기·내려받기·지우기). 다섯 개를 다 늘어놓으면 1024 에서 들쭉날쭉 접혔다 */
+.store-actions { display: flex; align-items: center; gap: 6px; margin-top: auto; }   /* 카드 높이가 달라도 버튼 줄은 아래에 맞춘다 */
 .store-actions .pb-btn { text-decoration: none; }
+.store-more { position: relative; margin-left: auto; flex: none; }
+.store-more__bt { width: var(--ctl-sm); padding: 0 !important; }
+.store-menu {
+  position: absolute; right: 0; top: calc(100% + 4px); z-index: 20; min-width: 168px; padding: 4px;
+  display: flex; flex-direction: column; gap: 2px;
+  background: var(--v2-raise); border: 1px solid var(--v2-line); border-radius: var(--r-ctl); box-shadow: 0 8px 24px var(--v2-shadow);
+}
+.store-menu[hidden] { display: none; }
+body.pb-v2 .store-menu > button, body.pb-v2 .store-menu > a {
+  display: flex; align-items: center; gap: 10px; width: 100%; height: var(--ctl-md); min-height: 0; padding: 0 12px;
+  border: 0 !important; border-radius: var(--r-chip) !important; background: transparent !important; box-shadow: none !important;
+  color: var(--v2-ink); font: var(--fw-b) var(--fs-md)/1 var(--font-ui); text-align: left; text-decoration: none; cursor: pointer;
+}
+body.pb-v2 .store-menu > button:hover, body.pb-v2 .store-menu > a:hover,
+body.pb-v2 .store-menu > button:focus, body.pb-v2 .store-menu > a:focus { background: var(--v2-hover) !important; outline: none; }
+body.pb-v2 .store-menu > * > i { width: 16px; text-align: center; color: var(--v2-ink-2); }
+body.pb-v2 .store-menu > .is-danger, body.pb-v2 .store-menu > .is-danger > i { color: var(--v2-red-ink) !important; }
+body.pb-v2 .store-menu > .is-danger:hover { background: var(--v2-red-t) !important; }
 
 #store_list > .store-empty { grid-column: 1 / -1; }
 

@@ -20,11 +20,11 @@
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
   <link rel="stylesheet" href="../static/codemirror.css" />
   <link rel="stylesheet" href="../static/jquery.jsonview.min.css" />
-  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261027v3" />
-  <link rel="stylesheet" href="../static/v2/ide.css?ver=261027v3" />
+  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261027v4" />
+  <link rel="stylesheet" href="../static/v2/ide.css?ver=261027v4" />
   <link rel="shortcut icon" href="../static/icon.png?ver=240319v1" type="image/x-icon" />
 
-  <script src="../static/ko2en.js?ver=261027v3"></script>
+  <script src="../static/ko2en.js?ver=261027v4"></script>
   <script src="../static/blockly_compressed.js?ver=240319v1"></script>
   <script src="../static/blocks_compressed.js?ver=240319v1"></script>
   <script src="../static/python_compressed.js?ver=240319v1"></script>
@@ -68,7 +68,7 @@
         <summary class="pb-iconbtn" data-title-key="v2_more"><i class="fa-solid fa-ellipsis"></i></summary>
         <div class="v2-pop v2-pop--right" role="menu">
           <div class="v2-pop__row v2-pop__row--stack">
-            <span data-key="v2_theme"></span>
+            <span class="v2-pop__lbl"><i class="fa-solid fa-circle-half-stroke"></i><span data-key="v2_theme"></span></span>
             <div class="v2-seg v2-seg--full" id="theme_seg" role="radiogroup">
               <button type="button" data-theme-set="light"><i class="fa-solid fa-sun"></i><span data-key="v2_theme_light"></span></button>
               <button type="button" data-theme-set="soft"><i class="fa-solid fa-circle-half-stroke"></i><span data-key="v2_theme_soft"></span></button>
@@ -76,7 +76,7 @@
             </div>
           </div>
           <div class="v2-pop__row">
-            <span data-key="v2_fontsize"></span>
+            <span class="v2-pop__lbl"><i class="fa-solid fa-text-height"></i><span data-key="v2_fontsize"></span></span>
             <span class="v2-stepper">
               <button type="button" data-step="-1" aria-label="-"><i class="fa-solid fa-minus"></i></button>
               <input type="number" id="fontsize" min="5" max="50" value="14" step="1" pattern="\d*" aria-label="Font size" data-aria-key="v2_fontsize" />
@@ -84,7 +84,7 @@
             </span>
           </div>
           <label class="v2-pop__row v2-switch">
-            <span data-key="v2_dark_editor"></span>
+            <span class="v2-pop__lbl"><i class="fa-solid fa-code"></i><span data-key="v2_dark_editor"></span></span>
             <input type="checkbox" id="theme_check" name="theme_check" checked aria-label="Dark Python editor" data-aria-key="v2_dark_editor" />
             <span class="v2-switch__track"></span>
           </label>
@@ -297,8 +297,8 @@
     </div>
   </div>
 
-  <script src="../static/pibo-ui.js?ver=261027v3"></script>
-  <script src="../static/index.js?ver=261027v3"></script>
+  <script src="../static/pibo-ui.js?ver=261027v4"></script>
+  <script src="../static/index.js?ver=261027v4"></script>
   <script src="../static/v2/vendor/toolbox-search.js?ver=1.2.11"></script>
   <script src="../static/v2/ide.js?ver=261027v3"></script>
 </body>

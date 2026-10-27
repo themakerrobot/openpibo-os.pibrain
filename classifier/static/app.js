@@ -712,7 +712,7 @@ function renderTestLeft() {
   const items = [];
   if (S.trained && !S.trained.saved) {
     items.push(`<button type="button" class="model-pick" data-pick="__trained__" aria-selected="${!!(S.test && S.test.unsaved)}">
-      <i class="fa-solid fa-flask"></i><span class="model-pick__name">${esc(t('test_unsaved'))}</span>
+      <i class="fa-solid fa-graduation-cap"></i><span class="model-pick__name">${esc(t('test_unsaved'))}</span>
       <span class="model-pick__meta">${esc(t('src_' + S.trained.source))} · ${S.trained.classes.length}</span></button>`);
   }
   S.models.forEach(m => {
@@ -721,14 +721,25 @@ function renderTestLeft() {
       <i class="fa-solid ${src.icon}"></i><span class="model-pick__name">${esc(m.name)}</span>
       <span class="model-pick__meta">${esc(t('src_' + m.source))} · ${m.classes.length}</span></button>`);
   });
-  list.innerHTML = items.join('') || `<div class="pb-empty"><i class="fa-solid fa-box-open" aria-hidden="true"></i><p>${esc(t('no_models'))}</p></div>`;
+  list.innerHTML = items.join('') || noModelsHtml('');
   $('thr').value = Math.round(S.threshold * 100);
   $('thr_val').textContent = Math.round(S.threshold * 100) + '%';
+}
+
+// 모델이 하나도 없을 때의 빈 화면: 안내 + [학습하러 가기](학습 탭으로)
+function noModelsHtml(cls) {
+  return `<div class="pb-empty ${cls}"><i class="fa-solid fa-box-open" aria-hidden="true"></i><p>${esc(t('no_models'))}</p>` +
+    `<button type="button" class="pb-btn pb-btn--sm pb-btn--tint" data-goto="learn"><i class="fa-solid fa-graduation-cap"></i><span>${esc(t('go_train'))}</span></button></div>`;
 }
 
 function renderTestRight() {
   const has = !!S.test;
   $('test_empty').hidden = has;
+  // 시험할 모델이 하나도 없으면 '왼쪽에서 고르라' 대신 먼저 학습하라는 안내
+  const none = !S.models.length && !(S.trained && !S.trained.saved);
+  const ep = $('test_empty').querySelector('p');
+  ep.dataset.key = none ? 'test_empty_none' : 'test_empty';
+  ep.textContent = t(ep.dataset.key);
   $('test_live').hidden = !has;
   $('test_photo').hidden = !(has && S.test.source === 'image');
   if (!has) return;
@@ -744,24 +755,32 @@ function renderStore() {
   if (!box) return;
   $('store_root').textContent = MODEL_DIR;
   if (!S.modelsLoaded) { box.innerHTML = '<div class="pb-skel pb-skel--card"></div>'.repeat(2); return; }
-  if (!S.models.length) { box.innerHTML = `<div class="pb-empty store-empty"><i class="fa-solid fa-box-open" aria-hidden="true"></i><p>${esc(t('no_models'))}</p></div>`; return; }
+  if (!S.models.length) { box.innerHTML = noModelsHtml('store-empty'); return; }
   box.innerHTML = S.models.map(m => {
     const src = SOURCES.find(s => s.id === m.source) || SOURCES[0];
     const acc = typeof m.accuracy === 'number' ? Math.round(m.accuracy * 100) + '%' : '—';
-    const when = m.trainedAt ? new Date(m.trainedAt).toLocaleString(lang === 'ko' ? 'ko-KR' : 'en-US') : '';
+    // 날짜·시각은 분까지(초는 뺀다)
+    const when = m.trainedAt ? new Date(m.trainedAt).toLocaleString(lang === 'ko' ? 'ko-KR' : 'en-US',
+      { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
     const chips = m.classes.map(c => `<span class="chip">${esc(c)}</span>`).join('');
     const n = esc(m.name);
+    const code = `cf.load('${esc(MODEL_DIR)}/${n}')`;
     return `<article class="store-card">
       <header><i class="fa-solid ${src.icon}"></i><h3 title="${n}">${n}</h3><span class="store-acc" title="${esc(t('acc'))}">${acc}</span></header>
       <p class="store-meta">${esc(t('src_' + m.source))}${m.variant ? ' · ' + esc(t('var_' + m.variant)) : ''} · ${esc(when)}</p>
       <div class="chips">${chips}</div>
-      <code class="store-code">cf.load('${esc(MODEL_DIR)}/${n}')</code>
+      <code class="store-code" title="${code}">${code}</code>
       <div class="store-actions">
-        <button type="button" class="pb-btn pb-btn--sm pb-btn--accent" data-act="test" data-name="${n}"><i class="fa-solid fa-vial"></i><span>${esc(t('st_test'))}</span></button>
+        <button type="button" class="pb-btn pb-btn--sm pb-btn--accent" data-act="test" data-name="${n}"><i class="fa-solid fa-flask"></i><span>${esc(t('st_test'))}</span></button>
         <button type="button" class="pb-btn pb-btn--sm" data-act="continue" data-name="${n}" ${m.hasSamples ? '' : 'disabled'}><i class="fa-solid fa-graduation-cap"></i><span>${esc(t('st_continue'))}</span></button>
-        <button type="button" class="pb-btn pb-btn--sm" data-act="rename" data-name="${n}"><i class="fa-solid fa-pen"></i><span>${esc(t('st_rename'))}</span></button>
-        <a class="pb-btn pb-btn--sm" href="/api/models/${encodeURIComponent(m.name)}/zip" download><i class="fa-solid fa-download"></i><span>${esc(t('st_download'))}</span></a>
-        <button type="button" class="pb-btn pb-btn--sm pb-btn--ghost" data-act="delete" data-name="${n}"><i class="fa-solid fa-trash-can"></i><span>${esc(t('delete'))}</span></button>
+        <div class="store-more">
+          <button type="button" class="pb-btn pb-btn--sm pb-btn--ghost store-more__bt" aria-haspopup="true" aria-expanded="false" title="${esc(t('st_more'))}" aria-label="${esc(t('st_more'))}"><i class="fa-solid fa-ellipsis"></i></button>
+          <div class="store-menu" role="menu" hidden>
+            <button type="button" role="menuitem" data-act="rename" data-name="${n}"><i class="fa-solid fa-pen"></i><span>${esc(t('st_rename'))}</span></button>
+            <a role="menuitem" href="/api/models/${encodeURIComponent(m.name)}/zip" download><i class="fa-solid fa-download"></i><span>${esc(t('st_download'))}</span></a>
+            <button type="button" role="menuitem" class="is-danger" data-act="delete" data-name="${n}"><i class="fa-solid fa-trash-can"></i><span>${esc(t('delete'))}</span></button>
+          </div>
+        </div>
       </div>
     </article>`;
   }).join('');
@@ -847,6 +866,39 @@ $('photo_input').addEventListener('change', async e => {
   } catch (err) {
     toast(t('photo_fail'), 'warn');
   }
+});
+
+// 보관함 카드의 [⋯] 메뉴(이름 바꾸기·내려받기·지우기). 누르면 열고 닫는다. 바깥을 누르거나 Esc 면 닫는다
+function closeStoreMenus(except) {
+  document.querySelectorAll('.store-menu').forEach(m => {
+    if (m === except) return;
+    m.hidden = true;
+    const bt = m.parentNode.querySelector('.store-more__bt');
+    if (bt) bt.setAttribute('aria-expanded', 'false');
+  });
+}
+document.addEventListener('click', e => {
+  const tg = e.target.closest ? e.target : e.target.parentNode;
+  const more = tg.closest('.store-more__bt');
+  if (more) {
+    const menu = more.parentNode.querySelector('.store-menu');
+    closeStoreMenus(menu);
+    menu.hidden = !menu.hidden;
+    more.setAttribute('aria-expanded', String(!menu.hidden));
+    if (!menu.hidden) { const first = menu.querySelector('[role=menuitem]'); if (first) first.focus(); }
+    return;
+  }
+  closeStoreMenus(null);   // 메뉴 항목을 누른 경우도 닫는다(동작은 아래 store_list 처리)
+  const go = tg.closest('[data-goto]');
+  if (go) setTab(go.dataset.goto);
+});
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  const open = document.querySelector('.store-menu:not([hidden])');
+  if (!open) return;
+  closeStoreMenus(null);
+  const bt = open.parentNode.querySelector('.store-more__bt');
+  if (bt) bt.focus();
 });
 
 $('store_list').addEventListener('click', e => {

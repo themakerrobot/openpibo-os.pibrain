@@ -138,26 +138,28 @@ async def main():
     ko = LANG == 'ko'
     count = lambda c: ('만들면 생김' if ko else 'appear when you make one') if c.get('dynamic') or not c['rows'] else len(c['rows'])
 
+    # 분류는 표로(261027v4 — 전엔 코드 블록 안 ├── 나무 그림이었다). 안내 상자에는 인터넷이 필요한 분류만 적는다
     if ko:
-        L = ['# 블록코딩', '',
+        L = ['# 블록 코딩', '',
              f'{PRODUCT} 메이커는 Blockly 기반의 블록 코딩을 지원합니다. 기본 블록 외에 {PRODUCT}{"을" if PRODUCT == "PiBrain" else "를"} 쉽게 쓸 수 있도록',
              '**openpibo** 파이썬 패키지와 이어진 블록이 있습니다. 블록 코드는 [파이썬 코드] 버튼으로 파이썬으로 볼 수 있습니다.', '',
-             '```{note}', '이 페이지는 IDE 툴박스에서 자동으로 만들었습니다(`docs/tools/gen_block_guide.py`). 블록 그림은 툴박스에서 꺼냈을 때의 기본값입니다.',
-             '모든 기능은 **' + PRODUCT + ' 안에서** 돌아가며 인터넷이 필요한 것은 [수집] 분류뿐입니다.', '```', '',
-             '## 블록 구성', '', '```', 'Blockly 기본 블록 (Blockly 공식 블록 — 설명은 블록에 마우스를 올리면 나옵니다)']
+             '```{note}', '모든 기능은 **' + PRODUCT + ' 안에서** 돌아가며 인터넷이 필요한 것은 [수집] 분류뿐입니다.', '```', '',
+             '## 블록 구성', '']
+        groups = [('Blockly 기본 블록', '설명은 블록에 마우스를 올리면 나옵니다.', basic), (f'{PRODUCT} 전용 블록', '', custom)]
+        head = '| 분류 | 블록 수 |'
     else:
         L = ['# Block coding', '',
              f'{PRODUCT} Maker uses Blockly for block coding. Besides the standard blocks there are {PRODUCT} blocks that call',
              'the **openpibo** Python package. The [Python code] button shows the Python code your blocks make.', '',
-             '```{note}', 'This page is generated from the IDE toolbox (`docs/tools/gen_block_guide.py`). Each picture shows the block as it comes out of the toolbox.',
-             'Everything runs **inside ' + PRODUCT + '**. Only the [Collect] category needs the internet, and it is only in the Korean edition.', '```', '',
-             '## Categories', '', '```', 'Standard Blockly blocks (hover over a block to see what it does)']
-    for i, c in enumerate(basic):
-        L.append(('└── ' if i == len(basic) - 1 else '├── ') + f"{c['name']} ({count(c)})")
-    L += ['', f'{PRODUCT} 전용 블록' if ko else f'{PRODUCT} blocks']
-    for i, c in enumerate(custom):
-        L.append(('└── ' if i == len(custom) - 1 else '├── ') + f"{c['name']} ({count(c)})")
-    L += ['```', '', f'## {PRODUCT} 전용 블록' if ko else f'## {PRODUCT} blocks', '']
+             '```{note}', 'Everything runs **inside ' + PRODUCT + '**. Only the [Collect] category needs the internet, and it is only in the Korean edition.', '```', '',
+             '## Categories', '']
+        groups = [('Standard Blockly blocks', 'Hover over a block to see what it does.', basic), (f'{PRODUCT} blocks', '', custom)]
+        head = '| Category | Blocks |'
+    for title, note, cs in groups:
+        L += [f'**{title}**' + (f' — {note}' if note else ''), '', head, '|---|---|']
+        L += [f"| {c['name']} | {count(c)} |" for c in cs]
+        L += ['']
+    L += [f'## {PRODUCT} 전용 블록' if ko else f'## {PRODUCT} blocks', '']
     # 블록마다 그림(원래 크기) + 그 아래 설명 한 줄. 표에 넣으면 칸이 좁아 긴 블록 글자가 작아졌다
     for c in custom:
         L += [f"### {c['name']}", '']
