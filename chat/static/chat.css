@@ -9,8 +9,8 @@ main.chat {
 /* 준비 상태 줄 */
 .chat-status {
   display: flex; align-items: center; gap: 8px;
-  margin: 12px 0 0; padding: 10px 14px; border-radius: 10px;
-  background: var(--v2-tint); color: var(--v2-tint-ink); font-weight: 600;
+  margin: 12px 0 0; padding: 8px 14px; min-height: var(--ctl-md); border-radius: var(--r-ctl);
+  background: var(--v2-tint); color: var(--v2-tint-ink); font-weight: var(--fw-b);   /* 키트 배너(안내)와 같은 색 */
 }
 .chat-status[hidden] { display: none; }
 .chat-status[data-state="error"] { background: var(--v2-red-t); color: var(--v2-red-ink); }
@@ -24,10 +24,10 @@ main.chat {
   display: flex; flex-direction: column; gap: 12px;
   padding: 16px 2px;
 }
-.chat-empty { margin: auto; text-align: center; color: var(--v2-ink-3); }
+.chat-empty { margin: auto; text-align: center; color: var(--v2-ink-2); }   /* 빈 화면 안내(.pb-empty)와 같은 꼴 */
 .chat-empty[hidden] { display: none; }
-.chat-empty > i { font-size: 40px; opacity: .5; }
-.chat-empty > p { margin: 10px 0 16px; font-weight: 600; }
+.chat-empty > i { font-size: 32px; color: var(--v2-ink-3); }
+.chat-empty > p { margin: 10px 0 16px; font-weight: var(--fw-b); }
 .chat-try { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
 
 .msg { display: flex; flex-direction: column; max-width: 78%; animation: pb-rise .18s ease-out both; }
@@ -37,7 +37,7 @@ main.chat {
   padding: 10px 14px; border-radius: 16px; line-height: 1.55;
   white-space: pre-wrap; word-break: break-word; font-size: 15.5px;
 }
-.msg--me  .msg__body { background: var(--v2-dark); color: var(--v2-on-dark); border-bottom-right-radius: 4px; }
+.msg--me  .msg__body { background: var(--v2-accent); color: var(--v2-on-accent); border-bottom-right-radius: 4px; }   /* 강조 파랑(어둡게에서도) */
 .msg--bot .msg__body { background: var(--v2-raise); color: var(--v2-ink); border: 1px solid var(--v2-line);
                        border-bottom-left-radius: 4px; }
 .msg--err .msg__body { background: var(--v2-red-t); color: var(--v2-red-ink); border-color: transparent; }
@@ -54,21 +54,21 @@ main.chat {
 /* 입력 */
 .chat-input { display: flex; gap: 8px; align-items: flex-end; padding: 10px 0 16px; }
 .chat-input textarea {
-  flex: 1 1 auto; resize: none; min-height: 44px; max-height: 140px;
-  padding: 11px 14px; line-height: 1.4; font-size: 15.5px; border-radius: 12px;
+  flex: 1 1 auto; resize: none; min-height: var(--ctl-lg); max-height: 140px;
+  padding: 13px 14px; line-height: 1.4; font-size: 15.5px; border-radius: var(--r-ctl);
 }
-.chat-input .pb-btn { height: 44px; }
+.chat-input .pb-btn { height: var(--ctl-lg); }
 
 /* 소리로 말하기 */
 .chat-voice { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding-top: 6px; font-size: 14px; color: var(--v2-ink-2); }
-.chat-speak { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-weight: 600; user-select: none; }
-.chat-speak input { width: 18px; height: 18px; margin: 0; accent-color: var(--v2-dark); cursor: pointer; }
+.chat-speak { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-weight: var(--fw-b); user-select: none; }
+.chat-speak input { width: 18px; height: 18px; margin: 0; accent-color: var(--v2-accent); cursor: pointer; }   /* accent-color 는 덧칠일 뿐(체크 표시는 어느 브라우저나 보인다) */
 .chat-voice select:disabled { opacity: .5; }
 .chat-vol { display: inline-flex; align-items: center; gap: 6px; }
-.chat-vol input { width: 110px; accent-color: var(--v2-dark); }
-.chat-vol b { min-width: 2.2em; font-variant-numeric: tabular-nums; font-weight: 600; }
+.chat-vol input { width: 110px; }   /* 슬라이더 모양은 키트(pb-refresh)가 그린다 */
+.chat-vol b { min-width: 2.2em; font-variant-numeric: tabular-nums; font-weight: var(--fw-b); }
 .chat-vol.is-off { opacity: .5; }
-.chat-voice__st { font-size: 13px; color: var(--v2-ink-3); }
+.chat-voice__st { font-size: var(--fs-sm); color: var(--v2-ink-2); }
 .chat-voice__st[data-state="error"] { color: var(--v2-red-ink); }
 
 @media (max-width: 600px) {

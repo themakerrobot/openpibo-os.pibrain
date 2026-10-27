@@ -17,7 +17,7 @@ Standard Blockly blocks (hover over a block to see what it does)
 ├── Math (13)
 ├── Text (15)
 ├── Lists (12)
-├── Colour (4)
+├── Color (4)
 ├── Variables (appear when you make one)
 └── Functions (appear when you make one)
 
@@ -26,11 +26,11 @@ PiBrain blocks
 ├── Audio (3)
 ├── Collect (4)
 ├── Device (7)
-├── Oled (11)
+├── Display (11)
 ├── Speech (7)
 ├── Vision (16)
-├── Rec (36)
-└── Utils (12)
+├── Recognition (36)
+└── Utilities (12)
 ```
 
 ## PiBrain blocks
@@ -107,7 +107,7 @@ Send message to USB Device.
 
 Disconnect USB Device.
 
-### Oled
+### Display
 
 <img src="img/oled_set_font.png" alt="Set OLED font size to ([30])" width="319" class="blk">
 
@@ -249,7 +249,7 @@ Turns the 8×4 picture you draw by tapping dots into an image (scaled to the cam
 
 Turns the 8×8 picture you draw by tapping dots into an image (scaled to the camera size). *returns a value*
 
-### Rec
+### Recognition
 
 <img src="img/vision_face_detect.png" alt="Find faces in image ([item ▾])" width="336" class="blk">
 
@@ -395,7 +395,7 @@ Classify the image with the loaded classifier model and return the best matching
 
 Draws what the last [Classify with classifier model] saw on that image: points and bones for hand and pose, points for face, plus the class name and probability.
 
-### Utils
+### Utilities
 
 <img src="img/utils_sleep.png" alt="Delay for ([1]) seconds" width="282" class="blk">
 

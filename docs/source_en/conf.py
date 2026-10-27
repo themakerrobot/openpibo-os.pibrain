@@ -8,6 +8,7 @@ exec(compile(open(os.path.join(_here, '..', 'source', 'conf.py'), encoding='utf-
 language = 'en'
 html_title = html_title.replace('도움말', 'Help')
 html_static_path = ['../source/_static']
+templates_path = ['../source/_templates']   # 밝기 스크립트를 <head> 에 싣는 base.html
 html_favicon = '../source/_static/icon.png'
 locale_dirs = ['locale/']
 gettext_compact = False            # 페이지마다 .po 하나(libraries/speech.po …)

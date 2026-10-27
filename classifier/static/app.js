@@ -721,7 +721,7 @@ function renderTestLeft() {
       <i class="fa-solid ${src.icon}"></i><span class="model-pick__name">${esc(m.name)}</span>
       <span class="model-pick__meta">${esc(t('src_' + m.source))} · ${m.classes.length}</span></button>`);
   });
-  list.innerHTML = items.join('') || `<p class="muted">${esc(t('no_models'))}</p>`;
+  list.innerHTML = items.join('') || `<div class="pb-empty"><i class="fa-solid fa-box-open" aria-hidden="true"></i><p>${esc(t('no_models'))}</p></div>`;
   $('thr').value = Math.round(S.threshold * 100);
   $('thr_val').textContent = Math.round(S.threshold * 100) + '%';
 }
@@ -744,7 +744,7 @@ function renderStore() {
   if (!box) return;
   $('store_root').textContent = MODEL_DIR;
   if (!S.modelsLoaded) { box.innerHTML = '<div class="pb-skel pb-skel--card"></div>'.repeat(2); return; }
-  if (!S.models.length) { box.innerHTML = `<p class="muted">${esc(t('no_models'))}</p>`; return; }
+  if (!S.models.length) { box.innerHTML = `<div class="pb-empty store-empty"><i class="fa-solid fa-box-open" aria-hidden="true"></i><p>${esc(t('no_models'))}</p></div>`; return; }
   box.innerHTML = S.models.map(m => {
     const src = SOURCES.find(s => s.id === m.source) || SOURCES[0];
     const acc = typeof m.accuracy === 'number' ? Math.round(m.accuracy * 100) + '%' : '—';

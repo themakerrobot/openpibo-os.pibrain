@@ -83,39 +83,55 @@ exclude_patterns = []
 # Furo(MIT) — 밝게·어둡게는 브라우저 설정을 따른다. 색은 IDE 와 같게(노랑 포인트, 파랑 링크).
 # 외부 글꼴·CDN 을 쓰지 않아 기기(AP 모드, 인터넷 없음)에서도 그대로 보인다
 html_theme = 'furo'
-html_title = 'PiBrain 도움말'
+html_title = '도움말 · PiBrain'   # 탭 제목: 다른 화면과 같은 꼴('도구 · PiBrain', '분류기 · PiBrain'). 영문은 source_en 이 'Help · PiBrain' 로
+# 색은 키트(design/pibo-ui.css '디자인 토큰')와 같은 값. 밝게·어둡게·부드럽게는 쿠키 pibo_theme 를 따른다
+# (_static/pibotheme.js + _templates/base.html). 부드럽게의 면 색은 mycss.css 의 html[data-pb-theme="soft"]
 html_theme_options = {
     'sidebar_hide_name': False,
     'navigation_with_keys': True,
     'light_css_variables': {
-        'color-brand-primary': '#2563eb',
-        'color-brand-content': '#2563eb',
-        'color-brand-visited': '#2563eb',
+        'color-brand-primary': '#1d4ed8',
+        'color-brand-content': '#1d4ed8',
+        'color-brand-visited': '#1d4ed8',
         'font-stack': '"Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, -apple-system, "Segoe UI", sans-serif',
         'font-stack--headings': 'var(--font-stack)',
         'font-stack--monospace': '"D2Coding", "JetBrains Mono", Consolas, "SF Mono", ui-monospace, monospace',
+        'color-foreground-primary': '#1a1e29',
+        'color-foreground-secondary': '#474f62',
+        'color-foreground-muted': '#5f6779',
         'color-background-secondary': '#f5f6fa',
+        'color-background-border': '#dcdfe7',
         'color-sidebar-background': '#f5f6fa',
-        'color-sidebar-item-background--current': 'rgba(37, 99, 235, .08)',
-        'color-sidebar-link-text': '#4a5163',
-        'color-sidebar-link-text--top-level': '#4a5163',
+        'color-sidebar-item-background--current': '#e3ecfd',
+        'color-sidebar-link-text': '#474f62',
+        'color-sidebar-link-text--top-level': '#474f62',
         'color-admonition-title--note': '#2563eb',
-        'color-admonition-title-background--note': 'rgba(37, 99, 235, .08)',
-        'color-admonition-title--tip': '#16a34a',
-        'color-admonition-title-background--tip': 'rgba(22, 163, 74, .08)',
+        'color-admonition-title-background--note': '#e3ecfd',
+        'color-admonition-title--tip': '#157a4b',
+        'color-admonition-title-background--tip': '#dcf3e7',
+        'color-api-name': '#1d4ed8',          # 클래스·함수 이름: 빨강 대신 키트의 강조 파랑
+        'color-api-pre-name': '#474f62',
     },
     'dark_css_variables': {
+        'color-foreground-primary': '#e4e7ef',
+        'color-foreground-secondary': '#adb4c4',
+        'color-foreground-muted': '#8c94a7',
         'color-background-primary': '#1a1e27',
-        'color-background-secondary': '#222733',
-        'color-sidebar-background': '#1f232d',
-        'color-sidebar-item-background--current': 'rgba(251, 201, 45, .10)',
-        'color-sidebar-link-text': '#b4bac8',
-        'color-sidebar-link-text--top-level': '#b4bac8',
-        'color-admonition-title--note': '#fbc92d',
-        'color-admonition-title-background--note': 'rgba(251, 201, 45, .10)',
-        'color-brand-primary': '#fbc92d',
-        'color-brand-content': '#fbc92d',
-        'color-brand-visited': '#fbc92d',
+        'color-background-secondary': '#1f232d',
+        'color-background-border': '#2b303c',
+        'color-sidebar-background': '#151922',
+        'color-sidebar-item-background--current': '#1f2c4d',
+        'color-sidebar-link-text': '#adb4c4',
+        'color-sidebar-link-text--top-level': '#adb4c4',
+        'color-admonition-title--note': '#7aa7ff',
+        'color-admonition-title-background--note': '#1f2c4d',
+        'color-admonition-title--tip': '#6fd6a0',
+        'color-admonition-title-background--tip': '#1d3a2a',
+        'color-api-name': '#7aa7ff',
+        'color-api-pre-name': '#adb4c4',
+        'color-brand-primary': '#7aa7ff',   # 어둡게에서도 링크·강조는 파랑(노랑은 맨 위 띠만)
+        'color-brand-content': '#7aa7ff',
+        'color-brand-visited': '#7aa7ff',
     },
 }
 
@@ -126,3 +142,4 @@ html_static_path = ['_static']
 html_favicon = '_static/icon.png'
 html_css_files = ['mycss.css']
 html_js_files = ['langswitch.js']   # 한국어 ↔ English 전환 링크(build/html ↔ build/en)
+# _static/pibotheme.js(밝기·IDE 링크)는 html_js_files 가 아니라 _templates/base.html 이 <head> 에서 싣는다(먼저 돌아야 해서)

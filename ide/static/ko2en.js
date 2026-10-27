@@ -1,11 +1,13 @@
 const blang = 'en';
 let lang = localStorage.getItem("language") || blang;
 
+// IDE 화면 문구. 대화 화면(chat/)도 이 파일을 같이 읽는다(chat_* 키).
+// 261028: 말투·용어 정리 — 알림·확인·오류는 해요체, 버튼·이름표는 짧게. 쓰지 않던 옛 키를 정리했다
 const translations = {
   cf_model_default: { ko: "모델 이름", en: "model name" },
-  saved:            { ko: "저장했습니다",                 en: "Saved" },
-  save_unconfirmed: { ko: "저장 확인을 받지 못했습니다. 다시 저장해 보세요.", en: "Save was not confirmed. Please save again." },
-  copied:           { ko: "복사했습니다",                 en: "Copied" },
+  saved:            { ko: "저장했어요.",                  en: "Saved." },
+  save_unconfirmed: { ko: "저장됐는지 확인하지 못했어요. 다시 저장해 보세요.", en: "Could not confirm the save. Please save again." },
+  copied:           { ko: "복사했어요.",                  en: "Copied." },
   pycode:           { ko: "파이썬 코드",                  en: "Python code" },
   pycode_title:     { ko: "블록이 만드는 파이썬 코드",      en: "Python code made by the blocks" },
   copy:             { ko: "복사",                        en: "Copy" },
@@ -17,382 +19,163 @@ const translations = {
   run_toast_done:   { ko: (s) => `실행 끝 · ${s}초`,       en: (s) => `Finished · ${s} s` },
   run_toast_error:  { ko: (s) => `오류로 끝남 · ${s}초`,    en: (s) => `Stopped with an error · ${s} s` },
   nav_files:      { ko: "파일",     en: "Files" },
-  nav_terminal:   { ko: "터미널",   en: "Terminal" },
   nav_tools:      { ko: "도구",     en: "Tools" },
   nav_llm:        { ko: "대화",     en: "Chat" },
   nav_classifier: { ko: "분류기",   en: "Classifier" },
   nav_guide:      { ko: "도움말",   en: "Guide" },
   nav_fullscreen: { ko: "전체화면", en: "Full screen" },
-  nav_restore:    { ko: "초기화",   en: "Reset" },
-  nav_poweroff:   { ko: "전원",     en: "Power" },
+  nav_restore:    { ko: "공장 초기화", en: "Factory reset" },
+  nav_poweroff:   { ko: "전원 끄기",   en: "Power off" },
   // IDE 화면 (templates/index.html, 시안 B)
-  v2_view:          { ko: "보기",     en: "View" },
   v2_more:          { ko: "더보기",   en: "More" },
   v2_fontsize:      { ko: "글자 크기", en: "Font size" },
   v2_dark_editor:   { ko: "어두운 파이썬 편집기", en: "Dark Python editor" },
   v2_language:      { ko: "언어",     en: "Language" },
   v2_no_file:       { ko: "열린 파일 없음", en: "No file open" },
   v2_prompt_ph:     { ko: "프로그램에 입력 보내기", en: "Send input to the program" },
-  v2_add:           { ko: "추가",     en: "New" },
+  v2_add:           { ko: "추가",     en: "Add" },
   v2_brand:         { ko: "메이커",   en: "Maker" },
-  v2_panel:         { ko: "패널 접기/펴기", en: "Toggle panel" },
+  v2_panel:         { ko: "패널 접기/펴기", en: "Show or hide panel" },
   v2_tab_robot:     { ko: "PiBrain", en: "PiBrain" },
-  v2_live_empty:    { ko: "코드에서 [IDE에 보기] 블록을 쓰면 여기에 화면이 나와요", en: "Use the show-in-IDE block to see the picture here" },
+  v2_live_empty:    { ko: "코드에서 [이미지 … IDE에 보여주기] 블록을 쓰면 여기에 화면이 나와요.", en: "Use the \"Display image variable … on IDE\" block to see the picture here." },
   v2_settings:      { ko: "설정",     en: "Settings" },
   v2_output:        { ko: "출력",     en: "Output" },
   v2_clear:         { ko: "지우기",   en: "Clear" },
   v2_search:        { ko: "블록 찾기", en: "Search blocks" },
-  v2_search_hint:   { ko: "찾을 블록의 낱말을 적어 보세요", en: "Type a word from the block" },
-  v2_search_none:   { ko: "맞는 블록이 없어요", en: "No matching blocks" },
+  v2_search_hint:   { ko: "찾을 블록의 낱말을 적어 보세요.", en: "Type a word from the block." },
+  v2_search_none:   { ko: "맞는 블록이 없어요.", en: "No matching blocks." },
   v2_preview:       { ko: "미리보기", en: "Preview" },
   v2_live:          { ko: "화면 출력", en: "Screen output" },
   v2_zoom:          { ko: "크게 보기", en: "Enlarge" },
-  v2_preview_empty: { ko: "사진·소리 파일을 누르면 여기서 보고 들어요", en: "Tap a picture or sound file to see or hear it here" },
-  v2_drop_hint:     { ko: "파일을 이 목록으로 끌어다 놓아도 올라가요", en: "You can also drag files onto the list" },
+  v2_preview_empty: { ko: "사진·소리 파일을 누르면 여기서 보고 들을 수 있어요.", en: "Tap a picture or sound file to see or hear it here." },
+  v2_drop_hint:     { ko: "파일을 이 목록으로 끌어다 놓아도 올라가요.", en: "You can also drag files onto the list to upload them." },
   v2_theme:         { ko: "화면 밝기", en: "Brightness" },
   v2_theme_light:   { ko: "밝게",     en: "Light" },
   v2_theme_soft:    { ko: "부드럽게", en: "Soft" },
   v2_theme_dark:    { ko: "어둡게",   en: "Dark" },
-  password: {
-    ko: "비밀번호",
-    en: "Password"
-  },
-  internet_settings: {
-    ko: "인터넷 설정",
-    en: "Internet settings"
-  },
-  available_networks: {
-    ko: "연결할 수 있는 WiFi",
-    en: "Available networks"
-  },
-  manual_connection: {
-    ko: "수동 설정",
-    en: "Manual Connection / Other Network..."
-  },
-  wifi_name: {
-    ko: "이름",
-    en: "Name"
-  },
-  wifi_type: {
-    ko: "종류",
-    en: "Type"
-  },
-  wifi_identity: {
-    ko: "아이디",
-    en: "Identity"
-  },
-  confirm: {
-    ko: "확인",
-    en: "Confirm"
-  },
-  cancel: {
-    ko: "취소",
-    en: "Cancel"
-  },
-  reset: {
-    ko: "초기화",
-    en: "Reset"
-  },
-  wifi_signal: {
-    ko: "신호세기",
-    en: "Signal"
-  },
-  wifi_psk: {
-    ko: "암호화방식",
-    en: "Encryption"
-  },
-  usedata: {
-    ko: "사용성 데이터",
-    en: "Used Data"
-  },
+  password:           { ko: "비밀번호",          en: "Password" },
+  internet_settings:  { ko: "WiFi 설정",         en: "WiFi settings" },
+  available_networks: { ko: "연결할 수 있는 WiFi", en: "Available WiFi" },
+  manual_connection:  { ko: "다른 WiFi 직접 입력", en: "Enter another WiFi manually" },
+  wifi_name:          { ko: "이름",              en: "Name" },
+  wifi_identity:      { ko: "아이디",            en: "User ID" },
+  confirm:            { ko: "확인",              en: "OK" },
+  cancel:             { ko: "취소",              en: "Cancel" },
   confirm_wifi: {
-    ko: "\n\n로봇의 Wifi 정보를 변경하시겠습니까?\nWifi 정보를 한번 더 확인하시기 바랍니다.\n(잘못된 정보 입력 시, 심각한 오류가 발생할 수 있습니다.)",
-    en: "\n\nAre you sure you want to change the wifi information of the robot?\nPlease check the wifi information once more.\n(Serious errors may occur if you enter incorrect information.)"
+    ko: (ssid) => `PiBrain의 WiFi를 "${ssid}"(으)로 바꿀까요?\n이름과 비밀번호를 한 번 더 확인해 주세요. 틀리면 PiBrain이 WiFi에 연결되지 않아요.`,
+    en: (ssid) => `Switch PiBrain to the WiFi "${ssid}"?\nCheck the name and password once more. If they are wrong, PiBrain can't connect.`
   },
-  move_to_tool: {
-    ko: "Tools로 이동하시겠습니까?",
-    en: "Are you sure you want to go to Tools?"
-  },
-  file_error: {
-    ko: "파일전송 오류",
-    en: "File Transfer error."
-  },
-  file_ok: {
-    ko: "파일전송 완료",
-    en: "File transfer ok."
-  },
-  nofile: {
-    ko: "파일없음.",
-    en: "No file found."
-  },
-  not_load_block: {
-    ko: "블록 데이터를 불러오지 못했습니다.",
-    en: "Failed to load block data."
-  },
-  not_move_parent: {
-    ko: "더이상 상위 폴더로 이동할 수 없습니다.",
-    en: "Cannot move further up in the folder hierarchy"
-  },
+  file_error:      { ko: "파일을 올리지 못했어요.", en: "Could not upload the file." },
+  file_ok:         { ko: "파일을 올렸어요.", en: "File uploaded." },
+  nofile:          { ko: "열린 파일이 없어요. 먼저 파일을 열거나 새로 만들어 주세요.", en: "No file is open. Open or create a file first." },
+  not_load_block:  { ko: "블록을 불러오지 못했어요.", en: "Could not load the blocks." },
+  not_move_parent: { ko: "더 위 폴더로 갈 수 없어요.", en: "You can't go above this folder." },
   confirm_load_file: {
-    ko: (filepath) => {return `${filepath} 파일을 불러오겠습니까?`},
-    en: (filepath) => {return `Would you like to load ${filepath}?`}
+    ko: (filepath) => `"${filepath}" 파일을 열까요?`,
+    en: (filepath) => `Open "${filepath}"?`
   },
   confirm_save_file: {
-    ko: (filepath) => {return `${filepath} 파일을 저장하지 않았습니다. 저장하시겠습니까?`},
-    en: (filepath) => {return `${filepath} not saved. Would you like to save it?`}
+    ko: (filepath) => `"${filepath}" 파일을 저장하지 않았어요. 저장할까요?`,
+    en: (filepath) => `"${filepath}" is not saved. Save it?`
   },
   confirm_delete_file: {
-    ko: (filepath) => {return `${filepath} 파일 또는 폴더를 삭제하시겠습니까?`},
-    en: (filepath) => {return `Are you sure you want to delete the file or folder ${filepath}?`}
+    ko: (filepath) => `"${filepath}" 파일이나 폴더를 지울까요?\n되돌릴 수 없어요.`,
+    en: (filepath) => `Delete the file or folder "${filepath}"?\nThis cannot be undone.`
   },
   confirm_rename: {
-    ko: (oldname, newname) => {return `${oldname} 파일 또는 폴더의 이름을 ${newname}으로 변경하시겠습니까?`},
-    en: (oldname, newname) => {return `Are you sure you want to rename the file or folder ${oldname} to ${newname}?`}
+    ko: (oldname, newname) => `"${oldname}"의 이름을 "${newname}"(으)로 바꿀까요?`,
+    en: (oldname, newname) => `Rename "${oldname}" to "${newname}"?`
   },
   confirm_restore: {
-    ko: "공장 초기화를 할까요?\n내 코드·사진·소리·분류기 모델이 모두 지워지고, WiFi가 기본값(pibo)으로 돌아간 뒤 전원이 꺼집니다.\n되돌릴 수 없어요.",
-    en: "Factory reset?\nAll your code, pictures, sounds, classifier models will be deleted, WiFi goes back to the default (pibo), and the robot powers off.\nThis cannot be undone."
-  },
-  confirm_poweroff: {
-    ko: "정말 종료하시겠습니까?",
-    en: "Are you sure you want to quit?"
-  },
-  confirm_restart: {
-    ko: "재시작하시겠습니까?",
-    en: "Are you sure you want to restart?"
-  },
-  check_newfolder_name: {
-    ko: "새 폴더의 이름을 입력하세요.",
-    en: "Enter a name for the new folder."
-  },
-  check_newfile_name: {
-    ko: "새 파일의 이름을 입력하세요.",
-    en: "Enter a name for the new file."
-  },
-  name_size_limit: {
-    ko: (max_limit) => {return `(${max_limit}자 이하로 입력해주세요.)`},
-    en: (max_limit) => {return `Enter within ${max_limit} characters or less.`}
-  },
-  upload: {
-    ko: "업로드",
-    en: "Upload"
-  },
-  add_directory: {
-    ko: "새 폴더",
-    en: "New folder"
-  },
-  add_file: {
-    ko: "새 파일",
-    en: "New file"
-  },
-  python: {
-    ko: "파이썬",
-    en: "Python"
-  },
-  block: {
-    ko: "블록",
-    en: "Block"
-  },
-  execute: {
-    ko: "실행",
-    en: "Run"
-  },
-  stop: {
-    ko: "정지",
-    en: "Stop"
-  },
-  save: {
-    ko: "저장",
-    en: "Save"
-  },
-  reset: {
-    ko: "초기화",
-    en: "Reset"
-  },
-  logic: {
-    ko: "논리",
-    en: "Logic"
-  },
-  loops: {
-    ko: "반복",
-    en: "Loops"
-  },
-  math: {
-    ko: "수학",
-    en: "Math"
-  },
-  text: {
-    ko: "문자",
-    en: "Text"
-  },
-  lists: {
-    ko: "목록",
-    en: "Lists"
-  },
-  colour: {
-    ko: "색상",
-    en: "Colour"
-  },
-  variables: {
-    ko: "변수",
-    en: "Variables"
-  },
-  functions: {
-    ko: "함수",
-    en: "Functions"
-  },
-  event: {
-    ko: "이벤트",
-    en: "Event"
-  },
-  audio: {
-    ko: "소리",
-    en: "Audio"
-  },
-  collect: {
-    ko: "수집",
-    en: "Collect"
-  },
-  device: {
-    ko: "장치",
-    en: "Device"
-  },
-  motion: {
-    ko: "동작",
-    en: "Motion"
-  },
-  oled: {
-    ko: "화면",
-    en: "Oled"
-  },
-  speech: {
-    ko: "음성",
-    en: "Speech"
-  },
-  vision: {
-    ko: "시각",
-    en: "Vision"
-  },
-  recognition: {
-    ko: "인식",
-    en: "Rec"
-  },
-  utils: {
-    ko: "도구",
-    en: "Utils"
-  },
-  mymotion: {
-    ko: "나의 모션",
-    en: "My motion"
-  },
-  filename: {
-    ko: "파일 이름",
-    en: "Filename"
-  },
-  image_filename: {
-    ko: "이미지 파일 이름",
-    en: "Image filename"
-  },
-  audio_filename: {
-    ko: "오디오 파일 이름",
-    en: "Audio filename"
-  },
-  model_filename: {
-    ko: "모델 파일 이름",
-    en: "Model filename"
-  },
-  label_filename: {
-    ko: "라벨 파일 이름",
-    en: "Label filename"
-  },
-  csv_filename: {
-    ko: "csv 파일 이름",
-    en: "csv filename"
-  },
-  keyname: {
-    ko: "키 이름",
-    en: "Key name"
-  },
-  path: {
-    ko: "경로",
-    en: "Path"
-  },
-  robot: {
-    ko: "로봇",
-    en: "Robot"
-  },
-  sample_text: {
-    ko: "안녕하세요",
-    en: "Hello"
-  },
-  abc: {
-    ko: "가나다",
-    en: "abc"
-  },
-  a: {
-    ko: "가",
-    en: "a"
-  },
-  b: {
-    ko: "나",
-    en: "b"
-  },
-  c: {
-    ko: "다",
-    en: "c"
-  },
-  confirm_block_file: {
-    ko: "파일을 고르거나 새 파일을 만드세요.",
-    en: "Select a file or create a new one."
-  },
-  file_number_limit: {
-    ko: (max_limit) => {return `파일은 ${max_limit}개 이하로 업로드해주세요.`},
-    en: (max_limit) => {return `Upload within ${max_limit} files or less.`}
-  },
-  enter: {
-    ko: "입력",
-    en: "Enter"
-  },
-  auto: {
-    ko: "자동",
-    en: "Auto"
-  },
-  start: {
-    ko: "시작",
-    en: "Start"
-  },
-  classifier: {
-    ko: "분류기",
-    en: "Classifier"
+    ko: "공장 초기화를 할까요?\n내 코드·사진·소리·분류기 모델이 모두 지워지고, WiFi가 기본값(pibo)으로 돌아간 뒤 전원이 꺼져요.\n되돌릴 수 없어요.",
+    en: "Factory reset?\nAll your code, pictures, sounds and classifier models will be deleted, the WiFi goes back to the default (pibo), and the power turns off.\nThis cannot be undone."
   },
   confirm_hwtest: {
-    ko: "하드웨어 검수 페이지를 엽니다.\n검수 중에는 IDE·Tools·Classifier 를 쓸 수 없습니다.",
-    en: "Open the hardware inspection page.\nThe IDE, Tools and Classifier are unavailable while it runs."
+    ko: "하드웨어 검수를 시작할까요?\n켜져 있는 도구·대화·분류기는 꺼지고, 검수 창을 닫으면 검수도 끝나요.",
+    en: "Start the hardware test?\nTools, Chat and Classifier will be turned off. Closing the test tab ends the test."
   },
-  err_download_protected: { ko: "파일 다운로드 오류: 보호 디렉토리입니다.", en: "Download error: protected directory." },
-  err_not_found:          { ko: "파일 또는 폴더를 찾을 수 없습니다.", en: "File or folder not found." },
-  err_invalid_path:       { ko: "올바른 파일 또는 폴더가 아닙니다.", en: "Not a valid file or folder." },
-  err_upload_protected:   { ko: "파일 업로드 오류: 보호 디렉토리입니다.", en: "Upload error: protected directory." },
-  msg_upload_done:        { ko: "파일 업로드 완료", en: "Upload complete" },
-  msg_view_done:          { ko: "이미지 표시 완료", en: "Image displayed" },
-  err_init_sysfile:       { ko: "초기화: 시스템 파일 오류입니다.", en: "Init: system file error." },
-  err_load_protected:     { ko: "파일 불러오기 오류: 보호 파일입니다.", en: "Load error: protected file." },
-  err_delete_protected:   { ko: "파일 삭제 오류: 보호 파일입니다.", en: "Delete error: protected file." },
-  err_delete_parse:       { ko: "파일 삭제 오류: 파일명 파싱 에러입니다.", en: "Delete error: invalid file name." },
-  err_rename_protected:   { ko: "파일 이름 변경 오류: 보호 파일입니다.", en: "Rename error: protected file." },
-  err_rename_parse:       { ko: "파일 이름 변경 오류: 파일명 파싱 에러입니다.", en: "Rename error: invalid file name." },
-  err_create_protected:   { ko: "파일 생성 오류: 보호 디렉토리입니다.", en: "Create error: protected directory." },
-  err_mkdir_protected:    { ko: "디렉토리 생성 오류: 보호 폴더입니다.", en: "Create folder error: protected folder." },
-  err_save_protected:     { ko: "파일 저장 오류: 보호 파일입니다.", en: "Save error: protected file." },
-  err_run_protected:      { ko: "실행 오류: 보호 파일입니다.", en: "Run error: protected file." },
-  err_view:   { ko: (d) => `보기 오류: ${d}`,          en: (d) => `View error: ${d}` },
-  err_play:   { ko: (d) => `재생 오류: ${d}`,          en: (d) => `Play error: ${d}` },
-  err_load:   { ko: (d) => `파일 불러오기 오류: ${d}`, en: (d) => `Load error: ${d}` },
-  err_init:   { ko: (d) => `초기화 오류: ${d}`,        en: (d) => `Init error: ${d}` },
-  err_create: { ko: (d) => `파일 생성 오류: ${d}`,     en: (d) => `Create error: ${d}` },
-  err_mkdir:  { ko: (d) => `디렉토리 생성 오류: ${d}`, en: (d) => `Create folder error: ${d}` },
-  err_save:   { ko: (d) => `파일 저장 오류: ${d}`,     en: (d) => `Save error: ${d}` },
-  err_run:    { ko: (d) => `실행 오류: ${d}`,          en: (d) => `Run error: ${d}` },
+  confirm_poweroff: { ko: "PiBrain 전원을 끌까요?", en: "Turn off PiBrain?" },
+  check_newfolder_name: { ko: "새 폴더 이름을 적어 주세요.", en: "Enter a name for the new folder." },
+  check_newfile_name:   { ko: "새 파일 이름을 적어 주세요.", en: "Enter a name for the new file." },
+  name_size_limit: {
+    ko: (max_limit) => `이름은 ${max_limit}자까지 쓸 수 있어요.`,
+    en: (max_limit) => `Names can be up to ${max_limit} characters.`
+  },
+  upload:        { ko: "올리기", en: "Upload" },
+  add_directory: { ko: "새 폴더", en: "New folder" },
+  add_file:      { ko: "새 파일", en: "New file" },
+  python:        { ko: "파이썬", en: "Python" },
+  block:         { ko: "블록",   en: "Blocks" },
+  execute:       { ko: "실행",   en: "Run" },
+  stop:          { ko: "정지",   en: "Stop" },
+  save:          { ko: "저장",   en: "Save" },
+  reset:         { ko: "초기화", en: "Reset" },
+  // 블록 분류 이름(customblock_toolbox.js 가 읽는다)
+  logic:       { ko: "논리",   en: "Logic" },
+  loops:       { ko: "반복",   en: "Loops" },
+  math:        { ko: "수학",   en: "Math" },
+  text:        { ko: "문자",   en: "Text" },
+  lists:       { ko: "목록",   en: "Lists" },
+  colour:      { ko: "색상",   en: "Color" },
+  variables:   { ko: "변수",   en: "Variables" },
+  functions:   { ko: "함수",   en: "Functions" },
+  event:       { ko: "이벤트", en: "Event" },
+  audio:       { ko: "소리",   en: "Audio" },
+  collect:     { ko: "수집",   en: "Collect" },
+  device:      { ko: "장치",   en: "Device" },
+  motion:      { ko: "동작",   en: "Motion" },
+  oled:        { ko: "화면",   en: "Display" },
+  speech:      { ko: "음성",   en: "Speech" },
+  vision:      { ko: "시각",   en: "Vision" },
+  recognition: { ko: "인식",   en: "Recognition" },
+  utils:       { ko: "기타",   en: "Utilities" },
+  // 블록 기본값(customblock_toolbox.js)
+  mymotion:       { ko: "내 동작",          en: "my motion" },
+  filename:       { ko: "파일 이름",        en: "Filename" },
+  image_filename: { ko: "이미지 파일 이름", en: "Image filename" },
+  audio_filename: { ko: "소리 파일 이름",   en: "Audio filename" },
+  keyname:        { ko: "키 이름",          en: "Key name" },
+  path:           { ko: "경로",             en: "Path" },
+  robot:          { ko: "로봇",             en: "Robot" },
+  sample_text:    { ko: "안녕하세요",       en: "Hello" },
+  abc: { ko: "가나다", en: "abc" },
+  a:   { ko: "가",     en: "a" },
+  b:   { ko: "나",     en: "b" },
+  c:   { ko: "다",     en: "c" },
+  confirm_block_file: { ko: "파일을 고르거나 새 파일을 만들어 주세요.", en: "Choose a file or create a new one." },
+  file_number_limit: {
+    ko: (max_limit) => `파일은 한 번에 ${max_limit}개까지 올릴 수 있어요.`,
+    en: (max_limit) => `You can upload up to ${max_limit} files at a time.`
+  },
+  enter:      { ko: "입력 보내기", en: "Send input" },
+  auto:       { ko: "자동",   en: "Auto" },
+  start:      { ko: "시작",   en: "Start" },
+  classifier: { ko: "분류기", en: "Classifier" },
+  // 서버(run_ide.py)가 보내는 키 — {'dialog': 키, 'detail': 오류 글}
+  err_download_protected: { ko: "보호된 폴더라 내려받을 수 없어요.", en: "This folder is protected and can't be downloaded." },
+  err_not_found:          { ko: "파일이나 폴더를 찾지 못했어요.", en: "Could not find the file or folder." },
+  err_invalid_path:       { ko: "올바른 파일이나 폴더가 아니에요.", en: "This is not a valid file or folder." },
+  err_upload_protected:   { ko: "보호된 폴더라 파일을 올릴 수 없어요.", en: "This folder is protected. You can't upload files here." },
+  msg_upload_done:        { ko: "파일을 올렸어요.", en: "File uploaded." },
+  msg_view_done:          { ko: "그림을 보여 줬어요.", en: "Picture shown." },
+  err_init_sysfile:       { ko: "시스템 정보를 읽지 못했어요.", en: "Could not read the system information." },
+  err_load_protected:     { ko: "보호된 파일이라 열 수 없어요.", en: "This file is protected and can't be opened." },
+  err_delete_protected:   { ko: "보호된 파일이라 지울 수 없어요.", en: "This file is protected and can't be deleted." },
+  err_delete_parse:       { ko: "파일 이름이 올바르지 않아 지우지 못했어요.", en: "Could not delete. The file name is not valid." },
+  err_rename_protected:   { ko: "보호된 파일이라 이름을 바꿀 수 없어요.", en: "This file is protected and can't be renamed." },
+  err_rename_parse:       { ko: "이름이 올바르지 않아 바꾸지 못했어요.", en: "Could not rename. The name is not valid." },
+  err_create_protected:   { ko: "보호된 폴더라 파일을 만들 수 없어요.", en: "This folder is protected. You can't create files here." },
+  err_mkdir_protected:    { ko: "보호된 폴더라 새 폴더를 만들 수 없어요.", en: "This folder is protected. You can't create folders here." },
+  err_save_protected:     { ko: "보호된 파일이라 저장할 수 없어요.", en: "This file is protected and can't be saved." },
+  err_run_protected:      { ko: "보호된 파일이라 실행할 수 없어요.", en: "This file is protected and can't be run." },
+  err_view:   { ko: (d) => `그림을 보여 주지 못했어요.\n${d}`, en: (d) => `Could not show the picture.\n${d}` },
+  err_play:   { ko: (d) => `소리를 재생하지 못했어요.\n${d}`,  en: (d) => `Could not play the sound.\n${d}` },
+  err_load:   { ko: (d) => `파일을 열지 못했어요.\n${d}`,      en: (d) => `Could not open the file.\n${d}` },
+  err_init:   { ko: (d) => `공장 초기화를 하지 못했어요.\n${d}`, en: (d) => `Could not factory reset.\n${d}` },
+  err_create: { ko: (d) => `파일을 만들지 못했어요.\n${d}`,    en: (d) => `Could not create the file.\n${d}` },
+  err_mkdir:  { ko: (d) => `폴더를 만들지 못했어요.\n${d}`,    en: (d) => `Could not create the folder.\n${d}` },
+  err_save:   { ko: (d) => `저장하지 못했어요.\n${d}`,         en: (d) => `Could not save.\n${d}` },
+  err_run:    { ko: (d) => `실행하지 못했어요.\n${d}`,         en: (d) => `Could not run.\n${d}` },
   // 260930 — AGPL-3.0 §13: 네트워크로 쓰는 사람에게 소스 위치를 알린다
   v2_source:  { ko: "소스 코드 · 라이선스 (AGPL-3.0)", en: "Source code · License (AGPL-3.0)" },
   // 260930 — 상태 칸: 켜진 시간 단위(전엔 늘 'N hours'), 이름표·툴팁
@@ -400,53 +183,61 @@ const translations = {
   v2_mem:     { ko: "메모리", en: "RAM" },
   v2_tip_temp:    { ko: "CPU 온도", en: "CPU temperature" },
   v2_tip_mem:     { ko: "메모리 사용량", en: "Memory in use" },
-  v2_tip_uptime:  { ko: "켜진 지 얼마나 됐는지", en: "Time since power-on" },
+  v2_tip_uptime:  { ko: "켜진 시간", en: "Time since power-on" },
   v2_tip_version: { ko: "OS 버전", en: "OS version" },
-  v2_tip_serial:  { ko: "시리얼 번호 — 누르면 H/W 검수", en: "Serial number — click for H/W test" },
+  v2_tip_serial:  { ko: "시리얼 번호 · 누르면 하드웨어 검수", en: "Serial number · click for the hardware test" },
   v2_tip_battery: { ko: "배터리", en: "Battery" },
-  // 260930 — [인터넷 설정] 안내(전엔 영어로만 나왔다)
-  wifi_scanning:    { ko: "WiFi를 찾는 중…", en: "Scanning…" },
-  wifi_none:        { ko: "찾은 WiFi가 없어요", en: "No networks found." },
-  wifi_scan_failed: { ko: "WiFi를 찾지 못했어요. 다시 해 보세요", en: "Scan failed. Please try again." },
-  wifi_manual:      { ko: "직접 입력", en: "Manual" },
-  wifi_connecting:  { ko: "연결하는 중…", en: "Connecting…" },
-  wifi_sent:        { ko: "연결을 요청했어요. 잠시 뒤 새 주소로 다시 들어오세요", en: "Connection request sent. Reconnect at the new address shortly." },
-  wifi_failed:      { ko: "연결 요청에 실패했어요", en: "Connection request failed." },
-  wifi_cancelled:   { ko: "연결을 취소했어요", en: "Connection cancelled." },
+  // 260930 — [WiFi 설정] 안내(전엔 영어로만 나왔다)
+  wifi_scanning:    { ko: "WiFi를 찾는 중…", en: "Looking for WiFi…" },
+  wifi_none:        { ko: "찾은 WiFi가 없어요.", en: "No WiFi found." },
+  wifi_scan_failed: { ko: "WiFi를 찾지 못했어요. 다시 시도해 주세요.", en: "Could not look for WiFi. Please try again." },
+  wifi_manual:      { ko: "직접 입력", en: "Entered manually" },
+  wifi_connecting:  { ko: "연결 중…", en: "Connecting…" },
+  wifi_sent:        { ko: "연결을 요청했어요. 잠시 뒤 새 주소로 다시 들어와 주세요.", en: "Connection requested. Reconnect at the new address in a moment." },
+  wifi_failed:      { ko: "연결을 요청하지 못했어요.", en: "Could not send the connection request." },
+  wifi_cancelled:   { ko: "연결을 취소했어요.", en: "Connection cancelled." },
   // 261026 — 대화 웹(chat/, 50030). 대화 화면이 IDE 의 이 파일을 같이 읽는다(영문판 델타를 늘리지 않으려고)
   chat_title:       { ko: "대화", en: "Chat" },
   chat_new:         { ko: "새 대화", en: "New chat" },
   chat_fullscreen:  { ko: "전체화면", en: "Full screen" },
   chat_send:        { ko: "보내기", en: "Send" },
-  chat_stop:        { ko: "멈추기", en: "Stop" },
+  chat_stop:        { ko: "정지", en: "Stop" },
   chat_placeholder: { ko: "하고 싶은 말을 적어 보세요 (Enter 보내기, Shift+Enter 줄바꿈)", en: "Type a message (Enter to send, Shift+Enter for a new line)" },
-  chat_empty:       { ko: "말을 걸어 보세요", en: "Say something" },
+  chat_empty:       { ko: "말을 걸어 보세요.", en: "Say something." },
   chat_try_hello:   { ko: "안녕! 너는 누구야?", en: "Hi! Who are you?" },
   chat_try_dino:    { ko: "공룡은 왜 사라졌어?", en: "Why did the dinosaurs disappear?" },
   chat_try_school:  { ko: "학교에서 친구랑 싸웠어", en: "I had a fight with my friend at school" },
-  chat_try_english: { ko: "영어로 인사하는 법 알려 줘", en: "How do I say hello in Korean?" },
+  chat_try_english: { ko: "영어로 인사하는 법 알려 줘", en: "How do I say hello in another language?" },
   chat_speak:       { ko: "소리로 말하기", en: "Speak out loud" },
-  chat_speaking:    { ko: "말하는 중", en: "speaking" },
+  chat_speaking:    { ko: "말하는 중", en: "Speaking" },
   chat_hush:        { ko: "그만 말하기", en: "Stop speaking" },
   chat_voice_m:     { ko: "남성", en: "Male" },
   chat_voice_f:     { ko: "여성", en: "Female" },
-  chat_voice_loading: { ko: "목소리를 준비하는 중…", en: "Getting the voice ready…" },
-  chat_voice_error: { ko: "목소리를 준비하지 못했어요", en: "Could not load the voice." },
-  chat_sec:         { ko: "초", en: "s" },
+  chat_voice_loading: { ko: "목소리 준비 중…", en: "Loading the voice…" },
+  chat_voice_error: { ko: "목소리를 준비하지 못했어요.", en: "Could not load the voice." },
+  chat_sec:         { ko: "초", en: " s" },
   chat_st_down:     { ko: "대화 모델을 켜는 중…", en: "Starting the chat model…" },
-  chat_st_loading:  { ko: "대화 모델을 불러오는 중…", en: "Loading the chat model…" },
-  chat_st_warming:  { ko: "처음 한 번 준비하는 중이에요", en: "Getting ready for the first time" },
-  chat_st_failed:   { ko: "대화 모델 서버를 켜지 못했어요. 다른 대화 모델 서버가 켜져 있으면 끄고 다시 켜 보세요", en: "Could not start the chat model server. If another one is running, stop it and try again." },
-  chat_retry:       { ko: "다시 켜기", en: "Try again" },
-  chat_st_error:    { ko: "대화 모델을 준비하지 못했어요. 탭을 닫고 다시 열어 주세요", en: "Could not prepare the chat model. Close this tab and open it again." },
-  chat_err_conn:    { ko: "대화 서버에 연결하지 못했어요", en: "Could not reach the chat server." },
+  chat_st_loading:  { ko: "대화 모델 준비 중…", en: "Loading the chat model…" },
+  chat_st_warming:  { ko: "처음 한 번 준비하는 중…", en: "Getting ready for the first time…" },
+  chat_st_failed:   { ko: "대화 모델을 켜지 못했어요. 다른 대화 모델 서버가 켜져 있으면 끄고 다시 켜 보세요.", en: "Could not start the chat model. If another chat model server is running, stop it and try again." },
+  chat_retry:       { ko: "다시 켜기", en: "Restart" },
+  chat_st_error:    { ko: "대화 모델을 준비하지 못했어요. 탭을 닫고 다시 열어 주세요.", en: "Could not load the chat model. Close this tab and open it again." },
+  chat_err_conn:    { ko: "대화 서버에 연결하지 못했어요.", en: "Could not reach the chat server." },
   chat_err_server:  { ko: "잠깐 문제가 생겼어요. 한 번만 다시 말해 줄래요?", en: "Something went wrong. Could you say that again?" },
-  chat_err_busy:    { ko: "앞의 대답을 만드는 중이에요. 잠시 뒤에 보내 주세요", en: "Still answering the last message. Please wait a moment." },
-  chat_err_not_ready: { ko: "아직 준비 중이에요. 잠시 뒤에 보내 주세요", en: "Still getting ready. Please wait a moment." },
-  chat_err_empty:   { ko: "보낼 말이 없어요", en: "Nothing to send." },
-  wifi_err_ssid:    { ko: "WiFi 이름(SSID)을 적어 주세요. 32바이트(영문 32자, 한글 10자)까지 됩니다", en: "Enter the WiFi name (SSID), up to 32 bytes." },
-  wifi_err_psk:     { ko: "비밀번호는 8~63자로 적어 주세요", en: "The password must be 8 to 63 characters." },
-  wifi_err_connect: { ko: "WiFi에 연결하지 못했어요. 이름과 비밀번호를 확인해 주세요", en: "Could not connect to the WiFi. Check the name and password." }
+  chat_err_busy:    { ko: "앞의 대답을 만드는 중이에요. 잠시 뒤에 보내 주세요.", en: "Still answering the last message. Please wait a moment." },
+  chat_err_not_ready: { ko: "아직 준비 중이에요. 잠시 뒤에 보내 주세요.", en: "Still getting ready. Please wait a moment." },
+  chat_err_empty:   { ko: "보낼 말이 없어요.", en: "Nothing to send." },
+  wifi_err_ssid:    { ko: "WiFi 이름(SSID)을 적어 주세요. 32바이트(영문 32자, 한글 10자)까지 돼요.", en: "Enter the WiFi name (SSID), up to 32 bytes." },
+  wifi_err_psk:     { ko: "비밀번호는 8~63자로 적어 주세요.", en: "The password must be 8 to 63 characters." },
+  wifi_err_connect: { ko: "WiFi에 연결하지 못했어요. 이름과 비밀번호를 확인해 주세요.", en: "Could not connect to the WiFi. Check the name and password." },
+  // 261028 — 말투 정리 때 더한 키(대화 화면·접근성 이름 포함)
+  wifi_connect:     { ko: "연결", en: "Connect" },
+  wifi_sec_unknown: { ko: "알 수 없음", en: "Unknown" },
+  v2_resize:        { ko: "크기 조절", en: "Resize" },
+  v2_unsaved:       { ko: "저장 안 됨", en: "Not saved" },
+  v2_code_editor:   { ko: "파이썬 편집기", en: "Python editor" },
+  chat_voice_label: { ko: "목소리", en: "Voice" },
+  chat_volume_label: { ko: "음량", en: "Volume" }
 };
 
 // 키 → 현재 언어 문자열. 모르는 키(일반 문자열)는 그대로 반환.

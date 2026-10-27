@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-product="PiBrain">
 <!--
   Tools for PiBrain — 화면 v2 (260924, Pibo IDE v2 와 같은 모양)
-    상단바(노랑)  도구 | IDE · 화면 밝기 · KO/EN
+    상단바(노랑)  PiBrain · 도구 | IDE · 전체화면 · 화면 밝기 · 언어(한국어/English) — 파이보 도구·분류기와 같은 순서
     왼쪽 레일     버튼 · LED · 카메라 · 음성 · LCD
     본문          카드. 넓으면 두 칸
   동작은 index.js(REST/SSE) 그대로다. id·onclick 은 바꾸지 않았다.
@@ -13,9 +13,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="shortcut icon" href="/static/icon.png" type="image/x-icon"/>
   <link rel="stylesheet" href="/static/all.min.css"/>
-  <link rel="stylesheet" href="/static/pibo-ui.css?ver=260930v3"/>
-  <link rel="stylesheet" href="/static/index.css?ver=260930v9"/>
-  <title>PiBrain Tools</title>
+  <link rel="stylesheet" href="/static/pibo-ui.css?ver=261028v1"/>
+  <link rel="stylesheet" href="/static/index.css?ver=261028v1"/>
+  <title data-key="title">도구</title>
   <script>/* 화면 밝기를 첫 페인트 전에 (쿠키 pibo_theme, 기본 soft) */
     (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
       document.documentElement.setAttribute('data-theme', m ? m[1] : 'soft'); } catch (e) {} })();</script>
@@ -23,12 +23,17 @@
 <body class="pb v2-app tl">
 
 <header class="pb-header tl-top">
-  <span class="tl-brand"><i class="fa-solid fa-microchip"></i><b data-key="title">도구</b><span class="tl-brand__sub">PiBrain</span></span>
+  <span class="pb-header__brand"><i class="fa-solid fa-brain"></i><b>PiBrain</b><span class="pb-header__app" data-key="title">도구</span></span>
   <div class="tl-actions">
     <button type="button" class="tl-hbtn" id="ide_bt" title="IDE"><i class="fa-solid fa-code"></i><span>IDE</span></button>
     <button type="button" class="tl-hbtn" id="fullscreen_bt"><i class="fa-solid fa-maximize" data-pb-fs-icon></i><span data-key="nav_fullscreen">전체화면</span></button>
     <button type="button" class="tl-hbtn" id="theme_bt"><i class="fa-solid fa-circle-half-stroke"></i><span id="theme_lbl"></span></button>
-    <button type="button" class="tl-hbtn tl-hbtn--lang" id="lang-toggle" onclick="toggleLang()">EN</button>
+    <!-- 언어: 지금 언어를 보여 주는 select(파이보 도구·분류기와 같다). index.js 의 toggleLang 을 그대로 쓰고, 예전 버튼은 숨겨 둔다 -->
+    <select class="pb-field pb-field--sm" id="lang_sel" aria-label="Language" onchange="if (this.value !== lang) toggleLang()">
+      <option value="ko">한국어</option>
+      <option value="en">English</option>
+    </select>
+    <button type="button" id="lang-toggle" hidden></button>
   </div>
 </header>
 
@@ -37,7 +42,7 @@
   <button class="active" onclick="switchTab('buttons',this)"><i class="fa-solid fa-circle-dot"></i><span data-key="tab_buttons">버튼</span></button>
   <button onclick="switchTab('led',this)"><i class="fa-solid fa-lightbulb"></i><span data-key="tab_led">LED</span></button>
   <button onclick="switchTab('camera',this)"><i class="fa-solid fa-camera"></i><span data-key="tab_camera">카메라</span></button>
-  <button onclick="switchTab('tts',this)"><i class="fa-solid fa-volume-high"></i><span data-key="tab_tts">음성</span></button>
+  <button onclick="switchTab('tts',this)"><i class="fa-solid fa-comment-dots"></i><span data-key="tab_tts">음성</span></button>
   <button onclick="switchTab('lcd',this)"><i class="fa-solid fa-display"></i><span data-key="tab_lcd">LCD</span></button>
 </nav>
 
@@ -48,12 +53,12 @@
   <div class="card card--wide">
     <h2 class="card-title" data-key="button_status">버튼 상태 (실시간)</h2>
     <div class="button-grid">
-      <div class="bi" id="bi-1"><div class="num">1</div><div class="lbl">OFF</div></div>
-      <div class="bi" id="bi-2"><div class="num">2</div><div class="lbl">OFF</div></div>
-      <div class="bi" id="bi-3"><div class="num">3</div><div class="lbl">OFF</div></div>
-      <div class="bi" id="bi-4"><div class="num">4</div><div class="lbl">OFF</div></div>
+      <div class="bi" id="bi-1"><div class="num">1</div><div class="lbl">안 눌림</div></div>
+      <div class="bi" id="bi-2"><div class="num">2</div><div class="lbl">안 눌림</div></div>
+      <div class="bi" id="bi-3"><div class="num">3</div><div class="lbl">안 눌림</div></div>
+      <div class="bi" id="bi-4"><div class="num">4</div><div class="lbl">안 눌림</div></div>
     </div>
-    <div class="log-box" id="btn-log" data-key="event_waiting">이벤트 대기 중...</div>
+    <div class="log-box" id="btn-log" data-key="event_waiting">버튼을 기다리는 중…</div>
   </div>
 </section>
 
@@ -65,7 +70,7 @@
       <div class="led-preview" id="led-preview"></div>
       <label class="led-pick">
         <input type="color" class="color-picker" id="led-picker" value="#000000" oninput="applyColorPicker(this.value)"/>
-        <span data-key="color_picker">컬러픽커</span>
+        <span data-key="color_picker">색 고르기</span>
       </label>
     </div>
     <div class="led-row">
@@ -105,13 +110,13 @@
 <section class="tab" id="tab-camera">
   <div class="card">
     <h2 class="card-title" data-key="camera_title">카메라</h2>
-    <div class="cam-stage">
+    <div class="cam-stage pb-stage">
       <div id="cam-wrap" style="display:none"><img id="cam-img" alt="camera"/></div>
-      <div id="cam-ph" data-key="cam_off_msg">카메라를 켜면 기기 LCD에 표시됩니다</div>
+      <div id="cam-ph" data-key="cam_off_msg">카메라를 켜면 PiBrain LCD에 화면이 나와요.</div>
     </div>
     <div class="btn-row">
       <button class="btn btn-primary" id="btn-cam" onclick="toggleCamera()"><i class="fa-solid fa-camera"></i><span data-key="cam_on_btn">카메라 켜기</span></button>
-      <button class="btn" id="btn-capture" onclick="captureToWeb()" disabled><i class="fa-solid fa-image"></i><span data-key="capture_btn">웹에 표시</span></button>
+      <button class="btn" id="btn-capture" onclick="captureToWeb()" disabled><i class="fa-solid fa-image"></i><span data-key="capture_btn">여기에 보기</span></button>
     </div>
   </div>
   <div class="card">
@@ -119,18 +124,18 @@
     <div class="vision-grid">
       <button class="vbtn active" onclick="setVision('camera',this)"><i class="fa-solid fa-camera"></i><span data-key="v_camera">카메라</span></button>
       <button class="vbtn" onclick="setVision('grayscale',this)"><i class="fa-solid fa-circle-half-stroke"></i><span data-key="v_grayscale">흑백</span></button>
-      <button class="vbtn" onclick="setVision('canny',this)"><i class="fa-solid fa-pen"></i><span data-key="v_canny">엣지</span></button>
-      <button class="vbtn" onclick="setVision('edgePreservingFilter',this)"><i class="fa-solid fa-water"></i><span data-key="v_edge_pres">엣지보존</span></button>
-      <button class="vbtn" onclick="setVision('cartoon',this)"><i class="fa-solid fa-palette"></i><span data-key="v_cartoon">카툰</span></button>
+      <button class="vbtn" onclick="setVision('canny',this)"><i class="fa-solid fa-pen"></i><span data-key="v_canny">윤곽선</span></button>
+      <button class="vbtn" onclick="setVision('edgePreservingFilter',this)"><i class="fa-solid fa-water"></i><span data-key="v_edge_pres">흐리게</span></button>
+      <button class="vbtn" onclick="setVision('cartoon',this)"><i class="fa-solid fa-palette"></i><span data-key="v_cartoon">만화</span></button>
       <button class="vbtn" onclick="setVision('sketch_rgb',this)"><i class="fa-solid fa-pencil"></i><span data-key="v_sketch">스케치</span></button>
-      <button class="vbtn" onclick="setVision('detail',this)"><i class="fa-solid fa-magnifying-glass-plus"></i><span data-key="v_detail">디테일</span></button>
-      <button class="vbtn" onclick="setVision('qr',this)"><i class="fa-solid fa-qrcode"></i><span data-key="v_qr">QR코드</span></button>
-      <button class="vbtn" onclick="setVision('face',this)"><i class="fa-solid fa-face-smile"></i><span data-key="v_face">얼굴인식</span></button>
-      <button class="vbtn" onclick="setVision('face_landmark',this)"><i class="fa-solid fa-location-crosshairs"></i><span data-key="v_landmark">랜드마크</span></button>
-      <button class="vbtn" onclick="setVision('object',this)"><i class="fa-solid fa-box"></i><span data-key="v_object">객체인식</span></button>
-      <button class="vbtn" onclick="setVision('hand',this)"><i class="fa-solid fa-hand"></i><span data-key="v_hand">손인식</span></button>
-      <button class="vbtn" onclick="setVision('pose',this)"><i class="fa-solid fa-person-walking"></i><span data-key="v_pose">포즈</span></button>
-      <button class="vbtn" onclick="setVision('marker',this)"><i class="fa-solid fa-thumbtack"></i><span data-key="v_marker">마커</span></button>
+      <button class="vbtn" onclick="setVision('detail',this)"><i class="fa-solid fa-magnifying-glass-plus"></i><span data-key="v_detail">선명하게</span></button>
+      <button class="vbtn" onclick="setVision('qr',this)"><i class="fa-solid fa-qrcode"></i><span data-key="v_qr">QR 코드</span></button>
+      <button class="vbtn" onclick="setVision('face',this)"><i class="fa-solid fa-face-smile"></i><span data-key="v_face">얼굴 분석</span></button>
+      <button class="vbtn" onclick="setVision('face_landmark',this)"><i class="fa-solid fa-location-crosshairs"></i><span data-key="v_landmark">얼굴 특징점</span></button>
+      <button class="vbtn" onclick="setVision('object',this)"><i class="fa-solid fa-box"></i><span data-key="v_object">사물 인식</span></button>
+      <button class="vbtn" onclick="setVision('hand',this)"><i class="fa-solid fa-hand"></i><span data-key="v_hand">손동작 인식</span></button>
+      <button class="vbtn" onclick="setVision('pose',this)"><i class="fa-solid fa-person-walking"></i><span data-key="v_pose">포즈 인식</span></button>
+      <button class="vbtn" onclick="setVision('marker',this)"><i class="fa-solid fa-thumbtack"></i><span data-key="v_marker">마커 인식</span></button>
     </div>
     <div class="marker-row" id="marker-row" style="display:none">
       <label for="marker-len" data-key="marker_len_label">마커 길이</label>
@@ -138,14 +143,14 @@
       <span>cm</span>
       <button class="btn btn-sm" onclick="updateMarkerLen()" data-key="apply_sm">적용</button>
     </div>
-    <div class="result-box" id="vision-result" data-key="result_ph">결과가 여기에 표시됩니다</div>
+    <div class="result-box" id="vision-result" data-key="result_ph">결과가 여기에 나와요.</div>
   </div>
 </section>
 
 <!-- ── 음성 ─────────────────────────────────────────────────── -->
 <section class="tab" id="tab-tts">
   <div class="card">
-    <h2 class="card-title" data-key="voice_select">목소리 선택</h2>
+    <h2 class="card-title" data-key="voice_select">목소리</h2>
     <div class="voice-grid">
       <button class="voice-btn active" onclick="setVoice('m1',this)"><i class="fa-solid fa-person"></i><span data-key="voice_m1">남성 1</span></button>
       <button class="voice-btn" onclick="setVoice('m2',this)"><i class="fa-solid fa-person"></i><span data-key="voice_m2">남성 2</span></button>
@@ -160,13 +165,13 @@
     </div>
   </div>
   <div class="card">
-    <label class="card-title" for="tts-text" data-key="tts_label">말할 내용</label>
-    <textarea id="tts-text" data-key="tts_ph" placeholder="여기에 말할 내용을 입력하세요...">안녕하세요! 저는 파이브레인입니다.</textarea>
+    <label class="card-title" for="tts-text" data-key="tts_label">말할 글자</label>
+    <textarea id="tts-text" data-key="tts_ph" placeholder="말할 글자를 적어 보세요">안녕하세요! 저는 파이브레인입니다.</textarea>
     <div class="btn-row">
       <button class="btn btn-primary btn-grow" id="tts-btn" onclick="speakTTS()"><i class="fa-solid fa-play"></i><span data-key="speak_btn">말하기</span></button>
       <button class="btn" onclick="stopTTS()"><i class="fa-solid fa-stop"></i><span data-key="stop_tts_btn">정지</span></button>
     </div>
-    <div class="result-box" id="tts-status" data-key="waiting">대기 중...</div>
+    <div class="result-box" id="tts-status" data-key="waiting">대기 중…</div>
   </div>
 </section>
 
@@ -178,13 +183,13 @@
   </div>
 
   <div class="card">
-    <h2 class="card-title" data-key="lcd_text_title">텍스트 출력</h2>
-    <label class="form-label" for="lcd-text" data-key="lcd_text_label">출력할 글자 (Enter 로 줄바꿈)</label>
-    <textarea id="lcd-text" data-key="lcd_ph" placeholder="여기에 출력할 내용을 입력하세요..." oninput="updateLcdPreview()">안녕하세요!
+    <h2 class="card-title" data-key="lcd_text_title">글자 출력</h2>
+    <label class="form-label" for="lcd-text" data-key="lcd_text_label">출력할 글자 (Enter로 줄바꿈)</label>
+    <textarea id="lcd-text" data-key="lcd_ph" placeholder="LCD에 보일 글자를 적어 보세요" oninput="updateLcdPreview()">안녕하세요!
 파이브레인입니다.</textarea>
 
     <div class="field-grid">
-      <label><span data-key="font_size">폰트 크기</span><input type="number" id="lcd-size" value="24" min="8" max="80" step="2" oninput="updateLcdPreview()"/></label>
+      <label><span data-key="font_size">글자 크기</span><input type="number" id="lcd-size" value="24" min="8" max="80" step="2" oninput="updateLcdPreview()"/></label>
       <label><span data-key="x_pos">X 위치</span><input type="number" id="lcd-x" value="10" min="0" max="230" oninput="updateLcdPreview()"/></label>
       <label><span data-key="y_pos">Y 위치</span><input type="number" id="lcd-y" value="10" min="0" max="310" oninput="updateLcdPreview()"/></label>
       <label><span data-key="text_color">글자색</span><input type="color" id="lcd-fg" value="#ffffff" oninput="updateLcdPreview()"/></label>
@@ -195,7 +200,7 @@
       <button class="btn btn-primary btn-grow" onclick="sendLcdText()"><i class="fa-solid fa-paper-plane"></i><span data-key="lcd_send_btn">LCD에 출력</span></button>
       <button class="btn" onclick="clearLcd()"><i class="fa-solid fa-eraser"></i><span data-key="lcd_clear_btn">화면 지우기</span></button>
     </div>
-    <div class="result-box" id="lcd-status" data-key="waiting">대기 중...</div>
+    <div class="result-box" id="lcd-status" data-key="waiting">대기 중…</div>
   </div>
 
   <div class="card">
@@ -204,15 +209,20 @@
       LCD를 처음 화면(IP 주소 표시)으로 되돌립니다.<br>카메라가 꺼져 있을 때만 됩니다.
     </p>
     <button class="btn" onclick="resetOled()"><i class="fa-solid fa-rotate"></i><span data-key="lcd_reset_btn">LCD 처음 화면으로</span></button>
-    <div class="result-box" id="oled-reset-status" data-key="waiting">대기 중...</div>
+    <div class="result-box" id="oled-reset-status" data-key="waiting">대기 중…</div>
   </div>
 </section>
 
 </main>
 </div>
 
-<script src="/static/ko2en.js?ver=260930v2"></script>
-<script src="/static/pibo-ui.js?ver=261026v1"></script>
-<script src="/static/index.js?ver=261001v2"></script>
+<script src="/static/ko2en.js?ver=261028v1"></script>
+<script src="/static/pibo-ui.js?ver=261028v1"></script>
+<script src="/static/index.js?ver=261028v1"></script>
+<script>/* 언어 select 를 지금 언어에 맞춘다(바꾸는 건 toggleLang → applyLang) */
+  (function () { var sel = document.getElementById('lang_sel'); if (!sel) return;
+    var sync = function () { sel.value = lang; }; sync();
+    document.getElementById('lang-toggle').addEventListener('click', sync);
+    sel.addEventListener('change', function () { setTimeout(sync, 0); }); })();</script>
 </body>
 </html>

@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" data-product="PiBrain">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PiBrain</title>
 <link rel="stylesheet" href="all.min.css">
-<link rel="stylesheet" href="pibo-ui.css?ver=260930v3">
+<link rel="stylesheet" href="pibo-ui.css?ver=261028v1">
 <link rel="shortcut icon" href="icon.png" type="image/x-icon">
 <script>/* 화면 밝기를 첫 페인트 전에 (pibo-ui.js 의 getTheme 과 같은 규칙. 고른 적 없으면 soft) */
 (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
@@ -19,7 +19,7 @@
   body { font-family: var(--pb-font); color: var(--v2-ink); position: relative; isolation: isolate; }
   /* 배경: 노랑·파랑·초록 빛 번짐이 천천히 흐른다(그림 파일 없이 그라데이션만, transform 으로만 움직인다) */
   body::before {
-    content: ""; position: fixed; inset: -20%; z-index: -1; pointer-events: none;
+    content: ""; position: fixed; top: -20%; right: -20%; bottom: -20%; left: -20%; z-index: -1; pointer-events: none;
     background: radial-gradient(38% 42% at 28% 30%, rgba(251, 201, 45, .30), transparent 70%),
                 radial-gradient(34% 38% at 74% 66%, rgba(37, 99, 235, .16), transparent 70%),
                 radial-gradient(30% 30% at 62% 18%, rgba(31, 157, 98, .10), transparent 70%);
@@ -27,44 +27,48 @@
   }
   html[data-theme="dark"] body::before { opacity: .5; }
   @keyframes lp-drift { from { transform: translate(-3%, -2%) rotate(0deg); } to { transform: translate(3%, 3%) rotate(6deg); } }
-  .wrap { min-height: calc(100dvh - 54px); display: flex; align-items: center; justify-content: center; padding: 16px; }
-  .card { background: var(--v2-surface); border: 1px solid var(--v2-line); border-radius: 16px;
-          box-shadow: 0 10px 30px rgba(20, 24, 40, .10);
+  .wrap { min-height: calc(100vh - 48px); display: flex; align-items: center; justify-content: center; padding: 16px; }
+  /* 카드: 대화상자와 같은 모양(모서리 16 · 떠 있는 면 · 테두리). 옅은 바닥 위에서도 가장자리가 보이게 */
+  .card { background: var(--v2-raise); border: 1px solid var(--v2-line-2); border-radius: var(--r-dlg);
+          box-shadow: 0 12px 32px var(--v2-shadow);
           width: min(440px, 100%); padding: 26px 24px 20px; animation: pb-rise .3s cubic-bezier(.34, 1.4, .64, 1) backwards; }
-  .ttl { display: flex; align-items: center; gap: 12px; font: 700 20px/1.2 var(--pb-font); margin: 0 0 18px; }
+  .ttl { display: flex; align-items: center; gap: 12px; font: 700 var(--fs-xl)/1.25 var(--font-ui); margin: 0 0 18px; }
   /* 아이콘 둘레 진행 링: 기다리는 동안 돌고, 끝나면 초록·실패면 빨강으로 멈춘다(body[data-state]) */
   .ring { position: relative; display: inline-grid; place-items: center; flex: none;
           width: 44px; height: 44px; border-radius: 50%; background: var(--v2-sunken); }
   .ring > i { font-size: 19px; }
   .ring::before {
-    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; border-radius: 50%;
     background: conic-gradient(from 0deg, transparent 0 55%, var(--v2-accent) 100%);
     -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px));
             mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px));
     animation: lp-spin 1s linear infinite;
   }
-  body[data-state="done"] .ring::before { animation: none; background: #1f9d62; }
+  body[data-state="done"] .ring::before { animation: none; background: var(--v2-green); }
   body[data-state="fail"] .ring::before { animation: none; background: var(--v2-red); }
   @keyframes lp-spin { to { transform: rotate(360deg); } }
   @media (prefers-reduced-motion: reduce) { body::before, .ring::before, .card { animation: none !important; } }
   ol { list-style: none; margin: 0 0 16px; padding: 0; }
-  li { display: flex; align-items: center; gap: 10px; padding: 7px 0; color: var(--v2-ink-3); font: 600 15px/1.3 var(--pb-font); }
+  li { display: flex; align-items: center; gap: 10px; padding: 7px 0; color: var(--v2-ink-3); font: 700 15px/1.3 var(--font-ui); }
   li i { width: 18px; text-align: center; }
   li i.pending { font-size: 8px; opacity: .45; }   /* fa-regular 글꼴은 기기에 없다. solid 원을 작게 */
   li[data-s="now"]  { color: var(--v2-ink); }
-  li[data-s="done"] { color: #1f9d62; }
-  li .sec { margin-left: auto; font: 600 13px var(--pb-mono); color: var(--pb-text-dim); }
+  li[data-s="done"] { color: var(--v2-green-ink); }   /* 4.6:1 이상 */
+  li .sec { margin-left: auto; font: 700 13px var(--pb-mono); color: var(--v2-ink-2); }
   .bar { height: 6px; border-radius: 3px; background: var(--v2-sunken); overflow: hidden; margin: 4px 0 14px; }
-  .bar > div { height: 100%; width: 0; background: var(--yellow); transition: width .4s ease; }
-  .msg { min-height: 20px; font: 14px/1.45 var(--pb-font); color: var(--pb-text-dim); margin: 0 0 14px; }
+  .bar > div { height: 100%; width: 0; background: var(--v2-accent); transition: width .4s ease; }   /* 진행은 강조 파랑(노랑은 상단바만) */
+  body[data-state="fail"] .bar > div { background: var(--v2-red); }
+  body[data-state="done"] .bar > div { background: var(--v2-green); }
+  .msg { min-height: 20px; font: 14px/1.5 var(--font-ui); color: var(--v2-ink-2); margin: 0 0 14px; }
   .msg.err { color: var(--v2-red-ink); font-weight: 700; }
+  body[data-state="fail"] .ring > i { color: var(--v2-red); }
   .acts { display: flex; justify-content: flex-end; gap: 8px; }
   .acts [hidden] { display: none; }
 </style>
 </head>
 <body class="pb pb-v2">
 <header class="pb-header">
-  <span class="pb-header__brand"><i class="fa-solid fa-brain"></i>&nbsp;PiBrain</span>
+  <span class="pb-header__brand"><i class="fa-solid fa-brain"></i><b>PiBrain</b><span class="pb-header__app" id="app_name" hidden></span></span>
 </header>
 <div class="wrap">
   <div class="card" role="status" aria-live="polite">
@@ -90,20 +94,21 @@
            || ((navigator.language || '').indexOf('ko') === 0 ? 'ko' : 'en')) === 'ko' ? 'ko' : 'en';
   document.documentElement.lang = L;
   var T = {
-    s1:      { ko: '켜는 중',                     en: 'Starting' },
-    s2:      { ko: '준비될 때까지 기다리는 중',     en: 'Waiting until it is ready' },
-    s2_llm:  { ko: '대화 모델을 불러오는 중',       en: 'Loading the chat model' },
-    s3:      { ko: '여는 중',                     en: 'Opening' },
+    s1:      { ko: '켜는 중…',                    en: 'Starting…' },
+    s2:      { ko: '준비될 때까지 기다리는 중…',    en: 'Waiting until it is ready…' },
+    s2_llm:  { ko: '대화 모델 준비 중…',           en: 'Loading the chat model…' },
+    s3:      { ko: '여는 중…',                    en: 'Opening…' },
     close:   { ko: '닫기',                        en: 'Close' },
     retry:   { ko: '다시 시도',                   en: 'Try again' },
-    title:   { ko: '{0} 켜는 중',                 en: 'Starting {0}' },
-    slow:    { ko: '처음 켤 때는 조금 더 걸릴 수 있습니다.', en: 'The first start can take a little longer.' },
-    llmslow: { ko: '대화 모델은 크기가 커서 1~2분 걸릴 수 있습니다.', en: 'The chat model is large and can take a minute or two.' },
-    cors:    { ko: '준비 상태를 확인할 수 없어 열어 봅니다. 아직 불러오는 중이면 잠시 뒤 새로고침하세요.',
-               en: 'Could not confirm it is ready, opening anyway. If it is still loading, refresh in a moment.' },
-    fail:    { ko: '{0}을(를) 켜지 못했습니다. 로봇이 켜져 있고 같은 WiFi 에 있는지 확인한 뒤 다시 시도하세요.',
-               en: 'Could not start {0}. Check the robot is on and on the same WiFi, then try again.' },
-    bad:     { ko: '알 수 없는 도구입니다.', en: 'Unknown tool.' }
+    title:   { ko: '{0} 켜는 중…',                en: 'Starting {0}…' },
+    slow:    { ko: '처음 켤 때는 조금 더 걸릴 수 있어요.', en: 'The first start can take a little longer.' },
+    llmslow: { ko: '대화 모델은 크기가 커서 1~2분 걸릴 수 있어요.', en: 'The chat model is large and can take a minute or two.' },
+    cors:    { ko: '준비됐는지 확인하지 못했지만 열어 볼게요. 아직 준비 중이면 잠시 뒤 새로고침해 주세요.',
+               en: 'Could not confirm it is ready. Opening it anyway. If it is still loading, refresh in a moment.' },
+    fail:    { ko: '{0}를 켜지 못했어요. PiBrain이 켜져 있고 같은 WiFi에 있는지 확인한 뒤 다시 시도해 주세요.',
+               en: 'Could not start {0}. Check that PiBrain is on and on the same WiFi, then try again.' },
+    bad:     { ko: '알 수 없는 도구예요.', en: 'Unknown tool.' },
+    fail_title: { ko: '{0}를 켜지 못했어요', en: 'Could not start {0}' }
   };
   function t(k, a) { var s = (T[k] && (T[k][L] || T[k].en)) || k; return a == null ? s : s.replace('{0}', a); }
   Array.prototype.forEach.call(document.querySelectorAll('[data-t]'), function (e) { e.textContent = t(e.getAttribute('data-t')); });
@@ -113,7 +118,7 @@
     tools:      { port: 50000, on: '/tools?enable=on',      check: 'port',   limit: 60,
                   name: { ko: '도구', en: 'Tools' },               icon: 'fa-microchip' },
     classifier: { port: 50010, on: '/classifier?enable=on', check: 'port',   limit: 60,
-                  name: { ko: '분류기', en: 'Image Classifier' },   icon: 'fa-images' },
+                  name: { ko: '분류기', en: 'Classifier' },   icon: 'fa-images' },
     // 대화: 대화 웹(chat/run_chat.py, 50030)이 열리면 바로 간다. 모델 준비(1~2분)는 대화 화면이 보여 준다(261026)
     llm:        { port: 50030, on: '/llm?enable=on',        check: 'port',   limit: 60,
                   name: { ko: '대화', en: 'Chat' },                icon: 'fa-comment' }
@@ -124,11 +129,13 @@
     try { window.close(); } catch (e) {}
     setTimeout(function () { if (!window.closed) location.href = 'http://' + HOST + '/'; }, 200);
   };
-  if (!S) { document.body.dataset.state = 'fail'; $('msg').textContent = t('bad'); $('msg').className = 'msg err'; return; }
+  var PRODUCT = document.documentElement.getAttribute('data-product') || '';
+  function setTitle(s) { $('title').textContent = s; document.title = PRODUCT ? s + ' · ' + PRODUCT : s; }   // 탭 제목은 '… · PiBrain' (다른 화면과 같은 꼴)
+  if (!S) { document.body.dataset.state = 'fail'; setTitle(t('bad')); $('icon').className = 'fa-solid fa-circle-exclamation'; return; }
 
   var name = S.name[L];
-  document.title = t('title', name);
-  $('title').textContent = t('title', name);
+  setTitle(t('title', name));
+  $('app_name').textContent = name; $('app_name').hidden = false;
   $('icon').className = 'fa-solid ' + S.icon;
   if (key === 'llm') $('s2').children[1].textContent = t('s2_llm');
   var target = 'http://' + HOST + ':' + S.port + '/';
@@ -163,7 +170,7 @@
   function stopTimers() { clearInterval(polling); clearInterval(resend); }
   function tick() {
     var s = Math.floor((Date.now() - t0) / 1000);
-    $('sec').textContent = s + 's';
+    $('sec').textContent = L === 'ko' ? s + '초' : s + ' s';   // 숫자+단위 규칙(5초 / 5 s)
     // 진행 바는 '예상'이 아니라 한도 대비 경과. 끝까지 차면 실패다
     $('bar').style.width = Math.min(95, Math.round(s / S.limit * 100)) + '%';
     if (s === 8) $('msg').textContent = t(key === 'llm' ? 'llmslow' : 'slow');
@@ -181,11 +188,12 @@
     stopTimers();
     document.body.dataset.state = 'fail';
     step(2, 'idle');
+    setTitle(t('fail_title', name));
     $('msg').textContent = t('fail', name); $('msg').className = 'msg err';
     $('retry').hidden = false; $('retry').focus();
   }
   function start() {
-    document.body.dataset.state = 'busy';
+    document.body.dataset.state = 'busy'; setTitle(t('title', name));
     $('retry').hidden = true; $('msg').textContent = ''; $('msg').className = 'msg';
     step(1, 'now'); step(2, 'idle'); step(3, 'idle');
     t0 = Date.now(); tick();

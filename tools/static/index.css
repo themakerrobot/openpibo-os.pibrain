@@ -6,72 +6,42 @@
    화면 밝기 — html[data-theme] = light / soft(기본) / dark. 쿠키 pibo_theme (포트 무관,
    IDE 에서 고른 값이 따라온다). 순백·순흑을 넓게 쓰지 않는다(오래된 노트북 패널 눈부심)
    ========================================================================== */
-:root, :root[data-theme="soft"] {
-  --c-brand:     #fbc92d;   /* 상단바 */
-  --c-brand-ink: #3d2f12;   /* 상단바 글씨 — 짙은 갈색 */
-  --c-brand-hov: rgba(61, 47, 18, .08);
-  --c-side:      #eceff3;   /* 레일 · 바닥 */
-  --c-card:      #fbfbfc;
-  --c-bg:        #f7f8fa;
-  --c-hover:     #e8ebf0;
-  --c-press:     #dde1e8;
-  --c-line:      #dde1e7;
-  --c-line-2:    #c7cdd6;
-  --c-ink:       #1f2430;
-  --c-ink-2:     #4b5363;
-  --c-ink-3:     #6e7686;
-  --c-raise:     #ffffff;
-  --c-dark:      #2563eb;   /* 주 동작 — 파랑(IDE v2 와 같다) */
-  --c-dark-hov:  #1d4fd8;
-  --c-on-dark:   #ffffff;
-  --c-accent:    #2563eb;
-  --c-accent-t:  #e3ecfd;
-  --c-sel:       #fff1c2;
-  --c-sel-ink:   #8a6400;
-  --c-red:       #d6393f;
-  --c-red-t:     #fce4e4;
-  --c-green:     #1f9d62;
-  --c-green-t:   #dcf3e7;
-  --c-live:      #20252d;
-  --c-ring:      rgba(37, 99, 235, .28);
-  --c-btn-sh:    inset 0 1px 0 rgba(255, 255, 255, .22), 0 1px 2px rgba(37, 99, 235, .35), 0 0 0 .5px rgba(29, 79, 216, .55);
-  --c-btn2-sh:   0 .5px 1.5px rgba(20, 24, 40, .12);
-  --c-focus:     rgba(37, 99, 235, .45);
-  color-scheme: light;
-}
-:root[data-theme="light"] {
-  --c-side: #f1f3f6; --c-card: #ffffff; --c-bg: #fbfbfc;
-  --c-hover: #eef0f4; --c-press: #e3e6ec; --c-line: #e4e7ec; --c-line-2: #d0d5dd;
-  --c-brand: #ffcb2f;
-}
-:root[data-theme="dark"] {
-  --c-brand: #1b1e24; --c-brand-ink: #eceef2; --c-brand-hov: rgba(255, 255, 255, .08);
-  --c-side: #16191e; --c-card: #1f232a; --c-bg: #1b1e24;
-  --c-hover: #2a2f37; --c-press: #333943; --c-line: #2c3139; --c-line-2: #3c434d;
-  --c-ink: #e6e8ec; --c-ink-2: #b0b7c2; --c-ink-3: #878f9b; --c-raise: #262a32;
-  --c-dark: #f2c94c; --c-dark-hov: #e6bb34; --c-on-dark: #1b1d20;   /* 어둡게에서는 주 동작이 노랑 */
-  --c-accent: #8e98ff; --c-accent-t: #262c52;
-  --c-sel: #3a331d; --c-sel-ink: #f2c94c;
-  --c-red: #e8676b; --c-red-t: #3e2226;
-  --c-green: #45c07f; --c-green-t: #1d3a2a; --c-live: #111317;
-  --c-ring: rgba(142, 152, 255, .35);
-  --c-btn-sh: inset 0 1px 0 rgba(255, 255, 255, .3), 0 1px 2px rgba(0, 0, 0, .45); --c-btn2-sh: none; --c-focus: rgba(142, 152, 255, .55);
-  color-scheme: dark;
-}
+/* 색·치수는 키트(pibo-ui.css '디자인 토큰')의 --v2-* 를 가리킨다(261028). 값을 여기 다시 적지 말 것 —
+   파이보 도구·분류기·IDE 와 같은 값이 되고, 밝기(soft·light·dark)도 키트가 html[data-theme] 에서 바꾼다 */
 :root {
-  --font: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
-          "Noto Sans KR", "Malgun Gothic", "맑은 고딕", "Segoe UI", Roboto, sans-serif;
-  /* 키트(알림·배너) 토큰 */
-  --pb-font: var(--font);
-  --pb-bg: var(--c-raise);
-  --pb-text: var(--c-ink);
-  --pb-text-dim: var(--c-ink-2);
-  --pb-border: var(--c-line-2);
-  --pb-surface: var(--c-bg);
-  --pb-surface-2: var(--c-press);
-  --pb-accent: var(--c-brand);
-  --pb-accent-edge: var(--c-brand);
-  --pb-focus: var(--c-accent);
+  --c-brand:     var(--v2-frame);
+  --c-brand-ink: var(--v2-frame-ink);
+  --c-brand-hov: var(--v2-frame-2);
+  --c-side:      var(--v2-rail);      /* 레일 = 파이보 도구의 왼쪽 메뉴 */
+  --c-bg:        var(--v2-canvas);    /* 본문 바닥 */
+  --c-card:      var(--v2-surface);   /* 카드 */
+  --c-inset:     var(--v2-sunken);    /* 카드 안 결과·기록 칸 */
+  --c-hover:     var(--v2-hover);
+  --c-press:     var(--v2-press);
+  --c-line:      var(--v2-line);
+  --c-line-2:    var(--v2-line-2);
+  --c-ink:       var(--v2-ink);
+  --c-ink-2:     var(--v2-ink-2);
+  --c-ink-3:     var(--v2-ink-3);
+  --c-raise:     var(--v2-raise);
+  --c-dark:      var(--v2-dark);      /* 꽉 찬 주 동작 — 어둡게에서는 노랑 */
+  --c-dark-hov:  var(--v2-dark-hov);
+  --c-on-dark:   var(--v2-on-dark);
+  --c-accent:    var(--v2-accent);    /* 그 밖의 강조 — 어둡게에서도 파랑 */
+  --c-accent-t:  var(--v2-accent-t);
+  --c-sel:       var(--v2-accent-t);  /* '고른 것' = 옅은 파랑(전엔 연노랑 #fff1c2) */
+  --c-sel-ink:   var(--v2-accent-ink);
+  --c-red:       var(--v2-red);
+  --c-red-t:     var(--v2-red-t);
+  --c-red-ink:   var(--v2-red-ink);
+  --c-green:     var(--v2-green);
+  --c-green-t:   var(--v2-green-t);
+  --c-live:      var(--v2-stage);     /* 카메라 칸 = 파이보 도구·분류기 카메라 칸 */
+  --c-ring:      var(--v2-ring);
+  --c-btn-sh:    var(--v2-btn-sh);
+  --c-btn2-sh:   var(--v2-btn2-sh);
+  --c-focus:     var(--v2-focus);
+  --font:        var(--font-ui);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -80,49 +50,50 @@ body.tl {
   display: flex; flex-direction: column;
   font: 14px/1.45 var(--font);
   color: var(--c-ink);
-  background: var(--c-side);
+  background: var(--c-bg);
 }
-/* 우선순위 0 — .btn-primary 같은 클래스 규칙을 이기면 안 된다 */
-:where(.tl) :where(button, input, textarea, select) { font: inherit; color: inherit; }
-.tl :focus-visible { outline: 3px solid var(--c-focus); outline-offset: 1px; }   /* macOS 식 번짐 테두리 */
+/* 글꼴만 물려받는다(색은 각 규칙이). :where() 는 오래된 브라우저(Safari 13 이하·Chrome 87 이하)가 몰라서 뺐다 —
+   요소 선택자 하나라 .btn-primary 같은 클래스 규칙보다 약하다 */
+button, input, textarea, select { font: inherit; color: inherit; }
+.tl :focus { outline: 3px solid var(--c-focus); outline-offset: 1px; }   /* :focus-visible 을 아는 브라우저는 클릭엔 끈다 */
+.tl :focus:not(:focus-visible) { outline: none; }
 
 /* ── 상단바 ──────────────────────────────────────────────────────────── */
 .tl .pb-header.tl-top {
   flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  height: 48px; padding: 0 10px 0 14px; margin: 0;
-  background: var(--c-brand); color: var(--c-brand-ink); border: 0; box-shadow: none;
+  height: var(--header-h); padding: 0 var(--sp-2) 0 var(--sp-4); margin: 0;
+  background: var(--c-brand); color: var(--c-brand-ink); border: 0; border-bottom: 1px solid var(--v2-frame-line); box-shadow: none;
 }
-.tl-brand { display: inline-flex; align-items: center; gap: 8px; min-width: 0; font-size: 17px; white-space: nowrap; }
-.tl-brand > i { font-size: 18px; }
-.tl-brand > b { font-weight: 800; }
-.tl-brand__sub { font-weight: 500; opacity: .7; }
+/* 브랜드는 키트 .pb-header__brand(제품 아이콘 · PiBrain · 앱 이름) — 파이보 도구·분류기·대화와 같다 */
 .tl-actions { display: flex; align-items: center; gap: 2px; }
+/* 상단바 버튼: 키트 .pb-iconbtn 과 같은 크기(32 · 13px 굵게 · 아이콘 15px) */
 .tl-hbtn {
-  display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 10px;
-  border: 0; border-radius: 8px; background: transparent; color: var(--c-brand-ink);
-  font-weight: 700; font-size: 13.5px; cursor: pointer; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 7px; height: var(--ctl-sm); padding: 0 10px;
+  border: 0; border-radius: var(--r-ctl); background: transparent; color: var(--c-brand-ink);
+  font-weight: var(--fw-b); font-size: var(--fs-sm); cursor: pointer; white-space: nowrap;
 }
+.tl-hbtn > i { width: 18px; font-size: 15px; text-align: center; }
 .tl-hbtn:hover { background: var(--c-brand-hov); }
-.tl-hbtn--lang { min-width: 40px; justify-content: center; box-shadow: inset 0 0 0 1.5px var(--c-brand-ink); height: 28px; margin-left: 6px; }
+.tl-hbtn:active { background: var(--v2-frame-3); }
 
 /* ── 본문 틀: 왼쪽 레일 + 카드 ───────────────────────────────────────── */
 .tl-body { flex: 1 1 auto; min-height: 0; display: flex; }
 .tl-rail {
-  flex: none; width: 76px; display: flex; flex-direction: column; gap: 4px; padding: 10px 8px;
+  flex: none; width: 72px; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0;
   background: var(--c-side); border-right: 1px solid var(--c-line); overflow-y: auto;
 }
+/* 레일: 파이보 도구 왼쪽 메뉴와 같은 모양(폭 72 · 아이콘 19 · 이름 12px 굵게 · 고른 것은 옅은 파랑) */
 .tl-rail button {
-  display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 10px 2px 8px;
-  border: 0; border-radius: 10px; background: transparent; color: var(--c-ink-3);
-  font-size: 12px; font-weight: 700; cursor: pointer;
+  width: 60px; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 2px 8px;
+  border: 0; border-radius: 10px; background: transparent; color: var(--c-ink-2);
+  font-size: var(--fs-xs); font-weight: var(--fw-b); line-height: 1.1; cursor: pointer;
 }
-.tl-rail button > i { font-size: 19px; }
+.tl-rail button > i { font-size: 19px; color: var(--c-ink-3); }
 .tl-rail button:hover { background: var(--c-hover); color: var(--c-ink); }
-.tl-rail button.active { background: var(--c-raise); color: var(--c-ink); box-shadow: 0 1px 3px rgba(20,24,40,.12), 0 0 0 .5px rgba(20,24,40,.08); }
-.tl-rail button.active > i { color: var(--c-brand-ink); }
-:root[data-theme="dark"] .tl-rail button.active > i { color: var(--c-dark); }
+.tl-rail button.active { background: var(--c-accent-t); color: var(--v2-accent-ink); }
+.tl-rail button.active > i { color: var(--v2-accent-ink); }
 
-.tl-main { flex: 1 1 auto; min-width: 0; overflow-y: auto; padding: 16px; background: var(--c-bg); }
+.tl-main { flex: 1 1 auto; min-width: 0; overflow-y: auto; padding: var(--sp-4); background: var(--c-bg); }
 .tab { display: none; }
 .tab.active {
   display: grid; gap: 14px; align-items: start;
@@ -132,65 +103,73 @@ body.tl {
 
 /* ── 카드 ────────────────────────────────────────────────────────────── */
 .card {
-  min-width: 0; padding: 16px 18px 18px; border-radius: 12px;
-  background: var(--c-card); box-shadow: 0 0 0 1px var(--c-line);
+  min-width: 0; padding: var(--sp-4); border-radius: var(--r-card);
+  background: var(--c-card); border: 1px solid var(--c-line);
 }
 .card--wide { grid-column: 1 / -1; }
 .card-title {
-  display: flex; align-items: center; gap: 8px; margin: 0 0 14px;
-  font-size: 15px; font-weight: 800; color: var(--c-ink);
+  display: flex; align-items: center; gap: 8px; margin: 0 0 var(--sp-3);
+  font-size: var(--fs-lg); font-weight: var(--fw-b); line-height: 1.3; color: var(--c-ink);
 }
-.card-title::before { content: ""; width: 4px; height: 16px; border-radius: 2px; background: var(--c-brand); }
-:root[data-theme="dark"] .card-title::before { background: var(--c-dark); }
-.card-desc { margin: -4px 0 12px; font-size: 13px; color: var(--c-ink-2); }
-.form-label { display: block; margin: 0 0 6px; font-size: 13px; font-weight: 700; color: var(--c-ink-2); }
+/* 카드 제목 = 키트 .pb-title(파이보 도구 .mark 와 같다): 16px 굵게 + 노랑 띠 */
+.card-title::before { content: ""; width: 4px; height: 16px; border-radius: 2px; background: var(--v2-yellow-2); flex: none; }
+.card-desc { margin: -4px 0 12px; font-size: var(--fs-sm); color: var(--c-ink-2); }
+.form-label { display: block; margin: 0 0 6px; font-size: var(--fs-sm); font-weight: var(--fw-b); color: var(--c-ink-2); }   /* 구역 이름 = 키트 .pb-label */
 
 /* ── 버튼 ────────────────────────────────────────────────────────────── */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  height: 40px; padding: 0 16px; border: 0; border-radius: 9px;
+  height: var(--ctl-md); padding: 0 16px; border: 0; border-radius: var(--r-ctl);
   background: var(--c-raise); color: var(--c-ink); box-shadow: inset 0 0 0 1px var(--c-line-2), var(--c-btn2-sh);
-  font-weight: 700; font-size: 14px; cursor: pointer; white-space: nowrap;
+  font-weight: var(--fw-b); font-size: var(--fs-md); cursor: pointer; white-space: nowrap;
 }
 .btn:active:not(:disabled) { filter: brightness(.93); }
 .btn:hover:not(:disabled) { background: var(--c-hover); }
 .btn:disabled { opacity: .45; cursor: not-allowed; }
 .btn-primary { background: var(--c-dark); color: var(--c-on-dark); box-shadow: var(--c-btn-sh); }   /* macOS 식 질감 */
 .btn-primary:hover:not(:disabled) { background: var(--c-dark-hov); }
-.btn-danger { background: var(--c-red-t); color: var(--c-red); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c-red) 35%, transparent); }
+.btn-danger { background: var(--c-red-t); color: var(--c-red-ink); box-shadow: inset 0 0 0 1px var(--v2-red-t2); }
 .btn-danger:hover:not(:disabled) { background: var(--c-red); color: #fff; }
-.btn-sm { height: 32px; padding: 0 12px; font-size: 13px; }
+.btn-sm { height: var(--ctl-sm); padding: 0 12px; font-size: var(--fs-sm); }
 .btn-grow { flex: 1 1 auto; }
 .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
 
 .result-box, .log-box {
-  margin-top: 12px; padding: 10px 12px; border-radius: 9px;
-  background: var(--c-bg); box-shadow: inset 0 0 0 1px var(--c-line);
-  font-size: 13px; color: var(--c-ink-2); min-height: 38px; word-break: break-all;
+  margin-top: 12px; padding: 10px 12px; border-radius: var(--r-ctl);
+  background: var(--c-inset); box-shadow: inset 0 0 0 1px var(--c-line);
+  font-size: var(--fs-sm); color: var(--c-ink-2); min-height: var(--ctl-md); word-break: break-all;
 }
 .log-box { min-height: 72px; max-height: 180px; overflow-y: auto; }
-.log-box .log-time { color: var(--c-sel-ink); font-weight: 700; margin-right: 6px; }
+.log-box .log-time { color: var(--c-sel-ink); font-weight: var(--fw-b); margin-right: 6px; }
 
 .tl input[type=number], .tl textarea {
-  border: 0; border-radius: 8px; background: var(--c-raise); color: var(--c-ink);
+  border: 0; border-radius: var(--r-ctl); background: var(--c-raise); color: var(--c-ink);
   box-shadow: inset 0 0 0 1px var(--c-line-2);
 }
-.tl input[type=number] { width: 72px; height: 34px; padding: 0 8px; text-align: center; }
+.tl input[type=number] { width: 72px; height: var(--ctl-md); padding: 0 8px; text-align: center; }
 .tl textarea { display: block; width: 100%; min-height: 88px; padding: 10px 12px; resize: vertical; }
-.tl input[type=number]:focus, .tl textarea:focus { outline: none; box-shadow: inset 0 0 0 2px var(--c-accent); }
-.tl input[type=range] { accent-color: var(--c-accent); }
-.tl input[type=color] { width: 48px; height: 34px; padding: 2px; border: 0; border-radius: 8px; background: var(--c-raise); box-shadow: inset 0 0 0 1px var(--c-line-2); cursor: pointer; }
+.tl input[type=number]:focus, .tl textarea:focus { outline: none; box-shadow: inset 0 0 0 1px var(--c-accent), 0 0 0 3px var(--c-ring); }
+/* 슬라이더: 파이보 도구와 같은 모양으로 직접 그린다(accent-color 는 Safari 14 가 모른다) */
+.tl input[type=range] { -webkit-appearance: none; appearance: none; height: 22px; padding: 0; background: transparent; cursor: pointer; }
+.tl input[type=range]::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: var(--c-line-2); }
+.tl input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; margin-top: -8px; border-radius: 50%;
+  background: var(--c-accent); border: 2px solid var(--c-raise); box-shadow: 0 1px 3px rgba(0, 0, 0, .35); }
+.tl input[type=range]::-moz-range-track { height: 4px; border-radius: 2px; background: var(--c-line-2); }
+.tl input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--c-accent); border: 2px solid var(--c-raise); box-shadow: 0 1px 3px rgba(0, 0, 0, .35); }
+.tl input[type=range]:focus { outline: none; }
+.tl input[type=range]:focus::-webkit-slider-thumb { box-shadow: 0 0 0 4px var(--c-ring); }
+.tl input[type=color] { width: 48px; height: var(--ctl-md); padding: 2px; border: 0; border-radius: var(--r-ctl); background: var(--c-raise); box-shadow: inset 0 0 0 1px var(--c-line-2); cursor: pointer; }
 
 /* ── 버튼 탭 ─────────────────────────────────────────────────────────── */
 .button-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 .bi {
-  padding: 22px 8px; border-radius: 12px; text-align: center;
+  padding: 22px 8px; border-radius: var(--r-card); text-align: center;
   background: var(--c-raise); box-shadow: inset 0 0 0 1.5px var(--c-line-2);
   transition: background .15s, box-shadow .15s;
 }
 .bi .num { font-size: 32px; font-weight: 900; line-height: 1; color: var(--c-ink-3); }
 .bi .lbl { margin-top: 6px; font-size: 12px; font-weight: 700; color: var(--c-ink-3); letter-spacing: .04em; }
-.bi.on { background: var(--c-sel); box-shadow: inset 0 0 0 2px var(--c-brand), 0 0 0 4px color-mix(in srgb, var(--c-brand) 30%, transparent); }
+.bi.on { background: var(--c-sel); box-shadow: inset 0 0 0 2px var(--c-accent), 0 0 0 4px var(--c-ring); }   /* 눌린 버튼 = '고른 것' 의 옅은 파랑 */
 .bi.on .num, .bi.on .lbl { color: var(--c-sel-ink); }
 
 /* ── LED 탭 ──────────────────────────────────────────────────────────── */
@@ -212,37 +191,36 @@ body.tl {
 .led-row input[type=range] { flex: 1; }
 .presets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .swatch {
-  display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 12px;
-  border: 0; border-radius: 9px; background: var(--c-raise); box-shadow: inset 0 0 0 1px var(--c-line-2);
-  font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; gap: 10px; height: var(--ctl-md); padding: 0 12px;
+  border: 0; border-radius: var(--r-ctl); background: var(--c-raise); box-shadow: inset 0 0 0 1px var(--c-line-2);
+  font-weight: var(--fw-b); cursor: pointer;
 }
 .swatch:hover { background: var(--c-hover); }
 .swatch > i { width: 20px; height: 20px; border-radius: 50%; background: var(--sw); box-shadow: inset 0 0 0 1px rgba(0,0,0,.2); }
 
 /* ── 카메라 · 비전 ───────────────────────────────────────────────────── */
-.cam-stage {
-  display: flex; align-items: center; justify-content: center; min-height: 200px;
-  border-radius: 10px; background: var(--c-live); color: #aeb5c0; overflow: hidden; text-align: center;
-}
-/* PiBrain 카메라·LCD 는 세로 3:4(480x640 · 240x320). 칸도 세로 3:4 로 두고 사진은 비율 그대로 담는다(260930) */
-.cam-stage { aspect-ratio: 3 / 4; width: min(100%, 360px); min-height: 0; margin: 0 auto; }
-#cam-wrap { width: 100%; height: 100%; }
+/* 카메라 칸 = 키트 .pb-stage(파이보 도구·분류기와 같은 바탕·빈 화면 안내). 바탕·모서리는 키트가 */
+/* PiBrain 카메라·LCD 는 세로 3:4(480x640 · 240x320). 칸도 세로 3:4 로 두고 사진은 비율 그대로 담는다(260930).
+   aspect-ratio 대신 높이 0 + padding-top(폭 min(100%, 360px) 의 4/3 = min(133.33%, 480px)) */
+.cam-stage { position: relative; width: min(100%, 360px); height: 0; padding-top: min(133.333%, 480px); margin: 0 auto; }
+#cam-wrap { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 #cam-img { display: block; width: 100%; height: 100%; object-fit: contain; }
 .cam-stage + .btn-row { justify-content: center; }
-#cam-ph { padding: 16px; font-size: 13.5px; }
+#cam-ph { position: absolute; top: 0; right: 0; bottom: 0; left: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--sp-2);
+  padding: var(--sp-4); text-align: center; color: var(--v2-stage-ink); font-size: var(--fs-sm); line-height: 1.5; }
+#cam-ph::before { content: "\f030"; font: var(--fa-font-solid, 900 1em "Font Awesome 6 Free"); font-size: 26px; opacity: .8; }
 .vision-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(86px, 1fr)); gap: 8px; }
 .vbtn, .voice-btn {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
-  min-height: 64px; padding: 8px 4px; border: 0; border-radius: 10px;
+  min-height: 64px; padding: 8px 4px; border: 0; border-radius: var(--r-ctl);
   background: var(--c-raise); color: var(--c-ink-2); box-shadow: inset 0 0 0 1px var(--c-line-2);
-  font-size: 12.5px; font-weight: 700; cursor: pointer; text-align: center;
+  font-size: var(--fs-xs); font-weight: var(--fw-b); cursor: pointer; text-align: center;
 }
 .vbtn > i, .voice-btn > i { font-size: 18px; color: var(--c-ink-3); }
 .vbtn:hover, .voice-btn:hover { background: var(--c-hover); color: var(--c-ink); }
-.vbtn.active, .voice-btn.active { background: var(--c-sel); color: var(--c-sel-ink); box-shadow: inset 0 0 0 2px var(--c-brand); }
+.vbtn.active, .voice-btn.active { background: var(--c-sel); color: var(--c-sel-ink); box-shadow: inset 0 0 0 1px var(--c-accent); }   /* 파이보 도구 타일과 같은 '고른 것' */
 .vbtn.active > i, .voice-btn.active > i { color: var(--c-sel-ink); }
-:root[data-theme="dark"] .vbtn.active, :root[data-theme="dark"] .voice-btn.active { box-shadow: inset 0 0 0 2px var(--c-dark); }
-.marker-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; font-size: 13px; color: var(--c-ink-2); }
+.marker-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; font-size: var(--fs-sm); color: var(--c-ink-2); }
 
 /* ── 음성 ────────────────────────────────────────────────────────────── */
 .voice-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
@@ -251,16 +229,16 @@ body.tl {
 /* ── LCD ─────────────────────────────────────────────────────────────── */
 .lcd-preview {
   width: 100%; max-width: 252px; margin: 0 auto; padding: 6px;
-  border-radius: 12px; background: #15181d; box-shadow: 0 0 0 1px var(--c-line-2);
+  border-radius: var(--r-card); background: var(--v2-stage); box-shadow: 0 0 0 1px var(--c-line-2);
 }
-.lcd-preview canvas { display: block; width: 100%; height: auto; aspect-ratio: 240 / 320; border-radius: 6px; }
+.lcd-preview canvas { display: block; width: 100%; height: auto; border-radius: var(--r-chip); }   /* 비율은 canvas 의 width·height 속성(240×320)이 정한다 */
 .field-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px 14px; margin-top: 12px; }
-.field-grid label { display: flex; flex-direction: column; gap: 5px; font-size: 12.5px; font-weight: 700; color: var(--c-ink-2); }
+.field-grid label { display: flex; flex-direction: column; gap: 5px; font-size: var(--fs-xs); font-weight: var(--fw-b); color: var(--c-ink-2); }
 .field-grid input[type=number] { width: 100%; }
 
 /* ── 폭에 따라 ───────────────────────────────────────────────────────── */
 @media (max-width: 720px) {
-  .tl-brand__sub { display: none; }
+  .tl .pb-header__app { display: none; }
   .tl-hbtn > span:not(:only-child) { display: none; }
   .tab.active { grid-template-columns: minmax(0, 1fr); }
   .voice-grid { grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); }

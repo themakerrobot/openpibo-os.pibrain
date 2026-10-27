@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-product="PiBrain">
 <head>
-  <title>PiBrain Classifier</title>
+  <title data-key="title">분류기</title>
   <meta charset="UTF-8" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
-  <link rel="stylesheet" href="../static/pibo-ui.css?ver=260930v3" />
-  <link rel="stylesheet" href="../static/index.css?ver=260930v9" />
+  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261028v1" />
+  <link rel="stylesheet" href="../static/index.css?ver=261028v1" />
   <link rel="shortcut icon" href="../static/icon.png?ver=240319v1" type="image/x-icon" />
 
   <script src="../static/socket.io.min.js"></script>
   <script src="../static/vendor/tfjs/tf.min.js"></script>
-  <script src="../static/ko2en.js?ver=261027v3"></script>
+  <script src="../static/ko2en.js?ver=261028v1"></script>
 </head>
 
 <body class="pb pb-shell pb-refresh pb-v2" data-tab="learn">
@@ -21,7 +21,7 @@
   (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
     document.documentElement.setAttribute('data-theme', m ? m[1] : 'soft'); } catch (e) {} })();</script>
   <header class="pb-header">
-    <span class="pb-header__brand"><i class="fa-solid fa-glasses"></i>&nbsp;<span data-key="title"></span></span>
+    <span class="pb-header__brand"><i class="fa-solid fa-brain"></i><b>PiBrain</b><span class="pb-header__app" data-key="title"></span></span>
     <div class="pb-seg cls-tabs" id="tabs" role="tablist">
       <button type="button" data-tab="learn" role="tab"><i class="fa-solid fa-graduation-cap"></i><span data-key="tab_learn"></span></button>
       <button type="button" data-tab="test" role="tab"><i class="fa-solid fa-vial"></i><span data-key="tab_test"></span></button>
@@ -29,8 +29,8 @@
     </div>
     <div class="pb-iconbar">
       <button type="button" class="pb-iconbtn" id="ide_bt" title="IDE"><i class="fa-solid fa-code"></i><span class="pb-iconbtn__label">IDE</span></button>
-      <a class="pb-iconbtn" id="fullscreen_bt" title="Full Screen"><span id="fullscreen_txt"></span><span class="pb-iconbtn__label" data-key="nav_fullscreen"></span></a>
-      <select class="pb-field pb-field--sm" id="language" aria-label="language">
+      <a class="pb-iconbtn" id="fullscreen_bt" data-title-key="nav_fullscreen"><span id="fullscreen_txt"></span><span class="pb-iconbtn__label" data-key="nav_fullscreen"></span></a>
+      <select class="pb-field pb-field--sm" id="language" aria-label="Language" data-aria-key="language">
         <option value="ko">한국어</option>
         <option value="en">English</option>
       </select>
@@ -56,17 +56,18 @@
         <h2 class="sec-title" data-key="test_pick"></h2>
         <div id="test_list"></div>
         <h2 class="sec-title"><span data-key="threshold"></span> <b id="thr_val"></b></h2>
-        <input type="range" id="thr" min="30" max="95" step="5" aria-label="threshold">
+        <input type="range" id="thr" min="30" max="95" step="5" aria-label="Confidence" data-aria-key="threshold">
         <p class="muted" data-key="threshold_hint"></p>
       </section>
     </aside>
 
-    <div class="pb-resizer" data-pane="left" data-target="left_pane" data-side="left" data-min="280" role="separator" aria-orientation="vertical" aria-label="resize"></div>
+    <div class="pb-resizer" data-pane="left" data-target="left_pane" data-side="left" data-min="280" role="separator" aria-orientation="vertical" aria-label="Resize" data-aria-key="resize"></div>
 
     <!-- 가운데: PiBrain 카메라 / 보관함 -->
     <main class="pb-pane pb-pane--grow center">
       <section class="not-store stage-wrap">
-        <div class="stage" id="stage">
+        <div class="stage pb-stage" id="stage">
+          <div class="stage__sizer"></div>
           <img id="cam" alt="PiBrain camera">
           <canvas id="overlay"></canvas>
           <div class="stage-msg" id="see_hint" hidden></div>
@@ -92,7 +93,7 @@
       </section>
     </main>
 
-    <div class="pb-resizer" data-pane="right" data-target="right_pane" data-side="right" data-min="280" role="separator" aria-orientation="vertical" aria-label="resize"></div>
+    <div class="pb-resizer" data-pane="right" data-target="right_pane" data-side="right" data-min="280" role="separator" aria-orientation="vertical" aria-label="Resize" data-aria-key="resize"></div>
 
     <!-- 오른쪽: 학습 = 배우기·결과·저장 / 시험 = 답 -->
     <aside class="pb-pane pb-pane--fixed side" id="right_pane">
@@ -116,7 +117,7 @@
           <h2 class="sec-title" data-key="save_title"></h2>
           <div class="save-row">
             <input type="text" class="pb-field" id="save_name" maxlength="40" data-key="save_name_ph">
-            <button type="button" class="pb-btn pb-btn--accent" id="save_btn"><i class="fa-solid fa-floppy-disk"></i><span data-key="save_btn"></span></button>
+            <button type="button" class="pb-btn pb-btn--tint" id="save_btn"><i class="fa-solid fa-floppy-disk"></i><span data-key="save_btn"></span></button>
           </div>
           <div class="saved" id="saved_box" hidden>
             <p><i class="fa-solid fa-circle-check"></i> <code id="saved_path"></code></p>
@@ -128,7 +129,7 @@
       </section>
 
       <section class="only-test">
-        <p class="muted" id="test_empty" data-key="test_empty"></p>
+        <div class="pb-empty" id="test_empty"><i class="fa-solid fa-vial" aria-hidden="true"></i><p data-key="test_empty"></p></div>
         <div id="test_live" hidden>
           <p class="test-name"><b id="test_name"></b> <span class="muted" id="test_src"></span></p>
           <div class="answer" id="test_answer">—</div>
@@ -156,7 +157,7 @@
     </div>
   </div>
 
-  <script src="../static/pibo-ui.js?ver=261026v1"></script>
-  <script type="module" src="../static/app.js?ver=261027v3"></script>
+  <script src="../static/pibo-ui.js?ver=261028v1"></script>
+  <script type="module" src="../static/app.js?ver=261028v1"></script>
 </body>
 </html>

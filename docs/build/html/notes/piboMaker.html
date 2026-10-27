@@ -7,12 +7,12 @@
         <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/notes/piboMaker.html">
 
     <link rel="shortcut icon" href="../_static/icon.png"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
-        <title>PiBrain 메이커 - PiBrain 도움말</title>
+        <title>PiBrain 메이커 - 도움말 · PiBrain</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=03d1bc43" />
+    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=d358c342" />
     
     
 
@@ -21,60 +21,83 @@
   body {
     --color-code-background: #f2f2f2;
   --color-code-foreground: #1e1e1e;
-  --color-brand-primary: #2563eb;
-  --color-brand-content: #2563eb;
-  --color-brand-visited: #2563eb;
+  --color-brand-primary: #1d4ed8;
+  --color-brand-content: #1d4ed8;
+  --color-brand-visited: #1d4ed8;
   --font-stack: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-stack--headings: var(--font-stack);
   --font-stack--monospace: "D2Coding", "JetBrains Mono", Consolas, "SF Mono", ui-monospace, monospace;
+  --color-foreground-primary: #1a1e29;
+  --color-foreground-secondary: #474f62;
+  --color-foreground-muted: #5f6779;
   --color-background-secondary: #f5f6fa;
+  --color-background-border: #dcdfe7;
   --color-sidebar-background: #f5f6fa;
-  --color-sidebar-item-background--current: rgba(37, 99, 235, .08);
-  --color-sidebar-link-text: #4a5163;
-  --color-sidebar-link-text--top-level: #4a5163;
+  --color-sidebar-item-background--current: #e3ecfd;
+  --color-sidebar-link-text: #474f62;
+  --color-sidebar-link-text--top-level: #474f62;
   --color-admonition-title--note: #2563eb;
-  --color-admonition-title-background--note: rgba(37, 99, 235, .08);
-  --color-admonition-title--tip: #16a34a;
-  --color-admonition-title-background--tip: rgba(22, 163, 74, .08);
+  --color-admonition-title-background--note: #e3ecfd;
+  --color-admonition-title--tip: #157a4b;
+  --color-admonition-title-background--tip: #dcf3e7;
+  --color-api-name: #1d4ed8;
+  --color-api-pre-name: #474f62;
   
   }
   @media not print {
     body[data-theme="dark"] {
       --color-code-background: #202020;
   --color-code-foreground: #d0d0d0;
+  --color-foreground-primary: #e4e7ef;
+  --color-foreground-secondary: #adb4c4;
+  --color-foreground-muted: #8c94a7;
   --color-background-primary: #1a1e27;
-  --color-background-secondary: #222733;
-  --color-sidebar-background: #1f232d;
-  --color-sidebar-item-background--current: rgba(251, 201, 45, .10);
-  --color-sidebar-link-text: #b4bac8;
-  --color-sidebar-link-text--top-level: #b4bac8;
-  --color-admonition-title--note: #fbc92d;
-  --color-admonition-title-background--note: rgba(251, 201, 45, .10);
-  --color-brand-primary: #fbc92d;
-  --color-brand-content: #fbc92d;
-  --color-brand-visited: #fbc92d;
+  --color-background-secondary: #1f232d;
+  --color-background-border: #2b303c;
+  --color-sidebar-background: #151922;
+  --color-sidebar-item-background--current: #1f2c4d;
+  --color-sidebar-link-text: #adb4c4;
+  --color-sidebar-link-text--top-level: #adb4c4;
+  --color-admonition-title--note: #7aa7ff;
+  --color-admonition-title-background--note: #1f2c4d;
+  --color-admonition-title--tip: #6fd6a0;
+  --color-admonition-title-background--tip: #1d3a2a;
+  --color-api-name: #7aa7ff;
+  --color-api-pre-name: #adb4c4;
+  --color-brand-primary: #7aa7ff;
+  --color-brand-content: #7aa7ff;
+  --color-brand-visited: #7aa7ff;
   
     }
     @media (prefers-color-scheme: dark) {
       body:not([data-theme="light"]) {
         --color-code-background: #202020;
   --color-code-foreground: #d0d0d0;
+  --color-foreground-primary: #e4e7ef;
+  --color-foreground-secondary: #adb4c4;
+  --color-foreground-muted: #8c94a7;
   --color-background-primary: #1a1e27;
-  --color-background-secondary: #222733;
-  --color-sidebar-background: #1f232d;
-  --color-sidebar-item-background--current: rgba(251, 201, 45, .10);
-  --color-sidebar-link-text: #b4bac8;
-  --color-sidebar-link-text--top-level: #b4bac8;
-  --color-admonition-title--note: #fbc92d;
-  --color-admonition-title-background--note: rgba(251, 201, 45, .10);
-  --color-brand-primary: #fbc92d;
-  --color-brand-content: #fbc92d;
-  --color-brand-visited: #fbc92d;
+  --color-background-secondary: #1f232d;
+  --color-background-border: #2b303c;
+  --color-sidebar-background: #151922;
+  --color-sidebar-item-background--current: #1f2c4d;
+  --color-sidebar-link-text: #adb4c4;
+  --color-sidebar-link-text--top-level: #adb4c4;
+  --color-admonition-title--note: #7aa7ff;
+  --color-admonition-title-background--note: #1f2c4d;
+  --color-admonition-title--tip: #6fd6a0;
+  --color-admonition-title-background--tip: #1d3a2a;
+  --color-api-name: #7aa7ff;
+  --color-api-pre-name: #adb4c4;
+  --color-brand-primary: #7aa7ff;
+  --color-brand-content: #7aa7ff;
+  --color-brand-visited: #7aa7ff;
   
       }
     }
   }
-</style></head>
+</style><script src="../_static/pibotheme.js"></script>
+</head>
   <body>
     
     <script>
@@ -201,7 +224,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">PiBrain 도움말</div></a>
+      <a href="../index.html"><div class="brand">도움말 · PiBrain</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -222,7 +245,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
-  <span class="sidebar-brand-text">PiBrain 도움말</span>
+  <span class="sidebar-brand-text">도움말 · PiBrain</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="검색" name="q" aria-label="검색">
@@ -339,10 +362,10 @@
 <p><img alt="IDE 블록 화면" src="../_images/ide_block.png" /></p>
 <ul class="simple">
 <li><p><strong>위 줄</strong>: [블록 | 파이썬] 으로 편집기를 바꿉니다. 오른쪽은 도구·대화·분류기·도움말·전체화면과 [⋯] 더보기
-(화면 밝기 · 글자 크기 · 파이썬 편집기 테마 · 언어 · 초기화 · 전원 · 소스 코드와 라이선스)</p></li>
+(화면 밝기 · 글자 크기 · 파이썬 편집기 테마 · 언어 · 공장 초기화 · 전원 끄기 · 소스 코드와 라이선스)</p></li>
 <li><p><strong>왼쪽 패널</strong>: 아래의 <strong>[실행] [정지]</strong> 는 늘 보입니다.</p>
 <ul>
-<li><p>[PiBrain] — 화면 출력(<code class="docutils literal notranslate"><span class="pre">IDE에</span> <span class="pre">보여주기</span></code> 블록으로 보낸 그림), 상태(WiFi·온도·메모리·켜진 시간·버전), 실행 출력, 프로그램에 입력 보내기</p></li>
+<li><p>[PiBrain] — 화면 출력(<code class="docutils literal notranslate"><span class="pre">IDE에</span> <span class="pre">보여주기</span></code> 블록으로 보낸 그림), 상태(WiFi 설정·온도·메모리·켜진 시간·버전), 실행 출력, 프로그램에 입력 보내기</p></li>
 <li><p>[파일] — 파일 목록, 새 파일·새 폴더·올리기, 사진·소리 미리보기</p></li>
 </ul>
 </li>
@@ -368,10 +391,10 @@ API 는 왼쪽 <strong>PYTHON</strong> 을 보세요</p></li>
 </ul>
 <p><img alt="도구 카메라" src="../_images/tools_camera.png" /></p>
 <ul class="simple">
-<li><p><strong>카메라</strong>: [카메라 켜기] 를 누르면 카메라 화면이 <strong>PiBrain LCD</strong> 에 나옵니다. 비전 기능(흑백·윤곽선·만화·QR코드·얼굴분석·
-사물인식·손동작인식·포즈인식·마커인식 등)을 누르면 LCD 화면에 바로 적용되고, 결과는 오른쪽 아래에 글자로 나옵니다.
-[웹에 표시] 를 누르면 지금 화면을 브라우저에서도 봅니다</p></li>
-<li><p><strong>음성</strong>: 목소리 10가지(남성 1~5, 여성 1~5) 중에서 골라 글자를 말하게 합니다. 한국어·영어는 자동으로 알아봅니다</p></li>
+<li><p><strong>카메라</strong>: [카메라 켜기] 를 누르면 카메라 화면이 <strong>PiBrain LCD</strong> 에 나옵니다. 비전 기능(흑백·윤곽선·만화·QR 코드·얼굴 분석·
+사물 인식·손동작 인식·포즈 인식·마커 인식 등)을 누르면 LCD 화면에 바로 적용되고, 결과는 오른쪽 아래에 글자로 나옵니다.
+[여기에 보기]를 누르면 지금 화면을 브라우저에서도 봅니다</p></li>
+<li><p><strong>음성</strong>: 목소리 10가지(남성 1~5, 여성 1~5) 중에서 골라 [말하기]로 글자를 말하게 합니다. 한국어·영어는 자동으로 알아봅니다</p></li>
 </ul>
 <p><img alt="도구 LCD" src="../_images/tools_lcd.png" /></p>
 <ul class="simple">
@@ -389,7 +412,7 @@ API 는 왼쪽 <strong>PYTHON</strong> 을 보세요</p></li>
 <li><p><strong>[저장]</strong> — PiBrain 의 <code class="docutils literal notranslate"><span class="pre">/home/pi/mymodel/&lt;모델</span> <span class="pre">이름&gt;</span></code> 에 저장됩니다</p></li>
 <li><p>IDE 에서 블록 <code class="docutils literal notranslate"><span class="pre">분류기</span> <span class="pre">모델</span> <span class="pre">[mymodel]</span> <span class="pre">(모델</span> <span class="pre">이름)</span> <span class="pre">불러오기</span></code> → <code class="docutils literal notranslate"><span class="pre">분류기</span> <span class="pre">모델로</span> <span class="pre">(이미지)</span> <span class="pre">분류하기</span></code> 로 씁니다</p></li>
 </ol>
-<p>[시험] 탭에서 저장한 모델을 다시 써 보고, [보관함] 에서 시험·이어서 배우기·이름 바꾸기·내려받기(zip)·삭제를 합니다.</p>
+<p>[시험] 탭에서 저장한 모델을 다시 써 보고, [보관함] 에서 시험·이어서 배우기·이름 바꾸기·내려받기(zip)·지우기를 합니다.</p>
 <div class="admonition tip">
 <p class="admonition-title">팁</p>
 <p>분류기는 처음 열 때 AI 파일(약 10MB)을 받습니다. 수업 전에 태블릿마다 한 번씩 열어 두면 수업 중에는 바로 뜹니다.</p>

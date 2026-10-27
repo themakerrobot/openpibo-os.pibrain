@@ -1,0 +1,7 @@
+{#- Furo 의 base.html 위에 한 줄: 화면 밝기(쿠키 pibo_theme)를 첫 페인트 전에 맞춘다(_static/pibotheme.js).
+    html_js_files 는 Furo 가 본문 끝에 싣기 때문에 너무 늦다(먼저 밝게 그렸다가 어둡게 바뀐다) -#}
+{% extends "!base.html" %}
+{%- block extrahead -%}
+<script src="{{ pathto('_static/pibotheme.js', 1) }}"></script>
+{{ super() }}
+{%- endblock -%}

@@ -10,7 +10,22 @@
 body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 
 /* 맨 위 가는 노랑 띠 (IDE 상단바 색) */
-body::before { content: ""; position: fixed; inset: 0 0 auto 0; height: 4px; background: #fbc92d; z-index: 100; }
+body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: 4px; background: #fbc92d; z-index: 100; }
+
+/* 부드럽게(쿠키 pibo_theme=soft, 기본) — IDE·도구의 부드럽게와 같은 옅은 청회색 면(pibotheme.js 가 html 에 data-pb-theme 를 단다).
+   흰 바탕이 오래된 노트북 패널에서 눈부신 것을 줄인다. 색 값은 키트(design/pibo-ui.css '디자인 토큰')와 같다 */
+html[data-pb-theme="soft"] body[data-theme="light"] {
+  --color-background-primary: #f5f6fa;
+  --color-background-secondary: #eceef4;
+  --color-background-hover: #e5e8ef;
+  --color-background-border: #dcdfe7;
+  --color-sidebar-background: #eceef4;
+  --color-sidebar-background-border: #dcdfe7;
+  --color-sidebar-search-background: #fdfdff;
+  --color-code-background: #eceef4;
+  --color-inline-code-background: #e5e8ef;
+  --color-table-header-background: #eceef4;
+}
 
 /* ── 왼쪽 위 이름 ───────────────────────────────────────────── */
 .sidebar-brand { padding: 1.25rem 1rem .75rem; margin: 0; }
@@ -83,9 +98,10 @@ code.literal { border-radius: 5px; padding: .1em .35em; font-size: .88em; }
 /* API 페이지: 클래스·메서드 이름 칸 */
 dl.py > dt { border-radius: 8px; }
 
-/* 한국어 ↔ English 전환 (langswitch.js) */
+/* 한국어 ↔ English 전환 (langswitch.js) · IDE 로 돌아가기 (pibotheme.js) */
 .pb-lang { display: inline-block; margin: 0 1rem .5rem; padding: .15rem .65rem; font-size: .8rem; font-weight: 700;
   border: 1px solid var(--color-background-border); border-radius: 99px; color: var(--color-foreground-secondary) !important;
   text-decoration: none !important; }
 .pb-lang:hover { border-color: var(--color-brand-primary); color: var(--color-brand-primary) !important; }
 .pb-lang--top { margin: 0 .5rem 0 0; }
+.pb-lang + .pb-lang { margin-left: 0; }

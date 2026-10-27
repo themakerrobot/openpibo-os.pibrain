@@ -22,6 +22,11 @@ function applyLang() {
     }
   });
 
+  /* 버튼 상태 칸(눌림/안 눌림) */
+  document.querySelectorAll('.bi').forEach(el => {
+    el.querySelector('.lbl').textContent = t(el.classList.contains('on') ? 'btn_on' : 'btn_off');
+  });
+
   /* Toggle button label */
   const btn = document.getElementById('lang-toggle');
   if (btn) btn.textContent = lang === 'ko' ? 'EN' : 'KO';
@@ -83,7 +88,7 @@ function startButtonStream() {
       const el = document.getElementById('bi-' + k);
       const on = v === 'on';
       el.classList.toggle('on', on);
-      el.querySelector('.lbl').textContent = on ? 'ON' : 'OFF';
+      el.querySelector('.lbl').textContent = t(on ? 'btn_on' : 'btn_off');
       if (on) {
         const time = new Date().toLocaleTimeString();
         const log = document.getElementById('btn-log');
@@ -217,7 +222,7 @@ async function speakTTS() {
   document.getElementById('tts-status').textContent = t('tts_speaking');
   const res = await fetch(`/tts?text=${encodeURIComponent(text)}&voice=${selectedVoice}`).then(r => r.json());
   document.getElementById('tts-status').textContent =
-    res.ok ? t('tts_done') : `${t('error_prefix')}${res.error || ''}`;
+    res.ok ? t('tts_done') : `${t('error_prefix')}${t(res.error || '')}`;
   ttsBtn.disabled = false;
 }
 
@@ -273,7 +278,7 @@ async function sendLcdText() {
 
   const res = await fetch(url).then(r => r.json());
   document.getElementById('lcd-status').textContent =
-    res.ok ? t('lcd_done') : `${t('error_prefix')}${res.error || ''}`;
+    res.ok ? t('lcd_done') : `${t('error_prefix')}${t(res.error || '')}`;
 }
 
 async function clearLcd() {
@@ -281,7 +286,7 @@ async function clearLcd() {
   document.getElementById('lcd-status').textContent = t('lcd_clearing');
   const res = await fetch(`/oled_clear?bg_r=${bg.r}&bg_g=${bg.g}&bg_b=${bg.b}`).then(r => r.json());
   document.getElementById('lcd-status').textContent =
-    res.ok ? t('lcd_cleared') : `${t('error_prefix')}${res.error || ''}`;
+    res.ok ? t('lcd_cleared') : `${t('error_prefix')}${t(res.error || '')}`;
   updateLcdPreview();
 }
 
@@ -289,7 +294,7 @@ async function resetOled() {
   document.getElementById('oled-reset-status').textContent = t('lcd_resetting');
   const res = await fetch('/oled_reset').then(r => r.json());
   document.getElementById('oled-reset-status').textContent =
-    res.ok ? t('lcd_reset_done') : `${t('error_prefix')}${res.error || ''}`;
+    res.ok ? t('lcd_reset_done') : `${t('error_prefix')}${t(res.error || '')}`;
 }
 
 /* 브라우저 탭을 바꾸거나 태블릿 화면이 꺼져도 카메라를 끈다(261001). 돌아와서 다시 켜려면 [카메라 켜기] */

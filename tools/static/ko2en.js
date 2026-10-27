@@ -8,27 +8,27 @@ const T = {
   theme_light:       { ko: "밝게",                 en: "Light" },
   theme_soft:        { ko: "부드럽게",              en: "Soft" },
   theme_dark:        { ko: "어둡게",               en: "Dark" },
-  led_title:         { ko: "LED 색",               en: "LED colour" },
-  presets_title:     { ko: "빠른 색",              en: "Quick colours" },
+  led_title:         { ko: "LED 색", en: "LED color" },
+  presets_title:     { ko: "빠른 색", en: "Quick colors" },
   camera_title:      { ko: "카메라",               en: "Camera" },
 
   /* ── Navigation ─────────────────────────────────────────── */
   tab_buttons:       { ko: "버튼",              en: "Buttons" },
   tab_led:           { ko: "LED",               en: "LED" },
   tab_camera:        { ko: "카메라",     en: "Camera" },
-  tab_tts:           { ko: "음성",           en: "Voice" },
+  tab_tts:           { ko: "음성", en: "Speech" },
   tab_lcd:           { ko: "LCD",               en: "LCD" },
 
   /* ── Buttons tab ─────────────────────────────────────────── */
-  button_status:     { ko: "버튼 상태 (실시간)",   en: "Button Status (Live)" },
-  event_waiting:     { ko: "이벤트 대기 중...",     en: "Waiting for events..." },
+  button_status:     { ko: "버튼 상태 (실시간)", en: "Button status (live)" },
+  event_waiting:     { ko: "버튼을 기다리는 중…", en: "Waiting for a button press…" },
   btn_pressed:       {
     ko: (n) => `버튼 ${n} 눌림`,
     en: (n) => `Button ${n} pressed`
   },
 
   /* ── LED tab ─────────────────────────────────────────────── */
-  color_picker:      { ko: "컬러픽커",             en: "Color Picker" },
+  color_picker:      { ko: "색 고르기", en: "Pick a color" },
   apply:             { ko: "적용",               en: "Apply" },
   led_off:           { ko: "끄기",               en: "Off" },
   preset_red:        { ko: "빨강",                 en: "Red" },
@@ -39,68 +39,68 @@ const T = {
   preset_white:      { ko: "흰색",                 en: "White" },
 
   /* ── Camera / Vision tab ─────────────────────────────────── */
-  cam_off_msg:       { ko: "카메라를 켜면 기기 LCD에 표시됩니다", en: "Camera output will appear on device LCD" },
+  cam_off_msg:       { ko: "카메라를 켜면 PiBrain LCD에 화면이 나와요.", en: "Turn on the camera to see it on the PiBrain LCD." },
   cam_on_btn:        { ko: "카메라 켜기",        en: "Camera on" },
   cam_off_btn:       { ko: "카메라 끄기",        en: "Camera off" },
-  cam_streaming:     { ko: "기기 LCD에 스트리밍 중...", en: "Streaming to device LCD..." },
-  capture_btn:       { ko: "웹에 표시",          en: "Show here" },
-  vision_title:      { ko: "비전 기능",             en: "Vision Functions" },
+  cam_streaming:     { ko: "PiBrain LCD에 보여 주는 중…", en: "Showing on the PiBrain LCD…" },
+  capture_btn:       { ko: "여기에 보기", en: "Show here" },
+  vision_title:      { ko: "비전 기능", en: "Vision features" },
 
   /* Vision buttons (text only — icon stays in HTML) */
   v_camera:          { ko: "카메라",               en: "Camera" },
   v_grayscale:       { ko: "흑백",                 en: "Grayscale" },
-  v_canny:           { ko: "윤곽선", en: "Canny Edge" },
+  v_canny:           { ko: "윤곽선", en: "Edges" },
   v_edge_pres:       { ko: "흐리게", en: "Soften" },
   v_cartoon:         { ko: "만화", en: "Cartoon" },
   v_sketch:          { ko: "스케치",               en: "Sketch" },
   v_detail:          { ko: "선명하게", en: "Sharpen" },
-  v_qr:              { ko: "QR코드", en: "QR code" },
-  v_face:            { ko: "얼굴분석", en: "Face analysis" },
+  v_qr:              { ko: "QR 코드", en: "QR code" },
+  v_face:            { ko: "얼굴 분석", en: "Face analysis" },
   v_landmark:        { ko: "얼굴 특징점", en: "Face landmarks" },
-  v_object:          { ko: "사물인식", en: "Object detection" },
-  v_hand:            { ko: "손동작인식", en: "Hand gesture" },
-  v_pose:            { ko: "포즈인식", en: "Human pose" },
-  v_marker:          { ko: "마커인식", en: "Marker detection" },
+  v_object:          { ko: "사물 인식", en: "Object detection" },
+  v_hand:            { ko: "손동작 인식", en: "Hand gesture" },
+  v_pose:            { ko: "포즈 인식", en: "Pose detection" },
+  v_marker:          { ko: "마커 인식", en: "Marker detection" },
 
-  marker_len_label:  { ko: "마커 길이",             en: "Marker Length" },
+  marker_len_label:  { ko: "마커 길이", en: "Marker length" },
   apply_sm:          { ko: "적용",                 en: "Apply" },
-  result_ph:         { ko: "결과가 여기에 표시됩니다", en: "Results will appear here" },
-  no_result:         { ko: "인식 결과 없음",         en: "No recognition result" },
+  result_ph:         { ko: "결과가 여기에 나와요.", en: "Results appear here." },
+  no_result:         { ko: "찾은 것이 없어요.", en: "Nothing found." },
 
   /* ── TTS tab ─────────────────────────────────────────────── */
-  voice_select:      { ko: "목소리 선택",           en: "Voice Selection" },
-  tts_label:         { ko: "말할 내용",             en: "Text to Speak" },
-  tts_ph:            { ko: "여기에 말할 내용을 입력하세요...", en: "Enter text to speak here..." },
+  voice_select:      { ko: "목소리", en: "Voice" },
+  tts_label:         { ko: "말할 글자", en: "Text to speak" },
+  tts_ph:            { ko: "말할 글자를 적어 보세요", en: "Type what to say" },
   speak_btn:         { ko: "말하기",             en: "Speak" },
   stop_tts_btn:      { ko: "정지",               en: "Stop" },
-  tts_speaking:      { ko: "말하는 중...",           en: "Speaking..." },
-  tts_done:          { ko: "완료",               en: "Done" },
-  tts_stopped:       { ko: "정지됨",               en: "Stopped" },
+  tts_speaking:      { ko: "말하는 중…", en: "Speaking…" },
+  tts_done:          { ko: "다 말했어요", en: "Done" },
+  tts_stopped:       { ko: "멈췄어요", en: "Stopped" },
 
   /* ── LCD tab ─────────────────────────────────────────────── */
-  lcd_preview_title: { ko: "LCD 미리보기 (240×320)", en: "LCD Preview (240×320)" },
-  lcd_text_title:    { ko: "텍스트 출력",           en: "Text Output" },
-  lcd_text_label:    { ko: "출력할 글자 (Enter 로 줄바꿈)", en: "Display text (Enter for a new line)" },
-  lcd_ph:            { ko: "여기에 출력할 내용을 입력하세요...", en: "Enter text to display..." },
-  font_size:         { ko: "폰트 크기",             en: "Font Size" },
-  x_pos:             { ko: "X 위치",               en: "X Pos" },
-  y_pos:             { ko: "Y 위치",               en: "Y Pos" },
-  text_color:        { ko: "글자색",               en: "Text Color" },
+  lcd_preview_title: { ko: "LCD 미리보기 (240×320)", en: "LCD preview (240×320)" },
+  lcd_text_title:    { ko: "글자 출력", en: "Text output" },
+  lcd_text_label:    { ko: "출력할 글자 (Enter로 줄바꿈)", en: "Text to show (Enter for a new line)" },
+  lcd_ph:            { ko: "LCD에 보일 글자를 적어 보세요", en: "Type the text to show" },
+  font_size:         { ko: "글자 크기", en: "Font size" },
+  x_pos:             { ko: "X 위치", en: "X position" },
+  y_pos:             { ko: "Y 위치", en: "Y position" },
+  text_color:        { ko: "글자색", en: "Text color" },
   bg_color:          { ko: "배경색",               en: "Background" },
   lcd_send_btn:      { ko: "LCD에 출력",         en: "Send to LCD" },
   lcd_clear_btn:     { ko: "화면 지우기",         en: "Clear screen" },
-  lcd_sending:       { ko: "전송 중...",             en: "Sending..." },
-  lcd_done:          { ko: "출력 완료",           en: "Complete" },
-  lcd_clearing:      { ko: "지우는 중...",           en: "Clearing..." },
-  lcd_cleared:       { ko: "화면 지워짐",         en: "Cleared" },
+  lcd_sending:       { ko: "보내는 중…", en: "Sending…" },
+  lcd_done:          { ko: "LCD에 보냈어요", en: "Sent" },
+  lcd_clearing:      { ko: "지우는 중…", en: "Clearing…" },
+  lcd_cleared:       { ko: "화면을 지웠어요", en: "Cleared" },
   system_title:      { ko: "시스템",               en: "System" },
   lcd_reset_desc:    {
-    ko: "LCD를 처음 화면(IP 주소 표시)으로 되돌립니다.<br>카메라가 꺼져 있을 때만 됩니다.",
+    ko: "LCD를 처음 화면(IP 주소 표시)으로 되돌려요.<br>카메라가 꺼져 있을 때만 돼요.",
     en: "Returns the LCD to its home screen (IP address).<br>Only works when the camera is off."
   },
   lcd_reset_btn:     { ko: "LCD 처음 화면으로", en: "LCD home screen" },
-  lcd_resetting:     { ko: "처음 화면으로 되돌리는 중...", en: "Restoring home screen..." },
-  lcd_reset_done:    { ko: "처음 화면으로 되돌렸어요",  en: "Home screen restored" },
+  lcd_resetting:     { ko: "처음 화면으로 되돌리는 중…", en: "Restoring the home screen…" },
+  lcd_reset_done:    { ko: "처음 화면으로 되돌렸어요", en: "Home screen restored" },
 
   // 260930 — 목소리 이름(전엔 k0~k9). 파이보 도구·IDE 블록과 같은 이름
   voice_m1: { ko: "남성 1", en: "Male 1" },
@@ -115,8 +115,17 @@ const T = {
   voice_f5: { ko: "여성 5", en: "Female 5" },
 
   /* ── Common ──────────────────────────────────────────────── */
-  waiting:           { ko: "대기 중...",             en: "Ready..." },
+  waiting:           { ko: "대기 중…", en: "Waiting…" },
   error_prefix:      { ko: "오류: ",               en: "Error: " },
+
+  /* ── 261028 — 말투·용어 정리 때 더한 키 ─────────────────────── */
+  btn_on:            { ko: "눌림",                 en: "Pressed" },
+  btn_off:           { ko: "안 눌림",              en: "Released" },
+  // 서버(run_tools.py)가 {"ok": false, "error": 키} 로 보내는 문구
+  err_led_timeout:   { ko: "LED가 응답하지 않아요.", en: "The LED did not respond." },
+  tts_err_voice:     { ko: "쓸 수 없는 목소리예요.", en: "This voice is not available." },
+  err_lcd_not_ready: { ko: "LCD가 아직 준비되지 않았어요.", en: "The LCD is not ready yet." },
+  err_camera_on:     { ko: "카메라를 먼저 꺼 주세요.", en: "Turn off the camera first." },
 };
 
 /**

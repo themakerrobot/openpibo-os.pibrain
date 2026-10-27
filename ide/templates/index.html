@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-product="PiBrain" data-title="lead">
 <!--
   IDE 화면 (시안 B, 260924~). 예전 화면(v1)은 260929 에 지웠다.
   요소 id 는 index.html 과 전부 같다 — index.js 를 그대로 쓴다. 바뀐 건 배치와 모양뿐이다.
@@ -8,7 +8,7 @@
     가운데       파일 이름·미저장·파이썬 코드·저장 | 블록 찾기 + 분류 + 작업판
 -->
 <head>
-  <title>PiBrain Maker</title>
+  <title data-key="v2_brand">메이커</title>
   <meta charset="UTF-8" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,11 +20,11 @@
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
   <link rel="stylesheet" href="../static/codemirror.css" />
   <link rel="stylesheet" href="../static/jquery.jsonview.min.css" />
-  <link rel="stylesheet" href="../static/pibo-ui.css?ver=260930v3" />
-  <link rel="stylesheet" href="../static/v2/ide.css?ver=260930v8" />
+  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261028v1" />
+  <link rel="stylesheet" href="../static/v2/ide.css?ver=261028v1" />
   <link rel="shortcut icon" href="../static/icon.png?ver=240319v1" type="image/x-icon" />
 
-  <script src="../static/ko2en.js?ver=261027v3"></script>
+  <script src="../static/ko2en.js?ver=261028v1"></script>
   <script src="../static/blockly_compressed.js?ver=240319v1"></script>
   <script src="../static/blocks_compressed.js?ver=240319v1"></script>
   <script src="../static/python_compressed.js?ver=240319v1"></script>
@@ -58,10 +58,10 @@
 
     <div class="v2-top__right">
       <div class="pb-iconbar v2-apps">
-        <a class="pb-iconbtn" id="tools_bt" title="Tools"><i class="fa-solid fa-microchip"></i><span class="pb-iconbtn__label" data-key="nav_tools"></span></a>
-        <a class="pb-iconbtn" id="llm_bt" title="Chat Bot"><i class="fa-solid fa-comment"></i><span class="pb-iconbtn__label" data-key="nav_llm"></span></a>
-        <a class="pb-iconbtn" id="classifier_bt" title="Image Classifier"><i class="fa-solid fa-images"></i><span class="pb-iconbtn__label" data-key="nav_classifier"></span></a>
-        <a class="pb-iconbtn" id="guide_bt" title="Guide"><i class="fa-solid fa-circle-question"></i><span class="pb-iconbtn__label" data-key="nav_guide"></span></a>
+        <a class="pb-iconbtn" id="tools_bt" data-title-key="nav_tools"><i class="fa-solid fa-microchip"></i><span class="pb-iconbtn__label" data-key="nav_tools"></span></a>
+        <a class="pb-iconbtn" id="llm_bt" data-title-key="nav_llm"><i class="fa-solid fa-comment"></i><span class="pb-iconbtn__label" data-key="nav_llm"></span></a>
+        <a class="pb-iconbtn" id="classifier_bt" data-title-key="nav_classifier"><i class="fa-solid fa-images"></i><span class="pb-iconbtn__label" data-key="nav_classifier"></span></a>
+        <a class="pb-iconbtn" id="guide_bt" data-title-key="nav_guide"><i class="fa-solid fa-circle-question"></i><span class="pb-iconbtn__label" data-key="nav_guide"></span></a>
         <a class="pb-iconbtn" id="fullscreen_bt" data-title-key="nav_fullscreen"><span id="fullscreen_txt"></span><span class="pb-iconbtn__label" data-key="nav_fullscreen"></span></a>
       </div>
       <details class="v2-menu" id="more_menu">
@@ -79,18 +79,18 @@
             <span data-key="v2_fontsize"></span>
             <span class="v2-stepper">
               <button type="button" data-step="-1" aria-label="-"><i class="fa-solid fa-minus"></i></button>
-              <input type="number" id="fontsize" min="5" max="50" value="14" step="1" pattern="\d*" aria-label="fontsize" />
+              <input type="number" id="fontsize" min="5" max="50" value="14" step="1" pattern="\d*" aria-label="Font size" data-aria-key="v2_fontsize" />
               <button type="button" data-step="1" aria-label="+"><i class="fa-solid fa-plus"></i></button>
             </span>
           </div>
           <label class="v2-pop__row v2-switch">
             <span data-key="v2_dark_editor"></span>
-            <input type="checkbox" id="theme_check" name="theme_check" checked aria-label="theme_check" />
+            <input type="checkbox" id="theme_check" name="theme_check" checked aria-label="Dark Python editor" data-aria-key="v2_dark_editor" />
             <span class="v2-switch__track"></span>
           </label>
           <hr>
           <label class="v2-pop__item v2-pop__item--field"><i class="fa-solid fa-language"></i><span data-key="v2_language"></span>
-            <select id="language" aria-label="language">
+            <select id="language" aria-label="Language" data-aria-key="v2_language">
               <option value="ko">한국어</option>
               <option value="en">English</option>
             </select>
@@ -140,10 +140,10 @@
               <span id="run_status" class="pb-runstat" hidden aria-live="polite"></span>
               <button id="eraser" class="v2-icon" data-title-key="v2_clear"><i class="fa-solid fa-eraser"></i></button>
             </div>
-            <textarea id="result" class="result" disabled aria-label="result"></textarea>
+            <textarea id="result" class="result" disabled aria-label="Output" data-aria-key="v2_output"></textarea>
             <div class="v2-term__input">
               <span class="v2-term__caret">&gt;</span>
-              <input type="text" id="prompt" name="prompt" autocomplete="off" aria-label="prompt" data-ph-key="v2_prompt_ph" />
+              <input type="text" id="prompt" name="prompt" autocomplete="off" aria-label="Send input to the program" data-aria-key="v2_prompt_ph" data-ph-key="v2_prompt_ph" />
               <button id="prompt_bt" class="v2-icon" data-title-key="enter"><i class="fa-solid fa-arrow-right"></i></button>
             </div>
           </div>
@@ -154,7 +154,7 @@
           <div class="v2-fbar">
             <div class="v2-crumb"><i class="fa-solid fa-folder"></i><span id="path"></span></div>
             <details class="v2-menu" id="add_menu">
-              <summary class="v2-btn v2-btn--dark v2-btn--sm"><i class="fa-solid fa-plus"></i><span data-key="v2_add"></span></summary>
+              <summary class="v2-btn v2-btn--tint v2-btn--sm"><i class="fa-solid fa-plus"></i><span data-key="v2_add"></span></summary>
               <div class="v2-pop v2-pop--right">
                 <button type="button" id="add_file" class="v2-pop__item"><i class="fa-solid fa-file-circle-plus"></i><span data-key="add_file"></span></button>
                 <button type="button" id="add_directory" class="v2-pop__item"><i class="fa-solid fa-folder-plus"></i><span data-key="add_directory"></span></button>
@@ -188,7 +188,7 @@
         </div>
       </aside>
 
-      <div class="pb-resizer" data-pane="side" data-target="v2_side" data-side="left" data-min="280" role="separator" aria-orientation="vertical" aria-label="resize"></div>
+      <div class="pb-resizer" data-pane="side" data-target="v2_side" data-side="left" data-min="280" role="separator" aria-orientation="vertical" aria-label="Resize" data-aria-key="v2_resize"></div>
 
       <!-- ── 편집기 ────────────────────────────────────────────────────── -->
       <section class="pb-pane pb-pane--grow v2-editor">
@@ -196,17 +196,17 @@
           <div class="v2-file" id="v2_file">
             <i class="fa-solid fa-file-lines"></i>
             <span class="v2-file__dir" id="v2_file_dir"></span><span class="v2-file__name" id="v2_file_name"></span>
-            <span id="codecheck" class="v2-file__dirty" aria-label="unsaved"></span>
+            <span id="codecheck" class="v2-file__dirty" aria-label="Not saved" data-aria-key="v2_unsaved"></span>
             <span id="codepath" hidden></span>
           </div>
           <button type="button" class="v2-btn v2-btn--sm v2-btn--ghost" id="pycode_bt" hidden><i class="fa-solid fa-code"></i><span data-key="pycode"></span></button>
-          <button type="button" id="save" class="v2-btn v2-btn--sm v2-btn--dark"><i class="fa-solid fa-floppy-disk"></i><span data-key="save"></span></button>
+          <button type="button" id="save" class="v2-btn v2-btn--sm v2-btn--tint"><i class="fa-solid fa-floppy-disk"></i><span data-key="save"></span></button>
         </div>
         <div class="v2-editor__stage">
           <div id="blocklyDiv" class="blocklyDiv"></div>
           <div id="codeDiv">
             <form id="code_form">
-              <textarea id="codemirror-code" name="source_code" aria-label="source_code"></textarea>
+              <textarea id="codemirror-code" name="source_code" aria-label="Python editor" data-aria-key="v2_code_editor"></textarea>
             </form>
           </div>
         </div>
@@ -218,38 +218,38 @@
   <div class="wifi-popup" id="wifiPopup" style="display:none;">
     <div class="wifi-popup-content">
       <h1>
-        <span><i class="fa-solid fa-wifi"></i><span data-key="internet_settings">Internet Settings</span></span>
-        <a id="hidewifi" aria-label="close"><i class="fa-solid fa-xmark"></i></a>
+        <span><i class="fa-solid fa-wifi"></i><span data-key="internet_settings">WiFi settings</span></span>
+        <a id="hidewifi" aria-label="Close" data-aria-key="close"><i class="fa-solid fa-xmark"></i></a>
       </h1>
       <div class="v2-wifi-info"><span id="network_info"></span></div>
       <div class="network-list-section">
-        <h2><span data-key="available_networks">Available Networks</span></h2>
+        <h2><span data-key="available_networks">Available WiFi</span></h2>
         <ul class="network-list" id="wifi_list_ul">
-          <li><span>...</span></li>
+          <li><span>…</span></li>
         </ul>
-        <p><a href="#" id="manualConnectionLink"><span data-key="manual_connection">Manual Connection / Other Network...</span></a></p>
+        <p><a href="#" id="manualConnectionLink"><span data-key="manual_connection">Enter another WiFi manually</span></a></p>
       </div>
 
       <form class="connection-details" id="connection-form" style="display: none;">
         <div class="form-group">
-          <label for="ssid"><span data-key="wifi_name">Name (SSID):</span></label>
-          <input type="text" id="ssid" name="ssid" readonly aria-label="ssid">
+          <label for="ssid"><span data-key="wifi_name">Name</span></label>
+          <input type="text" id="ssid" name="ssid" readonly aria-label="Name" data-aria-key="wifi_name">
         </div>
         <div class="form-group">
           <p><strong id="security-type-display"></strong></p>
           <input type="hidden" id="security-type-hidden" name="security-type">
         </div>
         <div class="form-group identity-field hidden">
-          <label for="identity"><span data-key="wifi_identity">Identity:</span></label>
-          <input type="text" id="identity" name="identity" aria-label="identity">
+          <label for="identity"><span data-key="wifi_identity">User ID</span></label>
+          <input type="text" id="identity" name="identity" aria-label="User ID" data-aria-key="wifi_identity">
         </div>
         <div class="form-group password-field hidden">
-          <label for="psk"><span data-key="password">Password:</span></label>
-          <input type="password" id="psk" name="psk" aria-label="psk">
+          <label for="psk"><span data-key="password">Password</span></label>
+          <input type="password" id="psk" name="psk" aria-label="Password" data-aria-key="password">
         </div>
         <div id="status-message" class="status-message"></div>
         <div class="dialog-actions">
-          <button type="submit" class="connect-button" id="wifi_submit_bt"><i class="fa-solid fa-check"></i><span data-key="confirm"></span></button>
+          <button type="submit" class="connect-button" id="wifi_submit_bt"><i class="fa-solid fa-check"></i><span data-key="wifi_connect"></span></button>
         </div>
       </form>
     </div>
@@ -288,19 +288,19 @@
   <div class="pb-modal" id="pyModal" hidden role="dialog" aria-modal="true" aria-labelledby="pyModalTitle">
     <div class="pb-modal__box">
       <div class="pb-modal__head"><i class="fa-solid fa-code"></i><span id="pyModalTitle" data-key="pycode_title"></span>
-        <button type="button" class="pb-btn pb-btn--sm pb-btn--ghost" data-act="close" aria-label="close"><i class="fa-solid fa-xmark"></i></button></div>
+        <button type="button" class="pb-btn pb-btn--sm pb-btn--ghost" data-act="close" aria-label="Close" data-aria-key="close"><i class="fa-solid fa-xmark"></i></button></div>
       <div class="pb-modal__body"><pre></pre></div>
       <div class="pb-modal__foot">
-        <button type="button" class="pb-btn pb-btn--sm" data-act="copy"><i class="fa-solid fa-copy"></i><span data-key="copy"></span></button>
-        <button type="button" class="pb-btn pb-btn--sm pb-btn--accent" data-act="close"><span data-key="close"></span></button>
+        <button type="button" class="pb-btn" data-act="copy"><i class="fa-solid fa-copy"></i><span data-key="copy"></span></button>
+        <button type="button" class="pb-btn pb-btn--accent" data-act="close"><span data-key="close"></span></button>
       </div>
     </div>
   </div>
 
-  <script src="../static/pibo-ui.js?ver=261026v1"></script>
-  <script src="../static/index.js?ver=261027v3"></script>
+  <script src="../static/pibo-ui.js?ver=261028v1"></script>
+  <script src="../static/index.js?ver=261028v1"></script>
   <script src="../static/v2/vendor/toolbox-search.js?ver=1.2.11"></script>
-  <script src="../static/v2/ide.js?ver=260930v8"></script>
+  <script src="../static/v2/ide.js?ver=261028v1"></script>
 </body>
 
 </html>
