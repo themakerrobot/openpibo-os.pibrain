@@ -11,7 +11,10 @@
   var st = document.createElement('style');
   st.textContent = '@font-face{font-family:"Pretendard";font-weight:100 549;font-display:swap;src:local("Pretendard Regular"),url("' + f + 'Regular.subset.woff2") format("woff2")}' +
                    '@font-face{font-family:"Pretendard";font-weight:550 900;font-display:swap;src:local("Pretendard Bold"),url("' + f + 'Bold.subset.woff2") format("woff2")}';
-  document.head.appendChild(st); })();</script>
+  document.head.appendChild(st);
+  // 상단바 제품 아이콘 — 다른 화면과 같은 Font Awesome 을 IDE(80) 에서 받는다(없으면 아이콘만 빠진다)
+  var fa = document.createElement('link'); fa.rel = 'stylesheet';
+  fa.href = 'http://' + location.hostname + '/static/all.min.css?ver=240110v1'; document.head.appendChild(fa); })();</script>
 <style>
   :root {
     --ink:        #1a1a1a;
@@ -199,6 +202,7 @@
               background: var(--frame); color: var(--frame-ink); border-bottom: 1px solid rgba(61, 47, 18, .14);
               font-size: 16px; font-weight: 700; letter-spacing: -.2px; }
     .hw-top span { font-weight: 400; }
+    .hw-top i { font-size: 18px; margin-right: 2px; }
     .hw-top span::before { content: "·"; margin: 0 6px 0 -2px; opacity: .55; font-weight: 700; }
     html[data-theme="light"] body { --canvas: #f1f3f8; }
     html[data-theme="light"] .hw-top { background: #ffcb2f; }
@@ -232,7 +236,7 @@
 </head>
 <body>
 
-<header class="hw-top no-print"><b>PiBrain</b><span>H/W 검수</span></header>
+<header class="hw-top no-print"><i class="fa-solid fa-brain" aria-hidden="true"></i><b>PiBrain</b><span>H/W 검수</span></header>
 
 <div class="toolbar no-print">
   <button class="btn btn-primary" id="btn-run-all">Run All Tests</button>

@@ -7,7 +7,7 @@
 :root {
   --pane-left: 340px;
   --pane-right: 340px;
-  --acc: var(--teal);
+  --acc: #2563eb;   /* 카메라 위 뼈대 선 — 파이보 쪽 그림(vision_classify draw, 점 #2563eb)과 같은 파랑. 영상 위라 밝기와 상관없이 고정 */
   --warn: var(--dark-red);
 }
 

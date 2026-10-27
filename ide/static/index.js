@@ -753,6 +753,13 @@ socket.on("update_file_manager", (d) => {
         )
     );
   }
+  // 빈 폴더 — '..' 만 있으면 안내(키트 .pb-empty, 다른 화면의 빈 칸과 같은 모양)
+  if (data.length === 1) {
+    $("#fm_table > tbody").append(
+      $("<tr class='v2-fm-empty'>").append(
+        $("<td colspan='9'>").append(
+          $("<div class='pb-empty'>").append("<i class='fa-solid fa-folder-open'></i>", $("<p>").text(t('v2_folder_empty'))))));
+  }
 });
 
 $("#hiddenfile").on("change", function () {
@@ -1407,7 +1414,7 @@ const setLanguage = (langCode) => {
     }
   });
 
-  const langFileVersion = '261026v4';
+  const langFileVersion = '261027v3';
   const langFile = `../static/${langCode}.js?ver=${langFileVersion}`;
   const prevKoScript = document.querySelector(`script[src*="../static/ko.js?ver=${langFileVersion}"]`);
   if (prevKoScript) {

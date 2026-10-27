@@ -642,3 +642,7 @@ body:not([data-offline]) .v2-dot { animation: pb-breathe 2.4s ease-out infinite;
   .v2-dot, .v2-side__page, .v2-pop,
   .v2-app .wifi-popup-content, .v2-app .alert-popup-content, .v2-app .prompt-popup-content, .v2-app .confirm-popup-content { animation: none !important; }
 }
+
+/* 빈 폴더 안내(index.js update_file_manager) — 키트 .pb-empty 를 표 칸 안에 */
+#fm_table tr.v2-fm-empty > td { padding: 16px 8px; border: 0; background: transparent; cursor: default; white-space: normal; max-width: 0; }
+#fm_table tr.v2-fm-empty .pb-empty p { white-space: normal; overflow-wrap: break-word; }
