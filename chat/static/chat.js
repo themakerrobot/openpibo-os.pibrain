@@ -178,10 +178,8 @@
   speakCk.checked = load('chat_speak') === '1';
   speakCk.addEventListener('change', function () {
     store('chat_speak', speakCk.checked ? '1' : '0');
-    if (speakCk.checked) {
-      post('/api/voice/warm').then(function (r) { return r.json(); })
-        .then(function (d) { st.voice = d.voice; renderVoiceState(); }, function () { /* 다음 상태 확인 */ });
-    } else {
+    // 켤 때 목소리 모델을 미리 올리지 않는다 — 처음 소리로 말할 때 서버가 올린다(LLM 과 같이 메모리에 오래 두지 않게, 261027)
+    if (!speakCk.checked) {
       post('/api/voice/stop').catch(function () {}); showHush(false);
     }
     renderVoiceState();
