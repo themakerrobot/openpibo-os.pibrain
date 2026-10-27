@@ -261,11 +261,29 @@ Functions:
     if not type(img) is np.ndarray:
       raise Exception('"img" must be image data from opencv')
 
+    color = (0,255,0)
     for item in items:
       x1,y1,x2,y2 = item['box']
-      name = item['name']
-      cv2.rectangle(img, (x1,y1), (x2,y2), (0,255,0), 2)
-      putTextPIL(img, name, (x1, y1-30), 30, (0,255,0))
+      cv2.rectangle(img, (x1,y1), (x2,y2), color, 2)
+    if not items:
+      return
+
+    # 이름표는 상자 색 바탕 + 검은 글자(밝은 배경에서도 보이게, 261027). 상자 위에 자리가 없으면 상자 안쪽 위에 그린다.
+    # 글자 크기는 그림 크기를 따른다(640x480 → 24). PIL 변환은 한 번만 한다(한글은 PIL 로만 그려진다)
+    h, w = img.shape[:2]
+    font = ImageFont.truetype(openpibo_models.filepath("KDL.ttf"), max(14, round(min(h, w) / 20)))
+    pil = Image.fromarray(img)
+    draw = ImageDraw.Draw(pil)
+    for item in items:
+      x1,y1,x2,y2 = item['box']
+      text = f"{item['name']} {item['score']}" if 'score' in item else str(item['name'])
+      l, t, r, b = draw.textbbox((0, 0), text, font=font)
+      tw, th = r - l + 8, b - t + 6
+      top = y1 - th if y1 - th >= 0 else y1
+      left = min(max(x1, 0), max(w - tw, 0))
+      draw.rectangle((left, top, left + tw, top + th), fill=color)
+      draw.text((left + 4 - l, top + 3 - t), text, font=font, fill=(0,0,0))
+    img[:] = np.array(pil)
 
   def detect_qr(self, img):
     """
