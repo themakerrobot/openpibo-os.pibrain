@@ -1,5 +1,5 @@
 /* piBo 도움말 — Furo 위에 얹는 것. 색 토큰은 conf.py 의 html_theme_options.
-   IDE(파이보 메이커)와 같은 느낌: Pretendard, 가는 노랑 띠, 파랑 링크, 옅은 청회색 면 */
+   IDE(파이보 메이커)와 같은 느낌: Pretendard, 48px 노랑 상단바, 파랑 링크, 옅은 청회색 면 */
 
 /* 글꼴: IDE 와 같은 원본 파일(고치지 않음, SIL OFL — fonts/LICENSE.txt). 인터넷 없이 된다 */
 @font-face { font-family: "Pretendard"; font-weight: 100 549; font-display: swap;
@@ -9,8 +9,80 @@
 
 body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 
-/* 맨 위 가는 노랑 띠 (IDE 상단바 색) */
-body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: 4px; background: #fbc92d; z-index: 100; }
+/* ── 상단바 (_templates/base.html, 261028) ─────────────────────
+   다른 앱(design/pibo-ui.css 의 .pb-header)과 같은 48px 막대: 색은 키트 --v2-frame* 값 그대로
+   (부드럽게 #fbc92d · 밝게 #ffcb2f · 어둡게 #1b1e26, 글씨 #3d2f12 / #eceef2, 아래 1px 선).
+   넓은 화면은 Furo 사이드바·목차를 막대 아래에 붙이고, 63em 이하는 Furo 모바일 머리줄 대신 이 막대를 쓴다.
+   구형 브라우저 기준(CLAUDE.md '디자인 시스템')이라 :has·중첩·color-mix·inset 줄임은 쓰지 않는다 */
+.pb-topbar {
+  --pb-frame: #fbc92d; --pb-frame-2: rgba(61, 47, 18, .10); --pb-frame-3: rgba(61, 47, 18, .16);
+  --pb-frame-line: rgba(61, 47, 18, .14); --pb-frame-ink: #3d2f12;
+  position: -webkit-sticky; position: sticky; top: 0; z-index: 35;   /* Furo 사이드바(30) 위, 목차 서랍(50) 아래 */
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  box-sizing: border-box; height: 48px; padding: 0 8px 0 16px; width: 100%; min-width: 0;
+  background: var(--pb-frame); color: var(--pb-frame-ink); border-bottom: 1px solid var(--pb-frame-line);
+  font-family: var(--font-stack); font-size: 13px; line-height: 1;
+}
+html[data-pb-theme="light"] .pb-topbar { --pb-frame: #ffcb2f; }
+html[data-pb-theme="dark"] .pb-topbar {
+  --pb-frame: #1b1e26; --pb-frame-2: rgba(255, 255, 255, .07); --pb-frame-3: rgba(255, 255, 255, .12);
+  --pb-frame-line: #0d0f14; --pb-frame-ink: #eceef2;
+}
+.pb-topbar a, .pb-topbar a:visited, .pb-topbar a:hover { color: var(--pb-frame-ink); text-decoration: none; }
+.pb-topbar__brand { display: flex; align-items: center; gap: 8px; min-width: 0; overflow: hidden;
+  font-size: 16px; font-weight: 700; letter-spacing: -.2px; white-space: nowrap; }
+.pb-topbar__brand b { font-weight: 700; }
+.pb-topbar__icon { width: 20px; height: 20px; flex: none; }
+.pb-topbar__app { font-weight: 400; overflow: hidden; text-overflow: ellipsis; }
+.pb-topbar__app::before { content: "·"; margin: 0 6px 0 -2px; opacity: .55; font-weight: 700; }
+.pb-topbar__right { display: flex; align-items: center; gap: 2px; flex: none; }
+.pb-topbar__btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box;
+  height: 32px; min-width: 32px; padding: 0 10px; border: 0; border-radius: 8px; background: transparent;
+  color: var(--pb-frame-ink); font: 700 13px/1 var(--font-stack); cursor: pointer; }
+.pb-topbar__btn:hover { background: var(--pb-frame-2); }
+.pb-topbar__btn:active { background: var(--pb-frame-3); }
+.pb-topbar__btn svg { width: 16px; height: 16px; flex: none; }
+.pb-topbar__btn.theme-toggle svg { width: 18px; height: 18px; color: var(--pb-frame-ink); }
+.pb-topbar__lang { height: 32px; margin-left: 2px; padding: 0 26px 0 10px; border: 0; border-radius: 8px; cursor: pointer;
+  color: var(--pb-frame-ink); font: 700 13px/1 var(--font-stack);
+  -webkit-appearance: none; -moz-appearance: none; appearance: none;
+  background-color: transparent;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: right 13px center, right 9px center; background-size: 4px 4px, 4px 4px; background-repeat: no-repeat; }
+.pb-topbar__lang:hover { background-color: var(--pb-frame-2); }
+.pb-topbar__lang option { color: #1a1e29; background: #fdfdff; }
+.pb-topbar :focus { outline: 2px solid var(--pb-frame-ink); outline-offset: 1px; }
+.pb-topbar__lang[hidden] { display: none; }
+/* 넓은 화면: 목록·밝기·목차 버튼은 Furo 제자리(사이드바·본문 오른쪽 위)에 있으므로 막대에서는 숨긴다 */
+.pb-topbar__m { display: none; }
+/* Furo 는 body 높이를 100% 로 묶어 두어 sticky 막대가 한 화면만 내려가면 사라진다 → body 는 내용 높이로, 바닥 채우기는 .page 가 */
+body { height: auto; min-height: 100%; }
+.page { min-height: calc(100vh - 48px); }
+/* 사이드바·목차가 막대 밑으로 들어가지 않게 */
+.sidebar-sticky, .toc-sticky { top: 48px; height: calc(100vh - 48px); }
+html { scroll-padding-top: 56px; }
+/* 넓은 화면의 오른쪽 목차는 서랍이 아니라 칸이라 막대 아래로(Furo 는 늘 z-index 50). 82em 이하는 서랍이라 그대로 위 */
+@media (min-width: 82.01em) { .toc-drawer { z-index: 20; } }
+/* 이름은 상단바가 보이므로 사이드바 맨 위 이름은 숨긴다(검색칸부터) */
+.sidebar-brand { display: none; }
+.sidebar-search-container { margin-top: .75rem; }
+
+@media (max-width: 63em) {
+  .mobile-header { display: none !important; }
+  .pb-topbar { padding: 0 4px 0 4px; gap: 4px; z-index: 25; }   /* 좁은 화면은 서랍(30)이 막대 위로 열린다 */
+  .pb-topbar__m { display: inline-flex; }
+  .pb-topbar__notoc { display: none; }
+  .pb-topbar__brand { padding-left: 4px; -webkit-box-flex: 1; flex: 1 1 auto; }
+  .sidebar-sticky, .toc-sticky { top: 0; height: 100vh; }
+  .sidebar-brand { display: block; }   /* 서랍을 열면 막대가 덮이므로 이름을 다시 보인다 */
+  .sidebar-search-container { margin-top: .25rem; }
+}
+@media (max-width: 480px) {
+  .pb-topbar__btn { padding: 0 8px; }
+  .pb-topbar__ide span { display: none; }          /* 아이콘만(title 이 있다) */
+  .pb-topbar__lang { padding-right: 22px; padding-left: 8px; background-position: right 11px center, right 7px center; }
+  .pb-topbar__brand { font-size: 15px; gap: 6px; }
+}
 
 /* 부드럽게(쿠키 pibo_theme=soft, 기본) — IDE·도구의 부드럽게와 같은 옅은 청회색 면(pibotheme.js 가 html 에 data-pb-theme 를 단다).
    흰 바탕이 오래된 노트북 패널에서 눈부신 것을 줄인다. 색 값은 키트(design/pibo-ui.css '디자인 토큰')와 같다 */
@@ -97,11 +169,3 @@ code.literal { border-radius: 5px; padding: .1em .35em; font-size: .88em; }
 
 /* API 페이지: 클래스·메서드 이름 칸 */
 dl.py > dt { border-radius: 8px; }
-
-/* 한국어 ↔ English 전환 (langswitch.js) · IDE 로 돌아가기 (pibotheme.js) */
-.pb-lang { display: inline-block; margin: 0 1rem .5rem; padding: .15rem .65rem; font-size: .8rem; font-weight: 700;
-  border: 1px solid var(--color-background-border); border-radius: 99px; color: var(--color-foreground-secondary) !important;
-  text-decoration: none !important; }
-.pb-lang:hover { border-color: var(--color-brand-primary); color: var(--color-brand-primary) !important; }
-.pb-lang--top { margin: 0 .5rem 0 0; }
-.pb-lang + .pb-lang { margin-left: 0; }

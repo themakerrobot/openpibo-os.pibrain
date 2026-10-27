@@ -312,7 +312,7 @@ window.addEventListener('beforeunload', () => {
 /* ── 상단바: IDE · 화면 밝기 (260924 v2) ──────────────────────
    IDE: 스크립트로 연 탭이면 닫고, 아니면 IDE 로 간다. 둘 다 beforeunload 가 서비스를 끈다.
    밝기: 쿠키 pibo_theme (PiboUI.setTheme). IDE·분류기와 같은 값을 쓴다 */
-const THEMES = ['soft', 'light', 'dark'];
+const THEMES = ['light', 'soft', 'dark'];   // 키트(pibo-ui.js)·IDE 와 같은 순서
 function syncThemeLabel() {
   const cur = document.documentElement.getAttribute('data-theme') || 'soft';
   const lbl = document.getElementById('theme_lbl');

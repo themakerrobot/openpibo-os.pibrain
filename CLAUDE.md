@@ -728,7 +728,7 @@ grep -n "[가-힣]" ide/run_ide.py | grep -E "emit|JSONResponse"            # 0 
 - 확인은 autodoc 앵커로: `grep -c 'id="openpibo.speech.SpeechToText"' docs/build/html/libraries/speech.html`
 - **영문 도움말(261001)** — 한 리포(main)에서 한/영 두 벌을 같이 빌드한다: `docs/build/html`(한국어) · `docs/build/en`(영문). `global` 에도 같은 `docs/build` 가 간다(델타 아님)
   - `docs/index.html` 이 `?lang=en` 이면 `build/en/`, 아니면 `build/html/` 로 보낸다. IDE [도움말] 은 `:8080/?lang=<IDE 언어>` 를 연다(`index.js` 의 `guide_bt`) —
-    영문판은 `blang='en'` 이라 처음부터 영문 도움말. 두 벌 모두 사이드바의 `English`/`한국어` 링크(`_static/langswitch.js`, 주소의 `/html/`↔`/en/`)로 서로 오간다
+    영문판은 `blang='en'` 이라 처음부터 영문 도움말. 두 벌 모두 상단바의 언어 select(`_static/langswitch.js`, 주소의 `/html/`↔`/en/`)로 서로 오간다
   - 페이지(`index.rst`·`notes/*`·`libraries/*.rst` 제목)는 **`source_en/` 에 영문으로 따로** 있다. 한국어 페이지를 고치면 영문도 고칠 것.
     `source_en/conf.py` 는 `source/conf.py` 를 exec 해 물려받고 언어·제목·번역 위치만 바꾼다. 영문 캡처는 `source_en/notes/images/`(영문 UI 로 찍는다), 하드웨어 사진은 한국어 쪽 것을 같이 쓴다
   - 블록 가이드는 `gen_block_guide.py --lang=en` 이 영문 툴박스(`en.js`)로 그려 `source_en/blocks/` 에 쓴다(`build.sh` 가 주소를 받으면 한·영 둘 다). [수집] 분류에는 '국내판 전용' 안내가 붙는다
