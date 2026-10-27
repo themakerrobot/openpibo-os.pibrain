@@ -295,7 +295,8 @@
 <span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">threading</span><span class="w"> </span><span class="kn">import</span> <span class="n">Thread</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
 
 <div class="viewcode-block" id="Audio">
 <a class="viewcode-back" href="../../libraries/audio.html#openpibo.audio.Audio">[docs]</a>
@@ -318,16 +319,13 @@
 <span class="sd">    :param str filename: 오디오 파일 경로 (mp3, wav)</span>
 <span class="sd">    :param int volume: 음량을 설정합니다. (0~100)</span>
 <span class="sd">    :param bool background: 백그라운드 실행 여부</span>
-<span class="sd">    :param float volume2: 개별 음량을 조절합니다. (비율)</span>
+<span class="sd">    :param float volume2: 개별 음량을 조절합니다. (비율, 0.0~3.0)</span>
 <span class="sd">    """</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">play_thread</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-      <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
       <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">" does not exist'</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'.'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'mp3'</span><span class="p">,</span> <span class="s1">'wav'</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'.'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'mp3'</span><span class="p">,</span> <span class="s1">'wav'</span><span class="p">]:</span>
       <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">" must be (mp3|wav)'</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">volume</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span> <span class="ow">or</span> <span class="p">(</span><span class="n">volume</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">volume</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">):</span>
@@ -336,19 +334,21 @@
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">background</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">background</span><span class="si">}</span><span class="s1">" is not bool'</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">volume2</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">float</span> <span class="ow">or</span> <span class="p">(</span><span class="n">volume2</span> <span class="o">&lt;</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">volume2</span> <span class="o">&gt;</span> <span class="mf">3.0</span><span class="p">):</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">volume2</span><span class="si">}</span><span class="s1">" is float(0.0~1.5)'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">volume2</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">volume2</span> <span class="o">&lt;</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">volume2</span> <span class="o">&gt;</span> <span class="mf">3.0</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">volume2</span><span class="si">}</span><span class="s1">" is Number(0.0~3.0)'</span><span class="p">)</span>
 
     <span class="n">volume</span> <span class="o">=</span> <span class="mi">40</span> <span class="o">+</span> <span class="n">volume</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">//</span> <span class="mi">100</span>   <span class="c1"># 0~100 을 실제 40~100% 로 편다(40% 아래는 소리가 너무 작음). 전엔 /2+40 이라 최대 90% 였다(261026)</span>
-    <span class="c1">#cmd = f'amixer -q -c Headphones sset Headphone {volume}%;'</span>
-    <span class="c1">#cmd = f'amixer -q -c Headphones sset PCM {volume}%;'</span>
-    <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'amixer -q -c MAX98357A sset PCM </span><span class="si">{</span><span class="n">volume</span><span class="si">}</span><span class="s1">%;'</span>
-    <span class="n">cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'play -q -V1 -v </span><span class="si">{</span><span class="n">volume2</span><span class="si">}</span><span class="s1"> "</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">"'</span>
+    <span class="c1"># 셸을 거치지 않는다 — 파일 이름에 따옴표·; 가 있어도 명령이 되지 않게</span>
+    <span class="n">mixer</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'amixer'</span><span class="p">,</span> <span class="s1">'-q'</span><span class="p">,</span> <span class="s1">'-c'</span><span class="p">,</span> <span class="s1">'MAX98357A'</span><span class="p">,</span> <span class="s1">'sset'</span><span class="p">,</span> <span class="s1">'PCM'</span><span class="p">,</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">volume</span><span class="si">}</span><span class="s1">%'</span><span class="p">]</span>
+    <span class="n">player</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'play'</span><span class="p">,</span> <span class="s1">'-q'</span><span class="p">,</span> <span class="s1">'-V1'</span><span class="p">,</span> <span class="s1">'-v'</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">volume2</span><span class="p">),</span> <span class="n">filename</span><span class="p">]</span>
 
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">mixer</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">background</span><span class="p">:</span>
-      <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">play_thread</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">cmd</span><span class="p">,),</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+      <span class="c1"># 스레드로 띄우면 바로 끝나는 프로그램에서 play 가 시작되기 전에 파이썬이 끝날 수 있다.</span>
+      <span class="c1"># 따로 띄운 play 는 프로그램이 끝나도 계속 난다(예전과 같음, [정지] 때 같이 꺼짐)</span>
+      <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">player</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-      <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span></div>
+      <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">player</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Audio.stop">
@@ -368,13 +368,30 @@
 <span class="sd">    소리 녹음 (파이보 마이크 해당)</span>
 
 <span class="sd">    :param str filename: 녹음한 파일 저장 경로. ``wav`` 확장자</span>
-<span class="sd">    :param int timeout: 녹음 시간(s)</span>
+<span class="sd">    :param int timeout: 녹음 시간(s). 0보다 큰 숫자</span>
 <span class="sd">    """</span>
 
-    <span class="k">if</span> <span class="n">verbose</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-      <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">'arecord -D plug:dmic_sv -c2 -r 44100 -f S16_LE -d </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s1"> -t wav -q -vv -V stereo stream.raw;sox stream.raw -c 1 -b 16 </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">;rm stream.raw'</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-      <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">'arecord -D plug:dmic_sv -c2 -r 44100 -f S16_LE -d </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s1"> -t wav -q stream.raw;sox stream.raw -q -c 1 -b 16 </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">;rm stream.raw'</span><span class="p">)</span></div>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">timeout</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s1">" is not a number'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">timeout</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="s1">'inf'</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s1">" must be a positive number'</span><span class="p">)</span>
+    <span class="n">seconds</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">timeout</span><span class="p">)))</span>   <span class="c1"># arecord -d 는 정수 초만 받는다(0 이면 끝없이 녹음)</span>
+
+    <span class="n">fd</span><span class="p">,</span> <span class="n">tmp</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkstemp</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s1">'.wav'</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">'stream_'</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'arecord'</span><span class="p">,</span> <span class="s1">'-D'</span><span class="p">,</span> <span class="s1">'plug:dmic_sv'</span><span class="p">,</span> <span class="s1">'-c2'</span><span class="p">,</span> <span class="s1">'-r'</span><span class="p">,</span> <span class="s1">'44100'</span><span class="p">,</span> <span class="s1">'-f'</span><span class="p">,</span> <span class="s1">'S16_LE'</span><span class="p">,</span> <span class="s1">'-d'</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">seconds</span><span class="p">),</span> <span class="s1">'-t'</span><span class="p">,</span> <span class="s1">'wav'</span><span class="p">,</span> <span class="s1">'-q'</span><span class="p">]</span>
+      <span class="k">if</span> <span class="n">verbose</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span> <span class="o">+</span> <span class="p">[</span><span class="s1">'-vv'</span><span class="p">,</span> <span class="s1">'-V'</span><span class="p">,</span> <span class="s1">'stereo'</span><span class="p">,</span> <span class="n">tmp</span><span class="p">])</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">'sox'</span><span class="p">,</span> <span class="n">tmp</span><span class="p">,</span> <span class="s1">'-c'</span><span class="p">,</span> <span class="s1">'1'</span><span class="p">,</span> <span class="s1">'-b'</span><span class="p">,</span> <span class="s1">'16'</span><span class="p">,</span> <span class="n">filename</span><span class="p">])</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span> <span class="o">+</span> <span class="p">[</span><span class="n">tmp</span><span class="p">])</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">'sox'</span><span class="p">,</span> <span class="n">tmp</span><span class="p">,</span> <span class="s1">'-q'</span><span class="p">,</span> <span class="s1">'-c'</span><span class="p">,</span> <span class="s1">'1'</span><span class="p">,</span> <span class="s1">'-b'</span><span class="p">,</span> <span class="s1">'16'</span><span class="p">,</span> <span class="n">filename</span><span class="p">])</span>
+    <span class="k">finally</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmp</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span></div>
 </div>
 
 

@@ -91,8 +91,8 @@ msgstr "Rotates an image."
 msgid "회전할 각도"
 msgstr "Rotation angle"
 
-msgid "축소 또는 확대할 비율"
-msgstr "Scale factor for shrinking or enlarging"
+msgid "축소 또는 확대할 비율 (0보다 큰 숫자. 1.0 보다 작으면 축소, 크면 확대)"
+msgstr "Scale factor (a number greater than 0. Less than 1.0 shrinks, greater enlarges)"
 
 msgid "회전한 ``numpy.ndarray`` 이미지 객체"
 msgstr "Rotated ``numpy.ndarray`` image object"
@@ -216,4 +216,7 @@ msgstr "Converts to a vertically/horizontally flipped image"
 
 msgid "0: 상하 대칭, 1: 좌우 대칭, -1: 상하/좌우 대칭"
 msgstr "0: vertical flip, 1: horizontal flip, -1: vertical and horizontal flip"
+
+#~ msgid "축소 또는 확대할 비율"
+#~ msgstr "Scale factor for shrinking or enlarging"
 

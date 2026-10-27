@@ -9,9 +9,6 @@ import cv2,dlib
 import os,pickle,math
 import numpy as np
 from pyzbar import pyzbar
-import mediapipe as mp
-from mediapipe.tasks import python as mp_python
-from mediapipe.tasks.python import vision as mp_vision
 from .modules.ed_onnx import EdOnnx
 from .modules.pose.movenet import Movenet
 from .modules.pose.utils import visualize_pose
@@ -138,6 +135,10 @@ Functions:
     :param str modelpath: 손동작 인식 모델 경로
     """
     #'/home/pi/.model/hand/gesture_recognizer.task', /home/pi/.model/hand/rps_recognizer.task'
+    # mediapipe 는 여기서 처음 불러온다. 파일 맨 위에서 불러오면 QR·포즈·사물 인식만 써도
+    # import 비용(약 50MB)이 늘 붙는다
+    from mediapipe.tasks import python as mp_python
+    from mediapipe.tasks.python import vision as mp_vision
     self.hand_gesture_recognizer =  mp_vision.GestureRecognizer.create_from_options(
       mp_vision.GestureRecognizerOptions(
         base_options=mp_python.BaseOptions(model_asset_path=modelpath),
@@ -159,6 +160,7 @@ Functions:
     """
     if self.hand_gesture_recognizer == None:
       raise Exception('"load_hand_gesture_model" must be called')
+    import mediapipe as mp          # load_hand_gesture_model 에서 이미 올라와 있다
     rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_image)
     recognition_result = self.hand_gesture_recognizer.recognize(mp_image)
@@ -307,7 +309,7 @@ Functions:
     for barcode in barcodes:
       x,y,w,h = barcode.rect
       _type = barcode.type
-      _data = barcode.data.decode("utf-8")
+      _data = barcode.data.decode("utf-8", errors="replace")   # UTF-8 이 아닌 QR 도 멈추지 않게
 
       res = get_card(_data)
       if res != None:

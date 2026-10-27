@@ -67,6 +67,9 @@ msgstr "Only ``espeak`` is supported"
 msgid "사용하지 않습니다 (espeak 기본 음성)"
 msgstr "Not used (espeak default voice)"
 
+msgid "espeak 가 실패하면 ``RuntimeError`` 를 냅니다."
+msgstr "Raises ``RuntimeError`` if espeak fails."
+
 msgid "STT(Speech to Text)"
 msgstr ""
 
@@ -111,6 +114,9 @@ msgstr ""
 
 msgid "저장된 파일 경로"
 msgstr "Path of the saved file"
+
+msgid "``text`` 가 비어 있거나 공백뿐이면 합성하지 않고 0.1초짜리 조용한 wav 를 저장합니다. 바로 뒤에 ``Audio.play(filename)`` 를 불러도 오류 없이 아무 소리도 나지 않습니다."
+msgstr "If ``text`` is empty or only whitespace, nothing is synthesized and a 0.1-second silent wav is saved. Calling ``Audio.play(filename)`` right after plays no sound and raises no error."
 
 msgid "Functions: :meth:`~openpibo.speech.SpeechToText.listen` :meth:`~openpibo.speech.SpeechToText.transcribe` :meth:`~openpibo.speech.SpeechToText.transcribe_file`"
 msgstr ""
@@ -166,8 +172,17 @@ msgstr "Sends questions to an LLM (llama-server) running on the device and recei
 msgid "n-gram 챗봇(``load`` ``reset`` ``ngram`` ``diff_ngram`` ``get_dialog``), 서버 기반 대화·분석(``get_dialog_dl`` ``nlp_dl``), 번역(``translate``)은 제거했습니다. ``dialog.csv`` 가 한글 전용이고, 나머지는 자사 서버·Google 에 의존했습니다."
 msgstr "The n-gram chatbot (``load`` ``reset`` ``ngram`` ``diff_ngram`` ``get_dialog``), server-based conversation/analysis (``get_dialog_dl`` ``nlp_dl``) and translation (``translate``) have been removed. ``dialog.csv`` was Korean-only, and the rest depended on our own servers or Google."
 
-msgid "LLM 서비스를 시작합니다. (Chat 모드)"
-msgstr "Starts the LLM service. (Chat mode)"
+msgid "LLM 서비스를 시작하고, 모델이 다 올라와 대답할 수 있을 때까지 기다립니다. (Chat 모드)"
+msgstr "Starts the LLM service and waits until the model is loaded and can answer. (Chat mode)"
+
+msgid "llama-server 포트"
+msgstr "llama-server port"
+
+msgid "최대로 기다리는 시간(초)"
+msgstr "Maximum waiting time (seconds)"
+
+msgid "준비되면 ``True``, ``timeout`` 안에 준비되지 않으면 ``False``"
+msgstr "``True`` when ready, ``False`` if not ready within ``timeout``"
 
 msgid "LLM 서버(OpenAI 호환 Chat Completions API)를 호출합니다."
 msgstr "Calls the LLM server (OpenAI-compatible Chat Completions API)."
@@ -183,6 +198,9 @@ msgstr "The user's input message."
 
 msgid "시스템 프롬프트. (없으면 기본값 유지)"
 msgstr "System prompt. (keeps the default if not given)"
+
+msgid "대답을 기다리는 최대 시간(초). 넘으면 예외가 납니다"
+msgstr "Maximum time to wait for the answer (seconds). Raises an exception if exceeded"
 
 msgid "생성된 텍스트 또는 API 응답 전체 JSON."
 msgstr "The generated text, or the full API response JSON."

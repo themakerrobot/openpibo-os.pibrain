@@ -239,6 +239,12 @@ document.getElementById("logo_bt").addEventListener("click", function () {
 
 const system_port = 8080;
 const MAX_FILENAME_LENGTH = 50;
+const RESULT_MAX = 200 * 1024;   // 실행 출력 칸에 남기는 글자 수
+// 열린 파일이 바로 그 경로이거나 그 폴더 안에 있는지(이름 바꾸기·지우기 때). 전엔 includes 라
+// 'a' 를 지우면 열려 있던 'abc.py' 까지 비웠다(261027)
+function isPathOrInside(path, target) {
+  return path === target || path.startsWith(target + "/");
+}
 const MAX_FILE_NUMBER = 10;
 const codeEditor = CodeMirror.fromTextArea(
   document.getElementById("codemirror-code"),
@@ -358,7 +364,12 @@ socket.on("update", async (data) => {
   // 서버는 시작할 때 전체(record)를 한 번 보내고, 그 뒤로는 늘어난 부분(record_add)만 보낸다
   if ("record" in data || "record_add" in data) {
     if ("record" in data) result.value = data["record"];
-    else result.value += data["record_add"];
+    else {
+      // 뒤쪽 RESULT_MAX 글자만 둔다(서버 RECORD_MAX 와 같다, 261027). 전엔 끝없이 늘어 무한 반복 print 면 화면이 점점 느려졌다.
+      // 두 배를 넘을 때만 잘라 매번 자르지 않는다
+      const v = result.value + data["record_add"];
+      result.value = v.length > RESULT_MAX * 2 ? v.slice(-RESULT_MAX) : v;
+    }
     result.scrollTop = result.scrollHeight;
     execute.classList.add("disabled");
     stop.classList.remove("disabled");
@@ -692,15 +703,15 @@ socket.on("update_file_manager", (d) => {
 
               if (!await confirm_popup(translations['confirm_rename'][lang](name, newname))) return;
 
-              if ($("#codepath").text().includes(CURRENT_DIR.join("/") + "/" + name)) {
+              if (isPathOrInside($("#codepath").text(), CURRENT_DIR.join("/") + "/" + name)) {
                 $("#codepath").text("");
               }
-              if (CODE_PATH.includes(CURRENT_DIR.join("/") + "/" + name)) {
+              if (isPathOrInside(CODE_PATH, CURRENT_DIR.join("/") + "/" + name)) {
                 CODE_PATH = "";
                 saveCode = "";
                 codeEditor.setValue(saveCode);
               }
-              if (BLOCK_PATH.includes(CURRENT_DIR.join("/") + "/" + name)) {
+              if (isPathOrInside(BLOCK_PATH, CURRENT_DIR.join("/") + "/" + name)) {
                 BLOCK_PATH = "";
                 saveBlock = "{}";
                 Blockly.serialization.workspaces.load(JSON.parse(saveBlock), workspace);
@@ -721,15 +732,15 @@ socket.on("update_file_manager", (d) => {
               //let type = $(`#fm_table tr:eq(${idx}) td:eq(0)`).html();
               let name = $(`#fm_table tr:eq(${idx}) td:eq(1)`).text();
               if (await confirm_popup(translations['confirm_delete_file'][lang](`${CURRENT_DIR.join("/")}/${name}`))) {
-                if ($("#codepath").text().includes(CURRENT_DIR.join("/") + "/" + name)) {
+                if (isPathOrInside($("#codepath").text(), CURRENT_DIR.join("/") + "/" + name)) {
                   $("#codepath").text("");
                 }
-                if (CODE_PATH.includes(CURRENT_DIR.join("/") + "/" + name)) {
+                if (isPathOrInside(CODE_PATH, CURRENT_DIR.join("/") + "/" + name)) {
                   CODE_PATH = "";
                   saveCode = "";
                   codeEditor.setValue(saveCode);
                 }
-                if (BLOCK_PATH.includes(CURRENT_DIR.join("/") + "/" + name)) {
+                if (isPathOrInside(BLOCK_PATH, CURRENT_DIR.join("/") + "/" + name)) {
                   BLOCK_PATH = "";
                   saveBlock = "{}";
                   Blockly.serialization.workspaces.load(JSON.parse(saveBlock), workspace);
@@ -1076,22 +1087,16 @@ const workspace = Blockly.inject("blocklyDiv", {
 });
 
 Blockly.Python.init(workspace);
-Blockly.Python.nameDB_.getName = function(name, type) {
-  const enc_name = Blockly.Names.prototype.getName.call(this, name, type);
-
-  // 인코딩된 한글 문자 디코딩
-  const decodedName = enc_name.replace(/(_[A-Z0-9]{2})+/g, (match) => {
-    try {
-      const uriEncoded = match.replace(/_/g, "%");
-      return decodeURIComponent(uriEncoded);
-    } catch (error) {
-      return match; // 디코딩 실패 시 그대로 반환
-    }
-  });
-
-  // Python 변수명에 맞지 않는 문자 중 한글, 알파벳, 숫자, 밑줄만 허용하고 나머지를 언더스코어로 변환
-  const pythonCompatibleName = decodedName.replace(/[^a-zA-Z0-9가-힣_]/g, "_");
-  return pythonCompatibleName;
+// 한글 변수·함수 이름을 파이썬 이름에 그대로 쓴다. Blockly 기본 safeName 은 encodeURI 뒤 \W 를 _ 로 바꿔
+// '점수' 를 '_EC_A0_90_EC_88_98' 로 만든다. 전엔 getName 결과의 _XX 를 모두 되돌렸는데, 그러면 영문 이름의
+// pos_10·x_30 까지 깨졌고(→ pos__·x0) 서로 다른 이름이 하나로 합쳐질 수 있었다(261027).
+// safeName 만 바꾸면 겹치는 이름은 Blockly 가 그대로 숫자를 붙여 가른다(getDistinctName)
+Blockly.Python.nameDB_.safeName = function(name) {
+  if (!name) return Blockly.Msg.UNNAMED_KEY || 'unnamed';
+  // 영문·숫자·밑줄·한글 음절만 남기고 나머지(띄어쓰기·기호 등)는 밑줄로
+  let safe = name.replace(/[^a-zA-Z0-9가-힣_]/g, '_');
+  if ('0123456789'.indexOf(safe[0]) !== -1) safe = 'my_' + safe;
+  return safe;
 };
 const disableTopBlocks = new DisableTopBlocks(workspace);
 disableTopBlocks.init();
@@ -1289,8 +1294,9 @@ $(document).keydown(async (evt) => {
         event.preventDefault(); // Prevent default form submission
         statusMessage.text(t('wifi_connecting')).removeClass('error');
 
-        const ssid = ssidInput.val().trim();
-        const psk = pskInput.val().trim(); // Assume password is in psk field
+        // SSID·비밀번호는 다듬지(trim) 않는다 — 앞뒤 띄어쓰기도 쓸 수 있는 글자다(261027)
+        const ssid = ssidInput.val();
+        const psk = pskInput.val(); // Assume password is in psk field
         const identity = identityInput.val().trim();
         // Determine key_mgmt based on which fields are visible/filled or hidden security type
         let key_mgmt = securityTypeHidden.val() || 'wpa-psk'; // Default assumption or get from selection
@@ -1303,6 +1309,19 @@ $(document).keydown(async (evt) => {
              else key_mgmt = 'none';
         }
 
+
+        // booting.py 가 거절할 값은 보내기 전에 막는다(같은 규칙: 비밀번호 없음 = 열린 WiFi, ID 없음 = WPA-PSK)
+        const ssidBytes = new TextEncoder().encode(ssid).length;
+        const pskBytes = new TextEncoder().encode(psk).length;
+        if (ssid === '' || ssidBytes > 32) {
+            statusMessage.text(t('wifi_err_ssid')).addClass('error');
+            return;
+        }
+        if (psk !== '' && identity === '' &&
+            !((pskBytes >= 8 && pskBytes <= 63) || /^[0-9a-fA-F]{64}$/.test(psk))) {
+            statusMessage.text(t('wifi_err_psk')).addClass('error');
+            return;
+        }
 
         // --- Optional: Use your confirm_popup ---
         let confirmMessage = `Connect to Wi-Fi: ${ssid}`;
@@ -1321,9 +1340,16 @@ $(document).keydown(async (evt) => {
                     key_mgmt: key_mgmt // Send determined key_mgmt
                  }),
                 contentType: "application/json",
-                timeout: 20000 // Add timeout
+                timeout: 100000 // booting.py 가 연결을 최대 90초 기다린 뒤 답한다
             }).done(function(response) {
-                 // Assuming success means connection attempt was accepted by backend
+                 // 거절·실패도 HTTP 200 + {'result':'fail', 'reason':…} 로 온다. 전엔 늘 '요청했어요' 를 띄우고 창을 닫았다(261027)
+                 if (response && response.result === 'fail') {
+                     const reason = String(response.reason || '');
+                     statusMessage.text(t(reason.includes('ssid') ? 'wifi_err_ssid'
+                                        : reason.includes('psk') ? 'wifi_err_psk' : 'wifi_err_connect')).addClass('error');
+                     console.warn("Connection request rejected:", response);
+                     return;
+                 }
                  statusMessage.text(t('wifi_sent')).removeClass('error');
                  console.log("Connection request success:", response);
                  // Optionally close popup after a delay

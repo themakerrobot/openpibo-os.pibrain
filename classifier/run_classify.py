@@ -19,6 +19,7 @@ import zipfile
 import argparse
 import mimetypes
 import tempfile
+import threading
 
 import cv2
 
@@ -63,14 +64,57 @@ camera = None
 vision_en = False
 vision_task = None
 frame_interval = FRAME_SLOW
+fast_sids = set()             # [꾹 눌러 모으기] 중인 화면. 하나라도 있으면 빠르게, 끊기면 빠진다(261027)
 camera_lock = asyncio.Lock()
+# camera.read 와 camera.release 가 겹치지 않게 한다(스레드에서 돈다). 취소해도 to_thread 의 read 는 끝까지 돈다(261027)
+camera_io = threading.Lock()
+
+
+def camera_read():
+  with camera_io:
+    cam = camera
+    return cam.read() if cam is not None else None
+
+
+def camera_release(cam):
+  # 읽는 중이면 끝날 때까지 기다린다. 카메라가 멈춰 read 가 안 끝나면 5초 뒤 그냥 놓는다
+  got = camera_io.acquire(timeout=5)
+  if not got:
+    print('[camera] read did not finish in 5s — release anyway')
+  try:
+    cam.release()
+  finally:
+    if got:
+      camera_io.release()
+
+
+async def stop_vision_loop():
+  """vision_en 을 내린 뒤 부른다. 루프가 지금 장을 끝내고 스스로 나오길 기다린다(PiBrain 도구 261001 과 같은 방식)"""
+  global vision_task
+  if vision_task:
+    try:
+      await asyncio.wait_for(asyncio.shield(vision_task), timeout=5)
+    except asyncio.TimeoutError:
+      print('[camera] vision loop did not stop in 5s — cancel')
+      vision_task.cancel()
+      try:
+        await vision_task
+      except asyncio.CancelledError:
+        pass
+    except Exception as e:
+      print(f'[camera] vision loop: {e}')
+    vision_task = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+  global vision_en, camera
   yield
+  vision_en = False
+  await stop_vision_loop()
   if camera:
-    camera.release()
+    await asyncio.to_thread(camera_release, camera)
+    camera = None
 
 
 # 글꼴은 IDE(80) 한 벌을 세 앱이 같이 쓴다(260929). 이 서버의 글꼴 주소는 IDE 주소로 영구 이동시킨다.
@@ -137,7 +181,7 @@ async def vision_loop():
       if not any(watchers.values()):
         await asyncio.sleep(FRAME_SLOW)
         continue
-      img = await asyncio.to_thread(camera.read)
+      img = await asyncio.to_thread(camera_read)
       if img is None:
         await asyncio.sleep(0.5)
         continue
@@ -152,29 +196,32 @@ async def vision_loop():
       await asyncio.sleep(1)
 
 
-async def toggle_camera_logic(turn_on: bool):
+async def toggle_camera_logic(turn_on: bool, sid=None):
   global vision_en, camera, vision_task
 
   async with camera_lock:
     if turn_on:
       if not vision_en:
-        vision_en = True
+        # 카메라가 켜진 뒤에만 켜짐으로 친다. 전엔 먼저 켜짐으로 두어서 Camera() 가 실패하면
+        # 루프도 카메라도 없이 '켜짐' 으로 남아 다시 켜도 아무 일이 없었다(261027)
         if camera is None:
-          camera = await asyncio.to_thread(Camera)
+          try:
+            camera = await asyncio.to_thread(Camera)
+          except Exception as e:
+            print(f'[camera] open failed: {e}')
+            await sio.emit('camera_error', {'error': 'cam_fail', 'detail': str(e)}, to=sid)
+            return {"status": "error", "error": "cam_fail", "detail": str(e)}
+        vision_en = True
         vision_task = asyncio.create_task(vision_loop())
         return {"status": "success", "camera": "on"}
     else:
       if vision_en:
         vision_en = False
-        if vision_task:
-          vision_task.cancel()
-          try:
-            await vision_task
-          except asyncio.CancelledError:
-            pass
-          vision_task = None
+        # cancel() 은 스레드에서 도는 camera.read 를 멈추지 못한다. 그대로 release 하면 읽는 도중에
+        # 카메라를 닫는다(Picamera2). 루프가 나오길 기다리고, release 도 read 와 같은 잠금을 잡는다
+        await stop_vision_loop()
         if camera is not None:
-          await asyncio.to_thread(camera.release)
+          await asyncio.to_thread(camera_release, camera)
           camera = None
         return {"status": "success", "camera": "off"}
   return {"status": "no change"}
@@ -195,7 +242,7 @@ async def control_cam_http(d: str):
 
 @sio.on('control_cam')
 async def control_cam_socket(sid, d: bool):
-  await toggle_camera_logic(d)
+  await toggle_camera_logic(bool(d), sid)
 
 
 @sio.on('connect')
@@ -205,7 +252,11 @@ async def on_connect(sid, *args):
 
 @sio.on('disconnect')
 async def on_disconnect(sid, *args):
+  global frame_interval
   watchers.pop(sid, None)
+  # 모으던 화면이 끊기면(탭 닫기·네트워크) 빠른 전송이 남지 않게 한다
+  fast_sids.discard(sid)
+  frame_interval = FRAME_FAST if fast_sids else FRAME_SLOW
 
 
 @sio.on('camera_visible')
@@ -218,7 +269,11 @@ async def camera_visible(sid, visible: bool):
 async def camera_rate(sid, fast: bool):
   """예시를 모으는 동안만 빠르게 (fast=True), 끝나면 다시 느리게"""
   global frame_interval
-  frame_interval = FRAME_FAST if fast else FRAME_SLOW
+  if fast:
+    fast_sids.add(sid)
+  else:
+    fast_sids.discard(sid)
+  frame_interval = FRAME_FAST if fast_sids else FRAME_SLOW
 
 
 # ---------------------------------

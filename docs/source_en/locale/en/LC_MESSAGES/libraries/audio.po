@@ -49,8 +49,8 @@ msgstr "Sets the volume. (0~100)"
 msgid "백그라운드 실행 여부"
 msgstr "Whether to run in the background"
 
-msgid "개별 음량을 조절합니다. (비율)"
-msgstr "Adjusts the individual volume. (ratio)"
+msgid "개별 음량을 조절합니다. (비율, 0.0~3.0)"
+msgstr "Adjusts the individual volume. (ratio, 0.0~3.0)"
 
 msgid "재생 중인 오디오 정지"
 msgstr "Stops the audio being played"
@@ -61,6 +61,6 @@ msgstr "Records sound (piBo microphone)"
 msgid "녹음한 파일 저장 경로. ``wav`` 확장자"
 msgstr "Path to save the recorded file. ``wav`` extension"
 
-msgid "녹음 시간(s)"
-msgstr "Recording time (s)"
+msgid "녹음 시간(s). 0보다 큰 숫자"
+msgstr "Recording time (s). A number greater than 0"
 

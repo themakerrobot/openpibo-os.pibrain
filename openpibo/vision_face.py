@@ -165,12 +165,13 @@ Functions:
     for detection in detections[0][0]:
       confidence = detection[2]
       if confidence > 0.5:  # Threshold
-        xmin = int(detection[3] * w)
-        ymin = int(detection[4] * h)
-        xmax = int(detection[5] * w)
-        ymax = int(detection[6] * h)
+        # 얼굴이 화면 끝에 걸리면 좌표가 음수·이미지 밖으로 나온다 — 이미지 안으로 자른다
+        xmin = min(max(int(detection[3] * w), 0), w)
+        ymin = min(max(int(detection[4] * h), 0), h)
+        xmax = min(max(int(detection[5] * w), 0), w)
+        ymax = min(max(int(detection[6] * h), 0), h)
 
-        if img[ymin:ymax, xmin:xmax].size == 0:
+        if xmax <= xmin or ymax <= ymin:
           continue
         items.append([xmin, ymin, xmax, ymax])
     return items
@@ -368,7 +369,8 @@ Functions:
     """
 
     ret = name in self.facedb[0]
-    if ret == True:
+    # 같은 이름으로 여러 번 등록했으면 전부 지운다
+    while name in self.facedb[0]:
       idx = self.facedb[0].index(name)
       #os.remove(self.data_path +"/" + name + ".jpg")
       for item in self.facedb:
@@ -474,7 +476,7 @@ Functions:
     """
 
     if not os.path.isfile(filename):
-      raise Exception('"{filename}" does not exist')
+      raise Exception(f'"{filename}" does not exist')
 
     with open(filename, "rb") as f :
       self.facedb = pickle.load(f)
@@ -597,6 +599,7 @@ Functions:
           y_vals.append(face_landmarks[idx].y * h)
 
         iris_diameter_px = max(max(x_vals) - min(x_vals), max(y_vals) - min(y_vals))
+        distance_cm = 0   # 홍채 크기를 못 재면 0 (앞 얼굴 값을 쓰지 않게)
         if iris_diameter_px > 0:
           distance_mm = (self.FOCAL_LENGTH_MM * self.IRIS_REAL_DIAMETER_MM) / (iris_diameter_px * self.PIXEL_PITCH_MM)
           distance_cm = int(distance_mm / 10.0)

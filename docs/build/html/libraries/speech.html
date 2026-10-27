@@ -346,6 +346,7 @@ woman1)는 제거됐습니다. 자연스러운 음성이 필요하면
 </ul>
 </dd>
 </dl>
+<p>espeak 가 실패하면 <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code> 를 냅니다.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -417,6 +418,8 @@ woman1)는 제거됐습니다. 자연스러운 음성이 필요하면
 <dd class="field-even"><p>저장된 파일 경로</p>
 </dd>
 </dl>
+<p><code class="docutils literal notranslate"><span class="pre">text</span></code> 가 비어 있거나 공백뿐이면 합성하지 않고 0.1초짜리 조용한 wav 를 저장합니다.
+바로 뒤에 <code class="docutils literal notranslate"><span class="pre">Audio.play(filename)</span></code> 를 불러도 오류 없이 아무 소리도 나지 않습니다.</p>
 </dd></dl>
 
 </dd></dl>
@@ -539,17 +542,28 @@ woman1)는 제거됐습니다. 자연스러운 음성이 필요하면
 </div></blockquote>
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.speech.Dialog.start_llm">
-<span class="sig-name descname"><span class="pre">start_llm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50020</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Dialog.start_llm"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.Dialog.start_llm" title="Link to this definition">¶</a></dt>
-<dd><p>LLM 서비스를 시작합니다. (Chat 모드)</p>
+<span class="sig-name descname"><span class="pre">start_llm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50020</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Dialog.start_llm"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.Dialog.start_llm" title="Link to this definition">¶</a></dt>
+<dd><p>LLM 서비스를 시작하고, 모델이 다 올라와 대답할 수 있을 때까지 기다립니다. (Chat 모드)</p>
 <p>example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dialog</span><span class="o">.</span><span class="n">start_llm</span><span class="p">()</span>
 </pre></div>
 </div>
+<dl class="field-list simple">
+<dt class="field-odd">매개변수<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>port</strong> (<em>int</em>) – llama-server 포트</p></li>
+<li><p><strong>timeout</strong> (<em>int</em>) – 최대로 기다리는 시간(초)</p></li>
+</ul>
+</dd>
+<dt class="field-even">반환<span class="colon">:</span></dt>
+<dd class="field-even"><p>준비되면 <code class="docutils literal notranslate"><span class="pre">True</span></code>, <code class="docutils literal notranslate"><span class="pre">timeout</span></code> 안에 준비되지 않으면 <code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.speech.Dialog.call_llm">
-<span class="sig-name descname"><span class="pre">call_llm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tokens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Dialog.call_llm"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.Dialog.call_llm" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">call_llm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tokens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Dialog.call_llm"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.speech.Dialog.call_llm" title="Link to this definition">¶</a></dt>
 <dd><p>LLM 서버(OpenAI 호환 Chat Completions API)를 호출합니다.</p>
 <dl class="simple">
 <dt>예시:</dt><dd><p>dialog.call_llm(prompt=”안녕하세요”, system_prompt=”너는 내 스마트한 비서야”)</p>
@@ -560,6 +574,7 @@ woman1)는 제거됐습니다. 자연스러운 음성이 필요하면
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>prompt</strong> (<em>str</em>) – 사용자의 입력 메시지.</p></li>
 <li><p><strong>system_prompt</strong> (<em>str</em>) – 시스템 프롬프트. (없으면 기본값 유지)</p></li>
+<li><p><strong>timeout</strong> (<em>int</em>) – 대답을 기다리는 최대 시간(초). 넘으면 예외가 납니다</p></li>
 </ul>
 </dd>
 <dt class="field-even">반환<span class="colon">:</span></dt>

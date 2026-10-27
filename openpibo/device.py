@@ -15,6 +15,18 @@ import urllib
 import RPi.GPIO as GPIO
 from rpi_ws281x import PixelStrip, Color
 
+
+def _field(raw, idx=None):
+  # MCU 응답 '15:85' · '40:person-touch--' 에서 값을 꺼낸다.
+  # 응답이 비었거나(아직 못 받음·시간 초과) 모양이 다르면 '' — 감지 안 된 칸과 같은 값
+  parts = str(raw).split(':')
+  if len(parts) < 2:
+    return ''
+  if idx is None:
+    return parts[1]
+  items = parts[1].split('-')
+  return items[idx] if idx < len(items) else ''
+
 class Device:
   """
 Functions:
@@ -387,11 +399,10 @@ Functions:
 
     :param v: 값만 가져올지 메시지 전체를 가져올지 선택
 
-    :returns: 배터리 정보 응답
+    :returns: 배터리 정보 응답. 응답이 없으면 ``v=True`` 일 때 빈 문자열 ``''``
     """
 
-
-    return self.send_raw('#15:!') if v == False else self.send_raw('#15:!').split(':')[1]
+    return self.send_raw('#15:!') if v == False else _field(self.send_raw('#15:!'))
   
   def get_dc(self, v=False):
     """
@@ -403,10 +414,10 @@ Functions:
 
     :param v: 값만 가져올지 메시지 전체를 가져올지 선택
 
-    :returns: DC커넥터 연결 정보 응답
+    :returns: DC커넥터 연결 정보 응답. 응답이 없으면 ``v=True`` 일 때 빈 문자열 ``''``
     """
 
-    return self.send_raw('#14:!') if v == False else self.send_raw('#14:!').split(':')[1]
+    return self.send_raw('#14:!') if v == False else _field(self.send_raw('#14:!'))
 
   def get_system(self, v=False):
     """
@@ -420,10 +431,10 @@ Functions:
 
     :param name: 가져올 값 선택 ('pir'|'touch'|'dc'|'button'|'all')
 
-    :returns: 시스템 메시지 정보 응답 (pir-touch-dc-button) 
+    :returns: 시스템 메시지 정보 응답 (pir-touch-dc-button). 응답이 없으면 ``v=True`` 일 때 빈 문자열 ``''``
     """
 
-    return self.send_raw('#40:!') if v == False else self.send_raw('#40:!').split(':')[1]
+    return self.send_raw('#40:!') if v == False else _field(self.send_raw('#40:!'))
 
   def get_pir(self):
     """
@@ -433,10 +444,10 @@ Functions:
 
       device.get_pir()
 
-    :returns: 시스템 메시지 정보 응답에서 pir 값 추출
+    :returns: 시스템 메시지 정보 응답에서 pir 값 추출. 감지가 없거나 응답이 없으면 빈 문자열 ``''``
     """
 
-    return self.send_raw('#40:!').split(':')[1].split('-')[0]
+    return _field(self.send_raw('#40:!'), 0)
 
   def get_touch(self):
     """
@@ -446,10 +457,10 @@ Functions:
 
       device.get_touch()
 
-    :returns: 시스템 메시지 정보 응답에서 touch 값 추출
+    :returns: 시스템 메시지 정보 응답에서 touch 값 추출. 감지가 없거나 응답이 없으면 빈 문자열 ``''``
     """
 
-    return self.send_raw('#40:!').split(':')[1].split('-')[1]
+    return _field(self.send_raw('#40:!'), 1)
 
   def get_button(self):
     """
@@ -459,10 +470,10 @@ Functions:
 
       device.get_button()
 
-    :returns: 시스템 메시지 정보 응답에서 button 값 추출
+    :returns: 시스템 메시지 정보 응답에서 button 값 추출. 감지가 없거나 응답이 없으면 빈 문자열 ``''``
     """
 
-    return self.send_raw('#40:!').split(':')[1].split('-')[3]
+    return _field(self.send_raw('#40:!'), 3)
 
 class DeviceByPiBrain:
   """
@@ -505,10 +516,16 @@ Functions:
     """
     버튼 눌림을 체크 합니다.
 
-    :param n: 버튼 번호 (1 ~ 4)
+    :param n: 버튼 번호 (1 ~ 4). 범위 밖이면 ``ValueError``
     :returns: ``on`` 또는 ``off`` 
     """
-    
+
+    try:
+      n = int(n)
+    except (TypeError, ValueError):
+      raise ValueError(f'"{n}" must be 1~4')
+    if not 1 <= n <= len(self.buttons):   # 0 이면 [-1] 로 4번 버튼이 읽혔다
+      raise ValueError(f'"{n}" must be 1~{len(self.buttons)}')
     button = self.buttons[n-1]
     return "on" if GPIO.input(button) == GPIO.LOW else "off"
 

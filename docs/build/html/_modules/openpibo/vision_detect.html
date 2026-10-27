@@ -298,9 +298,6 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="nn">pickle</span><span class="o">,</span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyzbar</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyzbar</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">mediapipe</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mp</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">mediapipe.tasks</span><span class="w"> </span><span class="kn">import</span> <span class="n">python</span> <span class="k">as</span> <span class="n">mp_python</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">mediapipe.tasks.python</span><span class="w"> </span><span class="kn">import</span> <span class="n">vision</span> <span class="k">as</span> <span class="n">mp_vision</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.modules.ed_onnx</span><span class="w"> </span><span class="kn">import</span> <span class="n">EdOnnx</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.modules.pose.movenet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Movenet</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.modules.pose.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">visualize_pose</span>
@@ -434,6 +431,10 @@
 <span class="sd">    :param str modelpath: 손동작 인식 모델 경로</span>
 <span class="sd">    """</span>
     <span class="c1">#'/home/pi/.model/hand/gesture_recognizer.task', /home/pi/.model/hand/rps_recognizer.task'</span>
+    <span class="c1"># mediapipe 는 여기서 처음 불러온다. 파일 맨 위에서 불러오면 QR·포즈·사물 인식만 써도</span>
+    <span class="c1"># import 비용(약 50MB)이 늘 붙는다</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">mediapipe.tasks</span><span class="w"> </span><span class="kn">import</span> <span class="n">python</span> <span class="k">as</span> <span class="n">mp_python</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">mediapipe.tasks.python</span><span class="w"> </span><span class="kn">import</span> <span class="n">vision</span> <span class="k">as</span> <span class="n">mp_vision</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">hand_gesture_recognizer</span> <span class="o">=</span>  <span class="n">mp_vision</span><span class="o">.</span><span class="n">GestureRecognizer</span><span class="o">.</span><span class="n">create_from_options</span><span class="p">(</span>
       <span class="n">mp_vision</span><span class="o">.</span><span class="n">GestureRecognizerOptions</span><span class="p">(</span>
         <span class="n">base_options</span><span class="o">=</span><span class="n">mp_python</span><span class="o">.</span><span class="n">BaseOptions</span><span class="p">(</span><span class="n">model_asset_path</span><span class="o">=</span><span class="n">modelpath</span><span class="p">),</span>
@@ -458,6 +459,7 @@
 <span class="sd">    """</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hand_gesture_recognizer</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"load_hand_gesture_model" must be called'</span><span class="p">)</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">mediapipe</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mp</span>          <span class="c1"># load_hand_gesture_model 에서 이미 올라와 있다</span>
     <span class="n">rgb_image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">)</span>
     <span class="n">mp_image</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">image_format</span><span class="o">=</span><span class="n">mp</span><span class="o">.</span><span class="n">ImageFormat</span><span class="o">.</span><span class="n">SRGB</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">rgb_image</span><span class="p">)</span>
     <span class="n">recognition_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hand_gesture_recognizer</span><span class="o">.</span><span class="n">recognize</span><span class="p">(</span><span class="n">mp_image</span><span class="p">)</span>
@@ -621,7 +623,7 @@
     <span class="k">for</span> <span class="n">barcode</span> <span class="ow">in</span> <span class="n">barcodes</span><span class="p">:</span>
       <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">h</span> <span class="o">=</span> <span class="n">barcode</span><span class="o">.</span><span class="n">rect</span>
       <span class="n">_type</span> <span class="o">=</span> <span class="n">barcode</span><span class="o">.</span><span class="n">type</span>
-      <span class="n">_data</span> <span class="o">=</span> <span class="n">barcode</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">)</span>
+      <span class="n">_data</span> <span class="o">=</span> <span class="n">barcode</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">"replace"</span><span class="p">)</span>   <span class="c1"># UTF-8 이 아닌 QR 도 멈추지 않게</span>
 
       <span class="n">res</span> <span class="o">=</span> <span class="n">get_card</span><span class="p">(</span><span class="n">_data</span><span class="p">)</span>
       <span class="k">if</span> <span class="n">res</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>

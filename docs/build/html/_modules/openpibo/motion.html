@@ -296,9 +296,23 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">openpibo_models</span>
 <span class="c1">#current_path = os.path.dirname(os.path.abspath(__file__))</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_to_int</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+  <span class="c1"># '30'·30.0 같은 값도 받되, 숫자가 아니면 servo 명령에 넣지 않는다</span>
+  <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">" is not a number'</span><span class="p">)</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+  <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">OverflowError</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">" is not a number'</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_servo</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+  <span class="c1"># 셸을 거치지 않고 servo 를 부른다</span>
+  <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">'servo'</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">])</span>
 
 <div class="viewcode-block" id="Motion">
 <a class="viewcode-back" href="../../libraries/motion.html#openpibo.motion.Motion">[문서]</a>
@@ -414,7 +428,7 @@
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">pos</span><span class="si">}</span><span class="s1">" must be integer type'</span><span class="p">)</span>
 
-    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">"servo write </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">pos</span><span class="o">*</span><span class="mi">10</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
+    <span class="n">_servo</span><span class="p">(</span><span class="s1">'write'</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">pos</span><span class="o">*</span><span class="mi">10</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Motion.set_motors">
@@ -440,17 +454,17 @@
 <span class="sd">    """</span>
 
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
-      <span class="n">positions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">positions</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">','</span><span class="p">)))</span>
+      <span class="n">positions</span> <span class="o">=</span> <span class="n">positions</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">','</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">10</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">Exception</span> <span class="p">(</span><span class="sa">f</span><span class="s1">'len(</span><span class="si">{</span><span class="n">positions</span><span class="si">}</span><span class="s1">) must be 10'</span><span class="p">)</span>
 
-    <span class="n">mpos</span> <span class="o">=</span> <span class="p">[</span><span class="n">positions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="mi">10</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">positions</span><span class="p">))]</span>
+    <span class="n">mpos</span> <span class="o">=</span> <span class="p">[</span><span class="n">_to_int</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">*</span><span class="mi">10</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">positions</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">movetime</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
-      <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">'servo mwrite </span><span class="si">{</span><span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="w"> </span><span class="n">mpos</span><span class="p">))</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+      <span class="n">_servo</span><span class="p">(</span><span class="s1">'mwrite'</span><span class="p">,</span> <span class="o">*</span><span class="n">mpos</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-      <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">'servo move </span><span class="si">{</span><span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="w"> </span><span class="n">mpos</span><span class="p">))</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">movetime</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span></div>
+      <span class="n">_servo</span><span class="p">(</span><span class="s1">'move'</span><span class="p">,</span> <span class="o">*</span><span class="n">mpos</span><span class="p">,</span> <span class="n">_to_int</span><span class="p">(</span><span class="n">movetime</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="Motion.set_speed">
@@ -483,7 +497,7 @@
     <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">speed</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">Exception</span> <span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">speed</span><span class="si">}</span><span class="s1">" must be 0~255'</span><span class="p">)</span>
 
-    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">'servo speed </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">speed</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span></div>
+    <span class="n">_servo</span><span class="p">(</span><span class="s1">'speed'</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">speed</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Motion.set_speeds">
@@ -504,7 +518,7 @@
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">speeds</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">10</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">Exception</span> <span class="p">(</span><span class="sa">f</span><span class="s1">'len(</span><span class="si">{</span><span class="n">speeds</span><span class="si">}</span><span class="s1">) must be 10'</span><span class="p">)</span>
 
-    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">'servo speed all </span><span class="si">{</span><span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="w"> </span><span class="n">speeds</span><span class="p">))</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span></div>
+    <span class="n">_servo</span><span class="p">(</span><span class="s1">'speed'</span><span class="p">,</span> <span class="s1">'all'</span><span class="p">,</span> <span class="o">*</span><span class="p">[</span><span class="n">_to_int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">speeds</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="Motion.set_acceleration">
@@ -540,7 +554,7 @@
     <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">accel</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">Exception</span> <span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">accel</span><span class="si">}</span><span class="s1">" must be 0~255'</span><span class="p">)</span>
 
-    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">'servo accelerate </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">accel</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span></div>
+    <span class="n">_servo</span><span class="p">(</span><span class="s1">'accelerate'</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">accel</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Motion.set_accelerations">
@@ -561,7 +575,7 @@
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">accels</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">10</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">Exception</span> <span class="p">(</span><span class="sa">f</span><span class="s1">'len(</span><span class="si">{</span><span class="n">accels</span><span class="si">}</span><span class="s1">) must be 10'</span><span class="p">)</span>
 
-    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">'servo accelerate all </span><span class="si">{</span><span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="w"> </span><span class="n">accels</span><span class="p">))</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span></div>
+    <span class="n">_servo</span><span class="p">(</span><span class="s1">'accelerate'</span><span class="p">,</span> <span class="s1">'all'</span><span class="p">,</span> <span class="o">*</span><span class="p">[</span><span class="n">_to_int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">accels</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="Motion.get_motion">
@@ -662,10 +676,11 @@
     <span class="n">seq</span><span class="p">,</span><span class="n">cnt</span><span class="p">,</span><span class="n">cycle_cnt</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">if</span> <span class="n">exe</span><span class="p">[</span><span class="s2">"init_def"</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="c1"># 도구에서 빈 표는 {}, 한 줄(0초)만 있으면 pos 가 [] 로 저장된다</span>
+    <span class="k">if</span> <span class="n">exe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"init_def"</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="s2">"init"</span> <span class="ow">in</span> <span class="n">exe</span><span class="p">:</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">set_motors</span><span class="p">(</span><span class="n">exe</span><span class="p">[</span><span class="s2">"init"</span><span class="p">],</span> <span class="mi">1000</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="s2">"pos"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exe</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">exe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"pos"</span><span class="p">):</span>
       <span class="k">return</span>
 
     <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>

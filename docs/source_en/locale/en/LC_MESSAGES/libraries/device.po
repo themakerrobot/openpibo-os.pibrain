@@ -106,14 +106,14 @@ msgstr "Requests battery information."
 msgid "값만 가져올지 메시지 전체를 가져올지 선택"
 msgstr "Whether to get only the value or the whole message"
 
-msgid "배터리 정보 응답"
-msgstr "Battery information response"
+msgid "배터리 정보 응답. 응답이 없으면 ``v=True`` 일 때 빈 문자열 ``''``"
+msgstr "Battery information response. With ``v=True``, an empty string ``''`` if there is no response"
 
 msgid "DC커넥터 정보를 요청합니다."
 msgstr "Requests DC connector information."
 
-msgid "DC커넥터 연결 정보 응답"
-msgstr "DC connector connection information response"
+msgid "DC커넥터 연결 정보 응답. 응답이 없으면 ``v=True`` 일 때 빈 문자열 ``''``"
+msgstr "DC connector connection information response. With ``v=True``, an empty string ``''`` if there is no response"
 
 msgid "시스템 메시지를 요청합니다."
 msgstr "Requests the system message."
@@ -121,26 +121,26 @@ msgstr "Requests the system message."
 msgid "가져올 값 선택 ('pir'|'touch'|'dc'|'button'|'all')"
 msgstr "Value to get ('pir'|'touch'|'dc'|'button'|'all')"
 
-msgid "시스템 메시지 정보 응답 (pir-touch-dc-button)"
-msgstr "System message information response (pir-touch-dc-button)"
+msgid "시스템 메시지 정보 응답 (pir-touch-dc-button). 응답이 없으면 ``v=True`` 일 때 빈 문자열 ``''``"
+msgstr "System message information response (pir-touch-dc-button). With ``v=True``, an empty string ``''`` if there is no response"
 
 msgid "시스템 메시지를 요청합니다. (pir)"
 msgstr "Requests the system message. (pir)"
 
-msgid "시스템 메시지 정보 응답에서 pir 값 추출"
-msgstr "pir value extracted from the system message information response"
+msgid "시스템 메시지 정보 응답에서 pir 값 추출. 감지가 없거나 응답이 없으면 빈 문자열 ``''``"
+msgstr "The pir value extracted from the system message response. An empty string ``''`` if nothing is detected or there is no response"
 
 msgid "시스템 메시지를 요청합니다. (touch)"
 msgstr "Requests the system message. (touch)"
 
-msgid "시스템 메시지 정보 응답에서 touch 값 추출"
-msgstr "touch value extracted from the system message information response"
+msgid "시스템 메시지 정보 응답에서 touch 값 추출. 감지가 없거나 응답이 없으면 빈 문자열 ``''``"
+msgstr "The touch value extracted from the system message response. An empty string ``''`` if nothing is detected or there is no response"
 
 msgid "시스템 메시지를 요청합니다. (button)"
 msgstr "Requests the system message. (button)"
 
-msgid "시스템 메시지 정보 응답에서 button 값 추출"
-msgstr "button value extracted from the system message information response"
+msgid "시스템 메시지 정보 응답에서 button 값 추출. 감지가 없거나 응답이 없으면 빈 문자열 ``''``"
+msgstr "The button value extracted from the system message response. An empty string ``''`` if nothing is detected or there is no response"
 
 msgid "Functions: :meth:`~openpibo.device.DeviceByPiBrain.get_button` :meth:`~openpibo.device.DeviceByPiBrain.led_on` :meth:`~openpibo.device.DeviceByPiBrain.led_on_s` :meth:`~openpibo.device.DeviceByPiBrain.led_off`"
 msgstr ""
@@ -148,8 +148,8 @@ msgstr ""
 msgid "버튼 눌림을 체크 합니다."
 msgstr "Checks whether a button is pressed."
 
-msgid "버튼 번호 (1 ~ 4)"
-msgstr "Button number (1 ~ 4)"
+msgid "버튼 번호 (1 ~ 4). 범위 밖이면 ``ValueError``"
+msgstr "Button number (1 ~ 4). ``ValueError`` if out of range"
 
 msgid "``on`` 또는 ``off``"
 msgstr "``on`` or ``off``"
@@ -225,4 +225,13 @@ msgstr "RGB hex string #ffffff"
 
 #~ msgid "Device에 전송되는 메시지의 포맷은 ``#code:data!`` 입니다. 해당 메시지를 메인 컨트롤러에 전송합니다."
 #~ msgstr "The format of the message sent to the Device is ``#code:data!``. The message is sent to the main controller."
+
+#~ msgid "배터리 정보 응답"
+#~ msgstr "Battery information response"
+
+#~ msgid "DC커넥터 연결 정보 응답"
+#~ msgstr "DC connector connection information response"
+
+#~ msgid "버튼 번호 (1 ~ 4)"
+#~ msgstr "Button number (1 ~ 4)"
 

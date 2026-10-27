@@ -56,8 +56,14 @@ msgstr "Returns the content as an array of dictionaries.  In most cases item '0'
 msgid "위키백과에서 ``search_text`` 를 검색합니다. (block 전용)"
 msgstr "Searches Wikipedia for ``search_text``. (for blocks only)"
 
-msgid "search 함수의 반환 값의 content만 추출한 리스트를 반환합니다.  대부분의 경우 '0'번 항목에 개요를 표시하고, 검색된 내용이 없을 경우 None을 반환합니다.  example::      [         \"한국어 ‘강아지’는 ‘개’에 어린 짐승을 뜻하는 ‘아지’가 붙은 말이다...\",         ...     ]     or     None"
-msgstr "Returns a list containing only the content of the search function's return value.  In most cases item '0' holds the summary. Returns None if nothing is found.  example::      [         \"한국어 ‘강아지’는 ‘개’에 어린 짐승을 뜻하는 ‘아지’가 붙은 말이다...\",         ...     ]     or     None"
+msgid "search 함수의 반환 값의 content만 추출한 리스트를 반환합니다.  대부분의 경우 '0'번 항목에 개요를 표시하고, 검색된 내용이 없을 경우 빈 리스트를 반환합니다.  example::      [         \"한국어 ‘강아지’는 ‘개’에 어린 짐승을 뜻하는 ‘아지’가 붙은 말이다...\",         ...     ]     or     []"
+msgstr "Returns a list containing only the content of the search function's return value.  In most cases item '0' holds the summary. Returns an empty list if nothing is found.  example::      [         \"한국어 ‘강아지’는 ‘개’에 어린 짐승을 뜻하는 ‘아지’가 붙은 말이다...\",         ...     ]     or     []"
+
+msgid "search 함수의 반환 값의 content만 추출한 리스트를 반환합니다."
+msgstr "Returns a list containing only the content of the search function's return value."
+
+msgid "대부분의 경우 '0'번 항목에 개요를 표시하고, 검색된 내용이 없을 경우 빈 리스트를 반환합니다."
+msgstr "In most cases item '0' holds the summary. Returns an empty list if nothing is found."
 
 msgid "Functions: :meth:`~openpibo.collect.Weather.search` :meth:`~openpibo.collect.Weather.search_s`"
 msgstr ""
