@@ -223,7 +223,32 @@ def chat_stream(text, speak_as, ctl, vol=80):
                     'speak': bool(speak_as and reply)}) + '\n'
 
 
-async def chat_async(text, speak_as, vol=80):
+def lock_releaser():
+  """turn_lock 을 한 번만 푸는 함수. 대답 생성기와 응답 객체 양쪽에서 부른다"""
+  done = [False]
+  def release():
+    if not done[0]:
+      done[0] = True
+      turn_lock.release()
+  return release
+
+
+class TurnStream(StreamingResponse):
+  """응답이 어떻게 끝나든(다 보냄·끊김·취소) 잠금을 푼다(261027).
+  요청을 보낸 직후 브라우저가 끊기면 starlette 가 대답 생성기를 한 번도 돌리지 않고 접어서, 생성기 안의
+  finally 가 안 돌았다 → 잠금이 남아 이후 모든 말이 '다른 대화 중'(409) 이 됐다(컨테이너 starlette 1.10 에서 재현)"""
+  def __init__(self, content, release, **kw):
+    super().__init__(content, **kw)
+    self._release = release
+
+  async def __call__(self, scope, receive, send):
+    try:
+      await super().__call__(scope, receive, send)
+    finally:
+      self._release()
+
+
+async def chat_async(text, speak_as, vol=80, release=None):
   """chat_stream 을 스레드에서 한 줄씩 받아 넘긴다. 브라우저가 끊으면 starlette 가 여기를 취소한다 →
   llama-server 연결을 닫아 생성을 멈추게 하고 잠금을 푼다. 전엔 [멈추기] 뒤에도 모델이 끝까지 만들었다"""
   ctl = {'cancel': False, 'resp': None}
@@ -242,7 +267,7 @@ async def chat_async(text, speak_as, vol=80):
         r.close()
       except Exception:  # noqa: BLE001 — 다른 스레드가 읽는 중이어도 닫기만 하면 된다
         pass
-    turn_lock.release()
+    (release or turn_lock.release)()
 
 
 # ── 웹 ─────────────────────────────────────────────────────────────────────
@@ -313,8 +338,13 @@ async def chat(body: dict = Body(...)):
     vol = min(100, max(0, int(body.get('volume', 80))))   # Audio.play 가 실제 40~100% 로 편다
   except (TypeError, ValueError):
     vol = 80
-  return StreamingResponse(chat_async(text, speak_as, vol), media_type='application/x-ndjson',
-                           headers={'Cache-Control': 'no-cache', 'X-Accel-Buffering': 'no'})
+  release = lock_releaser()
+  try:
+    return TurnStream(chat_async(text, speak_as, vol, release), release, media_type='application/x-ndjson',
+                      headers={'Cache-Control': 'no-cache', 'X-Accel-Buffering': 'no'})
+  except Exception:
+    release()
+    raise
 
 
 @app.post('/api/llm/restart')

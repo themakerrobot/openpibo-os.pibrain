@@ -751,3 +751,9 @@ SSID·비밀번호·ID 는 `subprocess.run(['sudo', conwifi.sh, 종류, ssid, ..
 (8080 은 로그인 없이 받고 AP 모드에서도 열려 있다). `Kim's WiFi` 같은 이름은 연결도 안 됐다.
 SSID 가 비면 실패 안내를 돌려준다(전엔 정의 안 된 `ex` 로 500). 비밀번호는 로그에 남기지 않는다.
 **셸 문자열에 사용자 입력을 넣지 말 것** — `tools/lib.py` 의 espeak 도 같은 이유로 고쳤다
+
+## 고친 것 (261027)
+
+- **IDE 실행은 프로세스 묶음으로 띄우고 [정지]·다시 실행 때 묶음 전체를 끈다**(Pibo 와 같은 `run_ide.py` 변경). 배경 소리 등 하위 프로세스가 남아도 '실행 중' 에서 안 멈춘다. 자세한 건 Pibo CLAUDE.md '실행 로그 프로토콜'
+- **대화 웹 잠금**: 보내자마자 끊겨도 잠금이 풀린다(`chat/run_chat.py` 의 `TurnStream`, Pibo 와 같은 파일)
+- netwatch(AP 다시 켜기)는 PiBrain 에 아직 없다 — `booting.py` 가 예전 구조
