@@ -93,7 +93,7 @@ git tag -d <태그> ...           # 로컬 삭제
 | Chat Bot | `llama-server.service` | (외부) | 50020 |
 | H/W 검수 | 없음 — IDE 가 subprocess 로 띄운다 | `test/test.py` | 50050 |
 
-- 파이썬은 `/home/pi/.pyenv/bin/python3`.
+- 파이썬은 `/home/pi/.pyenv/bin/python3`. **기기에서 돌릴 명령은 `sudo /home/pi/.pyenv/bin/python3` 로 줄 것**(사용자, 261027 — 시스템 `python3` 에는 onnxruntime 등이 없다)
 - `booting.py` 가 `docs/build` 를 `/build` 로 서빙한다. IDE 헤더의 Guide 버튼이 8080 을 연다.
 - 검수 서버만 유닛이 아니다. 유닛 파일은 리포 밖이라 이미지 작업이 되므로, 리포 안에서 끝나게 했다.
 - **유닛 파일은 `/etc/systemd/system/` 에 있어 이미지에 속한다.** 260624 이미지에는
