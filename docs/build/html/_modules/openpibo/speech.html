@@ -303,6 +303,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -361,6 +362,8 @@
 <span class="sd">    :param str voice: ``espeak`` 만 지원합니다</span>
 
 <span class="sd">    :param str lang: 사용하지 않습니다 (espeak 기본 음성)</span>
+
+<span class="sd">    espeak 가 실패하면 ``RuntimeError`` 를 냅니다.</span>
 <span class="sd">    """</span>
 
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
@@ -369,7 +372,11 @@
     <span class="k">if</span> <span class="n">voice</span> <span class="o">!=</span> <span class="s2">"espeak"</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">voice</span><span class="si">}</span><span class="s1">" is not supported. use "espeak" or SpeechOnDevice'</span><span class="p">)</span>
 
-    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">'espeak "</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s1">" -w </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span></div>
+    <span class="c1"># 셸을 거치지 않는다 — 글자에 따옴표·$() 가 있어도 명령이 되지 않게. '--' 뒤는 옵션으로 읽지 않는다</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">'espeak'</span><span class="p">,</span> <span class="s1">'-w'</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="s1">'--'</span><span class="p">,</span> <span class="n">text</span><span class="p">],</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="n">err</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">'utf-8'</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">'replace'</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+      <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'espeak failed (</span><span class="si">{</span><span class="n">res</span><span class="o">.</span><span class="n">returncode</span><span class="si">}</span><span class="s1">): </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Speech.stt">
@@ -460,6 +467,9 @@
 <span class="sd">    :param str voice: 목소리 종류 (m1~m5/f1~f5)</span>
 <span class="sd">    :param str lang: 언어 코드 ('na'=자동/기타, 'ko', 'en', 'ja' ...)</span>
 <span class="sd">    :returns str: 저장된 파일 경로</span>
+
+<span class="sd">    ``text`` 가 비어 있거나 공백뿐이면 합성하지 않고 0.1초짜리 조용한 wav 를 저장합니다.</span>
+<span class="sd">    바로 뒤에 ``Audio.play(filename)`` 를 불러도 오류 없이 아무 소리도 나지 않습니다.</span>
 <span class="sd">    """</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -473,6 +483,15 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">voice_path</span><span class="p">):</span>
       <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Voice style not found: </span><span class="si">{</span><span class="n">voice_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
+    <span class="n">out_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">out_dir</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">out_dir</span><span class="p">):</span>
+      <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">out_dir</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+      <span class="c1"># 빈 글자는 모델이 길이를 못 낸다(None). 이전 파일이 그대로 재생되지 않게 조용한 소리를 쓴다</span>
+      <span class="n">sf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">sample_rate</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">filename</span>
+
     <span class="n">style</span> <span class="o">=</span> <span class="n">load_voice_style</span><span class="p">([</span><span class="n">voice_path</span><span class="p">])</span>
     <span class="n">wav</span><span class="p">,</span> <span class="n">duration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">(</span>
       <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
@@ -481,10 +500,6 @@
       <span class="n">total_step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">total_step</span><span class="p">,</span>
       <span class="n">speed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">speed</span><span class="p">,</span>
     <span class="p">)</span>
-
-    <span class="n">out_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">out_dir</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">out_dir</span><span class="p">):</span>
-      <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">out_dir</span><span class="p">)</span>
 
     <span class="c1"># wav 저장</span>
     <span class="n">w</span> <span class="o">=</span> <span class="n">wav</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">sample_rate</span> <span class="o">*</span> <span class="n">duration</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">())]</span>
@@ -746,23 +761,38 @@
 
 <div class="viewcode-block" id="Dialog.start_llm">
 <a class="viewcode-back" href="../../libraries/speech.html#openpibo.speech.Dialog.start_llm">[문서]</a>
-  <span class="k">def</span><span class="w"> </span><span class="nf">start_llm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">50020</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">start_llm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">50020</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">120</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    LLM 서비스를 시작합니다. (Chat 모드)</span>
+<span class="sd">    LLM 서비스를 시작하고, 모델이 다 올라와 대답할 수 있을 때까지 기다립니다. (Chat 모드)</span>
 
 <span class="sd">    example::</span>
 
 <span class="sd">      dialog.start_llm()</span>
 
+<span class="sd">    :param int port: llama-server 포트</span>
+<span class="sd">    :param int timeout: 최대로 기다리는 시간(초)</span>
+<span class="sd">    :returns: 준비되면 ``True``, ``timeout`` 안에 준비되지 않으면 ``False``</span>
 <span class="sd">    """</span>
 
     <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">"systemctl start llama-server"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"Connect to http:{Device IP}:50020 for LLM Web-UI"</span><span class="p">)</span></div>
+    <span class="c1"># 모델을 읽는 동안 /health 는 503 이다. 200 이 될 때까지 기다린다</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">+</span> <span class="n">timeout</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+      <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">"http://localhost:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">/health"</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+          <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Connect to http:</span><span class="se">{{</span><span class="s2">Device IP</span><span class="se">}}</span><span class="s2">:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2"> for LLM Web-UI"</span><span class="p">)</span>
+          <span class="k">return</span> <span class="kc">True</span>
+      <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span><span class="p">:</span>
+        <span class="k">pass</span>
+      <span class="k">if</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">end</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"LLM server is not ready after </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s2">s (http://localhost:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">/health)"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+      <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Dialog.call_llm">
 <a class="viewcode-back" href="../../libraries/speech.html#openpibo.speech.Dialog.call_llm">[문서]</a>
-  <span class="k">def</span><span class="w"> </span><span class="nf">call_llm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">system_prompt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">max_tokens</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">call_llm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">system_prompt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">max_tokens</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">120</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    LLM 서버(OpenAI 호환 Chat Completions API)를 호출합니다.</span>
 
@@ -771,6 +801,7 @@
 
 <span class="sd">    :param str prompt: 사용자의 입력 메시지.</span>
 <span class="sd">    :param str system_prompt: 시스템 프롬프트. (없으면 기본값 유지)</span>
+<span class="sd">    :param int timeout: 대답을 기다리는 최대 시간(초). 넘으면 예외가 납니다</span>
 <span class="sd">    :return: 생성된 텍스트 또는 API 응답 전체 JSON.</span>
 <span class="sd">    """</span>
 
@@ -792,7 +823,7 @@
     <span class="p">}</span>
 
     <span class="k">try</span><span class="p">:</span>
-      <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
+      <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
       <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>  <span class="c1"># 4xx, 5xx 에러 발생 시 예외 처리</span>
     <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">"LLM 서버 호출 실패: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>

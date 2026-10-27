@@ -7,9 +7,23 @@ Class:
 import time
 import os
 import json
+import subprocess
 
 import openpibo_models
 #current_path = os.path.dirname(os.path.abspath(__file__))
+
+def _to_int(x):
+  # '30'·30.0 같은 값도 받되, 숫자가 아니면 servo 명령에 넣지 않는다
+  if type(x) is bool:
+    raise ValueError(f'"{x}" is not a number')
+  try:
+    return int(round(float(x)))
+  except (TypeError, ValueError, OverflowError):
+    raise ValueError(f'"{x}" is not a number')
+
+def _servo(*args):
+  # 셸을 거치지 않고 servo 를 부른다
+  subprocess.run(['servo'] + [str(a) for a in args])
 
 class Motion:
   """
@@ -121,7 +135,7 @@ Functions:
     if type(pos) is not int:
       raise Exception(f'"{pos}" must be integer type')
 
-    os.system(f"servo write {n} {pos*10}")
+    _servo('write', n, pos*10)
 
   def set_motors(self, positions, movetime=None):
     """
@@ -144,17 +158,17 @@ Functions:
     """
 
     if type(positions) is str:
-      positions = list(map(int, positions.split(',')))
+      positions = positions.split(',')
 
     if len(positions) != 10:
       raise Exception (f'len({positions}) must be 10')
 
-    mpos = [positions[i]*10 for i in range(len(positions))]
+    mpos = [_to_int(p)*10 for p in positions]
 
     if movetime == None:
-      os.system(f'servo mwrite {" ".join(map(str, mpos))}')
+      _servo('mwrite', *mpos)
     else:
-      os.system(f'servo move {" ".join(map(str, mpos))} {movetime}')
+      _servo('move', *mpos, _to_int(movetime))
 
   def set_speed(self, n, speed):
     """
@@ -184,7 +198,7 @@ Functions:
     if abs(speed) > 255:
       raise Exception (f'"{speed}" must be 0~255')
 
-    os.system(f'servo speed {n} {speed}')
+    _servo('speed', n, speed)
 
   def set_speeds(self, speeds):
     """
@@ -202,7 +216,7 @@ Functions:
     if len(speeds) != 10:
       raise Exception (f'len({speeds}) must be 10')
 
-    os.system(f'servo speed all {" ".join(map(str, speeds))}')
+    _servo('speed', 'all', *[_to_int(v) for v in speeds])
 
   def set_acceleration(self, n, accel):
     """
@@ -235,7 +249,7 @@ Functions:
     if abs(accel) > 255:
       raise Exception (f'"{accel}" must be 0~255')
 
-    os.system(f'servo accelerate {n} {accel}')
+    _servo('accelerate', n, accel)
 
   def set_accelerations(self, accels):
     """
@@ -253,7 +267,7 @@ Functions:
     if len(accels) != 10:
       raise Exception (f'len({accels}) must be 10')
 
-    os.system(f'servo accelerate all {" ".join(map(str, accels))}')
+    _servo('accelerate', 'all', *[_to_int(v) for v in accels])
 
   def get_motion(self, name=None, path=None):
     """
@@ -348,10 +362,11 @@ Functions:
     seq,cnt,cycle_cnt = 0,0,0
     self.stopped = False
 
-    if exe["init_def"] == 1:
+    # 도구에서 빈 표는 {}, 한 줄(0초)만 있으면 pos 가 [] 로 저장된다
+    if exe.get("init_def") == 1 and "init" in exe:
       self.set_motors(exe["init"], 1000)
 
-    if "pos" not in exe:
+    if not exe.get("pos"):
       return
 
     time.sleep(1)

@@ -342,6 +342,7 @@
 </ul>
 </dd>
 </dl>
+<p>Raises <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code> if espeak fails.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -411,6 +412,7 @@
 <dd class="field-even"><p>Path of the saved file</p>
 </dd>
 </dl>
+<p>If <code class="docutils literal notranslate"><span class="pre">text</span></code> is empty or only whitespace, nothing is synthesized and a 0.1-second silent wav is saved. Calling <code class="docutils literal notranslate"><span class="pre">Audio.play(filename)</span></code> right after plays no sound and raises no error.</p>
 </dd></dl>
 
 </dd></dl>
@@ -528,17 +530,28 @@
 </div></blockquote>
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.speech.Dialog.start_llm">
-<span class="sig-name descname"><span class="pre">start_llm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50020</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Dialog.start_llm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.speech.Dialog.start_llm" title="Link to this definition">¶</a></dt>
-<dd><p>Starts the LLM service. (Chat mode)</p>
+<span class="sig-name descname"><span class="pre">start_llm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50020</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Dialog.start_llm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.speech.Dialog.start_llm" title="Link to this definition">¶</a></dt>
+<dd><p>Starts the LLM service and waits until the model is loaded and can answer. (Chat mode)</p>
 <p>example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dialog</span><span class="o">.</span><span class="n">start_llm</span><span class="p">()</span>
 </pre></div>
 </div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>port</strong> (<em>int</em>) – llama-server port</p></li>
+<li><p><strong>timeout</strong> (<em>int</em>) – Maximum waiting time (seconds)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when ready, <code class="docutils literal notranslate"><span class="pre">False</span></code> if not ready within <code class="docutils literal notranslate"><span class="pre">timeout</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.speech.Dialog.call_llm">
-<span class="sig-name descname"><span class="pre">call_llm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tokens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Dialog.call_llm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.speech.Dialog.call_llm" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">call_llm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tokens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Dialog.call_llm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.speech.Dialog.call_llm" title="Link to this definition">¶</a></dt>
 <dd><p>Calls the LLM server (OpenAI-compatible Chat Completions API).</p>
 <dl class="simple">
 <dt>Example:</dt><dd><p>dialog.call_llm(prompt=”Hello”, system_prompt=”You are my smart assistant”)</p>
@@ -549,6 +562,7 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>prompt</strong> (<em>str</em>) – The user’s input message.</p></li>
 <li><p><strong>system_prompt</strong> (<em>str</em>) – System prompt. (keeps the default if not given)</p></li>
+<li><p><strong>timeout</strong> (<em>int</em>) – Maximum time to wait for the answer (seconds). Raises an exception if exceeded</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

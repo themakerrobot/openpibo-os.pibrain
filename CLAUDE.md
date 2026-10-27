@@ -757,3 +757,24 @@ SSID 가 비면 실패 안내를 돌려준다(전엔 정의 안 된 `ex` 로 500
 - **IDE 실행은 프로세스 묶음으로 띄우고 [정지]·다시 실행 때 묶음 전체를 끈다**(Pibo 와 같은 `run_ide.py` 변경). 배경 소리 등 하위 프로세스가 남아도 '실행 중' 에서 안 멈춘다. 자세한 건 Pibo CLAUDE.md '실행 로그 프로토콜'
 - **대화 웹 잠금**: 보내자마자 끊겨도 잠금이 풀린다(`chat/run_chat.py` 의 `TurnStream`, Pibo 와 같은 파일)
 - netwatch(AP 다시 켜기)는 PiBrain 에 아직 없다 — `booting.py` 가 예전 구조
+
+### 전체 검토 수정 (261027v3)
+
+컨테이너 가짜 장치로만 시험했다 — **실기기 확인 필요**. Pibo 와 같은 변경은 Pibo CLAUDE.md '전체 검토 수정 (261027v3)'.
+
+- **WiFi 저장(`booting.py` `POST /wifi`)**: SSID 1~32바이트, WPA-PSK 비밀번호 8~63바이트(16진수 64자)를 conwifi.sh 전에 검사한다(conwifi.sh 가 쓰던 연결을 먼저 지우므로).
+  실패는 `{'result':'fail','reason':wifi_err_ssid|wifi_err_psk|wifi_err_connect}` — IDE 가 `reason` 으로 안내하고 창을 닫지 않는다.
+  conwifi.sh 가 실패로 끝나도 **연결 정보가 저장됐으면 예전처럼 재부팅**한다(`wifi_saved` — 지금 없는 공유기를 미리 넣을 때는 `connection up` 만 실패한다). 저장도 안 됐을 때만 재부팅하지 않는다
+- **말하기 블록(`speech_otts_play`·`speech_etts_play`)은 말을 다 하고 다음 블록으로 간다**(`background=False`). 전엔 둘을 이어 쓰면 같은 `/home/pi/tmp.mp3` 를 덮어써 겹치거나 잘렸다
+- **`Audio.play(background=True)` 는 `play` 를 따로 띄운다**(`Popen`, 셸 안 씀). 스레드 안에서 부르면 바로 끝나는 프로그램은 `play` 가 시작되기 전에 파이썬이 끝나 소리가 안 났다. 소리는 프로그램이 끝나도 계속 나고 [정지] 때 꺼진다
+- **파이썬 변수 이름**: `Blockly.Python.nameDB_.safeName` 을 바꿔 끼운다(`index.js`) — 영문·숫자·`_`·한글 음절(가-힣)은 그대로, 나머지는 `_`. 전엔 `_XX` 를 모두 되살려서 `pos_10`·`pos_11` 이 둘 다 `pos_` 가 됐다. 겹치는 이름은 Blockly 가 숫자를 붙인다
+- 실행 출력은 서버·화면 모두 마지막 약 200KB 만 둔다(`record_*`, 400KB 넘으면 자름). 폴더 내려받기는 요청마다 따로 압축(스레드)
+- 라이브러리: 셸 문자열 대신 인자 목록(`Audio.play`·`record`, `Motion` 의 servo, espeak `--`), `Speech.start_llm` 은 `/health` 가 200 일 때까지 최대 120초 기다리고 `call_llm(timeout=120)`,
+  `SpeechOnDevice.tts('')` 는 0.1초 무음 파일, MCU 응답이 비면 센서 함수가 `''`, `config.json` 은 바뀔 때만 원자적으로 쓴다(`exec` 안 씀), `Camera(width, height)` 가 실제로 크기를 바꾼다
+- 분류기: 카메라를 못 켜면 상태를 켜짐으로 남기지 않고 `camera_error` → 안내(`cam_fail`), 끌 때 읽던 프레임이 끝난 뒤 놓는다, [꾹 눌러 모으기] 중 끊기면 빠른 전송을 푼다
+- **USB 시리얼 실행(`uart_ctrl.py`)**: 프로그램을 프로세스 묶음으로 띄우고 새로 받거나 `###END###` 면 묶음째 끈다(전엔 앞 프로그램이 고아로 남아 둘이 같이 돌았다).
+  실행 전에 도구·분류기·LLM 서비스와 대화 웹·H/W 검수를 끄고, IDE 에서 돌던 프로그램은 IDE 에 socket.io `stop` 을 보내 끈다. IDE 쪽에서 USB 프로그램을 끄는 건 아직 없다
+- **`/dev/ttyGS0` 는 시작할 때 열지 않는다** — 작업 스레드가 10초마다 다시 연다. 전엔 포트가 없으면 `booting.py` import 가 실패해 `booting.service` 가 아예 안 떴다
+- `wifi_update` 는 예외가 나도 다음 점검을 이어간다(Pibo 와 같음). 도구의 모델 미리 올리기(`ensure_*`)에 잠금, LCD 쓰기에 `oled_lock`(다른 프로세스 — `booting.py` 의 쓰기는 안 막는다)
+- H/W 검수: 장치를 하나씩 따로 열고 카메라는 5초까지 다시 시도한다(도구가 카메라를 아직 놓지 않아 전부 '불량' 이 뜨던 것)
+- `vision_detect` 의 mediapipe 는 손 제스처를 쓸 때만 불러온다(Pibo 와 같음)

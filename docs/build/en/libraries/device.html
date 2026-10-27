@@ -570,7 +570,7 @@
 <dd class="field-odd"><p><strong>v</strong> – Whether to get only the value or the whole message</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Battery information response</p>
+<dd class="field-even"><p>Battery information response. With <code class="docutils literal notranslate"><span class="pre">v=True</span></code>, an empty string <code class="docutils literal notranslate"><span class="pre">''</span></code> if there is no response</p>
 </dd>
 </dl>
 </dd></dl>
@@ -588,7 +588,7 @@
 <dd class="field-odd"><p><strong>v</strong> – Whether to get only the value or the whole message</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>DC connector connection information response</p>
+<dd class="field-even"><p>DC connector connection information response. With <code class="docutils literal notranslate"><span class="pre">v=True</span></code>, an empty string <code class="docutils literal notranslate"><span class="pre">''</span></code> if there is no response</p>
 </dd>
 </dl>
 </dd></dl>
@@ -609,7 +609,7 @@
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>System message information response (pir-touch-dc-button)</p>
+<dd class="field-even"><p>System message information response (pir-touch-dc-button). With <code class="docutils literal notranslate"><span class="pre">v=True</span></code>, an empty string <code class="docutils literal notranslate"><span class="pre">''</span></code> if there is no response</p>
 </dd>
 </dl>
 </dd></dl>
@@ -624,7 +624,7 @@
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>pir value extracted from the system message information response</p>
+<dd class="field-odd"><p>The pir value extracted from the system message response. An empty string <code class="docutils literal notranslate"><span class="pre">''</span></code> if nothing is detected or there is no response</p>
 </dd>
 </dl>
 </dd></dl>
@@ -639,7 +639,7 @@
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>touch value extracted from the system message information response</p>
+<dd class="field-odd"><p>The touch value extracted from the system message response. An empty string <code class="docutils literal notranslate"><span class="pre">''</span></code> if nothing is detected or there is no response</p>
 </dd>
 </dl>
 </dd></dl>
@@ -654,7 +654,7 @@
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>button value extracted from the system message information response</p>
+<dd class="field-odd"><p>The button value extracted from the system message response. An empty string <code class="docutils literal notranslate"><span class="pre">''</span></code> if nothing is detected or there is no response</p>
 </dd>
 </dl>
 </dd></dl>
@@ -676,7 +676,7 @@
 <dd><p>Checks whether a button is pressed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>n</strong> – Button number (1 ~ 4)</p>
+<dd class="field-odd"><p><strong>n</strong> – Button number (1 ~ 4). <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> if out of range</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">on</span></code> or <code class="docutils literal notranslate"><span class="pre">off</span></code></p>

@@ -1,3 +1,9 @@
+// 블록 칸 값(파일 목록에서 고른 이름 등)을 파이썬 문자열 글자로 만든다(261027).
+// 전엔 '${dir}'+'${filename}' 처럼 그대로 넣어서 이름에 ' 나 \ 가 있으면 SyntaxError 가 났다
+function pbPyStr(s) {
+  return "'" + String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+    .replace(/\n/g, '\\n').replace(/\r/g, '\\r') + "'";
+}
 Blockly.Python.forBlock['flag_event'] = function (block) {
   return '';
 };
@@ -32,7 +38,7 @@ Blockly.Python.forBlock['audio_play_dynamic'] = function(block) {
   const filename = block.getFieldValue("filename");
   const volume = Blockly.Python.valueToCode(block, 'volume', Blockly.Python.ORDER_ATOMIC);
   // const volume = block.getFieldValue("volume");
-  return `audio.play('${dir}'+'${filename}', ${volume})\n`;
+  return `audio.play(${pbPyStr(dir + filename)}, ${volume})\n`;
 }
 Blockly.Python.forBlock['audio_play'] = function(block) {
   Blockly.Python.definitions_['from_audio_import_Audio'] = 'from openpibo.audio import Audio';
@@ -302,7 +308,7 @@ Blockly.Python.forBlock['oled_draw_image_dynamic'] = function(block) {
 
   const dir = block.getFieldValue("dir");
   const filename = block.getFieldValue("filename");
-  return `oled.draw_image('${dir}'+'${filename}')\n`;
+  return `oled.draw_image(${pbPyStr(dir + filename)})\n`;
 }
 Blockly.Python.forBlock['oled_draw_image'] = function(block) {
   Blockly.Python.definitions_['from_oled_import_Oled'] = 'from openpibo.oled import OledByPiBrain as Oled';
@@ -401,7 +407,7 @@ Blockly.Python.forBlock['speech_otts_play'] = function(block) {
   const voice = block.getFieldValue("voice");
   const volume = Blockly.Python.valueToCode(block, 'volume', Blockly.Python.ORDER_ATOMIC);
 
-  return `speech_ondevice.tts(text=${text}, filename='/home/pi/tmp.mp3', voice='${voice}')\naudio.play('/home/pi/tmp.mp3', ${volume})\n`;
+  return `speech_ondevice.tts(text=${text}, filename='/home/pi/tmp.mp3', voice='${voice}')\naudio.play('/home/pi/tmp.mp3', ${volume}, background=False)\n`;
 }
 Blockly.Python.forBlock['speech_etts'] = function(block) {
   Blockly.Python.definitions_['from_speech_import_Speech'] = 'from openpibo.speech import Speech';
@@ -423,7 +429,7 @@ Blockly.Python.forBlock['speech_etts_play'] = function(block) {
   const text = Blockly.Python.valueToCode(block, 'text', Blockly.Python.ORDER_ATOMIC);
   const volume = Blockly.Python.valueToCode(block, 'volume', Blockly.Python.ORDER_ATOMIC);
 
-  return `speech.tts(text=${text}, filename='/home/pi/tmp.mp3', voice='espeak')\naudio.play('/home/pi/tmp.mp3', ${volume})\n`;
+  return `speech.tts(text=${text}, filename='/home/pi/tmp.mp3', voice='espeak')\naudio.play('/home/pi/tmp.mp3', ${volume}, background=False)\n`;
 }
 Blockly.Python.forBlock['speech_start_llm'] = function(block) {
   Blockly.Python.definitions_['from_speech_import_Dialog'] = 'from openpibo.speech import Dialog';
@@ -459,7 +465,7 @@ Blockly.Python.forBlock['vision_imread_dynamic'] = function(block) {
 
   const dir = block.getFieldValue("dir");
   const filename = block.getFieldValue("filename");
-  return [`camera.imread('${dir}'+'${filename}')`, Blockly.Python.ORDER_ATOMIC];
+  return [`camera.imread(${pbPyStr(dir + filename)})`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_imread'] = function(block) {
   Blockly.Python.definitions_['from_vision_import_Camera'] = 'from openpibo.vision_camera import Camera';
@@ -741,7 +747,8 @@ Blockly.Python.forBlock['vision_qr'] = function(block) {
   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
 
   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
-  return [`detect.detect_qr(${img})[0]['data']`, Blockly.Python.ORDER_ATOMIC];
+  // QR 이 없으면 detect_qr 가 [] 라 [0] 이 IndexError 였다 → 빈 글자(261027)
+  return [`(detect.detect_qr(${img}) or [{'data': ''}])[0]['data']`, Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['vision_qr_raw'] = function(block) {
   Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_detect import Detect';

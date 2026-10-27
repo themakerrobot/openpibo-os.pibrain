@@ -14,6 +14,8 @@ import time
 import os
 import openpibo_models
 
+ICON_TARGET_SIZE = (32, 32)   # 거북이 그림 크기(가로, 세로 px). 화면 틀(frame) 기준
+
 class PiboGraphics:
     def __init__(self, view_instance, width=240, height=320,
                  animation_delay=0.01, move_step_size=2, turn_step_size=5, icon_path=openpibo_models.filepath('pibo_graphics.png')):
@@ -94,7 +96,7 @@ class PiboGraphics:
         self._redraw_from_history() # Redraw path history first
         self._draw_turtle_icon()    # Draw icon on top
         try:                        # Show final frame
-            self.oled.imshow(self.frame)
+            self.view.imshow(self.frame)
             delay = 0.05 if initial else self.animation_delay
             if delay > 0: time.sleep(delay)
         except Exception as e: print(f"Error during oled.imshow/sleep: {e}")
@@ -278,9 +280,10 @@ class PiboGraphics:
 
 # --- Example Usage ---
 if __name__ == "__main__":
-    oled_instance = Oled()
+    from openpibo.oled import OledByPiBrain
+    oled_instance = OledByPiBrain()
 
-    t = Turtle(oled_instance, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, animation_delay=0.001, move_step_size=8, turn_step_size=16)
+    t = PiboGraphics(oled_instance, width=240, height=320, animation_delay=0.001, move_step_size=8, turn_step_size=16)
     t.pencolor(0, 255, 0)
     
     t.pensize(2)

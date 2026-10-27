@@ -80,6 +80,8 @@ def _kill_net_disp():
 
 # ── OLED 전용 스레드 ──────────────────────────────────────────
 _oled_queue = _queue.Queue(maxsize=1)
+# LCD(SPI)는 카메라 그림(_oled_worker)·/oled_text·/oled_clear 가 각자 다른 스레드에서 쓴다. 한 번에 하나만 쓰게 잠근다
+oled_lock = threading.Lock()
 
 def _oled_worker():
     while True:
@@ -87,7 +89,8 @@ def _oled_worker():
         if img is None:
             break
         try:
-            oled.imshow(img)
+            with oled_lock:
+                oled.imshow(img)
         except Exception as e:
             print(f'[oled_worker] {e}')
 
@@ -230,13 +233,20 @@ async def toggle_camera(on: bool):
             await asyncio.to_thread(start_network_disp)
 
 # ── Lazy loaders ─────────────────────────────────────────────
+# 한꺼번에 여러 요청이 와도 한 번만 올린다(전엔 확인 → 올리기 사이가 비어 TTS 약 330MB 등이 두 번 올라갔다)
+face_load_lock   = threading.Lock()
+detect_load_lock = threading.Lock()
+audio_load_lock  = threading.Lock()
+speech_load_lock = threading.Lock()
 async def ensure_face():
     global face
     if face: return face
     def _load():
         global face
-        from openpibo.vision_face import Face
-        face = Face()
+        with face_load_lock:
+            if face: return
+            from openpibo.vision_face import Face
+            face = Face()
     await asyncio.to_thread(_load)
     return face
 
@@ -245,8 +255,10 @@ async def ensure_detect():
     if detect: return detect
     def _load():
         global detect
-        from openpibo.vision_detect import Detect
-        detect = Detect()
+        with detect_load_lock:
+            if detect: return
+            from openpibo.vision_detect import Detect
+            detect = Detect()
     await asyncio.to_thread(_load)
     return detect
 
@@ -255,8 +267,10 @@ async def ensure_audio():
     if audio: return audio
     def _load():
         global audio
-        from openpibo.audio import Audio
-        audio = Audio()
+        with audio_load_lock:
+            if audio: return
+            from openpibo.audio import Audio
+            audio = Audio()
     await asyncio.to_thread(_load)
     return audio
 
@@ -265,8 +279,10 @@ async def ensure_speech():
     if speech: return speech
     def _load():
         global speech
-        from openpibo.speech import SpeechOnDevice
-        speech = SpeechOnDevice()
+        with speech_load_lock:
+            if speech: return
+            from openpibo.speech import SpeechOnDevice
+            speech = SpeechOnDevice()
     await asyncio.to_thread(_load)
     return speech
 
@@ -283,8 +299,9 @@ async def background_init():
             print(f'[device] {e}')
         try:
             from openpibo.oled import OledByPiBrain as Oled
-            oled = Oled()
-            oled.clear()
+            with oled_lock:
+                oled = Oled()
+                oled.clear()
         except Exception as e:
             print(f'[oled] {e}')
         # OLED 초기화 완료 후 network_disp 시작
@@ -304,7 +321,9 @@ async def lifespan(app: FastAPI):
         try: device.led_off()
         except: pass
     if oled:
-        try: oled.clear()
+        try:
+            with oled_lock:
+                oled.clear()
         except: pass
 
 # ── App ──────────────────────────────────────────────────────
@@ -506,18 +525,19 @@ async def oled_text(
     try:
         def _draw():
             stop_network_disp()
-            oled.set_font(size=size)
-            # 배경 색으로 클리어 (fill 없이 직접 image 교체)
             from PIL import Image, ImageDraw
-            oled.image = Image.new("RGB", (oled.width, oled.height), (bg_r, bg_g, bg_b))
-            # 멀티라인 처리
-            lines = text.split('\\n')
-            line_h = size + 4
-            cur_y = y
-            for line in lines:
-                ImageDraw.Draw(oled.image).text((x, cur_y), line, font=oled.font, fill=(r, g, b))
-                cur_y += line_h
-            oled.show()
+            with oled_lock:
+                oled.set_font(size=size)
+                # 배경 색으로 클리어 (fill 없이 직접 image 교체)
+                oled.image = Image.new("RGB", (oled.width, oled.height), (bg_r, bg_g, bg_b))
+                # 멀티라인 처리
+                lines = text.split('\\n')
+                line_h = size + 4
+                cur_y = y
+                for line in lines:
+                    ImageDraw.Draw(oled.image).text((x, cur_y), line, font=oled.font, fill=(r, g, b))
+                    cur_y += line_h
+                oled.show()
         await asyncio.to_thread(_draw)
         return JSONResponse({"ok": True})
     except Exception as e:
@@ -532,8 +552,9 @@ async def oled_clear(bg_r: int = 0, bg_g: int = 0, bg_b: int = 0):
         def _clear():
             stop_network_disp()
             from PIL import Image
-            oled.image = Image.new("RGB", (oled.width, oled.height), (bg_r, bg_g, bg_b))
-            oled.show()
+            with oled_lock:
+                oled.image = Image.new("RGB", (oled.width, oled.height), (bg_r, bg_g, bg_b))
+                oled.show()
         await asyncio.to_thread(_clear)
         return JSONResponse({"ok": True})
     except Exception as e:

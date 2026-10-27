@@ -80,14 +80,27 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-try:
-    device_obj = Device()
-    oled_obj = Oled()
-    camera_obj = Camera()
-    audio_obj = Audio()
-except Exception as e:
-    print(f"Error initializing hardware: {e}")
-    device_obj = oled_obj = camera_obj = audio_obj = None
+# 장치마다 따로 연다. 전엔 한꺼번에 열어서 하나(주로 카메라)만 실패해도 넷 다 None 이 되어
+# 멀쩡한 기기가 전부 불량으로 보였다
+def init_hw(name, cls, wait=0):
+    """wait 초 동안 다시 시도한다. 카메라는 tools 등이 아직 놓는 중이면 잠깐 실패한다"""
+    deadline = time.time() + wait
+    while True:
+        try:
+            return cls()
+        except Exception as e:
+            if time.time() >= deadline:
+                print(f"Error initializing {name}: {e}")
+                return None
+            time.sleep(0.5)
+
+
+CAMERA_WAIT = 5     # 초
+
+device_obj = init_hw("device", Device)
+oled_obj = init_hw("lcd", Oled)
+camera_obj = init_hw("camera", Camera, CAMERA_WAIT)
+audio_obj = init_hw("audio", Audio)
 
 
 def restore_lcd():
@@ -186,8 +199,13 @@ def led_test():
 
 
 def camera_test():
+    global camera_obj
     img_path = "/tmp/pibrain_capture.jpg"
+    if camera_obj is None:   # 처음에 못 열었으면 검사할 때 한 번 더 열어 본다
+        camera_obj = init_hw("camera", Camera, CAMERA_WAIT)
     try:
+        if camera_obj is None:
+            raise RuntimeError("camera not initialized")
         frame = camera_obj.read()
         camera_obj.imwrite(img_path, frame)
         # 촬영한 화면을 LCD 로도 한 번 띄운다. 카메라와 LCD 배선을 한 번에 본다.

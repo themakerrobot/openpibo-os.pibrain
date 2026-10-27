@@ -3,6 +3,8 @@ import codecs
 import sys
 import asyncio
 import shutil
+import tempfile
+import zipfile
 import base64
 import datetime
 import signal
@@ -17,6 +19,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi_socketio import SocketManager
 from starlette.websockets import WebSocketDisconnect
+from starlette.background import BackgroundTask
 from contextlib import asynccontextmanager
 
 @asynccontextmanager
@@ -59,7 +62,30 @@ protectList = [
 ]
 
 ENV_PATH = '/home/pi/.pyenv/bin'
-record = ''
+# 실행 로그는 뒤쪽 RECORD_MAX 글자만 기억한다(261027). 전엔 record += text 로 끝없이 늘었고
+# 늘 때마다 통째로 복사했다(무한 반복 print 면 메모리·CPU 가 계속 늘었다). 조각 목록으로 모으고
+# 두 배를 넘으면 한 번에 뒤쪽만 남긴다. 화면(init)에 보낼 때만 이어 붙인다
+RECORD_MAX = 200 * 1024
+record_parts = []
+record_size = 0
+
+def record_reset(text):
+  global record_parts, record_size
+  record_parts = [text]
+  record_size = len(text)
+
+def record_append(text):
+  global record_parts, record_size
+  record_parts.append(text)
+  record_size += len(text)
+  if record_size > RECORD_MAX * 2:
+    tail = ''.join(record_parts)[-RECORD_MAX:]
+    record_parts = [tail]
+    record_size = len(tail)
+
+def record_text():
+  return ''.join(record_parts)
+
 ps = None
 ps_pgid = None   # 학생 프로그램의 프로세스 묶음. 하위 프로세스(배경 소리 등)까지 같이 끄려고 따로 띄운다
 
@@ -151,6 +177,20 @@ async def read_root(request: Request):
   # no-cache: FileResponse 는 Last-Modified 를 붙여 브라우저가 페이지를 그냥 캐시할 수 있다. 그러면 올린 ?ver 가 안 보인다
   return FileResponse(os.path.join(TEMPLATE_DIR, page), media_type="text/html", headers={"Cache-Control": "no-cache"})
 
+def zip_folder(src, zip_path):
+  # shutil.make_archive 는 파이썬 버전에 따라 root_dir 로 os.chdir 를 한다 — 스레드에서 돌리면
+  # 서버 전체의 현재 폴더가 바뀌어(static 등 상대 경로) 위험하므로 직접 묶는다
+  with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zf:
+    for root, dirs, files in os.walk(src):
+      dirs.sort()
+      rel = os.path.relpath(root, src)
+      if rel != '.':
+        zf.write(root, rel + '/')
+      for name in sorted(files):
+        fp = os.path.join(root, name)
+        if os.path.isfile(fp):
+          zf.write(fp, os.path.normpath(os.path.join(rel, name)))
+
 @app.get("/download")
 async def download_item(filename: str):
   full_path = os.path.join(PATH, filename)
@@ -168,20 +208,21 @@ async def download_item(filename: str):
   if os.path.isfile(full_path):
     return FileResponse(full_path, filename=filename)
 
-  # 폴더인 경우: /tmp/download.zip 로 압축 후 다운로드 (매번 새로 생성)
+  # 폴더인 경우: 요청마다 따로 만든 임시 폴더에 압축해 보내고, 다 보낸 뒤 지운다(261027).
+  # 전엔 모두가 /tmp/download.zip 하나를 같이 써서 두 사람이 동시에 받으면 서로 덮어썼고,
+  # 압축을 이벤트 루프 안에서 해서 큰 폴더면 그동안 IDE 전체가 멈췄다
   elif os.path.isdir(full_path):
-    zip_path = "/tmp/download.zip"
+    tmp_dir = tempfile.mkdtemp(prefix='pibo-download-')
+    try:
+      zip_path = os.path.join(tmp_dir, 'download.zip')
+      await run_blocking(zip_folder, full_path, zip_path)
+    except Exception as err:
+      shutil.rmtree(tmp_dir, ignore_errors=True)
+      print(err)
+      return JSONResponse(content={'error': 'err_invalid_path'}, status_code=500)
+    return FileResponse(zip_path, media_type="application/zip", filename="download.zip",
+                        background=BackgroundTask(shutil.rmtree, tmp_dir, ignore_errors=True))
 
-    # 기존 압축 파일이 있다면 삭제
-    if os.path.exists(zip_path):
-      os.remove(zip_path)
-
-    # shutil.make_archive는 base_name 인자로 확장자 없는 경로를 요구함
-    base_name = "/tmp/download"  # 결과적으로 /tmp/download.zip 생성됨
-    shutil.make_archive(base_name, 'zip', root_dir=full_path)
-
-    return FileResponse(zip_path, media_type="application/zip", filename="download.zip")
-    
   else:
     return JSONResponse(content={'error':"err_invalid_path"}, status_code=403)
 
@@ -240,7 +281,7 @@ async def handle_init(sid):
   # 실행 중에 새로 붙은 화면(새로고침 등)은 지금까지의 출력을 한 번 통째로 받는다.
   # 이후로는 다른 화면과 똑같이 늘어난 부분(record_add)만 받는다
   if ps and ps.returncode is None:
-    await app.sio.emit('update', {'record': record}, to=sid)
+    await app.sio.emit('update', {'record': record_text()}, to=sid)
 
   try:
     with open(codePath, 'r') as f:
@@ -355,8 +396,7 @@ async def llm(enable: str):
 
 @app.sio.on('reset_log')
 async def handle_reset_log(sid):
-  global record
-  record = f'[{datetime.datetime.now()}]: \n\n'
+  record_reset(f'[{datetime.datetime.now()}]: \n\n')
   subprocess.Popen([f'{ENV_PATH}/python3', '/home/pi/openpibo-os/system/network_disp.py'])
 
 
@@ -542,10 +582,10 @@ async def execute(EXEC, codepath):
   # 예전에는 줄마다 전체를 다시 보내서 2000줄이면 39KB 출력에 39MB가 나갔다
   # stderr 는 stdout 에 합친다(STDOUT). 따로 두고 끝에 읽으면 무한 반복 안의 에러가 정지할 때까지 안 보이고,
   # stderr 파이프(64KB)가 차면 학생 프로그램이 거기서 멈췄다. 합치면 찍힌 순서 그대로 나온다
-  global record, ps, ps_pgid
+  global ps, ps_pgid
   async with mutex:
-    record = f'[{datetime.datetime.now()}]: \n\n'
-    await app.sio.emit('update', {'record': record})
+    record_reset(f'[{datetime.datetime.now()}]: \n\n')
+    await app.sio.emit('update', {'record': record_text()})
     files_before = read_directory(PATH)
     if EXEC == 'python3':
       ps = await asyncio.create_subprocess_exec(
@@ -604,19 +644,19 @@ async def execute(EXEC, codepath):
       text = decoder.decode(data)
       if not text:
         continue
-      record += text
+      record_append(text)
       pending.append(text)
       if loop.time() - last_flush >= LOG_FLUSH_SEC:
         await flush()
     text = decoder.decode(b'', final=True)
     if text:
-      record += text
+      record_append(text)
       pending.append(text)
     await flush()
 
     await ps.wait()
     ps = None  # 프로세스가 종료되었으므로 ps를 None으로 설정
-    record += "\n[exit]"
+    record_append("\n[exit]")
     await app.sio.emit('update', {'record_add': "\n[exit]", 'exit': True})
     # 실행 중에 파일이 생기거나 지워졌을 때만 목록을 다시 보낸다 (사진 저장·녹음 등)
     directory_data = read_directory(PATH)

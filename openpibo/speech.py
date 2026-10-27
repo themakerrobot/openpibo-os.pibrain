@@ -14,6 +14,7 @@ Class:
 import json
 import os
 import subprocess
+import time
 import requests
 
 import numpy as np
@@ -68,6 +69,8 @@ Functions:
     :param str voice: ``espeak`` 만 지원합니다
 
     :param str lang: 사용하지 않습니다 (espeak 기본 음성)
+
+    espeak 가 실패하면 ``RuntimeError`` 를 냅니다.
     """
 
     if type(text) is not str:
@@ -76,7 +79,11 @@ Functions:
     if voice != "espeak":
       raise Exception(f'"{voice}" is not supported. use "espeak" or SpeechOnDevice')
 
-    os.system(f'espeak "{text}" -w {filename}')
+    # 셸을 거치지 않는다 — 글자에 따옴표·$() 가 있어도 명령이 되지 않게. '--' 뒤는 옵션으로 읽지 않는다
+    res = subprocess.run(['espeak', '-w', filename, '--', text], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+    if res.returncode != 0:
+      err = res.stderr.decode('utf-8', errors='replace').strip()
+      raise RuntimeError(f'espeak failed ({res.returncode}): {err}')
 
   def stt(self, filename="stream.wav", timeout=5, verbose=True):
     """
@@ -158,6 +165,9 @@ Functions:
     :param str voice: 목소리 종류 (m1~m5/f1~f5)
     :param str lang: 언어 코드 ('na'=자동/기타, 'ko', 'en', 'ja' ...)
     :returns str: 저장된 파일 경로
+
+    ``text`` 가 비어 있거나 공백뿐이면 합성하지 않고 0.1초짜리 조용한 wav 를 저장합니다.
+    바로 뒤에 ``Audio.play(filename)`` 를 불러도 오류 없이 아무 소리도 나지 않습니다.
     """
 
     if not isinstance(text, str):
@@ -171,6 +181,15 @@ Functions:
     if not os.path.exists(voice_path):
       raise FileNotFoundError(f"Voice style not found: {voice_path}")
 
+    out_dir = os.path.dirname(filename)
+    if out_dir and not os.path.exists(out_dir):
+      os.makedirs(out_dir)
+
+    if not text.strip():
+      # 빈 글자는 모델이 길이를 못 낸다(None). 이전 파일이 그대로 재생되지 않게 조용한 소리를 쓴다
+      sf.write(filename, np.zeros(int(self._model.sample_rate * 0.1), dtype=np.float32), self._model.sample_rate)
+      return filename
+
     style = load_voice_style([voice_path])
     wav, duration = self._model(
       text=text,
@@ -179,10 +198,6 @@ Functions:
       total_step=self.total_step,
       speed=self.speed,
     )
-
-    out_dir = os.path.dirname(filename)
-    if out_dir and not os.path.exists(out_dir):
-      os.makedirs(out_dir)
 
     # wav 저장
     w = wav[0, : int(self._model.sample_rate * duration[0].item())]
@@ -426,20 +441,35 @@ Functions:
   def __init__(self):
     pass
 
-  def start_llm(self, port=50020):
+  def start_llm(self, port=50020, timeout=120):
     """
-    LLM 서비스를 시작합니다. (Chat 모드)
+    LLM 서비스를 시작하고, 모델이 다 올라와 대답할 수 있을 때까지 기다립니다. (Chat 모드)
 
     example::
 
       dialog.start_llm()
 
+    :param int port: llama-server 포트
+    :param int timeout: 최대로 기다리는 시간(초)
+    :returns: 준비되면 ``True``, ``timeout`` 안에 준비되지 않으면 ``False``
     """
 
     os.system(f"systemctl start llama-server")
-    print("Connect to http:{Device IP}:50020 for LLM Web-UI")
+    # 모델을 읽는 동안 /health 는 503 이다. 200 이 될 때까지 기다린다
+    end = time.time() + timeout
+    while True:
+      try:
+        if requests.get(f"http://localhost:{port}/health", timeout=2).status_code == 200:
+          print(f"Connect to http:{{Device IP}}:{port} for LLM Web-UI")
+          return True
+      except requests.RequestException:
+        pass
+      if time.time() >= end:
+        print(f"LLM server is not ready after {timeout}s (http://localhost:{port}/health)")
+        return False
+      time.sleep(1)
 
-  def call_llm(self, prompt=None, system_prompt=None, temperature=0.8, max_tokens=100):
+  def call_llm(self, prompt=None, system_prompt=None, temperature=0.8, max_tokens=100, timeout=120):
     """
     LLM 서버(OpenAI 호환 Chat Completions API)를 호출합니다.
 
@@ -448,6 +478,7 @@ Functions:
 
     :param str prompt: 사용자의 입력 메시지.
     :param str system_prompt: 시스템 프롬프트. (없으면 기본값 유지)
+    :param int timeout: 대답을 기다리는 최대 시간(초). 넘으면 예외가 납니다
     :return: 생성된 텍스트 또는 API 응답 전체 JSON.
     """
 
@@ -469,7 +500,7 @@ Functions:
     }
 
     try:
-      response = requests.post(url, json=payload)
+      response = requests.post(url, json=payload, timeout=timeout)
       response.raise_for_status()  # 4xx, 5xx 에러 발생 시 예외 처리
     except requests.RequestException as e:
       raise Exception(f"LLM 서버 호출 실패: {e}")

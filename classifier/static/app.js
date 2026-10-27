@@ -894,6 +894,8 @@ socket.on('connect', () => {
 // 탭이 가려지면 PiBrain 이 그림 보내기를 쉰다(카메라는 켜 둔다). 수업에서 방치된 탭이 공유기 대역을 쓰지 않게(260929)
 document.addEventListener('visibilitychange', () => socket.emit('camera_visible', !document.hidden));
 socket.on('camera_image', showFrame);
+// 카메라를 못 켰을 때(도구가 아직 놓지 않음 등). 다시 켜면 서버가 다시 시도한다
+socket.on('camera_error', (d) => toast(t('cam_fail'), 'warn'));
 PiboUI.watchSocket(socket, {
   banner: () => ({
     text: PiboUI.text('svc_stopped'),

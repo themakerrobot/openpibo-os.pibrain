@@ -105,6 +105,7 @@ const translations = {
   deleted_ok:       { ko: (n) => `"${n}" 지웠어요.`,  en: (n) => `Deleted "${n}".` },
   replace_learn:    { ko: "지금 모은 예시가 지워져요. 불러올까요?", en: "This replaces the examples you have now. Continue?" },
   continue_ok:      { ko: (n) => `"${n}" 의 예시를 불러왔어요.`, en: (n) => `Loaded the examples of "${n}".` },
+  cam_fail:         { ko: "카메라를 켜지 못했어요. 잠시 뒤 다시 켜 보세요.", en: "Could not turn on the camera. Try again in a moment." },
 };
 
 const t = (key, ...args) => {

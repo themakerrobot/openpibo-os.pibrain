@@ -6,6 +6,13 @@ eye_type = {"255,0,0":"빨강", "255,128,0":"주황", "255,255,0":"노랑", "0,2
 motion_type = {"RIGHT":"우회전", "LEFT":"좌회전", "FORWARD":"전진", "BACKWARD":"후진", "BORING":"지루함", "EXCITE":"신남", "SAD":"슬픔", "HAPPY":"기쁨"}
 
 def get_card(data):
+  # 카드 모양(!|...)이 아니거나 깨진 QR 이면 None — 보통 QR 로 돌려준다
+  try:
+    return _get_card(data)
+  except (IndexError, KeyError, ValueError, TypeError):
+    return None
+
+def _get_card(data):
   def decodeQR(code):
     orgData = ''
     for item in code:

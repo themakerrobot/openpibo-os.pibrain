@@ -53,7 +53,7 @@ Functions:
         _chapters = {'0':{'title':'개요', 'content':[]}}
         encode_text = quote(search_text)
         url = f'https://ko.wikipedia.org/wiki/{encode_text}'
-        resp = requests.get(url, headers={'User-Agent' : 'Mozilla/5.0'})
+        resp = requests.get(url, headers={'User-Agent' : 'Mozilla/5.0'}, timeout=10)
         soup = BeautifulSoup(resp.content, 'html.parser')
         total_content = soup.find('div', {'class': 'mw-parser-output'})
 
@@ -97,7 +97,7 @@ Functions:
 
         :returns: search 함수의 반환 값의 content만 추출한 리스트를 반환합니다.
 
-            대부분의 경우 '0'번 항목에 개요를 표시하고, 검색된 내용이 없을 경우 None을 반환합니다.
+            대부분의 경우 '0'번 항목에 개요를 표시하고, 검색된 내용이 없을 경우 빈 리스트를 반환합니다.
 
             example::
 
@@ -106,10 +106,12 @@ Functions:
                     ...
                 ]
                 or
-                None
+                []
         """
 
         res = self.search(search_text)
+        if not res:
+            return []
         return [item.strip().replace('\n', '') for _, v in res.items() if len(v['content']) > 0 for item in v['content'] if item != '\n']
 
 class Weather:
@@ -204,7 +206,7 @@ Functions:
         _after_tomorrow = {}
 
         url = f'https://www.weather.go.kr/w/weather/forecast/short-term.do?stnId={region}'
-        resp = requests.get(url, headers={'User-Agent' : 'Mozilla/5.0'})
+        resp = requests.get(url, headers={'User-Agent' : 'Mozilla/5.0'}, timeout=10)
         soup = BeautifulSoup(resp.content, 'html.parser')
         forecasts = soup.find('div', {'class': 'cmp-view-content'}).text
         forecasts = forecasts.split('□')[1].split('○')
@@ -367,7 +369,7 @@ Functions:
 
         _articles = []
         url = f'https://fs.jtbc.joins.com//RSS/{topic}.xml'
-        res = requests.get(url, headers={'User-Agent' : 'Mozilla/5.0'})
+        res = requests.get(url, headers={'User-Agent' : 'Mozilla/5.0'}, timeout=10)
         soup = BeautifulSoup(res.content, 'xml')
         items = soup.findAll('item')
         for item in items:

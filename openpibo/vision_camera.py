@@ -54,9 +54,23 @@ Functions:
   def __init__(self, cam=0, width=None, height=None):
     """
     Camera 클래스를 초기화합니다.
+
+    :param int cam: 사용하지 않습니다 (카메라는 하나)
+    :param int width: ``read()`` 가 돌려줄 그림의 가로(px). 없으면 480
+    :param int height: ``read()`` 가 돌려줄 그림의 세로(px). 없으면 640
+
+      하나만 주면 다른 쪽은 기본 비율(480:640)로 맞춥니다.
     """
 
     self.width, self.height = 480, 640
+    if width is not None or height is not None:
+      w = self._size(width, 'width') if width is not None else None
+      h = self._size(height, 'height') if height is not None else None
+      if w is None:
+        w = max(1, int(round(h * self.width / self.height)))
+      if h is None:
+        h = max(1, int(round(w * self.height / self.width)))
+      self.width, self.height = w, h
     cv2.setUseOptimized(True)
     cv2.setNumThreads(cv2.getNumberOfCPUs())
     cap = Picamera2()
@@ -74,6 +88,18 @@ Functions:
     cap.start()
     self.cap = cap
 
+
+  @staticmethod
+  def _size(v, name):
+    if type(v) is bool:
+      raise ValueError(f'"{name}" must be a positive integer')
+    try:
+      n = int(round(float(v)))
+    except (TypeError, ValueError, OverflowError):
+      raise ValueError(f'"{name}" must be a positive integer')
+    if n <= 0:
+      raise ValueError(f'"{name}" must be a positive integer')
+    return n
 
   def release(self):
     if self.cap is not None:
@@ -158,7 +184,7 @@ Functions:
 
     :param numpy.ndarray img: 이미지 객체
     :param int degree: 회전할 각도
-    :param float ratio: 축소 또는 확대할 비율
+    :param float ratio: 축소 또는 확대할 비율 (0보다 큰 숫자. 1.0 보다 작으면 축소, 크면 확대)
     :returns: 회전한 ``numpy.ndarray`` 이미지 객체
     """
 
@@ -168,8 +194,8 @@ Functions:
     if type(degree) is not int or abs(degree) >= 360:
       raise Exception(f'{degree} must be integer type and -360~360')
 
-    if type(ratio) is not float or ratio >= 1.0:
-      raise Exception(f'"{ratio} must be float type and 0~1.0')
+    if type(ratio) not in (int, float) or ratio <= 0:
+      raise Exception(f'"{ratio}" must be a number greater than 0')
 
     rows, cols = img.shape[0:2]
     op = cv2.getRotationMatrix2D((cols/2,rows/2), degree, ratio)

@@ -304,6 +304,18 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">RPi.GPIO</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">GPIO</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">rpi_ws281x</span><span class="w"> </span><span class="kn">import</span> <span class="n">PixelStrip</span><span class="p">,</span> <span class="n">Color</span>
 
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_field</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+  <span class="c1"># MCU 응답 '15:85' · '40:person-touch--' 에서 값을 꺼낸다.</span>
+  <span class="c1"># 응답이 비었거나(아직 못 받음·시간 초과) 모양이 다르면 '' — 감지 안 된 칸과 같은 값</span>
+  <span class="n">parts</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">':'</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s1">''</span>
+  <span class="k">if</span> <span class="n">idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+  <span class="n">items</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'-'</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">items</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">if</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="k">else</span> <span class="s1">''</span>
+
 <div class="viewcode-block" id="Device">
 <a class="viewcode-back" href="../../libraries/device.html#openpibo.device.Device">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Device</span><span class="p">:</span>
@@ -695,11 +707,10 @@
 
 <span class="sd">    :param v: 값만 가져올지 메시지 전체를 가져올지 선택</span>
 
-<span class="sd">    :returns: 배터리 정보 응답</span>
+<span class="sd">    :returns: 배터리 정보 응답. 응답이 없으면 ``v=True`` 일 때 빈 문자열 ``''``</span>
 <span class="sd">    """</span>
 
-
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_raw</span><span class="p">(</span><span class="s1">'#15:!'</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="kc">False</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_raw</span><span class="p">(</span><span class="s1">'#15:!'</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">':'</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_raw</span><span class="p">(</span><span class="s1">'#15:!'</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="kc">False</span> <span class="k">else</span> <span class="n">_field</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">send_raw</span><span class="p">(</span><span class="s1">'#15:!'</span><span class="p">))</span></div>
 
   
 <div class="viewcode-block" id="Device.get_dc">
@@ -714,10 +725,10 @@
 
 <span class="sd">    :param v: 값만 가져올지 메시지 전체를 가져올지 선택</span>
 
-<span class="sd">    :returns: DC커넥터 연결 정보 응답</span>
+<span class="sd">    :returns: DC커넥터 연결 정보 응답. 응답이 없으면 ``v=True`` 일 때 빈 문자열 ``''``</span>
 <span class="sd">    """</span>
 
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_raw</span><span class="p">(</span><span class="s1">'#14:!'</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="kc">False</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_raw</span><span class="p">(</span><span class="s1">'#14:!'</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">':'</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_raw</span><span class="p">(</span><span class="s1">'#14:!'</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="kc">False</span> <span class="k">else</span> <span class="n">_field</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">send_raw</span><span class="p">(</span><span class="s1">'#14:!'</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="Device.get_system">
@@ -734,10 +745,10 @@
 
 <span class="sd">    :param name: 가져올 값 선택 ('pir'|'touch'|'dc'|'button'|'all')</span>
 
-<span class="sd">    :returns: 시스템 메시지 정보 응답 (pir-touch-dc-button) </span>
+<span class="sd">    :returns: 시스템 메시지 정보 응답 (pir-touch-dc-button). 응답이 없으면 ``v=True`` 일 때 빈 문자열 ``''``</span>
 <span class="sd">    """</span>
 
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_raw</span><span class="p">(</span><span class="s1">'#40:!'</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="kc">False</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_raw</span><span class="p">(</span><span class="s1">'#40:!'</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">':'</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_raw</span><span class="p">(</span><span class="s1">'#40:!'</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="kc">False</span> <span class="k">else</span> <span class="n">_field</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">send_raw</span><span class="p">(</span><span class="s1">'#40:!'</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="Device.get_pir">
@@ -750,10 +761,10 @@
 
 <span class="sd">      device.get_pir()</span>
 
-<span class="sd">    :returns: 시스템 메시지 정보 응답에서 pir 값 추출</span>
+<span class="sd">    :returns: 시스템 메시지 정보 응답에서 pir 값 추출. 감지가 없거나 응답이 없으면 빈 문자열 ``''``</span>
 <span class="sd">    """</span>
 
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_raw</span><span class="p">(</span><span class="s1">'#40:!'</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">':'</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'-'</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="n">_field</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">send_raw</span><span class="p">(</span><span class="s1">'#40:!'</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Device.get_touch">
@@ -766,10 +777,10 @@
 
 <span class="sd">      device.get_touch()</span>
 
-<span class="sd">    :returns: 시스템 메시지 정보 응답에서 touch 값 추출</span>
+<span class="sd">    :returns: 시스템 메시지 정보 응답에서 touch 값 추출. 감지가 없거나 응답이 없으면 빈 문자열 ``''``</span>
 <span class="sd">    """</span>
 
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_raw</span><span class="p">(</span><span class="s1">'#40:!'</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">':'</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'-'</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="n">_field</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">send_raw</span><span class="p">(</span><span class="s1">'#40:!'</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Device.get_button">
@@ -782,10 +793,10 @@
 
 <span class="sd">      device.get_button()</span>
 
-<span class="sd">    :returns: 시스템 메시지 정보 응답에서 button 값 추출</span>
+<span class="sd">    :returns: 시스템 메시지 정보 응답에서 button 값 추출. 감지가 없거나 응답이 없으면 빈 문자열 ``''``</span>
 <span class="sd">    """</span>
 
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_raw</span><span class="p">(</span><span class="s1">'#40:!'</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">':'</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'-'</span><span class="p">)[</span><span class="mi">3</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="n">_field</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">send_raw</span><span class="p">(</span><span class="s1">'#40:!'</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span></div>
 </div>
 
 
@@ -834,10 +845,16 @@
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    버튼 눌림을 체크 합니다.</span>
 
-<span class="sd">    :param n: 버튼 번호 (1 ~ 4)</span>
+<span class="sd">    :param n: 버튼 번호 (1 ~ 4). 범위 밖이면 ``ValueError``</span>
 <span class="sd">    :returns: ``on`` 또는 ``off`` </span>
 <span class="sd">    """</span>
-    
+
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">" must be 1~4'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buttons</span><span class="p">):</span>   <span class="c1"># 0 이면 [-1] 로 4번 버튼이 읽혔다</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">" must be 1~</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buttons</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
     <span class="n">button</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">buttons</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="k">return</span> <span class="s2">"on"</span> <span class="k">if</span> <span class="n">GPIO</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="n">button</span><span class="p">)</span> <span class="o">==</span> <span class="n">GPIO</span><span class="o">.</span><span class="n">LOW</span> <span class="k">else</span> <span class="s2">"off"</span></div>
 

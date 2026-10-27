@@ -443,7 +443,10 @@ const translations = {
   chat_err_server:  { ko: "잠깐 문제가 생겼어요. 한 번만 다시 말해 줄래요?", en: "Something went wrong. Could you say that again?" },
   chat_err_busy:    { ko: "앞의 대답을 만드는 중이에요. 잠시 뒤에 보내 주세요", en: "Still answering the last message. Please wait a moment." },
   chat_err_not_ready: { ko: "아직 준비 중이에요. 잠시 뒤에 보내 주세요", en: "Still getting ready. Please wait a moment." },
-  chat_err_empty:   { ko: "보낼 말이 없어요", en: "Nothing to send." }
+  chat_err_empty:   { ko: "보낼 말이 없어요", en: "Nothing to send." },
+  wifi_err_ssid:    { ko: "WiFi 이름(SSID)을 적어 주세요. 32바이트(영문 32자, 한글 10자)까지 됩니다", en: "Enter the WiFi name (SSID), up to 32 bytes." },
+  wifi_err_psk:     { ko: "비밀번호는 8~63자로 적어 주세요", en: "The password must be 8 to 63 characters." },
+  wifi_err_connect: { ko: "WiFi에 연결하지 못했어요. 이름과 비밀번호를 확인해 주세요", en: "Could not connect to the WiFi. Check the name and password." }
 };
 
 // 키 → 현재 언어 문자열. 모르는 키(일반 문자열)는 그대로 반환.
