@@ -936,10 +936,10 @@ Blockly.Python.forBlock['utils_current_time'] = function(block) {
   return ["time.strftime('%Y-%m-%d %H:%M:%S')", Blockly.Python.ORDER_ATOMIC];
 }
 Blockly.Python.forBlock['utils_include'] = function(block) {
-  const a = Blockly.Python.valueToCode(block, 'a', Blockly.Python.ORDER_ATOMIC);
-  const b = Blockly.Python.valueToCode(block, 'b', Blockly.Python.ORDER_ATOMIC);
+  const a = Blockly.Python.valueToCode(block, 'a', Blockly.Python.ORDER_RELATIONAL);
+  const b = Blockly.Python.valueToCode(block, 'b', Blockly.Python.ORDER_RELATIONAL);
 
-  return [`${a} in ${b}`, Blockly.Python.ORDER_ATOMIC];
+  return [`${a} in ${b}`, Blockly.Python.ORDER_RELATIONAL];
 }
 Blockly.Python.forBlock['utils_dict_get'] = function(block) {
   const dictionary = Blockly.Python.valueToCode(block, 'dictionary', Blockly.Python.ORDER_ATOMIC);

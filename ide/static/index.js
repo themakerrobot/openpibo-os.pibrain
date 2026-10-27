@@ -655,7 +655,7 @@ socket.on("update_file_manager", (d) => {
               }
             })
           ,
-          $("<td style='width:15px;text-align:center'>").append(data[i].type == "" || data[i].protect == true ? "" : $("<a>").attr("href", "/download?filename=" + encodeURIComponent(data[i].name)).append("<i class='fa-solid fa-circle-down'></i>"))
+          $("<td style='width:15px;text-align:center'>").append(data[i].type == "" || data[i].protect == true ? "" : $("<a>").attr("href", "/download?filename=" + encodeURIComponent(data[i].name)).attr("download", "").append("<i class='fa-solid fa-circle-down'></i>"))
             //$("<td style='width:15px;text-align:center'>").append(["", "folder"].includes(data[i].type) || data[i].protect==true?"":`<a href='/download?filename=${data[i].name}'><i class='fa-solid fa-circle-down'></i></a>`)
             .hover(
               function () { $(this).animate({ opacity: "0.3" }, 100); },

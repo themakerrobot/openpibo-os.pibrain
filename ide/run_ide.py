@@ -162,7 +162,7 @@ async def download_item(filename: str):
 
   # 존재 여부 체크
   if not os.path.exists(full_path):
-    raise JSONResponse(content={'error':"err_not_found"}, status_code=404)
+    return JSONResponse(content={'error':"err_not_found"}, status_code=404)
 
   # 파일인 경우: 그대로 다운로드
   if os.path.isfile(full_path):
@@ -183,7 +183,7 @@ async def download_item(filename: str):
     return FileResponse(zip_path, media_type="application/zip", filename="download.zip")
     
   else:
-    raise JSONResponse(content={'error':"err_invalid_path"}, status_code=403)
+    return JSONResponse(content={'error':"err_invalid_path"}, status_code=403)
 
 @app.post('/upload')
 async def upload_file(files: List[UploadFile] = File(...)):
@@ -232,10 +232,10 @@ async def handle_init(sid):
   global codeText, codePath
   try:
     system_info = await run_blocking(get_system_info)
-    await app.sio.emit('system', system_info)
+    await app.sio.emit('system', system_info, to=sid)
   except Exception as err:
     print(err)
-    await app.sio.emit('update', {'dialog': 'err_init_sysfile'})
+    await app.sio.emit('update', {'dialog': 'err_init_sysfile'}, to=sid)
 
   # 실행 중에 새로 붙은 화면(새로고침 등)은 지금까지의 출력을 한 번 통째로 받는다.
   # 이후로는 다른 화면과 똑같이 늘어난 부분(record_add)만 받는다
@@ -247,7 +247,7 @@ async def handle_init(sid):
       codeText = f.read()
   except Exception as err:
     codeText = ''
-  await app.sio.emit('init', {'codepath': codePath, 'codetext': codeText, 'path': PATH})
+  await app.sio.emit('init', {'codepath': codePath, 'codetext': codeText, 'path': PATH}, to=sid)
 
 # 하드웨어 검수 페이지(test/test.py, 50050번). systemd 유닛이 아니라 IDE 가 직접
 # 띄운다. 유닛 파일은 리포 밖이라 이미지 작업이 되므로, 리포 안에서 끝나게 했다.
@@ -388,9 +388,9 @@ async def handle_view(sid, p):
     with open(p, 'rb') as f:
       data = f.read()
       encoded_image = base64.b64encode(data).decode('utf-8')
-      await app.sio.emit('update', {'image': encoded_image, 'filepath': p})
+      await app.sio.emit('update', {'image': encoded_image, 'filepath': p}, to=sid)
   except Exception as err:
-    await app.sio.emit('update', {'dialog': 'err_view', 'detail': str(err)})
+    await app.sio.emit('update', {'dialog': 'err_view', 'detail': str(err)}, to=sid)
 
 
 @app.sio.on('play')
@@ -399,31 +399,31 @@ async def handle_play(sid, p):
     with open(p, 'rb') as f:
       data = f.read()
       encoded_audio = base64.b64encode(data).decode('utf-8')
-      await app.sio.emit('update', {'audio': encoded_audio, 'filepath': p})
+      await app.sio.emit('update', {'audio': encoded_audio, 'filepath': p}, to=sid)
   except Exception as err:
-    await app.sio.emit('update', {'dialog': 'err_play', 'detail': str(err)})
+    await app.sio.emit('update', {'dialog': 'err_play', 'detail': str(err)}, to=sid)
 
 
 @app.sio.on('load')
 async def handle_load(sid, p):
   global codeText, codePath
   if is_protect(p) :
-    await app.sio.emit('update', {'dialog': 'err_load_protected'})
+    await app.sio.emit('update', {'dialog': 'err_load_protected'}, to=sid)
     return
   try:
     with open(p, 'r') as f:
       codeText = f.read()
       codePath = p
-      await app.sio.emit('update', {'code': codeText, 'filepath': codePath})
+      await app.sio.emit('update', {'code': codeText, 'filepath': codePath}, to=sid)
   except Exception as err:
-    await app.sio.emit('update', {'dialog': 'err_load', 'detail': str(err)})
+    await app.sio.emit('update', {'dialog': 'err_load', 'detail': str(err)}, to=sid)
 
 
 @app.sio.on('delete')
 async def handle_delete(sid, d):
   global codeText, codePath
   if is_protect(d):
-    await app.sio.emit('update', {'dialog': 'err_delete_protected'})
+    await app.sio.emit('update', {'dialog': 'err_delete_protected'}, to=sid)
     return
   if d == codePath:
     codePath = ""
@@ -435,7 +435,7 @@ async def handle_delete(sid, d):
       os.remove(d)
   except Exception as err:
     print(err)
-    await app.sio.emit('update', {'dialog': 'err_delete_parse'})
+    await app.sio.emit('update', {'dialog': 'err_delete_parse'}, to=sid)
     return
   directory_data = read_directory(PATH)
   await app.sio.emit('update_file_manager', {'data': directory_data})
@@ -447,12 +447,12 @@ async def handle_rename(sid, d):
   oldpath = d['oldpath']
   newpath = d['newpath']
   if is_protect(oldpath) or is_protect(newpath):
-    await app.sio.emit('update', {'dialog': 'err_rename_protected'})
+    await app.sio.emit('update', {'dialog': 'err_rename_protected'}, to=sid)
     return
   try:
     os.rename(oldpath, newpath)
   except Exception as err:
-    await app.sio.emit('update', {'dialog': 'err_rename_parse'})
+    await app.sio.emit('update', {'dialog': 'err_rename_parse'}, to=sid)
     return
   directory_data = read_directory(PATH)
   await app.sio.emit('update_file_manager', {'data': directory_data})
@@ -461,9 +461,9 @@ async def handle_rename(sid, d):
       with open(newpath, 'r') as f:
         codeText = f.read()
         codePath = newpath
-        await app.sio.emit('update', {'code': codeText, 'filepath': codePath})
+        await app.sio.emit('update', {'code': codeText, 'filepath': codePath}, to=sid)
     except Exception as err:
-      await app.sio.emit('update', {'dialog': 'err_load', 'detail': str(err)})
+      await app.sio.emit('update', {'dialog': 'err_load', 'detail': str(err)}, to=sid)
 
 @app.sio.on('restore')
 async def handle_restore(sid):
@@ -484,7 +484,7 @@ async def handle_restore(sid):
 async def handle_add_file(sid, p):
   global codeText, codePath
   if is_protect(PATH):
-    await app.sio.emit('update', {'dialog': 'err_create_protected'})
+    await app.sio.emit('update', {'dialog': 'err_create_protected'}, to=sid)
     return
   if not os.path.exists(p):
     try:
@@ -494,20 +494,20 @@ async def handle_add_file(sid, p):
       directory_data = read_directory(PATH)
       await app.sio.emit('update_file_manager', {'data': directory_data})
     except Exception as err:
-      await app.sio.emit('update', {'dialog': 'err_create', 'detail': str(err)})
+      await app.sio.emit('update', {'dialog': 'err_create', 'detail': str(err)}, to=sid)
       return
   codePath = p
   try:
     with open(p, 'r') as f:
       codeText = f.read()
-      await app.sio.emit('update', {'code': codeText, 'filepath': p})
+      await app.sio.emit('update', {'code': codeText, 'filepath': p}, to=sid)
   except Exception as err:
-    await app.sio.emit('update', {'dialog': 'err_load', 'detail': str(err)})
+    await app.sio.emit('update', {'dialog': 'err_load', 'detail': str(err)}, to=sid)
 
 @app.sio.on('add_directory')
 async def handle_add_directory(sid, p):
   if is_protect(PATH):
-    await app.sio.emit('update', {'dialog': 'err_mkdir_protected'})
+    await app.sio.emit('update', {'dialog': 'err_mkdir_protected'}, to=sid)
     return
   try:
     os.makedirs(p, exist_ok=True)
@@ -515,14 +515,14 @@ async def handle_add_directory(sid, p):
     directory_data = read_directory(PATH)
     await app.sio.emit('update_file_manager', {'data': directory_data})
   except Exception as err:
-    await app.sio.emit('update', {'dialog': 'err_mkdir', 'detail': str(err)})
+    await app.sio.emit('update', {'dialog': 'err_mkdir', 'detail': str(err)}, to=sid)
 
 @app.sio.on('save')
 async def handle_save(sid, d):
   global codeText, codePath
   try:
     if is_protect(d['codepath']) or is_protect(os.path.dirname(d['codepath'])):
-      await app.sio.emit('update', {'dialog': 'err_save_protected'})
+      await app.sio.emit('update', {'dialog': 'err_save_protected'}, to=sid)
       return
     codeText = d['codetext']
     codePath = d['codepath']
@@ -531,9 +531,9 @@ async def handle_save(sid, d):
       f.write(codeText)
     shutil.chown(os.path.dirname(codePath), user='pi', group='pi')
     # 다 썼다는 확인. 클라이언트는 이걸 받아야 미저장 표시를 지운다
-    await app.sio.emit('update', {'saved': codePath})
+    await app.sio.emit('update', {'saved': codePath}, to=sid)
   except Exception as err:
-    await app.sio.emit('update', {'dialog': 'err_save', 'detail': str(err)})
+    await app.sio.emit('update', {'dialog': 'err_save', 'detail': str(err)}, to=sid)
 
 async def execute(EXEC, codepath):
   # 실행 로그 프로토콜
