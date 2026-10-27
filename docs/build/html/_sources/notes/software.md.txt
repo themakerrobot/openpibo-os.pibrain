@@ -1,7 +1,7 @@
 # 소프트웨어
 
 PiBrain 의 기능은 **openpibo** 파이썬 패키지로 씁니다(파이보와 같은 패키지이고, PiBrain 전용 클래스가 따로 있습니다). 블록도 이 패키지를 부르는 파이썬 코드로 바뀌어 실행됩니다
-([파이썬 코드] 버튼으로 볼 수 있습니다). 소스는 [GitHub](https://github.com/themakerrobot/openpibo-os.pibrain) 에 있습니다(AGPL-3.0).
+([파이썬 코드] 버튼으로 볼 수 있습니다). 소스는 [GitHub](https://github.com/themakerrobot/openpibo-os.pibrain) 에 있습니다(Apache-2.0).
 
 ## 패키지 구성
 

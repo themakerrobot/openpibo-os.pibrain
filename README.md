@@ -21,4 +21,4 @@ piBo 와 화면·분류기·라이브러리를 같이 씁니다([openpibo-os.pib
 
 ## 라이선스
 
-[GNU AGPL-3.0](LICENSE). 포함된 다른 소프트웨어·모델의 라이선스는 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)에 있습니다.
+[Apache-2.0](LICENSE). 포함된 다른 소프트웨어·모델의 라이선스는 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)에 있습니다.

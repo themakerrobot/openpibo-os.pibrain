@@ -213,15 +213,16 @@ IDE [대화] 가 llama-server 기본 웹 화면 대신 대화 웹(`chat/run_chat
 - 문구는 IDE `ko2en.js` 끝의 `chat_*` 키를 대화 화면이 같이 읽는다(영문판 델타 안 늘림)
 - 기기의 `llama-server.service`·모델 전환은 이미지 작업(파이보 CLAUDE.md '대화 웹' 의 '기기 서비스 전환'). **실기기로는 아직 안 봤다**
 
-## 라이선스 (260930)
+## 라이선스 (261027 — Apache-2.0)
 
-**리포 전체가 AGPL-3.0 이다**(`LICENSE`, 사용자 결정). 이유·파일은 Pibo 와 같다 — 자세한 건 Pibo CLAUDE.md '라이선스'.
-261026 에 사물 인식을 easydetect ed(Apache-2.0)로 바꾸고 예전 모델(Ultralytics, AGPL)의 코드·파일·고지를 지웠지만 리포 라이선스는 그대로 둔다.
+**리포 전체가 Apache-2.0 이다**(`LICENSE`, 사용자 결정 261027v6). 260930~261027v5 는 AGPL-3.0 이었다(이유였던 Ultralytics 모델을 261026 에 지움).
+이미 나간 태그는 AGPL 그대로. 자세한 건 Pibo CLAUDE.md '라이선스'.
 
-- `LICENSE`(AGPL-3.0 전문, 고치지 말 것) · `THIRD_PARTY_NOTICES.md`(vendor·모델 표 — **넣거나 바꾸면 같이 고칠 것**) ·
+- `LICENSE`(Apache-2.0 원문, 고치지 말 것) · `THIRD_PARTY_NOTICES.md`(vendor·모델 표 — **넣거나 바꾸면 같이 고칠 것**)
   (`.model/object/` 의 모델 고지는 THIRD_PARTY_NOTICES 표 — 따로 복사할 고지 파일은 없다)
-- IDE [더보기] → **소스 코드 · 라이선스 (AGPL-3.0)**(`#source_bt`, AGPL §13). 링크는 기기 버전의 마지막 `_` 뒤
+- IDE [더보기] → **소스 코드 · 라이선스 (Apache-2.0)**(`#source_bt`). 링크는 기기 버전의 마지막 `_` 뒤
   (`YYMMDDvN` / `YYMMDDvN-gl`)를 태그로 본 GitHub 트리. 형식이 다르면 리포 첫 화면
+- GPL·AGPL 코드는 넣지 말 것(리포 전체가 GPL 이 된다)
 - 비상업·연구 전용 라이선스의 코드·모델은 넣지 말 것
 
 ---
