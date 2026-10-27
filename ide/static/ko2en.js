@@ -176,8 +176,8 @@ const translations = {
   err_mkdir:  { ko: (d) => `폴더를 만들지 못했어요.\n${d}`,    en: (d) => `Could not create the folder.\n${d}` },
   err_save:   { ko: (d) => `저장하지 못했어요.\n${d}`,         en: (d) => `Could not save.\n${d}` },
   err_run:    { ko: (d) => `실행하지 못했어요.\n${d}`,         en: (d) => `Could not run.\n${d}` },
-  // 260930 — AGPL-3.0 §13: 네트워크로 쓰는 사람에게 소스 위치를 알린다
-  v2_source:  { ko: "소스 코드 · 라이선스 (AGPL-3.0)", en: "Source code · License (AGPL-3.0)" },
+  // 소스 위치와 라이선스 안내(261027 에 AGPL-3.0 → Apache-2.0)
+  v2_source:  { ko: "소스 코드 · 라이선스 (Apache-2.0)", en: "Source code · License (Apache-2.0)" },
   // 260930 — 상태 칸: 켜진 시간 단위(전엔 늘 'N hours'), 이름표·툴팁
   v2_uptime:  { ko: (h, m) => h ? `${h}시간 ${m}분` : `${m}분`, en: (h, m) => h ? `${h} h ${m} min` : `${m} min` },
   v2_mem:     { ko: "메모리", en: "RAM" },

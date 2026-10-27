@@ -1,7 +1,7 @@
 # Software
 
 PiBrain's features are used through the **openpibo** Python package (the same package as piBo, with its own classes for PiBrain). Blocks also turn into
-Python code that calls this package (see it with the [Python code] button). The source is on [GitHub](https://github.com/themakerrobot/openpibo-os.pibrain) (AGPL-3.0).
+Python code that calls this package (see it with the [Python code] button). The source is on [GitHub](https://github.com/themakerrobot/openpibo-os.pibrain) (Apache-2.0).
 
 ## Package layout
 
