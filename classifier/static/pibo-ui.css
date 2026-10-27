@@ -1449,8 +1449,20 @@ body.pb-v2 .s-status[data-kind="err"] { color: var(--v2-red-ink); }
 body.pb-v2 .s-status[data-kind="load"] { color: var(--v2-accent-ink); font-weight: var(--fw-b); }
 body.pb-v2 #s_tts_bt { width: auto !important; min-width: 110px; background: var(--v2-dark) !important; color: var(--v2-on-dark); border-color: transparent; box-shadow: var(--v2-btn-sh); font-weight: 700; }
 body.pb-v2 #s_tts_bt:hover { background: var(--v2-dark-hov) !important; }
-body.pb-v2 #mic_bt { background: var(--v2-dark) !important; color: var(--v2-on-dark); border-color: transparent; box-shadow: var(--v2-btn-sh); font-weight: 700; }
-body.pb-v2 #mic_bt:hover { background: var(--v2-dark-hov) !important; }
+/* 듣기 카드(261027): 꽉 찬 버튼은 [말해 보기] 하나, [녹음] 은 옅은 파랑(카드마다 꽉 찬 버튼 하나) */
+body.pb-v2 #stt_bt { min-width: 120px; height: var(--ctl-md); padding: 0 14px; background: var(--v2-dark) !important; color: var(--v2-on-dark); border-color: transparent; box-shadow: var(--v2-btn-sh); font-weight: 700; }
+body.pb-v2 #stt_bt:hover { background: var(--v2-dark-hov) !important; }
+body.pb-v2 #stt_bt > i { color: inherit; }
+body.pb-v2 #stt_bt:disabled, body.pb-v2 #mic_bt:disabled { opacity: .5; cursor: default; }
+body.pb-v2 #mic_bt { background: var(--v2-tint) !important; color: var(--v2-tint-ink); border-color: transparent; font-weight: 700; }
+body.pb-v2 #mic_bt:hover { background: var(--v2-tint-hov) !important; }
+body.pb-v2 .stt-row { gap: 8px; align-items: center; }
+body.pb-v2 .stt-row .s-status { margin: 0; }
+body.pb-v2 #stt_to_tts_bt { height: var(--ctl-md); padding: 0 14px; }
+body.pb-v2 .stt-result { min-height: 64px; margin: 0 0 8px; padding: 12px 14px; border-radius: var(--r-ctl);
+  background: var(--v2-sunken); color: var(--v2-ink); font-size: var(--fs-lg); line-height: 1.5; white-space: pre-wrap; overflow-wrap: break-word; }
+body.pb-v2 .stt-result[data-empty] { color: var(--v2-ink-3); font-size: var(--fs-sm); }
+body.pb-v2 .s-rec-sub { margin: 8px 0 8px; padding-top: 16px; border-top: 1px solid var(--v2-line); }
 body.pb-v2 #mic_bt > i, body.pb-v2 #s_tts_bt > i, body.pb-v2 #add_motion_bt > i { color: inherit; }
 body.pb-v2 .record-row { gap: 8px; align-items: center; }
 body.pb-v2 .record-row #mic_time_val { width: 72px; text-align: right; }
