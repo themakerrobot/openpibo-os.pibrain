@@ -95,12 +95,14 @@ button, input, textarea, select { font: inherit; color: inherit; }
 
 .tl-main { flex: 1 1 auto; min-width: 0; overflow-y: auto; padding: var(--sp-4); background: var(--c-bg); }
 .tab { display: none; }
-/* 본문 폭: 파이보 도구와 같게 가운데 최대 1180px · 바깥 16 · 카드 사이 12 */
+/* 본문 폭: 파이보 도구와 같게 가운데 · 바깥 16 · 카드 사이 12. 폭은 탭마다 — [카메라] 최대 1600px(화면 칸이 커진다), 나머지 1180px
+   (파이보 도구: [동작] 화면 전체 · [카메라] 1600 · [음성] 1180, 261027v5) */
 .tab.active {
   display: grid; gap: var(--sp-3); align-items: start;
   grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
   max-width: 1180px; margin: 0 auto;   /* 넓은 화면에서 카드가 왼쪽으로 쏠리지 않게 가운데로 */
 }
+#tab-camera.active { max-width: 1600px; }
 
 /* ── 카드 ────────────────────────────────────────────────────────────── */
 .card {
@@ -206,6 +208,10 @@ button, input, textarea, select { font: inherit; color: inherit; }
 /* PiBrain 카메라·LCD 는 세로 3:4(480x640 · 240x320). 칸도 세로 3:4 로 두고 사진은 비율 그대로 담는다(260930).
    aspect-ratio 대신 높이 0 + padding-top(폭 min(100%, 360px) 의 4/3 = min(133.33%, 480px)) */
 .cam-stage { position: relative; width: min(100%, 360px); height: 0; padding-top: min(133.333%, 480px); margin: 0 auto; }
+/* 넓고 높은 화면은 카메라 칸을 450×600 으로(세로 카메라 3:4). 1366×768 같은 화면은 그대로 360×480 */
+@media (min-width: 1400px) and (min-height: 860px) {
+  .cam-stage { width: min(100%, 450px); padding-top: min(133.333%, 600px); }
+}
 #cam-wrap { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 #cam-img { display: block; width: 100%; height: 100%; object-fit: contain; }
 .cam-stage + .btn-row { justify-content: center; }
@@ -213,6 +219,8 @@ button, input, textarea, select { font: inherit; color: inherit; }
   padding: var(--sp-4); text-align: center; color: var(--v2-stage-ink); font-size: var(--fs-sm); line-height: 1.5; }
 #cam-ph::before { content: "\f030"; font: var(--fa-font-solid, 900 1em "Font Awesome 6 Free"); font-size: 26px; opacity: .8; }
 .vision-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(86px, 1fr)); gap: 8px; }
+/* 넓은 화면은 5칸 고정(파이보 도구 비전 타일과 같다) — auto-fill 이면 1600 폭에서 한 줄에 8~9칸이 된다 */
+@media (min-width: 1200px) { .vision-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
 .vbtn, .voice-btn {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
   min-height: 64px; padding: 8px 4px; border: 0; border-radius: var(--r-ctl);
