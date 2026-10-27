@@ -833,7 +833,7 @@ async function uploadFiles(fileList) {
         await alert_popup(translations['file_ok'][lang]);
       } else {
         const detail = (xhr.responseJSON && (xhr.responseJSON.error || xhr.responseJSON.result)) || "";
-        await alert_popup(`${translations['file_error'][lang]}\n >> ${t(detail)}`);
+        await alert_popup(detail ? `${t('file_error')}\n${t(detail)}` : t('file_error'));
       }
     });
 }
@@ -1170,7 +1170,7 @@ $(document).keydown(async (evt) => {
     // --- Function to update form fields based on selected network ---
     function updateFormForNetwork(ssid, securityType) {
         ssidInput.val(ssid);
-        securityTypeDisplay.text(securityType || 'Unknown'); // Display type
+        securityTypeDisplay.text(securityType || t('wifi_sec_unknown')); // Display type
         securityTypeHidden.val(securityType || ''); // Store type if needed
 
         // Reset fields and hide them initially
@@ -1179,7 +1179,6 @@ $(document).keydown(async (evt) => {
         identityFieldDiv.addClass('hidden');
         passwordFieldDiv.addClass('hidden');
         ssidInput.prop('readonly', true); // SSID is usually read-only when selected from list
-        connectionFormTitle.find('[data-key]').attr('data-key', 'enter_network_info'); // Reset title key
 
         // Show/hide fields based on security type
         if (!securityType || securityType.toLowerCase() === 'none') {
@@ -1220,15 +1219,9 @@ $(document).keydown(async (evt) => {
                     // Skip invalid SSIDs
                     if (network.essid.length > 50 || network.essid.includes('\x00')) return;
 
-                    // Determine icons (replace with actual icon classes/HTML)
-                    let signalIcon = '📶'; // Placeholder
-                    let quality = parseInt(network.signal_quality, 10);
-                    // Basic signal strength icon logic (example)
-                    if (quality < 30) signalIcon = '📶'; // Low
-                    else if (quality < 60) signalIcon = '📶'; // Medium
-                    else signalIcon = '📶'; // High
-
-                    let securityIcon = network.encryption.toLowerCase() === 'none' ? '🔓' : '🔒'; // Placeholder
+                    // 신호·보안 표시는 Font Awesome 아이콘(261028 — 전엔 이모지 📶🔒🔓 라 기기·글꼴마다 모양이 달랐다)
+                    const quality = parseInt(network.signal_quality, 10);
+                    const isOpen = network.encryption.toLowerCase() === 'none';
 
                     // Create list item
                     const listItem = $('<li>')
@@ -1238,8 +1231,8 @@ $(document).keydown(async (evt) => {
                         .append(
                             $('<span>').addClass('name').text(network.essid),
                             $('<span>').addClass('details').append(
-                                $('<span>').addClass('signal').html(`${signalIcon} ${quality}%`), // Use .html() if icons are HTML
-                                $('<span>').addClass('security').html(`${securityIcon} ${network.encryption}`)
+                                $('<span>').addClass('signal').append($('<i>').addClass('fa-solid fa-wifi'), document.createTextNode(` ${quality}%`)),
+                                $('<span>').addClass('security').append($('<i>').addClass(isOpen ? 'fa-solid fa-lock-open' : 'fa-solid fa-lock'), document.createTextNode(` ${network.encryption}`))
                             )
                         );
                     wifiListUl.append(listItem);
@@ -1284,7 +1277,6 @@ $(document).keydown(async (evt) => {
         identityFieldDiv.removeClass('hidden'); // Show all fields for manual
         passwordFieldDiv.removeClass('hidden');
         statusMessage.text('').removeClass('error');
-        connectionFormTitle.find('[data-key]').attr('data-key', 'manual_connection_title'); // Change title key
         wifiListUl.find('.network-item').css('background-color', ''); // Deselect list item
      });
 
@@ -1324,8 +1316,7 @@ $(document).keydown(async (evt) => {
         }
 
         // --- Optional: Use your confirm_popup ---
-        let confirmMessage = `Connect to Wi-Fi: ${ssid}`;
-        confirmMessage += translations["confirm_wifi"][lang]; // Adapt your translation logic
+        const confirmMessage = t('confirm_wifi', ssid);
 
         // Replace with your actual confirm_popup call if it returns a promise
         let proceed = await confirm_popup(confirmMessage);

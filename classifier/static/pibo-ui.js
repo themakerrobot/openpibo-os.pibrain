@@ -25,15 +25,16 @@
      키트가 직접 띄우는 문장만 여기 둔다. 앱 문장은 각 앱의 ko2en.js 에 있다.
      언어는 앱의 전역 `lang`(ko2en.js 가 선언) → localStorage → 브라우저 순. */
   var TEXT = {
-    conn_lost:     { ko: '로봇과 연결이 끊겼습니다. 다시 연결하는 중…', en: 'Lost connection to the robot. Reconnecting…' },
-    conn_back:     { ko: '다시 연결됐습니다', en: 'Reconnected' },
-    svc_stopped:   { ko: '이 도구가 꺼졌습니다. 다른 도구를 켜거나 IDE 에서 코드를 실행하면 꺼집니다.',
-                     en: 'This tool has stopped. It stops when another tool starts or code runs in the IDE.' },
+    conn_lost:     { ko: '로봇과 연결이 끊겼어요. 다시 연결하는 중…', en: 'Connection lost. Reconnecting…' },
+    conn_back:     { ko: '다시 연결됐어요.', en: 'Reconnected.' },
+    // 도구·분류기·대화가 같이 쓴다(파이보·PiBrain 공통이라 제품 이름을 넣지 않는다)
+    svc_stopped:   { ko: '이 창이 꺼졌어요. IDE에서 도구·대화·분류기 중 다른 것을 켜거나 코드를 실행하면 꺼져요.',
+                     en: 'This window has stopped. It stops when Tools, Chat or Classifier is opened from the IDE, or when code runs.' },
     restart:       { ko: '다시 켜기', en: 'Restart' },
     close:         { ko: '닫기', en: 'Close' },
-    popup_blocked: { ko: '새 탭이 차단됐습니다. 이 주소의 팝업을 허용해 주세요.',
-                     en: 'The new tab was blocked. Please allow pop-ups for this address.' },
-    fs_tap:        { ko: '화면을 한 번 누르면 전체화면으로 돌아가요', en: 'Tap the screen once to return to full screen' }
+    popup_blocked: { ko: '새 탭이 열리지 않았어요. 이 주소의 팝업을 허용해 주세요.',
+                     en: 'The new tab was blocked. Allow pop-ups for this address.' },
+    fs_tap:        { ko: '화면을 한 번 누르면 전체화면으로 돌아가요.', en: 'Tap the screen once to return to full screen.' }
   };
   function curLang() {
     try { if (typeof lang !== 'undefined' && lang) return lang; } catch (e) { /* 앱에 lang 없음 */ }
@@ -346,7 +347,7 @@
   var TAB = { tools: 'pibo_tools', classifier: 'pibo_classifier', llm: 'pibo_llm' };
   // launch.html 은 ?ver 없이 열려 브라우저가 옛 판을 쓸 수 있다(포트가 바뀌면 옛 포트를 기다린다).
   // 대기 페이지를 고치면 이 번호를 올릴 것
-  var LAUNCH_VER = '261026v1';
+  var LAUNCH_VER = '261028v1';
   function launchUrl(svc) {
     return 'http://' + location.hostname + '/static/launch.html?svc=' +
            encodeURIComponent(svc) + '&lang=' + curLang() + '&v=' + LAUNCH_VER;
@@ -453,6 +454,58 @@
     fsEnter();
   }, true);
 
+  /* ── 탭 제목 (261028) ───────────────────────────────────────────────────
+     모든 화면이 같은 꼴: "도구 · piBo", "Tools · PiBrain". 앱은 <title> 에 앱 이름만 넣고(번역은 data-key 로),
+     제품 이름은 <html data-product="piBo"> 에 둔다. 앱 JS 가 document.title 을 바꿔도(대화·대기 페이지) 여기서 뒤에 붙인다.
+     <html data-title="lead"> 면 앞에 붙인다 — IDE 의 "piBo 메이커" */
+  function fixTitle() {
+    var root = document.documentElement, product = root.getAttribute('data-product');
+    if (!product) return;
+    var t = (document.title || '').trim();
+    if (!t || t.indexOf(product) >= 0) return;
+    document.title = root.getAttribute('data-title') === 'lead' ? product + ' ' + t : t + ' · ' + product;
+  }
+  function watchTitle() {
+    fixTitle();
+    if (!window.MutationObserver || !document.head) return;
+    new MutationObserver(fixTitle).observe(document.head, { childList: true, subtree: true, characterData: true });
+  }
+
+  /* ── 오류 알림에 빨간 아이콘 (261028) ─────────────────────────────────────
+     앱의 alert_popup(문장) 은 오류인지 알려 주지 않는다. 문장이 ko2en.js 의 오류 문장(err… · …error · …fail …)으로
+     시작하면 상자에 data-kind="error" 를 단다(아이콘은 pibo-ui.css '대화상자'). 아니면 아이콘 없이.
+     키 이름 err_* 는 모두 오류로 본다 — 인자를 받는 함수 문장(err_save(d))도 빈 인자로 불러 앞부분을 맞춘다 */
+  var ERR_KEY = /(^err|error|fail|invalid)/;
+  function isErrorText(msg) {
+    msg = String(msg == null ? '' : msg);
+    var T = null;
+    try { T = translations; } catch (e) { return false; }   // eslint-disable-line no-undef — 앱의 ko2en.js
+    if (!msg || !T) return false;
+    for (var k in T) {
+      if (!ERR_KEY.test(k) || !T[k]) continue;
+      for (var l in T[k]) {
+        var v = T[k][l];
+        // 인자를 받는 문장(err_save(d) 등)은 빈 인자로 불러 앞부분만 쓴다 — 'Could not save.\n${d}' → 'Could not save.'
+        if (typeof v === 'function') { try { v = String(v('', '', '')); } catch (e) { continue; } }
+        if (typeof v !== 'string') continue;
+        v = v.split('{')[0].split('\n')[0].slice(0, 24);
+        if (v.length > 3 && msg.indexOf(v) === 0) return true;
+      }
+    }
+    return false;
+  }
+  function markAlerts() {
+    var orig = window.alert_popup;
+    if (typeof orig !== 'function' || orig._pbKind) return;
+    var wrapped = function (msg) {
+      var box = document.querySelector('#alertPopup .alert-popup-content');
+      if (box) box.setAttribute('data-kind', isErrorText(msg) ? 'error' : 'info');
+      return orig.apply(this, arguments);
+    };
+    wrapped._pbKind = true;
+    window.alert_popup = wrapped;
+  }
+
   window.PiboUI = {
     toast: toast, banner: banner, hideBanner: hideBanner, watchSocket: watchSocket,
     openService: openService, backToIDE: backToIDE, restartSelf: restartSelf,
@@ -461,7 +514,7 @@
     fullscreen: fsToggle
   };
 
-  function initAll() { initShell(); addThemeButton(); syncThemeButtons(); initFullscreen(); }
+  function initAll() { initShell(); addThemeButton(); syncThemeButtons(); initFullscreen(); watchTitle(); markAlerts(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAll);
   else initAll();
 })();

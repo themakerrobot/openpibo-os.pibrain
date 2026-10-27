@@ -6,7 +6,7 @@
      2) 펼침 메뉴(<details>): 바깥을 누르거나 Esc 면 닫힌다
      3) 편집기 줄의 파일 이름: #codepath(전체 경로, index.js 가 채운다)에서 이름만
      4) 글자 크기 [-][+]
-     5) data-ph-key / data-title-key 번역 (index.js 의 setLanguage 는 textContent 만 바꾼다)
+     5) data-ph-key / data-title-key / data-aria-key 번역 (index.js 의 setLanguage 는 textContent 만 바꾼다)
      6) 화면 출력: [IDE에 보기] 블록의 그림 → [PiBrain] 탭 위쪽. 파일 미리보기와 가른다
      7) 크게 보기(사진·화면 출력, 화면 출력은 실시간)
      8) 화면 밝기: 어둡게면 파이썬 편집기도 어둡게
@@ -129,6 +129,10 @@
       var s = tr(el.getAttribute('data-title-key'));
       el.title = s; el.setAttribute('aria-label', s);
     });
+    // 접근성 이름만(보이는 글자·툴팁 없음, 261028) — 입력칸·편집기 등
+    Array.prototype.forEach.call(document.querySelectorAll('[data-aria-key]'), function (el) {
+      el.setAttribute('aria-label', tr(el.getAttribute('data-aria-key')));
+    });
     // 아이콘만 남는 폭에서도 뜻이 보이게 라벨을 툴팁으로 복사한다
     Array.prototype.forEach.call(document.querySelectorAll('.v2-top a.pb-iconbtn, .v2-top .v2-seg > button, #pycode_bt'), function (el) {
       var lab = el.querySelector('[data-key]');
@@ -249,6 +253,9 @@
   // setLanguage → updateToolbox 로 툴박스를 새로 그리므로, 다시 그려질 때마다 고친다
   function searchPlaceholder() {
     Array.prototype.forEach.call(document.querySelectorAll('.blocklyToolboxDiv input'), function (inp) {
+      // 검색칸이 든 분류 줄에 표시를 단다(ide.css 가 그 줄만 높게 그린다 — :has() 는 오래된 브라우저가 모른다)
+      var row = inp.closest && inp.closest('.blocklyTreeRow');
+      if (row && !row.classList.contains('v2-search-row')) row.classList.add('v2-search-row');
       var t = tr('v2_search');
       if (t && inp.placeholder !== t) { inp.placeholder = t; inp.setAttribute('aria-label', t); }
     });

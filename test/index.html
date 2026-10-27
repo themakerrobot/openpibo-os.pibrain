@@ -3,14 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PiBrain Hardware Inspection Report</title>
+<title>H/W 검수 · PiBrain</title>
+<script>/* 화면 밝기(쿠키 pibo_theme — IDE·도구와 같은 값)와 IDE(80) 의 Pretendard 글꼴. 인쇄 모양에는 영향 없다 */
+(function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
+  document.documentElement.setAttribute('data-theme', m ? m[1] : 'soft'); } catch (e) {}
+  var f = 'http://' + location.hostname + '/static/fonts/Pretendard-';
+  var st = document.createElement('style');
+  st.textContent = '@font-face{font-family:"Pretendard";font-weight:100 549;font-display:swap;src:local("Pretendard Regular"),url("' + f + 'Regular.subset.woff2") format("woff2")}' +
+                   '@font-face{font-family:"Pretendard";font-weight:550 900;font-display:swap;src:local("Pretendard Bold"),url("' + f + 'Bold.subset.woff2") format("woff2")}';
+  document.head.appendChild(st); })();</script>
 <style>
   :root {
     --ink:        #1a1a1a;
     --ink-soft:   #555;
     --line:       #b9bcc2;
     --head-bg:    #eef1f5;
-    --accent:     #1d4ed8;
+    --accent:     #2563eb;   /* 파이보 화면들의 주 동작 파랑 */
+    --accent-hov: #1d4fd8;
+    --canvas:     #eceef4;   /* 화면 바닥 — IDE·도구의 부드럽게와 같다 */
+    --frame:      #fbc92d;   /* 상단바 노랑 */
+    --frame-ink:  #3d2f12;
     --pass:       #0f7a3d;
     --fail:       #c02626;
     --wait:       #8a6d00;
@@ -21,9 +33,9 @@
   body {
     margin: 0;
     padding: 16px 12px 48px;
-    background: #f2f4f7;
+    background: var(--canvas);
     color: var(--ink);
-    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    font-family: "Pretendard", -apple-system, "Segoe UI", Roboto, "Malgun Gothic", Arial, sans-serif;
     font-size: 13px;
     line-height: 1.5;
   }
@@ -40,9 +52,11 @@
   .toolbar .spacer { flex: 1 1 auto; }
   .btn {
     font: inherit;
-    padding: 7px 14px;
+    height: 40px;
+    padding: 0 16px;
     border: 1px solid var(--line);
-    border-radius: 4px;
+    border-radius: 8px;
+    font-weight: 700;
     background: #fff;
     color: var(--ink);
     cursor: pointer;
@@ -55,10 +69,10 @@
     color: #fff;
     font-weight: 600;
   }
-  .btn-primary:hover:not(:disabled) { background: #1741ad; }
+  .btn-primary:hover:not(:disabled) { background: var(--accent-hov); border-color: var(--accent-hov); }
   .btn-danger { color: var(--fail); border-color: var(--fail); }
   .btn-danger:hover:not(:disabled) { background: var(--fail); color: #fff; }
-  .btn-sm { padding: 3px 10px; font-size: 12px; }
+  .btn-sm { height: 32px; padding: 0 12px; font-size: 12px; }
 
   /* report sheet */
   .sheet {
@@ -177,6 +191,25 @@
   }
 
   /* print */
+  /* 화면에서만: IDE·도구와 같은 48px 노랑 상단바, 밝기 쿠키. 인쇄(보고서)는 그대로 흰 종이 */
+  .hw-top { display: none; }
+  @media screen {
+    body { padding-top: 0; }
+    .hw-top { display: flex; align-items: center; gap: 8px; height: 48px; margin: 0 -12px 16px; padding: 0 16px;
+              background: var(--frame); color: var(--frame-ink); border-bottom: 1px solid rgba(61, 47, 18, .14);
+              font-size: 16px; font-weight: 700; letter-spacing: -.2px; }
+    .hw-top span { font-weight: 400; }
+    .hw-top span::before { content: "·"; margin: 0 6px 0 -2px; opacity: .55; font-weight: 700; }
+    html[data-theme="light"] body { --canvas: #f1f3f8; }
+    html[data-theme="light"] .hw-top { background: #ffcb2f; }
+    html[data-theme="dark"] body { --canvas: #151922; }
+    html[data-theme="dark"] .hw-top { background: #1b1e26; color: #eceef2; border-bottom-color: #0d0f14; }
+    html[data-theme="dark"] .toolbar .btn:not(.btn-primary):not(.btn-danger) { background: #242935; color: #e4e7ef; border-color: #3b4252; }
+    html[data-theme="dark"] .toolbar .btn-primary { background: #f2c94c; color: #1b1d20; border-color: #f2c94c; }   /* 어둡게의 주 동작은 노랑(다른 화면과 같게) */
+    html[data-theme="dark"] .toolbar .btn-danger { background: #242935; color: #ffb0b2; border-color: #e8676b; }
+    .sheet { border-radius: 12px; }
+  }
+
   @page { size: A4 portrait; margin: 11mm; }
 
   @media print {
@@ -198,6 +231,8 @@
 </style>
 </head>
 <body>
+
+<header class="hw-top no-print"><b>PiBrain</b><span>H/W 검수</span></header>
 
 <div class="toolbar no-print">
   <button class="btn btn-primary" id="btn-run-all">Run All Tests</button>
@@ -412,7 +447,12 @@ async function fetchSystemInfo() {
        so the report lands as <serial>.pdf. Strip anything a filesystem would
        choke on -- get_serial() returns "N/A" when /proc/cpuinfo cannot be read. */
     const safe = String(d.serial || '').replace(/[^A-Za-z0-9_.-]/g, '_');
-    if (safe) document.title = safe;
+    /* 화면 제목은 'H/W 검수 · PiBrain' 그대로 두고, 인쇄할 때만 제목(=PDF 파일 이름)을 일련번호로 바꾼다 */
+    if (safe) {
+      const screenTitle = document.title;
+      window.addEventListener('beforeprint', () => { document.title = safe; });
+      window.addEventListener('afterprint', () => { document.title = screenTitle; });
+    }
   } catch (e) {
     ['serial','board','os','memory','library'].forEach(k => {
       document.getElementById(`info-${k}`).textContent = 'Read failed';

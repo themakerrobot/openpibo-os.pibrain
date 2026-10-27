@@ -16,88 +16,54 @@
    화면 밝기 — html[data-theme] (쿠키 pibo_theme, 기본 soft). 순백·순흑을 넓게 쓰지 않는다
    ========================================================================== */
 
-:root, :root[data-theme="soft"] {
-  --c-brand:     #fbc92d;   /* 상단바 */
-  --c-brand-ink: #3d2f12;   /* 상단바 글씨 — 먹색 대신 짙은 갈색(노랑과 덜 부딪친다) */
-  --c-brand-hov: rgba(61, 47, 18, .08);
-  --c-brand-seg: rgba(61, 47, 18, .10);
-  --c-seg-on:    #fffdf6;   /* 상단바 [블록|파이썬] 선택 — 흰 알약 */
-  --c-seg-on-ink:#3d2f12;
-  --c-seg-on-sh: 0 1px 3px rgba(61, 47, 18, .22), 0 0 0 .5px rgba(61, 47, 18, .14);
-  --c-seg-sh:    0 1px 3px rgba(20, 24, 40, .12), 0 0 0 .5px rgba(20, 24, 40, .08);   /* 패널 안 탭 선택 */
-  --c-btn-sh:    inset 0 1px 0 rgba(255, 255, 255, .22), 0 1px 2px rgba(37, 99, 235, .35), 0 0 0 .5px rgba(29, 79, 216, .55);
-  --c-btn2-sh:   0 .5px 1.5px rgba(20, 24, 40, .12);
-  --c-focus:     rgba(37, 99, 235, .45);
-  --c-side:      #eceff3;   /* 왼쪽 패널 바닥 */
-  --c-card:      #fbfbfc;   /* 패널 안 카드 */
-  --c-bg:        #f7f8fa;   /* 편집기 줄 · 툴박스 */
-  --c-work:      #fdfdfe;   /* 블록 작업판 */
-  --c-hover:     #e8ebf0;
-  --c-press:     #dde1e8;
-  --c-line:      #dde1e7;
-  --c-line-2:    #c7cdd6;
-  --c-ink:       #1f2430;
-  --c-ink-2:     #4b5363;
-  --c-ink-3:     #6e7686;
-  --c-raise:     #ffffff;
-  --c-dark:      #2563eb;   /* 주 동작(실행·저장·추가) — 파랑. 노랑의 보색. 흰 글씨 5.2:1 */
-  --c-dark-hov:  #1d4fd8;
-  --c-on-dark:   #ffffff;
-  --c-accent:    #2563eb;   /* 포커스·스위치 — 주 동작과 같은 파랑 */
-  --c-accent-t:  #e3ecfd;
-  --c-sel:       #fff1c2;   /* 지금 연 파일 */
-  --c-sel-ink:   #8a6400;
-  --c-red:       #d6393f;
-  --c-red-t:     #fce4e4;
-  --c-red-ink:   #a41d23;
-  --c-green:     #1f9d62;
-  --c-live:      #20252d;   /* 화면 출력 바탕 */
-  --c-shadow:    rgba(20, 24, 40, .16);
-  --c-scrim:     rgba(16, 20, 32, .48);
-  --c-ring:      rgba(37, 99, 235, .28);
+/* 색·치수는 키트(pibo-ui.css '디자인 토큰')의 --v2-* 를 그대로 가리킨다(261028). 값을 여기 다시 적지 말 것 —
+   밝기(soft·light·dark)도 키트가 html[data-theme] 에서 바꾼다. 도구·분류기·대화·PiBrain 도구와 같은 값이 된다 */
+:root {
+  --c-brand:     var(--v2-frame);       /* 상단바 */
+  --c-brand-ink: var(--v2-frame-ink);   /* 상단바 글씨 — 짙은 갈색 */
+  --c-brand-hov: var(--v2-frame-2);
+  --c-brand-seg: var(--v2-frame-2);
+  --c-seg-on:    var(--v2-seg-on);      /* 상단바 [블록|파이썬] 선택 — 흰 알약 */
+  --c-seg-on-ink:var(--v2-seg-on-ink);
+  --c-seg-on-sh: var(--v2-seg-on-sh);
+  --c-seg-sh:    var(--v2-seg-sh);      /* 패널 안 탭 선택 */
+  --c-btn-sh:    var(--v2-btn-sh);
+  --c-btn2-sh:   var(--v2-btn2-sh);
+  --c-focus:     var(--v2-focus);
+  --c-side:      var(--v2-canvas);      /* 왼쪽 패널 바닥 = 도구·분류기의 바닥 */
+  --c-card:      var(--v2-surface);     /* 패널 안 카드 = 도구·분류기의 카드 */
+  --c-bg:        var(--v2-surface);     /* 편집기 줄 · 툴박스 */
+  --c-work:      var(--v2-raise);       /* 블록 작업판 */
+  --c-hover:     var(--v2-hover);
+  --c-press:     var(--v2-press);
+  --c-line:      var(--v2-line);
+  --c-line-2:    var(--v2-line-2);
+  --c-ink:       var(--v2-ink);
+  --c-ink-2:     var(--v2-ink-2);
+  --c-ink-3:     var(--v2-ink-3);
+  --c-raise:     var(--v2-raise);
+  --c-dark:      var(--v2-dark);        /* 꽉 찬 주 동작([실행] 하나) — 파랑, 어둡게에서는 노랑 */
+  --c-dark-hov:  var(--v2-dark-hov);
+  --c-on-dark:   var(--v2-on-dark);
+  --c-accent:    var(--v2-accent);      /* 포커스·스위치·링크 — 어둡게에서도 파랑 */
+  --c-accent-t:  var(--v2-accent-t);
+  --c-accent-ink:var(--v2-accent-ink);
+  --c-sel:       var(--v2-accent-t);    /* 지금 연 파일 — '고른 것' 은 어디서나 옅은 파랑 */
+  --c-sel-ink:   var(--v2-accent-ink);
+  --c-red:       var(--v2-red);
+  --c-red-t:     var(--v2-red-t);
+  --c-red-ink:   var(--v2-red-ink);
+  --c-green:     var(--v2-green);
+  --c-live:      var(--v2-stage);       /* 화면 출력 바탕 = 카메라 칸 바탕 */
+  --c-shadow:    var(--v2-shadow);
+  --c-scrim:     var(--v2-scrim);
+  --c-ring:      var(--v2-ring);
   color-scheme: light;
-}
-:root[data-theme="light"] {
-  --c-side: #f1f3f6; --c-card: #ffffff; --c-bg: #fbfbfc; --c-work: #ffffff;
-  --c-hover: #eef0f4; --c-press: #e3e6ec; --c-line: #e4e7ec; --c-line-2: #d0d5dd;
-  --c-brand: #ffcb2f;
-}
-:root[data-theme="dark"] {
-  --c-brand: #1b1e24; --c-brand-ink: #eceef2; --c-brand-hov: rgba(255, 255, 255, .08); --c-brand-seg: rgba(255, 255, 255, .08);
-  --c-seg-on: #eceef2; --c-seg-on-ink: #1b1e24; --c-seg-on-sh: none;
-  --c-seg-sh: 0 1px 3px rgba(0, 0, 0, .4); --c-btn2-sh: none; --c-focus: rgba(142, 152, 255, .55);
-  --c-btn-sh: inset 0 1px 0 rgba(255, 255, 255, .3), 0 1px 2px rgba(0, 0, 0, .45);
-  --c-side: #16191e; --c-card: #1f232a; --c-bg: #1b1e24; --c-work: #20242b;
-  --c-hover: #2a2f37; --c-press: #333943; --c-line: #2c3139; --c-line-2: #3c434d;
-  --c-ink: #e6e8ec; --c-ink-2: #b0b7c2; --c-ink-3: #878f9b; --c-raise: #262a32;
-  --c-dark: #f2c94c; --c-dark-hov: #e6bb34; --c-on-dark: #1b1d20;   /* 어둡게에서는 주 동작이 노랑 */
-  --c-accent: #8e98ff; --c-accent-t: #262c52;
-  --c-sel: #3a331d; --c-sel-ink: #f2c94c;
-  --c-red: #e8676b; --c-red-t: #3e2226; --c-red-ink: #ffb0b2;
-  --c-green: #45c07f; --c-live: #111317;
-  --c-shadow: rgba(0, 0, 0, .45); --c-scrim: rgba(0, 0, 0, .6);
-  --c-ring: rgba(142, 152, 255, .35);
-  color-scheme: dark;
 }
 
 :root {
-  --font: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
-          "Noto Sans KR", "Malgun Gothic", "맑은 고딕", "Segoe UI", Roboto, sans-serif;
+  --font: var(--font-ui);
   --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "D2Coding", monospace;
-  /* 키트 토큰 */
-  --pb-font: var(--font);
-  --pb-bg: var(--c-raise);
-  --pb-text: var(--c-ink);
-  --pb-text-dim: var(--c-ink-2);
-  --pb-border: var(--c-line-2);
-  --pb-surface: var(--c-bg);
-  --pb-surface-2: var(--c-press);
-  --pb-accent: var(--c-brand);
-  --pb-accent-edge: var(--c-brand);
-  --pb-focus: var(--c-accent);
-  --pb-radius: 10px;
-  --pb-radius-s: 8px;
-
   --pane-side: 340px;
 }
 
@@ -116,28 +82,34 @@ body.v2-app a { color: inherit; text-decoration: none; cursor: pointer; }
 .v2-app [hidden] { display: none !important; }
 .v2-app .hidden { display: none; }
 .v2-app ::selection { background: var(--c-ring); }
-.v2-app :focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+/* 포커스: :focus 로 그리고, :focus-visible 을 아는 브라우저만 마우스 클릭에서 끈다(Safari 14 는 늘 보인다) */
+.v2-app :focus { outline: 3px solid var(--c-focus); outline-offset: 1px; }
+.v2-app :focus:not(:focus-visible) { outline: none; }
 
 /* ── 버튼 ─────────────────────────────────────────────────────────────── */
 .v2-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 7px;
-  height: 34px; padding: 0 14px; flex: none;
-  border: 1px solid var(--c-line-2); border-radius: 8px;
+  height: var(--ctl-md); padding: 0 14px; flex: none;
+  border: 1px solid var(--c-line-2); border-radius: var(--r-ctl);
   background: var(--c-raise); color: var(--c-ink);
-  font: 600 14px/1 var(--font); white-space: nowrap; cursor: pointer; list-style: none;
+  font: var(--fw-b) var(--fs-md)/1 var(--font); white-space: nowrap; cursor: pointer; list-style: none;
   transition: background-color .12s, border-color .12s, color .12s;
 }
 .v2-btn > i { font-size: 13px; }
 .v2-btn:hover:not(:disabled):not(.disabled) { background: var(--c-hover); }
-.v2-btn--sm { height: 30px; padding: 0 12px; font-size: 13px; gap: 6px; }
+.v2-btn--sm { height: var(--ctl-sm); padding: 0 12px; font-size: var(--fs-sm); gap: 6px; }
+/* 옅은 파랑: 주 동작 다음으로 자주 누르는 것([저장]·[+ 추가]). 꽉 찬 파랑은 [실행] 하나 */
+.v2-btn--tint { background: var(--v2-tint); border-color: transparent; color: var(--v2-tint-ink); }
+.v2-btn--tint:hover:not(:disabled):not(.disabled) { background: var(--v2-tint-hov); }
+.v2-btn--tint > i { color: inherit; }
 .v2-btn--ghost { border-color: transparent; background: transparent; color: var(--c-ink-2); }
 .v2-btn--dark { background: var(--c-dark); border-color: transparent; color: var(--c-on-dark); }
 .v2-btn--dark:hover:not(:disabled):not(.disabled) { background: var(--c-dark-hov); }
 .v2-btn.disabled, .v2-btn:disabled { opacity: .4; cursor: default; }
 
 .v2-icon {
-  width: 30px; height: 30px; display: inline-grid; place-items: center; flex: none;
-  border: 0; border-radius: 7px; background: transparent; color: var(--c-ink-3); cursor: pointer;
+  width: var(--ctl-sm); height: var(--ctl-sm); display: inline-grid; place-items: center; flex: none;
+  border: 0; border-radius: var(--r-ctl); background: transparent; color: var(--c-ink-3); cursor: pointer;
 }
 .v2-icon:hover { background: var(--c-hover); color: var(--c-ink); }
 
@@ -146,7 +118,7 @@ body.v2-app a { color: inherit; text-decoration: none; cursor: pointer; }
   display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center; gap: 12px;
   height: 48px; min-height: 48px; padding: 0 8px 0 6px;
-  background: var(--c-brand); color: var(--c-brand-ink); border-bottom: 0;
+  background: var(--c-brand); color: var(--c-brand-ink); border-bottom: 1px solid var(--v2-frame-line);   /* 도구·분류기와 같은 아래 선 */
 }
 .v2-top__left, .v2-top__right { display: flex; align-items: center; gap: 4px; min-width: 0; }
 .v2-top__right { justify-content: flex-end; }
@@ -154,10 +126,11 @@ body.v2-app a { color: inherit; text-decoration: none; cursor: pointer; }
 .v2-top .v2-icon { color: var(--c-brand-ink); }
 .v2-top .v2-icon:hover { background: var(--c-brand-hov); }
 .v2-top .v2-side-toggle[aria-pressed="true"] { background: var(--c-brand-seg); }
-.v2-brand { display: flex; align-items: center; gap: 6px; padding: 0 6px; font-size: 18px; letter-spacing: -.3px; white-space: nowrap; }
-.v2-brand > i { font-size: 18px; margin-right: 2px; }
-.v2-brand > b { font-weight: 800; }
-.v2-brand > span { font-weight: 400; opacity: .8; }
+/* 브랜드: 도구·분류기·대화의 .pb-header__brand 와 같은 크기(16px, 아이콘 18px). IDE 는 "piBo 메이커" 라 가운데 점이 없다 */
+.v2-brand { display: flex; align-items: center; gap: 8px; padding: 0 6px; font-size: var(--fs-lg); letter-spacing: -.2px; white-space: nowrap; }
+.v2-brand > i { font-size: 18px; width: 20px; text-align: center; }
+.v2-brand > b { font-weight: var(--fw-b); }
+.v2-brand > span { font-weight: var(--fw-n); }
 
 /* 블록 | 파이썬 */
 .v2-seg { display: inline-flex; padding: 3px; gap: 2px; border-radius: 9px; background: var(--c-press); }
@@ -178,13 +151,13 @@ body.v2-app a { color: inherit; text-decoration: none; cursor: pointer; }
 .v2-top .v2-seg > button.checked { background: var(--c-seg-on); color: var(--c-seg-on-ink); box-shadow: var(--c-seg-on-sh); }
 
 /* 헤더 아이콘 버튼 */
-.v2-app .v2-top .pb-iconbtn { color: var(--c-brand-ink); height: 34px; padding: 0 10px; }
+.v2-app .v2-top .pb-iconbtn { color: var(--c-brand-ink); height: var(--ctl-sm); padding: 0 10px; }
 .v2-app .v2-top .pb-iconbtn:hover { background: var(--c-brand-hov); }
-.v2-app .v2-top .pb-iconbtn > :first-child { font-size: 16px; width: 18px; height: 18px; }
-.v2-app .v2-top .pb-iconbtn__label { font-size: 13.5px; font-weight: 600; }
+.v2-app .v2-top .pb-iconbtn > :first-child { font-size: 15px; width: 18px; height: 18px; }
+.v2-app .v2-top .pb-iconbtn__label { font-size: var(--fs-sm); font-weight: var(--fw-b); }
 .v2-app .v2-top .pb-iconbar { gap: 0; }
 .v2-top .v2-menu[open] > summary { background: var(--c-brand-seg); }
-.v2-app .v2-top :focus-visible { outline-color: var(--c-brand-ink); }
+.v2-app .v2-top :focus { outline-color: var(--c-brand-ink); }
 
 /* ── 펼침 메뉴 (<details>) ────────────────────────────────────────────── */
 .v2-menu { position: relative; flex: none; }
@@ -241,7 +214,7 @@ body.v2-app a { color: inherit; text-decoration: none; cursor: pointer; }
 }
 .v2-switch > input:checked + .v2-switch__track { background: var(--c-accent); }
 .v2-switch > input:checked + .v2-switch__track::after { transform: translateX(16px); }
-.v2-switch > input:focus-visible + .v2-switch__track { outline: 3px solid var(--c-ring); outline-offset: 2px; }
+.v2-switch > input:focus + .v2-switch__track { outline: 3px solid var(--c-ring); outline-offset: 2px; }
 
 /* ── 본문 ─────────────────────────────────────────────────────────────── */
 .v2-app > main { flex: 1 1 auto; min-height: 0; display: flex; }
@@ -275,26 +248,27 @@ body[data-offline] .v2-dot { background: var(--c-red); box-shadow: 0 0 0 3px rgb
 
 /* 화면 출력 — [IDE에 보기] 블록이 보내는 그림 */
 .v2-live {
-  position: relative; flex: none; margin: 0; aspect-ratio: 4 / 3; max-height: 36vh;
+  position: relative; flex: none; margin: 0; height: 0; padding-top: 75%;   /* 4:3 (aspect-ratio 는 Safari 14 가 모른다) */
   border-radius: 10px; overflow: hidden; background: var(--c-live);
   display: grid; place-items: center;
 }
-.v2-live img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; cursor: zoom-in; }
+.v2-live img { position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; object-fit: contain; cursor: zoom-in; }
 .v2-live img:not([src]), .v2-live img[src=""] { display: none; }
 .v2-live__empty {
   display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 0 28px;
-  color: #8b94a1; font-size: 12.5px; text-align: center; line-height: 1.5;
+  color: var(--v2-stage-ink); font-size: var(--fs-xs); text-align: center; line-height: 1.5;
 }
 .v2-live__empty > i { font-size: 24px; opacity: .7; }
 /* 아직 한 장도 안 온 칸은 검은 판 대신 옅은 점선 칸. 밝은 화면 한가운데 검정 덩어리가 무거웠다.
    첫 그림이 오면 ide.js 가 data-has 를 달고, 그때부터 사진 바탕(--c-live)이 된다 */
 .v2-live:not([data-has]) { background: var(--c-bg); }
 .v2-live:not([data-has])::before {
-  content: ""; position: absolute; inset: 0; border: 1.5px dashed var(--c-line-2); border-radius: inherit; pointer-events: none;
+  content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; border: 1.5px dashed var(--c-line-2); border-radius: inherit; pointer-events: none;
 }
 .v2-live:not([data-has]) .v2-live__empty { color: var(--c-ink-3); }
 /* 그림이 한 장도 안 왔으면 한 줄로 접는다(260930). 4:3 빈 칸이 약 240px 을 차지해 768 높이에서 출력 칸이 좁았다 */
-.v2-live:not([data-has]) { aspect-ratio: auto; height: 40px; }
+.v2-live:not([data-has]) { padding-top: 0; height: 40px; }
+.v2-live[data-has] .v2-live__empty { position: absolute; top: 0; right: 0; bottom: 0; left: 0; justify-content: center; }
 .v2-live:not([data-has]) .v2-live__empty { flex-direction: row; gap: 8px; padding: 0 12px; font-size: 12px; line-height: 1.3; }
 .v2-live:not([data-has]) .v2-live__empty > i { font-size: 15px; }
 .v2-live img[src]:not([src=""]) ~ .v2-live__empty { display: none; }
@@ -309,7 +283,7 @@ body[data-offline] .v2-dot { background: var(--c-red); box-shadow: 0 0 0 3px rgb
   position: absolute; right: 8px; top: 8px; width: 30px; height: 30px; border: 0; border-radius: 8px;
   background: rgba(0,0,0,.45); color: #fff; display: none; place-items: center; cursor: pointer;
 }
-.v2-live:has(img[src]:not([src=""])) .v2-live__zoom { display: grid; }
+.v2-live[data-has] .v2-live__zoom { display: grid; }   /* ide.js 가 첫 그림이 올 때 data-has 를 단다 */
 
 /* 상태 */
 .v2-stats {
@@ -359,7 +333,7 @@ a.v2-stat:hover { color: var(--c-accent); }
 
 /* 실행 · 정지 — 탭과 상관없이 늘 맨 아래 */
 .v2-run { flex: none; display: flex; gap: 8px; }
-.v2-btn--run, .v2-btn--stop { flex: 1 1 0; height: 44px; font-size: 15px; font-weight: 700; border-radius: 9px; }
+.v2-btn--run, .v2-btn--stop { flex: 1 1 0; height: var(--ctl-lg); font-size: var(--fs-lg); font-weight: var(--fw-b); border-radius: var(--r-ctl); }
 .v2-btn--run { background: var(--c-dark); border-color: transparent; color: var(--c-on-dark); }
 .v2-btn--run:hover:not(:disabled):not(.disabled) { background: var(--c-dark-hov); }
 .v2-btn--stop { background: var(--c-raise); color: var(--c-red-ink); }
@@ -413,7 +387,7 @@ body[data-running] #execute { background: var(--c-press); color: var(--c-ink-3);
 .v2-preview__head > i { color: var(--c-ink-3); }
 .v2-preview__head > #mediapath { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; color: var(--c-ink-3); text-align: right; }
 .v2-preview__img { position: relative; height: 150px; border-radius: 8px; background: var(--c-hover); display: grid; place-items: center; overflow: hidden; }
-.v2-preview__img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; cursor: zoom-in; }
+.v2-preview__img img { position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; object-fit: contain; cursor: zoom-in; }
 .v2-preview__img img:not([src]), .v2-preview__img img[src=""] { display: none; }
 .v2-preview__empty { margin: 0; padding: 0 16px; text-align: center; font-size: 12px; color: var(--c-ink-3); }
 .v2-preview__img img[src]:not([src=""]) ~ .v2-preview__empty { display: none; }
@@ -439,11 +413,11 @@ body[data-running] #execute { background: var(--c-press); color: var(--c-ink-3);
   direction: rtl; font: 500 12.5px var(--mono); color: var(--c-ink-3);
 }
 .v2-file[data-empty] .v2-file__name { color: var(--c-ink-3); font-weight: 500; }
-.v2-file__dirty { flex: none; display: inline-flex; color: #e8a30c; font-size: 8px; }
+.v2-file__dirty { flex: none; display: inline-flex; color: var(--v2-yellow-2); font-size: 8px; }
 .v2-file__dirty:empty { display: none; }
 .v2-editor__stage { position: relative; flex: 1 1 auto; min-height: 0; }
 .v2-editor__stage > #blocklyDiv,
-.v2-editor__stage > #codeDiv { position: absolute; inset: 0; width: auto !important; height: auto !important; }
+.v2-editor__stage > #codeDiv { position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: auto !important; height: auto !important; }
 .v2-editor__stage #code_form { height: 100%; }
 .v2-editor__stage .CodeMirror { height: 100%; font-family: var(--mono); font-size: 14px; }
 /* 파이썬 편집기 테마 — v2 전용(ide.js 가 화면 밝기에 따라 고른다). 기존 cobalt·duotone-light 는 v1 용.
@@ -453,7 +427,7 @@ body[data-running] #execute { background: var(--c-press); color: var(--c-ink-3);
 .cm-s-pibo-light .CodeMirror-gutters { background: var(--c-work); border-right: 1px solid var(--c-line); }
 .cm-s-pibo-light .CodeMirror-linenumber { color: #8a919c; }
 .cm-s-pibo-light .CodeMirror-cursor { border-left: 2px solid #1f2430; }
-.cm-s-pibo-light div.CodeMirror-selected, .cm-s-pibo-light .CodeMirror-focused div.CodeMirror-selected { background: #fff1c2; }
+.cm-s-pibo-light div.CodeMirror-selected, .cm-s-pibo-light .CodeMirror-focused div.CodeMirror-selected { background: #cfdffc; }
 .cm-s-pibo-light .CodeMirror-matchingbracket { color: #1f2430 !important; background: #fde58a; }
 .cm-s-pibo-light span.cm-keyword { color: #4450c8; font-weight: 600; }                        /* 6.4:1 */
 .cm-s-pibo-light span.cm-def { color: #0b6aa2; font-weight: 600; }                            /* 5.7:1 */
@@ -470,7 +444,7 @@ body[data-running] #execute { background: var(--c-press); color: var(--c-ink-3);
 .cm-s-pibo-dark .CodeMirror-gutters { background: var(--c-work); border-right: 1px solid var(--c-line); }
 .cm-s-pibo-dark .CodeMirror-linenumber { color: #7d8594; }
 .cm-s-pibo-dark .CodeMirror-cursor { border-left: 2px solid #f2c94c; }
-.cm-s-pibo-dark div.CodeMirror-selected, .cm-s-pibo-dark .CodeMirror-focused div.CodeMirror-selected { background: #4a4330; }
+.cm-s-pibo-dark div.CodeMirror-selected, .cm-s-pibo-dark .CodeMirror-focused div.CodeMirror-selected { background: #2a3b63; }
 .cm-s-pibo-dark .CodeMirror-matchingbracket { color: #fff !important; background: #5a5236; }
 .cm-s-pibo-dark span.cm-keyword { color: #a3acff; font-weight: 600; }                         /* 7.3:1 */
 .cm-s-pibo-dark span.cm-def { color: #7cc4f2; font-weight: 600; }                             /* 8.2:1 */
@@ -518,15 +492,16 @@ html[data-theme="dark"] .cm-s-pibo-light .CodeMirror-gutters { border-right-colo
   background: var(--c-raise); color: var(--c-ink); font: 13px var(--font);
   pointer-events: auto;   /* Blockly 가 행 안쪽을 pointer-events:none 으로 둔다 — 칸을 바로 눌러도 입력되게 */
 }
-.v2-app .blocklyToolboxDiv .blocklyTreeRow:has(input) { height: 40px !important; margin-bottom: 6px !important; background: transparent !important; box-shadow: none; }
-.v2-app .blocklyToolboxDiv .blocklyTreeRow:has(input) .customIcon { display: none; }
+/* 검색칸 줄(ide.js 가 .v2-search-row 를 단다 — :has() 를 안 쓰려고) */
+.v2-app .blocklyToolboxDiv .blocklyTreeRow.v2-search-row { height: 40px !important; margin-bottom: 6px !important; background: transparent !important; box-shadow: none; }
+.v2-app .blocklyToolboxDiv .blocklyTreeRow.v2-search-row .customIcon { display: none; }
 /* 낮은 화면(1366×768 노트북 등): 분류 18개가 한 화면에 다 들어가게 줄 높이를 줄인다(260930).
    전엔 맨 아래 [도구] 가 잘려 스크롤해야 보였다 */
 @media (max-height: 820px) {
   .v2-app .blocklyTreeRow { height: 28px !important; line-height: 28px; margin: 0 8px !important; }
   .v2-app .blocklyTreeRow .customIcon { width: 20px; height: 20px; line-height: 20px !important; }
   .v2-app .blocklyTreeSeparator { margin: 3px 12px !important; }
-  .v2-app .blocklyToolboxDiv .blocklyTreeRow:has(input) { height: 36px !important; margin-bottom: 4px !important; }
+  .v2-app .blocklyToolboxDiv .blocklyTreeRow.v2-search-row { height: 36px !important; margin-bottom: 4px !important; }
 }
 
 .v2-app .blocklyPath { stroke-width: 1px; }
@@ -547,44 +522,26 @@ html[data-theme="dark"] .cm-s-pibo-light .CodeMirror-gutters { border-right-colo
 
 /* ── 크게 보기 ─────────────────────────────────────────────────────────── */
 .v2-lightbox {
-  position: fixed; inset: 0; z-index: 1100; display: flex; align-items: center; justify-content: center;
+  position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 1100; display: flex; align-items: center; justify-content: center;
   padding: 24px; background: rgba(10, 12, 16, .82); cursor: zoom-out; animation: v2-fade .15s ease-out;
 }
 .v2-lightbox img { max-width: 100%; max-height: 100%; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
 .v2-lightbox__cap { position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; color: #cfd5dc; font-size: 13px; }
 @keyframes v2-fade { from { opacity: 0; } to { opacity: 1; } }
 
-/* ── 대화상자 (alert · prompt · confirm) ──────────────────────────────── */
-.alert-popup, .prompt-popup, .confirm-popup, .wifi-popup {
-  position: fixed; inset: 0; z-index: 1000; background: var(--c-scrim); backdrop-filter: blur(2px);
-  display: flex; justify-content: center; align-items: center; padding: 16px;
-}
-.wifi-popup { z-index: 900; overflow: auto; }
-.alert-popup-content, .prompt-popup-content, .confirm-popup-content {
-  width: 100%; max-width: 400px; padding: 22px 22px 16px; border-radius: 16px;
-  background: var(--c-raise); color: var(--c-ink); box-shadow: 0 20px 48px var(--c-shadow); animation: pb-rise .26s cubic-bezier(.34, 1.4, .64, 1) backwards;
-}
-.alert-popup-content p, .prompt-popup-content p, .confirm-popup-content p { margin: 0 0 16px; font-size: 15px; line-height: 1.55; white-space: pre-line; }
+/* ── 대화상자 (alert · prompt · confirm) ──────────────────────────────────
+   모양(가림막·상자·버튼·오류 아이콘)은 키트 pibo-ui.css '대화상자' 절 하나다 — 도구·분류기와 같다(261028).
+   전엔 여기만 바탕을 흐리게(backdrop-filter) 했다. 여기는 IDE 에만 있는 입력칸 몫 */
+.wifi-popup { overflow: auto; }
 .prompt-popup-content input[type="text"], .form-group input[type="text"], .form-group input[type="password"] {
-  width: 100%; height: 40px; padding: 0 12px; margin-bottom: 4px; border: 1px solid var(--c-line-2); border-radius: 9px;
-  font-size: 15px; background: var(--c-bg); color: var(--c-ink);
+  width: 100%; height: var(--ctl-md); padding: 0 12px; margin-bottom: 4px; border: 1px solid var(--c-line-2); border-radius: var(--r-ctl);
+  font-size: 15px; background: var(--c-raise); color: var(--c-ink);
 }
 .prompt-popup-content input:focus, .form-group input:focus { outline: none; border-color: var(--c-accent); box-shadow: 0 0 0 3px var(--c-ring); }
-.popup-buttons { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
-.popup-buttons button {
-  height: 38px; min-width: 84px; padding: 0 16px; border-radius: 9px; cursor: pointer;
-  font: 700 14px var(--font); border: 1px solid var(--c-line-2); background: var(--c-raise); color: var(--c-ink);
-}
-.popup-buttons button:hover { background: var(--c-hover); }
-#alertOkBtn, #confirmOkBtn, #promptOkBtn { background: var(--c-dark); border-color: transparent; color: var(--c-on-dark); }
-#alertOkBtn:hover, #confirmOkBtn:hover, #promptOkBtn:hover { background: var(--c-dark-hov); }
 
 /* WiFi */
-.wifi-popup-content {
-  width: 100%; max-width: 480px; max-height: calc(100dvh - 32px); overflow: auto; padding: 20px 22px; border-radius: 16px;
-  background: var(--c-raise); color: var(--c-ink); box-shadow: 0 20px 48px var(--c-shadow); font-size: 14px;
-}
-.wifi-popup-content h1 { display: flex; justify-content: space-between; align-items: center; margin: 0 0 14px; font-size: 17px; font-weight: 800; }
+.wifi-popup-content { width: 100%; max-width: 480px; max-height: calc(100vh - 32px); overflow: auto; padding: 20px; font-size: var(--fs-md); }
+.wifi-popup-content h1 { display: flex; justify-content: space-between; align-items: center; margin: 0 0 var(--sp-3); font-size: var(--fs-lg); font-weight: var(--fw-b); }
 .wifi-popup-content h1 > span { display: flex; align-items: center; gap: 10px; }
 .wifi-popup-content h1 i { color: var(--c-ink-2); }
 #hidewifi { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 8px; color: var(--c-ink-2); }
@@ -601,27 +558,23 @@ html[data-theme="dark"] .cm-s-pibo-light .CodeMirror-gutters { border-right-colo
 .network-item .details span { font-size: 12.5px; color: var(--c-ink-2); white-space: nowrap; }
 .network-item .details i { margin-right: 4px; }
 .network-list-section p { margin: 8px 0 0; text-align: right; }
-.network-list-section p a { font-size: 13px; color: var(--c-accent); font-weight: 600; }
+.network-list-section p a { font-size: var(--fs-sm); color: var(--c-accent-ink); font-weight: var(--fw-b); }
 .connection-details { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--c-line); }
 .connection-details h2 { margin: 0 0 12px; font-size: 14px; }
 .form-group { margin-bottom: 12px; }
 .form-group label { display: block; margin-bottom: 6px; font-weight: 700; font-size: 13px; }
 .form-group p { margin: 0; font-size: 13px; }
 .form-group input[readonly] { background: var(--c-bg); color: var(--c-ink-2); }
-.status-message { margin-top: 10px; min-height: 1.2em; text-align: center; font-size: 13px; font-weight: 700; color: var(--c-green); }
-.status-message.error { color: var(--c-red); }
+.status-message { margin-top: 10px; min-height: 1.2em; text-align: center; font-size: var(--fs-sm); font-weight: var(--fw-b); color: var(--v2-green-ink); }
+.status-message.error { color: var(--c-red-ink); }
 .dialog-actions button {
-  width: 100%; height: 42px; border: 0; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-  background: var(--c-dark); color: var(--c-on-dark); font: 700 15px var(--font);
+  width: 100%; height: var(--ctl-md); border: 0; border-radius: var(--r-ctl); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+  background: var(--c-dark); color: var(--c-on-dark); font: var(--fw-b) var(--fs-md) var(--font);
 }
 .dialog-actions button:hover { background: var(--c-dark-hov); }
 
-/* 파이썬 코드 보기 모달 (키트) */
-.v2-app .pb-modal__box { border-radius: 16px; border: 0; background: var(--c-raise); color: var(--c-ink); box-shadow: 0 20px 48px var(--c-shadow); }
-.v2-app .pb-modal__head { background: var(--c-raise); border-bottom: 1px solid var(--c-line); font-weight: 700; }
-.v2-app .pb-modal__foot { background: var(--c-raise); border-top-color: var(--c-line); }
-.v2-app .pb-modal__body pre { background: #161a20; color: #e1e5ea; border-radius: 10px; font-family: var(--mono); }
-.v2-app .pb-modal__foot .pb-btn--accent { background: var(--c-dark); color: var(--c-on-dark); border-color: transparent; }
+/* 파이썬 코드 보기 모달 — 모양은 키트 .pb-modal. 코드 칸 글꼴만 */
+.v2-app .pb-modal__body pre { font-family: var(--mono); }
 
 /* ── 버튼 질감 (macOS 느낌, 260924) ────────────────────────────────────────
    주 동작: 위쪽 1px 안쪽 하이라이트 + 옅은 파란 그림자 + 0.5px 테두리. 배경색을 바꾸는 hover 에서도
@@ -629,12 +582,11 @@ html[data-theme="dark"] .cm-s-pibo-light .CodeMirror-gutters { border-right-colo
    누르면 살짝 어두워진다. 포커스는 파랑 번짐 테두리(3px, 반투명) */
 .v2-btn { box-shadow: var(--c-btn2-sh); transition: background-color .12s, border-color .12s, color .12s, box-shadow .12s, filter .08s; }
 .v2-btn--ghost { box-shadow: none; }
-.v2-btn--dark, .v2-btn--run, #alertOkBtn, #confirmOkBtn, #promptOkBtn, .dialog-actions button,
-.v2-app .pb-modal__foot .pb-btn--accent { box-shadow: var(--c-btn-sh); }
+.v2-btn--dark, .v2-btn--run, .dialog-actions button { box-shadow: var(--c-btn-sh); }
+.v2-btn--tint { box-shadow: none; }
 .v2-btn:active:not(:disabled):not(.disabled), .dialog-actions button:active { filter: brightness(.93); }
 .v2-btn.disabled, .v2-btn:disabled { box-shadow: none; }
 .v2-seg > button.checked, .v2-seg > button[aria-checked="true"] { box-shadow: var(--c-seg-sh); }
-.v2-app :focus-visible { outline: 3px solid var(--c-focus); outline-offset: 1px; }
 
 /* ── 폭에 따라 ────────────────────────────────────────────────────────── */
 body[data-side="closed"] #v2_side,
@@ -658,7 +610,7 @@ body[data-side="closed"] .pb-resizer[data-target="v2_side"] { display: none; }
 @media (max-width: 760px) {
   .v2-app .pb-panes { position: relative; }
   .v2-side.pb-pane {
-    position: absolute; inset: 0 auto 0 0; z-index: 80; /* Blockly 분류(70) 위 */
+    position: absolute; top: 0; bottom: 0; left: 0; z-index: 80; /* Blockly 분류(70) 위 */
     width: min(340px, 88vw) !important; flex: none !important;
     box-shadow: 4px 0 18px rgba(0,0,0,.22);
   }

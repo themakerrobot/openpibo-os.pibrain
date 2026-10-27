@@ -7,12 +7,12 @@
         <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/blocks/guide.html">
 
     <link rel="shortcut icon" href="../_static/icon.png"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
-        <title>Block coding - PiBrain Help</title>
+        <title>Block coding - Help · PiBrain</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=03d1bc43" />
+    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=d358c342" />
     
     
 
@@ -21,60 +21,83 @@
   body {
     --color-code-background: #f2f2f2;
   --color-code-foreground: #1e1e1e;
-  --color-brand-primary: #2563eb;
-  --color-brand-content: #2563eb;
-  --color-brand-visited: #2563eb;
+  --color-brand-primary: #1d4ed8;
+  --color-brand-content: #1d4ed8;
+  --color-brand-visited: #1d4ed8;
   --font-stack: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-stack--headings: var(--font-stack);
   --font-stack--monospace: "D2Coding", "JetBrains Mono", Consolas, "SF Mono", ui-monospace, monospace;
+  --color-foreground-primary: #1a1e29;
+  --color-foreground-secondary: #474f62;
+  --color-foreground-muted: #5f6779;
   --color-background-secondary: #f5f6fa;
+  --color-background-border: #dcdfe7;
   --color-sidebar-background: #f5f6fa;
-  --color-sidebar-item-background--current: rgba(37, 99, 235, .08);
-  --color-sidebar-link-text: #4a5163;
-  --color-sidebar-link-text--top-level: #4a5163;
+  --color-sidebar-item-background--current: #e3ecfd;
+  --color-sidebar-link-text: #474f62;
+  --color-sidebar-link-text--top-level: #474f62;
   --color-admonition-title--note: #2563eb;
-  --color-admonition-title-background--note: rgba(37, 99, 235, .08);
-  --color-admonition-title--tip: #16a34a;
-  --color-admonition-title-background--tip: rgba(22, 163, 74, .08);
+  --color-admonition-title-background--note: #e3ecfd;
+  --color-admonition-title--tip: #157a4b;
+  --color-admonition-title-background--tip: #dcf3e7;
+  --color-api-name: #1d4ed8;
+  --color-api-pre-name: #474f62;
   
   }
   @media not print {
     body[data-theme="dark"] {
       --color-code-background: #202020;
   --color-code-foreground: #d0d0d0;
+  --color-foreground-primary: #e4e7ef;
+  --color-foreground-secondary: #adb4c4;
+  --color-foreground-muted: #8c94a7;
   --color-background-primary: #1a1e27;
-  --color-background-secondary: #222733;
-  --color-sidebar-background: #1f232d;
-  --color-sidebar-item-background--current: rgba(251, 201, 45, .10);
-  --color-sidebar-link-text: #b4bac8;
-  --color-sidebar-link-text--top-level: #b4bac8;
-  --color-admonition-title--note: #fbc92d;
-  --color-admonition-title-background--note: rgba(251, 201, 45, .10);
-  --color-brand-primary: #fbc92d;
-  --color-brand-content: #fbc92d;
-  --color-brand-visited: #fbc92d;
+  --color-background-secondary: #1f232d;
+  --color-background-border: #2b303c;
+  --color-sidebar-background: #151922;
+  --color-sidebar-item-background--current: #1f2c4d;
+  --color-sidebar-link-text: #adb4c4;
+  --color-sidebar-link-text--top-level: #adb4c4;
+  --color-admonition-title--note: #7aa7ff;
+  --color-admonition-title-background--note: #1f2c4d;
+  --color-admonition-title--tip: #6fd6a0;
+  --color-admonition-title-background--tip: #1d3a2a;
+  --color-api-name: #7aa7ff;
+  --color-api-pre-name: #adb4c4;
+  --color-brand-primary: #7aa7ff;
+  --color-brand-content: #7aa7ff;
+  --color-brand-visited: #7aa7ff;
   
     }
     @media (prefers-color-scheme: dark) {
       body:not([data-theme="light"]) {
         --color-code-background: #202020;
   --color-code-foreground: #d0d0d0;
+  --color-foreground-primary: #e4e7ef;
+  --color-foreground-secondary: #adb4c4;
+  --color-foreground-muted: #8c94a7;
   --color-background-primary: #1a1e27;
-  --color-background-secondary: #222733;
-  --color-sidebar-background: #1f232d;
-  --color-sidebar-item-background--current: rgba(251, 201, 45, .10);
-  --color-sidebar-link-text: #b4bac8;
-  --color-sidebar-link-text--top-level: #b4bac8;
-  --color-admonition-title--note: #fbc92d;
-  --color-admonition-title-background--note: rgba(251, 201, 45, .10);
-  --color-brand-primary: #fbc92d;
-  --color-brand-content: #fbc92d;
-  --color-brand-visited: #fbc92d;
+  --color-background-secondary: #1f232d;
+  --color-background-border: #2b303c;
+  --color-sidebar-background: #151922;
+  --color-sidebar-item-background--current: #1f2c4d;
+  --color-sidebar-link-text: #adb4c4;
+  --color-sidebar-link-text--top-level: #adb4c4;
+  --color-admonition-title--note: #7aa7ff;
+  --color-admonition-title-background--note: #1f2c4d;
+  --color-admonition-title--tip: #6fd6a0;
+  --color-admonition-title-background--tip: #1d3a2a;
+  --color-api-name: #7aa7ff;
+  --color-api-pre-name: #adb4c4;
+  --color-brand-primary: #7aa7ff;
+  --color-brand-content: #7aa7ff;
+  --color-brand-visited: #7aa7ff;
   
       }
     }
   }
-</style></head>
+</style><script src="../_static/pibotheme.js"></script>
+</head>
   <body>
     
     <script>
@@ -201,7 +224,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">PiBrain Help</div></a>
+      <a href="../index.html"><div class="brand">Help · PiBrain</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -222,7 +245,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
-  <span class="sidebar-brand-text">PiBrain Help</span>
+  <span class="sidebar-brand-text">Help · PiBrain</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -310,7 +333,7 @@ Everything runs <strong>inside PiBrain</strong>. Only the [Collect] category nee
 ├── Math (13)
 ├── Text (15)
 ├── Lists (12)
-├── Colour (4)
+├── Color (4)
 ├── Variables (appear when you make one)
 └── Functions (appear when you make one)
 
@@ -319,11 +342,11 @@ PiBrain blocks
 ├── Audio (3)
 ├── Collect (4)
 ├── Device (7)
-├── Oled (11)
+├── Display (11)
 ├── Speech (7)
 ├── Vision (16)
-├── Rec (36)
-└── Utils (12)
+├── Recognition (36)
+└── Utilities (12)
 </pre></div>
 </div>
 </section>
@@ -390,8 +413,8 @@ PiBrain blocks
 </a>
 <p>Disconnect USB Device.</p>
 </section>
-<section id="oled">
-<h3>Oled<a class="headerlink" href="#oled" title="Link to this heading">¶</a></h3>
+<section id="display">
+<h3>Display<a class="headerlink" href="#display" title="Link to this heading">¶</a></h3>
 <a class="blk reference internal image-reference" href="../_images/oled_set_font.png"><img alt="Set OLED font size to ([30])" class="blk" src="../_images/oled_set_font.png" width="319" />
 </a>
 <p>Set the font size on the OLED display.</p>
@@ -501,8 +524,8 @@ PiBrain blocks
 </a>
 <p>Turns the 8×8 picture you draw by tapping dots into an image (scaled to the camera size). <em>returns a value</em></p>
 </section>
-<section id="rec">
-<h3>Rec<a class="headerlink" href="#rec" title="Link to this heading">¶</a></h3>
+<section id="recognition">
+<h3>Recognition<a class="headerlink" href="#recognition" title="Link to this heading">¶</a></h3>
 <a class="blk reference internal image-reference" href="../_images/vision_face_detect.png"><img alt="Find faces in image ([item ▾])" class="blk" src="../_images/vision_face_detect.png" width="336" />
 </a>
 <p>Detect and identify faces in the specified image. <em>returns a value</em></p>
@@ -612,8 +635,8 @@ PiBrain blocks
 </a>
 <p>Draws what the last [Classify with classifier model] saw on that image: points and bones for hand and pose, points for face, plus the class name and probability.</p>
 </section>
-<section id="utils">
-<h3>Utils<a class="headerlink" href="#utils" title="Link to this heading">¶</a></h3>
+<section id="utilities">
+<h3>Utilities<a class="headerlink" href="#utilities" title="Link to this heading">¶</a></h3>
 <a class="blk reference internal image-reference" href="../_images/utils_sleep.png"><img alt="Delay for ([1]) seconds" class="blk" src="../_images/utils_sleep.png" width="282" />
 </a>
 <p>Pause the process for a specified duration of seconds.</p>
@@ -716,11 +739,11 @@ PiBrain blocks
 <li><a class="reference internal" href="#audio">Audio</a></li>
 <li><a class="reference internal" href="#collect">Collect</a></li>
 <li><a class="reference internal" href="#device">Device</a></li>
-<li><a class="reference internal" href="#oled">Oled</a></li>
+<li><a class="reference internal" href="#display">Display</a></li>
 <li><a class="reference internal" href="#speech">Speech</a></li>
 <li><a class="reference internal" href="#vision">Vision</a></li>
-<li><a class="reference internal" href="#rec">Rec</a></li>
-<li><a class="reference internal" href="#utils">Utils</a></li>
+<li><a class="reference internal" href="#recognition">Recognition</a></li>
+<li><a class="reference internal" href="#utilities">Utilities</a></li>
 </ul>
 </li>
 </ul>

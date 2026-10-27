@@ -148,7 +148,7 @@ def process_frame(img, vtype):
             face.detect_face_vis(img, items)
             if items:
                 info = face.analyze_face(img, max(items, key=lambda x:(x[2]-x[0])*(x[3]-x[1])))
-                res = f"{info['gender']}, {info['age']}세, {info['emotion']}"
+                res = f"{info['gender']}, {info['age']}, {info['emotion']}"   # 파이보 도구와 같은 모양(언어와 상관없이)
         elif vtype == 'face_landmark':
             mesh = face.detect_mesh(img)
             face.detect_mesh_vis(img, mesh)
@@ -451,7 +451,7 @@ async def led_call(fn, *a):
         return JSONResponse({"ok": True})
     except asyncio.TimeoutError:
         print('[led] show() did not return in 2s')
-        return JSONResponse({"ok": False, "error": "led timeout"})
+        return JSONResponse({"ok": False, "error": "err_led_timeout"})
     except Exception as e:
         return JSONResponse({"ok": False, "error": str(e)})
 
@@ -486,7 +486,7 @@ async def button_stream(request: Request):
 async def tts(text: str, voice: str = 'f1'):
     valid = ('m1','m2','m3','m4','m5','f1','f2','f3','f4','f5')
     if voice not in valid:
-        return JSONResponse({"ok": False, "error": "invalid voice"})
+        return JSONResponse({"ok": False, "error": "tts_err_voice"})
     try:
         sp = await ensure_speech()
         au = await ensure_audio()
@@ -521,7 +521,7 @@ async def oled_text(
 ):
     """LCD에 텍스트 출력. network_disp를 종료하고 직접 렌더링."""
     if oled is None:
-        return JSONResponse({"ok": False, "error": "oled not ready"})
+        return JSONResponse({"ok": False, "error": "err_lcd_not_ready"})
     try:
         def _draw():
             stop_network_disp()
@@ -547,7 +547,7 @@ async def oled_text(
 async def oled_clear(bg_r: int = 0, bg_g: int = 0, bg_b: int = 0):
     """LCD 화면 단색으로 클리어."""
     if oled is None:
-        return JSONResponse({"ok": False, "error": "oled not ready"})
+        return JSONResponse({"ok": False, "error": "err_lcd_not_ready"})
     try:
         def _clear():
             stop_network_disp()
@@ -564,7 +564,7 @@ async def oled_clear(bg_r: int = 0, bg_g: int = 0, bg_b: int = 0):
 async def oled_reset():
     """network_disp.py 재시작 (카메라가 꺼진 상태에서만 유효)."""
     if vision_en:
-        return JSONResponse({"ok": False, "error": "camera is on — turn off camera first"})
+        return JSONResponse({"ok": False, "error": "err_camera_on"})
     await asyncio.to_thread(start_network_disp)
     return JSONResponse({"ok": True})
 

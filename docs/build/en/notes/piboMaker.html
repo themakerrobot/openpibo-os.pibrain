@@ -7,12 +7,12 @@
         <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/notes/piboMaker.html">
 
     <link rel="shortcut icon" href="../_static/icon.png"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
-        <title>PiBrain Maker - PiBrain Help</title>
+        <title>PiBrain Maker - Help · PiBrain</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=03d1bc43" />
+    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=d358c342" />
     
     
 
@@ -21,60 +21,83 @@
   body {
     --color-code-background: #f2f2f2;
   --color-code-foreground: #1e1e1e;
-  --color-brand-primary: #2563eb;
-  --color-brand-content: #2563eb;
-  --color-brand-visited: #2563eb;
+  --color-brand-primary: #1d4ed8;
+  --color-brand-content: #1d4ed8;
+  --color-brand-visited: #1d4ed8;
   --font-stack: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-stack--headings: var(--font-stack);
   --font-stack--monospace: "D2Coding", "JetBrains Mono", Consolas, "SF Mono", ui-monospace, monospace;
+  --color-foreground-primary: #1a1e29;
+  --color-foreground-secondary: #474f62;
+  --color-foreground-muted: #5f6779;
   --color-background-secondary: #f5f6fa;
+  --color-background-border: #dcdfe7;
   --color-sidebar-background: #f5f6fa;
-  --color-sidebar-item-background--current: rgba(37, 99, 235, .08);
-  --color-sidebar-link-text: #4a5163;
-  --color-sidebar-link-text--top-level: #4a5163;
+  --color-sidebar-item-background--current: #e3ecfd;
+  --color-sidebar-link-text: #474f62;
+  --color-sidebar-link-text--top-level: #474f62;
   --color-admonition-title--note: #2563eb;
-  --color-admonition-title-background--note: rgba(37, 99, 235, .08);
-  --color-admonition-title--tip: #16a34a;
-  --color-admonition-title-background--tip: rgba(22, 163, 74, .08);
+  --color-admonition-title-background--note: #e3ecfd;
+  --color-admonition-title--tip: #157a4b;
+  --color-admonition-title-background--tip: #dcf3e7;
+  --color-api-name: #1d4ed8;
+  --color-api-pre-name: #474f62;
   
   }
   @media not print {
     body[data-theme="dark"] {
       --color-code-background: #202020;
   --color-code-foreground: #d0d0d0;
+  --color-foreground-primary: #e4e7ef;
+  --color-foreground-secondary: #adb4c4;
+  --color-foreground-muted: #8c94a7;
   --color-background-primary: #1a1e27;
-  --color-background-secondary: #222733;
-  --color-sidebar-background: #1f232d;
-  --color-sidebar-item-background--current: rgba(251, 201, 45, .10);
-  --color-sidebar-link-text: #b4bac8;
-  --color-sidebar-link-text--top-level: #b4bac8;
-  --color-admonition-title--note: #fbc92d;
-  --color-admonition-title-background--note: rgba(251, 201, 45, .10);
-  --color-brand-primary: #fbc92d;
-  --color-brand-content: #fbc92d;
-  --color-brand-visited: #fbc92d;
+  --color-background-secondary: #1f232d;
+  --color-background-border: #2b303c;
+  --color-sidebar-background: #151922;
+  --color-sidebar-item-background--current: #1f2c4d;
+  --color-sidebar-link-text: #adb4c4;
+  --color-sidebar-link-text--top-level: #adb4c4;
+  --color-admonition-title--note: #7aa7ff;
+  --color-admonition-title-background--note: #1f2c4d;
+  --color-admonition-title--tip: #6fd6a0;
+  --color-admonition-title-background--tip: #1d3a2a;
+  --color-api-name: #7aa7ff;
+  --color-api-pre-name: #adb4c4;
+  --color-brand-primary: #7aa7ff;
+  --color-brand-content: #7aa7ff;
+  --color-brand-visited: #7aa7ff;
   
     }
     @media (prefers-color-scheme: dark) {
       body:not([data-theme="light"]) {
         --color-code-background: #202020;
   --color-code-foreground: #d0d0d0;
+  --color-foreground-primary: #e4e7ef;
+  --color-foreground-secondary: #adb4c4;
+  --color-foreground-muted: #8c94a7;
   --color-background-primary: #1a1e27;
-  --color-background-secondary: #222733;
-  --color-sidebar-background: #1f232d;
-  --color-sidebar-item-background--current: rgba(251, 201, 45, .10);
-  --color-sidebar-link-text: #b4bac8;
-  --color-sidebar-link-text--top-level: #b4bac8;
-  --color-admonition-title--note: #fbc92d;
-  --color-admonition-title-background--note: rgba(251, 201, 45, .10);
-  --color-brand-primary: #fbc92d;
-  --color-brand-content: #fbc92d;
-  --color-brand-visited: #fbc92d;
+  --color-background-secondary: #1f232d;
+  --color-background-border: #2b303c;
+  --color-sidebar-background: #151922;
+  --color-sidebar-item-background--current: #1f2c4d;
+  --color-sidebar-link-text: #adb4c4;
+  --color-sidebar-link-text--top-level: #adb4c4;
+  --color-admonition-title--note: #7aa7ff;
+  --color-admonition-title-background--note: #1f2c4d;
+  --color-admonition-title--tip: #6fd6a0;
+  --color-admonition-title-background--tip: #1d3a2a;
+  --color-api-name: #7aa7ff;
+  --color-api-pre-name: #adb4c4;
+  --color-brand-primary: #7aa7ff;
+  --color-brand-content: #7aa7ff;
+  --color-brand-visited: #7aa7ff;
   
       }
     }
   }
-</style></head>
+</style><script src="../_static/pibotheme.js"></script>
+</head>
   <body>
     
     <script>
@@ -201,7 +224,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">PiBrain Help</div></a>
+      <a href="../index.html"><div class="brand">Help · PiBrain</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -222,7 +245,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
-  <span class="sidebar-brand-text">PiBrain Help</span>
+  <span class="sidebar-brand-text">Help · PiBrain</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -338,11 +361,11 @@ as PiBrain, type <strong>PiBrain’s IP address</strong> (shown on the first LCD
 <h2>IDE<a class="headerlink" href="#ide" title="Link to this heading">¶</a></h2>
 <p><img alt="IDE with blocks" src="../_images/ide_block.png" /></p>
 <ul class="simple">
-<li><p><strong>Top bar</strong>: switch the editor with [Block | Python]. On the right are Tools, Chat, Classifier, Guide, Full screen and [⋯] More
-(brightness · font size · Python editor theme · language · reset · power · source code and license)</p></li>
+<li><p><strong>Top bar</strong>: switch the editor with [Blocks | Python]. On the right are Tools, Chat, Classifier, Guide, Full screen and [⋯] More
+(brightness · font size · Python editor theme · language · factory reset · power off · source code and license)</p></li>
 <li><p><strong>Left panel</strong>: <strong>[Run] [Stop]</strong> at the bottom are always visible.</p>
 <ul>
-<li><p>[PiBrain] — screen output (pictures sent with the <code class="docutils literal notranslate"><span class="pre">Display</span> <span class="pre">image</span> <span class="pre">variable</span> <span class="pre">…</span> <span class="pre">on</span> <span class="pre">IDE</span></code> block), status (WiFi, temperature, memory, uptime, version), program output, sending input to the program</p></li>
+<li><p>[PiBrain] — screen output (pictures sent with the <code class="docutils literal notranslate"><span class="pre">Display</span> <span class="pre">image</span> <span class="pre">variable</span> <span class="pre">…</span> <span class="pre">on</span> <span class="pre">IDE</span></code> block), status (WiFi settings, temperature, memory, uptime, version), program output, sending input to the program</p></li>
 <li><p>[Files] — the file list, new file / new folder / upload, and a preview for pictures and sounds</p></li>
 </ul>
 </li>
@@ -358,24 +381,24 @@ See <strong>Python</strong> on the left for the API</p></li>
 </section>
 <section id="tools">
 <h2>Tools<a class="headerlink" href="#tools" title="Link to this heading">¶</a></h2>
-<p>Try PiBrain’s features one at a time, without code. Pick [Buttons], [LED], [Camera], [Voice] or [LCD] on the left.</p>
+<p>Try PiBrain’s features one at a time, without code. Pick [Buttons], [LED], [Camera], [Speech] or [LCD] on the left.</p>
 <ul class="simple">
 <li><p><strong>Buttons</strong>: shows live whether each of the 4 buttons is pressed</p></li>
 </ul>
 <p><img alt="Tools: LED" src="../_images/tools_led.png" /></p>
 <ul class="simple">
-<li><p><strong>LED</strong>: pick a colour and press [Apply] to light the LED in that colour</p></li>
+<li><p><strong>LED</strong>: pick a color and press [Apply] to light the LED in that color</p></li>
 </ul>
 <p><img alt="Tools: Camera" src="../_images/tools_camera.png" /></p>
 <ul class="simple">
 <li><p><strong>Camera</strong>: press [Camera on] to show the camera view on the <strong>PiBrain LCD</strong>. Tap a vision feature (grayscale, edges, cartoon, QR code,
 face analysis, object detection, hand gestures, pose, markers…) to apply it to the LCD view right away; the result appears as text at the bottom right.
 [Show here] shows the current view in the browser too</p></li>
-<li><p><strong>Voice</strong>: pick one of ten voices (Male 1–5, Female 1–5) and let PiBrain say your text. Korean and English are detected automatically</p></li>
+<li><p><strong>Speech</strong>: pick one of ten voices (Male 1–5, Female 1–5) and press [Speak] to let PiBrain say your text. Korean and English are detected automatically</p></li>
 </ul>
 <p><img alt="Tools: LCD" src="../_images/tools_lcd.png" /></p>
 <ul class="simple">
-<li><p><strong>LCD</strong>: choose the text, size, position and colour and show it on the LCD (240×320). [LCD home screen] goes back to the first screen with the IP address</p></li>
+<li><p><strong>LCD</strong>: choose the text, size, position and color and show it on the LCD (240×320). [LCD home screen] goes back to the first screen with the IP address</p></li>
 </ul>
 </section>
 <section id="classifier">
@@ -384,8 +407,8 @@ face analysis, object detection, hand gestures, pose, markers…) to apply it to
 <p>Collect examples with the camera and teach the AI, for example “this is a cat, this is food”. The PiBrain camera is portrait (3:4), so the view is portrait too.</p>
 <ol class="arabic simple">
 <li><p><strong>What should it learn from?</strong> — Image (the whole picture) · Hand (hand shape) · Face (expression) · Pose (body posture)</p></li>
-<li><p>Name each <strong>class</strong> and keep pressing <strong>[Hold to record]</strong> to collect examples. You can also upload files with [Photos]</p></li>
-<li><p><strong>[Train]</strong> — the tablet or laptop browser learns in a few seconds and shows the accuracy, a confusion table and live scores</p></li>
+<li><p>Name each <strong>class</strong> and keep pressing <strong>[Hold to collect]</strong> to collect examples. You can also upload files with [Photos]</p></li>
+<li><p><strong>[Teach the AI]</strong> — the tablet or laptop browser learns in a few seconds and shows the accuracy, a confusion table and live scores</p></li>
 <li><p><strong>[Save]</strong> (under Save to PiBrain) — saved on PiBrain in <code class="docutils literal notranslate"><span class="pre">/home/pi/mymodel/&lt;model</span> <span class="pre">name&gt;</span></code></p></li>
 <li><p>In the IDE use <code class="docutils literal notranslate"><span class="pre">Load</span> <span class="pre">classifier</span> <span class="pre">model</span> <span class="pre">(mymodel)</span> <span class="pre">(model</span> <span class="pre">name)</span></code> → <code class="docutils literal notranslate"><span class="pre">Classify</span> <span class="pre">(image)</span> <span class="pre">with</span> <span class="pre">classifier</span> <span class="pre">model</span></code>.
 <code class="docutils literal notranslate"><span class="pre">Draw</span> <span class="pre">what</span> <span class="pre">the</span> <span class="pre">classifier</span> <span class="pre">saw</span> <span class="pre">on</span> <span class="pre">image</span></code> draws the hand, face or body points and the class name on the picture</p></li>

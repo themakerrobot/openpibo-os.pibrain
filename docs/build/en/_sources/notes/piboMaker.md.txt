@@ -20,10 +20,10 @@ Everything runs **inside PiBrain** (voices, chat and the classifier included). O
 
 ![IDE with blocks](images/ide_block.png)
 
-- **Top bar**: switch the editor with [Block | Python]. On the right are Tools, Chat, Classifier, Guide, Full screen and [⋯] More
-  (brightness · font size · Python editor theme · language · reset · power · source code and license)
+- **Top bar**: switch the editor with [Blocks | Python]. On the right are Tools, Chat, Classifier, Guide, Full screen and [⋯] More
+  (brightness · font size · Python editor theme · language · factory reset · power off · source code and license)
 - **Left panel**: **[Run] [Stop]** at the bottom are always visible.
-  - [PiBrain] — screen output (pictures sent with the `Display image variable … on IDE` block), status (WiFi, temperature, memory, uptime, version), program output, sending input to the program
+  - [PiBrain] — screen output (pictures sent with the `Display image variable … on IDE` block), status (WiFi settings, temperature, memory, uptime, version), program output, sending input to the program
   - [Files] — the file list, new file / new folder / upload, and a preview for pictures and sounds
 - **Blocks**: drag blocks out of the categories on the left. Type a word such as "sound" or "face" into **Search blocks** at the top
   to find blocks. [Python code] shows the Python code your blocks make. See **Blocks** on the left for every block.
@@ -36,24 +36,24 @@ Everything runs **inside PiBrain** (voices, chat and the classifier included). O
 
 ## Tools
 
-Try PiBrain's features one at a time, without code. Pick [Buttons], [LED], [Camera], [Voice] or [LCD] on the left.
+Try PiBrain's features one at a time, without code. Pick [Buttons], [LED], [Camera], [Speech] or [LCD] on the left.
 
 - **Buttons**: shows live whether each of the 4 buttons is pressed
 
 ![Tools: LED](images/tools_led.png)
 
-- **LED**: pick a colour and press [Apply] to light the LED in that colour
+- **LED**: pick a color and press [Apply] to light the LED in that color
 
 ![Tools: Camera](images/tools_camera.png)
 
 - **Camera**: press [Camera on] to show the camera view on the **PiBrain LCD**. Tap a vision feature (grayscale, edges, cartoon, QR code,
   face analysis, object detection, hand gestures, pose, markers…) to apply it to the LCD view right away; the result appears as text at the bottom right.
   [Show here] shows the current view in the browser too
-- **Voice**: pick one of ten voices (Male 1–5, Female 1–5) and let PiBrain say your text. Korean and English are detected automatically
+- **Speech**: pick one of ten voices (Male 1–5, Female 1–5) and press [Speak] to let PiBrain say your text. Korean and English are detected automatically
 
 ![Tools: LCD](images/tools_lcd.png)
 
-- **LCD**: choose the text, size, position and colour and show it on the LCD (240×320). [LCD home screen] goes back to the first screen with the IP address
+- **LCD**: choose the text, size, position and color and show it on the LCD (240×320). [LCD home screen] goes back to the first screen with the IP address
 
 ## Classifier
 
@@ -62,8 +62,8 @@ Try PiBrain's features one at a time, without code. Pick [Buttons], [LED], [Came
 Collect examples with the camera and teach the AI, for example "this is a cat, this is food". The PiBrain camera is portrait (3:4), so the view is portrait too.
 
 1. **What should it learn from?** — Image (the whole picture) · Hand (hand shape) · Face (expression) · Pose (body posture)
-2. Name each **class** and keep pressing **[Hold to record]** to collect examples. You can also upload files with [Photos]
-3. **[Train]** — the tablet or laptop browser learns in a few seconds and shows the accuracy, a confusion table and live scores
+2. Name each **class** and keep pressing **[Hold to collect]** to collect examples. You can also upload files with [Photos]
+3. **[Teach the AI]** — the tablet or laptop browser learns in a few seconds and shows the accuracy, a confusion table and live scores
 4. **[Save]** (under Save to PiBrain) — saved on PiBrain in `/home/pi/mymodel/<model name>`
 5. In the IDE use `Load classifier model (mymodel) (model name)` → `Classify (image) with classifier model`.
    `Draw what the classifier saw on image` draws the hand, face or body points and the class name on the picture

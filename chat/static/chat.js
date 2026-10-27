@@ -22,6 +22,13 @@
     Array.prototype.forEach.call(document.querySelectorAll('[data-key]'), function (e) {
       e.textContent = tr(e.getAttribute('data-key'));
     });
+    // 툴팁·접근성 이름(261028): data-title-key → title(+aria-label), data-aria-key → aria-label
+    Array.prototype.forEach.call(document.querySelectorAll('[data-title-key]'), function (e) {
+      var s = tr(e.getAttribute('data-title-key')); e.title = s; e.setAttribute('aria-label', s);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-aria-key]'), function (e) {
+      e.setAttribute('aria-label', tr(e.getAttribute('data-aria-key')));
+    });
     text.placeholder = tr('chat_placeholder');
     document.title = tr('chat_title');
     renderVoices();
