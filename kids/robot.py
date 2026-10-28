@@ -208,10 +208,9 @@ class PiBrainRobot(BaseRobot):
     super().__init__(cache_dir, **kw)
     from openpibo.device import DeviceByPiBrain
     from openpibo.audio import Audio
-    from openpibo.oled import OledByPiBrain
     self.d, self.a = DeviceByPiBrain(), Audio()
-    self.lcd = OledByPiBrain(self.W, self.H)
-    self._pressed = set()
+    self._lcd = None         # 처음 얼굴을 그릴 때 연다 — OledByPiBrain() 이 LCD 를 다시 초기화하고 검게 칠해서,
+    self._pressed = set()    # 켜자마자 열면 booting 이 띄운 화면(IP 등)이 꺼진 것처럼 지워졌다
 
   def play(self, path):
     if self.stop_flag.is_set():
@@ -226,8 +225,11 @@ class PiBrainRobot(BaseRobot):
 
   def face(self, kind, color=None):
     from face import draw_face
-    self.lcd.image = draw_face(kind, self.W, self.H, color or '#ffb703')
-    self.lcd.show()
+    if self._lcd is None:
+      from openpibo.oled import OledByPiBrain
+      self._lcd = OledByPiBrain(self.W, self.H)
+    self._lcd.image = draw_face(kind, self.W, self.H, color or '#ffb703')
+    self._lcd.show()
 
   def poll_inputs(self):
     out = []
