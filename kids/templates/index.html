@@ -8,11 +8,11 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
   <link rel="stylesheet" href="../static/pibo-ui.css?ver=261028v2" />
-  <link rel="stylesheet" href="../static/kids.css?ver=261028v2" />
+  <link rel="stylesheet" href="../static/kids.css?ver=261028v3" />
   <link rel="shortcut icon" href="../static/icon.png?ver=240319v1" type="image/x-icon" />
   <!-- 문구는 IDE 의 ko2en.js 를 같이 쓴다(kids_* 키, 영문판 델타를 늘리지 않으려고). IDE(80)는 늘 떠 있다 -->
   <script>(function () { var p = new URLSearchParams(location.search).get('ide') || 80;   /* ?ide= 는 시험용 */
-    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261028v2"><\/script>'); })();</script>
+    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261028v3"><\/script>'); })();</script>
 </head>
 
 <!-- pb-plain: 키트의 pb-v2 층을 얹지 않는다(그 층의 앱 버튼 규칙이 카드 색을 덮는다) -->
@@ -182,6 +182,7 @@
   <!-- 도전 결과 -->
   <div class="kids-modal" id="dlg_result" hidden>
     <div class="kids-modal__box kids-result">
+      <div class="kids-result__art" id="res_art"></div>
       <div class="kids-result__stars" id="res_stars"></div>
       <p class="kids-result__msg" id="res_msg"></p>
       <div class="kids-compare" id="res_compare" hidden>
@@ -208,6 +209,10 @@
           <input class="pb-field kids-namein" id="cu_name" maxlength="8" autocomplete="off">
           <span class="pb-label" data-key="kids_custom_color"></span>
           <div class="kids-colors" id="cu_colors"></div>
+          <span class="pb-label" data-key="kids_custom_hat"></span>
+          <div class="kids-names" id="cu_hats"></div>
+          <span class="pb-label" data-key="kids_custom_glasses"></span>
+          <div class="kids-names" id="cu_glasses"></div>
         </div>
       </div>
       <span class="pb-label" data-key="kids_custom_kind"></span>
@@ -287,6 +292,7 @@
   </div>
 
   <script src="../static/pibo-ui.js?ver=261028v2"></script>
-  <script src="../static/kids.js?ver=261028v2"></script>
+  <script src="../static/pet.js?ver=261028v3"></script>
+  <script src="../static/kids.js?ver=261028v3"></script>
 </body>
 </html>

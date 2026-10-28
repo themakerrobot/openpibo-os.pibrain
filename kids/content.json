@@ -218,7 +218,7 @@
       "sleepyhead": {"icon": "fa-bed",         "ko": "잠꾸러기",  "en": "Sleepyhead", "about_ko": "금방 졸리고, 잠도 빨리 자요.",        "about_en": "Gets sleepy fast and falls asleep quickly."},
       "playful":    {"icon": "fa-futbol",      "ko": "장난꾸러기", "en": "Playful",   "about_ko": "금방 심심해하고, 놀면 아주 기뻐해요.", "about_en": "Gets bored fast and loves to play."}
     },
-    "colors": ["#ffb703", "#ff6b9a", "#4cc9f0", "#80d36b", "#b388ff", "#ff8a3d"],
+    "colors": ["#2b7de9", "#ffb703", "#ff6b9a", "#4cc9f0", "#80d36b", "#b388ff", "#ff8a3d"],
     "names_ko": ["몽이", "콩이", "별이", "보리", "하루", "토리"],
     "names_en": ["Momo", "Bean", "Star", "Coco", "Sunny", "Toto"],
     "acts": {
