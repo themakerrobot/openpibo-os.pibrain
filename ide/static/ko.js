@@ -711,7 +711,7 @@ Blockly.Msg["VISION_FACE_MESH_VIS"] = "%1 %2 이미지 %3 얼굴 방향/거리 %
 Blockly.Msg["VISION_FACE_MESH_VIS_TOOLTIP"] = "인식된 얼굴의 방향과 거리를 표시합니다.";
 
 Blockly.Msg["VISION_OBJECT_LOAD_EXT"] = "%1 %2 사물인식 모델 %3 %4.onnx 불러오기";
-Blockly.Msg["VISION_OBJECT_LOAD_EXT_TOOLTIP"] = "사물인식 모델을 불러옵니다. easydetect 에서 받은 모델 파일(pibo-job1.onnx 등)의 이름을 .onnx 빼고 적습니다. 이름과 기준은 파일 안에 들어 있습니다.";
+Blockly.Msg["VISION_OBJECT_LOAD_EXT_TOOLTIP"] = "사물인식 모델을 불러옵니다. easydetect 에서 받은 모델 파일(job1.onnx 등)의 이름을 .onnx 빼고 적습니다. 이름과 기준은 파일 안에 들어 있습니다.";
 Blockly.Msg["VISION_OBJECT"] = "%1 %2 이미지 %3 사물 찾기";
 Blockly.Msg["VISION_OBJECT_TOOLTIP"] = "이미지에서 사물을 찾아냅니다. (80개 종류의 사물)";
 Blockly.Msg["VISION_OBJECT_RAW"] = "%1 %2 이미지 %3 사물 찾기(raw)";

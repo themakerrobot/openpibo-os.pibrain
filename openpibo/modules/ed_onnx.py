@@ -2,7 +2,7 @@
 """easydetect ed 사물 인식 — ``.onnx`` 파일 하나를 onnxruntime 으로 돌린다 (261026).
 
 모델은 **파일 하나**다. 기본 COCO 모델 ``/home/pi/.model/object/ed-s-320.onnx`` 와 easydetect-lab 의
-'Pibo로 보내기' 로 받은 ``pibo-job<번호>.onnx`` 를 같은 방법으로 읽는다.
+easydetect lab 에서 받은 ``job<번호>.onnx`` 를 같은 방법으로 읽는다.
 
 - ONNX opset 17, 입력 크기는 파일마다 고정이다. **크기는 파일에서 읽는다**(320 이든 640 이든 막지 않는다)
 - 파일 안(ONNX metadata, ``session.get_modelmeta().custom_metadata_map``)에 든 것:

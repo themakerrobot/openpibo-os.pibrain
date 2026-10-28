@@ -26,7 +26,7 @@ os.environ['LIBCAMERA_LOG_LEVELS'] = '3'
 logging.getLogger("tensorflow").setLevel(logging.ERROR)
 
 # 기본 사물 인식 모델 (easydetect ed-s 320, COCO 80종 — 이름·conf 가 파일 안에 있다). 261026, easydetect-lab 지시서.
-# 다른 기본 모델을 쓰려면 이 한 줄만 바꾼다. lab 에서 받은 모델(pibo-job<번호>.onnx)은 load_object_model(파일) 로 고른다
+# 다른 기본 모델을 쓰려면 이 한 줄만 바꾼다. lab 에서 받은 모델(job<번호>.onnx)은 load_object_model(파일) 로 고른다
 OBJECT_MODEL = '/home/pi/.model/object/ed-s-320.onnx'
 
 def putTextPIL(img, text, points, size=30, colors=(255,255,255)):
@@ -210,13 +210,13 @@ Functions:
     """
     사물 인식 모델을 불러옵니다.
 
-    easydetect 모델 파일(``.onnx``)을 고릅니다. easydetect lab 의 'Pibo로 보내기' 로 받은
-    ``pibo-job<번호>.onnx`` 가 그대로 쓰입니다. 클래스 이름과 확신 기준은 파일 안에 들어 있고, 이름은 한글일 수 있습니다.
+    easydetect 모델 파일(``.onnx``)을 고릅니다. easydetect lab 에서 받은
+    ``job<번호>.onnx`` 가 그대로 쓰입니다. 클래스 이름과 확신 기준은 파일 안에 들어 있고, 이름은 한글일 수 있습니다.
     모델을 못 쓰면(파일이 없음, onnxruntime 1.13 미만, 읽기 실패) 이유가 담긴 오류가 납니다.
 
     example::
 
-      detect.load_object_model('/home/pi/code/pibo-job3.onnx')   # lab 에서 받은 모델
+      detect.load_object_model('/home/pi/code/job3.onnx')   # lab 에서 받은 모델
       detect.load_object_model()                                  # 기본 모델(COCO)로 돌아가기
 
     :param str modelpath: 사물 인식 모델 파일(``.onnx``). 없으면 기본 모델

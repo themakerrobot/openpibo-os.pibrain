@@ -94,8 +94,8 @@ msgstr "Hand gesture recognition result"
 msgid "사물 인식 모델을 불러옵니다."
 msgstr "Loads an object detection model."
 
-msgid "easydetect 모델 파일(``.onnx``)을 고릅니다. easydetect lab 의 'Pibo로 보내기' 로 받은 ``pibo-job<번호>.onnx`` 가 그대로 쓰입니다. 클래스 이름과 확신 기준은 파일 안에 들어 있고, 이름은 한글일 수 있습니다. 모델을 못 쓰면(파일이 없음, onnxruntime 1.13 미만, 읽기 실패) 이유가 담긴 오류가 납니다."
-msgstr "Picks an easydetect model file (``.onnx``). The ``pibo-job<number>.onnx`` from 'Send to Pibo' in the easydetect lab works as it is. The class names and the score threshold are inside the file; the names may be Korean. If the model cannot be used (missing file, onnxruntime older than 1.13, a file that does not load), an error says why."
+msgid "easydetect 모델 파일(``.onnx``)을 고릅니다. easydetect lab 에서 받은 ``job<번호>.onnx`` 가 그대로 쓰입니다. 클래스 이름과 확신 기준은 파일 안에 들어 있고, 이름은 한글일 수 있습니다. 모델을 못 쓰면(파일이 없음, onnxruntime 1.13 미만, 읽기 실패) 이유가 담긴 오류가 납니다."
+msgstr "Picks an easydetect model file (``.onnx``). The ``job<number>.onnx`` downloaded from the easydetect lab works as it is. The class names and the score threshold are inside the file; the names may be Korean. If the model cannot be used (missing file, onnxruntime older than 1.13, a file that does not load), an error says why."
 
 msgid "사물 인식 모델 파일(``.onnx``). 없으면 기본 모델"
 msgstr "Object detection model file (``.onnx``). Left out, the default model"
