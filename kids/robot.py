@@ -26,6 +26,7 @@ def voice_path(cache_dir, text, voice):
 
 class BaseRobot:
   device = 'pibo'
+  has_screen = False          # 키우기 얼굴·점수를 그릴 화면(PiBrain LCD)
 
   def __init__(self, cache_dir, volume=60, voice='f1'):
     self.cache_dir = cache_dir
@@ -77,8 +78,10 @@ class BaseRobot:
   def colour(self, rgb):
     raise NotImplementedError
 
-  def face(self, kind, look=None):
-    """키우기 얼굴(sleep·hungry·sleepy·sad·happy·normal). look = 꾸미기 {color, hat, glasses}. 화면이 없는 제품은 눈 색 등으로"""
+  def face(self, kind, look=None, stats=None, pose=None, bubble=None):
+    """키우기 얼굴(sleep·hungry·sleepy·sad·happy·normal). look = 꾸미기 {color, hat, glasses}.
+    화면이 있는 제품은 stats(점수 [(이름, 값, 열쇠)]) · pose(반응 포즈, 없으면 kind) · bubble(말풍선 글)도 그린다.
+    화면이 없는 제품(파이보)은 kind 로 눈 색·동작만"""
 
   def poll_inputs(self):
     """눌린 입력 목록. 파이보 'touch', PiBrain 'b1'~'b4'"""
@@ -114,6 +117,7 @@ class FakeRobot(BaseRobot):
   def __init__(self, cache_dir, device='pibo', speed=1.0, **kw):
     super().__init__(cache_dir, **kw)
     self.device = device
+    self.has_screen = device == 'pibrain'
     self.speed = speed
     self.log = []
     self.inputs = []
@@ -146,8 +150,10 @@ class FakeRobot(BaseRobot):
   def colour(self, rgb):
     self._do(('colour', tuple(rgb)), 0.05)
 
-  def face(self, kind, look=None):
+  def face(self, kind, look=None, stats=None, pose=None, bubble=None):
     self.log.append(('face', kind))
+    if self.has_screen:
+      self.log.append(('screen', pose or kind, bubble, [v for _, v, _ in (stats or [])]))
 
   def poll_inputs(self):
     out, self.inputs = self.inputs, []
@@ -187,7 +193,7 @@ class PiboRobot(BaseRobot):
   def colour(self, rgb):
     self.d.eye_on(*[int(v) for v in rgb])
 
-  def face(self, kind, look=None):
+  def face(self, kind, look=None, stats=None, pose=None, bubble=None):
     self.colour(self.FACE_EYE.get(kind, (255, 255, 255)))
     name = self.FACE_MOTION.get(kind)
     if name:
@@ -222,6 +228,7 @@ class PiboRobot(BaseRobot):
 
 class PiBrainRobot(BaseRobot):
   device = 'pibrain'
+  has_screen = True
   W, H = 240, 320          # OledByPiBrain 기본값 — 실제 LCD 해상도·방향은 확인 필요
 
   def __init__(self, cache_dir, **kw):
@@ -243,12 +250,12 @@ class PiBrainRobot(BaseRobot):
   def colour(self, rgb):
     self.d.led_on(*[int(v) for v in rgb])
 
-  def face(self, kind, look=None):
+  def face(self, kind, look=None, stats=None, pose=None, bubble=None):
     from face import draw_face
     if self._lcd is None:
       from openpibo.oled import OledByPiBrain
       self._lcd = OledByPiBrain(self.W, self.H)
-    self._lcd.image = draw_face(kind, self.W, self.H, look)
+    self._lcd.image = draw_face(pose or kind, self.W, self.H, look, stats, bubble)
     self._lcd.show()
 
   def poll_inputs(self):

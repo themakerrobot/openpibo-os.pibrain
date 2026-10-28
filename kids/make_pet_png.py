@@ -11,7 +11,7 @@ from playwright.sync_api import sync_playwright
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(BASE, 'static', 'pet', 'lcd')
-STATES = ('normal', 'happy', 'hungry', 'sleepy', 'sleep', 'sad')
+STATES = ('normal', 'happy', 'hungry', 'sleepy', 'sleep', 'sad', 'eat', 'ball', 'wash')   # 상태 6 + 돌보기 반응 3
 HATS = ('antenna', 'cap')
 KEY = '#2b7de9'
 SIZE = 240

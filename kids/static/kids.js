@@ -637,12 +637,13 @@
     clearTimeout(showInput.t);
     showInput.t = setTimeout(function () { p.hidden = true; }, 3500);
     if (li.reaction && C.guides[li.reaction]) bubble(txt(C.guides[li.reaction]));
-    react(li.act);
+    react(li.reaction);
   }
-  /* 돌보기 반응 포즈 — 2.5초 보여 주고 지금 상태로 돌아간다 */
-  var ACT_POSE = { feed: 'eat', play: 'ball', wash: 'wash', pet: 'happy', sleep: 'sleep' };
-  function react(act) {
-    var pose = ACT_POSE[act];
+  /* 돌보기 반응 포즈 — 2.5초 보여 주고 지금 상태로 돌아간다. 반응(서버 pet.act 결과) 기준이라 거절(배불러 등)은 그대로.
+     run_kids.py 의 REACT_POSE 와 같게(PiBrain LCD 도 같은 포즈) */
+  var REACT_POSE = { eat: 'eat', play: 'ball', wash: 'wash', pet: 'happy', wake: 'happy', sleep: 'sleep' };
+  function react(reaction) {
+    var pose = REACT_POSE[reaction];
     if (!pose || !S.pet) return;
     var art = $('pet_art');
     S.pose = pose;
@@ -656,7 +657,7 @@
       if (r._status !== 200) { toast(tr(r._status === 409 ? 'kids_busy' : 'kids_err')); return; }
       if (C.guides[r.reaction]) bubble(txt(C.guides[r.reaction]));
       applyPet(r);
-      react(what);
+      react(r.reaction);
     }).catch(function () { toast(tr('kids_err_conn'), 'error'); });
   }
   $('pet_art').addEventListener('click', function () { doAct('pet'); });

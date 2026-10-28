@@ -60,6 +60,8 @@ MAX_ACTIONS = 300         # 재주·반복을 다 펼쳤을 때 한 번에 하�
 ROSTER_MAX = 40
 PET_REACT = {'eat': 'munch', 'full': 'oops', 'play': 'boing', 'tired': 'oops', 'starving': 'oops',
              'sleep': 'lullaby', 'notsleepy': 'oops', 'wash': 'bubble', 'pet': 'happy', 'woken': 'oops', 'wake': 'happy'}
+#: 반응 → 잠깐 보여 줄 포즈(pet.js). 태블릿 kids.js 의 REACT_POSE 와 같게. 거절(배불러 등)은 지금 얼굴 그대로
+REACT_POSE = {'eat': 'eat', 'play': 'ball', 'wash': 'wash', 'pet': 'happy', 'wake': 'happy', 'sleep': 'sleep'}
 PIBRAIN_BUTTON = {'b1': 'feed', 'b2': 'play', 'b3': 'sleep', 'b4': 'wash'}   # 버튼 번호 ↔ 실제 위치는 확인 필요
 NEED_GAP = 60             # 키우기 혼잣말('배고파') 은 1분에 한 번까지
 HISTORY_EVERY = 20        # 관찰 그래프 점 하나 = 20초
@@ -433,7 +435,8 @@ _react_cv = threading.Condition()
 
 
 def speak_async(item, lang):
-  """item = (효과음 이름 또는 None, guides 키 또는 말할 글 또는 None[, 얼굴]) — 반응 일꾼에게 넘긴다"""
+  """item = (효과음 이름 또는 None, guides 키 또는 말할 글 또는 None[, 얼굴[, 포즈]]) — 반응 일꾼에게 넘긴다.
+  얼굴이 있으면 화면(PiBrain LCD)에 말풍선도 같이 띄운다"""
   with _react_cv:
     _react['next'] = (item, lang)
     _react_cv.notify()
@@ -447,25 +450,43 @@ def react_worker():
       (item, lang), _react['next'] = _react['next'], None
     sound, guide = item[0], item[1]
     face = item[2] if len(item) > 2 else None
+    pose = item[3] if len(item) > 3 else None
+    text = None
+    if guide:
+      g = CONTENT['guides'].get(guide)
+      text = fmt(g[lang], lang) if g else guide
     try:
       with robot.lock:
         robot.stop_flag.clear()
+        t0 = time.time()
         if face:
-          robot.face(face, dict(pet_profile))
+          robot.face(face, dict(pet_profile), screen_stats(lang), pose=pose, bubble=text)
         if sound:
           robot.sound(sound)
-        if guide:
-          g = CONTENT['guides'].get(guide)
-          robot.say(fmt(g[lang], lang) if g else guide)
+        if text:
+          robot.say(text)
+        if face and (pose or text):            # 말풍선·반응 포즈는 2.5초 이상 보이고 지금 얼굴로 돌아간다
+          robot.wait(max(0.0, 2.5 - (time.time() - t0)))
+          robot.face(pet.face(), dict(pet_profile), screen_stats(lang))
+          pet_state['screen'] = screen_key()
     except Exception as exc:  # noqa: BLE001
       print(f'[kids] 반응 오류: {exc}', flush=True)
+
+
+def screen_stats(lang):
+  """화면에 그릴 점수 [(이름, 값, 열쇠)] — 배고픔·기분·졸림"""
+  return [(CONTENT['pet']['stats'][k][lang], getattr(pet, k), k) for k in ('hunger', 'mood', 'sleepy')]
+
+
+def screen_key():
+  return (pet.face(), pet.hunger, pet.mood, pet.sleepy, json.dumps(pet_profile, sort_keys=True), pet_state['lang'])
 
 
 # ── 키우기 (지금 아이의 친구만 시간이 간다) ────────────────────────────────
 pet = Pet()
 pet_profile = {'name': '', 'color': CONTENT['pet']['colors'][0], 'hat': 'antenna', 'glasses': False}
 HATS = ('antenna', 'cap')
-pet_state = {'mode': False, 'lang': 'ko', 'last_need': 0.0, 'face': None}
+pet_state = {'mode': False, 'lang': 'ko', 'last_need': 0.0, 'face': None, 'screen': None}
 histories = {}            # {프로필 id: [[t, 배고픔, 기분, 졸림], ...]} — 메모리에만
 pet_lock = threading.Lock()
 
@@ -495,7 +516,7 @@ def pet_act(what, source='screen'):
     after = pet.to_dict()
     pet_save()
   pet_state['face'] = pet.face()
-  speak_async((PET_REACT.get(r), r, pet.face()), pet_state['lang'])
+  speak_async((PET_REACT.get(r), r, pet.face(), REACT_POSE.get(r)), pet_state['lang'])
   return {'reaction': r, 'before': before, 'after': after, 'source': source}
 
 
@@ -532,6 +553,15 @@ def pet_loop():
           pet_state['last_need'] = now
           speak_async((None, need, f), pet_state['lang'])
         pet_state['face'] = f
+      # 화면이 있는 제품(PiBrain LCD)은 점수가 바뀌면 다시 그린다. 말하는 중(lock)이면 다음 점검에
+      if robot.has_screen and screen_key() != pet_state['screen'] and _react['next'] is None and robot.lock.acquire(blocking=False):
+        try:
+          robot.face(pet.face(), dict(pet_profile), screen_stats(pet_state['lang']))
+          pet_state['screen'] = screen_key()
+        except Exception as exc:  # noqa: BLE001
+          print(f'[kids] 화면 오류: {exc}', flush=True)
+        finally:
+          robot.lock.release()
     if pet_state['mode'] and not run['running']:
       for inp in robot.poll_inputs():
         what = 'pet' if inp == 'touch' else PIBRAIN_BUTTON.get(inp)
@@ -951,6 +981,7 @@ async def api_pet_mode(body: dict = Body(...)):
     pet_state['face'] = pet.face()
     speak_async((None, None, pet.face()), pet_state['lang'])
   elif was:
+    pet_state['screen'] = None
     with _react_cv:
       _react['next'] = None                         # 아직 안 그린 얼굴이 IP 화면을 덮지 않게
     await asyncio.to_thread(robot.show_network)     # 얼굴을 띄웠던 화면을 IP 로
