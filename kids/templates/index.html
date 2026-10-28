@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko" data-product="piBo">
+<head>
+  <title data-key="kids_title">로봇 놀이</title>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
+  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261028v1" />
+  <link rel="stylesheet" href="../static/kids.css?ver=261028v1" />
+  <link rel="shortcut icon" href="../static/icon.png?ver=240319v1" type="image/x-icon" />
+  <!-- 문구는 IDE 의 ko2en.js 를 같이 쓴다(kids_* 키, 영문판 델타를 늘리지 않으려고). IDE(80)는 늘 떠 있다 -->
+  <script>(function () { var p = new URLSearchParams(location.search).get('ide') || 80;   /* ?ide= 는 시험용 */
+    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261028v1"><\/script>'); })();</script>
+</head>
+
+<body class="pb pb-shell pb-plain kids">
+  <script>/* 화면 밝기를 첫 페인트 전에 (규칙은 pibo-ui.js 의 getTheme 과 같다. 고른 적 없으면 soft) */
+  (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
+    document.documentElement.setAttribute('data-theme', m ? m[1] : 'soft'); } catch (e) {} })();</script>
+  <header class="pb-header">
+    <span class="pb-header__brand"><i class="fa-solid fa-robot" id="brand_icon"></i><b id="brand_name">piBo</b><span class="pb-header__app" data-key="kids_title"></span></span>
+    <div class="pb-iconbar">
+      <button type="button" class="pb-iconbtn" id="home_bt"><i class="fa-solid fa-house"></i><span class="pb-iconbtn__label" data-key="kids_home"></span></button>
+      <a class="pb-iconbtn" id="fullscreen_bt" data-title-key="kids_fullscreen"><span id="fullscreen_txt"></span></a>
+      <!-- 선생님 잠금: 3초 길게 누르기 → 숫자 4개 -->
+      <button type="button" class="pb-iconbtn kids-lockbt" id="lock_bt" data-title-key="kids_teacher_hold"><i class="fa-solid fa-lock"></i><svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="16"/></svg></button>
+    </div>
+  </header>
+
+  <main class="kids-main">
+    <!-- 첫 화면 -->
+    <section class="kids-view" id="v_home">
+      <div class="kids-home">
+        <button type="button" class="kids-big kids-big--play" id="go_play">
+          <span class="kids-big__art"><i class="fa-solid fa-cubes"></i></span>
+          <b data-key="kids_play"></b><span data-key="kids_play_sub"></span>
+        </button>
+        <button type="button" class="kids-big kids-big--pet" id="go_pet">
+          <span class="kids-big__art" id="home_pet"></span>
+          <b data-key="kids_pet"></b><span data-key="kids_pet_sub"></span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 단계·미션 고르기 -->
+    <section class="kids-view" id="v_levels" hidden>
+      <div class="kids-bar">
+        <button type="button" class="kids-back" data-go="home" data-title-key="kids_back"><i class="fa-solid fa-arrow-left"></i></button>
+        <div class="kids-levels" id="levels"></div>
+      </div>
+      <p class="kids-about" id="level_about"></p>
+      <div class="kids-missions" id="missions"></div>
+    </section>
+
+    <!-- 미션 -->
+    <section class="kids-view" id="v_mission" hidden>
+      <div class="kids-bar">
+        <button type="button" class="kids-back" data-go="levels" data-title-key="kids_back"><i class="fa-solid fa-arrow-left"></i></button>
+        <div class="kids-task">
+          <span class="kids-task__ic" id="task_icon"></span>
+          <p class="kids-task__txt" id="task_text"></p>
+          <button type="button" class="kids-round kids-round--soft" id="listen_bt" data-title-key="kids_listen"><i class="fa-solid fa-volume-high"></i></button>
+          <span class="kids-stars" id="task_stars"></span>
+        </div>
+      </div>
+      <div class="kids-row" id="row" aria-live="polite"></div>
+      <div class="kids-dock">
+        <div class="kids-palette" id="palette"></div>
+        <div class="kids-actions">
+          <button type="button" class="kids-go" id="run_bt" data-title-key="kids_run"><i class="fa-solid fa-play"></i></button>
+          <button type="button" class="kids-go kids-go--stop" id="stop_bt" data-title-key="kids_stop" hidden><i class="fa-solid fa-stop"></i></button>
+          <button type="button" class="kids-round" id="clear_bt" data-title-key="kids_clear"><i class="fa-solid fa-trash-can"></i></button>
+          <button type="button" class="kids-round" id="export_bt" data-title-key="kids_export"><i class="fa-solid fa-puzzle-piece"></i></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 키우기 -->
+    <section class="kids-view" id="v_pet" hidden>
+      <div class="kids-bar">
+        <button type="button" class="kids-back" data-go="home" data-title-key="kids_back"><i class="fa-solid fa-arrow-left"></i></button>
+        <b class="kids-petname" id="pet_name"></b>
+        <span class="kids-petkind" id="pet_kind"></span>
+        <span class="kids-bar__fill"></span>
+        <button type="button" class="kids-chip" id="custom_bt"><i class="fa-solid fa-palette"></i><span data-key="kids_custom"></span></button>
+        <button type="button" class="kids-chip" id="graph_bt"><i class="fa-solid fa-chart-line"></i><span data-key="kids_graph"></span></button>
+      </div>
+      <div class="kids-petwrap">
+        <div class="kids-petstage">
+          <div class="kids-bubble" id="pet_bubble" hidden></div>
+          <button type="button" class="kids-pet" id="pet_art" data-title-key="kids_pet_touch"></button>
+          <p class="kids-input" id="pet_input" hidden></p>
+        </div>
+        <div class="kids-petside">
+          <div class="kids-stats" id="pet_stats"></div>
+          <div class="kids-acts" id="pet_acts"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 미션 결과 -->
+  <div class="kids-modal" id="dlg_result" hidden>
+    <div class="kids-modal__box kids-result">
+      <div class="kids-result__stars" id="res_stars"></div>
+      <p class="kids-result__msg" id="res_msg"></p>
+      <div class="kids-compare" id="res_compare" hidden>
+        <div><span class="kids-compare__lbl" data-key="kids_want"></span><div class="kids-compare__row" id="res_want"></div></div>
+        <div><span class="kids-compare__lbl" data-key="kids_mine"></span><div class="kids-compare__row" id="res_mine"></div></div>
+      </div>
+      <div class="kids-modal__btns">
+        <button type="button" class="kids-btn" id="res_again"><i class="fa-solid fa-rotate-left"></i><span data-key="kids_retry"></span></button>
+        <button type="button" class="kids-btn kids-btn--main" id="res_next"><span data-key="kids_next"></span><i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 꾸미기 -->
+  <div class="kids-modal" id="dlg_custom" hidden>
+    <div class="kids-modal__box kids-custom">
+      <h2 class="pb-title" data-key="kids_custom"></h2>
+      <div class="kids-custom__grid">
+        <div class="kids-custom__preview" id="cu_preview"></div>
+        <div>
+          <span class="pb-label" data-key="kids_custom_name"></span>
+          <div class="kids-names" id="cu_names"></div>
+          <input class="pb-field kids-namein" id="cu_name" maxlength="8" autocomplete="off">
+          <span class="pb-label" data-key="kids_custom_color"></span>
+          <div class="kids-colors" id="cu_colors"></div>
+        </div>
+      </div>
+      <span class="pb-label" data-key="kids_custom_kind"></span>
+      <div class="kids-kinds" id="cu_kinds"></div>
+      <div class="kids-modal__btns">
+        <button type="button" class="kids-btn" data-close><span data-key="kids_cancel"></span></button>
+        <button type="button" class="kids-btn kids-btn--main" id="cu_save"><i class="fa-solid fa-check"></i><span data-key="kids_done"></span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 관찰 일기 -->
+  <div class="kids-modal" id="dlg_graph" hidden>
+    <div class="kids-modal__box kids-graph">
+      <h2 class="pb-title" data-key="kids_graph"></h2>
+      <div class="kids-graph__chart" id="gr_chart"></div>
+      <div class="kids-graph__legend" id="gr_legend"></div>
+      <p class="kids-graph__rates" id="gr_rates"></p>
+      <div class="kids-modal__btns">
+        <button type="button" class="kids-btn kids-btn--main" data-close><span data-key="kids_close"></span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 선생님: 숫자 -->
+  <div class="kids-modal" id="dlg_pin" hidden>
+    <div class="kids-modal__box kids-pin">
+      <h2 class="pb-title" data-key="kids_teacher"></h2>
+      <p class="kids-pin__dots" id="pin_dots"><i></i><i></i><i></i><i></i></p>
+      <div class="kids-pin__pad" id="pin_pad"></div>
+      <div class="kids-modal__btns">
+        <button type="button" class="kids-btn" data-close><span data-key="kids_cancel"></span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 선생님 설정 -->
+  <div class="kids-modal" id="dlg_teacher" hidden>
+    <div class="kids-modal__box kids-teacher">
+      <h2 class="pb-title" data-key="kids_teacher"></h2>
+      <div class="kids-form">
+        <span class="pb-label" data-key="kids_t_age"></span>
+        <div class="pb-seg kids-seg" id="t_age">
+          <button type="button" data-v="kinder" data-key="kids_t_kinder"></button>
+          <button type="button" data-v="school" data-key="kids_t_school"></button>
+        </div>
+        <span class="pb-label" data-key="kids_t_lang"></span>
+        <select class="pb-field" id="t_lang"><option value="ko">한국어</option><option value="en">English</option></select>
+        <span class="pb-label" data-key="kids_t_voice"></span>
+        <div><select class="pb-field" id="t_voice"></select><p class="kids-note" data-key="kids_t_voice_note"></p></div>
+        <span class="pb-label" data-key="kids_t_volume"></span>
+        <label class="kids-vol"><input type="range" id="t_volume" min="0" max="100" step="10"><b id="t_volume_v"></b></label>
+        <span class="pb-label" data-key="kids_t_pin"></span>
+        <input class="pb-field" id="t_pin" inputmode="numeric" maxlength="4" pattern="[0-9]*" autocomplete="off">
+      </div>
+      <div class="kids-teacher__more">
+        <button type="button" class="kids-btn kids-btn--danger" id="t_reset_progress"><i class="fa-solid fa-star"></i><span data-key="kids_t_reset_progress"></span></button>
+        <button type="button" class="kids-btn kids-btn--danger" id="t_reset_pet"><i class="fa-solid fa-heart"></i><span data-key="kids_t_reset_pet"></span></button>
+        <a class="kids-btn" id="t_ide"><i class="fa-solid fa-code"></i><span>IDE</span></a>
+      </div>
+      <div class="kids-modal__btns">
+        <button type="button" class="kids-btn" id="t_lock"><i class="fa-solid fa-lock"></i><span data-key="kids_t_lock"></span></button>
+        <button type="button" class="kids-btn kids-btn--main" id="t_save"><i class="fa-solid fa-check"></i><span data-key="kids_t_save"></span></button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../static/pibo-ui.js?ver=261028v1"></script>
+  <script src="../static/kids.js?ver=261028v1"></script>
+</body>
+</html>

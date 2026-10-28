@@ -1,0 +1,340 @@
+/* 체험 앱 — 키트(pibo-ui.css) 색·글꼴 그대로, 글자·칸만 크게. 누르는 칸 최소 64px.
+   구형 브라우저 기준(CLAUDE.md '디자인 시스템'): :has · aspect-ratio · inset · dvh · color-mix 안 씀
+   body 에 pb-refresh·pb-v2 를 달지 않는다 — 그 층의 '앱 버튼' 규칙(우선순위 (0,5,3), 배경 !important)이 카드·큰 버튼 색을 덮는다.
+   상단바·대화상자·알림 같은 키트 부품(.pb-*)과 색 토큰(--v2-*)은 그 층 없이도 같다 */
+
+body.kids {
+  --k-motion: #3f76f2;
+  --k-say:    #8b4ff0;
+  --k-sound:  #e0447a;
+  --k-wait:   #6b7488;
+  --k-repeat: #f08a00;
+  --k-card:   84px;
+  --k-gap:    10px;
+  background: var(--v2-canvas);
+  color: var(--v2-ink);
+  font-family: var(--pb-font);
+  -webkit-user-select: none; user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+html[data-theme="dark"] body.kids { --k-motion: #5b8cff; --k-say: #a477ff; --k-sound: #ff5f93; --k-wait: #7f8aa0; --k-repeat: #ffa21f; }
+.kids-main { min-height: calc(100vh - var(--header-h, 48px)); display: flex; flex-direction: column; }
+.kids-view { flex: 1 1 auto; display: flex; flex-direction: column; padding: 16px; min-height: 0; }
+.kids-view[hidden], .kids-modal[hidden], .kids [hidden] { display: none !important; }
+.kids-dead { padding: 40px 16px; text-align: center; font-size: 20px; color: var(--v2-red-ink); }
+
+/* ── 버튼 ───────────────────────────────────────────────────────────── */
+.kids button, .kids input, .kids select { font-family: inherit; cursor: pointer; }
+.kids-back, .kids-round {
+  width: 64px; height: 64px; flex: 0 0 64px; border-radius: 50%; border: 0;
+  background: var(--v2-raise); color: var(--v2-ink-2); font-size: 26px;
+  box-shadow: 0 1px 3px var(--v2-shadow);
+}
+.kids-round--soft { background: var(--v2-tint); color: var(--v2-tint-ink); }
+.kids-back:active, .kids-round:active, .kids-go:active, .kids-btn:active, .kcard:active, .kids-act:active, .kids-mtile:active, .kids-big:active { transform: scale(.95); }
+.kids-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 56px; padding: 0 22px; border-radius: 16px; border: 0;
+  background: var(--v2-sunken); color: var(--v2-ink); font-size: 18px; font-weight: 700; text-decoration: none;
+}
+.kids-btn--main { background: var(--v2-dark); color: var(--v2-on-dark); box-shadow: var(--v2-btn-sh); }
+.kids-btn--danger { background: var(--v2-red-t); color: var(--v2-red-ink); }
+.kids-chip {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 48px; padding: 0 16px;
+  border-radius: 999px; border: 0; background: var(--v2-raise); color: var(--v2-ink); font-size: 16px; font-weight: 700;
+  box-shadow: 0 1px 3px var(--v2-shadow);
+}
+.kids-chip.is-on { background: var(--v2-tint); color: var(--v2-tint-ink); box-shadow: 0 0 0 2px var(--v2-accent); }
+.kids-note { margin: 4px 0 0; font-size: 13px; color: var(--v2-ink-3); }
+
+/* 자물쇠 — 3초 누르면 둘레가 찬다 */
+.kids-lockbt { position: relative; opacity: .55; }
+.kids-lockbt svg { position: absolute; left: 50%; top: 50%; width: 36px; height: 36px; margin: -18px 0 0 -18px; transform: rotate(-90deg); pointer-events: none; }
+.kids-lockbt circle { fill: none; stroke: var(--v2-frame-ink); stroke-width: 3; stroke-dasharray: 100.6; stroke-dashoffset: 100.6; }
+.kids-lockbt.is-hold { opacity: 1; }
+.kids-lockbt.is-hold circle { transition: stroke-dashoffset 3s linear; stroke-dashoffset: 0; }
+
+/* ── 첫 화면 ─────────────────────────────────────────────────────────── */
+.kids-home { flex: 1; display: flex; gap: 24px; align-items: stretch; justify-content: center; padding: 8px; }
+.kids-big {
+  flex: 1 1 0; max-width: 460px; min-height: 280px; border: 0; border-radius: 28px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  background: var(--v2-raise); color: var(--v2-ink); box-shadow: 0 4px 16px var(--v2-shadow);
+}
+.kids-big b { font-size: 34px; }
+.kids-big span { font-size: 17px; color: var(--v2-ink-3); }
+.kids-big__art { width: 150px; height: 150px; display: flex; align-items: center; justify-content: center; }
+.kids-big--play .kids-big__art { border-radius: 36px; background: var(--k-motion); color: #fff; font-size: 76px; }
+.kids-big--pet .kids-big__art svg { width: 150px; height: 150px; }
+
+/* ── 단계·미션 ───────────────────────────────────────────────────────── */
+.kids-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.kids-bar__fill { flex: 1; }
+.kids-levels { display: flex; gap: 10px; flex-wrap: wrap; }
+.kids-level {
+  position: relative; display: inline-flex; align-items: center; gap: 10px; min-height: 64px; padding: 0 22px 0 12px;
+  border-radius: 999px; border: 0; background: var(--v2-raise); color: var(--v2-ink); font-size: 20px;
+  box-shadow: 0 1px 3px var(--v2-shadow);
+}
+.kids-level__n { width: 40px; height: 40px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+  background: var(--v2-sunken); font-weight: 700; }
+.kids-level.is-on { background: var(--v2-dark); color: var(--v2-on-dark); }
+.kids-level.is-on .kids-level__n { background: rgba(255,255,255,.22); }
+.kids-level.is-locked { opacity: .5; }
+.kids-about { margin: 0 0 14px; font-size: 18px; color: var(--v2-ink-2); }
+.kids-missions { display: flex; flex-wrap: wrap; gap: 16px; }
+.kids-mtile {
+  position: relative; width: 150px; height: 150px; border: 0; border-radius: 24px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+  background: var(--v2-raise); color: var(--k-motion); font-size: 48px; box-shadow: 0 2px 8px var(--v2-shadow);
+}
+.kids-mtile.is-free { color: var(--k-repeat); }
+.kids-mtile__n { position: absolute; left: 12px; top: 8px; font-size: 18px; font-weight: 700; color: var(--v2-ink-3); }
+.kids-stars { display: inline-flex; gap: 2px; font-size: 20px; color: var(--v2-line-2); }
+.kids-stars .on { color: #f7b500; }
+
+/* ── 미션 ───────────────────────────────────────────────────────────── */
+.kids-task { flex: 1; display: flex; align-items: center; gap: 14px; min-height: 72px; padding: 6px 12px 6px 6px;
+  border-radius: 20px; background: var(--v2-raise); box-shadow: 0 1px 3px var(--v2-shadow); }
+.kids-task__ic { width: 60px; height: 60px; flex: 0 0 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center;
+  background: var(--v2-tint); color: var(--v2-tint-ink); font-size: 30px; }
+.kids-task__txt { flex: 1; margin: 0; font-size: 22px; font-weight: 700; line-height: 1.35; word-break: keep-all; }
+.kids-task .kids-round { width: 56px; height: 56px; flex-basis: 56px; font-size: 22px; box-shadow: none; }
+
+.kids-row {
+  flex: 1 1 auto; min-height: 150px; display: flex; flex-wrap: wrap; align-content: flex-start; align-items: center; gap: var(--k-gap);
+  padding: 16px; border-radius: 24px; background: var(--v2-sunken); border: 3px dashed var(--v2-line-2); overflow-y: auto;
+}
+.kids-row__empty { margin: auto; display: flex; align-items: center; gap: 12px; font-size: 22px; color: var(--v2-ink-3); }
+.kids-row__empty i { font-size: 34px; animation: kids-nudge 1.2s ease-in-out infinite; }
+.kids-arrow { color: var(--v2-ink-3); font-size: 18px; }
+.kids-slot {
+  width: 56px; height: var(--k-card); border-radius: 16px; border: 3px dashed var(--v2-line-2);
+  background: transparent; color: var(--v2-ink-3); font-size: 22px;
+}
+.kids-slot.is-on { border-color: var(--v2-accent); color: var(--v2-accent); background: var(--v2-tint); animation: kids-breathe 1.6s ease-in-out infinite; }
+
+.kcard {
+  position: relative; width: var(--k-card); height: var(--k-card); flex: 0 0 var(--k-card); padding: 0;
+  display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  border: 0; border-radius: 18px; color: #fff; background: var(--k-wait);
+  box-shadow: inset 0 -4px 0 rgba(0,0,0,.18), 0 2px 4px var(--v2-shadow);
+  transition: transform .15s;
+}
+.kcard__ic { font-size: 30px; line-height: 1; display: flex; align-items: center; justify-content: center; height: 34px; }
+.kcard__t { font-size: 15px; font-weight: 700; line-height: 1.1; max-width: 100%; padding: 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kcard__note { font-size: 30px; font-weight: 800; }
+.k-motion { background: var(--k-motion); }
+.k-say    { background: var(--k-say); }
+.k-sound  { background: var(--k-sound); }
+.k-wait   { background: var(--k-wait); }
+.k-repeat { background: var(--k-repeat); }
+.k-colour { background: var(--v2-raise); color: var(--v2-ink); box-shadow: inset 0 -4px 0 var(--v2-line), 0 2px 4px var(--v2-shadow); }
+.kcard__dot { width: 34px; height: 34px; border-radius: 50%; box-shadow: inset 0 0 0 2px rgba(0,0,0,.12); }
+.kcard.is-new { animation: kids-pop .35s ease-out; }
+.kcard.is-now { transform: scale(1.12); box-shadow: 0 0 0 5px #ffd23f, 0 6px 16px var(--v2-shadow); z-index: 1; }
+.kcard--mini { width: 52px; height: 52px; flex-basis: 52px; border-radius: 12px; }
+.kcard--mini .kcard__ic { font-size: 20px; height: 22px; }
+.kcard--mini .kcard__note { font-size: 20px; }
+.kcard--mini .kcard__dot { width: 22px; height: 22px; }
+.kcard--mini .kcard__t { font-size: 11px; }
+.kcard.is-diff { box-shadow: 0 0 0 4px var(--v2-red); }
+
+.kids-loop {
+  display: inline-flex; align-items: stretch; border-radius: 22px; padding: 6px; gap: 6px;
+  background: var(--k-repeat); box-shadow: 0 2px 4px var(--v2-shadow);
+}
+.kids-loop__head { width: 72px; border: 0; border-radius: 16px; background: transparent; color: #fff;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 26px; }
+.kids-loop__head b { font-size: 16px; }
+.kids-loop__iter { font-size: 14px; font-weight: 800; min-height: 16px; }
+.kids-loop__body { display: flex; flex-wrap: wrap; gap: 6px; padding: 6px; border-radius: 16px; background: var(--v2-sunken); min-width: 70px; }
+.kids-loop.is-open { box-shadow: 0 0 0 4px var(--v2-accent), 0 2px 4px var(--v2-shadow); }
+.kids-loop.is-now { box-shadow: 0 0 0 5px #ffd23f; }
+
+.kids-dock { display: flex; gap: 16px; align-items: flex-end; margin-top: 14px; }
+.kids-palette { flex: 1; display: flex; flex-wrap: wrap; gap: var(--k-gap); padding: 14px; border-radius: 24px; background: var(--v2-raise);
+  box-shadow: 0 1px 3px var(--v2-shadow); }
+.kids-actions { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.kids-go {
+  width: 104px; height: 104px; border-radius: 50%; border: 0; font-size: 44px; color: #fff;
+  background: var(--v2-green); box-shadow: inset 0 -6px 0 rgba(0,0,0,.18), 0 4px 10px var(--v2-shadow);
+}
+.kids-go i.fa-play { margin-left: 8px; }
+.kids-go--stop { background: var(--v2-red); }
+.kids-go[hidden], .kids-round[hidden] { display: none; }
+body.is-running .kids-palette { opacity: .45; pointer-events: none; }
+body.is-running .kids-row .kcard, body.is-running .kids-loop__head, body.is-running .kids-slot { pointer-events: none; }
+
+/* ── 키우기 ─────────────────────────────────────────────────────────── */
+.kids-petname { font-size: 26px; }
+.kids-petkind { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px;
+  background: var(--v2-tint); color: var(--v2-tint-ink); font-size: 15px; font-weight: 700; }
+.kids-petkind:empty { display: none; }
+.kids-petwrap { flex: 1; display: flex; gap: 24px; align-items: center; justify-content: center; }
+.kids-petstage { position: relative; flex: 0 1 380px; display: flex; flex-direction: column; align-items: center; }
+.kids-pet { width: 320px; height: 320px; max-width: 80vw; max-height: 80vw; border: 0; background: transparent; padding: 0; }
+.kids-pet svg { width: 100%; height: 100%; overflow: visible; }
+.kids-pet.is-bounce .kids-face__body { animation: kids-bounce .5s ease-out; }
+.kids-face__body { transform-origin: 120px 220px; animation: kids-idle 3s ease-in-out infinite; }
+.kids-face--sleep .kids-face__body { animation-duration: 5s; }
+.kids-face__shadow { fill: rgba(0,0,0,.12); }
+.kids-face__z { animation: kids-float 2.4s ease-in-out infinite; }
+.kids-face__eye { animation: kids-blink 4s infinite; transform-box: fill-box; transform-origin: center; }
+.kids-bubble {
+  position: absolute; left: 50%; top: -6px; transform: translate(-50%, -100%); max-width: 340px; padding: 12px 18px;
+  border-radius: 20px; background: var(--v2-raise); color: var(--v2-ink); font-size: 20px; font-weight: 700; text-align: center;
+  box-shadow: 0 4px 14px var(--v2-shadow); word-break: keep-all; white-space: normal; z-index: 2;
+}
+.kids-bubble:after { content: ''; position: absolute; left: 50%; bottom: -10px; margin-left: -10px;
+  border: 10px solid transparent; border-bottom: 0; border-top-color: var(--v2-raise); }
+.kids-bubble.is-show { animation: kids-pop .3s ease-out; }
+.kids-input { margin: 8px 0 0; padding: 8px 14px; border-radius: 999px; background: var(--v2-yellow-t); color: var(--v2-yellow-ink);
+  font-size: 16px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; }
+.kids-input[hidden] { display: none; }
+.kids-petside { flex: 0 1 460px; display: flex; flex-direction: column; gap: 18px; }
+.kids-stats { display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 24px; background: var(--v2-raise); box-shadow: 0 1px 3px var(--v2-shadow); }
+.kids-stat { position: relative; display: flex; align-items: center; gap: 10px; font-size: 18px; }
+.kids-stat__ic { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; flex: 0 0 40px; }
+.kids-stat--hunger .kids-stat__ic { background: #ff8a3d; }
+.kids-stat--mood .kids-stat__ic   { background: #e8467c; }
+.kids-stat--sleepy .kids-stat__ic { background: #5b6cff; }
+.kids-stat__name { width: 64px; }
+.kids-stat__bar { flex: 1; display: flex; gap: 3px; }
+.kids-stat__bar i { flex: 1; height: 22px; border-radius: 5px; background: var(--v2-sunken); transition: background .3s; }
+.kids-stat--hunger .kids-stat__bar i.on { background: #ff8a3d; }
+.kids-stat--mood .kids-stat__bar i.on   { background: #e8467c; }
+.kids-stat--sleepy .kids-stat__bar i.on { background: #5b6cff; }
+.kids-stat__eq { color: var(--v2-ink-3); font-weight: 700; }
+.kids-stat__v { width: 30px; text-align: right; font-size: 26px; font-variant-numeric: tabular-nums; }
+.kids-stat.is-warn .kids-stat__v { color: var(--v2-red-ink); }
+.kids-stat__d { position: absolute; right: -6px; top: -14px; font-size: 18px; font-weight: 800; opacity: 0; pointer-events: none; }
+.kids-stat__d.up { color: var(--v2-green-ink); }
+.kids-stat__d.down { color: var(--v2-red-ink); }
+.kids-stat__d.is-show { animation: kids-delta 1.6s ease-out; }
+.kids-acts { display: flex; flex-wrap: wrap; gap: 12px; }
+.kids-act {
+  position: relative; flex: 1 1 calc(50% - 6px); min-height: 88px; border: 0; border-radius: 22px;
+  display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 30px; color: #fff;
+  box-shadow: inset 0 -5px 0 rgba(0,0,0,.18), 0 2px 6px var(--v2-shadow);
+}
+.kids-act b { font-size: 22px; }
+.kids-act--feed  { background: #ff8a3d; }
+.kids-act--play  { background: #e8467c; }
+.kids-act--sleep { background: #5b6cff; }
+.kids-act--wash  { background: #20a4c7; }
+.kids-act__hw { position: absolute; right: 10px; top: 8px; width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,.3);
+  font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+body.pet-sleeping .kids-petstage { filter: brightness(.85); }
+
+/* ── 대화상자 ───────────────────────────────────────────────────────── */
+.kids-modal { position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 90; display: flex; align-items: center; justify-content: center;
+  padding: 16px; background: var(--v2-scrim); }
+.kids-modal__box { width: 100%; max-width: 640px; max-height: calc(100vh - 32px); overflow-y: auto; padding: 24px; border-radius: 24px;
+  background: var(--v2-surface); color: var(--v2-ink); box-shadow: 0 10px 40px var(--v2-shadow); animation: kids-pop .25s ease-out; }
+.kids-modal__box h2 { margin: 0 0 16px; }
+.kids-modal__btns { display: flex; gap: 12px; justify-content: flex-end; flex-wrap: wrap; margin-top: 20px; }
+.kids-modal__btns .kids-btn[hidden] { display: none; }
+
+.kids-result { text-align: center; max-width: 560px; }
+.kids-result__stars { display: flex; justify-content: center; gap: 14px; font-size: 64px; color: var(--v2-line-2); margin: 6px 0 10px; }
+.kids-result__stars .on { color: #f7b500; animation: kids-star .5s ease-out both; }
+.kids-result__msg { margin: 0; font-size: 26px; font-weight: 700; word-break: keep-all; }
+.kids-result .kids-modal__btns { justify-content: center; }
+.kids-compare { margin-top: 18px; display: flex; flex-direction: column; gap: 10px; text-align: left; }
+.kids-compare__lbl { display: block; font-size: 14px; font-weight: 700; color: var(--v2-ink-3); margin-bottom: 4px; }
+.kids-compare__row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.kids-custom { max-width: 760px; }
+.kids-custom__grid { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 12px; }
+.kids-custom__preview { width: 160px; height: 160px; flex: 0 0 160px; }
+.kids-custom__preview svg { width: 100%; height: 100%; }
+.kids-custom__grid > div:last-child { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.kids-names { display: flex; flex-wrap: wrap; gap: 8px; }
+.kids-namein { height: 52px; font-size: 20px; }
+.kids-colors { display: flex; flex-wrap: wrap; gap: 10px; }
+.kids-swatch { width: 52px; height: 52px; border-radius: 50%; border: 0; box-shadow: inset 0 0 0 2px rgba(0,0,0,.1); }
+.kids-swatch.is-on { box-shadow: 0 0 0 4px var(--v2-surface), 0 0 0 7px var(--v2-accent); }
+.kids-kinds { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.kids-kind { flex: 1 1 calc(50% - 5px); min-height: 96px; border: 0; border-radius: 18px; padding: 12px 14px; text-align: left;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 4px; background: var(--v2-raise); color: var(--v2-ink); box-shadow: 0 1px 3px var(--v2-shadow); }
+.kids-kind > i { font-size: 22px; color: var(--v2-ink-3); }
+.kids-kind b { font-size: 18px; }
+.kids-kind span { font-size: 14px; color: var(--v2-ink-2); }
+.kids-kind small { font-size: 12px; color: var(--v2-ink-3); }
+.kids-kind.is-on { background: var(--v2-tint); box-shadow: 0 0 0 3px var(--v2-accent); }
+.kids-kind.is-on > i { color: var(--v2-accent); }
+
+.kids-graph { max-width: 640px; }
+.kids-graph__chart svg { width: 100%; height: auto; display: block; }
+.kids-chart__grid { stroke: var(--v2-line); stroke-width: 1; }
+.kids-chart__lbl { fill: var(--v2-ink-3); font-size: 13px; }
+.kids-graph__legend { display: flex; gap: 18px; justify-content: center; margin-top: 8px; font-size: 16px; font-weight: 700; }
+.kids-graph__legend i { display: inline-block; width: 18px; height: 6px; border-radius: 3px; margin-right: 6px; vertical-align: middle; }
+.kids-graph__rates { margin: 12px 0 0; font-size: 15px; color: var(--v2-ink-2); text-align: center; word-break: keep-all; }
+
+.kids-pin { max-width: 380px; text-align: center; }
+.kids-pin__dots { display: flex; justify-content: center; gap: 16px; margin: 4px 0 18px; }
+.kids-pin__dots i { width: 18px; height: 18px; border-radius: 50%; background: var(--v2-sunken); box-shadow: inset 0 0 0 2px var(--v2-line-2); }
+.kids-pin__dots i.on { background: var(--v2-ink); box-shadow: none; }
+.kids-pin__dots.is-wrong { animation: kids-shake .4s; }
+.kids-pin__pad { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.kids-key { width: 88px; height: 64px; border-radius: 16px; border: 0; background: var(--v2-raise); color: var(--v2-ink); font-size: 26px; font-weight: 700;
+  box-shadow: 0 1px 3px var(--v2-shadow); }
+.kids-key.is-blank { visibility: hidden; }
+.kids-pin .kids-modal__btns { justify-content: center; }
+
+.kids-teacher { max-width: 620px; }
+.kids-form { display: grid; grid-template-columns: 110px 1fr; gap: 12px 14px; align-items: center; }
+.kids-form .pb-field { height: 44px; font-size: 16px; }
+.kids-seg { height: 44px; }
+.kids-seg > button { padding: 0 18px; font-size: 16px; }
+.kids-vol { display: flex; align-items: center; gap: 10px; }
+.kids-vol input { flex: 1; }
+.kids-teacher__more { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--v2-line); }
+.kids-teacher__more .kids-btn { min-height: 48px; font-size: 16px; }
+
+/* ── 좁은 화면 (태블릿 세로·폰) ──────────────────────────────────────── */
+@media (max-width: 900px) {
+  .kids-petwrap { flex-direction: column; gap: 12px; }
+  .kids-petside { flex-basis: auto; width: 100%; max-width: 520px; }
+  .kids-pet { width: 240px; height: 240px; }
+  .kids-dock { flex-direction: column; align-items: stretch; }
+  .kids-actions { flex-direction: row; justify-content: center; }
+  .kids-go { width: 88px; height: 88px; font-size: 38px; }
+}
+@media (max-width: 600px) {
+  body.kids { --k-card: 72px; }
+  .kids-view { padding: 12px; }
+  .kids-home { flex-direction: column; gap: 14px; }
+  .kids-big { min-height: 200px; }
+  .kids-big__art { width: 110px; height: 110px; }
+  .kids-big--play .kids-big__art { font-size: 54px; }
+  .kids-big--pet .kids-big__art svg { width: 110px; height: 110px; }
+  .kids-task__txt { font-size: 18px; }
+  .kids-mtile { width: calc(50% - 8px); height: 130px; }
+  .kids-custom__grid { flex-direction: column; align-items: center; }
+  .kids-kind { flex-basis: 100%; }
+  .kids-form { grid-template-columns: 1fr; }
+  .kids-bar { flex-wrap: wrap; }
+}
+@media (max-height: 700px) and (min-width: 901px) {
+  .kids-row { min-height: 110px; }
+  .kids-go { width: 88px; height: 88px; }
+}
+
+/* ── 움직임 ─────────────────────────────────────────────────────────── */
+@keyframes kids-pop { 0% { transform: scale(.6); opacity: 0; } 70% { transform: scale(1.08); opacity: 1; } 100% { transform: scale(1); } }
+@keyframes kids-star { 0% { transform: scale(0) rotate(-40deg); } 70% { transform: scale(1.25) rotate(8deg); } 100% { transform: scale(1) rotate(0); } }
+@keyframes kids-breathe { 50% { transform: scale(1.06); } }
+@keyframes kids-nudge { 50% { transform: translateY(6px); } }
+@keyframes kids-idle { 50% { transform: translateY(-6px) scale(1.01, .99); } }
+@keyframes kids-bounce { 30% { transform: translateY(-24px) scale(.95, 1.05); } 60% { transform: translateY(0) scale(1.06, .94); } }
+@keyframes kids-float { 50% { transform: translateY(-8px); opacity: .6; } }
+@keyframes kids-blink { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(.1); } }
+@keyframes kids-delta { 0% { opacity: 0; transform: translateY(8px); } 15% { opacity: 1; transform: translateY(0); } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(-14px); } }
+@keyframes kids-shake { 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+@media (prefers-reduced-motion: reduce) {
+  .kids *, .kids *:before, .kids *:after { animation: none !important; transition: none !important; }
+}
