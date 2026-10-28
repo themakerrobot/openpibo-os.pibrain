@@ -32,7 +32,7 @@ in each file are kept as they are.
 | Model | Folder | License | Notice file on the device |
 |---|---|---|---|
 | easydetect ed-s COCO (ONNX, 320) | `object/ed-s-320.onnx` | Apache-2.0 (easydetect · D-FINE; weights license to be confirmed on the HF model card) | — |
-| Models trained in the easydetect lab (`pibo-job<N>.onnx`) | wherever the user puts them | Apache-2.0 code; weights belong to whoever trained them | — |
+| Models trained in the easydetect lab (`job<N>.onnx`) | wherever the user puts them | Apache-2.0 code; weights belong to whoever trained them | — |
 | Supertonic 3 TTS (int8 conversion) | `tts/assets/` | OpenRAIL-M | `LICENSE-OpenRAIL-M.txt`, `MODIFICATIONS.md` |
 | SenseVoiceSmall int8 (sherpa-onnx export) + silero VAD — used once a microphone is fitted | `stt/` | FunASR model license / MIT | `LICENSE-SenseVoice` |
 | Qwen3.5 0.8B fine-tune (`pibo-qwen3.5-0.8b-school-small-Q4_K_M.gguf`, used by `llm/llm-model.gguf`) | `llm/` | Base model license — to be confirmed on the Qwen model card | — |

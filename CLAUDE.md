@@ -499,7 +499,7 @@ Pibo 리포의 변경을 가져올 때 **항목마다 적용 여부를 먼저 �
 
 **사물 인식은 Pibo 와 같은 easydetect ed 모델 파일이다(261026)** — `openpibo/modules/ed_onnx.py`(Pibo 와 **같은 파일**, 같이 고칠 것)로 onnxruntime 만 쓴다.
 자세한 건 Pibo CLAUDE.md '사물 인식'. 요점:
-- 기본 `/home/pi/.model/object/ed-s-320.onnx`(`vision_detect.py` 의 `OBJECT_MODEL` 한 줄). lab 의 'Pibo로 보내기' `pibo-job<번호>.onnx` 는 `load_object_model(파일)`·블록으로 고른다.
+- 기본 `/home/pi/.model/object/ed-s-320.onnx`(`vision_detect.py` 의 `OBJECT_MODEL` 한 줄). lab 에서 받은 `job<번호>.onnx`(261028 전엔 `pibo-job<번호>.onnx`) 는 `load_object_model(파일)`·블록으로 고른다. 블록 기본 글자 `job1`.
   이름·conf 는 파일 안 메타데이터(`easydetect.names`·`easydetect.conf`), 입력 크기도 파일에서 읽는다
 - lab `pibo/detect.py` 는 불러오지 않는다(비교 기준일 뿐). 못 쓰면 이유를 담은 오류(다른 모델로 바꾸지 않는다)
 - 예전 사물 인식 모델의 코드·가중치·고지는 지웠다. `/home/pi/.model` 은 Pibo 것을 그대로 넣는다 — IMAGE.md '모델 폴더'.

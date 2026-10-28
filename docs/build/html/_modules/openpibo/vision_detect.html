@@ -366,7 +366,7 @@
 <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"tensorflow"</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
 
 <span class="c1"># 기본 사물 인식 모델 (easydetect ed-s 320, COCO 80종 — 이름·conf 가 파일 안에 있다). 261026, easydetect-lab 지시서.</span>
-<span class="c1"># 다른 기본 모델을 쓰려면 이 한 줄만 바꾼다. lab 에서 받은 모델(pibo-job&lt;번호&gt;.onnx)은 load_object_model(파일) 로 고른다</span>
+<span class="c1"># 다른 기본 모델을 쓰려면 이 한 줄만 바꾼다. lab 에서 받은 모델(job&lt;번호&gt;.onnx)은 load_object_model(파일) 로 고른다</span>
 <span class="n">OBJECT_MODEL</span> <span class="o">=</span> <span class="s1">'/home/pi/.model/object/ed-s-320.onnx'</span>
 
 <div class="viewcode-block" id="putTextPIL">
@@ -566,13 +566,13 @@
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    사물 인식 모델을 불러옵니다.</span>
 
-<span class="sd">    easydetect 모델 파일(``.onnx``)을 고릅니다. easydetect lab 의 'Pibo로 보내기' 로 받은</span>
-<span class="sd">    ``pibo-job&lt;번호&gt;.onnx`` 가 그대로 쓰입니다. 클래스 이름과 확신 기준은 파일 안에 들어 있고, 이름은 한글일 수 있습니다.</span>
+<span class="sd">    easydetect 모델 파일(``.onnx``)을 고릅니다. easydetect lab 에서 받은</span>
+<span class="sd">    ``job&lt;번호&gt;.onnx`` 가 그대로 쓰입니다. 클래스 이름과 확신 기준은 파일 안에 들어 있고, 이름은 한글일 수 있습니다.</span>
 <span class="sd">    모델을 못 쓰면(파일이 없음, onnxruntime 1.13 미만, 읽기 실패) 이유가 담긴 오류가 납니다.</span>
 
 <span class="sd">    example::</span>
 
-<span class="sd">      detect.load_object_model('/home/pi/code/pibo-job3.onnx')   # lab 에서 받은 모델</span>
+<span class="sd">      detect.load_object_model('/home/pi/code/job3.onnx')   # lab 에서 받은 모델</span>
 <span class="sd">      detect.load_object_model()                                  # 기본 모델(COCO)로 돌아가기</span>
 
 <span class="sd">    :param str modelpath: 사물 인식 모델 파일(``.onnx``). 없으면 기본 모델</span>

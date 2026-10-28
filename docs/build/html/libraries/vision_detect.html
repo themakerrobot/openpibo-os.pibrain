@@ -441,11 +441,11 @@
 <dt class="sig sig-object py" id="openpibo.vision_detect.Detect.load_object_model">
 <span class="sig-name descname"><span class="pre">load_object_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_detect.html#Detect.load_object_model"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_detect.Detect.load_object_model" title="Link to this definition">¶</a></dt>
 <dd><p>사물 인식 모델을 불러옵니다.</p>
-<p>easydetect 모델 파일(<code class="docutils literal notranslate"><span class="pre">.onnx</span></code>)을 고릅니다. easydetect lab 의 ‘Pibo로 보내기’ 로 받은
-<code class="docutils literal notranslate"><span class="pre">pibo-job&lt;번호&gt;.onnx</span></code> 가 그대로 쓰입니다. 클래스 이름과 확신 기준은 파일 안에 들어 있고, 이름은 한글일 수 있습니다.
+<p>easydetect 모델 파일(<code class="docutils literal notranslate"><span class="pre">.onnx</span></code>)을 고릅니다. easydetect lab 에서 받은
+<code class="docutils literal notranslate"><span class="pre">job&lt;번호&gt;.onnx</span></code> 가 그대로 쓰입니다. 클래스 이름과 확신 기준은 파일 안에 들어 있고, 이름은 한글일 수 있습니다.
 모델을 못 쓰면(파일이 없음, onnxruntime 1.13 미만, 읽기 실패) 이유가 담긴 오류가 납니다.</p>
 <p>example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">detect</span><span class="o">.</span><span class="n">load_object_model</span><span class="p">(</span><span class="s1">'/home/pi/code/pibo-job3.onnx'</span><span class="p">)</span>   <span class="c1"># lab 에서 받은 모델</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">detect</span><span class="o">.</span><span class="n">load_object_model</span><span class="p">(</span><span class="s1">'/home/pi/code/job3.onnx'</span><span class="p">)</span>   <span class="c1"># lab 에서 받은 모델</span>
 <span class="n">detect</span><span class="o">.</span><span class="n">load_object_model</span><span class="p">()</span>                                  <span class="c1"># 기본 모델(COCO)로 돌아가기</span>
 </pre></div>
 </div>

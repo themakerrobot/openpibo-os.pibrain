@@ -2117,7 +2117,7 @@ let toolbox = (lang) => {
                 "shadow": {
                   "type": "text",
                   "fields": {
-                    "TEXT": "pibo-job1"
+                    "TEXT": "job1"
                   }
                 }
               },
