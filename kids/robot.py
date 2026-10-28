@@ -103,7 +103,10 @@ class FakeRobot(BaseRobot):
 
   def _do(self, what, sec):
     self.log.append(what)
-    self.wait(sec * self.speed)
+    self.wait(sec)
+
+  def wait(self, sec):
+    self.stop_flag.wait(sec * self.speed)      # 기다리기 카드도 배수대로(시험을 빨리)
 
   def voice_file(self, text, voice=None):
     return f'(voice {voice or self.voice}) {text}'

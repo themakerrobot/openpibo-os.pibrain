@@ -23,8 +23,8 @@ def texts(lang):
     out.append(run_kids.say_text(k, lang))
   for g in run_kids.CONTENT['guides'].values():
     out.append(run_kids.fmt(g[lang], lang))
-  for m in run_kids.missions():
-    out.append(run_kids.fmt(m[lang], lang))
+  for c in run_kids.for_device(run_kids.CONTENT['challenges']):
+    out.append(run_kids.fmt(c[lang], lang))
   return list(dict.fromkeys(out))
 
 
