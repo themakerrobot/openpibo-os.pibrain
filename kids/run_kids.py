@@ -97,7 +97,7 @@ def write_json(rel, data):
   os.replace(tmp, full)
 
 
-DEFAULT_SETTINGS = {'lesson': 1, 'roster': 24, 'volume': 60, 'voice': 'f1', 'pin': '1234'}
+DEFAULT_SETTINGS = {'lesson': 1, 'roster': 4, 'volume': 60, 'voice': 'f1', 'pin': '1234'}
 settings = dict(DEFAULT_SETTINGS)
 profiles = {}             # {'7': {'icon': 'fa-cat', 'made': 시각}}
 teacher_tokens = set()

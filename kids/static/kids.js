@@ -8,7 +8,7 @@
   var L = function () { return (typeof lang === 'string' && lang === 'en') ? 'en' : 'ko'; };
   var C = null;                         // /api/content
   var S = {
-    view: 'who', settings: { lesson: 1, roster: 24 }, profile: null, profiles: {}, progress: { stars: {} }, tricks: [],
+    view: 'who', settings: { lesson: 1, roster: 4 }, profile: null, profiles: {}, progress: { stars: {} }, tricks: [],
     ch: null,                           // 지금 도전(없으면 자유 만들기)
     editing: null,                      // 고치는 중인 재주 id
     program: [], cursor: -1, tab: null, running: false, token: null,
