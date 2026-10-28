@@ -35,6 +35,7 @@ in each file are kept as they are.
 | Models trained in the easydetect lab (`pibo-job<N>.onnx`) | wherever the user puts them | Apache-2.0 code; weights belong to whoever trained them | — |
 | Supertonic 3 TTS (int8 conversion) | `tts/assets/` | OpenRAIL-M | `LICENSE-OpenRAIL-M.txt`, `MODIFICATIONS.md` |
 | SenseVoiceSmall int8 (sherpa-onnx export) + silero VAD — used once a microphone is fitted | `stt/` | FunASR model license / MIT | `LICENSE-SenseVoice` |
-| Qwen3.5 0.8B fine-tune (`pibo-qwen3.5-0.8b-school-small-Q4_K_M.gguf`, used by `llm/llm-model.gguf`) | `llm/` | Base model license — to be confirmed on the Qwen model card | — |
+| Gemma 3 1B (GGUF, current chat model on PiBrain, `llm/llm-model.gguf`) | `llm/` | Gemma Terms of Use | — |
+| Qwen3.5 0.8B fine-tune (`pibo-qwen3.5-0.8b-school-small-Q4_K_M.gguf`) — piBo's chat model; PiBrain can use it after rebuilding llama.cpp | `llm/` | Base model license — to be confirmed on the Qwen model card | — |
 
 Python packages are listed in `requirements.txt`; each is used under its own license.

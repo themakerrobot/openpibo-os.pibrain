@@ -393,9 +393,13 @@ if __name__ == '__main__':
   p = argparse.ArgumentParser()
   p.add_argument('--port', type=int, default=50030)
   p.add_argument('--llm', default=LLM)
-  p.add_argument('--device', default='pibo', help='쓰지 않는다(도구를 뺀 뒤로 기기 차이 없음). IDE 가 넘기므로 받기만 한다')
+  p.add_argument('--device', default='pibo', help='pibo / pibrain — 시스템 글의 로봇 이름만 바꾼다(IDE 가 넘긴다)')
   args = p.parse_args()
   LLM = args.llm.rstrip('/')
+  # PiBrain 은 자기를 파이브레인이라고 해야 한다. 시스템 글은 파이보 학습 글이라(위 SYSTEM) PiBrain 에서만 이름을 바꾼다.
+  # PiBrain 기기의 대화 모델은 아직 젬마라 학습 글과 맞출 일이 없다. 두 제품 공통 이름의 모델로 다시 학습하면 이 줄을 없앤다
+  if args.device == 'pibrain':
+    SYSTEM = SYSTEM.replace('로봇 파이보야', '로봇 파이브레인이야')
   threading.Thread(target=warm_loop, daemon=True).start()
 
   import uvicorn
