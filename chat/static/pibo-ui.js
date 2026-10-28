@@ -43,9 +43,10 @@
   }
   /* ── 화면 ───────────────────────────────────────────────────────────────
      화면은 하나다(시안 B). 예전 화면(v1)과 ?ui= · 쿠키 pibo_ui 전환은 260929 에 지웠다.
-     v2 전용 화면(body.v2-app: IDE)은 자체 CSS 를 쓰므로 pb-v2 층을 얹지 않는다. */
+     v2 전용 화면(body.v2-app: IDE)은 자체 CSS 를 쓰므로 pb-v2 층을 얹지 않는다.
+     body.pb-plain(체험 앱, 261028)도 얹지 않는다 — 그 층의 '앱 버튼' 규칙이 카드·큰 버튼 색을 덮는다. 상단바·밝기 버튼은 그대로 */
   var UI = 'v2';   // PiboUI.ui 로 내보내던 값. 바깥 코드가 볼 수 있어 이름만 남겨 둔다
-  if (document.body && !document.body.classList.contains('v2-app')) {
+  if (document.body && !document.body.classList.contains('v2-app') && !document.body.classList.contains('pb-plain')) {
     document.body.classList.add('pb-v2');
   }
 
