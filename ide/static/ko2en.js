@@ -22,6 +22,7 @@ const translations = {
   nav_tools:      { ko: "도구",     en: "Tools" },
   nav_llm:        { ko: "대화",     en: "Chat" },
   nav_classifier: { ko: "분류기",   en: "Classifier" },
+  nav_kids:       { ko: "로봇 놀이", en: "Robot Play" },
   nav_guide:      { ko: "도움말",   en: "Guide" },
   nav_fullscreen: { ko: "전체화면", en: "Full screen" },
   nav_restore:    { ko: "공장 초기화", en: "Factory reset" },

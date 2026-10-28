@@ -649,8 +649,7 @@ classifier 언어 토글, 검수 보고서 구조, Tools 서비스.
 **파이보·PiBrain 같은 코드**(`kids/` 통째로, 원본은 파이보 리포 — 고치면 PiBrain 에도 복사). 제품은 `--device pibo|pibrain`.
 설계·차시·도전 규칙·확인 필요는 **파이보 리포 `KIDS.md`**.
 
-- **IDE 버튼이 아직 없다**(기기 시험 뒤 연결). 손으로 띄운다: 도구 3개를 끄고 `sudo /home/pi/.pyenv/bin/python3 kids/run_kids.py --device <제품>`, 태블릿 `:50060`.
-  연결할 때 `run_ide.py` 의 '셋 중 하나만' 규칙에 넣을 것
+- **IDE [로봇 놀이] 버튼으로 연다(261028, 사용자 — 시험 편하게. 안 쓰기로 하면 `ide/templates/index.html` 의 `#kids_bt` 만 지우면 된다).** 대기 페이지 `launch.html?svc=kids` → `/kids?enable=on`(IDE 가 `kids_proc` 로 띄움) → 50060. 체험 앱 상단바 [IDE], 탭을 닫으면 `beforeunload` 가 `/kids?enable=off`(keepalive). `LAUNCH_VER` 261028v1. 손으로 띄울 때는 `sudo /home/pi/.pyenv/bin/python3 kids/run_kids.py --device <제품>`
 - **아이 프로필**: 번호(선생님이 정한 수) + 그림. 재주·별·도달 기록·키우기가 `/home/pi/.kids/p/<번호>/` 에 따로. 운영 전제는 '같은 아이 = 같은 번호 로봇'
 - **차시·도전은 `kids/content.json` 만 고친다**(`concepts` `lessons` `challenges`, 정답형 `want`·열린형 조건 열쇠). 코드는 안 바뀐다
 - 재주 한도: 24개 · 3겹 · 펼쳐 300번 · 줄 20장. 자기 자신을 부르는 재주(`cycle`)·쓰이는 재주 지우기는 막는다. [블록으로 보기] 에서 재주는 IDE **함수 블록**

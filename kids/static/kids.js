@@ -776,6 +776,13 @@
   ['pointerup', 'pointerleave', 'pointercancel'].forEach(function (ev) { $('lock_bt').addEventListener(ev, holdEnd); });
   $('lock_bt').addEventListener('contextmenu', function (e) { e.preventDefault(); });
 
+  /* IDE 와 연결(261028) — [IDE] 는 이 탭을 닫거나 IDE 로 간다. 탭이 닫히면 IDE 가 체험 앱을 끈다(keepalive 가 있어야 언로드 중에도 간다).
+     손으로 띄운 경우(IDE 없이 시험)엔 /kids 가 없어 실패해도 상관없다 */
+  $('ide_bt').addEventListener('click', function () { PiboUI.backToIDE(); });
+  window.addEventListener('beforeunload', function () {
+    try { fetch('http://' + location.hostname + '/kids?enable=off', { method: 'GET', keepalive: true }).catch(function () {}); } catch (e) { /* 무시 */ }
+  });
+
   var pin = '';
   function openPin() {
     if (S.token) { openTeacher(); return; }

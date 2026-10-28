@@ -10,7 +10,7 @@
      2) 알림 : PiboUI.toast(text, kind)          화면 아래에서 잠깐 뜨는 알림
      3) 배너 : PiboUI.banner(id, {...}) / hideBanner(id)   헤더 바로 아래 고정 안내
      4) 연결 : PiboUI.watchSocket(socket, opts)  socket.io 가 끊기면 배너
-     5) 서비스: PiboUI.openService('tools'|'classifier'|'llm')  이름 붙인 새 탭으로 연다
+     5) 서비스: PiboUI.openService('tools'|'classifier'|'llm'|'kids')  이름 붙인 새 탭으로 연다
               PiboUI.backToIDE()                 도구 탭을 닫고 IDE 로
      6) 버튼 : PiboUI.busy(el, on)               아이콘만 스피너로. 라벨·크기는 그대로
      7) 화면 : 도구·분류기는 body.pb-v2 층(예전 v1 화면은 260929 에 지웠다). IDE 는 자체 CSS(body.v2-app)
@@ -345,10 +345,10 @@
      누르는 '그 순간' 탭을 연다(팝업 차단 회피). 탭은 IDE 가 서빙하는 대기 페이지
      launch.html 로 열리고, 거기서 서비스를 켜고 준비될 때까지 기다린 뒤 스스로 이동한다.
      탭에 이름을 붙여 두 번 눌러도 탭이 하나로 유지된다. */
-  var TAB = { tools: 'pibo_tools', classifier: 'pibo_classifier', llm: 'pibo_llm' };
+  var TAB = { tools: 'pibo_tools', classifier: 'pibo_classifier', llm: 'pibo_llm', kids: 'pibo_kids' };
   // launch.html 은 ?ver 없이 열려 브라우저가 옛 판을 쓸 수 있다(포트가 바뀌면 옛 포트를 기다린다).
   // 대기 페이지를 고치면 이 번호를 올릴 것
-  var LAUNCH_VER = '261027v4';
+  var LAUNCH_VER = '261028v1';
   function launchUrl(svc) {
     return 'http://' + location.hostname + '/static/launch.html?svc=' +
            encodeURIComponent(svc) + '&lang=' + curLang() + '&v=' + LAUNCH_VER;
