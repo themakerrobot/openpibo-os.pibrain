@@ -77,8 +77,8 @@ class BaseRobot:
   def colour(self, rgb):
     raise NotImplementedError
 
-  def face(self, kind, color=None):
-    """키우기 얼굴(sleep·hungry·sleepy·sad·happy·normal). 화면이 없는 제품은 눈 색 등으로"""
+  def face(self, kind, look=None):
+    """키우기 얼굴(sleep·hungry·sleepy·sad·happy·normal). look = 꾸미기 {color, hat, glasses}. 화면이 없는 제품은 눈 색 등으로"""
 
   def poll_inputs(self):
     """눌린 입력 목록. 파이보 'touch', PiBrain 'b1'~'b4'"""
@@ -146,7 +146,7 @@ class FakeRobot(BaseRobot):
   def colour(self, rgb):
     self._do(('colour', tuple(rgb)), 0.05)
 
-  def face(self, kind, color=None):
+  def face(self, kind, look=None):
     self.log.append(('face', kind))
 
   def poll_inputs(self):
@@ -187,7 +187,7 @@ class PiboRobot(BaseRobot):
   def colour(self, rgb):
     self.d.eye_on(*[int(v) for v in rgb])
 
-  def face(self, kind, color=None):
+  def face(self, kind, look=None):
     self.colour(self.FACE_EYE.get(kind, (255, 255, 255)))
     name = self.FACE_MOTION.get(kind)
     if name:
@@ -243,12 +243,12 @@ class PiBrainRobot(BaseRobot):
   def colour(self, rgb):
     self.d.led_on(*[int(v) for v in rgb])
 
-  def face(self, kind, color=None):
+  def face(self, kind, look=None):
     from face import draw_face
     if self._lcd is None:
       from openpibo.oled import OledByPiBrain
       self._lcd = OledByPiBrain(self.W, self.H)
-    self._lcd.image = draw_face(kind, self.W, self.H, color or '#ffb703')
+    self._lcd.image = draw_face(kind, self.W, self.H, look)
     self._lcd.show()
 
   def poll_inputs(self):

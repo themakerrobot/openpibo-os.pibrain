@@ -451,7 +451,7 @@ def react_worker():
       with robot.lock:
         robot.stop_flag.clear()
         if face:
-          robot.face(face, pet_profile.get('color'))
+          robot.face(face, dict(pet_profile))
         if sound:
           robot.sound(sound)
         if guide:
@@ -463,7 +463,8 @@ def react_worker():
 
 # ── 키우기 (지금 아이의 친구만 시간이 간다) ────────────────────────────────
 pet = Pet()
-pet_profile = {'name': '', 'color': CONTENT['pet']['colors'][0]}
+pet_profile = {'name': '', 'color': CONTENT['pet']['colors'][0], 'hat': 'antenna', 'glasses': False}
+HATS = ('antenna', 'cap')
 pet_state = {'mode': False, 'lang': 'ko', 'last_need': 0.0, 'face': None}
 histories = {}            # {프로필 id: [[t, 배고픔, 기분, 졸림], ...]} — 메모리에만
 pet_lock = threading.Lock()
@@ -553,7 +554,7 @@ def load_profile(pid):
       cur['tricks'] = {'next': 1, 'items': {}}
       cur['progress'] = new_progress()
       pet = Pet()
-      pet_profile.update(name='', color=CONTENT['pet']['colors'][0])
+      pet_profile.update(name='', color=CONTENT['pet']['colors'][0], hat='antenna', glasses=False)
       pet_state['mode'] = False
       return
     t = read_json(os.path.join('p', pid, 'tricks.json'), {})
@@ -561,7 +562,8 @@ def load_profile(pid):
     cur['progress'] = dict(new_progress(), **read_json(os.path.join('p', pid, 'progress.json'), {}))
     pet = Pet.load(path('p', pid, 'pet.json'))
     d = read_json(os.path.join('p', pid, 'pet.json'), {})
-    pet_profile.update(name=d.get('name', ''), color=d.get('color', CONTENT['pet']['colors'][0]))
+    pet_profile.update(name=d.get('name', ''), color=d.get('color', CONTENT['pet']['colors'][0]),
+                       hat=d.get('hat') if d.get('hat') in HATS else 'antenna', glasses=bool(d.get('glasses')))
     pet_state['face'] = None
 
 
@@ -972,16 +974,18 @@ async def api_pet_act(body: dict = Body(...)):
 
 @app.post('/api/pet/profile')
 async def api_pet_profile(body: dict = Body(...)):
-  """꾸미기 — 이름·색·성격. 아이가 직접 고른다(잠금 없음)"""
+  """꾸미기 — 이름·색·머리 소품·안경·성격. 아이가 직접 고른다(잠금 없음)"""
   if need_profile():
     return need_profile()
   name = str(body.get('name', pet_profile['name']))[:8].strip()
   color = body.get('color', pet_profile['color'])
   kind = body.get('kind', pet.kind)
-  if color not in CONTENT['pet']['colors'] or kind not in PERSONALITY:
+  hat = body.get('hat', pet_profile['hat'])
+  glasses = body.get('glasses', pet_profile['glasses'])
+  if color not in CONTENT['pet']['colors'] or kind not in PERSONALITY or hat not in HATS or not isinstance(glasses, bool):
     return bad('bad profile')
   with pet_lock:
-    pet_profile.update(name=name, color=color)
+    pet_profile.update(name=name, color=color, hat=hat, glasses=glasses)
     pet.kind = kind
     pet_save()
   if pet_state['mode']:

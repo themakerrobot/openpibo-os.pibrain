@@ -105,7 +105,7 @@
     var l = lessonOf(lessonNow());
     $('home_lesson').textContent = S.settings.lesson ? tr('kids_lesson_n', l.n, txt(l)) : tr('kids_lesson_free');
     $('home_tricks').textContent = tr('kids_n_tricks', S.tricks.length);
-    get('/api/pet').then(function (p) { if (p.stats) { S.pet = p; $('home_pet').innerHTML = faceSvg(p.face, petColor()); } }).catch(function () {});
+    get('/api/pet').then(function (p) { if (p.stats) { S.pet = p; $('home_pet').innerHTML = faceSvg(p.face, petLook(p.profile)); } }).catch(function () {});
   }
 
   /* ── 카드 ───────────────────────────────────────────────────────── */
@@ -448,6 +448,7 @@
       s.style.animationDelay = (i * 0.18) + 's';
       stars.appendChild(s);
     }
+    $('res_art').innerHTML = faceSvg(res.ok ? 'cheer' : 'oops');
     $('res_msg').textContent = txt(C.guides[res.ok ? 'great' : 'again']);
     if (res.ok && res.stars < 3) $('res_msg').textContent += ' ' + tr('kids_fewer');
     var cmp = $('res_compare');
@@ -528,30 +529,12 @@
   });
 
   /* ── 키우기 얼굴 (face.py 와 같은 모양) ───────────────────────────── */
-  function faceSvg(kind, color) {
-    var ink = '#28201a', s = '';
-    s += '<svg viewBox="0 0 240 240" class="kids-face kids-face--' + kind + '" aria-hidden="true">';
-    s += '<ellipse class="kids-face__shadow" cx="120" cy="228" rx="70" ry="8"/>';
-    s += '<g class="kids-face__body"><circle cx="120" cy="120" r="100" fill="' + color + '"/>';
-    [-1, 1].forEach(function (sx) {
-      var x = 120 + sx * 38, y = 102;
-      if (kind === 'sleep' || kind === 'sleepy') s += '<line x1="' + (x - 12) + '" y1="' + y + '" x2="' + (x + 12) + '" y2="' + y + '" stroke="' + ink + '" stroke-width="5" stroke-linecap="round"/>';
-      else if (kind === 'happy') s += '<path d="M' + (x - 12) + ' ' + (y + 4) + ' Q' + x + ' ' + (y - 12) + ' ' + (x + 12) + ' ' + (y + 4) + '" fill="none" stroke="' + ink + '" stroke-width="5" stroke-linecap="round"/>';
-      else s += '<g class="kids-face__eye"><circle cx="' + x + '" cy="' + y + '" r="12" fill="' + ink + '"/><circle cx="' + (x + 2) + '" cy="' + (y - 5) + '" r="4" fill="#fff"/></g>';
-      s += '<ellipse cx="' + (120 + sx * 66) + '" cy="130" rx="13" ry="8" fill="#ff8c96" opacity=".75"/>';
-    });
-    var my = 150;
-    if (kind === 'happy') s += '<path d="M94 ' + (my - 6) + ' Q120 ' + (my + 30) + ' 146 ' + (my - 6) + ' Z" fill="' + ink + '"/>';
-    else if (kind === 'sad') s += '<path d="M98 ' + (my + 14) + ' Q120 ' + (my - 4) + ' 142 ' + (my + 14) + '" fill="none" stroke="' + ink + '" stroke-width="5" stroke-linecap="round"/>';
-    else if (kind === 'hungry') s += '<ellipse cx="120" cy="' + (my + 2) + '" rx="13" ry="14" fill="' + ink + '"/>';
-    else if (kind === 'sleep' || kind === 'sleepy') s += '<ellipse cx="120" cy="' + (my + 2) + '" rx="7" ry="6" fill="' + ink + '"/>';
-    else s += '<path d="M102 ' + (my - 4) + ' Q120 ' + (my + 12) + ' 138 ' + (my - 4) + '" fill="none" stroke="' + ink + '" stroke-width="5" stroke-linecap="round"/>';
-    s += '</g>';
-    if (kind === 'sleep') s += '<g class="kids-face__z" fill="none" stroke="#8fa0ff" stroke-width="4" stroke-linejoin="round"><path d="M180 40 h16 l-16 16 h16"/><path d="M204 14 h12 l-12 12 h12"/></g>';
-    if (kind === 'hungry') s += '<g class="kids-face__z"><text x="182" y="52" font-size="34" fill="#ff8a3d">!</text></g>';
-    return s + '</svg>';
+  /* 친구 그림은 pet.js(PetArt). 상태(normal·happy·hungry·sleepy·sleep·sad)와 반응 포즈를 같은 함수로 그린다 */
+  function petLook(prof) {
+    prof = prof || (S.pet && S.pet.profile) || {};
+    return { color: prof.color || C.pet.colors[0], hat: prof.hat || 'antenna', glasses: !!prof.glasses };
   }
-  function petColor() { return (S.pet && S.pet.profile.color) || C.pet.colors[0]; }
+  function faceSvg(pose, look) { return PetArt.svg(pose, look || petLook()); }
 
   /* ── 키우기 ─────────────────────────────────────────────────────── */
   var STATS = ['hunger', 'mood', 'sleepy'];
@@ -608,7 +591,12 @@
     var old = S.pet;
     S.pet = p;
     var art = $('pet_art');
-    if (force || !old || !art.firstChild || old.face !== p.face || old.profile.color !== p.profile.color) art.innerHTML = faceSvg(p.face, petColor());
+    var look = JSON.stringify(petLook(p.profile));
+    if (S.pose) { /* 반응 포즈를 보여 주는 동안은 그대로 */ }
+    else if (force || !old || !art.firstChild || old.face !== p.face || art.getAttribute('data-look') !== look) {
+      art.innerHTML = faceSvg(p.face, petLook(p.profile));
+      art.setAttribute('data-look', look);
+    }
     $('pet_name').textContent = p.profile.name || tr('kids_noname');
     var kind = C.pet.kinds[p.stats.kind];
     $('pet_kind').innerHTML = kind ? icon(kind.icon) + '<span></span>' : '';
@@ -649,14 +637,26 @@
     clearTimeout(showInput.t);
     showInput.t = setTimeout(function () { p.hidden = true; }, 3500);
     if (li.reaction && C.guides[li.reaction]) bubble(txt(C.guides[li.reaction]));
+    react(li.act);
+  }
+  /* 돌보기 반응 포즈 — 2.5초 보여 주고 지금 상태로 돌아간다 */
+  var ACT_POSE = { feed: 'eat', play: 'ball', wash: 'wash', pet: 'happy', sleep: 'sleep' };
+  function react(act) {
+    var pose = ACT_POSE[act];
+    if (!pose || !S.pet) return;
+    var art = $('pet_art');
+    S.pose = pose;
+    art.innerHTML = faceSvg(pose);
+    art.classList.remove('is-bounce'); void art.offsetWidth; art.classList.add('is-bounce');
+    clearTimeout(react.t);
+    react.t = setTimeout(function () { S.pose = null; if (S.pet) applyPet(S.pet, true); }, 2500);
   }
   function doAct(what) {
     post('/api/pet/act', { act: what, lang: L() }).then(function (r) {
       if (r._status !== 200) { toast(tr(r._status === 409 ? 'kids_busy' : 'kids_err')); return; }
       if (C.guides[r.reaction]) bubble(txt(C.guides[r.reaction]));
-      var art = $('pet_art');
-      art.classList.remove('is-bounce'); void art.offsetWidth; art.classList.add('is-bounce');
       applyPet(r);
+      react(what);
     }).catch(function () { toast(tr('kids_err_conn'), 'error'); });
   }
   $('pet_art').addEventListener('click', function () { doAct('pet'); });
@@ -671,7 +671,18 @@
     }).join(' · ');
   }
   function renderCustom() {
-    $('cu_preview').innerHTML = faceSvg('happy', CU.color);
+    $('cu_preview').innerHTML = faceSvg('happy', CU);
+    [['cu_hats', 'hat', [['antenna', 'kids_hat_antenna'], ['cap', 'kids_hat_cap']]],
+     ['cu_glasses', 'glasses', [[false, 'kids_glasses_off'], [true, 'kids_glasses_on']]]].forEach(function (g) {
+      var box = $(g[0]);
+      box.innerHTML = '';
+      g[2].forEach(function (o) {
+        var b = btn('kids-chip' + (CU[g[1]] === o[0] ? ' is-on' : ''));
+        b.textContent = tr(o[1]);
+        b.addEventListener('click', function () { CU[g[1]] = o[0]; renderCustom(); });
+        box.appendChild(b);
+      });
+    });
     var names = $('cu_names');
     names.innerHTML = '';
     C.pet['names_' + L()].forEach(function (n) {
@@ -702,7 +713,8 @@
   }
   $('custom_bt').addEventListener('click', function () {
     if (!S.pet) return;
-    CU = { name: S.pet.profile.name, color: S.pet.profile.color, kind: S.pet.stats.kind };
+    var lk = petLook();
+    CU = { name: S.pet.profile.name, color: lk.color, hat: lk.hat, glasses: lk.glasses, kind: S.pet.stats.kind };
     $('cu_name').value = CU.name || '';
     $('cu_name').placeholder = tr('kids_name_ph');
     renderCustom();
@@ -710,7 +722,7 @@
   });
   $('cu_name').addEventListener('input', function () { CU.name = this.value; });
   $('cu_save').addEventListener('click', function () {
-    post('/api/pet/profile', { name: CU.name, color: CU.color, kind: CU.kind, lang: L() }).then(function (r) {
+    post('/api/pet/profile', { name: CU.name, color: CU.color, hat: CU.hat, glasses: CU.glasses, kind: CU.kind, lang: L() }).then(function (r) {
       if (r._status !== 200) { toast(tr('kids_err'), 'error'); return; }
       $('dlg_custom').hidden = true;
       applyPet(Object.assign({}, S.pet, r), true);
