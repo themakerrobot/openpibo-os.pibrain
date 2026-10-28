@@ -7,14 +7,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
-  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261028v1" />
-  <link rel="stylesheet" href="../static/kids.css?ver=261028v1" />
+  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261028v2" />
+  <link rel="stylesheet" href="../static/kids.css?ver=261028v2" />
   <link rel="shortcut icon" href="../static/icon.png?ver=240319v1" type="image/x-icon" />
   <!-- 문구는 IDE 의 ko2en.js 를 같이 쓴다(kids_* 키, 영문판 델타를 늘리지 않으려고). IDE(80)는 늘 떠 있다 -->
   <script>(function () { var p = new URLSearchParams(location.search).get('ide') || 80;   /* ?ide= 는 시험용 */
-    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261028v1"><\/script>'); })();</script>
+    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261028v2"><\/script>'); })();</script>
 </head>
 
+<!-- pb-plain: 키트의 pb-v2 층을 얹지 않는다(그 층의 앱 버튼 규칙이 카드 색을 덮는다) -->
 <body class="pb pb-shell pb-plain kids">
   <script>/* 화면 밝기를 첫 페인트 전에 (규칙은 pibo-ui.js 의 getTheme 과 같다. 고른 적 없으면 soft) */
   (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
@@ -22,7 +23,8 @@
   <header class="pb-header">
     <span class="pb-header__brand"><i class="fa-solid fa-robot" id="brand_icon"></i><b id="brand_name">piBo</b><span class="pb-header__app" data-key="kids_title"></span></span>
     <div class="pb-iconbar">
-      <button type="button" class="pb-iconbtn" id="home_bt"><i class="fa-solid fa-house"></i><span class="pb-iconbtn__label" data-key="kids_home"></span></button>
+      <button type="button" class="pb-iconbtn kids-whobt" id="who_bt" data-title-key="kids_switch" hidden><i class="fa-solid fa-user" id="who_icon"></i><span class="pb-iconbtn__label" id="who_no"></span></button>
+      <button type="button" class="pb-iconbtn" id="home_bt" hidden><i class="fa-solid fa-house"></i><span class="pb-iconbtn__label" data-key="kids_home"></span></button>
       <a class="pb-iconbtn" id="fullscreen_bt" data-title-key="kids_fullscreen"><span id="fullscreen_txt"></span></a>
       <!-- 선생님 잠금: 3초 길게 누르기 → 숫자 4개 -->
       <button type="button" class="pb-iconbtn kids-lockbt" id="lock_bt" data-title-key="kids_teacher_hold"><i class="fa-solid fa-lock"></i><svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="16"/></svg></button>
@@ -30,12 +32,26 @@
   </header>
 
   <main class="kids-main">
-    <!-- 첫 화면 -->
-    <section class="kids-view" id="v_home">
+    <!-- 번호 고르기 -->
+    <section class="kids-view" id="v_who" hidden>
+      <h1 class="kids-h1" data-key="kids_who_title"></h1>
+      <div class="kids-whogrid" id="who_grid"></div>
+    </section>
+
+    <!-- 처음 -->
+    <section class="kids-view" id="v_home" hidden>
       <div class="kids-home">
-        <button type="button" class="kids-big kids-big--play" id="go_play">
+        <button type="button" class="kids-big kids-big--ch" id="go_challenges">
+          <span class="kids-big__art"><i class="fa-solid fa-flag"></i></span>
+          <b data-key="kids_challenges"></b><span id="home_lesson"></span>
+        </button>
+        <button type="button" class="kids-big kids-big--make" id="go_make">
           <span class="kids-big__art"><i class="fa-solid fa-cubes"></i></span>
-          <b data-key="kids_play"></b><span data-key="kids_play_sub"></span>
+          <b data-key="kids_make"></b><span data-key="kids_make_sub"></span>
+        </button>
+        <button type="button" class="kids-big kids-big--tricks" id="go_tricks">
+          <span class="kids-big__art"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+          <b data-key="kids_tricks"></b><span id="home_tricks"></span>
         </button>
         <button type="button" class="kids-big kids-big--pet" id="go_pet">
           <span class="kids-big__art" id="home_pet"></span>
@@ -44,20 +60,19 @@
       </div>
     </section>
 
-    <!-- 단계·미션 고르기 -->
-    <section class="kids-view" id="v_levels" hidden>
+    <!-- 도전 (선생님이 고른 차시 + 지난 차시) -->
+    <section class="kids-view" id="v_challenges" hidden>
       <div class="kids-bar">
         <button type="button" class="kids-back" data-go="home" data-title-key="kids_back"><i class="fa-solid fa-arrow-left"></i></button>
-        <div class="kids-levels" id="levels"></div>
+        <h1 class="kids-h1 kids-h1--bar" id="ch_title"></h1>
       </div>
-      <p class="kids-about" id="level_about"></p>
-      <div class="kids-missions" id="missions"></div>
+      <div id="ch_list"></div>
     </section>
 
-    <!-- 미션 -->
-    <section class="kids-view" id="v_mission" hidden>
+    <!-- 만들기 -->
+    <section class="kids-view" id="v_make" hidden>
       <div class="kids-bar">
-        <button type="button" class="kids-back" data-go="levels" data-title-key="kids_back"><i class="fa-solid fa-arrow-left"></i></button>
+        <button type="button" class="kids-back" data-go="home" data-title-key="kids_back"><i class="fa-solid fa-arrow-left"></i></button>
         <div class="kids-task">
           <span class="kids-task__ic" id="task_icon"></span>
           <p class="kids-task__txt" id="task_text"></p>
@@ -65,16 +80,35 @@
           <span class="kids-stars" id="task_stars"></span>
         </div>
       </div>
-      <div class="kids-row" id="row" aria-live="polite"></div>
+      <div class="kids-rowwrap">
+        <div class="kids-row" id="row" aria-live="polite"></div>
+        <span class="kids-rowcount" id="row_count"></span>
+      </div>
       <div class="kids-dock">
-        <div class="kids-palette" id="palette"></div>
+        <div class="kids-palbox">
+          <div class="kids-ptabs" id="pal_tabs"></div>
+          <div class="kids-palette" id="palette"></div>
+        </div>
         <div class="kids-actions">
           <button type="button" class="kids-go" id="run_bt" data-title-key="kids_run"><i class="fa-solid fa-play"></i></button>
           <button type="button" class="kids-go kids-go--stop" id="stop_bt" data-title-key="kids_stop" hidden><i class="fa-solid fa-stop"></i></button>
-          <button type="button" class="kids-round" id="clear_bt" data-title-key="kids_clear"><i class="fa-solid fa-trash-can"></i></button>
-          <button type="button" class="kids-round" id="export_bt" data-title-key="kids_export"><i class="fa-solid fa-puzzle-piece"></i></button>
+          <div class="kids-actions__row">
+            <button type="button" class="kids-round kids-round--save" id="save_bt" data-title-key="kids_save"><i class="fa-solid fa-floppy-disk"></i></button>
+            <button type="button" class="kids-round" id="clear_bt" data-title-key="kids_clear"><i class="fa-solid fa-trash-can"></i></button>
+            <button type="button" class="kids-round" id="export_bt" data-title-key="kids_export"><i class="fa-solid fa-puzzle-piece"></i></button>
+          </div>
         </div>
       </div>
+    </section>
+
+    <!-- 내 재주 -->
+    <section class="kids-view" id="v_tricks" hidden>
+      <div class="kids-bar">
+        <button type="button" class="kids-back" data-go="home" data-title-key="kids_back"><i class="fa-solid fa-arrow-left"></i></button>
+        <h1 class="kids-h1 kids-h1--bar" data-key="kids_tricks"></h1>
+      </div>
+      <p class="kids-empty" id="tricks_empty" hidden><i class="fa-solid fa-wand-magic-sparkles"></i><span data-key="kids_no_tricks"></span></p>
+      <div class="kids-tgrid" id="tricks_grid"></div>
     </section>
 
     <!-- 키우기 -->
@@ -101,7 +135,51 @@
     </section>
   </main>
 
-  <!-- 미션 결과 -->
+  <!-- 처음 고르는 번호: 내 그림 -->
+  <div class="kids-modal" id="dlg_icon" hidden>
+    <div class="kids-modal__box kids-iconpick">
+      <h2 class="pb-title"><span data-key="kids_icon_title"></span> <b id="icon_no"></b></h2>
+      <div class="kids-picks" id="icon_grid"></div>
+      <div class="kids-modal__btns"><button type="button" class="kids-btn" data-close><span data-key="kids_cancel"></span></button></div>
+    </div>
+  </div>
+
+  <!-- 재주로 저장 -->
+  <div class="kids-modal" id="dlg_save" hidden>
+    <div class="kids-modal__box kids-save">
+      <h2 class="pb-title" id="sv_title"></h2>
+      <div class="kids-save__grid">
+        <div class="kids-save__preview" id="sv_preview"></div>
+        <div class="kids-save__form">
+          <span class="pb-label" data-key="kids_trick_name"></span>
+          <input class="pb-field kids-namein" id="sv_name" maxlength="8" autocomplete="off">
+          <span class="pb-label" data-key="kids_trick_icon"></span>
+          <div class="kids-picks" id="sv_icons"></div>
+        </div>
+      </div>
+      <p class="kids-note" data-key="kids_save_hint"></p>
+      <div class="kids-modal__btns">
+        <button type="button" class="kids-btn" data-close><span data-key="kids_cancel"></span></button>
+        <button type="button" class="kids-btn kids-btn--main" id="sv_ok"><i class="fa-solid fa-floppy-disk"></i><span data-key="kids_save"></span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 재주 하나 -->
+  <div class="kids-modal" id="dlg_trick" hidden>
+    <div class="kids-modal__box kids-trickbox">
+      <h2 class="pb-title" id="tk_title"></h2>
+      <div class="kids-compare__row" id="tk_row"></div>
+      <div class="kids-modal__btns">
+        <button type="button" class="kids-btn kids-btn--danger" id="tk_del"><i class="fa-solid fa-trash-can"></i><span data-key="kids_delete"></span></button>
+        <button type="button" class="kids-btn" id="tk_edit"><i class="fa-solid fa-pen"></i><span data-key="kids_edit"></span></button>
+        <button type="button" class="kids-btn kids-btn--main" id="tk_run"><i class="fa-solid fa-play"></i><span data-key="kids_run"></span></button>
+        <button type="button" class="kids-btn" data-close><span data-key="kids_close"></span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 도전 결과 -->
   <div class="kids-modal" id="dlg_result" hidden>
     <div class="kids-modal__box kids-result">
       <div class="kids-result__stars" id="res_stars"></div>
@@ -110,6 +188,7 @@
         <div><span class="kids-compare__lbl" data-key="kids_want"></span><div class="kids-compare__row" id="res_want"></div></div>
         <div><span class="kids-compare__lbl" data-key="kids_mine"></span><div class="kids-compare__row" id="res_mine"></div></div>
       </div>
+      <ul class="kids-miss" id="res_miss" hidden></ul>
       <div class="kids-modal__btns">
         <button type="button" class="kids-btn" id="res_again"><i class="fa-solid fa-rotate-left"></i><span data-key="kids_retry"></span></button>
         <button type="button" class="kids-btn kids-btn--main" id="res_next"><span data-key="kids_next"></span><i class="fa-solid fa-arrow-right"></i></button>
@@ -170,11 +249,10 @@
     <div class="kids-modal__box kids-teacher">
       <h2 class="pb-title" data-key="kids_teacher"></h2>
       <div class="kids-form">
-        <span class="pb-label" data-key="kids_t_age"></span>
-        <div class="pb-seg kids-seg" id="t_age">
-          <button type="button" data-v="kinder" data-key="kids_t_kinder"></button>
-          <button type="button" data-v="school" data-key="kids_t_school"></button>
-        </div>
+        <span class="pb-label" data-key="kids_t_lesson"></span>
+        <div><select class="pb-field" id="t_lesson"></select><p class="kids-lhelp" id="t_lesson_help"></p></div>
+        <span class="pb-label" data-key="kids_t_roster"></span>
+        <input class="pb-field kids-num" id="t_roster" type="number" min="1" max="40" inputmode="numeric">
         <span class="pb-label" data-key="kids_t_lang"></span>
         <select class="pb-field" id="t_lang"><option value="ko">한국어</option><option value="en">English</option></select>
         <span class="pb-label" data-key="kids_t_voice"></span>
@@ -185,8 +263,8 @@
         <input class="pb-field" id="t_pin" inputmode="numeric" maxlength="4" pattern="[0-9]*" autocomplete="off">
       </div>
       <div class="kids-teacher__more">
-        <button type="button" class="kids-btn kids-btn--danger" id="t_reset_progress"><i class="fa-solid fa-star"></i><span data-key="kids_t_reset_progress"></span></button>
-        <button type="button" class="kids-btn kids-btn--danger" id="t_reset_pet"><i class="fa-solid fa-heart"></i><span data-key="kids_t_reset_pet"></span></button>
+        <button type="button" class="kids-btn" id="t_report"><i class="fa-solid fa-table-cells"></i><span data-key="kids_t_report"></span></button>
+        <button type="button" class="kids-btn kids-btn--danger" id="t_reset_all"><i class="fa-solid fa-trash-can"></i><span data-key="kids_t_reset_all"></span></button>
         <a class="kids-btn" id="t_ide"><i class="fa-solid fa-code"></i><span>IDE</span></a>
       </div>
       <div class="kids-modal__btns">
@@ -196,7 +274,19 @@
     </div>
   </div>
 
-  <script src="../static/pibo-ui.js?ver=261028v1"></script>
-  <script src="../static/kids.js?ver=261028v1"></script>
+  <!-- 도달 기록 -->
+  <div class="kids-modal" id="dlg_report" hidden>
+    <div class="kids-modal__box kids-reportbox">
+      <h2 class="pb-title" data-key="kids_t_report"></h2>
+      <p class="kids-note" data-key="kids_t_report_legend"></p>
+      <div class="kids-report__wrap" id="rp_table"></div>
+      <div class="kids-modal__btns">
+        <button type="button" class="kids-btn kids-btn--main" data-close><span data-key="kids_close"></span></button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../static/pibo-ui.js?ver=261028v2"></script>
+  <script src="../static/kids.js?ver=261028v2"></script>
 </body>
 </html>
