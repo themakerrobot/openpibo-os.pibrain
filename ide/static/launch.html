@@ -124,7 +124,10 @@
                   name: { ko: '분류기', en: 'Classifier' },   icon: 'fa-images' },
     // 대화: 대화 웹(chat/run_chat.py, 50030)이 열리면 바로 간다. 모델 준비(1~2분)는 대화 화면이 보여 준다(261026)
     llm:        { port: 50030, on: '/llm?enable=on',        check: 'port',   limit: 60,
-                  name: { ko: '대화', en: 'Chat' },                icon: 'fa-comment' }
+                  name: { ko: '대화', en: 'Chat' },                icon: 'fa-comment' },
+    // 체험 앱 '로봇 놀이'(kids/run_kids.py, 50060, 261028 시험 중)
+    kids:       { port: 50060, on: '/kids?enable=on',       check: 'port',   limit: 60,
+                  name: { ko: '로봇 놀이', en: 'Robot Play' },     icon: 'fa-shapes' }
   };
   var key = Q.get('svc'), S = SVC[key];
   var $ = function (id) { return document.getElementById(id); };

@@ -197,6 +197,10 @@ document.getElementById("llm_bt").addEventListener("click", function () {
 document.getElementById("classifier_bt").addEventListener("click", function () {
   PiboUI.openService("classifier");
 });
+// [로봇 놀이] 체험 앱(261028 시험 중). 버튼을 빼려면 index.html 의 #kids_bt 를 지우면 된다
+if (document.getElementById("kids_bt")) document.getElementById("kids_bt").addEventListener("click", function () {
+  PiboUI.openService("kids");
+});
 
 // H/W 검수. 출하 검수용이라 헤더 아이콘으로 내놓지 않고 푸터 시리얼번호를 누르게 했다.
 // 검수 서버는 카메라·LCD·GPIO·오디오를 독점하므로 학생이 실수로 열면 곤란하다. 켜기 전에 한 번 되묻는다.
