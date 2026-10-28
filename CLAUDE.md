@@ -212,6 +212,8 @@ IDE [대화] 가 llama-server 기본 웹 화면 대신 대화 웹(`chat/run_chat
   40% 아래는 소리가 너무 작아 하한을 둔 것이 원래 의도였다(사용자). 블록·도구 소리도 같이 조금 커진다(기본 80: 80% → 88%)
 - 문구는 IDE `ko2en.js` 끝의 `chat_*` 키를 대화 화면이 같이 읽는다(영문판 델타 안 늘림)
 - 기기의 `llama-server.service`·모델 전환은 이미지 작업(파이보 CLAUDE.md '대화 웹' 의 '기기 서비스 전환'). **실기기로는 아직 안 봤다**
+- **PiBrain 기기는 지금 젬마 + 옛 llama.cpp 그대로다(261028).** `llama-server.service` 를 안 바꾼다. `run_chat.py` 는 `--device pibrain` 이면 시스템 글의 로봇 이름을 파이브레인으로 바꾼다.
+  `.model` 을 파이보에서 통째로 복사하지 말 것 — `llm/` 이 Qwen 으로 덮여 옛 llama.cpp 가 [대화] 때 바로 죽는다. Qwen 으로 가려면 PiBrain 에서 llama.cpp 를 새로 빌드(파이보 IMAGE.md '대화 서버 llama.cpp')
 
 ## 라이선스 (261027 — Apache-2.0)
 
