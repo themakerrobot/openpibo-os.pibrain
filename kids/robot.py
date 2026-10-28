@@ -7,12 +7,16 @@
 처음 한 번이 6~15초라 이미지를 만들 때 make_voice.py 로 미리 만들어 둘 것.
 """
 import os
+import sys
 import time
+import subprocess
 import hashlib
 import threading
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SOUND_DIR = os.path.join(BASE_DIR, 'sounds')
+#: booting·도구·IDE 가 쓰는 IP 화면(파이보 OLED·PiBrain LCD). 제품마다 그 리포의 파일이 맞는 화면에 그린다
+NETWORK_DISP = os.path.join(os.path.dirname(BASE_DIR), 'system', 'network_disp.py')
 
 
 def voice_path(cache_dir, text, voice):
@@ -80,6 +84,19 @@ class BaseRobot:
     """눌린 입력 목록. 파이보 'touch', PiBrain 'b1'~'b4'"""
     return []
 
+  def show_network(self):
+    """화면을 IP 정보로 되돌린다 — 앱을 켤 때·키우기를 나갈 때·앱을 끌 때.
+    말하는 중이면(react_worker 가 lock 을 쥠) 끝날 때까지 최대 10초 기다린다. 얼굴을 그리다 덮어쓰지 않게"""
+    got = self.lock.acquire(timeout=10)
+    try:
+      subprocess.run([sys.executable, NETWORK_DISP], timeout=20,
+                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception as exc:  # noqa: BLE001 — 화면을 못 그려도 앱은 계속
+      print(f'[kids] IP 화면 오류: {exc}', flush=True)
+    finally:
+      if got:
+        self.lock.release()
+
   def stop(self):
     self.stop_flag.set()
 
@@ -135,6 +152,9 @@ class FakeRobot(BaseRobot):
   def poll_inputs(self):
     out, self.inputs = self.inputs, []
     return out
+
+  def show_network(self):
+    self.log.append(('network',))
 
   def rest(self):
     self.log.append(('rest',))

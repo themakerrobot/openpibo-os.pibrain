@@ -944,10 +944,14 @@ async def api_pet_mode(body: dict = Body(...)):
   pet_state['lang'] = lang_of(body)
   if on and (run['running'] or not cur['id']):
     return bad('busy', 409)
-  pet_state['mode'] = on
+  was, pet_state['mode'] = pet_state['mode'], on
   if on:
     pet_state['face'] = pet.face()
     speak_async((None, None, pet.face()), pet_state['lang'])
+  elif was:
+    with _react_cv:
+      _react['next'] = None                         # 아직 안 그린 얼굴이 IP 화면을 덮지 않게
+    await asyncio.to_thread(robot.show_network)     # 얼굴을 띄웠던 화면을 IP 로
   return {'ok': True}
 
 
@@ -1008,6 +1012,7 @@ def main():
   app.state.robot = robot
   threading.Thread(target=react_worker, daemon=True).start()
   threading.Thread(target=pet_loop, daemon=True).start()
+  threading.Thread(target=robot.show_network, daemon=True).start()   # 들어올 때 화면 초기화
   if args.fake:
     @app.post('/api/fake/input')
     async def fake_input(body: dict = Body(...)):
@@ -1019,7 +1024,11 @@ def main():
       return {'log': robot.log}
 
   import uvicorn
-  uvicorn.run(app, host='0.0.0.0', port=args.port, access_log=False)
+  try:
+    uvicorn.run(app, host='0.0.0.0', port=args.port, access_log=False)
+  finally:
+    robot.stop()            # 나갈 때(Ctrl+C·SIGTERM) 소리를 끊고 화면을 IP 로
+    robot.show_network()
 
 
 if __name__ == '__main__':
