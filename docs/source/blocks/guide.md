@@ -412,17 +412,17 @@ USB 연결 해제합니다.
 
 항목이 리스트 안에 있는지 확인합니다. *값을 돌려주는 블록*
 
-<img src="img/utils_dict_get.png" alt="사전 ([변수 ▾]) 에서 키 ([키 이름]) 값 가져오기" width="516" class="blk">
+<img src="img/utils_dict_get.png" alt="사전 ([사전 ▾]) 에서 키 ([키 이름]) 값 가져오기" width="516" class="blk">
 
 사전에서 정해진 키에 해당하는 값을 가져옵니다. *값을 돌려주는 블록*
 
-<img src="img/utils_dict_set.png" alt="사전 ([변수 ▾]) 에 { ([키 이름]) : ( ) } 추가하기" width="536" class="blk">
+<img src="img/utils_dict_set.png" alt="사전 ([사전 ▾]) 에 { ([키 이름]) : ( ) } 추가하기" width="536" class="blk">
 
 사전에 정해진 키와 값을 추가합니다.
 
-<img src="img/utils_dict_create.png" alt="빈 사전 만들기" width="188" class="blk">
+<img src="img/variables_set.png" alt="[사전 ▾] 을(를) (빈 사전 만들기) (으)로 정하기" width="505" class="blk">
 
-빈 사전을 만듭니다. *값을 돌려주는 블록*
+변수의 값을 입력한 값으로 변경해 줍니다.
 
 <img src="img/utils_array_slice_set.png" alt="리스트 ([변수 ▾]) [ ([0]) : ([0]) , ([0]) : ([0]) ] 값을 ([변수 ▾]) 에 저장하기" width="707" class="blk">
 

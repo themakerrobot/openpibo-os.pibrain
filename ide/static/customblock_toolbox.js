@@ -2549,6 +2549,7 @@ let toolbox = (lang) => {
               "dictionary":{
                 "shadow":{
                   "type":"variables_get",
+                  "fields": { "VAR": { "name": lang === 'en' ? 'my_dict' : '사전' } },
                 }
               },
               "keyname":{
@@ -2568,6 +2569,7 @@ let toolbox = (lang) => {
               "dictionary":{
                 "shadow":{
                   "type":"variables_get",
+                  "fields": { "VAR": { "name": lang === 'en' ? 'my_dict' : '사전' } },
                 }
               },
               "keyname":{
@@ -2580,9 +2582,12 @@ let toolbox = (lang) => {
               },
             }
           },
+          // 빈 사전은 값 블록이라 따로 꺼내면 끼울 자리 없이 떠 있었다(261029, 사용자) — [사전 변수 = 빈 사전] 으로 끼워서 꺼내게 한다
           {
             "kind": "block",
-            "type": "utils_dict_create",
+            "type": "variables_set",
+            "fields": { "VAR": { "name": lang === 'en' ? 'my_dict' : '사전' } },
+            "inputs": { "VALUE": { "block": { "type": "utils_dict_create" } } }
           },
 
           {
