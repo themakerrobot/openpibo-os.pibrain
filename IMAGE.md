@@ -57,7 +57,7 @@ sudo systemctl daemon-reload
 
 **`enable` 하지 않는다.** IDE 가 `/tools?enable=on` 에서 `systemctl start`,
 탭을 닫을 때 `stop` 으로 켜고 끈다. 부팅 때 떠 있으면 카메라를 쥔 채로 남는다.
-`classify.service` `llama-server.service` 도 같은 방식이다.
+`classify.service` 도 같은 방식이다. 대화 모델 `llama-server@<모델>` 은 `[Install]` 이 없어 enable 자체가 안 된다.
 
 확인:
 
@@ -142,7 +142,7 @@ TensorFlow·torch·ultralytics, MeloTTS 시험 잔재(gruut·unidic·mecab·jieb
 
 ```bash
 PY=/home/pi/.pyenv/bin/python3
-sudo systemctl stop tools.service classify.service llama-server.service   # 도구가 떠 있으면 먼저 끈다
+sudo systemctl stop tools.service classify.service 'llama-server@*'   # 도구가 떠 있으면 먼저 끈다
 
 # 1) 목록만 본다 — 아무것도 안 바꾼다. 맨 위에 개수·용량, 아래에 큰 것부터
 sudo $PY /home/pi/openpibo-os/system/venv_prune.py | head -40
@@ -199,8 +199,8 @@ sudo rm -rf /home/pi/.pyenv.old                                  # 잘 되면 �
 
 - `stt/`(약 230MB)는 마이크를 달면 쓴다(STT 소스는 이미 들어 있다, 블록만 막힘). **지우지 말고 그대로 둔다**
 - `object/` 에는 `ed-s-320.onnx` 하나만 있어야 한다(261026 에 예전 사물 인식 가중치·고지 파일을 지웠다)
-- `llm/llm-model.gguf` 는 `llama-server.service` 가 읽는다. **유닛의 모델 경로가 이 파일인지 확인 필요**(유닛은 리포 밖)
-- **모델 고르기용 템플릿 유닛(261029)** `/etc/systemd/system/llama-server@.service` 와 모델별 별칭 링크(`gemma3.gguf`·`themaker-ko.gguf`·`themaker-en.gguf`)는
+- `llm/` 은 별칭 링크 `general.gguf`·`themaker-ko.gguf`·`themaker-en.gguf` 를 템플릿 유닛 `llama-server@<이름>` 이 읽는다. 예전 `llm-model.gguf`·`llama-server.service` 는 261029 에 지웠다
+- **모델 고르기용 템플릿 유닛(261029)** `/etc/systemd/system/llama-server@.service` 와 모델별 별칭 링크(`general.gguf`·`themaker-ko.gguf`·`themaker-en.gguf`)는
   파이보 리포 `IMAGE.md` '모델 고르기용 템플릿 유닛' 과 같다(유닛 내용·링크 명령 그대로, enable 안 함, 그 뒤 `daemon-reload`). CLAUDE.md '대화 모델 고르기' 참고
 
 ```bash

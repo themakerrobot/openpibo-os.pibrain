@@ -35,6 +35,7 @@ in each file are kept as they are.
 | Models trained in the easydetect lab (`job<N>.onnx`) | wherever the user puts them | Apache-2.0 code; weights belong to whoever trained them | — |
 | Supertonic 3 TTS (int8 conversion) | `tts/assets/` | OpenRAIL-M | `LICENSE-OpenRAIL-M.txt`, `MODIFICATIONS.md` |
 | SenseVoiceSmall int8 (sherpa-onnx export) + silero VAD — used once a microphone is fitted | `stt/` | FunASR model license / MIT | `LICENSE-SenseVoice` |
-| Qwen3.5 0.8B fine-tune (`pibo-qwen3.5-0.8b-school-small-Q4_K_M.gguf`, used by `llm/llm-model.gguf`) | `llm/` | Base model license — to be confirmed on the Qwen model card | — |
+| TheMaker 0.8B (Qwen3.5 0.8B fine-tune, `themaker-0.8b-Q4_K_M.gguf`, used by `llm/themaker-ko.gguf`; `themaker-en-0.8b-Q4_K_M.gguf` for `llm/themaker-en.gguf`) | `llm/` | Base model license — to be confirmed on the Qwen model card | — |
+| Gemma 3 1B IT (`gemma-3-1b-it-Q4_K_M.gguf`, used by `llm/general.gguf`) | `llm/` | Gemma Terms of Use (not an OSI license) — redistribution terms to be confirmed | — |
 
 Python packages are listed in `requirements.txt`; each is used under its own license.

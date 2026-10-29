@@ -12,7 +12,7 @@ llama-server(50020) 의 대화 모델과 글자로 이야기하는 웹 화면이
 
 **모델은 화면에서 고른다(261029, 사용자 결정).** 대화 웹은 모델 없이 뜨고, 화면에서 일반(general, 지금 젬마3)·더메이커 KO·더메이커 EN 중
 하나를 고르면 그때 템플릿 유닛 llama-server@<이름>(/home/pi/.model/llm/<이름>.gguf)을 띄운다. 램 2GB 라 늘 하나만.
-기본 서비스(llama-server.service · llm-model.gguf 링크)는 쓰지 않는다.
+예전 기본 서비스(llama-server.service · llm-model.gguf 링크)는 261029 에 지웠다.
 
 대답을 로봇이 소리로도 말할 수 있다(화면의 [소리로 말하기] 체크, 261026). 기기 안 TTS(SpeechOnDevice, Supertonic 3 int8,
 목소리 m1~m5·f1~f5, lang='na' 자동)로 만들고 Audio.play(볼륨 0~100)로 튼다. 목소리 모델은 체크를 켤 때 한 번 올린다(약 330MB, 몇 초).
@@ -195,7 +195,7 @@ def systemctl(*args, timeout=60):
 
 
 def switch_model(model):
-  """고른 모델로 서버를 바꾼다(스레드). 램 2GB 라 기본 서버·다른 모델을 먼저 다 끈다 — 템플릿끼리는 Conflicts 가 아니다"""
+  """고른 모델로 서버를 바꾼다(스레드). 램 2GB 라 다른 모델을 먼저 다 끈다 — 템플릿끼리는 서로 끄지 않는다"""
   with model_lock:
     _switching[0] = True
     try:
@@ -203,7 +203,7 @@ def switch_model(model):
         voice_stop()
         history.clear()
         state.update(model=model, llm='down', warm='idle', error='')
-      systemctl('stop', 'llama-server', 'llama-server@*')
+      systemctl('stop', 'llama-server@*')
       systemctl('reset-failed', unit(model))
       systemctl('start', '--no-block', unit(model))
     finally:

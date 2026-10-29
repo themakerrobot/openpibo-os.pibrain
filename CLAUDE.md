@@ -90,7 +90,7 @@ git tag -d <태그> ...           # 로컬 삭제
 | IDE | `ide.service` | `ide/run_ide.py` | 80 |
 | Tools | `tools.service` | `tools/run_tools.py` | 50000 (260930 전엔 50040) |
 | Classifier | `classify.service` | `classifier/run_classify.py` | 50010 |
-| Chat Bot | `llama-server.service` | (외부) | 50020 |
+| Chat Bot | `llama-server@<모델>`(템플릿, 261029) | (외부) | 50020 |
 | H/W 검수 | 없음 — IDE 가 subprocess 로 띄운다 | `test/test.py` | 50050 |
 
 - 파이썬은 `/home/pi/.pyenv/bin/python3`. **기기에서 돌릴 명령은 `sudo /home/pi/.pyenv/bin/python3` 로 줄 것**(사용자, 261027 — 시스템 `python3` 에는 onnxruntime 등이 없다)
@@ -202,7 +202,7 @@ span 이 날아가면 시리얼이 영영 안 돌아온다.
 ## 대화 모델 고르기 (261029) — 블록 [대화 모델 고르기] · 대화 화면
 
 **일반 / 더메이커 KO / 더메이커 EN**(`general` · `themaker-ko` · `themaker-en`) 중 하나를 골라 띄운다(지시서 261029, 사용자 결정). 램 2GB 라 한 번에 하나.
-모든 경로가 **템플릿 유닛 `llama-server@<이름>`** 으로 띄운다. 기본 서비스 `llama-server.service`·링크 `llm-model.gguf` 는 **아무도 안 쓴다**(지우거나 disable 하지는 않는다 — 지시서).
+모든 경로가 **템플릿 유닛 `llama-server@<이름>`** 으로 띄운다. 예전 기본 서비스 `llama-server.service`·링크 `llm-model.gguf` 는 **261029 에 지웠다**(사용자 — 지시서의 '끄지 말 것'을 사용자가 바꿈). 다시 만들지 말 것.
 
 | 경로 | 띄우는 모델 |
 |---|---|
@@ -228,9 +228,9 @@ span 이 날아가면 시리얼이 영영 안 돌아온다.
   대답 중이면 끝난 뒤 기록·말하기를 비우고, 다 끈 다음 `llama-server@<이름>` 을 `--no-block` 으로 켠다. 준비는 예전처럼 `warm_loop` 가 `/health` → 미리 읽기. 바꾸는 동안(`_switching`)은 옛 서버를 보지 않는다.
   고르기 전엔 상태 줄을 숨기고 빈 화면이 '위에서 대화 모델을 골라 주세요.'(`chat_pick_model`). 새로 고쳐도 서버의 `model` 로 선택이 남는다. [다시 켜기] 는 같은 모델로 `switch_model`.
   시스템 글은 `pick_system(모델)` — 이름이나 **링크가 가리키는 실제 파일 이름**에 `themaker` 가 있으면 None, 아니면 `DEVICE_SYSTEM`(PiBrain 은 이름만 바꿈). general 링크를 다른 모델로 바꿔도 맞게. `--model-dir` 은 시험용(미리보기는 가짜 파일)
-- **템플릿 유닛 `llama-server@.service`**(리포 밖, 이미지 작업 — IMAGE.md): `llama-server.service` 와 같고 `-m /home/pi/.model/llm/%i.gguf`, `Conflicts=llama-server.service`, `Restart=no`, enable 안 함.
+- **템플릿 유닛 `llama-server@.service`**(리포 밖, 이미지 작업 — IMAGE.md): `-m /home/pi/.model/llm/%i.gguf`, `Restart=no`, `[Install]` 없음(enable 안 됨 — `static`).
   템플릿끼리는 서로 끄지 않으므로 켜기 전에 늘 다 끈다. **이 코드를 기기에 올리기 전에 유닛·별칭 링크가 있어야 한다** — 없으면 대화 화면도 블록도 모델을 못 띄운다
-- **끄는 곳(`ide/run_ide.py`)은 전부 `llama-server.service` 와 `llama-server@*` 를 같이 끈다** — `/tools` `/classifier` `/hwtest` `/kids` `/llm` 켜기·끄기, 코드 실행(`execute`·`executeb`). [정지] 는 `pkill llama-server`.
+- **끄는 곳(`ide/run_ide.py`)은 전부 `systemctl stop 'llama-server@*'`** — `/tools` `/classifier` `/hwtest` `/kids` `/llm` 켜기·끄기, 코드 실행(`execute`·`executeb`). [정지] 는 `pkill llama-server`.
   새로 끄는 곳을 만들면 `@*` 를 빠뜨리지 말 것(모델 둘이 램에 올라간다)
 - **도구**: 더메이커는 도구 목록 없이 물어도 도구 호출(`<tool_call>`·`tool_calls`)로 답할 수 있다. 블록 `call_llm` 은 더메이커를 골랐을 때만 그 부분을 빼고 글만 돌려주고(`_without_tool_call`),
   대화 웹은 화면·소리에서 뺀다(도구만 부르려던 대답이면 `chat_tool_only` 안내, 기억하지 않음). 261029 실측 질문 3개에서는 도구 호출이 안 나왔다. 블록에서 도구를 실제로 쓰는 것은 범위 밖
@@ -265,6 +265,7 @@ IDE [대화] 가 llama-server 기본 웹 화면 대신 대화 웹(`chat/run_chat
   (`amixer sset PCM`). 그 식이 `/2+40` 이라 최대 90% 였다 → **261026 에 `40 + v*60//100`(40~100%)으로 고쳤다**(두 리포 `openpibo/audio.py`).
   40% 아래는 소리가 너무 작아 하한을 둔 것이 원래 의도였다(사용자). 블록·도구 소리도 같이 조금 커진다(기본 80: 80% → 88%)
 - 문구는 IDE `ko2en.js` 끝의 `chat_*` 키를 대화 화면이 같이 읽는다(영문판 델타 안 늘림)
+- (261029 에 `llama-server.service`·`llm-model.gguf` 를 지우고 템플릿 유닛으로 바꿨다 — '대화 모델 고르기'. 아래는 그 전 기록)
 - 기기의 `llama-server.service`·모델 전환은 이미지 작업(파이보 CLAUDE.md '대화 웹' 의 '기기 서비스 전환'). **실기기로는 아직 안 봤다**
 - **PiBrain 도 파이보와 같은 대화 모델(Qwen3.5 0.8B 미세조정)·llama.cpp(b11889, `/home/pi/.llama.cpp`)·`llama-server.service` 다(261028, fc1a8f31).** 젬마는 없다.
   빌드·유닛 전문은 파이보 IMAGE.md '대화 서버 llama.cpp'. `run_chat.py` 는 `--device pibrain` 이면 시스템 글의 로봇 이름을 파이브레인으로 바꾼다.

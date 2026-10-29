@@ -863,8 +863,8 @@
 <span class="sd">    """</span>
 
     <span class="c1"># 모델은 템플릿 유닛 llama-server@&lt;이름&gt; 으로 띄운다(고르지 않았으면 general = 젬마3 — 예전 프로그램은 젬마 시절에 만든 것이라, 261029).</span>
-    <span class="c1"># 램 2GB 라 기본 서버와 다른 모델을 먼저 다 끈다(템플릿끼리는 서로 Conflicts 가 아니다)</span>
-    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">'systemctl'</span><span class="p">,</span> <span class="s1">'stop'</span><span class="p">,</span> <span class="s1">'llama-server'</span><span class="p">,</span> <span class="s1">'llama-server@*'</span><span class="p">])</span>
+    <span class="c1"># 램 2GB 라 다른 모델을 먼저 다 끈다(템플릿끼리는 서로 끄지 않는다)</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">'systemctl'</span><span class="p">,</span> <span class="s1">'stop'</span><span class="p">,</span> <span class="s1">'llama-server@*'</span><span class="p">])</span>
     <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">'systemctl'</span><span class="p">,</span> <span class="s1">'start'</span><span class="p">,</span> <span class="sa">f</span><span class="s1">'llama-server@</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">llm_model</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s2">"general"</span><span class="si">}</span><span class="s1">'</span><span class="p">])</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_llm_port</span> <span class="o">=</span> <span class="n">port</span>
     <span class="c1"># 모델을 읽는 동안 /health 는 503 이다. 200 이 될 때까지 기다린다</span>
@@ -907,7 +907,7 @@
         <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="n">prompt</span><span class="p">})</span>
 
     <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
-      <span class="s2">"model"</span><span class="p">:</span> <span class="s2">"llm-model.gguf"</span><span class="p">,</span>  <span class="c1"># 모델명 (환경에 맞게 수정)</span>
+      <span class="s2">"model"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">llm_model</span> <span class="ow">or</span> <span class="s2">"general"</span><span class="p">,</span>  <span class="c1"># llama-server 는 이 값을 보지 않는다(띄운 모델 하나로 답함)</span>
       <span class="s2">"messages"</span><span class="p">:</span> <span class="n">messages</span><span class="p">,</span>
       <span class="s2">"temperature"</span><span class="p">:</span> <span class="n">temperature</span><span class="p">,</span>   <span class="c1"># 생성 텍스트의 무작위성 조절</span>
       <span class="s2">"top_p"</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">,</span>        <span class="c1"># 누적 확률 임계값</span>
@@ -956,7 +956,7 @@
 
 <span class="sd">    """</span>
 
-    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">"systemctl stop llama-server 'llama-server@*'"</span><span class="p">)</span>   <span class="c1"># 기본 서버든 고른 모델이든 끈다</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">'systemctl'</span><span class="p">,</span> <span class="s1">'stop'</span><span class="p">,</span> <span class="s1">'llama-server@*'</span><span class="p">])</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_llm_port</span> <span class="o">=</span> <span class="kc">None</span></div>
 </div>
 
