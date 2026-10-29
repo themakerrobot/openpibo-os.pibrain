@@ -31,7 +31,7 @@ PYBASE=${PYBASE:-/usr/bin/python3}
 NOSVC=${NOSVC:-0}            # 1 이면 서비스를 건드리지 않는다(시험용)
 STAMP=$(date +%y%m%d_%H%M%S)
 LOCK=${LOCK:-/home/pi/venv_lock_$STAMP.txt}
-SERVICES="ide.service booting.service tools.service classify.service llama-server.service"
+SERVICES="ide.service booting.service tools.service classify.service"
 BUILD="dlib rpi-gpio rpi-ws281x pidng python-prctl"      # aarch64 wheel 이 PyPI 에 없는 것 (norm 이름)
 
 say() { echo "== $*"; }
@@ -39,7 +39,7 @@ die() { echo "!! $*"; exit 1; }
 
 svc() {   # svc stop|start
   [ "$NOSVC" = 1 ] && return 0
-  if [ "$1" = stop ]; then systemctl stop $SERVICES 2>/dev/null
+  if [ "$1" = stop ]; then systemctl stop $SERVICES 'llama-server@*' 2>/dev/null   # 대화 모델(템플릿 유닛, 261029)
   else systemctl start ide.service booting.service; fi
 }
 

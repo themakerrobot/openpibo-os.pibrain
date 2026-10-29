@@ -8,7 +8,7 @@
 아이마다 프로필(번호 + 그림)이 있고, 재주·별·도달 기록·키우기가 프로필마다 따로 저장된다(로봇은 반마다 아이가 바뀐다).
 
 아직 IDE 에 버튼이 없다(시험 중). 기기에서 손으로 띄운다:
-  sudo systemctl stop tools.service classify.service llama-server.service
+  sudo systemctl stop tools.service classify.service 'llama-server@*'
   sudo /home/pi/.pyenv/bin/python3 kids/run_kids.py --device pibo      # PiBrain 은 --device pibrain
 기기 없이:  python3 kids/run_kids.py --fake [--data-dir /tmp/kids] [--code-dir /tmp/code]
 

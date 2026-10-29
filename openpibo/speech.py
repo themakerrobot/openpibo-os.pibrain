@@ -489,8 +489,8 @@ Functions:
     """
 
     # 모델은 템플릿 유닛 llama-server@<이름> 으로 띄운다(고르지 않았으면 general = 젬마3 — 예전 프로그램은 젬마 시절에 만든 것이라, 261029).
-    # 램 2GB 라 기본 서버와 다른 모델을 먼저 다 끈다(템플릿끼리는 서로 Conflicts 가 아니다)
-    subprocess.run(['systemctl', 'stop', 'llama-server', 'llama-server@*'])
+    # 램 2GB 라 다른 모델을 먼저 다 끈다(템플릿끼리는 서로 끄지 않는다)
+    subprocess.run(['systemctl', 'stop', 'llama-server@*'])
     subprocess.run(['systemctl', 'start', f'llama-server@{self.llm_model or "general"}'])
     self._llm_port = port
     # 모델을 읽는 동안 /health 는 503 이다. 200 이 될 때까지 기다린다
@@ -530,7 +530,7 @@ Functions:
         messages.append({"role": "user", "content": prompt})
 
     payload = {
-      "model": "llm-model.gguf",  # 모델명 (환경에 맞게 수정)
+      "model": self.llm_model or "general",  # llama-server 는 이 값을 보지 않는다(띄운 모델 하나로 답함)
       "messages": messages,
       "temperature": temperature,   # 생성 텍스트의 무작위성 조절
       "top_p": 0.95,        # 누적 확률 임계값
@@ -576,5 +576,5 @@ Functions:
 
     """
 
-    os.system("systemctl stop llama-server 'llama-server@*'")   # 기본 서버든 고른 모델이든 끈다
+    subprocess.run(['systemctl', 'stop', 'llama-server@*'])
     self._llm_port = None

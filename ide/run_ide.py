@@ -318,7 +318,7 @@ async def hwtest(enable: str):
     # 검수 프로그램이 카메라·LCD(SPI)·GPIO·오디오를 독점해야 한다
     subprocess.Popen(['systemctl', 'stop', 'tools.service'])
     subprocess.Popen(['systemctl', 'stop', 'classify.service'])
-    subprocess.Popen(['systemctl', 'stop', 'llama-server.service', 'llama-server@*'])   # 고른 모델(템플릿 유닛)도
+    subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
     stop_chat()
     stop_kids()
     if hwtest_proc is None or hwtest_proc.poll() is not None:
@@ -337,7 +337,7 @@ async def tools(enable: str):
     stop_kids()     # 체험 앱도 모터·소리를 쓴다
     stop_chat()     # 대화 웹이 카메라를 쥐고 있을 수 있다(find_objects)
     subprocess.Popen(['systemctl', 'stop', 'classify.service'])
-    subprocess.Popen(['systemctl', 'stop', 'llama-server.service', 'llama-server@*'])   # 고른 모델(템플릿 유닛)도
+    subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
     subprocess.Popen(['systemctl', 'start', 'tools.service'])
   elif enable == "off":
     subprocess.Popen(['systemctl', 'stop', 'tools.service'])
@@ -351,7 +351,7 @@ async def classifier(enable: str):
     stop_hwtest()   # 〃 (classifier 는 카메라를 직접 쓴다)
     stop_kids()     # 체험 앱도 모터·소리를 쓴다
     stop_chat()     # 〃
-    subprocess.Popen(['systemctl', 'stop', 'llama-server.service', 'llama-server@*'])   # 고른 모델(템플릿 유닛)도
+    subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
     subprocess.Popen(['systemctl', 'stop', 'tools.service'])
     subprocess.Popen(['systemctl', 'start', 'classify.service'])
   elif enable == "off":
@@ -405,7 +405,7 @@ async def kids(enable: str):
   if enable == "on":
     subprocess.Popen(['systemctl', 'stop', 'tools.service'])
     subprocess.Popen(['systemctl', 'stop', 'classify.service'])
-    subprocess.Popen(['systemctl', 'stop', 'llama-server.service', 'llama-server@*'])   # 고른 모델(템플릿 유닛)도
+    subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
     stop_hwtest()
     stop_chat()
     if kids_proc is None or kids_proc.poll() is not None:
@@ -423,12 +423,12 @@ async def llm(enable: str):
     stop_kids()     # 체험 앱도 모터·소리를 쓴다
     subprocess.Popen(['systemctl', 'stop', 'classify.service'])
     subprocess.Popen(['systemctl', 'stop', 'tools.service'])
-    subprocess.Popen(['systemctl', 'stop', 'llama-server.service', 'llama-server@*'])   # 모델은 대화 화면에서 고를 때 띄운다
+    subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 모델은 대화 화면에서 고를 때 띄운다
     if chat_proc is None or chat_proc.poll() is not None:
       chat_proc = subprocess.Popen([f'{ENV_PATH}/python3', CHAT_PY, '--device', CHAT_DEVICE], cwd=CHAT_DIR)
   elif enable == "off":
     stop_chat()
-    subprocess.Popen(['systemctl', 'stop', 'llama-server.service', 'llama-server@*'])   # 고른 모델(템플릿 유닛)도
+    subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
   await asyncio.sleep(2)
   return HTMLResponse(content="", status_code=200)
 
@@ -708,7 +708,7 @@ async def handle_execute(sid, d):
   stop_hwtest()   # 사용자 코드가 카메라·LCD 를 쓰므로 검수 서버를 먼저 내린다
   stop_kids()     # 체험 앱도 모터·소리를 쓴다
   stop_chat()
-  subprocess.Popen(['systemctl', 'stop', 'llama-server.service', 'llama-server@*'])   # 고른 모델(템플릿 유닛)도
+  subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
   subprocess.Popen(['systemctl', 'stop', 'classify.service'])
   subprocess.Popen(['systemctl', 'stop', 'tools.service'])
   try:
@@ -735,7 +735,7 @@ async def handle_executeb(sid, d):
   stop_hwtest()   # 〃
   stop_kids()     # 체험 앱도 모터·소리를 쓴다
   stop_chat()
-  subprocess.Popen(['systemctl', 'stop', 'llama-server.service', 'llama-server@*'])   # 고른 모델(템플릿 유닛)도
+  subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
   subprocess.Popen(['systemctl', 'stop', 'classify.service'])
   subprocess.Popen(['systemctl', 'stop', 'tools.service'])
   try:

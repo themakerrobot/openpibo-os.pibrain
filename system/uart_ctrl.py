@@ -35,7 +35,7 @@ current_pgid = None   # 프로그램의 프로세스 묶음. 본체가 끝나도
 record = ''
 
 # USB 로 받은 프로그램도 IDE 실행처럼 카메라·LCD·오디오를 쓰는 것들을 먼저 내린다(ide/run_ide.py handle_execute)
-STOP_SERVICES = ['tools.service', 'classify.service', 'llama-server.service']
+STOP_SERVICES = ['tools.service', 'classify.service', 'llama-server@*']   # 대화 모델은 템플릿 유닛(261029)
 CHAT_PY = '/home/pi/openpibo-os/chat/run_chat.py'
 HWTEST_PY = '/home/pi/openpibo-os/test/test.py'
 IDE_URL = 'http://127.0.0.1:80/socket.io/?EIO=4&transport=polling'
