@@ -448,8 +448,59 @@ API 는 왼쪽 <strong>PYTHON</strong> 을 보세요</p></li>
 </section>
 <section id="id3">
 <h2>대화<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
-<p>PiBrain 안에서 도는 언어 모델(LLM)과 글로 대화합니다. 블록 [음성] 의 <code class="docutils literal notranslate"><span class="pre">대화</span> <span class="pre">서버</span> <span class="pre">시작하기</span></code> · <code class="docutils literal notranslate"><span class="pre">…</span> <span class="pre">대화하기</span></code> 로
-프로그램에서도 씁니다. 모델을 올리는 데 시간이 걸려서 처음 열면 준비될 때까지 기다리는 화면이 먼저 나옵니다.</p>
+<p>PiBrain 안에서 도는 언어 모델(LLM)과 글로 대화합니다. 화면 위 <strong>[대화 모델]</strong> 에서 모델을 고르면 그때 모델을 올립니다
+(처음 한 번은 준비하는 데 수십 초 걸립니다). 모델을 바꾸면 대화가 처음부터 다시 시작됩니다.</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>모델</p></th>
+<th class="head"><p>무엇</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>일반</p></td>
+<td><p>한국어·영어로 대화합니다. 도구는 쓰지 않습니다</p></td>
+</tr>
+<tr class="row-odd"><td><p>더메이커 KO</p></td>
+<td><p>학생과 이야기하도록 배운 한국어 모델입니다. 말로 PiBrain에게 일을 시킬 수 있습니다(아래 도구)</p></td>
+</tr>
+<tr class="row-even"><td><p>더메이커 EN</p></td>
+<td><p>더메이커의 영어판입니다. 기기에 모델 파일이 없으면 ‘(없음)’ 으로 나오고 고를 수 없습니다</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>더메이커는 말을 듣고 <strong>스스로 도구를 골라 실행</strong>합니다. 실행한 도구는 대답 아래에 작게 나옵니다(예: <code class="docutils literal notranslate"><span class="pre">불빛</span> <span class="pre">·</span> <span class="pre">빨강</span></code>).</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>도구</p></th>
+<th class="head"><p>이렇게 말해 보세요</p></th>
+<th class="head"><p>하는 일</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>불빛</p></td>
+<td><p>“빨간 불 켜 줘”, “불 꺼 줘”</p></td>
+<td><p>LED 색을 바꾸거나 끕니다(빨강·주황·노랑·초록·파랑·하늘·보라·분홍·하양)</p></td>
+</tr>
+<tr class="row-odd"><td><p>보기</p></td>
+<td><p>“앞에 뭐 있어?”</p></td>
+<td><p>카메라로 보고 본 것을 말합니다</p></td>
+</tr>
+<tr class="row-even"><td><p>움직이기</p></td>
+<td><p>“인사해 줘”, “춤춰 줘”</p></td>
+<td><p>몸이 없어서 “움직일 수는 없어요” 라고 대답합니다</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<ul class="simple">
+<li><p>“대화만 하자” 라고 하면 도구를 쓰지 않고, “이제 움직여도 돼” 라고 하면 다시 씁니다.</p></li>
+<li><p>[소리로 말하기] 를 켜면 PiBrain이 대답을 소리로 말합니다(목소리·음량을 고를 수 있습니다).</p></li>
+</ul>
+<p>블록 [음성] 의 <code class="docutils literal notranslate"><span class="pre">대화</span> <span class="pre">모델</span> <span class="pre">고르기</span></code> · <code class="docutils literal notranslate"><span class="pre">대화</span> <span class="pre">서버</span> <span class="pre">시작하기</span></code> · <code class="docutils literal notranslate"><span class="pre">…</span> <span class="pre">대화하기</span></code> 로 프로그램에서도 씁니다.
+블록에서는 글자로만 대화하고 도구는 실행하지 않습니다.</p>
 <div class="admonition note">
 <p class="admonition-title">참고</p>
 <p>도구·대화·분류기는 <strong>한 번에 하나만</strong> 켜집니다. 하나를 열면 나머지는 꺼지고, IDE 에서 프로그램을 실행해도 꺼집니다
