@@ -6,9 +6,11 @@ llama-server(50020) 의 대화 모델과 글자로 이야기하는 웹 화면이
   브라우저 ── POST /api/chat ──▶ 이 서버 ── /v1/chat/completions (stream) ──▶ llama-server :50020
             ◀── 한 줄씩(JSON) ───┘
 
-**도구는 쓰지 않는다(261026, 사용자 결정).** 도구 호출 방식은 한 차례에 모델을 두 번 부르고(도구 판단 → 결과로 다시 묻기)
-매번 도구 목록 약 1천 토큰을 붙여서 파이보에서 15~44초가 걸렸다(차례마다 늘었다). 지금은 한 차례에 한 번만 묻고,
-요청 모양이 늘 같아(시스템 글 + 대화가 뒤에만 붙음) 서버가 앞부분을 다시 쓰고 새로 한 말만 읽는다.
+**도구(261029)**: 더메이커(themaker-ko·en)는 도구 3개(불빛·보기·움직이기)를 배운 모델이다. 학습 PC 리포 openpibo-chat 의
+tools.py · pibo_chat.py · pibrain_chat.py 를 이 폴더에 **글자 그대로** 두고(a9072ff, claude/inspiring-curie-s3a7wn), 한 차례를
+pibo_chat.turn() 으로 처리한다 — 멈춰 → 시스템 글 + 최근 3번 + 도구 목록 → 이동 막기 → 실행 → 할 말. 시스템 글·도구 목록은
+학습 때와 글자까지 같아야 하므로 고치지 말 것(바꾸면 재학습). 일반(젬마3)은 예전처럼 도구 없이 흘려 받는다.
+(261026 에 예전 Qwen 판의 도구 6개를 붙였다가 한 차례 15→44초로 늘어 뺐다 — 그때는 결과로 다시 묻는 두 번 호출이었다)
 
 **모델은 화면에서 고른다(261029, 사용자 결정).** 대화 웹은 모델 없이 뜨고, 화면에서 일반(general, 지금 젬마3)·더메이커 KO·더메이커 EN 중
 하나를 고르면 그때 템플릿 유닛 llama-server@<이름>(/home/pi/.model/llm/<이름>.gguf)을 띄운다. 램 2GB 라 늘 하나만.
@@ -21,6 +23,7 @@ llama-server(50020) 의 대화 모델과 글자로 이야기하는 웹 화면이
 """
 import os
 import re
+import atexit
 import json
 import time
 import asyncio
@@ -29,6 +32,10 @@ import threading
 import subprocess
 import urllib.error
 import urllib.request
+
+import tools
+import pibo_chat
+import pibrain_chat
 
 from fastapi import FastAPI, Body
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, StreamingResponse
@@ -41,7 +48,7 @@ LLM = 'http://127.0.0.1:50020'
 MODELS = ('general', 'themaker-ko', 'themaker-en')  # openpibo Dialog.LLM_MODELS 와 같게. general 은 지금 젬마3
 MODEL_DIR = '/home/pi/.model/llm'                   # <이름>.gguf 별칭 링크(이미지 작업)
 
-#: 일반(젬마3)에 보내는 시스템 글(예전 Qwen 학습 판의 글을 그대로 둔다). 더메이커는 보내지 않는다 — GGUF 템플릿이 학습 글을 넣는다
+#: 일반(젬마3)에 보내는 시스템 글(예전 Qwen 학습 판의 글을 그대로 둔다). 더메이커는 tools.SYSTEM / SYSTEM_EN
 SYSTEM = ("너는 초등학생부터 고등학생까지와 이야기하는 교육용 로봇 파이보야. "
           "친구처럼 친근한 존댓말로 짧게 말해. 이모지나 기호는 쓰지 말고, 정말 모르는 건 모른다고 해.")
 DEVICE_SYSTEM = SYSTEM   # 기기 이름을 맞춘 시스템 글(PiBrain 은 __main__ 에서 바꾼다)
@@ -51,14 +58,21 @@ def model_file(model):
   return os.path.join(MODEL_DIR, f'{model}.gguf')
 
 
-def pick_system(model):
-  """고른 모델에 맞는 시스템 글. 실제 파일(별칭 링크가 가리키는 것)이 더메이커면 None — 시스템 글을 보내지 않으면
-  GGUF 템플릿이 학습 때의 글(tools.SYSTEM / SYSTEM_EN)을 글자 그대로 넣는다(대화 모델 고르기 지시서 261029).
-  그 밖(일반 = 젬마3)은 DEVICE_SYSTEM. 이름이 아니라 파일로 가르므로 general 링크를 다른 모델로 바꿔도 맞는다"""
+def is_tool_model(model):
+  """도구를 배운 모델(더메이커)인지. 이름이나 별칭 링크가 가리키는 실제 파일로 가른다(general 링크를 바꿔도 맞게)"""
   if not model:
-    return DEVICE_SYSTEM
+    return False
   name = os.path.basename(os.path.realpath(model_file(model))).lower()
-  return None if model.startswith('themaker') or 'themaker' in name else DEVICE_SYSTEM
+  return model.startswith('themaker') or 'themaker' in name
+
+
+def model_lang(model):
+  return 'en' if model == 'themaker-en' else 'ko'
+
+
+def pick_system(model):
+  """고른 모델에 맞는 시스템 글. 더메이커는 학습 때 글(tools.SYSTEM / SYSTEM_EN — 글자까지 같아야 한다), 일반(젬마3)은 DEVICE_SYSTEM"""
+  return tools.SYSTEMS[model_lang(model)] if is_tool_model(model) else DEVICE_SYSTEM
 
 
 def unit(model):
@@ -95,6 +109,66 @@ state = {
   'error': '',
 }
 history = []          # [{'role': 'user'|'assistant', 'content': ...}, ...]
+use_tools = [True]    # 더메이커: "대화만 하자" 로 끄고 "이제 움직여도 돼" 로 켠다(pibo_chat.tool_switch)
+
+
+# ── 로봇(도구) ─────────────────────────────────────────────────────────────
+TOOL_HISTORY_KEEP = 20   # 더메이커 기록은 최근 3번만 보내지만(pibo_chat.window) 목록이 끝없이 늘지 않게
+robot = None             # __main__ 에서 만든다(파이보 Pibo / PiBrain)
+_tool_log = []           # 이번 차례에 실행한 도구 [[이름, 값, 성공]] — 화면에 작게 보인다
+
+
+def make_robot(device, fake=False):
+  """pibo_chat.Pibo / pibrain_chat.PiBrain 에 두 가지만 덧씌운다:
+  - 보기: 참고 앱은 부를 때마다 Camera() 를 새로 만든다 — Picamera2 는 앞 것이 안 닫히면 다시 못 연다. 한 번 만들어 계속 쓴다
+  - 실행한 도구를 _tool_log 에 남긴다(화면 표시)"""
+  base = pibrain_chat.PiBrain if device == 'pibrain' else pibo_chat.Pibo
+
+  class Robot(base):
+    def _log(self, name, value, fn, *a):
+      entry = [name, value, False]
+      _tool_log.append(entry)
+      out = fn(*a)
+      entry[2] = True
+      return out
+
+    def light(self, color):
+      return self._log('light', color, super().light, color)
+
+    def move(self, action):
+      return self._log('move', action, super().move, action)
+
+    def stop(self):
+      if self.can_move:
+        return self._log('stop', '', super().stop)
+
+    def look(self):
+      return self._log('look', '', self._look)
+
+    def _cam(self):
+      if 'camera' not in self._parts:
+        from openpibo.vision_camera import Camera
+        from openpibo.vision_detect import Detect
+        self._parts['camera'], self._parts['detect'] = Camera(), Detect()
+
+    def _look(self):
+      names = pibo_chat.korean_names if pibo_chat.LANG == 'ko' else pibo_chat.english_names
+      if self.fake:
+        return names(['cup', 'apple'])
+      self._cam()
+      items = self._parts['detect'].detect_object(self._parts['camera'].read())
+      return names(i.get('name') if isinstance(i, dict) else i for i in items or [])
+
+    def off(self):
+      """대화 웹이 끝날 때 — 켜 둔 불빛을 끈다(장치를 쓴 적이 있을 때만)"""
+      if 'device' in self._parts:
+        try:
+          base.light(self, '끄기')
+        except Exception as exc:  # noqa: BLE001
+          print(f'[chat] 불빛 끄기 실패: {exc}', flush=True)
+
+  return Robot(fake=fake)
+
 turn_lock = threading.Lock()
 model_lock = threading.Lock()          # 모델 바꾸기는 한 번에 하나
 _switching = [False]                   # 바꾸는 중엔 warm_loop 가 옛 서버를 보고 준비됐다고 하지 않게
@@ -202,6 +276,8 @@ def switch_model(model):
       with turn_lock:                      # 받던 대답이 있으면 끝난 뒤에
         voice_stop()
         history.clear()
+        use_tools[0] = True
+        pibo_chat.LANG = model_lang(model)
         state.update(model=model, llm='down', warm='idle', error='')
       systemctl('stop', 'llama-server@*')
       systemctl('reset-failed', unit(model))
@@ -235,9 +311,14 @@ def warm_loop():
         state['warm'], state['error'] = 'warming', ''
         t = time.time()
         try:
-          with post({'messages': with_system([{'role': 'user', 'content': '안녕'}]),
-                     'max_tokens': 1}, timeout=900) as r:
-            r.read()
+          if is_tool_model(state['model']):    # 시스템 글 + 도구 목록 약 530토큰(파이보 약 30초) — 대화 때와 같은 앞부분
+            pibo_chat.LANG = model_lang(state['model'])
+            pibo_chat.ask(LLM, [{'role': 'system', 'content': pick_system(state['model'])},
+                                {'role': 'user', 'content': pibo_chat.say('hello')}], True, max_tokens=1, timeout=900)
+          else:
+            with post({'messages': with_system([{'role': 'user', 'content': '안녕'}]),
+                       'max_tokens': 1}, timeout=900) as r:
+              r.read()
           state['warm'], state['warm_sec'] = 'ready', round(time.time() - t, 1)
           history.clear()
         except OSError as exc:
@@ -317,6 +398,53 @@ def chat_stream(text, speak_as, ctl, vol=80):
     threading.Thread(target=say, args=(reply, speak_as, vol), daemon=True).start()
   yield json.dumps({'done': True, 'sec': round(time.time() - t0, 1), 'read': read_n, 'said': said_n,
                     'speak': bool(speak_as and reply)}) + '\n'
+
+
+def tool_turn(text, speak_as, vol, ctl):
+  """더메이커 한 차례(스레드). pibo_chat.turn 그대로 — 대답 전체를 받은 뒤 한 번에 낸다(도구 호출이 있는지 끝까지 봐야 해서).
+  돌려주는 것: {'said', 'tools', 'sec', 'switch'} 또는 {'error'}"""
+  t0 = time.time()
+  del _tool_log[:]
+  was = use_tools[0]
+  use_tools[0] = pibo_chat.tool_switch(text, was)
+  if use_tools[0] != was:                  # 끄고 켜는 말은 모델에 묻지 않고 정해진 말로, 기억은 비운다(참고 앱과 같다)
+    history.clear()
+    said = pibo_chat.say('tools_on' if use_tools[0] else 'tools_off')
+    out = {'said': said, 'tools': [], 'switch': 'on' if use_tools[0] else 'off'}
+  else:
+    try:
+      said = pibo_chat.turn(LLM, history, text, robot, pick_system(state['model']), use_tools[0])
+    except OSError as exc:                 # 서버 오류(HTTPError 포함)·연결 끊김
+      detail = exc.read().decode('utf-8', 'ignore')[:300] if hasattr(exc, 'read') else ''
+      print(f'[chat] 서버 오류: {exc} {detail}', flush=True)
+      history.clear()
+      return {'error': 'chat_err_server'}
+    if len(history) > TOOL_HISTORY_KEEP:
+      users = [i for i, m in enumerate(history) if m['role'] == 'user']
+      del history[:users[-pibo_chat.HISTORY]]
+    out = {'said': said, 'tools': [list(e) for e in _tool_log]}
+  out['sec'] = round(time.time() - t0, 1)
+  if speak_as and said and not ctl['cancel']:
+    _speaking[0] = True
+    threading.Thread(target=say, args=(said, speak_as, vol), daemon=True).start()
+  out['speak'] = bool(speak_as and said and not ctl['cancel'])
+  return out
+
+
+async def tool_async(fut, ctl):
+  """tool_turn 이 끝나기를 기다려 한 번에 보낸다. 브라우저가 끊어도 차례는 끝까지 돈다(로봇이 이미 움직였을 수 있다) —
+  잠금은 그 스레드가 끝날 때 푼다"""
+  try:
+    out = await asyncio.shield(fut)
+  except asyncio.CancelledError:
+    ctl['cancel'] = True
+    raise
+  if out.get('error'):
+    yield json.dumps({'error': out['error']}) + '\n'
+    return
+  yield json.dumps({'d': out['said']}, ensure_ascii=False) + '\n'
+  yield json.dumps({'done': True, 'sec': out['sec'], 'speak': out['speak'], 'tools': out['tools'],
+                    'switch': out.get('switch')}, ensure_ascii=False) + '\n'
 
 
 def lock_releaser():
@@ -461,6 +589,17 @@ async def chat(body: dict = Body(...)):
   except (TypeError, ValueError):
     vol = 80
   release = lock_releaser()
+  if is_tool_model(state['model']):
+    ctl = {'cancel': False}
+
+    def work():
+      try:
+        return tool_turn(text, speak_as, vol, ctl)
+      finally:
+        release()                          # 응답이 어떻게 끝나든 차례가 끝난 뒤에 푼다
+    fut = asyncio.get_running_loop().run_in_executor(None, work)
+    return TurnStream(tool_async(fut, ctl), lambda: None, media_type='application/x-ndjson',
+                      headers={'Cache-Control': 'no-cache', 'X-Accel-Buffering': 'no'})
   try:
     return TurnStream(chat_async(text, speak_as, vol, release), release, media_type='application/x-ndjson',
                       headers={'Cache-Control': 'no-cache', 'X-Accel-Buffering': 'no'})
@@ -497,6 +636,7 @@ async def voice_stop_api():
 async def reset():
   voice_stop()
   history.clear()
+  use_tools[0] = True
   return {'ok': True}
 
 
@@ -505,8 +645,11 @@ if __name__ == '__main__':
   p.add_argument('--port', type=int, default=50030)
   p.add_argument('--llm', default=LLM)
   p.add_argument('--model-dir', default=MODEL_DIR, help='<이름>.gguf 가 있는 곳(시험용)')
-  p.add_argument('--device', default='pibo', help='pibo / pibrain — 시스템 글의 로봇 이름만 바꾼다(IDE 가 넘긴다)')
+  p.add_argument('--device', default='pibo', help='pibo / pibrain — 도구를 실행할 기기, 일반(젬마3) 시스템 글의 로봇 이름(IDE 가 넘긴다)')
+  p.add_argument('--fake-robot', action='store_true', help='도구를 실행하지 않고 흉내만(시험·미리보기)')
   args = p.parse_args()
+  robot = make_robot(args.device, args.fake_robot)
+  atexit.register(robot.off)            # IDE 가 끌 때(SIGTERM → uvicorn 이 정상 종료) 켜 둔 불빛을 끈다
   LLM = args.llm.rstrip('/')
   MODEL_DIR = args.model_dir
   # PiBrain 은 자기를 파이브레인이라고 해야 한다. 젬마3 에 보내는 시스템 글은 파이보 글이라 PiBrain 에서만 이름을 바꾼다

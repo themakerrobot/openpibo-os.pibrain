@@ -48,6 +48,8 @@ main.chat {
                        border-bottom-left-radius: 4px; }
 .msg--err .msg__body { background: var(--v2-red-t); color: var(--v2-red-ink); border-color: transparent; }
 .msg__meta { margin-top: 3px; font-size: 12px; color: var(--v2-ink-3); font-variant-numeric: tabular-nums; }
+.msg__tool { color: var(--v2-accent-ink); font-weight: var(--fw-b); }   /* 실행한 도구(불빛 · 빨강) */
+.msg__tool.is-fail { color: var(--v2-red-ink); }
 
 /* 기다리는 동안 */
 .dots { display: inline-flex; gap: 4px; vertical-align: middle; }

@@ -218,7 +218,7 @@ span 이 날아가면 시리얼이 영영 안 돌아온다.
 | 이름(표시) | 별칭 링크(`/home/pi/.model/llm/`) → 파일 | 도구 | 시스템 글 |
 |---|---|---|---|
 | `general`(일반) | `general.gguf` → `gemma-3-1b-it-Q4_K_M.gguf`(806,058,272 B) | **없음** | 블록이 준 것 / 대화 화면은 `SYSTEM` |
-| `themaker-ko`(더메이커 KO) | `themaker-ko.gguf` → `themaker-0.8b-Q4_K_M.gguf`(337,040,032 B) | **있음**(불빛·보기·움직이기) | 안 보낸다 — GGUF 템플릿이 학습 글을 넣는다 |
+| `themaker-ko`(더메이커 KO) | `themaker-ko.gguf` → `themaker-0.8b-Q4_K_M.gguf`(337,040,032 B) | **있음**(불빛·보기·움직이기) | 대화 화면: `tools.SYSTEM` + 도구 목록 / 블록: 준 것 |
 | `themaker-en`(더메이커 EN) | `themaker-en.gguf` → `themaker-en-0.8b-Q4_K_M.gguf`(PC 학습 중 — 오기 전엔 깨진 링크) | **있음** | 〃 |
 
 - `openpibo/speech.py` `Dialog`: `set_llm_model(model)`(이름이 셋 밖이면 `ValueError`, 파일이 없으면(깨진 링크 포함) `FileNotFoundError`, 이미 띄웠으면 다시 띄움).
@@ -227,13 +227,24 @@ span 이 날아가면 시리얼이 영영 안 돌아온다.
   파일이 없는 모델은 '(없음)' 으로 못 고른다(`/api/models` 의 `have`·`file`·`mb`). 고르면 `POST /api/model` → `switch_model()`(스레드)이
   대답 중이면 끝난 뒤 기록·말하기를 비우고, 다 끈 다음 `llama-server@<이름>` 을 `--no-block` 으로 켠다. 준비는 예전처럼 `warm_loop` 가 `/health` → 미리 읽기. 바꾸는 동안(`_switching`)은 옛 서버를 보지 않는다.
   고르기 전엔 상태 줄을 숨기고 빈 화면이 '위에서 대화 모델을 골라 주세요.'(`chat_pick_model`). 새로 고쳐도 서버의 `model` 로 선택이 남는다. [다시 켜기] 는 같은 모델로 `switch_model`.
-  시스템 글은 `pick_system(모델)` — 이름이나 **링크가 가리키는 실제 파일 이름**에 `themaker` 가 있으면 None, 아니면 `DEVICE_SYSTEM`(PiBrain 은 이름만 바꿈). general 링크를 다른 모델로 바꿔도 맞게. `--model-dir` 은 시험용(미리보기는 가짜 파일)
+  시스템 글은 `pick_system(모델)` — 이름이나 **링크가 가리키는 실제 파일 이름**에 `themaker` 가 있으면(`is_tool_model`) `tools.SYSTEMS[ko|en]`, 아니면 `DEVICE_SYSTEM`(PiBrain 은 이름만 바꿈). general 링크를 다른 모델로 바꿔도 맞게. `--model-dir` 은 시험용(미리보기는 가짜 파일)
 - **템플릿 유닛 `llama-server@.service`**(리포 밖, 이미지 작업 — IMAGE.md): `-m /home/pi/.model/llm/%i.gguf`, `Restart=no`, `[Install]` 없음(enable 안 됨 — `static`).
   템플릿끼리는 서로 끄지 않으므로 켜기 전에 늘 다 끈다. **이 코드를 기기에 올리기 전에 유닛·별칭 링크가 있어야 한다** — 없으면 대화 화면도 블록도 모델을 못 띄운다
 - **끄는 곳(`ide/run_ide.py`)은 전부 `systemctl stop 'llama-server@*'`** — `/tools` `/classifier` `/hwtest` `/kids` `/llm` 켜기·끄기, 코드 실행(`execute`·`executeb`). [정지] 는 `pkill llama-server`.
   새로 끄는 곳을 만들면 `@*` 를 빠뜨리지 말 것(모델 둘이 램에 올라간다)
-- **도구**: 더메이커는 도구 목록 없이 물어도 도구 호출(`<tool_call>`·`tool_calls`)로 답할 수 있다. 블록 `call_llm` 은 더메이커를 골랐을 때만 그 부분을 빼고 글만 돌려주고(`_without_tool_call`),
-  대화 웹은 화면·소리에서 뺀다(도구만 부르려던 대답이면 `chat_tool_only` 안내, 기억하지 않음). 261029 실측 질문 3개에서는 도구 호출이 안 나왔다. 블록에서 도구를 실제로 쓰는 것은 범위 밖
+- **도구(261029, 대화 화면만)**: 더메이커를 고르면 도구 3개(불빛·보기·움직이기)를 실제로 실행한다. 학습 PC 리포 `themakerrobot/openpibo-chat`(브랜치 `claude/inspiring-curie-s3a7wn`, a9072ff)의
+  `tools.py` · `pibo_chat.py` · `pibrain_chat.py` 를 `chat/` 에 **글자 그대로** 둔다 — 시스템 글(`tools.SYSTEM`/`SYSTEM_EN`)·도구 목록(`tools.TOOLS`)은 학습 때와 글자까지 같아야 해서 고치지 말 것(바꾸면 재학습).
+  지시서는 openpibo-chat `docs/pibo-tools-handoff.md` · `pibrain-tools-handoff.md`. 새로 받으면 세 파일을 통째로 바꾼다
+  - 한 차례 = `pibo_chat.turn()` 그대로: 멈춰(STOP, 모델에 안 물음) → 시스템 글 + 최근 3번 + 도구 목록 → 이동 막기(`blocked`, 방향 낱말 없으면 앞·뒤·왼·오른 안 함) → 실행·할 말.
+    "대화만 하자"/"이제 움직여도 돼"(`tool_switch`)도 같다. 더메이커 EN 이면 `pibo_chat.LANG='en'`. 대답은 흘려 받지 않고 끝난 뒤 한 번에(도구 호출을 끝까지 봐야 해서)
+  - 기기: `--device` 로 `pibo_chat.Pibo`(눈 `eye_on`·`Motion.set_motion`) / `pibrain_chat.PiBrain`(NeoPixel, 움직이기는 "몸이 없어서…"). `run_chat.make_robot` 이 두 가지만 덧씌운다:
+    보기는 카메라·사물 인식을 **한 번 만들어 계속 쓴다**(참고 앱은 부를 때마다 `Camera()` — Picamera2 는 앞 것이 안 닫히면 못 연다), 실행한 도구를 화면에 작게(`불빛 · 빨강`, 실패는 빨강 ✕)
+  - 장치는 **처음 부를 때** 올린다(참고 앱과 같다 — 미리 올리기는 넣지 않기로, 사용자 261029). 처음 한 번만 그 차례가 늦다(파이보 실측 확인 필요)
+  - 브라우저가 끊어도 차례는 끝까지 돈다(로봇이 이미 움직였을 수 있다). 잠금은 그 스레드가 끝날 때 푼다. 대화 웹이 끝날 때(atexit) 켜 둔 불빛을 끈다
+  - 일반(젬마3)은 예전처럼 도구 없이 흘려 받는다. 블록 `call_llm` 에 도구를 붙이는 것은 범위 밖(지시서)
+  - 낱말로 잡는 명령(if/else)은 쓰지 않는다 — 도구는 모델이 판단한다(사용자). 써 보며 자주 쓰는 도구·말을 모아 정리한다
+  - 확인(컨테이너, 가짜 llama-server·가짜 로봇): 파이보 12/12 — 미리 읽기에 도구 목록, 불빛·보기·움직이기 표시, 멈춰는 모델에 안 물음, 이동 막기, 도구 끔·켬, 영문 표시, 일반은 흘려 받기.
+    PiBrain 은 움직이기가 "몸이 없어서…" 로 나오는 것 말고 같음. **실기기 확인 필요** — 동작 이름(`motion_db`), 앞으로·뒤로 이동 거리(책상), MCU 시리얼을 booting 과 같이 쓰는 것, 메모리
 - 문서: 블록 가이드 설명은 `docs/tools/gen_block_guide.py` 의 `EXTRA`(생성할 때마다 붙음). `speech.po` 영문 번역
 - 확인(컨테이너, 가짜 llama-server): 대화 화면 15/15 — select·없는 모델 못 고름·실제 파일 표시·고르기 전 보내기 막힘·고르면 준비·도구 호출 걸러짐·바꾸면 기록 비움·새로 고침 뒤 선택 유지·영문·390/768 넘침 0·pageerror 0.
   **실기기로는 아직 안 봤다**(systemctl 로 바꾸는 부분)

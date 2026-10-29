@@ -21,6 +21,7 @@ in each file are kept as they are.
 | TensorFlow.js 4.22.0 | `classifier/static/vendor/tfjs/tf.min.js` | Apache-2.0 |
 | MediaPipe Tasks Vision (wasm) | `classifier/static/vendor/tasks-vision/` | Apache-2.0 |
 | MediaPipe models (hand/face/pose landmarker, MobileNetV3 embedder) | `classifier/static/models/` | Apache-2.0 |
+| openpibo-chat (themakerrobot) a9072ff — `tools.py` `pibo_chat.py` `pibrain_chat.py` | `chat/` | Apache-2.0 |
 | teach-lab (themakerrobot) 74f421a | `classifier/static/tl/`, `openpibo/modules/teachlab/` | MIT |
 | TensorFlow Lite pose example (MoveNet helpers) | `openpibo/modules/pose/` | Apache-2.0 |
 | Adafruit CircuitPython display drivers | `openpibo/modules/oled/` | MIT |
