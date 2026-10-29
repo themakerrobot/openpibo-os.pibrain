@@ -23,6 +23,7 @@ pibo_chat.turn() 으로 처리한다 — 멈춰 → 시스템 글 + 최근 3번 
 """
 import os
 import re
+import random
 import atexit
 import json
 import time
@@ -115,6 +116,10 @@ use_tools = [True]    # 더메이커: "대화만 하자" 로 끄고 "이제 움�
 # ── 로봇(도구) ─────────────────────────────────────────────────────────────
 TOOL_HISTORY_KEEP = 20   # 더메이커 기록은 최근 3번만 보내지만(pibo_chat.window) 목록이 끝없이 늘지 않게
 robot = None             # __main__ 에서 만든다(파이보 Pibo / PiBrain)
+#: 움직이기 값 → motion_db 동작. tools.ACTIONS(학습 PC 원본)를 여기서만 덮어쓴다 — 모델이 고르는 값(목록)은 그대로라 재학습 불필요(261029, 사용자).
+#: 원본 춤 dance1~5 는 28~49초라 그동안 대답이 안 떠서 짧은 동작으로. greeting 은 한 팔 들고 손 흔들기, wave* 는 발·손을 흔드는 몸짓
+MOTIONS = {'인사': ['greeting'], '손흔들기': ['speak_r2', 'speak_l2'],
+           '춤': ['wave1', 'wave2', 'wave3', 'wave4', 'wave5', 'wave6']}
 _tool_log = []           # 이번 차례에 실행한 도구 [[이름, 값, 성공]] — 화면에 작게 보인다
 
 
@@ -136,7 +141,13 @@ def make_robot(device, fake=False):
       return self._log('light', color, super().light, color)
 
     def move(self, action):
-      return self._log('move', action, super().move, action)
+      return self._log('move', action, self._move, action)
+
+    def _move(self, action):
+      if not self.can_move:
+        return super().move(action)
+      if not self.fake:
+        self.part('motion').set_motion(random.choice(MOTIONS.get(action) or tools.ACTIONS[action]))
 
     def stop(self):
       if self.can_move:
