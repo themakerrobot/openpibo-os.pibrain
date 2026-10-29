@@ -174,11 +174,11 @@ Save text as espeak robot voice to a file.
 
 Say text with the espeak robot voice.
 
-<img src="img/speech_set_llm_model.png" alt="Choose chat model [TheMaker Korean ▾]" width="456" class="blk">
+<img src="img/speech_set_llm_model.png" alt="Choose chat model [TheMaker KO ▾]" width="418" class="blk">
 
-Choose the model before starting the chat server. Without it, the default model starts.
+Choose the model before starting the chat server. Without it, the general model starts.
 
-There are three models: **Gemma3** (Korean and English, no tools), **TheMaker Korean** (Korean only, short and polite) and **TheMaker English** (English only). Both TheMaker models learned tools (light, look, move), but the chat block is text only — if the model tries to answer with a tool, that part is dropped and you get only the text. This block only chooses, so put it **before [Start LLM server]**. Without it the default model starts, and the choice lasts only in that program. TheMaker already has its speaking style inside the model, so it works best with the system prompt of the chat block **left empty**. Only one model runs at a time.
+There are three models: **General** (Korean and English, no tools — currently Google Gemma3 1B), **TheMaker KO** (Korean only, short and polite) and **TheMaker EN** (English only). Both TheMaker models learned tools (light, look, move), but the chat block is text only — if the model tries to answer with a tool, that part is dropped and you get only the text. This block only chooses, so put it **before [Start LLM server]**. Without it the general model starts, and the choice lasts only in that program. TheMaker already has its speaking style inside the model, so it works best with the system prompt of the chat block **left empty**. Only one model runs at a time.
 
 <img src="img/speech_start_llm.png" alt="Start LLM server" width="218" class="blk">
 

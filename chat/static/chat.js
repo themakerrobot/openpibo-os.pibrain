@@ -1,4 +1,5 @@
 /* 대화 웹 (run_chat.py, 50030) — 도구 없이 대화만, 대답은 흘려 받는다. [소리로 말하기] 면 로봇이 말한다
+   대화 모델은 들어와서 고른다(261029) — 고르기 전엔 아무 모델도 올라가 있지 않다
    문구는 IDE 의 ko2en.js(전역 translations · t · lang)를 같이 쓴다. 키는 chat_* */
 (function () {
   'use strict';
@@ -6,7 +7,8 @@
   var tr = function (k, a, b) { return (typeof t === 'function') ? t(k, a, b) : k; };
   var log = $('log'), text = $('text'), sendBt = $('send_bt');
   var speakCk = $('speak'), voiceSel = $('voice'), volIn = $('vol');
-  var st = { warm: 'idle', llm: 'down', voice: 'off' };
+  var st = { model: null, warm: 'idle', llm: 'none', voice: 'off' };
+  var modelList = [];                                       // [{name, have}] — /api/models
   var waiting = null, failCount = 0;                       // waiting = 지금 받는 중인 AbortController
   var VOICES = ['m1', 'm2', 'm3', 'm4', 'm5', 'f1', 'f2', 'f3', 'f4', 'f5'];
 
@@ -32,6 +34,7 @@
     text.placeholder = tr('chat_placeholder');
     document.title = tr('chat_title');
     renderVoices();
+    renderModels();
     renderTry();
     renderStatus();
     renderVoiceState();
@@ -217,20 +220,72 @@
   });
 
   /* ── 새 대화 ──────────────────────────────────────────────────────── */
-  $('new_bt').addEventListener('click', function () {
-    if (waiting) waiting.abort();
-    post('/api/reset').catch(function () { /* 꺼져 있으면 기록도 없다 */ });
+  function clearLog() {
     Array.prototype.slice.call(log.querySelectorAll('.msg')).forEach(function (m) { m.remove(); });
     speakingTag = null;                                    // 말풍선과 같이 지워졌다
     $('empty').hidden = false; showHush(false);
+  }
+  $('new_bt').addEventListener('click', function () {
+    if (waiting) waiting.abort();
+    post('/api/reset').catch(function () { /* 꺼져 있으면 기록도 없다 */ });
+    clearLog();
     text.focus();
   });
+
+  /* ── 대화 모델 고르기 ─────────────────────────────────────────────── */
+  // 고르면 서버가 그 모델(llama-server@<이름>)을 올린다. 바꾸면 기억한 대화는 서버·화면 모두 비운다.
+  // 기기에 파일이 없는 모델(아직 안 온 더메이커 EN 등)은 고를 수 없다. 옆에는 고른 것의 실제 파일(별칭 링크가 가리키는 것)
+  var modelSel = $('model_sel');
+  function renderModels() {
+    modelSel.innerHTML = '';
+    if (!st.model) {
+      var o0 = document.createElement('option');
+      o0.value = ''; o0.textContent = tr('chat_model_none'); o0.disabled = true;
+      modelSel.appendChild(o0);
+    }
+    var cur = null;
+    modelList.forEach(function (m) {
+      var o = document.createElement('option');
+      o.value = m.name;
+      o.textContent = tr('chat_model_' + m.name.replace('-', '_')) + (m.have ? '' : ' (' + tr('chat_model_off') + ')');
+      o.disabled = !m.have;
+      modelSel.appendChild(o);
+      if (m.name === st.model) cur = m;
+    });
+    modelSel.value = st.model || '';
+    $('model_file').textContent = cur && cur.file ? cur.file + (cur.mb ? ' · ' + cur.mb + 'MB' : '') : '';
+    $('empty_txt').textContent = tr(st.model ? 'chat_empty' : 'chat_pick_model');
+    $('try').hidden = !st.model;
+  }
+  function loadModels() {
+    return fetch('/api/models', { cache: 'no-store' }).then(function (r) { return r.json(); })
+      .then(function (d) { modelList = d.models || []; st.model = d.model; renderModels(); renderStatus(); },
+            function () { /* 상태 확인이 배너를 띄운다 */ });
+  }
+  modelSel.addEventListener('change', function () { chooseModel(modelSel.value); });
+  function chooseModel(name) {
+    if (name === st.model && st.llm !== 'failed') return;
+    if (waiting) waiting.abort();
+    post('/api/model', { model: name }).then(function (r) {
+      return r.json().then(function (d) {
+        if (!r.ok) {
+          if (window.PiboUI) PiboUI.banner('model', { text: tr(d.error || 'chat_err_conn'), kind: 'warn' });
+          return loadModels();
+        }
+        if (window.PiboUI) PiboUI.hideBanner('model');
+        clearLog();
+        st.model = name; st.llm = 'down'; st.warm = 'idle';
+        renderModels(); renderStatus();
+      });
+    }, function () { /* 상태 확인이 배너를 띄운다 */ });
+  }
 
   /* ── 상태 (모델 준비) ─────────────────────────────────────────────── */
   var warmT0 = 0;
   function renderStatus() {
     var el = $('status'), key = '', s = '';
-    if (st.llm === 'failed') key = 'chat_st_failed';
+    if (!st.model) key = '';                                // 아직 안 고름 — 빈 화면이 '골라 주세요' 를 보인다
+    else if (st.llm === 'failed') key = 'chat_st_failed';
     else if (st.llm !== 'ready') key = st.llm === 'loading' ? 'chat_st_loading' : 'chat_st_down';
     else if (st.warm === 'warming') key = 'chat_st_warming';
     else if (st.warm === 'error') key = 'chat_st_error';
@@ -252,7 +307,9 @@
     return fetch('/api/status', { cache: 'no-store' })
       .then(function (r) { return r.json(); })
       .then(function (d) {
+        var was = st.model;
         st = d; failCount = 0;
+        if (d.model !== was) renderModels();                // 다른 화면(탭)에서 바꿨거나 새로 고침
         // 말하기가 끝났으면 표시를 지운다. 대답이 끝나기 전에 물은 답은 믿지 않는다(그때는 아직 말하기 전). speaking 이 없는 옛 서버면 그대로 둔다
         if (speakingTag && d.speaking === false && asked > speakingAt) clearSpeaking();
         if (window.PiboUI) PiboUI.hideBanner('svc');
@@ -286,6 +343,7 @@
   });
 
   applyLanguage();
+  loadModels();
   if (speakCk.checked) speakCk.dispatchEvent(new Event('change'));
   refreshStatus();
   text.focus();

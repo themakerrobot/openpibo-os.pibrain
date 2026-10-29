@@ -359,8 +359,8 @@ async def classifier(enable: str):
   await asyncio.sleep(2)
   return HTMLResponse(content="", status_code=200)
 
-# [대화] = llama-server(50020) + 대화 웹(chat/run_chat.py, 50030, 261026). 파이보와 같은 코드 — 기기 차이는 --device
-# llama-server 기본 웹 화면은 시스템 글·도구 목록을 보내지 않아 도구가 안 됐다. 대화 웹이 붙여서 보낸다.
+# [대화] = 대화 웹(chat/run_chat.py, 50030, 261026). 파이보와 같은 코드 — 기기 차이는 --device
+# 대화 모델은 화면에서 고르면 대화 웹이 llama-server@<이름>(50020)으로 띄운다(261029). 켤 때는 모델을 띄우지 않고 떠 있던 것도 끈다(램 2GB).
 # 대화 웹은 H/W 검수처럼 IDE 가 직접 띄운다(유닛 파일은 리포 밖이라)
 CHAT_DIR = '/home/pi/openpibo-os/chat'
 CHAT_PY = f'{CHAT_DIR}/run_chat.py'
@@ -423,8 +423,7 @@ async def llm(enable: str):
     stop_kids()     # 체험 앱도 모터·소리를 쓴다
     subprocess.Popen(['systemctl', 'stop', 'classify.service'])
     subprocess.Popen(['systemctl', 'stop', 'tools.service'])
-    subprocess.run(['systemctl', 'stop', 'llama-server@*'])   # 블록에서 고른 모델이 떠 있으면 먼저 끈다 — IDE [대화] 는 늘 기본 모델
-    subprocess.Popen(['systemctl', 'start', 'llama-server.service'])
+    subprocess.Popen(['systemctl', 'stop', 'llama-server.service', 'llama-server@*'])   # 모델은 대화 화면에서 고를 때 띄운다
     if chat_proc is None or chat_proc.poll() is not None:
       chat_proc = subprocess.Popen([f'{ENV_PATH}/python3', CHAT_PY, '--device', CHAT_DEVICE], cwd=CHAT_DIR)
   elif enable == "off":
