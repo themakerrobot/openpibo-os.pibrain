@@ -225,6 +225,7 @@ const translations = {
   chat_st_error:    { ko: "대화 모델을 준비하지 못했어요. 탭을 닫고 다시 열어 주세요.", en: "Could not load the chat model. Close this tab and open it again." },
   chat_err_conn:    { ko: "대화 서버에 연결하지 못했어요.", en: "Could not reach the chat server." },
   chat_err_server:  { ko: "잠깐 문제가 생겼어요. 한 번만 다시 말해 줄래요?", en: "Something went wrong. Could you say that again?" },
+  chat_tool_only:   { ko: "불빛·보기·움직이기 같은 도구로 답하려고 했어요. 이 화면은 글로만 이야기해요. 다르게 물어봐 줄래요?", en: "It tried to answer with a tool (light, look or move). This screen is for text only. Could you ask another way?" },
   chat_err_busy:    { ko: "앞의 대답을 만드는 중이에요. 잠시 뒤에 보내 주세요.", en: "Still answering the last message. Please wait a moment." },
   chat_err_not_ready: { ko: "아직 준비 중이에요. 잠시 뒤에 보내 주세요.", en: "Still getting ready. Please wait a moment." },
   chat_err_empty:   { ko: "보낼 말이 없어요.", en: "Nothing to send." },

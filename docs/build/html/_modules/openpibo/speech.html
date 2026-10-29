@@ -788,6 +788,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">Dialog</span><span class="p">:</span>
 <span class="w">  </span><span class="sd">"""</span>
 <span class="sd">Functions:</span>
+<span class="sd">:meth:`~openpibo.speech.Dialog.set_llm_model`</span>
 <span class="sd">:meth:`~openpibo.speech.Dialog.start_llm`</span>
 <span class="sd">:meth:`~openpibo.speech.Dialog.call_llm`</span>
 <span class="sd">:meth:`~openpibo.speech.Dialog.stop_llm`</span>
@@ -807,8 +808,42 @@
 <span class="sd">    # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
 <span class="sd">  """</span>
 
+  <span class="c1">#: 고를 수 있는 대화 모델. 파일은 ``/home/pi/.model/llm/&lt;이름&gt;.gguf`` (이미지 만들 때 만든 별칭 링크)</span>
+  <span class="n">LLM_MODELS</span> <span class="o">=</span> <span class="p">(</span><span class="s1">'gemma3'</span><span class="p">,</span> <span class="s1">'themaker-ko'</span><span class="p">,</span> <span class="s1">'themaker-en'</span><span class="p">)</span>
+  <span class="n">LLM_DIR</span> <span class="o">=</span> <span class="s1">'/home/pi/.model/llm'</span>
+
   <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">pass</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">llm_model</span> <span class="o">=</span> <span class="kc">None</span>     <span class="c1"># set_llm_model 로 고른 모델. None 이면 기본 모델(llama-server.service · llm-model.gguf)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_llm_port</span> <span class="o">=</span> <span class="kc">None</span>     <span class="c1"># 이 Dialog 가 띄운 서버의 포트(띄우기 전엔 None)</span>
+
+<div class="viewcode-block" id="Dialog.set_llm_model">
+<a class="viewcode-back" href="../../libraries/speech.html#openpibo.speech.Dialog.set_llm_model">[문서]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">set_llm_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    대화 서버를 시작하기 전에 쓸 모델을 고릅니다. 고르지 않으면 기본 모델로 시작합니다.</span>
+<span class="sd">    고른 모델은 이 ``Dialog`` 안에서만 기억합니다(기기의 기본 모델은 바뀌지 않습니다).</span>
+<span class="sd">    이미 서버를 띄운 뒤에 고르면 고른 모델로 다시 띄웁니다.</span>
+
+<span class="sd">    example::</span>
+
+<span class="sd">      dialog.set_llm_model('themaker-ko')</span>
+<span class="sd">      dialog.start_llm()</span>
+
+<span class="sd">    :param str model: ``gemma3`` (젬마3, 한국어·영어, 도구 없음) · ``themaker-ko`` (더메이커 한국어) · ``themaker-en`` (더메이커 영어).</span>
+<span class="sd">      더메이커 둘은 도구(불빛·보기·움직이기)가 있는 모델이지만 ``call_llm`` 은 글자 대화만 합니다 — 도구 호출로 답하면 그 부분은 빼고 글만 돌려줍니다</span>
+<span class="sd">    :raises ValueError: 모델 이름이 셋 중 하나가 아닐 때</span>
+<span class="sd">    :raises FileNotFoundError: 그 모델 파일이 기기에 아직 없을 때</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="n">model</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">LLM_MODELS</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"모델 이름은 gemma3, themaker-ko, themaker-en 중 하나"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LLM_DIR</span><span class="p">,</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s1">.gguf'</span><span class="p">)):</span>    <span class="c1"># 깨진 링크(파일이 아직 안 옴)도 여기서 걸린다</span>
+      <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> 모델 파일이 아직 없어요"</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">llm_model</span> <span class="o">=</span> <span class="n">model</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_llm_port</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_llm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_llm_port</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
 
 <div class="viewcode-block" id="Dialog.start_llm">
 <a class="viewcode-back" href="../../libraries/speech.html#openpibo.speech.Dialog.start_llm">[문서]</a>
@@ -825,7 +860,14 @@
 <span class="sd">    :returns: 준비되면 ``True``, ``timeout`` 안에 준비되지 않으면 ``False``</span>
 <span class="sd">    """</span>
 
-    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">"systemctl start llama-server"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">llm_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">"systemctl start llama-server"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="c1"># 고른 모델은 템플릿 유닛 llama-server@&lt;이름&gt; 으로 띄운다. 램 2GB 라 기본 서버와 다른 모델을 먼저 다 끈다</span>
+      <span class="c1"># (템플릿끼리는 서로 Conflicts 가 아니다)</span>
+      <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">'systemctl'</span><span class="p">,</span> <span class="s1">'stop'</span><span class="p">,</span> <span class="s1">'llama-server'</span><span class="p">,</span> <span class="s1">'llama-server@*'</span><span class="p">])</span>
+      <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">'systemctl'</span><span class="p">,</span> <span class="s1">'start'</span><span class="p">,</span> <span class="sa">f</span><span class="s1">'llama-server@</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">llm_model</span><span class="si">}</span><span class="s1">'</span><span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_llm_port</span> <span class="o">=</span> <span class="n">port</span>
     <span class="c1"># 모델을 읽는 동안 /health 는 503 이다. 200 이 될 때까지 기다린다</span>
     <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">+</span> <span class="n">timeout</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
@@ -883,11 +925,25 @@
 
     <span class="c1"># OpenAI Chat API 표준 응답 형식에 따른 처리</span>
     <span class="k">if</span> <span class="s2">"choices"</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"choices"</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"choices"</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">llm_model</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">llm_model</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'themaker'</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_without_tool_call</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"choices"</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">"message"</span><span class="p">])</span>
       <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">"choices"</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">"message"</span><span class="p">][</span><span class="s2">"content"</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
       <span class="c1"># 예상하는 키가 없으면 전체 응답 데이터를 반환합니다.</span>
       <span class="k">return</span> <span class="n">data</span></div>
 
+
+  <span class="nd">@staticmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">_without_tool_call</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""더메이커는 도구(불빛·보기·움직이기)가 있는 모델이라, 도구 목록 없이 물어도 도구 호출로 답할 수 있다.</span>
+<span class="sd">    블록 [대화하기] 는 글자 대화만 하므로 도구 호출(``tool_calls``·``&lt;tool_call&gt;…``)은 빼고 글만 돌려준다"""</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"content"</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"&lt;tool_call&gt;"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">message</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"tool_calls"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s2">"LLM: 도구 호출은 블록에서 쓰지 않아 뺐습니다(글만 돌려줍니다)"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Dialog.stop_llm">
 <a class="viewcode-back" href="../../libraries/speech.html#openpibo.speech.Dialog.stop_llm">[문서]</a>
@@ -901,7 +957,8 @@
 
 <span class="sd">    """</span>
 
-    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">"systemctl stop llama-server"</span><span class="p">)</span></div>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">"systemctl stop llama-server 'llama-server@*'"</span><span class="p">)</span>   <span class="c1"># 기본 서버든 고른 모델이든 끈다</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_llm_port</span> <span class="o">=</span> <span class="kc">None</span></div>
 </div>
 
 </pre></div>

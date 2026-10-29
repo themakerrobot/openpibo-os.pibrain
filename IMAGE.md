@@ -200,6 +200,8 @@ sudo rm -rf /home/pi/.pyenv.old                                  # 잘 되면 �
 - `stt/`(약 230MB)는 마이크를 달면 쓴다(STT 소스는 이미 들어 있다, 블록만 막힘). **지우지 말고 그대로 둔다**
 - `object/` 에는 `ed-s-320.onnx` 하나만 있어야 한다(261026 에 예전 사물 인식 가중치·고지 파일을 지웠다)
 - `llm/llm-model.gguf` 는 `llama-server.service` 가 읽는다. **유닛의 모델 경로가 이 파일인지 확인 필요**(유닛은 리포 밖)
+- **모델 고르기용 템플릿 유닛(261029)** `/etc/systemd/system/llama-server@.service` 와 모델별 별칭 링크(`gemma3.gguf`·`themaker-ko.gguf`·`themaker-en.gguf`)는
+  파이보 리포 `IMAGE.md` '모델 고르기용 템플릿 유닛' 과 같다(유닛 내용·링크 명령 그대로, enable 안 함, 그 뒤 `daemon-reload`). CLAUDE.md '대화 모델 고르기' 참고
 
 ```bash
 PY=/home/pi/.pyenv/bin/python3

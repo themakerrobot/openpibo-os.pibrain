@@ -565,6 +565,7 @@
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">openpibo.speech.</span></span><span class="sig-name descname"><span class="pre">Dialog</span></span><a class="reference internal" href="../_modules/openpibo/speech.html#Dialog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.speech.Dialog" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Functions:
+<a class="reference internal" href="#openpibo.speech.Dialog.set_llm_model" title="openpibo.speech.Dialog.set_llm_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_llm_model()</span></code></a>
 <a class="reference internal" href="#openpibo.speech.Dialog.start_llm" title="openpibo.speech.Dialog.start_llm"><code class="xref py py-meth docutils literal notranslate"><span class="pre">start_llm()</span></code></a>
 <a class="reference internal" href="#openpibo.speech.Dialog.call_llm" title="openpibo.speech.Dialog.call_llm"><code class="xref py py-meth docutils literal notranslate"><span class="pre">call_llm()</span></code></a>
 <a class="reference internal" href="#openpibo.speech.Dialog.stop_llm" title="openpibo.speech.Dialog.stop_llm"><code class="xref py py-meth docutils literal notranslate"><span class="pre">stop_llm()</span></code></a></p>
@@ -579,6 +580,39 @@
 </pre></div>
 </div>
 </div></blockquote>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="openpibo.speech.Dialog.LLM_MODELS">
+<span class="sig-name descname"><span class="pre">LLM_MODELS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('gemma3',</span> <span class="pre">'themaker-ko',</span> <span class="pre">'themaker-en')</span></span><a class="headerlink" href="#openpibo.speech.Dialog.LLM_MODELS" title="Link to this definition">¶</a></dt>
+<dd><p>Chat models you can choose. The file is <code class="docutils literal notranslate"><span class="pre">/home/pi/.model/llm/&lt;name&gt;.gguf</span></code> (an alias link made with the system image)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="openpibo.speech.Dialog.LLM_DIR">
+<span class="sig-name descname"><span class="pre">LLM_DIR</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/home/pi/.model/llm'</span></span><a class="headerlink" href="#openpibo.speech.Dialog.LLM_DIR" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.speech.Dialog.set_llm_model">
+<span class="sig-name descname"><span class="pre">set_llm_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Dialog.set_llm_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.speech.Dialog.set_llm_model" title="Link to this definition">¶</a></dt>
+<dd><p>Chooses the model to use before starting the chat server. Without it, the default model starts. The choice is kept only in this <code class="docutils literal notranslate"><span class="pre">Dialog</span></code> (the default model on the robot does not change). If the server is already running, it restarts with the chosen model.</p>
+<p>example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dialog</span><span class="o">.</span><span class="n">set_llm_model</span><span class="p">(</span><span class="s1">'themaker-ko'</span><span class="p">)</span>
+<span class="n">dialog</span><span class="o">.</span><span class="n">start_llm</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong> (<em>str</em>) – <code class="docutils literal notranslate"><span class="pre">gemma3</span></code> (Gemma3, Korean and English, no tools) · <code class="docutils literal notranslate"><span class="pre">themaker-ko</span></code> (TheMaker Korean) · <code class="docutils literal notranslate"><span class="pre">themaker-en</span></code> (TheMaker English). Both TheMaker models have tools (light, look, move), but <code class="docutils literal notranslate"><span class="pre">call_llm</span></code> is text only — if the model answers with a tool call, that part is removed and only the text is returned</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – when the model name is not one of the three</p></li>
+<li><p><strong>FileNotFoundError</strong> – when that model file is not on the robot yet</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.speech.Dialog.start_llm">
 <span class="sig-name descname"><span class="pre">start_llm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50020</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#Dialog.start_llm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.speech.Dialog.start_llm" title="Link to this definition">¶</a></dt>
@@ -702,6 +736,9 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#openpibo.speech.Dialog"><code class="docutils literal notranslate"><span class="pre">Dialog</span></code></a><ul>
+<li><a class="reference internal" href="#openpibo.speech.Dialog.LLM_MODELS"><code class="docutils literal notranslate"><span class="pre">Dialog.LLM_MODELS</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.speech.Dialog.LLM_DIR"><code class="docutils literal notranslate"><span class="pre">Dialog.LLM_DIR</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.speech.Dialog.set_llm_model"><code class="docutils literal notranslate"><span class="pre">Dialog.set_llm_model()</span></code></a></li>
 <li><a class="reference internal" href="#openpibo.speech.Dialog.start_llm"><code class="docutils literal notranslate"><span class="pre">Dialog.start_llm()</span></code></a></li>
 <li><a class="reference internal" href="#openpibo.speech.Dialog.call_llm"><code class="docutils literal notranslate"><span class="pre">Dialog.call_llm()</span></code></a></li>
 <li><a class="reference internal" href="#openpibo.speech.Dialog.stop_llm"><code class="docutils literal notranslate"><span class="pre">Dialog.stop_llm()</span></code></a></li>

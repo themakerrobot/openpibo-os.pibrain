@@ -419,6 +419,7 @@ def _speech_to_text():
 class Dialog:
   """
 Functions:
+:meth:`~openpibo.speech.Dialog.set_llm_model`
 :meth:`~openpibo.speech.Dialog.start_llm`
 :meth:`~openpibo.speech.Dialog.call_llm`
 :meth:`~openpibo.speech.Dialog.stop_llm`
@@ -438,8 +439,39 @@ Functions:
     # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.
   """
 
+  #: 고를 수 있는 대화 모델. 파일은 ``/home/pi/.model/llm/<이름>.gguf`` (이미지 만들 때 만든 별칭 링크)
+  LLM_MODELS = ('gemma3', 'themaker-ko', 'themaker-en')
+  LLM_DIR = '/home/pi/.model/llm'
+
   def __init__(self):
-    pass
+    self.llm_model = None     # set_llm_model 로 고른 모델. None 이면 기본 모델(llama-server.service · llm-model.gguf)
+    self._llm_port = None     # 이 Dialog 가 띄운 서버의 포트(띄우기 전엔 None)
+
+  def set_llm_model(self, model):
+    """
+    대화 서버를 시작하기 전에 쓸 모델을 고릅니다. 고르지 않으면 기본 모델로 시작합니다.
+    고른 모델은 이 ``Dialog`` 안에서만 기억합니다(기기의 기본 모델은 바뀌지 않습니다).
+    이미 서버를 띄운 뒤에 고르면 고른 모델로 다시 띄웁니다.
+
+    example::
+
+      dialog.set_llm_model('themaker-ko')
+      dialog.start_llm()
+
+    :param str model: ``gemma3`` (젬마3, 한국어·영어, 도구 없음) · ``themaker-ko`` (더메이커 한국어) · ``themaker-en`` (더메이커 영어).
+      더메이커 둘은 도구(불빛·보기·움직이기)가 있는 모델이지만 ``call_llm`` 은 글자 대화만 합니다 — 도구 호출로 답하면 그 부분은 빼고 글만 돌려줍니다
+    :raises ValueError: 모델 이름이 셋 중 하나가 아닐 때
+    :raises FileNotFoundError: 그 모델 파일이 기기에 아직 없을 때
+    """
+
+    if model not in self.LLM_MODELS:
+      raise ValueError("모델 이름은 gemma3, themaker-ko, themaker-en 중 하나")
+    if not os.path.isfile(os.path.join(self.LLM_DIR, f'{model}.gguf')):    # 깨진 링크(파일이 아직 안 옴)도 여기서 걸린다
+      raise FileNotFoundError(f"{model} 모델 파일이 아직 없어요")
+    self.llm_model = model
+    if self._llm_port is not None:
+      return self.start_llm(self._llm_port)
+    return True
 
   def start_llm(self, port=50020, timeout=120):
     """
@@ -454,7 +486,14 @@ Functions:
     :returns: 준비되면 ``True``, ``timeout`` 안에 준비되지 않으면 ``False``
     """
 
-    os.system(f"systemctl start llama-server")
+    if self.llm_model is None:
+      os.system(f"systemctl start llama-server")
+    else:
+      # 고른 모델은 템플릿 유닛 llama-server@<이름> 으로 띄운다. 램 2GB 라 기본 서버와 다른 모델을 먼저 다 끈다
+      # (템플릿끼리는 서로 Conflicts 가 아니다)
+      subprocess.run(['systemctl', 'stop', 'llama-server', 'llama-server@*'])
+      subprocess.run(['systemctl', 'start', f'llama-server@{self.llm_model}'])
+    self._llm_port = port
     # 모델을 읽는 동안 /health 는 503 이다. 200 이 될 때까지 기다린다
     end = time.time() + timeout
     while True:
@@ -509,10 +548,24 @@ Functions:
 
     # OpenAI Chat API 표준 응답 형식에 따른 처리
     if "choices" in data and isinstance(data["choices"], list) and len(data["choices"]) > 0:
+      if self.llm_model and self.llm_model.startswith('themaker'):
+        return self._without_tool_call(data["choices"][0]["message"])
       return data["choices"][0]["message"]["content"]
     else:
       # 예상하는 키가 없으면 전체 응답 데이터를 반환합니다.
       return data
+
+  @staticmethod
+  def _without_tool_call(message):
+    """더메이커는 도구(불빛·보기·움직이기)가 있는 모델이라, 도구 목록 없이 물어도 도구 호출로 답할 수 있다.
+    블록 [대화하기] 는 글자 대화만 하므로 도구 호출(``tool_calls``·``<tool_call>…``)은 빼고 글만 돌려준다"""
+    text = message.get("content") or ""
+    i = text.find("<tool_call>")
+    if i >= 0:
+      text = text[:i]
+    if message.get("tool_calls") or i >= 0:
+      print("LLM: 도구 호출은 블록에서 쓰지 않아 뺐습니다(글만 돌려줍니다)")
+    return text.strip()
 
   def stop_llm(self):
     """
@@ -524,4 +577,5 @@ Functions:
 
     """
 
-    os.system("systemctl stop llama-server")
+    os.system("systemctl stop llama-server 'llama-server@*'")   # 기본 서버든 고른 모델이든 끈다
+    self._llm_port = None

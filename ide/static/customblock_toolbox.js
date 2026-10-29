@@ -1554,6 +1554,11 @@ let toolbox = (lang) => {
           },
           {
             "kind": "block",
+            "type": "speech_set_llm_model",
+            "fields": { "model": "themaker-ko" }
+          },
+          {
+            "kind": "block",
             "type": "speech_start_llm",
           },
           {

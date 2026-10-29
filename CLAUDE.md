@@ -199,6 +199,34 @@ span 이 날아가면 시리얼이 영영 안 돌아온다.
 
 ---
 
+## 대화 모델 고르기 (261029) — 블록 [대화 모델 고르기]
+
+블록 코딩에서 **젬마3 / 더메이커 한국어 / 더메이커 영어** 중 하나를 골라 띄운다(지시서 261029, 사용자 결정). 램 2GB 라 한 번에 하나.
+
+```
+[대화 모델 고르기 (더메이커 한국어 ▼)]   ← speech_set_llm_model → dialog.set_llm_model('themaker-ko')  (고르기만)
+[대화 서버 시작하기(LLM)]                ← 예전 블록 그대로 — 고른 모델이 있으면 그 모델로 띄운다
+```
+
+| 이름 | 별칭 링크(`/home/pi/.model/llm/`) → 파일 | 도구 | 시스템 글 |
+|---|---|---|---|
+| `gemma3` | `gemma3.gguf` → `gemma-3-1b-it-Q4_K_M.gguf`(약 769MB) | **없음** | 블록이 준 것 |
+| `themaker-ko` | `themaker-ko.gguf` → `themaker-0.8b-Q4_K_M.gguf`(322MB) | **있음**(불빛·보기·움직이기) | 비우면 GGUF 템플릿이 학습 글을 넣는다 |
+| `themaker-en` | `themaker-en.gguf` → `themaker-en-0.8b-Q4_K_M.gguf`(PC 학습 중 — 오기 전엔 깨진 링크) | **있음** | 〃 |
+
+- `openpibo/speech.py` `Dialog`: `set_llm_model(model)`(이름이 셋 밖이면 `ValueError`, 파일이 없으면(깨진 링크 포함) `FileNotFoundError`, 이미 띄웠으면 다시 띄움).
+  `start_llm()` 은 **고르지 않았으면 예전과 똑같이** `systemctl start llama-server`, 골랐으면 `systemctl stop llama-server 'llama-server@*'` → `systemctl start llama-server@<이름>`.
+  `stop_llm()` 은 둘 다 끈다. 고른 모델은 그 `Dialog` 안에서만 기억한다 — **링크·서비스 기본값은 안 바꾼다**
+- **템플릿 유닛 `llama-server@.service`**(리포 밖, 이미지 작업): `llama-server.service` 를 그대로 베끼고 `-m /home/pi/.model/llm/%i.gguf`, `Conflicts=llama-server.service`, `Restart=no`, enable 안 함.
+  템플릿끼리는 서로 끄지 않으므로 켜기 전에 늘 다 끈다
+- **끄는 곳(`ide/run_ide.py`)은 전부 `llama-server.service` 와 `llama-server@*` 를 같이 끈다** — `/tools` `/classifier` `/hwtest` `/kids` 켜기, `/llm?enable=off`, 코드 실행(`execute`·`executeb`). [정지] 는 `pkill llama-server` 라 둘 다 끝난다.
+  `/llm?enable=on`(IDE [대화])은 `llama-server@*` 를 먼저 끄고 **늘 기본 모델**(`llama-server.service` · `llm-model.gguf`)로 띄운다. 새로 끄는 곳을 만들면 `@*` 를 빠뜨리지 말 것(모델 둘이 램에 올라간다)
+- **도구**: 더메이커는 도구가 있는 모델이라 도구 목록 없이 물어도 도구 호출(`<tool_call>`·`tool_calls`)로 답할 수 있다(실기기 확인 필요). 블록 `call_llm` 은 더메이커를 골랐을 때만 그 부분을 빼고 글만 돌려주고(`_without_tool_call`),
+  대화 웹은 화면·소리에서 뺀다(도구만 부르려던 대답이면 `chat_tool_only` 안내, 기억하지 않음). 블록에서 도구를 실제로 쓰는 것은 이번 범위 밖(261026 도구 판이 한 차례 15→44초로 느려졌던 기록 참고)
+- **대화 웹 시스템 글**: `pick_system()` 이 `llm-model.gguf` 의 실제 파일 이름(realpath)을 보고, `themaker` 면 시스템 글을 **안 보낸다**(GGUF 템플릿이 학습 글을 글자 그대로 넣음 — 학습 PC 의 `tools.SYSTEM`/`SYSTEM_EN` 을 리포에 베끼지 않아도 같다), 그 밖은 `SYSTEM`
+- 문서: 블록 가이드 설명은 `docs/tools/gen_block_guide.py` 의 `EXTRA`(생성할 때마다 붙음). `speech.po` 영문 번역
+- **261029 파이보 기기 `ls`: 기본 링크 `llm-model.gguf` 가 지운 파일(`pibo-qwen3.5-0.8b-school-small-Q4_K_M.gguf`)을 가리켜 깨져 있었다** — 기본 서버(IDE [대화]·예전 블록)가 못 뜬다. 링크를 `themaker-0.8b-Q4_K_M.gguf` 로 바꿔야 한다(이미지 작업, 사용자 확인 후)
+
 ## 대화 웹 (261026) — IDE [대화]
 
 **파이보와 같은 코드다. 원본은 파이보 리포**(`openpibo-os.pibo/CLAUDE.md` '대화 웹' 절에 구조·이유·시험이 있다). `chat/` 를 통째로 복사해 왔다.

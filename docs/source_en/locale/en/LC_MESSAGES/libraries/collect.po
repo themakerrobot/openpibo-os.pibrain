@@ -19,7 +19,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-msgid "collect · Wikipedia, weather, news (internet)"
+msgid "collect · Wikipedia, weather, news (internet, Korean edition)"
+msgstr ""
+
+msgid "Korean services only (Korean Wikipedia, Korea Meteorological Administration regions, a Korean news feed). The Global edition has no [Collect] block category. The Python module is still there, but it returns Korean text."
 msgstr ""
 
 msgid "인터넷에서 **위키 검색 정보, 날씨 정보, 뉴스 정보** 를 가져올 수 있습니다."
@@ -58,12 +61,6 @@ msgstr "Searches Wikipedia for ``search_text``. (for blocks only)"
 
 msgid "search 함수의 반환 값의 content만 추출한 리스트를 반환합니다.  대부분의 경우 '0'번 항목에 개요를 표시하고, 검색된 내용이 없을 경우 빈 리스트를 반환합니다.  example::      [         \"한국어 ‘강아지’는 ‘개’에 어린 짐승을 뜻하는 ‘아지’가 붙은 말이다...\",         ...     ]     or     []"
 msgstr "Returns a list containing only the content of the search function's return value.  In most cases item '0' holds the summary. Returns an empty list if nothing is found.  example::      [         \"한국어 ‘강아지’는 ‘개’에 어린 짐승을 뜻하는 ‘아지’가 붙은 말이다...\",         ...     ]     or     []"
-
-msgid "search 함수의 반환 값의 content만 추출한 리스트를 반환합니다."
-msgstr "Returns a list containing only the content of the search function's return value."
-
-msgid "대부분의 경우 '0'번 항목에 개요를 표시하고, 검색된 내용이 없을 경우 빈 리스트를 반환합니다."
-msgstr "In most cases item '0' holds the summary. Returns an empty list if nothing is found."
 
 msgid "Functions: :meth:`~openpibo.collect.Weather.search` :meth:`~openpibo.collect.Weather.search_s`"
 msgstr ""
@@ -163,4 +160,10 @@ msgstr "A list of the selected element (title, link, or description)  example:: 
 
 #~ msgid "title, link, description 중 선택한 요소의 리스트"
 #~ msgstr "A list of the selected element (title, link, or description)"
+
+#~ msgid "collect · Wikipedia, weather, news (internet)"
+#~ msgstr ""
+
+#~ msgid "대부분의 경우 '0'번 항목에 개요를 표시하고, 검색된 내용이 없을 경우 빈 리스트를 반환합니다."
+#~ msgstr "In most cases item '0' holds the summary. Returns an empty list if nothing is found."
 
