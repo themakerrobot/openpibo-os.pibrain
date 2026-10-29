@@ -1385,6 +1385,32 @@ Blockly.defineBlocksWithJsonArray(
       helpUrl: ''
     },
     {
+      type: 'speech_set_llm_model',      // 대화 모델 고르기 — 고르기만 한다. 뒤의 [대화 서버 시작하기] 가 고른 모델로 띄운다
+      message0: '%{BKY_SPEECH_SET_LLM_MODEL}',
+      args0:
+        [
+          {
+            "type": "field_image",
+            "src": "svg/database-solid.svg",
+            "width": 27,
+            "height": 27
+          },
+          {"type": "field_dropdown", "name": "model",
+            "options": [
+              [ '%{BKY_SPEECH_LLM_GEMMA3}', 'gemma3' ],
+              [ '%{BKY_SPEECH_LLM_THEMAKER_KO}', 'themaker-ko' ],
+              [ '%{BKY_SPEECH_LLM_THEMAKER_EN}', 'themaker-en' ],
+            ]
+          }
+        ],
+      nextStatement: true,
+      previousStatement: true,
+      inputsInline: true,
+      colour: color_type["speech"],
+      tooltip: '%{BKY_SPEECH_SET_LLM_MODEL_TOOLTIP}',
+      helpUrl: ''
+    },
+    {
       type: 'speech_start_llm',
       message0: '%{BKY_SPEECH_START_LLM}',
       args0:

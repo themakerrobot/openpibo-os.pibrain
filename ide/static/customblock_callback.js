@@ -431,6 +431,13 @@ Blockly.Python.forBlock['speech_etts_play'] = function(block) {
 
   return `speech.tts(text=${text}, filename='/home/pi/tmp.mp3', voice='espeak')\naudio.play('/home/pi/tmp.mp3', ${volume}, background=False)\n`;
 }
+Blockly.Python.forBlock['speech_set_llm_model'] = function(block) {
+  Blockly.Python.definitions_['from_speech_import_Dialog'] = 'from openpibo.speech import Dialog';
+  Blockly.Python.definitions_['assign_dialog'] = 'dialog = Dialog()';
+  const model = block.getFieldValue('model');
+
+  return `dialog.set_llm_model('${model}')\n`;
+}
 Blockly.Python.forBlock['speech_start_llm'] = function(block) {
   Blockly.Python.definitions_['from_speech_import_Dialog'] = 'from openpibo.speech import Dialog';
   Blockly.Python.definitions_['assign_dialog'] = 'dialog = Dialog()';

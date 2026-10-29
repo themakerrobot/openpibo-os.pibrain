@@ -39,6 +39,36 @@ SERVICE = 'llama-server.service'
 #: 학습 때의 시스템 글(학습 PC openpibo-chat 의 tools.SYSTEM 과 글자까지 같게). 모델을 새로 학습하면(모델 이름 등) 같이 바꿀 것
 SYSTEM = ("너는 초등학생부터 고등학생까지와 이야기하는 교육용 로봇 파이보야. "
           "친구처럼 친근한 존댓말로 짧게 말해. 이모지나 기호는 쓰지 말고, 정말 모르는 건 모른다고 해.")
+MODEL_LINK = '/home/pi/.model/llm/llm-model.gguf'   # IDE [대화] 는 늘 기본 모델(이 링크)로 뜬다
+
+
+def pick_system(link=MODEL_LINK):
+  """기본 링크가 가리키는 모델에 맞는 시스템 글. 더메이커(themaker-ko·en)는 None — 시스템 글을 보내지 않으면
+  GGUF 템플릿이 학습 때의 글(tools.SYSTEM / SYSTEM_EN)을 글자 그대로 넣는다(대화 모델 고르기 지시서 261029).
+  그 밖(Qwen 학습 판·젬마 등)은 위 SYSTEM"""
+  name = os.path.basename(os.path.realpath(link)).lower()
+  return None if 'themaker' in name else SYSTEM
+
+
+TOOL_TAG = '<tool_call>'
+
+
+def visible_text(reply):
+  """화면·소리로 낼 글. 더메이커(도구가 있는 모델)는 도구 목록 없이 물어도 도구 호출(<tool_call>…)로 답할 수 있다 —
+  이 화면은 글자 대화만 하므로 그 앞까지만 쓴다. 글 끝이 '<tool_call>' 의 앞부분이면(조각으로 오는 중) 잠깐 붙잡아 둔다"""
+  i = reply.find(TOOL_TAG)
+  if i >= 0:
+    return reply[:i], True
+  for k in range(len(TOOL_TAG) - 1, 0, -1):
+    if reply.endswith(TOOL_TAG[:k]):
+      return reply[:-k], False
+  return reply, False
+
+
+def with_system(msgs):
+  return ([{'role': 'system', 'content': SYSTEM}] if SYSTEM else []) + msgs
+
+
 #: 기억하는 주고받기. 넘으면 앞쪽 절반을 한꺼번에 버린다 — 한 번에 하나씩 밀어내면 앞부분이 매 차례 바뀌어
 #: 서버가 대화 전체를 다시 읽는다(파이보에서 읽기 초당 약 14토큰)
 MAX_TURNS = 6
@@ -161,7 +191,7 @@ def warm_loop():
         state['warm'], state['error'] = 'warming', ''
         t = time.time()
         try:
-          with post({'messages': [{'role': 'system', 'content': SYSTEM}, {'role': 'user', 'content': '안녕'}],
+          with post({'messages': with_system([{'role': 'user', 'content': '안녕'}]),
                      'max_tokens': 1}, timeout=900) as r:
             r.read()
           state['warm'], state['warm_sec'] = 'ready', round(time.time() - t, 1)
@@ -183,9 +213,9 @@ def chat_stream(text, speak_as, ctl, vol=80):
   ctl['cancel'] 이 서면 멈춘다(브라우저가 끊음 — [멈추기]·탭 닫기). 받던 연결은 chat_async 가 닫는다"""
   t0 = time.time()
   trim_history()
-  msgs = [{'role': 'system', 'content': SYSTEM}] + history + [{'role': 'user', 'content': text}]
+  msgs = with_system(history + [{'role': 'user', 'content': text}])
   body = {'messages': msgs, 'temperature': 0.6, 'max_tokens': MAX_TOKENS, 'stream': True}
-  reply, timings = '', {}
+  reply, timings, shown, tool = '', {}, '', False
   try:
     with post(body) as r:
       ctl['resp'] = r
@@ -206,9 +236,14 @@ def chat_stream(text, speak_as, ctl, vol=80):
         choices = obj.get('choices') or []
         delta = (choices[0].get('delta') or {}) if choices else {}
         piece = delta.get('content') or ''      # 생각(reasoning_content)은 보내지 않는다
-        if piece:
+        if delta.get('tool_calls'):             # 서버가 도구 호출을 따로 떼어 준 경우
+          tool = True
+        if piece and not tool:
           reply += piece
-          yield json.dumps({'d': piece}, ensure_ascii=False) + '\n'
+          vis, tool = visible_text(reply)
+          if len(vis) > len(shown):
+            yield json.dumps({'d': vis[len(shown):]}, ensure_ascii=False) + '\n'
+            shown = vis
   except (OSError, ValueError, AttributeError) as exc:
     if ctl['cancel']:                      # 우리가 닫은 것
       return
@@ -219,7 +254,11 @@ def chat_stream(text, speak_as, ctl, vol=80):
     return
   if ctl['cancel']:
     return                                 # 끊긴 대답은 기억하지 않는다
-  reply = reply.strip()
+  reply = visible_text(reply)[0].strip() if not tool else shown.strip()
+  if tool and not reply:                   # 도구만 부르려던 대답 — 기억하지 않고 안내만
+    print('[chat] 도구 호출로 답함 — 이 화면은 글자 대화만 한다', flush=True)
+    yield json.dumps({'error': 'chat_tool_only'}) + '\n'
+    return
   history.extend([{'role': 'user', 'content': text}, {'role': 'assistant', 'content': reply}])
   read_n, said_n = timings.get('prompt_n', 0), timings.get('predicted_n', 0)
   print(f"  (읽기 {read_n}토큰 {timings.get('prompt_ms', 0) / 1000:.1f}초, "
@@ -398,8 +437,10 @@ if __name__ == '__main__':
   LLM = args.llm.rstrip('/')
   # PiBrain 은 자기를 파이브레인이라고 해야 한다. 시스템 글은 파이보 학습 글이라(위 SYSTEM) PiBrain 에서만 이름을 바꾼다.
   # PiBrain 기기의 대화 모델은 아직 젬마라 학습 글과 맞출 일이 없다. 두 제품 공통 이름의 모델로 다시 학습하면 이 줄을 없앤다
-  if args.device == 'pibrain':
+  SYSTEM = pick_system()
+  if args.device == 'pibrain' and SYSTEM:
     SYSTEM = SYSTEM.replace('로봇 파이보야', '로봇 파이브레인이야')
+  print(f"[chat] 모델 {os.path.basename(os.path.realpath(MODEL_LINK))} · 시스템 글 {'학습 글(GGUF 템플릿)' if SYSTEM is None else '있음'}", flush=True)
   threading.Thread(target=warm_loop, daemon=True).start()
 
   import uvicorn

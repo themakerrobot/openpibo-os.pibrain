@@ -163,7 +163,7 @@ msgstr "Path to save the recorded audio (``wav``, 16kHz mono). If ``None``, it i
 msgid "말이 끝났다고 볼 조용한 시간(초)"
 msgstr "Silence time (seconds) after which speech is considered ended"
 
-msgid "Functions: :meth:`~openpibo.speech.Dialog.start_llm` :meth:`~openpibo.speech.Dialog.call_llm` :meth:`~openpibo.speech.Dialog.stop_llm`"
+msgid "Functions: :meth:`~openpibo.speech.Dialog.set_llm_model` :meth:`~openpibo.speech.Dialog.start_llm` :meth:`~openpibo.speech.Dialog.call_llm` :meth:`~openpibo.speech.Dialog.stop_llm`"
 msgstr ""
 
 msgid "기기 안에서 도는 LLM(llama-server)에 질문을 보내고 답을 받습니다."
@@ -171,6 +171,24 @@ msgstr "Sends questions to an LLM (llama-server) running on the device and recei
 
 msgid "n-gram 챗봇(``load`` ``reset`` ``ngram`` ``diff_ngram`` ``get_dialog``), 서버 기반 대화·분석(``get_dialog_dl`` ``nlp_dl``), 번역(``translate``)은 제거했습니다. ``dialog.csv`` 가 한글 전용이고, 나머지는 자사 서버·Google 에 의존했습니다."
 msgstr "The n-gram chatbot (``load`` ``reset`` ``ngram`` ``diff_ngram`` ``get_dialog``), server-based conversation/analysis (``get_dialog_dl`` ``nlp_dl``) and translation (``translate``) have been removed. ``dialog.csv`` was Korean-only, and the rest depended on our own servers or Google."
+
+msgid "고를 수 있는 대화 모델. 파일은 ``/home/pi/.model/llm/<이름>.gguf`` (이미지 만들 때 만든 별칭 링크)"
+msgstr "Chat models you can choose. The file is ``/home/pi/.model/llm/<name>.gguf`` (an alias link made with the system image)"
+
+msgid "대화 서버를 시작하기 전에 쓸 모델을 고릅니다. 고르지 않으면 기본 모델로 시작합니다. 고른 모델은 이 ``Dialog`` 안에서만 기억합니다(기기의 기본 모델은 바뀌지 않습니다). 이미 서버를 띄운 뒤에 고르면 고른 모델로 다시 띄웁니다."
+msgstr "Chooses the model to use before starting the chat server. Without it, the default model starts. The choice is kept only in this ``Dialog`` (the default model on the robot does not change). If the server is already running, it restarts with the chosen model."
+
+msgid "``gemma3`` (젬마3, 한국어·영어, 도구 없음) · ``themaker-ko`` (더메이커 한국어) · ``themaker-en`` (더메이커 영어). 더메이커 둘은 도구(불빛·보기·움직이기)가 있는 모델이지만 ``call_llm`` 은 글자 대화만 합니다 — 도구 호출로 답하면 그 부분은 빼고 글만 돌려줍니다"
+msgstr "``gemma3`` (Gemma3, Korean and English, no tools) · ``themaker-ko`` (TheMaker Korean) · ``themaker-en`` (TheMaker English). Both TheMaker models have tools (light, look, move), but ``call_llm`` is text only — if the model answers with a tool call, that part is removed and only the text is returned"
+
+msgid "Raises"
+msgstr ""
+
+msgid "모델 이름이 셋 중 하나가 아닐 때"
+msgstr "when the model name is not one of the three"
+
+msgid "그 모델 파일이 기기에 아직 없을 때"
+msgstr "when that model file is not on the robot yet"
 
 msgid "LLM 서비스를 시작하고, 모델이 다 올라와 대답할 수 있을 때까지 기다립니다. (Chat 모드)"
 msgstr "Starts the LLM service and waits until the model is loaded and can answer. (Chat mode)"
@@ -207,4 +225,7 @@ msgstr "The generated text, or the full API response JSON."
 
 msgid "LLM 서비스를 중지합니다."
 msgstr "Stops the LLM service."
+
+#~ msgid "Functions: :meth:`~openpibo.speech.Dialog.start_llm` :meth:`~openpibo.speech.Dialog.call_llm` :meth:`~openpibo.speech.Dialog.stop_llm`"
+#~ msgstr ""
 

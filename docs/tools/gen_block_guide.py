@@ -138,6 +138,18 @@ async def main():
     ko = LANG == 'ko'
     count = lambda c: ('만들면 생김' if ko else 'appear when you make one') if c.get('dynamic') or not c['rows'] else len(c['rows'])
 
+    # 블록 그림 아래 툴팁만으로 모자란 설명(블록 type → (한국어, 영어)). 생성할 때마다 다시 붙는다
+    EXTRA = {
+      'speech_set_llm_model': (
+        '모델은 셋입니다. **젬마3** 한국어·영어, 도구 없음 / **더메이커 한국어** 한국어 전용, 짧은 존댓말 / **더메이커 영어** 영어 전용. '
+        '더메이커 둘은 도구(불빛·보기·움직이기)를 배운 모델이지만 [대화하기] 블록은 글자 대화만 합니다 — 도구로 답하려 하면 그 부분은 빠지고 글만 옵니다. '
+        '이 블록은 고르기만 하므로 **[대화 서버 시작하기] 앞에** 놓습니다. 안 고르면 기본 모델로 시작하고, 고른 모델은 그 프로그램 안에서만 씁니다. '
+        '더메이커는 학습한 말투가 모델 안에 들어 있어 [대화하기]의 시스템 글을 **비워 두는 것**이 가장 자연스럽습니다. 램 때문에 모델은 한 번에 하나만 뜹니다.',
+        'There are three models: **Gemma3** (Korean and English, no tools), **TheMaker Korean** (Korean only, short and polite) and **TheMaker English** (English only). '
+        'Both TheMaker models learned tools (light, look, move), but the chat block is text only — if the model tries to answer with a tool, that part is dropped and you get only the text. '
+        'This block only chooses, so put it **before [Start LLM server]**. Without it the default model starts, and the choice lasts only in that program. '
+        'TheMaker already has its speaking style inside the model, so it works best with the system prompt of the chat block **left empty**. Only one model runs at a time.'),
+    }
     # 분류는 표로(261027v4 — 전엔 코드 블록 안 ├── 나무 그림이었다). 안내 상자에는 인터넷이 필요한 분류만 적는다
     if ko:
         L = ['# 블록 코딩', '',
@@ -169,6 +181,8 @@ async def main():
             alt = r['text'].replace('"', "'")
             L += [f'<img src="img/{r["type"]}.png" alt="{alt}" width="{r["w"]}" class="blk">', '',
                   (r['tip'] or '') + ((' *값을 돌려주는 블록*' if ko else ' *returns a value*') if r['value'] else ''), '']
+            if r['type'] in EXTRA:
+                L += [EXTRA[r['type']][0 if ko else 1], '']
     open(OUT, 'w', encoding='utf-8').write('\n'.join(L).rstrip() + '\n')
     print(OUT, sum(len(c['rows']) for c in custom), 'blocks in', len(custom), 'categories')
 
