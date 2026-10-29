@@ -553,7 +553,7 @@ app.add_middleware(SharedFonts)
 
 @app.get('/')
 async def index():
-  return FileResponse(os.path.join(BASE_DIR, 'templates', 'index.html'))
+  return FileResponse(os.path.join(BASE_DIR, 'templates', 'index.html'), headers={'Cache-Control': 'no-cache'})   # 업데이트 뒤 옛 화면이 남지 않게(261029)
 
 
 @app.get('/api/status')
