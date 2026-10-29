@@ -8,11 +8,11 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
   <link rel="stylesheet" href="../static/pibo-ui.css?ver=261027v4" />
-  <link rel="stylesheet" href="../static/chat.css?ver=261027v4" />
+  <link rel="stylesheet" href="../static/chat.css?ver=261029v2" />
   <link rel="shortcut icon" href="../static/icon.png?ver=240319v1" type="image/x-icon" />
   <!-- 문구는 IDE 의 ko2en.js 를 같이 쓴다(영문판 델타 파일을 늘리지 않으려고). IDE(80)는 늘 떠 있다 -->
   <script>(function () { var p = new URLSearchParams(location.search).get('ide') || 80;   /* ?ide= 는 시험용 */
-    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261029v1"><\/script>'); })();</script>
+    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261029v2"><\/script>'); })();</script>
 </head>
 
 <body class="pb pb-shell pb-refresh pb-v2">
@@ -34,6 +34,11 @@
   </header>
 
   <main class="chat">
+    <div class="chat-model">
+      <label class="chat-model__label" for="model_sel" data-key="chat_model"></label>
+      <select class="pb-field pb-field--sm" id="model_sel"></select>
+      <span class="chat-model__file" id="model_file"></span>
+    </div>
     <div class="chat-status" id="status" data-state="down">
       <i class="fa-solid fa-spinner fa-spin"></i><span id="status_txt"></span><span id="status_sec"></span>
       <button type="button" class="pb-btn pb-btn--sm" id="retry_bt" hidden><i class="fa-solid fa-rotate-right"></i><span data-key="chat_retry"></span></button>
@@ -41,7 +46,7 @@
     <div class="chat-log" id="log" aria-live="polite">
       <div class="chat-empty" id="empty">
         <i class="fa-solid fa-comments"></i>
-        <p data-key="chat_empty"></p>
+        <p id="empty_txt"></p>
         <div class="chat-try" id="try"></div>
       </div>
     </div>
@@ -59,6 +64,6 @@
   </main>
 
   <script src="../static/pibo-ui.js?ver=261027v4"></script>
-  <script src="../static/chat.js?ver=261027v4"></script>
+  <script src="../static/chat.js?ver=261029v2"></script>
 </body>
 </html>

@@ -440,17 +440,18 @@ Functions:
   """
 
   #: 고를 수 있는 대화 모델. 파일은 ``/home/pi/.model/llm/<이름>.gguf`` (이미지 만들 때 만든 별칭 링크)
-  LLM_MODELS = ('gemma3', 'themaker-ko', 'themaker-en')
+  LLM_MODELS = ('general', 'themaker-ko', 'themaker-en')
+  _LLM_ALIAS = {'gemma3': 'general'}   # 261029v1 블록이 쓰던 이름
   LLM_DIR = '/home/pi/.model/llm'
 
   def __init__(self):
-    self.llm_model = None     # set_llm_model 로 고른 모델. None 이면 기본 모델(llama-server.service · llm-model.gguf)
+    self.llm_model = None     # set_llm_model 로 고른 모델. None 이면 general(지금은 젬마3 — 예전 프로그램은 젬마 시절에 만든 것이라)
     self._llm_port = None     # 이 Dialog 가 띄운 서버의 포트(띄우기 전엔 None)
 
   def set_llm_model(self, model):
     """
-    대화 서버를 시작하기 전에 쓸 모델을 고릅니다. 고르지 않으면 기본 모델로 시작합니다.
-    고른 모델은 이 ``Dialog`` 안에서만 기억합니다(기기의 기본 모델은 바뀌지 않습니다).
+    대화 서버를 시작하기 전에 쓸 모델을 고릅니다. 고르지 않으면 ``general`` 로 시작합니다.
+    고른 모델은 이 ``Dialog`` 안에서만 기억합니다.
     이미 서버를 띄운 뒤에 고르면 고른 모델로 다시 띄웁니다.
 
     example::
@@ -458,14 +459,15 @@ Functions:
       dialog.set_llm_model('themaker-ko')
       dialog.start_llm()
 
-    :param str model: ``gemma3`` (젬마3, 한국어·영어, 도구 없음) · ``themaker-ko`` (더메이커 한국어) · ``themaker-en`` (더메이커 영어).
+    :param str model: ``general`` (일반 — 지금은 젬마3 1B, 한국어·영어, 도구 없음) · ``themaker-ko`` (더메이커 한국어) · ``themaker-en`` (더메이커 영어).
       더메이커 둘은 도구(불빛·보기·움직이기)가 있는 모델이지만 ``call_llm`` 은 글자 대화만 합니다 — 도구 호출로 답하면 그 부분은 빼고 글만 돌려줍니다
     :raises ValueError: 모델 이름이 셋 중 하나가 아닐 때
     :raises FileNotFoundError: 그 모델 파일이 기기에 아직 없을 때
     """
 
+    model = self._LLM_ALIAS.get(model, model)
     if model not in self.LLM_MODELS:
-      raise ValueError("모델 이름은 gemma3, themaker-ko, themaker-en 중 하나")
+      raise ValueError("모델 이름은 general, themaker-ko, themaker-en 중 하나")
     if not os.path.isfile(os.path.join(self.LLM_DIR, f'{model}.gguf')):    # 깨진 링크(파일이 아직 안 옴)도 여기서 걸린다
       raise FileNotFoundError(f"{model} 모델 파일이 아직 없어요")
     self.llm_model = model
@@ -486,13 +488,10 @@ Functions:
     :returns: 준비되면 ``True``, ``timeout`` 안에 준비되지 않으면 ``False``
     """
 
-    if self.llm_model is None:
-      os.system(f"systemctl start llama-server")
-    else:
-      # 고른 모델은 템플릿 유닛 llama-server@<이름> 으로 띄운다. 램 2GB 라 기본 서버와 다른 모델을 먼저 다 끈다
-      # (템플릿끼리는 서로 Conflicts 가 아니다)
-      subprocess.run(['systemctl', 'stop', 'llama-server', 'llama-server@*'])
-      subprocess.run(['systemctl', 'start', f'llama-server@{self.llm_model}'])
+    # 모델은 템플릿 유닛 llama-server@<이름> 으로 띄운다(고르지 않았으면 general = 젬마3 — 예전 프로그램은 젬마 시절에 만든 것이라, 261029).
+    # 램 2GB 라 기본 서버와 다른 모델을 먼저 다 끈다(템플릿끼리는 서로 Conflicts 가 아니다)
+    subprocess.run(['systemctl', 'stop', 'llama-server', 'llama-server@*'])
+    subprocess.run(['systemctl', 'start', f'llama-server@{self.llm_model or "general"}'])
     self._llm_port = port
     # 모델을 읽는 동안 /health 는 503 이다. 200 이 될 때까지 기다린다
     end = time.time() + timeout

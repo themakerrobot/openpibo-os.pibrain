@@ -10,10 +10,14 @@ llama-server(50020) 의 대화 모델과 글자로 이야기하는 웹 화면이
 매번 도구 목록 약 1천 토큰을 붙여서 파이보에서 15~44초가 걸렸다(차례마다 늘었다). 지금은 한 차례에 한 번만 묻고,
 요청 모양이 늘 같아(시스템 글 + 대화가 뒤에만 붙음) 서버가 앞부분을 다시 쓰고 새로 한 말만 읽는다.
 
+**모델은 화면에서 고른다(261029, 사용자 결정).** 대화 웹은 모델 없이 뜨고, 화면에서 일반(general, 지금 젬마3)·더메이커 KO·더메이커 EN 중
+하나를 고르면 그때 템플릿 유닛 llama-server@<이름>(/home/pi/.model/llm/<이름>.gguf)을 띄운다. 램 2GB 라 늘 하나만.
+기본 서비스(llama-server.service · llm-model.gguf 링크)는 쓰지 않는다.
+
 대답을 로봇이 소리로도 말할 수 있다(화면의 [소리로 말하기] 체크, 261026). 기기 안 TTS(SpeechOnDevice, Supertonic 3 int8,
 목소리 m1~m5·f1~f5, lang='na' 자동)로 만들고 Audio.play(볼륨 0~100)로 튼다. 목소리 모델은 체크를 켤 때 한 번 올린다(약 330MB, 몇 초).
 
-  python3 run_chat.py [--port 50030] [--llm http://127.0.0.1:50020]
+  python3 run_chat.py [--port 50030] [--llm http://127.0.0.1:50020] [--model-dir /home/pi/.model/llm]
 """
 import os
 import re
@@ -34,20 +38,31 @@ from fastapi.middleware.gzip import GZipMiddleware
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LLM = 'http://127.0.0.1:50020'
-SERVICE = 'llama-server.service'
+MODELS = ('general', 'themaker-ko', 'themaker-en')  # openpibo Dialog.LLM_MODELS 와 같게. general 은 지금 젬마3
+MODEL_DIR = '/home/pi/.model/llm'                   # <이름>.gguf 별칭 링크(이미지 작업)
 
-#: 학습 때의 시스템 글(학습 PC openpibo-chat 의 tools.SYSTEM 과 글자까지 같게). 모델을 새로 학습하면(모델 이름 등) 같이 바꿀 것
+#: 일반(젬마3)에 보내는 시스템 글(예전 Qwen 학습 판의 글을 그대로 둔다). 더메이커는 보내지 않는다 — GGUF 템플릿이 학습 글을 넣는다
 SYSTEM = ("너는 초등학생부터 고등학생까지와 이야기하는 교육용 로봇 파이보야. "
           "친구처럼 친근한 존댓말로 짧게 말해. 이모지나 기호는 쓰지 말고, 정말 모르는 건 모른다고 해.")
-MODEL_LINK = '/home/pi/.model/llm/llm-model.gguf'   # IDE [대화] 는 늘 기본 모델(이 링크)로 뜬다
+DEVICE_SYSTEM = SYSTEM   # 기기 이름을 맞춘 시스템 글(PiBrain 은 __main__ 에서 바꾼다)
 
 
-def pick_system(link=MODEL_LINK):
-  """기본 링크가 가리키는 모델에 맞는 시스템 글. 더메이커(themaker-ko·en)는 None — 시스템 글을 보내지 않으면
+def model_file(model):
+  return os.path.join(MODEL_DIR, f'{model}.gguf')
+
+
+def pick_system(model):
+  """고른 모델에 맞는 시스템 글. 실제 파일(별칭 링크가 가리키는 것)이 더메이커면 None — 시스템 글을 보내지 않으면
   GGUF 템플릿이 학습 때의 글(tools.SYSTEM / SYSTEM_EN)을 글자 그대로 넣는다(대화 모델 고르기 지시서 261029).
-  그 밖(Qwen 학습 판·젬마 등)은 위 SYSTEM"""
-  name = os.path.basename(os.path.realpath(link)).lower()
-  return None if 'themaker' in name else SYSTEM
+  그 밖(일반 = 젬마3)은 DEVICE_SYSTEM. 이름이 아니라 파일로 가르므로 general 링크를 다른 모델로 바꿔도 맞는다"""
+  if not model:
+    return DEVICE_SYSTEM
+  name = os.path.basename(os.path.realpath(model_file(model))).lower()
+  return None if model.startswith('themaker') or 'themaker' in name else DEVICE_SYSTEM
+
+
+def unit(model):
+  return f'llama-server@{model}'
 
 
 TOOL_TAG = '<tool_call>'
@@ -65,10 +80,6 @@ def visible_text(reply):
   return reply, False
 
 
-def with_system(msgs):
-  return ([{'role': 'system', 'content': SYSTEM}] if SYSTEM else []) + msgs
-
-
 #: 기억하는 주고받기. 넘으면 앞쪽 절반을 한꺼번에 버린다 — 한 번에 하나씩 밀어내면 앞부분이 매 차례 바뀌어
 #: 서버가 대화 전체를 다시 읽는다(파이보에서 읽기 초당 약 14토큰)
 MAX_TURNS = 6
@@ -77,13 +88,16 @@ MAX_TOKENS = 200
 
 # ── 상태 ──────────────────────────────────────────────────────────────────
 state = {
-  'llm': 'down',        # down / loading / ready — llama-server /health, failed — 서비스가 죽음
+  'model': None,        # 고른 모델. None 이면 아직 안 고름(서버 없음)
+  'llm': 'none',        # none(안 고름) / down / loading / ready — llama-server /health, failed — 서비스가 죽음
   'warm': 'idle',       # idle / warming / ready / error — 시스템 글 미리 읽기
   'warm_sec': 0,
   'error': '',
 }
 history = []          # [{'role': 'user'|'assistant', 'content': ...}, ...]
 turn_lock = threading.Lock()
+model_lock = threading.Lock()          # 모델 바꾸기는 한 번에 하나
+_switching = [False]                   # 바꾸는 중엔 warm_loop 가 옛 서버를 보고 준비됐다고 하지 않게
 
 
 # ── 소리로 말하기 ─────────────────────────────────────────────────────────
@@ -162,12 +176,39 @@ def llm_health():
 
 
 def service_failed():
-  """llama-server 서비스가 실패로 멈췄는지. 50020 을 다른 서버가 쥐고 있으면 켜자마자 죽고(18ms),
-  systemd 가 5번 다시 켜 보다 포기한다. 그러면 기다려도 안 뜨므로 화면에 알린다. systemctl 이 없으면(PC) False"""
+  """고른 모델의 서비스가 실패로 멈췄는지. 50020 을 다른 서버가 쥐고 있거나 모델 파일을 못 읽으면 켜자마자 죽는다
+  (템플릿 유닛은 Restart=no). 그러면 기다려도 안 뜨므로 화면에 알린다. systemctl 이 없으면(PC) False"""
+  if not state['model']:
+    return False
   try:
-    return subprocess.run(['systemctl', 'is-failed', '--quiet', SERVICE], timeout=5).returncode == 0
+    return subprocess.run(['systemctl', 'is-failed', '--quiet', unit(state['model'])], timeout=5).returncode == 0
   except (OSError, subprocess.SubprocessError):
     return False
+
+
+def systemctl(*args, timeout=60):
+  """systemctl 이 없으면(PC 미리보기) 조용히 넘어간다"""
+  try:
+    subprocess.run(['systemctl', *args], timeout=timeout)
+  except (OSError, subprocess.SubprocessError) as exc:
+    print(f'[chat] systemctl {" ".join(args)}: {exc}', flush=True)
+
+
+def switch_model(model):
+  """고른 모델로 서버를 바꾼다(스레드). 램 2GB 라 기본 서버·다른 모델을 먼저 다 끈다 — 템플릿끼리는 Conflicts 가 아니다"""
+  with model_lock:
+    _switching[0] = True
+    try:
+      with turn_lock:                      # 받던 대답이 있으면 끝난 뒤에
+        voice_stop()
+        history.clear()
+        state.update(model=model, llm='down', warm='idle', error='')
+      systemctl('stop', 'llama-server', 'llama-server@*')
+      systemctl('reset-failed', unit(model))
+      systemctl('start', '--no-block', unit(model))
+    finally:
+      _switching[0] = False
+    print(f"[chat] 모델 {model} · 시스템 글 {'학습 글(GGUF 템플릿)' if pick_system(model) is None else '있음'}", flush=True)
 
 
 def post(body, timeout=300):
@@ -179,6 +220,9 @@ def post(body, timeout=300):
 def warm_loop():
   """서버가 뜨기를 기다렸다가 시스템 글을 미리 읽힌다(짧아서 몇 초). 서버가 다시 시작되면 다시 읽힌다"""
   while True:
+    if not state['model'] or _switching[0]:
+      time.sleep(1)
+      continue
     h = llm_health()
     state['llm'] = 'failed' if h == 'down' and service_failed() else h
     if h != 'ready':
@@ -199,6 +243,11 @@ def warm_loop():
         except OSError as exc:
           state['warm'], state['error'] = 'error', str(exc)
     time.sleep(3)
+
+
+def with_system(msgs):
+  sysm = pick_system(state['model'] or '')
+  return ([{'role': 'system', 'content': sysm}] if sysm else []) + msgs
 
 
 def trim_history():
@@ -368,6 +417,32 @@ async def status():
   return dict(state, busy=turn_lock.locked(), voice=voice['state'], speaking=_speaking[0])
 
 
+@app.get('/api/models')
+async def models():
+  """고를 수 있는 모델. 파일이 없으면(깨진 링크 포함 — 아직 안 온 모델) have=False"""
+  out = []
+  for m in MODELS:
+    f = model_file(m)
+    have = os.path.isfile(f)
+    real = os.path.realpath(f)
+    out.append({'name': m, 'have': have, 'file': os.path.basename(real)[:-5] if have and real.endswith('.gguf') else '',
+                'mb': round(os.path.getsize(real) / 2 ** 20) if have else 0})
+  return {'models': out, 'model': state['model']}
+
+
+@app.post('/api/model')
+async def choose_model(body: dict = Body(...)):
+  model = body.get('model')
+  if model not in MODELS:
+    return JSONResponse({'error': 'chat_err_model'}, status_code=400)
+  if not os.path.isfile(model_file(model)):
+    return JSONResponse({'error': 'chat_err_model_file'}, status_code=404)
+  if model == state['model'] and state['llm'] != 'failed':
+    return {'model': model}
+  threading.Thread(target=switch_model, args=(model,), daemon=True).start()
+  return {'model': model}
+
+
 @app.post('/api/chat')
 async def chat(body: dict = Body(...)):
   text = str(body.get('text', '')).strip()[:500]
@@ -396,13 +471,10 @@ async def chat(body: dict = Body(...)):
 
 @app.post('/api/llm/restart')
 async def llm_restart():
-  """[다시 켜기] — 실패로 멈춘 서비스를 다시 켠다. 50020 을 쥔 다른 서버가 있으면 또 실패한다"""
-  try:
-    subprocess.run(['systemctl', 'reset-failed', SERVICE], timeout=10)
-    subprocess.run(['systemctl', 'start', SERVICE], timeout=30)
-  except (OSError, subprocess.SubprocessError) as exc:
-    return JSONResponse({'ok': False, 'error': str(exc)}, status_code=500)
-  state['llm'] = 'down'
+  """[다시 켜기] — 실패로 멈춘 고른 모델을 다시 켠다. 50020 을 쥔 다른 서버가 있으면 또 실패한다"""
+  if not state['model']:
+    return JSONResponse({'ok': False, 'error': 'chat_err_model'}, status_code=400)
+  threading.Thread(target=switch_model, args=(state['model'],), daemon=True).start()
   return {'ok': True}
 
 
@@ -432,15 +504,15 @@ if __name__ == '__main__':
   p = argparse.ArgumentParser()
   p.add_argument('--port', type=int, default=50030)
   p.add_argument('--llm', default=LLM)
+  p.add_argument('--model-dir', default=MODEL_DIR, help='<이름>.gguf 가 있는 곳(시험용)')
   p.add_argument('--device', default='pibo', help='pibo / pibrain — 시스템 글의 로봇 이름만 바꾼다(IDE 가 넘긴다)')
   args = p.parse_args()
   LLM = args.llm.rstrip('/')
-  # PiBrain 은 자기를 파이브레인이라고 해야 한다. 시스템 글은 파이보 학습 글이라(위 SYSTEM) PiBrain 에서만 이름을 바꾼다.
-  # PiBrain 기기의 대화 모델은 아직 젬마라 학습 글과 맞출 일이 없다. 두 제품 공통 이름의 모델로 다시 학습하면 이 줄을 없앤다
-  SYSTEM = pick_system()
-  if args.device == 'pibrain' and SYSTEM:
-    SYSTEM = SYSTEM.replace('로봇 파이보야', '로봇 파이브레인이야')
-  print(f"[chat] 모델 {os.path.basename(os.path.realpath(MODEL_LINK))} · 시스템 글 {'학습 글(GGUF 템플릿)' if SYSTEM is None else '있음'}", flush=True)
+  MODEL_DIR = args.model_dir
+  # PiBrain 은 자기를 파이브레인이라고 해야 한다. 젬마3 에 보내는 시스템 글은 파이보 글이라 PiBrain 에서만 이름을 바꾼다
+  # (더메이커는 시스템 글을 안 보낸다)
+  if args.device == 'pibrain':
+    DEVICE_SYSTEM = SYSTEM.replace('로봇 파이보야', '로봇 파이브레인이야')
   threading.Thread(target=warm_loop, daemon=True).start()
 
   import uvicorn

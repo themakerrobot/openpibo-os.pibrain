@@ -1397,7 +1397,7 @@ Blockly.defineBlocksWithJsonArray(
           },
           {"type": "field_dropdown", "name": "model",
             "options": [
-              [ '%{BKY_SPEECH_LLM_GEMMA3}', 'gemma3' ],
+              [ '%{BKY_SPEECH_LLM_GENERAL}', 'general' ],
               [ '%{BKY_SPEECH_LLM_THEMAKER_KO}', 'themaker-ko' ],
               [ '%{BKY_SPEECH_LLM_THEMAKER_EN}', 'themaker-en' ],
             ]

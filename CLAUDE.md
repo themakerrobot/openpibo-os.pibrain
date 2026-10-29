@@ -199,33 +199,59 @@ span 이 날아가면 시리얼이 영영 안 돌아온다.
 
 ---
 
-## 대화 모델 고르기 (261029) — 블록 [대화 모델 고르기]
+## 대화 모델 고르기 (261029) — 블록 [대화 모델 고르기] · 대화 화면
 
-블록 코딩에서 **젬마3 / 더메이커 한국어 / 더메이커 영어** 중 하나를 골라 띄운다(지시서 261029, 사용자 결정). 램 2GB 라 한 번에 하나.
+**일반 / 더메이커 KO / 더메이커 EN**(`general` · `themaker-ko` · `themaker-en`) 중 하나를 골라 띄운다(지시서 261029, 사용자 결정). 램 2GB 라 한 번에 하나.
+모든 경로가 **템플릿 유닛 `llama-server@<이름>`** 으로 띄운다. 기본 서비스 `llama-server.service`·링크 `llm-model.gguf` 는 **아무도 안 쓴다**(지우거나 disable 하지는 않는다 — 지시서).
+
+| 경로 | 띄우는 모델 |
+|---|---|
+| IDE [대화] | **켤 때는 아무것도 안 띄운다**(떠 있던 것도 끈다). 대화 화면 위 [대화 모델] select 에서 고른 것(사용자, 261029) |
+| 블록, [대화 모델 고르기] 있음 | 고른 것 |
+| 블록, 고르지 않음(예전 프로그램) | **`general`(지금 젬마3)** — 예전 프로그램은 젬마 시절(261026 전)에 만든 것이라(사용자, 261029) |
 
 ```
-[대화 모델 고르기 (더메이커 한국어 ▼)]   ← speech_set_llm_model → dialog.set_llm_model('themaker-ko')  (고르기만)
-[대화 서버 시작하기(LLM)]                ← 예전 블록 그대로 — 고른 모델이 있으면 그 모델로 띄운다
+[대화 모델 고르기 (더메이커 KO ▼)]   ← speech_set_llm_model → dialog.set_llm_model('themaker-ko')  (고르기만)
+[대화 서버 시작하기(LLM)]                ← 예전 블록 그대로 — 고른 모델, 안 골랐으면 general
 ```
 
-| 이름 | 별칭 링크(`/home/pi/.model/llm/`) → 파일 | 도구 | 시스템 글 |
+| 이름(표시) | 별칭 링크(`/home/pi/.model/llm/`) → 파일 | 도구 | 시스템 글 |
 |---|---|---|---|
-| `gemma3` | `gemma3.gguf` → `gemma-3-1b-it-Q4_K_M.gguf`(약 769MB) | **없음** | 블록이 준 것 |
-| `themaker-ko` | `themaker-ko.gguf` → `themaker-0.8b-Q4_K_M.gguf`(322MB) | **있음**(불빛·보기·움직이기) | 비우면 GGUF 템플릿이 학습 글을 넣는다 |
-| `themaker-en` | `themaker-en.gguf` → `themaker-en-0.8b-Q4_K_M.gguf`(PC 학습 중 — 오기 전엔 깨진 링크) | **있음** | 〃 |
+| `general`(일반) | `general.gguf` → `gemma-3-1b-it-Q4_K_M.gguf`(806,058,272 B) | **없음** | 블록이 준 것 / 대화 화면은 `SYSTEM` |
+| `themaker-ko`(더메이커 KO) | `themaker-ko.gguf` → `themaker-0.8b-Q4_K_M.gguf`(337,040,032 B) | **있음**(불빛·보기·움직이기) | 안 보낸다 — GGUF 템플릿이 학습 글을 넣는다 |
+| `themaker-en`(더메이커 EN) | `themaker-en.gguf` → `themaker-en-0.8b-Q4_K_M.gguf`(PC 학습 중 — 오기 전엔 깨진 링크) | **있음** | 〃 |
 
 - `openpibo/speech.py` `Dialog`: `set_llm_model(model)`(이름이 셋 밖이면 `ValueError`, 파일이 없으면(깨진 링크 포함) `FileNotFoundError`, 이미 띄웠으면 다시 띄움).
-  `start_llm()` 은 **고르지 않았으면 예전과 똑같이** `systemctl start llama-server`, 골랐으면 `systemctl stop llama-server 'llama-server@*'` → `systemctl start llama-server@<이름>`.
-  `stop_llm()` 은 둘 다 끈다. 고른 모델은 그 `Dialog` 안에서만 기억한다 — **링크·서비스 기본값은 안 바꾼다**
-- **템플릿 유닛 `llama-server@.service`**(리포 밖, 이미지 작업): `llama-server.service` 를 그대로 베끼고 `-m /home/pi/.model/llm/%i.gguf`, `Conflicts=llama-server.service`, `Restart=no`, enable 안 함.
-  템플릿끼리는 서로 끄지 않으므로 켜기 전에 늘 다 끈다
-- **끄는 곳(`ide/run_ide.py`)은 전부 `llama-server.service` 와 `llama-server@*` 를 같이 끈다** — `/tools` `/classifier` `/hwtest` `/kids` 켜기, `/llm?enable=off`, 코드 실행(`execute`·`executeb`). [정지] 는 `pkill llama-server` 라 둘 다 끝난다.
-  `/llm?enable=on`(IDE [대화])은 `llama-server@*` 를 먼저 끄고 **늘 기본 모델**(`llama-server.service` · `llm-model.gguf`)로 띄운다. 새로 끄는 곳을 만들면 `@*` 를 빠뜨리지 말 것(모델 둘이 램에 올라간다)
-- **도구**: 더메이커는 도구가 있는 모델이라 도구 목록 없이 물어도 도구 호출(`<tool_call>`·`tool_calls`)로 답할 수 있다(실기기 확인 필요). 블록 `call_llm` 은 더메이커를 골랐을 때만 그 부분을 빼고 글만 돌려주고(`_without_tool_call`),
-  대화 웹은 화면·소리에서 뺀다(도구만 부르려던 대답이면 `chat_tool_only` 안내, 기억하지 않음). 블록에서 도구를 실제로 쓰는 것은 이번 범위 밖(261026 도구 판이 한 차례 15→44초로 느려졌던 기록 참고)
-- **대화 웹 시스템 글**: `pick_system()` 이 `llm-model.gguf` 의 실제 파일 이름(realpath)을 보고, `themaker` 면 시스템 글을 **안 보낸다**(GGUF 템플릿이 학습 글을 글자 그대로 넣음 — 학습 PC 의 `tools.SYSTEM`/`SYSTEM_EN` 을 리포에 베끼지 않아도 같다), 그 밖은 `SYSTEM`
+  `gemma3`(261029v1 블록 값)는 `general` 로 받는다. `start_llm()` 은 `systemctl stop llama-server 'llama-server@*'` → `systemctl start llama-server@<고른 것 또는 general>`. `stop_llm()` 은 둘 다 끈다. 고른 모델은 그 `Dialog` 안에서만 기억한다
+- **대화 화면(`chat/`)**: 상단 [대화 모델] select 하나(`#model_sel`, 처음엔 '고르세요') + 옆에 고른 것의 실제 파일·크기(`#model_file`, 예 `themaker-0.8b-Q4_K_M · 321MB`). 세 개를 늘어놓지 말 것(사용자).
+  파일이 없는 모델은 '(없음)' 으로 못 고른다(`/api/models` 의 `have`·`file`·`mb`). 고르면 `POST /api/model` → `switch_model()`(스레드)이
+  대답 중이면 끝난 뒤 기록·말하기를 비우고, 다 끈 다음 `llama-server@<이름>` 을 `--no-block` 으로 켠다. 준비는 예전처럼 `warm_loop` 가 `/health` → 미리 읽기. 바꾸는 동안(`_switching`)은 옛 서버를 보지 않는다.
+  고르기 전엔 상태 줄을 숨기고 빈 화면이 '위에서 대화 모델을 골라 주세요.'(`chat_pick_model`). 새로 고쳐도 서버의 `model` 로 선택이 남는다. [다시 켜기] 는 같은 모델로 `switch_model`.
+  시스템 글은 `pick_system(모델)` — 이름이나 **링크가 가리키는 실제 파일 이름**에 `themaker` 가 있으면 None, 아니면 `DEVICE_SYSTEM`(PiBrain 은 이름만 바꿈). general 링크를 다른 모델로 바꿔도 맞게. `--model-dir` 은 시험용(미리보기는 가짜 파일)
+- **템플릿 유닛 `llama-server@.service`**(리포 밖, 이미지 작업 — IMAGE.md): `llama-server.service` 와 같고 `-m /home/pi/.model/llm/%i.gguf`, `Conflicts=llama-server.service`, `Restart=no`, enable 안 함.
+  템플릿끼리는 서로 끄지 않으므로 켜기 전에 늘 다 끈다. **이 코드를 기기에 올리기 전에 유닛·별칭 링크가 있어야 한다** — 없으면 대화 화면도 블록도 모델을 못 띄운다
+- **끄는 곳(`ide/run_ide.py`)은 전부 `llama-server.service` 와 `llama-server@*` 를 같이 끈다** — `/tools` `/classifier` `/hwtest` `/kids` `/llm` 켜기·끄기, 코드 실행(`execute`·`executeb`). [정지] 는 `pkill llama-server`.
+  새로 끄는 곳을 만들면 `@*` 를 빠뜨리지 말 것(모델 둘이 램에 올라간다)
+- **도구**: 더메이커는 도구 목록 없이 물어도 도구 호출(`<tool_call>`·`tool_calls`)로 답할 수 있다. 블록 `call_llm` 은 더메이커를 골랐을 때만 그 부분을 빼고 글만 돌려주고(`_without_tool_call`),
+  대화 웹은 화면·소리에서 뺀다(도구만 부르려던 대답이면 `chat_tool_only` 안내, 기억하지 않음). 261029 실측 질문 3개에서는 도구 호출이 안 나왔다. 블록에서 도구를 실제로 쓰는 것은 범위 밖
 - 문서: 블록 가이드 설명은 `docs/tools/gen_block_guide.py` 의 `EXTRA`(생성할 때마다 붙음). `speech.po` 영문 번역
-- **261029 파이보 기기 `ls`: 기본 링크 `llm-model.gguf` 가 지운 파일(`pibo-qwen3.5-0.8b-school-small-Q4_K_M.gguf`)을 가리켜 깨져 있었다** — 기본 서버(IDE [대화]·예전 블록)가 못 뜬다. 링크를 `themaker-0.8b-Q4_K_M.gguf` 로 바꿔야 한다(이미지 작업, 사용자 확인 후)
+- 확인(컨테이너, 가짜 llama-server): 대화 화면 15/15 — select·없는 모델 못 고름·실제 파일 표시·고르기 전 보내기 막힘·고르면 준비·도구 호출 걸러짐·바꾸면 기록 비움·새로 고침 뒤 선택 유지·영문·390/768 넘침 0·pageerror 0.
+  **실기기로는 아직 안 봤다**(systemctl 로 바꾸는 부분)
+
+### 실측 (261029, llama.cpp b11889 · `--jinja` · 서비스와 같은 옵션, 손으로 띄움)
+
+| | 파이보(cd488e95, RAM 1796MB) | PiBrain(fc1a8f31, RAM 7.7GB) |
+|---|---|---|
+| gemma3 RSS(올린 뒤 → 대답 뒤) | 855 → 862MB | 856 → 862MB |
+| gemma3 읽기 / 생성 | 11.4~11.7 / 4.1~4.2 토큰/s | 11.6~12.1 / 4.5~4.6 토큰/s |
+| gemma3 한 대답(약 40토큰) | 11~12초 | 8~10초 |
+| themaker-0.8b RSS | 405 → 456MB | 405 → 456MB |
+| themaker-0.8b 읽기 / 생성 | 17.1~17.9 / 6.0~6.1 토큰/s | 17.5~18.5 / 7.0 토큰/s |
+| themaker-0.8b 한 대답(약 20토큰) | 5~9초(첫 질문은 학습 글 약 100토큰을 읽어 9초) | 3.6~8.3초 |
+
+- **젬마는 새 빌드에서 그대로 돈다**(한·영, 시스템 글 있을 때도 오류 없음 — 젬마 템플릿은 system 역할이 없어 `--jinja` 가 첫 사용자 말에 붙인다). 자기를 '구글 딥마인드 모델'이라 소개한다(시스템 글 없을 때)
+- 파이보 젬마 로그에 `W common_fit_params: failed to fit params to free device memory: ... abort` 가 한 줄 나왔다. **경고이고 서버는 정상**이었다 — 새 빌드가 '자동 맞춤'을 하려다 `free`(페이지 캐시 제외, 약 100MB)만 보고 포기한 것으로 보인다(available 은 1.4GB). 자동 맞춤을 끄는 옵션 이름은 **확인 필요**
+- 두 모델 모두 사실 질문(하늘이 왜 파래?)에 틀린 답을 했다 — 1B 이하 모델의 한계. TTS·STT 를 같이 올린 메모리·시간은 아직 안 쟀다(젬마는 '음성 인식 · TTS · 메모리' 절대로 여유가 거의 없다)
 
 ## 대화 웹 (261026) — IDE [대화]
 
