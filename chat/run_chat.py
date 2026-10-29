@@ -120,6 +120,8 @@ robot = None             # __main__ 에서 만든다(파이보 Pibo / PiBrain)
 #: 원본 춤 dance1~5 는 28~49초라 그동안 대답이 안 떠서 짧은 동작으로. greeting 은 한 팔 들고 손 흔들기, wave* 는 발·손을 흔드는 몸짓
 MOTIONS = {'인사': ['greeting'], '손흔들기': ['speak_r2', 'speak_l2'],
            '춤': ['wave1', 'wave2', 'wave3', 'wave4', 'wave5', 'wave6']}
+#: 끝나고 처음 자세(stop, 약 1초)로 돌아갈 것 — greeting·speak_*·wave* 는 팔을 든 채 끝난다(사용자, 261029)
+HOME_AFTER = ('인사', '손흔들기', '춤')
 _tool_log = []           # 이번 차례에 실행한 도구 [[이름, 값, 성공]] — 화면에 작게 보인다
 
 
@@ -147,7 +149,10 @@ def make_robot(device, fake=False):
       if not self.can_move:
         return super().move(action)
       if not self.fake:
-        self.part('motion').set_motion(random.choice(MOTIONS.get(action) or tools.ACTIONS[action]))
+        motion = self.part('motion')
+        motion.set_motion(random.choice(MOTIONS.get(action) or tools.ACTIONS[action]))
+        if action in HOME_AFTER and not motion.stopped:    # "멈춰"(Motion.stop)로 끊겼으면 그대로
+          motion.set_motion('stop')
 
     def stop(self):
       if self.can_move:
