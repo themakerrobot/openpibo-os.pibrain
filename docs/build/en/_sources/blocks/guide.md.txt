@@ -416,17 +416,17 @@ Obtain the current time. *returns a value*
 
 Verify if an element is included in a list or array. *returns a value*
 
-<img src="img/utils_dict_get.png" alt="Get value of key ([Key name]) from dictionary ([item ▾])" width="639" class="blk">
+<img src="img/utils_dict_get.png" alt="Get value of key ([Key name]) from dictionary ([my_dict ▾])" width="670" class="blk">
 
 Retrieve the value associated with a specific key in a dictionary. *returns a value*
 
-<img src="img/utils_dict_set.png" alt="Append { ([Key name]) : ( ) } to dictionary ([item ▾])" width="631" class="blk">
+<img src="img/utils_dict_set.png" alt="Append { ([Key name]) : ( ) } to dictionary ([my_dict ▾])" width="661" class="blk">
 
 Add a new key-value pair to an existing dictionary.
 
-<img src="img/utils_dict_create.png" alt="Create empty dictionary" width="297" class="blk">
+<img src="img/variables_set.png" alt="set [my_dict ▾] to (Create empty dictionary)" width="496" class="blk">
 
-Generate a new empty dictionary. *returns a value*
+Sets this variable to be equal to the input.
 
 <img src="img/utils_array_slice_set.png" alt="set array ([item ▾]) [ ([0]) : ([0]) , ([0]) : ([0]) ] to ([item ▾])" width="621" class="blk">
 

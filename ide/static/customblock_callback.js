@@ -957,7 +957,7 @@ Blockly.Python.forBlock['utils_dict_get'] = function(block) {
 Blockly.Python.forBlock['utils_dict_set'] = function(block) {
   const dictionary = Blockly.Python.valueToCode(block, 'dictionary', Blockly.Python.ORDER_ATOMIC);
   const keyname = Blockly.Python.valueToCode(block, 'keyname', Blockly.Python.ORDER_ATOMIC);
-  const value = Blockly.Python.valueToCode(block, 'value', Blockly.Python.ORDER_ATOMIC);
+  const value = Blockly.Python.valueToCode(block, 'value', Blockly.Python.ORDER_ATOMIC) || 'None';   // 값 칸이 비면 'x[k] =' 문법 오류였다
 
   return `${dictionary}[${keyname}] = ${value}\n`;
 }
