@@ -69,10 +69,23 @@
     speakingTag = null;
     showHush(false);
   }
+  // 더메이커가 실행한 도구(261029): 불빛 · 빨강 / 보기 / 움직이기 · 춤 / 멈춤. 값은 모델이 고르는 한국어 이름이라 영문 화면에선 바꿔 보인다
+  var TOOL_EN = { '빨강': 'red', '주황': 'orange', '노랑': 'yellow', '초록': 'green', '파랑': 'blue', '하늘': 'sky blue',
+    '보라': 'purple', '분홍': 'pink', '하양': 'white', '끄기': 'off', '인사': 'greeting', '춤': 'dance', '손흔들기': 'wave',
+    '박수': 'clap', '하이파이브': 'high five', '끄덕이기': 'nod', '도리도리': 'head shake', '앞으로': 'forward', '뒤로': 'backward',
+    '왼쪽': 'left', '오른쪽': 'right' };
+  function toolTag(t) {
+    var s = document.createElement('span');
+    s.className = 'msg__tool' + (t[2] ? '' : ' is-fail');
+    var v = t[1] ? ' ' + ((lang === 'en' && TOOL_EN[t[1]]) || t[1]) : '';
+    s.textContent = ' · ' + tr('chat_tool_' + t[0]) + v + (t[2] ? '' : ' ✕');
+    return s;
+  }
   function meta(row, d) {
     var m = document.createElement('div');
     m.className = 'msg__meta';
     m.textContent = d.sec + tr('chat_sec');
+    (d.tools || []).forEach(function (t) { m.appendChild(toolTag(t)); });
     if (d.speak) {
       clearSpeaking();
       speakingTag = document.createElement('span');
@@ -120,7 +133,7 @@
       } else if (!got) {
         body.textContent = '…';
       }
-      meta(row, { sec: d && d.sec != null ? d.sec : ((Date.now() - t0) / 1000).toFixed(1), speak: d && d.speak });
+      meta(row, { sec: d && d.sec != null ? d.sec : ((Date.now() - t0) / 1000).toFixed(1), speak: d && d.speak, tools: d && d.tools });
       if (d && d.speak) showHush(true);
       setWaiting(null); scrollDown(); text.focus();
     }
