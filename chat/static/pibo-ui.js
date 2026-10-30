@@ -34,7 +34,10 @@
     close:         { ko: '닫기', en: 'Close' },
     popup_blocked: { ko: '새 탭이 열리지 않았어요. 이 주소의 팝업을 허용해 주세요.',
                      en: 'The new tab was blocked. Allow pop-ups for this address.' },
-    fs_tap:        { ko: '화면을 한 번 누르면 전체화면으로 돌아가요.', en: 'Tap the screen once to return to full screen.' }
+    fs_tap:        { ko: '화면을 한 번 누르면 전체화면으로 돌아가요.', en: 'Tap the screen once to return to full screen.' },
+    scr_tip:       { ko: '로봇 화면을 처음(IP)으로', en: 'Reset the robot screen (IP)' },
+    scr_done:      { ko: '로봇 화면을 처음으로 돌렸어요.', en: 'The robot screen is reset.' },
+    scr_fail:      { ko: '로봇 화면을 돌리지 못했어요.', en: 'Could not reset the robot screen.' }
   };
   function curLang() {
     try { if (typeof lang !== 'undefined' && lang) return lang; } catch (e) { /* 앱에 lang 없음 */ }
@@ -507,15 +510,38 @@
     window.alert_popup = wrapped;
   }
 
+  /* ── 로고 = 로봇 화면 처음으로 (261030, 사용자) ─────────────────────────
+     모든 앱 상단바 왼쪽 로고(.pb-header__brand · IDE .v2-brand)를 누르면 파이보 OLED · PiBrain LCD 를 IP 화면으로 되돌린다.
+     IDE [출력 지우기] 가 하던 화면 초기화(system/network_disp.py)와 같은 일을 IDE(80)의 POST /screen_reset 이 한다 */
+  var scrBusy = false;
+  function screenReset() {
+    if (scrBusy) return;
+    scrBusy = true;
+    fetch('http://' + location.hostname + '/screen_reset', { method: 'POST' })
+      .then(function (r) { toast(tr(r.ok ? 'scr_done' : 'scr_fail'), r.ok ? 'ok' : 'error', 2500); },
+            function () { toast(tr('scr_fail'), 'error'); })
+      .then(function () { setTimeout(function () { scrBusy = false; }, 1500); });
+  }
+  function initBrand() {
+    Array.prototype.forEach.call(document.querySelectorAll('.pb-header__brand, .v2-brand'), function (b) {
+      b.setAttribute('role', 'button');
+      b.tabIndex = 0;
+      b.title = tr('scr_tip');
+      b.style.cursor = 'pointer';
+      b.addEventListener('click', screenReset);
+      b.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); screenReset(); } });
+    });
+  }
+
   window.PiboUI = {
     toast: toast, banner: banner, hideBanner: hideBanner, watchSocket: watchSocket,
     openService: openService, backToIDE: backToIDE, restartSelf: restartSelf,
     busy: busy, text: tr, lang: curLang,
     getTheme: getTheme, setTheme: setTheme, ui: UI, countTo: countTo,
-    fullscreen: fsToggle
+    fullscreen: fsToggle, screenReset: screenReset
   };
 
-  function initAll() { initShell(); addThemeButton(); syncThemeButtons(); initFullscreen(); watchTitle(); markAlerts(); }
+  function initAll() { initShell(); addThemeButton(); syncThemeButtons(); initFullscreen(); watchTitle(); markAlerts(); initBrand(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAll);
   else initAll();
 })();

@@ -10,7 +10,7 @@
      2) 알림 : PiboUI.toast(text, kind)          화면 아래에서 잠깐 뜨는 알림
      3) 배너 : PiboUI.banner(id, {...}) / hideBanner(id)   헤더 바로 아래 고정 안내
      4) 연결 : PiboUI.watchSocket(socket, opts)  socket.io 가 끊기면 배너
-     5) 서비스: PiboUI.openService('tools'|'classifier'|'llm')  이름 붙인 새 탭으로 연다
+     5) 서비스: PiboUI.openService('tools'|'classifier'|'llm'|'kids')  이름 붙인 새 탭으로 연다
               PiboUI.backToIDE()                 도구 탭을 닫고 IDE 로
      6) 버튼 : PiboUI.busy(el, on)               아이콘만 스피너로. 라벨·크기는 그대로
      7) 화면 : 도구·분류기는 body.pb-v2 층(예전 v1 화면은 260929 에 지웠다). IDE 는 자체 CSS(body.v2-app)
@@ -34,7 +34,10 @@
     close:         { ko: '닫기', en: 'Close' },
     popup_blocked: { ko: '새 탭이 열리지 않았어요. 이 주소의 팝업을 허용해 주세요.',
                      en: 'The new tab was blocked. Allow pop-ups for this address.' },
-    fs_tap:        { ko: '화면을 한 번 누르면 전체화면으로 돌아가요.', en: 'Tap the screen once to return to full screen.' }
+    fs_tap:        { ko: '화면을 한 번 누르면 전체화면으로 돌아가요.', en: 'Tap the screen once to return to full screen.' },
+    scr_tip:       { ko: '로봇 화면을 처음(IP)으로', en: 'Reset the robot screen (IP)' },
+    scr_done:      { ko: '로봇 화면을 처음으로 돌렸어요.', en: 'The robot screen is reset.' },
+    scr_fail:      { ko: '로봇 화면을 돌리지 못했어요.', en: 'Could not reset the robot screen.' }
   };
   function curLang() {
     try { if (typeof lang !== 'undefined' && lang) return lang; } catch (e) { /* 앱에 lang 없음 */ }
@@ -345,10 +348,10 @@
      누르는 '그 순간' 탭을 연다(팝업 차단 회피). 탭은 IDE 가 서빙하는 대기 페이지
      launch.html 로 열리고, 거기서 서비스를 켜고 준비될 때까지 기다린 뒤 스스로 이동한다.
      탭에 이름을 붙여 두 번 눌러도 탭이 하나로 유지된다. */
-  var TAB = { tools: 'pibo_tools', classifier: 'pibo_classifier', llm: 'pibo_llm' };
+  var TAB = { tools: 'pibo_tools', classifier: 'pibo_classifier', llm: 'pibo_llm', kids: 'pibo_kids' };
   // launch.html 은 ?ver 없이 열려 브라우저가 옛 판을 쓸 수 있다(포트가 바뀌면 옛 포트를 기다린다).
   // 대기 페이지를 고치면 이 번호를 올릴 것
-  var LAUNCH_VER = '261027v4';
+  var LAUNCH_VER = '261028v1';
   function launchUrl(svc) {
     return 'http://' + location.hostname + '/static/launch.html?svc=' +
            encodeURIComponent(svc) + '&lang=' + curLang() + '&v=' + LAUNCH_VER;
@@ -507,15 +510,38 @@
     window.alert_popup = wrapped;
   }
 
+  /* ── 로고 = 로봇 화면 처음으로 (261030, 사용자) ─────────────────────────
+     모든 앱 상단바 왼쪽 로고(.pb-header__brand · IDE .v2-brand)를 누르면 파이보 OLED · PiBrain LCD 를 IP 화면으로 되돌린다.
+     IDE [출력 지우기] 가 하던 화면 초기화(system/network_disp.py)와 같은 일을 IDE(80)의 POST /screen_reset 이 한다 */
+  var scrBusy = false;
+  function screenReset() {
+    if (scrBusy) return;
+    scrBusy = true;
+    fetch('http://' + location.hostname + '/screen_reset', { method: 'POST' })
+      .then(function (r) { toast(tr(r.ok ? 'scr_done' : 'scr_fail'), r.ok ? 'ok' : 'error', 2500); },
+            function () { toast(tr('scr_fail'), 'error'); })
+      .then(function () { setTimeout(function () { scrBusy = false; }, 1500); });
+  }
+  function initBrand() {
+    Array.prototype.forEach.call(document.querySelectorAll('.pb-header__brand, .v2-brand'), function (b) {
+      b.setAttribute('role', 'button');
+      b.tabIndex = 0;
+      b.title = tr('scr_tip');
+      b.style.cursor = 'pointer';
+      b.addEventListener('click', screenReset);
+      b.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); screenReset(); } });
+    });
+  }
+
   window.PiboUI = {
     toast: toast, banner: banner, hideBanner: hideBanner, watchSocket: watchSocket,
     openService: openService, backToIDE: backToIDE, restartSelf: restartSelf,
     busy: busy, text: tr, lang: curLang,
     getTheme: getTheme, setTheme: setTheme, ui: UI, countTo: countTo,
-    fullscreen: fsToggle
+    fullscreen: fsToggle, screenReset: screenReset
   };
 
-  function initAll() { initShell(); addThemeButton(); syncThemeButtons(); initFullscreen(); watchTitle(); markAlerts(); }
+  function initAll() { initShell(); addThemeButton(); syncThemeButtons(); initFullscreen(); watchTitle(); markAlerts(); initBrand(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAll);
   else initAll();
 })();

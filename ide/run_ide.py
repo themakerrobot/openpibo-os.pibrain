@@ -432,6 +432,16 @@ async def llm(enable: str):
   await asyncio.sleep(2)
   return HTMLResponse(content="", status_code=200)
 
+# 로고 = 로봇 화면 처음으로(261030): 모든 앱 상단바 로고가 부른다(키트 pibo-ui.js 의 screenReset). [출력 지우기] 의 화면 초기화와 같다
+screen_proc = None
+
+@app.post('/screen_reset')
+async def screen_reset():
+  global screen_proc
+  if screen_proc is None or screen_proc.poll() is not None:   # 여러 번 눌러도 하나만
+    screen_proc = subprocess.Popen([f'{ENV_PATH}/python3', '/home/pi/openpibo-os/system/network_disp.py'])
+  return {'ok': True}
+
 @app.sio.on('reset_log')
 async def handle_reset_log(sid):
   record_reset(f'[{datetime.datetime.now()}]: \n\n')
