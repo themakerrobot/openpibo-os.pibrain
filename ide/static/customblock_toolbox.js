@@ -23,7 +23,7 @@ let toolbox = (lang) => {
       },
       { // Logic
         "kind": "category",
-        "colour": '#5566D9',
+        "colour": '#9C81BA',
         "name": translations['logic'][lang],
         "cssConfig": {
           "icon": "customIcon fa fa-bars-staggered"
@@ -62,7 +62,7 @@ let toolbox = (lang) => {
       },
       { // Loops
         "kind": "category",
-        "colour": '#2E9E6B',
+        "colour": '#629A66',
         "name": translations['loops'][lang],
         "cssConfig": {
           "icon": "customIcon fa fa-arrows-spin"
@@ -129,7 +129,7 @@ let toolbox = (lang) => {
       },
       { // Math
         "kind": "category",
-        "colour": '#7A56C9',
+        "colour": '#0191F2',
         "name": translations['math'][lang],
         "cssConfig": {
           "icon": "customIcon fa fa-square-root-variable"
@@ -333,7 +333,7 @@ let toolbox = (lang) => {
       },
       { // Text
         "kind": "category",
-        "colour": '#C2477B',
+        "colour": '#C18008',
         "name": translations['text'][lang],
         "cssConfig": {
           "icon": "customIcon fa fa-t"
@@ -563,7 +563,7 @@ let toolbox = (lang) => {
       },
       { // Lists
         "kind": "category",
-        "colour": '#D15A3A',
+        "colour": '#099D93',
         "name": translations['lists'][lang],
         "cssConfig": {
           "icon": "customIcon fa fa-list"
@@ -685,7 +685,7 @@ let toolbox = (lang) => {
       },
       { // Colour
         "kind": "category",
-        "colour": '#B34FB8',
+        "colour": '#B47E84',
         "name": translations['colour'][lang],
         "cssConfig": {
           "icon": "customIcon fa fa-palette"
@@ -767,7 +767,7 @@ let toolbox = (lang) => {
       },
       { // Variables
         "kind": "category",
-        "colour": '#D9772B',
+        "colour": '#CF7273',
         "name": translations['variables'][lang],
         "contents": [],
         "custom": "VARIABLE",
@@ -778,7 +778,7 @@ let toolbox = (lang) => {
       },
       { // Functions
         "kind": "category",
-        "colour": '#6C7A8C',
+        "colour": '#968A86',
         "name": translations['functions'][lang],
         "contents": [],
         "custom": "PROCEDURE",
