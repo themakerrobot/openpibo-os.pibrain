@@ -1,5 +1,5 @@
 const color_type={
-  "start":    "#AA8903",
+  "start":    "#E5B900",
   "audio":    "#4C9E4F",
   "collect":  "#7C7CBA",
   "device":   "#AB875D",
