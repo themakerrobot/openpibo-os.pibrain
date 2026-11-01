@@ -497,7 +497,7 @@ sudo raspi-config nonint get_wifi_country
 | `ide/static/index.js` | Pibo 를 기준으로 | H/W 검수(50050, 4초 뒤 열기). `langFileVersion` 은 260929 부터 Pibo 와 같다(`ko.js`·`en.js` 가 같은 파일) |
 | `ide/run_ide.py` | 항목별로 | gzip, `run_blocking`, 실행 로그 `record`/`record_add`, 저장 확인 `saved`, `/` 는 늘 `index.html`. MCU 조회(`get_device`)는 안 가져왔다 |
 | `ide/static/ko2en.js` | Pibo 의 새 키 53개를 앞에 끼움 | `v2_tab_robot` = PiBrain. 1·2행은 그대로(`global` 델타) |
-| `customblock.js` | | `color_type` **색 값만**(한글 줄 그대로). 261101 중간안 색(260624v1 계열 + 흰 글자 3.3:1, 시작만 260624v1 노랑 그대로) — 값·이유는 Pibo CLAUDE.md '블록 색' |
+| `customblock.js` | | `color_type` **색 값만**(한글 줄 그대로). 261101 중간안 색(260624v1 계열 + 흰 글자 3.3:1, 시작은 조금만 진하게 #D1A909) — 값·이유는 Pibo CLAUDE.md '블록 색' |
 | `customblock_toolbox.js` | | 기본 분류 8개의 `"colour"` 값만. **`global` 델타 파일이다** — merge 때 Collect 분류와 떨어져 있어 보통 자동으로 합쳐지지만 확인할 것 |
 | `jquery-3.7.1.min.js` | Pibo | 3.1.1 을 지우고 올렸다 |
 | `tools/templates/index.html` `static/index.css` | **PiBrain 전용**(Pibo 도구와 마크업이 다르다) | 새로 짰다 — 아래 '도구 화면' |
