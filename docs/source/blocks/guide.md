@@ -214,9 +214,9 @@ USB 연결 해제합니다.
 
 이미지 변수를 IDE에서 보여줍니다.
 
-<img src="img/vision_imshow_to_oled.png" alt="이미지 ([변수 ▾]) OLED에 보여주기" width="362" class="blk">
+<img src="img/vision_imshow_to_oled.png" alt="이미지 ([변수 ▾]) 화면에 보여주기" width="346" class="blk">
 
-이미지 변수를 OLED에서 보여줍니다.
+이미지 변수를 화면에 보여줍니다.
 
 <img src="img/vision_rectangle.png" alt="이미지 ([변수 ▾]) 좌표 ([0]) ([0]) , ([0]) ([0]) 색상 ([변수 ▾]) 굵기 ([2]) 네모 그리기" width="791" class="blk">
 

@@ -17,7 +17,7 @@ const T = {
   tab_led:           { ko: "LED",               en: "LED" },
   tab_camera:        { ko: "카메라",     en: "Camera" },
   tab_tts:           { ko: "음성", en: "Speech" },
-  tab_lcd:           { ko: "LCD",               en: "LCD" },
+  tab_lcd:           { ko: "화면",              en: "Screen" },
 
   /* ── Buttons tab ─────────────────────────────────────────── */
   button_status:     { ko: "버튼 상태 (실시간)", en: "Button status (live)" },
@@ -39,10 +39,10 @@ const T = {
   preset_white:      { ko: "흰색",                 en: "White" },
 
   /* ── Camera / Vision tab ─────────────────────────────────── */
-  cam_off_msg:       { ko: "카메라를 켜면 PiBrain LCD에 화면이 나와요.", en: "Turn on the camera to see it on the PiBrain LCD." },
+  cam_off_msg:       { ko: "카메라를 켜면 PiBrain 화면에 나와요.", en: "Turn on the camera to see it on the PiBrain screen." },
   cam_on_btn:        { ko: "카메라 켜기",        en: "Camera on" },
   cam_off_btn:       { ko: "카메라 끄기",        en: "Camera off" },
-  cam_streaming:     { ko: "PiBrain LCD에 보여 주는 중…", en: "Showing on the PiBrain LCD…" },
+  cam_streaming:     { ko: "PiBrain 화면에 보여 주는 중…", en: "Showing on the PiBrain screen…" },
   capture_btn:       { ko: "여기에 보기", en: "Show here" },
   vision_title:      { ko: "비전 기능", en: "Vision features" },
 
@@ -77,28 +77,28 @@ const T = {
   tts_done:          { ko: "다 말했어요", en: "Done" },
   tts_stopped:       { ko: "멈췄어요", en: "Stopped" },
 
-  /* ── LCD tab ─────────────────────────────────────────────── */
-  lcd_preview_title: { ko: "LCD 미리보기 (240×320)", en: "LCD preview (240×320)" },
+  /* ── Screen tab (LCD) ─────────────────────────────────────────────── */
+  lcd_preview_title: { ko: "화면 미리보기 (240×320)", en: "Screen preview (240×320)" },
   lcd_text_title:    { ko: "글자 출력", en: "Text output" },
   lcd_text_label:    { ko: "출력할 글자 (Enter로 줄바꿈)", en: "Text to show (Enter for a new line)" },
-  lcd_ph:            { ko: "LCD에 보일 글자를 적어 보세요", en: "Type the text to show" },
+  lcd_ph:            { ko: "화면에 보일 글자를 적어 보세요", en: "Type the text to show" },
   font_size:         { ko: "글자 크기", en: "Font size" },
   x_pos:             { ko: "X 위치", en: "X position" },
   y_pos:             { ko: "Y 위치", en: "Y position" },
   text_color:        { ko: "글자색", en: "Text color" },
   bg_color:          { ko: "배경색",               en: "Background" },
-  lcd_send_btn:      { ko: "LCD에 출력",         en: "Send to LCD" },
+  lcd_send_btn:      { ko: "화면에 보내기",      en: "Send to screen" },
   lcd_clear_btn:     { ko: "화면 지우기",         en: "Clear screen" },
   lcd_sending:       { ko: "보내는 중…", en: "Sending…" },
-  lcd_done:          { ko: "LCD에 보냈어요", en: "Sent" },
+  lcd_done:          { ko: "화면에 보냈어요", en: "Sent" },
   lcd_clearing:      { ko: "지우는 중…", en: "Clearing…" },
   lcd_cleared:       { ko: "화면을 지웠어요", en: "Cleared" },
   system_title:      { ko: "시스템",               en: "System" },
   lcd_reset_desc:    {
-    ko: "LCD를 처음 화면(IP 주소 표시)으로 되돌려요.<br>카메라가 꺼져 있을 때만 돼요.",
-    en: "Returns the LCD to its home screen (IP address).<br>Only works when the camera is off."
+    ko: "IP 주소가 보이는 처음 화면으로 되돌려요.<br>카메라가 꺼져 있을 때만 돼요.",
+    en: "Returns the screen to its home view (IP address).<br>Only works when the camera is off."
   },
-  lcd_reset_btn:     { ko: "LCD 처음 화면으로", en: "LCD home screen" },
+  lcd_reset_btn:     { ko: "처음 화면으로", en: "Home screen" },
   lcd_resetting:     { ko: "처음 화면으로 되돌리는 중…", en: "Restoring the home screen…" },
   lcd_reset_done:    { ko: "처음 화면으로 되돌렸어요", en: "Home screen restored" },
 
@@ -124,7 +124,7 @@ const T = {
   // 서버(run_tools.py)가 {"ok": false, "error": 키} 로 보내는 문구
   err_led_timeout:   { ko: "LED가 응답하지 않아요.", en: "The LED did not respond." },
   tts_err_voice:     { ko: "쓸 수 없는 목소리예요.", en: "This voice is not available." },
-  err_lcd_not_ready: { ko: "LCD가 아직 준비되지 않았어요.", en: "The LCD is not ready yet." },
+  err_lcd_not_ready: { ko: "화면이 아직 준비되지 않았어요.", en: "The screen is not ready yet." },
   err_camera_on:     { ko: "카메라를 먼저 꺼 주세요.", en: "Turn off the camera first." },
 
   /* ── 261027v4 — 화면 검토 때 더한 키 ────────────────────────── */

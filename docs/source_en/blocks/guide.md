@@ -112,49 +112,49 @@ Disconnect USB Device.
 
 ### Display
 
-<img src="img/oled_set_font.png" alt="Set OLED font size to ([30])" width="319" class="blk">
+<img src="img/oled_set_font.png" alt="Set screen font size to ([30])" width="329" class="blk">
 
-Set the font size on the OLED display.
+Set the font size on the screen.
 
-<img src="img/oled_draw_text.png" alt="Save ([Hello]) to OLED at ([0]) ([0])" width="450" class="blk">
+<img src="img/oled_draw_text.png" alt="Save ([Hello]) to screen at ([0]) ([0])" width="461" class="blk">
 
-Display text on the OLED screen.
+Save text to the screen.
 
-<img src="img/oled_draw_image_dynamic.png" alt="Save OLED [Select folder ▾] [Select file ▾] image" width="532" class="blk">
+<img src="img/oled_draw_image_dynamic.png" alt="Save image [Select folder ▾] [Select file ▾] to screen" width="568" class="blk">
 
-Display dynamically selected image on OLED.
+Save the selected image to the screen.
 
-<img src="img/oled_draw_image.png" alt="Save OLED [Select folder ▾] ([sample]) . [jpg ▾] image" width="638" class="blk">
+<img src="img/oled_draw_image.png" alt="Save image [Select folder ▾] ([sample]) . [jpg ▾] to screen" width="674" class="blk">
 
-Display a specified image on OLED.
+Save the given image to the screen.
 
-<img src="img/oled_draw_data.png" alt="Save OLED ([item ▾]) image data" width="372" class="blk">
+<img src="img/oled_draw_data.png" alt="Save image ([item ▾]) to screen" width="359" class="blk">
 
-Display a specified image data on OLED.
+Save an image variable to the screen.
 
-<img src="img/oled_draw_rectangle.png" alt="Save [Fill ▾] rectangle to OLED at ([0]) ([0]) , ([0]) ([0])" width="590" class="blk">
+<img src="img/oled_draw_rectangle.png" alt="Save [Fill ▾] rectangle to screen at ([0]) ([0]) , ([0]) ([0])" width="601" class="blk">
 
-Draw a rectangle on OLED.
+Save a rectangle to the screen.
 
-<img src="img/oled_draw_ellipse.png" alt="Save [Fill ▾] ellipse to OLED at ([0]) ([0]) , ([0]) ([0])" width="561" class="blk">
+<img src="img/oled_draw_ellipse.png" alt="Save [Fill ▾] ellipse to screen at ([0]) ([0]) , ([0]) ([0])" width="572" class="blk">
 
-Draw an ellipse on OLED.
+Save an ellipse to the screen.
 
-<img src="img/oled_draw_line.png" alt="Save line to OLED at ([0]) ([0]) , ([0]) ([0])" width="461" class="blk">
+<img src="img/oled_draw_line.png" alt="Save line to screen at ([0]) ([0]) , ([0]) ([0])" width="472" class="blk">
 
-Draw a line on OLED.
+Save a line to the screen.
 
-<img src="img/oled_invert.png" alt="Invert OLED" width="173" class="blk">
+<img src="img/oled_invert.png" alt="Invert screen" width="183" class="blk">
 
-Invert colors on the OLED screen.
+Invert the colors on the screen.
 
-<img src="img/oled_show.png" alt="Show OLED" width="171" class="blk">
+<img src="img/oled_show.png" alt="Show screen" width="182" class="blk">
 
-Display content on OLED screen.
+Show what was saved to the screen.
 
-<img src="img/oled_clear.png" alt="Clear OLED" width="168" class="blk">
+<img src="img/oled_clear.png" alt="Clear screen" width="179" class="blk">
 
-Clear the OLED screen.
+Clear the screen.
 
 ### Speech
 
@@ -218,9 +218,9 @@ Save as an image file.
 
 Display an image variable in IDE.
 
-<img src="img/vision_imshow_to_oled.png" alt="Display image variable ([item ▾]) on OLED" width="456" class="blk">
+<img src="img/vision_imshow_to_oled.png" alt="Show image variable ([item ▾]) on screen" width="451" class="blk">
 
-Display an image variable in OLED.
+Show an image variable on the screen.
 
 <img src="img/vision_rectangle.png" alt="Display a rectangle with color ([item ▾]) and thickness ([2]) at coordinates ([0]) ([0]) ([0]) ([0]) of image ([item ▾]) ." width="1160" class="blk">
 

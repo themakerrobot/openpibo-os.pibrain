@@ -11,7 +11,7 @@ openpibo
 ├── collect.py          위키백과·날씨·뉴스 (인터넷 필요)
 ├── device.py           LED·버튼 (PiBrain 은 DeviceByPiBrain)
 ├── motion.py           모터·동작 (파이보용 — PiBrain 에는 모터가 없습니다)
-├── oled.py             LCD 화면 (PiBrain 은 OledByPiBrain)
+├── oled.py             화면 — PiBrain 은 LCD (OledByPiBrain)
 ├── pibo_graphics.py    화면용 그림 도구
 ├── speech.py           목소리 만들기(TTS)·대화(LLM)·음성 인식(STT, 마이크를 달면)
 ├── usb_uart.py         USB 시리얼
@@ -56,7 +56,7 @@ tts.tts('안녕하세요! 나는 파이브레인이에요.', filename='/home/pi/
 Audio().play('/home/pi/hello.wav', background=False)
 ```
 
-예) LED 를 주황색으로 켜고 LCD 에 글자를 띄웁니다.
+예) LED 를 주황색으로 켜고 화면에 글자를 띄웁니다.
 
 ```python
 from openpibo.device import DeviceByPiBrain

@@ -44,7 +44,7 @@
   <button onclick="switchTab('led',this)"><i class="fa-solid fa-lightbulb"></i><span data-key="tab_led">LED</span></button>
   <button onclick="switchTab('camera',this)"><i class="fa-solid fa-camera"></i><span data-key="tab_camera">카메라</span></button>
   <button onclick="switchTab('tts',this)"><i class="fa-solid fa-comment-dots"></i><span data-key="tab_tts">음성</span></button>
-  <button onclick="switchTab('lcd',this)"><i class="fa-solid fa-display"></i><span data-key="tab_lcd">LCD</span></button>
+  <button onclick="switchTab('lcd',this)"><i class="fa-solid fa-display"></i><span data-key="tab_lcd">화면</span></button>
 </nav>
 
 <main class="tl-main">
@@ -113,7 +113,7 @@
     <h2 class="card-title" data-key="camera_title">카메라</h2>
     <div class="cam-stage pb-stage">
       <div id="cam-wrap" style="display:none"><img id="cam-img" alt="camera"/></div>
-      <div id="cam-ph" data-key="cam_off_msg">카메라를 켜면 PiBrain LCD에 화면이 나와요.</div>
+      <div id="cam-ph" data-key="cam_off_msg">카메라를 켜면 PiBrain 화면에 나와요.</div>
     </div>
     <div class="btn-row">
       <button class="btn btn-primary" id="btn-cam" onclick="toggleCamera()"><i class="fa-solid fa-camera"></i><span data-key="cam_on_btn">카메라 켜기</span></button>
@@ -179,14 +179,14 @@
 <!-- ── LCD ──────────────────────────────────────────────────── -->
 <section class="tab" id="tab-lcd">
   <div class="card">
-    <h2 class="card-title" data-key="lcd_preview_title">LCD 미리보기 (240×320)</h2>
+    <h2 class="card-title" data-key="lcd_preview_title">화면 미리보기 (240×320)</h2>
     <div class="lcd-preview"><canvas id="lcd-canvas" width="240" height="320"></canvas></div>
   </div>
 
   <div class="card">
     <h2 class="card-title" data-key="lcd_text_title">글자 출력</h2>
     <label class="form-label" for="lcd-text" data-key="lcd_text_label">출력할 글자 (Enter로 줄바꿈)</label>
-    <textarea id="lcd-text" data-key="lcd_ph" placeholder="LCD에 보일 글자를 적어 보세요" oninput="updateLcdPreview()"></textarea>
+    <textarea id="lcd-text" data-key="lcd_ph" placeholder="화면에 보일 글자를 적어 보세요" oninput="updateLcdPreview()"></textarea>
 
     <div class="field-grid">
       <label><span data-key="font_size">글자 크기</span><input type="number" id="lcd-size" value="24" min="8" max="80" step="2" oninput="updateLcdPreview()"/></label>
@@ -197,7 +197,7 @@
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-primary btn-grow" onclick="sendLcdText()"><i class="fa-solid fa-paper-plane"></i><span data-key="lcd_send_btn">LCD에 출력</span></button>
+      <button class="btn btn-primary btn-grow" onclick="sendLcdText()"><i class="fa-solid fa-paper-plane"></i><span data-key="lcd_send_btn">화면에 보내기</span></button>
       <button class="btn" onclick="clearLcd()"><i class="fa-solid fa-eraser"></i><span data-key="lcd_clear_btn">화면 지우기</span></button>
     </div>
     <div class="result-box" id="lcd-status" data-key="waiting">대기 중…</div>
@@ -206,9 +206,9 @@
   <div class="card">
     <h2 class="card-title" data-key="system_title">시스템</h2>
     <p class="card-desc" data-key="lcd_reset_desc" data-html>
-      LCD를 처음 화면(IP 주소 표시)으로 되돌립니다.<br>카메라가 꺼져 있을 때만 됩니다.
+      IP 주소가 보이는 처음 화면으로 되돌려요.<br>카메라가 꺼져 있을 때만 돼요.
     </p>
-    <button class="btn" onclick="resetOled()"><i class="fa-solid fa-rotate"></i><span data-key="lcd_reset_btn">LCD 처음 화면으로</span></button>
+    <button class="btn" onclick="resetOled()"><i class="fa-solid fa-rotate"></i><span data-key="lcd_reset_btn">처음 화면으로</span></button>
     <div class="result-box" id="oled-reset-status" data-key="waiting">대기 중…</div>
   </div>
 </section>
@@ -216,7 +216,7 @@
 </main>
 </div>
 
-<script src="/static/ko2en.js?ver=261027v4"></script>
+<script src="/static/ko2en.js?ver=261101v1"></script>
 <script src="/static/pibo-ui.js?ver=261030v1"></script>
 <script src="/static/index.js?ver=261027v4"></script>
 <script>/* 언어 select 를 지금 언어에 맞춘다(바꾸는 건 toggleLang → applyLang) */

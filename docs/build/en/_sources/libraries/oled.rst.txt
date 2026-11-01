@@ -1,4 +1,4 @@
-oled · LCD screen
+oled · Display (LCD)
 ============================================================
 
 .. automodule:: openpibo.oled

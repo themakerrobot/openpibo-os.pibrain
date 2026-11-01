@@ -298,7 +298,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../libraries/device.html">device · LED·버튼</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../libraries/usb_uart.html">usb_uart · USB 시리얼</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../libraries/motion.html">motion · 모터·동작 (파이보용)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../libraries/oled.html">oled · LCD 화면</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../libraries/oled.html">oled · 화면 (LCD)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../libraries/pibo_graphics.html">pibo_graphics · 거북이 그림</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../libraries/speech.html">speech · 목소리·대화·음성 인식</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../libraries/vision_camera.html">vision_camera · 카메라·이미지</a></li>
@@ -347,7 +347,7 @@
           <section id="pibrain">
 <h1>PiBrain 메이커<a class="headerlink" href="#pibrain" title="Link to this heading">¶</a></h1>
 <p>PiBrain 메이커는 브라우저로 여는 PiBrain 개발 환경입니다. 태블릿·노트북이 PiBrain 과 같은 WiFi 에 붙어 있으면
-주소창에 <strong>PiBrain 의 IP 주소</strong>(LCD 첫 화면에 나옵니다)를 적어 엽니다. 설치할 것은 없습니다.</p>
+주소창에 <strong>PiBrain 의 IP 주소</strong>(PiBrain 화면에 처음 나옵니다)를 적어 엽니다. 설치할 것은 없습니다.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -362,7 +362,7 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">http://&lt;PiBrain</span> <span class="pre">IP&gt;</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>도구</strong></p></td>
-<td><p>버튼·LED·카메라·목소리·LCD 를 코드 없이 바로 써 봅니다</p></td>
+<td><p>버튼·LED·카메라·목소리·화면을 코드 없이 바로 써 봅니다</p></td>
 <td><p>IDE 위 [도구]</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>대화</strong></p></td>
@@ -409,7 +409,7 @@ API 는 왼쪽 <strong>PYTHON</strong> 을 보세요</p></li>
 </section>
 <section id="id1">
 <h2>도구<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
-<p>PiBrain 의 기능을 하나씩 코드 없이 써 봅니다. 왼쪽 메뉴에서 [버튼] [LED] [카메라] [음성] [LCD] 를 고릅니다.</p>
+<p>PiBrain 의 기능을 하나씩 코드 없이 써 봅니다. 왼쪽 메뉴에서 [버튼] [LED] [카메라] [음성] [화면] 을 고릅니다.</p>
 <ul class="simple">
 <li><p><strong>버튼</strong>: 버튼 4개가 눌렸는지 실시간으로 보여 줍니다</p></li>
 </ul>
@@ -419,14 +419,14 @@ API 는 왼쪽 <strong>PYTHON</strong> 을 보세요</p></li>
 </ul>
 <p><img alt="도구 카메라" src="../_images/tools_camera.png" /></p>
 <ul class="simple">
-<li><p><strong>카메라</strong>: [카메라 켜기] 를 누르면 카메라 화면이 <strong>PiBrain LCD</strong> 에 나옵니다. 비전 기능(흑백·윤곽선·만화·QR 코드·얼굴 분석·
-사물 인식·손동작 인식·포즈 인식·마커 인식 등)을 누르면 LCD 화면에 바로 적용되고, 결과는 오른쪽 아래에 글자로 나옵니다.
+<li><p><strong>카메라</strong>: [카메라 켜기] 를 누르면 카메라 화면이 <strong>PiBrain 화면</strong>에 나옵니다. 비전 기능(흑백·윤곽선·만화·QR 코드·얼굴 분석·
+사물 인식·손동작 인식·포즈 인식·마커 인식 등)을 누르면 PiBrain 화면에 바로 적용되고, 결과는 오른쪽 아래에 글자로 나옵니다.
 [여기에 보기]를 누르면 지금 화면을 브라우저에서도 봅니다</p></li>
 <li><p><strong>음성</strong>: 목소리 10가지(남성 1~5, 여성 1~5) 중에서 골라 [말하기]로 글자를 말하게 합니다. 한국어·영어는 자동으로 알아봅니다</p></li>
 </ul>
-<p><img alt="도구 LCD" src="../_images/tools_lcd.png" /></p>
+<p><img alt="도구 화면" src="../_images/tools_lcd.png" /></p>
 <ul class="simple">
-<li><p><strong>LCD</strong>: 글자·크기·위치·색을 정해 LCD(240×320)에 띄웁니다. [LCD 처음 화면으로] 는 IP 주소가 나오는 첫 화면으로 되돌립니다</p></li>
+<li><p><strong>화면</strong>: 글자·크기·위치·색을 정해 화면(LCD 240×320)에 띄웁니다. [처음 화면으로] 는 IP 주소가 나오는 첫 화면으로 되돌립니다</p></li>
 </ul>
 </section>
 <section id="id2">
