@@ -19,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-msgid "oled · LCD screen"
+msgid "oled · Display (LCD)"
 msgstr ""
 
 msgid "LCD 화면에 문자나 이미지를 출력합니다."

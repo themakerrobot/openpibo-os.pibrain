@@ -11,7 +11,7 @@ openpibo
 ├── collect.py          Wikipedia, weather, news (internet, Korean edition)
 ├── device.py           LED and buttons (DeviceByPiBrain on PiBrain)
 ├── motion.py           motors and motions (for piBo — PiBrain has no motors)
-├── oled.py             LCD screen (OledByPiBrain on PiBrain)
+├── oled.py             Display — LCD on PiBrain (OledByPiBrain)
 ├── pibo_graphics.py    drawing tools for the screen
 ├── speech.py           voices (TTS), chat (LLM), speech recognition (STT, with a microphone attached)
 ├── usb_uart.py         USB serial
@@ -56,7 +56,7 @@ tts.tts('Hello! I am PiBrain.', filename='/home/pi/hello.wav', voice='f1')
 Audio().play('/home/pi/hello.wav', background=False)
 ```
 
-Example: turn the LED orange and show text on the LCD.
+Example: turn the LED orange and show text on the screen.
 
 ```python
 from openpibo.device import DeviceByPiBrain

@@ -1,12 +1,12 @@
 # PiBrain Maker
 
 PiBrain Maker is the PiBrain development environment you open in a web browser. When your tablet or laptop is on the same WiFi
-as PiBrain, type **PiBrain's IP address** (shown on the first LCD screen) into the address bar. There is nothing to install.
+as PiBrain, type **PiBrain's IP address** (shown on the PiBrain screen at startup) into the address bar. There is nothing to install.
 
 | Screen | What it does | Where to open it |
 |---|---|---|
 | **IDE** | Build and run programs with blocks or Python | `http://<PiBrain IP>` |
-| **Tools** | Try the buttons, LED, camera, voice and LCD right away, without code | [Tools] at the top of the IDE |
+| **Tools** | Try the buttons, LED, camera, voice and screen right away, without code | [Tools] at the top of the IDE |
 | **Chat** | Chat in text with the language model (LLM) running inside PiBrain | [Chat] at the top of the IDE |
 | **Classifier** | Collect examples with the camera and teach your own AI | [Classifier] at the top of the IDE |
 | **Guide** | This document | [Guide] at the top of the IDE |
@@ -36,7 +36,7 @@ Everything runs **inside PiBrain** (voices, chat and the classifier included). O
 
 ## Tools
 
-Try PiBrain's features one at a time, without code. Pick [Buttons], [LED], [Camera], [Speech] or [LCD] on the left.
+Try PiBrain's features one at a time, without code. Pick [Buttons], [LED], [Camera], [Speech] or [Screen] on the left.
 
 - **Buttons**: shows live whether each of the 4 buttons is pressed
 
@@ -46,14 +46,14 @@ Try PiBrain's features one at a time, without code. Pick [Buttons], [LED], [Came
 
 ![Tools: Camera](images/tools_camera.png)
 
-- **Camera**: press [Camera on] to show the camera view on the **PiBrain LCD**. Tap a vision feature (grayscale, edges, cartoon, QR code,
-  face analysis, object detection, hand gestures, pose, markers…) to apply it to the LCD view right away; the result appears as text at the bottom right.
+- **Camera**: press [Camera on] to show the camera view on the **PiBrain screen**. Tap a vision feature (grayscale, edges, cartoon, QR code,
+  face analysis, object detection, hand gestures, pose, markers…) to apply it to the PiBrain screen right away; the result appears as text at the bottom right.
   [Show here] shows the current view in the browser too
 - **Speech**: pick one of ten voices (Male 1–5, Female 1–5) and press [Speak] to let PiBrain say your text. Korean and English are detected automatically
 
-![Tools: LCD](images/tools_lcd.png)
+![Tools: Screen](images/tools_lcd.png)
 
-- **LCD**: choose the text, size, position and color and show it on the LCD (240×320). [LCD home screen] goes back to the first screen with the IP address
+- **Screen**: choose the text, size, position and color and show it on the screen (LCD, 240×320). [Home screen] goes back to the first screen with the IP address
 
 ## Classifier
 
