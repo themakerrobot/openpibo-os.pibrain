@@ -86,13 +86,20 @@ function switchTab(name, btn) {
   if (name === 'buttons' && !btnSrc) startButtonStream();
   if (name === 'camera') resetVision();
   if (name === 'lcd') updateLcdPreview();
+  devDraw();
 }
 
 /* ── 기기 그림(261102) ────────────────────────────────────────
    오른쪽 PiBrain 그림의 LED·버튼·화면을 이 페이지가 보낸 상태로 바꾼다. 실제 기기에서 읽어 오지 않는다 —
    학생 프로그램·로봇 놀이가 바꾼 LED·화면은 모른다(그림 아래 안내). 버튼은 실제 눌림(SSE) 그대로 */
-let devScreen = 'ip';          // ip | text | clear | camera — 언어를 바꾸면 다시 그린다
+let devScreen = 'ip';          // ip | text | clear | camera | photo — 실제로 보낸(일어난) 것. 언어를 바꾸면 다시 그린다
 let devClearBg = '#000000';
+let devPhoto = null;           // [여기에 보기] 로 받은 사진(Image)
+let lcdDirty = true;           // [화면] 탭 글자를 보낸 뒤 고쳤는지 — 그동안 그림 화면은 '미리보기'
+const lcdCanvas = document.createElement('canvas');   // 미리보기를 그리는 곳(화면에 안 붙는다)
+lcdCanvas.width = 240; lcdCanvas.height = 320;
+const sentCanvas = document.createElement('canvas');  // 마지막으로 보낸 글자 화면
+sentCanvas.width = 240; sentCanvas.height = 320;
 function devLed(r, g, b) {
   const on = r + g + b > 0, c = `rgb(${r},${g},${b})`;
   const led = document.getElementById('dev-led'), glow = document.getElementById('dev-led-glow');
@@ -110,8 +117,17 @@ function devDraw() {
   if (!cv) return;
   const ctx = cv.getContext('2d');
   const font = getComputedStyle(document.body).fontFamily;
-  if (devScreen === 'text') {
-    ctx.drawImage(document.getElementById('lcd-canvas'), 0, 0);   // 보낼 때의 미리보기를 그대로 옮긴다
+  // [화면] 탭에서 보내기 전에 고친 글자는 그림 화면에 미리보기로(위에 '미리보기' 표시). 탭을 떠나면 실제 상태로
+  const preview = curTab === 'lcd' && lcdDirty;
+  const badge = document.getElementById('dev-badge');
+  if (badge) badge.hidden = !preview;
+  if (preview) { ctx.drawImage(lcdCanvas, 0, 0); return; }
+  if (devScreen === 'text') { ctx.drawImage(sentCanvas, 0, 0); return; }
+  if (devScreen === 'photo' && devPhoto) {   // 사진을 화면(3:4)에 꽉 차게. PiBrain 카메라는 세로 480x640 이라 그대로 맞는다
+    const sc = Math.max(240 / devPhoto.width, 320 / devPhoto.height);
+    const w = devPhoto.width * sc, h = devPhoto.height * sc;
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, 240, 320);
+    ctx.drawImage(devPhoto, (240 - w) / 2, (320 - h) / 2, w, h);
     return;
   }
   ctx.fillStyle = devScreen === 'clear' ? devClearBg : '#000';
@@ -138,11 +154,8 @@ function startButtonStream() {
   btnSrc.onmessage = e => {
     const state = JSON.parse(e.data);
     for (const [k, v] of Object.entries(state)) {
-      const el = document.getElementById('bi-' + k);
       const on = v === 'on';
-      el.classList.toggle('on', on);
-      el.querySelector('.lbl').textContent = t(on ? 'btn_on' : 'btn_off');
-      devBtn(k, on);
+      devBtn(k, on);   // 상태는 그림의 버튼으로 보인다(261102 — 예전 1~4 칸은 뺐다)
       if (on) {
         const time = new Date().toLocaleTimeString();
         const log = document.getElementById('btn-log');
@@ -209,8 +222,6 @@ function toggleCamera() {
     setCamLabel('cam_on_btn');
     document.getElementById('btn-capture').disabled  = true;
     document.getElementById('cam-ph').textContent    = t('cam_off_msg');
-    document.getElementById('cam-wrap').style.display = 'none';
-    document.getElementById('cam-ph').style.display   = '';
     devSetScreen('ip');                 // 카메라를 끄면 서버가 network_disp(IP 화면)를 다시 띄운다
   } else {
     fetch('/camera?d=on');
@@ -222,17 +233,19 @@ function toggleCamera() {
   }
 }
 
-// [캡처]: JPEG 바이트로 한 장 받는다(260929, 전엔 base64 JSON). 앞 그림 주소는 풀어 준다
+// [여기에 보기]: JPEG 한 장을 받아 그림 속 화면에 보인다(261102 — 예전 카메라 칸 대신). 앞 그림 주소는 풀어 준다
 let captureUrl = '';
 async function captureToWeb() {
   const r = await fetch('/capture.jpg', { cache: 'no-store' });
   if (r.status !== 200) return;
   const url = URL.createObjectURL(await r.blob());
-  document.getElementById('cam-img').src             = url;
-  document.getElementById('cam-wrap').style.display  = 'block';
-  document.getElementById('cam-ph').style.display    = 'none';   // 안내 글과 사진이 옆으로 나란히 갈라져 보였다
-  if (captureUrl) URL.revokeObjectURL(captureUrl);
-  captureUrl = url;
+  const img = new Image();
+  img.onload = () => {
+    devPhoto = img; devSetScreen('photo');
+    if (captureUrl) URL.revokeObjectURL(captureUrl);
+    captureUrl = url;
+  };
+  img.src = url;
 }
 
 /* ── Vision ──────────────────────────────────────────────────*/
@@ -317,8 +330,7 @@ function hexToRgb(hex) {
 }
 
 function updateLcdPreview() {
-  const canvas = document.getElementById('lcd-canvas');
-  const ctx    = canvas.getContext('2d');
+  const ctx    = lcdCanvas.getContext('2d');
   const text   = document.getElementById('lcd-text').value;
   const size   = parseInt(document.getElementById('lcd-size').value) || 24;
   const x      = parseInt(document.getElementById('lcd-x').value)    || 0;
@@ -335,7 +347,13 @@ function updateLcdPreview() {
   text.split(/\\n|\n/).forEach((line, i) => {
     ctx.fillText(line, x, y + i * (size + 4));
   });
+  if (curTab === 'lcd') devDraw();
 }
+/* [화면] 탭 입력을 고치면 '보내기 전' 으로 */
+['lcd-text', 'lcd-size', 'lcd-x', 'lcd-y', 'lcd-fg', 'lcd-bg'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', () => { lcdDirty = true; devDraw(); });
+});
 
 async function sendLcdText() {
   const text = document.getElementById('lcd-text').value;
@@ -353,7 +371,11 @@ async function sendLcdText() {
     `&r=${fg.r}&g=${fg.g}&b=${fg.b}&bg_r=${bg.r}&bg_g=${bg.g}&bg_b=${bg.b}`;
 
   const res = await fetch(url).then(r => r.json());
-  if (res.ok) { updateLcdPreview(); devSetScreen('text'); }
+  if (res.ok) {
+    updateLcdPreview();
+    sentCanvas.getContext('2d').drawImage(lcdCanvas, 0, 0);
+    lcdDirty = false; devSetScreen('text');
+  }
   document.getElementById('lcd-status').textContent =
     res.ok ? t('lcd_done') : `${t('error_prefix')}${t(res.error || '')}`;
 }
@@ -362,7 +384,7 @@ async function clearLcd() {
   const bg = hexToRgb(document.getElementById('lcd-bg').value);
   document.getElementById('lcd-status').textContent = t('lcd_clearing');
   const res = await fetch(`/oled_clear?bg_r=${bg.r}&bg_g=${bg.g}&bg_b=${bg.b}`).then(r => r.json());
-  if (res.ok) { devClearBg = document.getElementById('lcd-bg').value; devSetScreen('clear'); }
+  if (res.ok) { devClearBg = document.getElementById('lcd-bg').value; lcdDirty = false; devSetScreen('clear'); }
   document.getElementById('lcd-status').textContent =
     res.ok ? t('lcd_cleared') : `${t('error_prefix')}${t(res.error || '')}`;
   updateLcdPreview();
@@ -371,7 +393,7 @@ async function clearLcd() {
 async function resetOled() {
   document.getElementById('oled-reset-status').textContent = t('lcd_resetting');
   const res = await fetch('/oled_reset').then(r => r.json());
-  if (res.ok) devSetScreen('ip');
+  if (res.ok) { lcdDirty = false; devSetScreen('ip'); }
   document.getElementById('oled-reset-status').textContent =
     res.ok ? t('lcd_reset_done') : `${t('error_prefix')}${t(res.error || '')}`;
 }
