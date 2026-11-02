@@ -152,7 +152,7 @@ Blockly.defineBlocksWithJsonArray(
           {
             "type": "field_dropdown",
             "name": "extension",
-            "options": [['wav', ".wav"], ['-', '']]
+            "options": [['mp3', '.mp3'], ['wav', ".wav"], ['-', '']]   // 261102: mp3 먼저 — [음성 저장]·[소리 재생] 기본값(audio.mp3)과 맞춤
           },
           {"type": "input_value", "name": "timeout", "check":"Number"}
         ],
