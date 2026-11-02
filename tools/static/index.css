@@ -249,7 +249,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
 
 /* ── 기기 그림(261102) ───────────────────────────────────────────────────
    오른쪽 칸에 늘 보인다. 기기 색은 밝기와 상관없이 실물 색(파랑 몸체). 화면은 canvas 를 그림의 화면 자리에 겹친다
-   (자리 = viewBox 680×520 의 176,110 / 210×280 — 바꾸면 아래 % 도 같이) */
+   (자리 = viewBox 680×520 의 160,84 / 240×320 — 바꾸면 아래 % 도 같이) */
 .tl-device {
   flex: none; width: clamp(220px, 24vw, 340px); padding: var(--sp-4) var(--sp-3);
   border-left: 1px solid var(--c-line); background: var(--c-side); overflow-y: auto;
@@ -257,8 +257,8 @@ button, input, textarea, select { font: inherit; color: inherit; }
 }
 .dev { position: relative; width: 100%; }
 .dev-svg { display: block; width: 100%; height: auto; }
-.dev-screen { position: absolute; left: 25.882%; top: 21.154%; width: 30.882%; height: 53.846%; background: #000; border-radius: 2px; }
-.dev-logo { font: 700 46px var(--font); fill: #2c80bb; letter-spacing: 1px; }
+.dev-screen { position: absolute; left: 23.529%; top: 16.154%; width: 35.294%; height: 61.538%; background: #000; border-radius: 2px; }
+.dev-logo { font: 700 34px var(--font); fill: #2c80bb; letter-spacing: 1px; }
 .dev-btn circle { fill: #f4f2ec; stroke: #d3d0c6; stroke-width: 2; transition: fill .12s, stroke .12s; }
 .dev-btn text { font: 700 22px var(--font); fill: #9a968b; text-anchor: middle; transition: fill .12s; }
 .dev-btn.on circle { fill: var(--v2-accent); stroke: #fff; stroke-width: 4; }
