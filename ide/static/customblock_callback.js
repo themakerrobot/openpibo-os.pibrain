@@ -385,51 +385,39 @@ Blockly.Python.forBlock['oled_clear'] = function(block) {
 //   const timeout = Blockly.Python.valueToCode(block, 'timeout', Blockly.Python.ORDER_ATOMIC);
 //   return [`speech.stt(timeout=${timeout}, verbose=False)`, Blockly.Python.ORDER_ATOMIC];
 // }
-Blockly.Python.forBlock['speech_otts'] = function(block) {
-  Blockly.Python.definitions_['from_speech_import_SpeechOnDevice'] = 'from openpibo.speech import SpeechOnDevice';
-  Blockly.Python.definitions_['assign_speech_ondevice'] = 'speech_ondevice = SpeechOnDevice()';
-
-  const text = Blockly.Python.valueToCode(block, 'text', Blockly.Python.ORDER_ATOMIC);
-  const voice = block.getFieldValue("voice");
-  const dir = block.getFieldValue("dir");
-  const filename = Blockly.Python.valueToCode(block, 'filename', Blockly.Python.ORDER_ATOMIC);
-  const extension = block.getFieldValue("extension");
-  
-  return `speech_ondevice.tts(text=${text}, filename='${dir}'+${filename}+'${extension}', voice='${voice}')\n`;
+// 말하기 블록(261102): 목소리가 espeak 면 Speech.tts(espeak), 아니면 SpeechOnDevice.
+// 예전 speech_otts*·speech_etts* 는 불러올 때 이 두 블록으로 바뀐다(이 파일 끝)
+function ttsDefs(voice, play) {
+  if (voice === 'espeak') {
+    Blockly.Python.definitions_['from_speech_import_Speech'] = 'from openpibo.speech import Speech';
+    Blockly.Python.definitions_['assign_speech'] = 'speech = Speech()';
+  } else {
+    Blockly.Python.definitions_['from_speech_import_SpeechOnDevice'] = 'from openpibo.speech import SpeechOnDevice';
+    Blockly.Python.definitions_['assign_speech_ondevice'] = 'speech_ondevice = SpeechOnDevice()';
+  }
+  if (play) {
+    Blockly.Python.definitions_['from_audio_import_Audio'] = 'from openpibo.audio import Audio';
+    Blockly.Python.definitions_['assign_audio'] = 'audio = Audio()';
+  }
+  return voice === 'espeak' ? 'speech' : 'speech_ondevice';
 }
-Blockly.Python.forBlock['speech_otts_play'] = function(block) {
-  Blockly.Python.definitions_['from_speech_import_SpeechOnDevice'] = 'from openpibo.speech import SpeechOnDevice';
-  Blockly.Python.definitions_['assign_speech_ondevice'] = 'speech_ondevice = SpeechOnDevice()';
-  Blockly.Python.definitions_['from_audio_import_Audio'] = 'from openpibo.audio import Audio';
-  Blockly.Python.definitions_['assign_audio'] = 'audio = Audio()';  
-
-  const text = Blockly.Python.valueToCode(block, 'text', Blockly.Python.ORDER_ATOMIC);
+Blockly.Python.forBlock['speech_tts'] = function(block) {
   const voice = block.getFieldValue("voice");
-  const volume = Blockly.Python.valueToCode(block, 'volume', Blockly.Python.ORDER_ATOMIC);
-
-  return `speech_ondevice.tts(text=${text}, filename='/home/pi/tmp.mp3', voice='${voice}')\naudio.play('/home/pi/tmp.mp3', ${volume}, background=False)\n`;
-}
-Blockly.Python.forBlock['speech_etts'] = function(block) {
-  Blockly.Python.definitions_['from_speech_import_Speech'] = 'from openpibo.speech import Speech';
-  Blockly.Python.definitions_['assign_speech'] = 'speech = Speech()';
-
+  const obj = ttsDefs(voice, false);
   const text = Blockly.Python.valueToCode(block, 'text', Blockly.Python.ORDER_ATOMIC);
   const dir = block.getFieldValue("dir");
   const filename = Blockly.Python.valueToCode(block, 'filename', Blockly.Python.ORDER_ATOMIC);
   const extension = block.getFieldValue("extension");
-  
-  return `speech.tts(text=${text}, filename='${dir}'+${filename}+'${extension}', voice='espeak')\n`;
-}
-Blockly.Python.forBlock['speech_etts_play'] = function(block) {
-  Blockly.Python.definitions_['from_speech_import_Speech'] = 'from openpibo.speech import Speech';
-  Blockly.Python.definitions_['assign_speech'] = 'speech = Speech()';
-  Blockly.Python.definitions_['from_audio_import_Audio'] = 'from openpibo.audio import Audio';
-  Blockly.Python.definitions_['assign_audio'] = 'audio = Audio()';  
 
+  return `${obj}.tts(text=${text}, filename='${dir}'+${filename}+'${extension}', voice='${voice}')\n`;
+}
+Blockly.Python.forBlock['speech_tts_play'] = function(block) {
+  const voice = block.getFieldValue("voice");
+  const obj = ttsDefs(voice, true);
   const text = Blockly.Python.valueToCode(block, 'text', Blockly.Python.ORDER_ATOMIC);
   const volume = Blockly.Python.valueToCode(block, 'volume', Blockly.Python.ORDER_ATOMIC);
 
-  return `speech.tts(text=${text}, filename='/home/pi/tmp.mp3', voice='espeak')\naudio.play('/home/pi/tmp.mp3', ${volume}, background=False)\n`;
+  return `${obj}.tts(text=${text}, filename='/home/pi/tmp.mp3', voice='${voice}')\naudio.play('/home/pi/tmp.mp3', ${volume}, background=False)\n`;
 }
 Blockly.Python.forBlock['speech_set_llm_model'] = function(block) {
   Blockly.Python.definitions_['from_speech_import_Dialog'] = 'from openpibo.speech import Dialog';
@@ -1079,6 +1067,20 @@ Blockly.Python.forBlock['utils_calculate_angle'] = function(block) {
     if (st.next) { dropLabel(st.next.block); dropLabel(st.next.shadow); }
   }
 
+  // 말하기 블록(261102): speech_otts·speech_otts_play·speech_etts·speech_etts_play → speech_tts·speech_tts_play.
+  // 이름만 바꾼다(입력 칸 이름이 같다). espeak 블록은 목소리 칸이 없었으므로 'espeak' 를 넣는다
+  const TTS_RENAME = { speech_otts: 'speech_tts', speech_otts_play: 'speech_tts_play',
+                       speech_etts: 'speech_tts', speech_etts_play: 'speech_tts_play' };
+  function renameTts(st) {
+    if (!st || typeof st !== 'object') return;
+    if (TTS_RENAME[st.type]) {
+      if (st.type.indexOf('speech_etts') === 0) st.fields = Object.assign({}, st.fields, { voice: 'espeak' });
+      st.type = TTS_RENAME[st.type];
+    }
+    for (const name in (st.inputs || {})) { const slot = st.inputs[name]; if (slot) { renameTts(slot.block); renameTts(slot.shadow); } }
+    if (st.next) { renameTts(st.next.block); renameTts(st.next.shadow); }
+  }
+
   const load = Blockly.serialization.workspaces.load;
   Blockly.serialization.workspaces.load = function (state, workspace, opts) {
     try {
@@ -1092,6 +1094,11 @@ Blockly.Python.forBlock['utils_calculate_angle'] = function(block) {
       if (state && state.blocks && Array.isArray(state.blocks.blocks)) state.blocks.blocks.forEach(dropLabel);
     } catch (e) {
       console.warn('legacy classifier fix', e);
+    }
+    try {
+      if (state && state.blocks && Array.isArray(state.blocks.blocks)) state.blocks.blocks.forEach(renameTts);
+    } catch (e) {
+      console.warn('legacy tts fix', e);
     }
     return load.call(this, state, workspace, opts);
   };

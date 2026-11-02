@@ -45,7 +45,7 @@ def card_block(card, device, say_text, voice, volume, sound_file):
       return {'type': 'device_pibrain_led_colour_on', 'id': _id(), 'inputs': {'color': _colour(c)}}
     return {'type': 'device_eye_colour_on', 'id': _id(), 'inputs': {'left': _colour(c), 'right': _colour(c)}}
   if kind == 'say':
-    return {'type': 'speech_otts_play', 'id': _id(), 'fields': {'voice': voice},
+    return {'type': 'speech_tts_play', 'id': _id(), 'fields': {'voice': voice},
             'inputs': {'text': _text(say_text(arg)), 'volume': _num(volume)}}
   if kind == 'sound':
     # audio_play 의 폴더 선택지 중 code(/home/pi/code/) 에 소리 파일을 같이 복사한다(run_kids.py)

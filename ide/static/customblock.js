@@ -1245,8 +1245,8 @@ Blockly.defineBlocksWithJsonArray(
       helpUrl: ''
     },
     {
-      type: 'speech_otts',
-      message0: '%{BKY_SPEECH_OTTS}',
+      type: 'speech_tts',      // 파일로 저장. 261102 에 speech_otts·speech_etts 를 합쳤다(목소리에 espeak)
+      message0: '%{BKY_SPEECH_TTS}',
       args0:
         [
           {
@@ -1269,6 +1269,7 @@ Blockly.defineBlocksWithJsonArray(
               [ '%{BKY_VOICE_F3}', 'f3' ],
               [ '%{BKY_VOICE_F4}', 'f4' ],
               [ '%{BKY_VOICE_F5}', 'f5' ],
+              [ '%{BKY_VOICE_ESPEAK}', 'espeak' ],
             ]
           },
           {"type": "field_dropdown", "name":"dir",
@@ -1289,12 +1290,12 @@ Blockly.defineBlocksWithJsonArray(
       previousStatement: true,
       inputsInline: true,
       colour: color_type["speech"],
-      tooltip: '%{BKY_SPEECH_OTTS_TOOLTIP}',
+      tooltip: '%{BKY_SPEECH_TTS_TOOLTIP}',
       helpUrl: ''
     },
     {
-      type: 'speech_otts_play',
-      message0: '%{BKY_SPEECH_OTTS_PLAY}',
+      type: 'speech_tts_play', // 말하기. 261102 에 speech_otts_play·speech_etts_play 를 합쳤다
+      message0: '%{BKY_SPEECH_TTS_PLAY}',
       args0:
         [
           {
@@ -1317,6 +1318,7 @@ Blockly.defineBlocksWithJsonArray(
               [ '%{BKY_VOICE_F3}', 'f3' ],
               [ '%{BKY_VOICE_F4}', 'f4' ],
               [ '%{BKY_VOICE_F5}', 'f5' ],
+              [ '%{BKY_VOICE_ESPEAK}', 'espeak' ],
             ]
           },
           {"type": "input_value", "name": "volume", "check":"Number"}
@@ -1325,63 +1327,7 @@ Blockly.defineBlocksWithJsonArray(
       previousStatement: true,
       inputsInline: true,
       colour: color_type["speech"],
-      tooltip: '%{BKY_SPEECH_OTTS_PLAY_TOOLTIP}',
-      helpUrl: ''
-    },
-    {
-      type: 'speech_etts',
-      message0: '%{BKY_SPEECH_ETTS}',
-      args0:
-        [
-          {
-            "type": "field_image",
-            "src": "svg/file-audio-solid.svg",
-            "width": 27,
-            "height": 27
-          },
-          {"type":"input_dummy"},
-          {"type": "input_value", "name": "text", "check":"String"},
-          {"type": "field_dropdown", "name":"dir",
-            "options":[
-              [ '%{BKY_FOLDER_SELECT}', ''],
-              [ 'code', '/home/pi/code/' ],
-              [ 'myaudio', '/home/pi/myaudio/' ],
-            ]
-          },
-          {"type": "input_value", "name": "filename", "check":"String"},
-          {
-            "type": "field_dropdown",
-            "name": "extension",
-            "options": [['mp3', '.mp3'], ['wav', '.wav'],['-', '']]
-          },
-        ],
-      nextStatement: true,
-      previousStatement: true,
-      inputsInline: true,
-      colour: color_type["speech"],
-      tooltip: '%{BKY_SPEECH_ETTS_TOOLTIP}',
-      helpUrl: ''
-    },
-    {
-      type: 'speech_etts_play',
-      message0: '%{BKY_SPEECH_ETTS_PLAY}',
-      args0:
-        [
-          {
-            "type": "field_image",
-            "src": "svg/file-audio-solid.svg",
-            "width": 27,
-            "height": 27
-          },
-          {"type":"input_dummy"},
-          {"type": "input_value", "name": "text", "check":"String"},
-          {"type": "input_value", "name": "volume", "check":"Number"}
-        ],
-      nextStatement: true,
-      previousStatement: true,
-      inputsInline: true,
-      colour: color_type["speech"],
-      tooltip: '%{BKY_SPEECH_ETTS_PLAY_TOOLTIP}',
+      tooltip: '%{BKY_SPEECH_TTS_PLAY_TOOLTIP}',
       helpUrl: ''
     },
     {
