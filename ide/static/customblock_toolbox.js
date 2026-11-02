@@ -1442,7 +1442,7 @@ let toolbox = (lang) => {
                 "shadow": {
                   "type": "text",
                   "fields": {
-                    "TEXT": "tts"
+                    "TEXT": "audio"   // 소리 블록과 같은 기본 이름(261102) — 만든 파일을 바로 [소리 재생]으로 틀 수 있게
                     // "TEXT": translations['audio_filename'][lang]
                   }
                 }
