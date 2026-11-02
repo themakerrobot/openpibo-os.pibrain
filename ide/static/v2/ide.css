@@ -627,7 +627,11 @@ html[data-theme="dark"] .cm-s-pibo-light .CodeMirror-gutters { border-right-colo
 body[data-side="closed"] #v2_side,
 body[data-side="closed"] .pb-resizer[data-target="v2_side"] { display: none; }
 @media (min-width: 1700px) { :root { --pane-side: 380px; } }
-@media (max-width: 1280px) {
+/* 1281~1439: 영문은 [로봇 놀이](Robot Play) 가 붙은 뒤로 [전체화면] 글자가 [더보기] 를 31~74px 덮었다(261102) → 전체화면만 아이콘 */
+@media (max-width: 1439px) {
+  .v2-app #fullscreen_bt .pb-iconbtn__label { display: none; }
+}
+@media (max-width: 1299px) {
   .v2-app .v2-apps .pb-iconbtn__label { display: none; }
   .v2-app .v2-top .pb-iconbtn { padding: 0 8px; }
 }

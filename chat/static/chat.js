@@ -74,11 +74,15 @@
     '보라': 'purple', '분홍': 'pink', '하양': 'white', '끄기': 'off', '인사': 'greeting', '춤': 'dance', '손흔들기': 'wave',
     '박수': 'clap', '하이파이브': 'high five', '끄덕이기': 'nod', '도리도리': 'head shake', '앞으로': 'forward', '뒤로': 'backward',
     '왼쪽': 'left', '오른쪽': 'right' };
+  var TOOL_ICON = { light: 'fa-lightbulb', look: 'fa-eye', move: 'fa-person-walking', stop: 'fa-hand' };
   function toolTag(t) {
     var s = document.createElement('span');
     s.className = 'msg__tool' + (t[2] ? '' : ' is-fail');
     var v = t[1] ? ' ' + ((lang === 'en' && TOOL_EN[t[1]]) || t[1]) : '';
-    s.textContent = ' · ' + tr('chat_tool_' + t[0]) + v + (t[2] ? '' : ' ✕');
+    var ic = document.createElement('i');   // 도구마다 아이콘(261102). 실패는 빨간 ✕ 아이콘
+    ic.className = 'fa-solid ' + (t[2] ? (TOOL_ICON[t[0]] || 'fa-wand-magic-sparkles') : 'fa-circle-xmark');
+    s.appendChild(ic);
+    s.appendChild(document.createTextNode(tr('chat_tool_' + t[0]) + v));
     return s;
   }
   function meta(row, d) {

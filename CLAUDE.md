@@ -878,6 +878,7 @@ SSID 가 비면 실패 안내를 돌려준다(전엔 정의 안 된 `ex` 로 500
 
 파이보와 같은 규칙이다 — Pibo CLAUDE.md '디자인 시스템 · 문구 규칙 (261028)' (구형 브라우저 기준, 키트 한 곳의 색, A안 강조색, 크기 기준, 상단바·제목 형식, 꽉 찬 버튼 하나, 해요체·용어 표).
 
+- **아이콘(261102) — 파이보와 같다**(Pibo CLAUDE.md '아이콘 (261102)'): 제품 마크는 PiBrain 보드 그림(`design/marks/pibrain.svg`, 키트 CSS 가 `fa-brain` 글리프를 바꿈), 탭 아이콘 `icon.png` 도 같은 그림, 앱 아이콘 도구 `fa-screwdriver-wrench`·대화 `fa-comments`·분류기 `fa-graduation-cap`. 도구 [음성]의 espeak 버튼 `fa-robot` 은 제품 마크가 아니라 그대로 둔다
 - **상단바 왼쪽 로고를 누르면 LCD 가 IP 화면으로 돌아간다(261030, 사용자).** 키트 `pibo-ui.js` 의 `screenReset` → IDE(80) `POST /screen_reset` → `system/network_disp.py`([출력 지우기] 의 화면 초기화와 같음). 로봇 놀이 키우기 얼굴도 IP 로 덮는다
 PiBrain 에서 바뀐 것: 도구 상단바를 키트 모양으로(`PiBrain · 도구`, 'EN' 단추 → 지금 언어 select `#lang_sel`), 선택 표시 노랑(#fff1c2) → 옅은 파랑, 버튼·슬라이더를 키트 모양으로,
 `:where()`·`color-mix()`·`aspect-ratio` 제거, 버튼 상태 ON/OFF → 눌림/안 눌림, 음성 [말하기]·'다 말했어요'·'멈췄어요'. `design/` 의 키트 두 파일은 파이보와 바이트까지 같게 둔다(원본은 파이보).

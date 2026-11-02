@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PiBrain</title>
 <link rel="stylesheet" href="all.min.css">
-<link rel="stylesheet" href="pibo-ui.css?ver=261027v3">
-<link rel="shortcut icon" href="icon.png" type="image/x-icon">
+<link rel="stylesheet" href="pibo-ui.css?ver=261102v1">
+<link rel="shortcut icon" href="icon.png?ver=261102v1" type="image/png">
 <script>/* 화면 밝기를 첫 페인트 전에 (pibo-ui.js 의 getTheme 과 같은 규칙. 고른 적 없으면 soft) */
 (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
   document.documentElement.setAttribute('data-theme', m ? m[1] : 'soft'); } catch (e) {} })();</script>
@@ -74,7 +74,7 @@
 </header>
 <div class="wrap">
   <div class="card" role="status" aria-live="polite">
-    <p class="ttl"><span class="ring"><i id="icon" class="fa-solid fa-microchip"></i></span><span id="title"></span></p>
+    <p class="ttl"><span class="ring"><i id="icon" class="fa-solid fa-screwdriver-wrench"></i></span><span id="title"></span></p>
     <ol>
       <li id="s1"><i class="fa-solid fa-circle pending"></i><span data-t="s1"></span></li>
       <li id="s2"><i class="fa-solid fa-circle pending"></i><span data-t="s2"></span><span class="sec" id="sec"></span></li>
@@ -119,12 +119,12 @@
   var HOST = location.hostname;
   var SVC = {
     tools:      { port: 50000, on: '/tools?enable=on',      check: 'port',   limit: 60,
-                  name: { ko: '도구', en: 'Tools' },               icon: 'fa-microchip' },
+                  name: { ko: '도구', en: 'Tools' },               icon: 'fa-screwdriver-wrench' },
     classifier: { port: 50010, on: '/classifier?enable=on', check: 'port',   limit: 60,
-                  name: { ko: '분류기', en: 'Classifier' },   icon: 'fa-images' },
+                  name: { ko: '분류기', en: 'Classifier' },   icon: 'fa-graduation-cap' },
     // 대화: 대화 웹(chat/run_chat.py, 50030)이 열리면 바로 간다. 모델 준비(1~2분)는 대화 화면이 보여 준다(261026)
     llm:        { port: 50030, on: '/llm?enable=on',        check: 'port',   limit: 60,
-                  name: { ko: '대화', en: 'Chat' },                icon: 'fa-comment' },
+                  name: { ko: '대화', en: 'Chat' },                icon: 'fa-comments' },
     // 체험 앱 '로봇 놀이'(kids/run_kids.py, 50060, 261028 시험 중)
     kids:       { port: 50060, on: '/kids?enable=on',       check: 'port',   limit: 60,
                   name: { ko: '로봇 놀이', en: 'Robot Play' },     icon: 'fa-shapes' }

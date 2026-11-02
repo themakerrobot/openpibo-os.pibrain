@@ -271,6 +271,24 @@ html[data-theme="dark"] {
 }
 .pb-header__brand > i:first-child { font-size: 18px; width: 20px; text-align: center; flex: none; }
 .pb-header__brand > b { font-weight: var(--fw-b); }
+
+/* 제품 마크(261102) — 범용 Font Awesome robot·brain 대신 파이보 얼굴(고리 안테나·둥근 눈) · PiBrain 보드(화면·십자 버튼).
+   템플릿의 <i class="fa-solid fa-robot|fa-brain"> 은 그대로 두고 글리프만 마스크 그림으로 바꾼다(체험 앱이 class 를 바꿔 제품을 고른다).
+   그림 원본은 design/marks/*.svg, 탭 아이콘(icon.png)도 같은 그림. 색은 글자색(currentColor)을 따른다 */
+:root {
+  --pb-mark-pibo: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 .9a2.6 2.6 0 0 1 .8 5.07V8H16a5.5 5.5 0 0 1 5.5 5.5v3A5.5 5.5 0 0 1 16 22H8a5.5 5.5 0 0 1-5.5-5.5v-3A5.5 5.5 0 0 1 8 8h3.2V5.97A2.6 2.6 0 0 1 12 .9zm0 1.5a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2zM8.3 11.7a2.6 2.6 0 1 0 0 5.2 2.6 2.6 0 0 0 0-5.2zm0 1.4a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4zm7.4-1.4a2.6 2.6 0 1 0 0 5.2 2.6 2.6 0 0 0 0-5.2zm0 1.4a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4zM10.4 18.4h3.2a1.6 1.6 0 0 1-3.2 0z'/%3E%3C/svg%3E");
+  --pb-mark-pibrain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M4.5 3h15a3 3 0 0 1 3 3v10.5a3 3 0 0 1-3 3h-15a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3zM5.2 5.8a.8.8 0 0 0-.8.8v9.3a.8.8 0 0 0 .8.8h6a.8.8 0 0 0 .8-.8V6.6a.8.8 0 0 0-.8-.8zM17.1 7.2a1.45 1.45 0 1 0 0 2.9a1.45 1.45 0 1 0 0 -2.9zM14.350000000000001 9.950000000000001a1.45 1.45 0 1 0 0 2.9a1.45 1.45 0 1 0 0 -2.9zM19.85 9.950000000000001a1.45 1.45 0 1 0 0 2.9a1.45 1.45 0 1 0 0 -2.9zM17.1 12.700000000000001a1.45 1.45 0 1 0 0 2.9a1.45 1.45 0 1 0 0 -2.9z'/%3E%3Crect x='8.6' y='20.2' width='6.8' height='2.6' rx='1'/%3E%3C/svg%3E");
+}
+.pb-header__brand > i.fa-robot::before, .pb-header__brand > i.fa-brain::before,
+.v2-brand > i.fa-robot::before, .v2-brand > i.fa-brain::before,
+.v2-stat > i.fa-robot::before, .v2-stat > i.fa-brain::before, i.pb-mark::before {
+  content: ""; display: inline-block; width: 1.12em; height: 1.12em; vertical-align: -.2em;
+  background-color: currentColor;
+  -webkit-mask: var(--pb-mark-pibo) center / contain no-repeat; mask: var(--pb-mark-pibo) center / contain no-repeat;
+}
+.pb-header__brand > i.fa-brain::before, .v2-brand > i.fa-brain::before, .v2-stat > i.fa-brain::before, i.pb-mark--pibrain::before {
+  -webkit-mask-image: var(--pb-mark-pibrain); mask-image: var(--pb-mark-pibrain);
+}
 /* 앱 이름: "piBo · 도구". 가운데 점은 글자가 아니라 꾸밈이다(읽기 프로그램이 읽지 않게) */
 .pb-header__app { font-weight: var(--fw-n); }
 .pb-header__app::before { content: "·"; margin: 0 6px 0 -2px; opacity: .55; font-weight: var(--fw-b); }

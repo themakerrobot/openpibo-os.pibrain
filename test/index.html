@@ -202,7 +202,7 @@
               background: var(--frame); color: var(--frame-ink); border-bottom: 1px solid rgba(61, 47, 18, .14);
               font-size: 16px; font-weight: 700; letter-spacing: -.2px; }
     .hw-top span { font-weight: 400; }
-    .hw-top i { font-size: 18px; margin-right: 2px; }
+    .hw-top .hw-mark { flex: none; margin-right: 2px; }
     .hw-top span::before { content: "·"; margin: 0 6px 0 -2px; opacity: .55; font-weight: 700; }
     html[data-theme="light"] body { --canvas: #f1f3f8; }
     html[data-theme="light"] .hw-top { background: #ffcb2f; }
@@ -236,7 +236,7 @@
 </head>
 <body>
 
-<header class="hw-top no-print"><i class="fa-solid fa-brain" aria-hidden="true"></i><b>PiBrain</b><span>H/W 검수</span></header>
+<header class="hw-top no-print"><svg class="hw-mark" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M4.5 3h15a3 3 0 0 1 3 3v10.5a3 3 0 0 1-3 3h-15a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3zM5.2 5.8a.8.8 0 0 0-.8.8v9.3a.8.8 0 0 0 .8.8h6a.8.8 0 0 0 .8-.8V6.6a.8.8 0 0 0-.8-.8zM17.1 7.2a1.45 1.45 0 1 0 0 2.9a1.45 1.45 0 1 0 0 -2.9zM14.350000000000001 9.950000000000001a1.45 1.45 0 1 0 0 2.9a1.45 1.45 0 1 0 0 -2.9zM19.85 9.950000000000001a1.45 1.45 0 1 0 0 2.9a1.45 1.45 0 1 0 0 -2.9zM17.1 12.700000000000001a1.45 1.45 0 1 0 0 2.9a1.45 1.45 0 1 0 0 -2.9z"/><rect x="8.6" y="20.2" width="6.8" height="2.6" rx="1"/></svg><b>PiBrain</b><span>H/W 검수</span></header>
 
 <div class="toolbar no-print">
   <button class="btn btn-primary" id="btn-run-all">Run all tests</button>
