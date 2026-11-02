@@ -226,7 +226,9 @@ IDE → 푸터의 **시리얼번호 클릭** → 검수 페이지(50050).
 ### USB 메모리 자동 마운트 — `/etc/fstab` (261102, 이미지당 1회)
 
 리포에는 USB 를 붙이는 코드가 없다(`system/init` 맨 위 복구용 `/media/usb/update.zip` 검사는 이미 붙어 있다는 전제). 260624 이미지부터 자동으로 안 붙었다.
-OS 설정으로 `/media/usb` 에 붙인다. 파이보 cd488e95 에서 FAT32·exFAT(커널 6.6.62, `exfat` 드라이버 있음 — 패키지 불필요) 확인, 재부팅 뒤 자동으로 붙음.
+OS 설정으로 `/media/usb` 에 붙인다. 파이보 cd488e95 에서 exFAT 를 손으로 붙여 읽음 확인(커널 6.6.62, `exfat` 드라이버 있음 — 패키지 불필요).
+**확인 중(261102):** 같은 기기가 fstab 에 줄이 없는데도 재부팅 뒤 `/media/usb` 가 붙어 있었다 — 이미 다른 자동 마운트(예: usbmount)가 있을 수 있다.
+그게 무엇인지 확인하기 전에는 아래 fstab 줄을 넣지 말 것(둘이 같은 자리를 붙이려고 다툰다). 확인: `findmnt /media/usb` · `ls -l /media` · `dpkg -l | grep -i usbmount` · `ls /etc/udev/rules.d`
 
 ```bash
 cat /etc/fstab                               # /media/usb 줄이 이미 있으면 넣지 말 것
