@@ -158,7 +158,7 @@ Clear the screen.
 
 ### Speech
 
-<img src="img/speech_tts.png" alt="Save ([Hello]) with [Male 1 ▾] voice to [Select folder ▾] ([tts]) . [mp3 ▾]" width="857" class="blk">
+<img src="img/speech_tts.png" alt="Save ([Hello]) with [Male 1 ▾] voice to [Select folder ▾] ([audio]) . [mp3 ▾]" width="884" class="blk">
 
 Make speech on the robot and save it to a file. Korean and English are detected automatically. The robot voice (espeak) reads English text only.
 
