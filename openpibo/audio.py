@@ -68,7 +68,7 @@ Functions:
     """
     소리 녹음 (파이보 마이크 해당)
 
-    :param str filename: 녹음한 파일 저장 경로. ``wav`` 확장자
+    :param str filename: 녹음한 파일 저장 경로. 확장자(``wav`` · ``mp3``)로 형식이 정해집니다
     :param int timeout: 녹음 시간(s). 0보다 큰 숫자
     """
 

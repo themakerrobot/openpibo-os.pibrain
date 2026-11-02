@@ -58,8 +58,8 @@ msgstr "Stops the audio being played"
 msgid "소리 녹음 (파이보 마이크 해당)"
 msgstr "Records sound (piBo microphone)"
 
-msgid "녹음한 파일 저장 경로. ``wav`` 확장자"
-msgstr "Path to save the recorded file. ``wav`` extension"
+msgid "녹음한 파일 저장 경로. 확장자(``wav`` · ``mp3``)로 형식이 정해집니다"
+msgstr "Path to save the recorded file. The extension (``wav`` · ``mp3``) sets the format"
 
 msgid "녹음 시간(s). 0보다 큰 숫자"
 msgstr "Recording time (s). A number greater than 0"
