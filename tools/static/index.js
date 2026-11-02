@@ -147,6 +147,16 @@ function devDraw() {
   }
 }
 function devSetScreen(kind) { devScreen = kind; devDraw(); }
+/* [음성] 말하는 동안 그림 위 말풍선. /tts 는 다 말한 뒤에 답하므로 그때 닫는다. 새로 말하면 앞 것의 닫기는 무시(번호로 가른다) */
+let devSayNo = 0;
+function devSay(text) {
+  const box = document.getElementById('dev-say');
+  if (!box) return 0;
+  document.getElementById('dev-say-text').textContent = text;
+  box.hidden = false;
+  return ++devSayNo;
+}
+function devSayEnd(no) { if (no === undefined || no === devSayNo) { const box = document.getElementById('dev-say'); if (box) box.hidden = true; } }
 
 /* ── Button SSE ──────────────────────────────────────────────*/
 function startButtonStream() {
@@ -309,7 +319,9 @@ async function speakTTS() {
   const ttsBtn = document.getElementById('tts-btn');
   ttsBtn.disabled = true;
   document.getElementById('tts-status').textContent = t('tts_speaking');
-  const res = await fetch(`/tts?text=${encodeURIComponent(text)}&voice=${selectedVoice}`).then(r => r.json());
+  const no = devSay(text);
+  const res = await fetch(`/tts?text=${encodeURIComponent(text)}&voice=${selectedVoice}`).then(r => r.json()).catch(() => ({ ok: false }));
+  devSayEnd(no);
   document.getElementById('tts-status').textContent =
     res.ok ? t('tts_done') : `${t('error_prefix')}${t(res.error || '')}`;
   ttsBtn.disabled = false;
@@ -317,6 +329,7 @@ async function speakTTS() {
 
 function stopTTS() {
   fetch('/tts_stop');
+  devSayEnd();
   document.getElementById('tts-status').textContent = t('tts_stopped');
 }
 
