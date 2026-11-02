@@ -11,6 +11,7 @@ from threading import Timer
 from collections import Counter
 import json,time,os,shutil,subprocess,asyncio
 import wifi
+import netwatch
 import network_disp
 import uart_ctrl
 import argparse
@@ -28,6 +29,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 apmode = False
+nw = netwatch.NetWatch()   # 학교 WiFi ↔ AP 전환 판단(netwatch.py — 파이보와 같은 파일, 261102 에 옮김)
 
 templates = Jinja2Templates(directory="/home/pi/openpibo-os/docs")
 app.mount("/build", StaticFiles(directory="/home/pi/openpibo-os/docs/build"), name="build")
@@ -85,8 +87,8 @@ async def f(data: dict = Body(...)):
     print('[wifi] 저장은 됨 → 재부팅')
     ok = True
   if not ok:
-    # conwifi 가 연결을 지우고 바꾸다 실패하면 AP 가 내려가 있을 수 있다. 다음 점검(10초)에서 IP 가 없으면 AP 를 다시 켜게 한다
-    apmode = False
+    # conwifi 가 연결을 지우고 바꾸다 실패하면 AP 가 내려가 있을 수 있다. 다음 점검(10초)에서 AP 를 다시 켜게 한다
+    nw.wifi_failed()
     return JSONResponse(content={'result':'fail', 'reason':'wifi_err_connect', 'data':'conwifi failed.'}, status_code=200)
   os.system('shutdown -r now &')
   return JSONResponse(content="ok", status_code=200)
@@ -106,18 +108,10 @@ def wifi_update():
   global winfo, apmode
   try:
     tmp = os.popen('/home/pi/openpibo-os/system/system.sh').read().strip('\n').split(',')
-    if (tmp[6] != '' and tmp[6][0:3] != '169') or (tmp[7] != '' and tmp[7][0:3] != '169'):
-      if apmode == True:
-        #os.system("sudo ip link set ap0 down")
-        os.system("/home/pi/openpibo-os/system/hotspot.sh stop")
-        print(f'ap0 up->down')
-      apmode = False
-    else:
-      if apmode == False:
-        #os.system("sudo ip link set ap0 up")
-        os.system("/home/pi/openpibo-os/system/hotspot.sh start")
-        print(f'ap0 down->up')
-      apmode = True
+    has_ip = (tmp[6] != '' and tmp[6][0:3] != '169') or (tmp[7] != '' and tmp[7][0:3] != '169')
+    # 전엔 IP 가 한 번만 없어도 바로 AP 로 넘어갔다 → 판단은 netwatch 가 한다(저장된 SSID 가 보이면 90초 기다림 등, 261102 파이보와 같게)
+    nw.step(has_ip)
+    apmode = nw.apmode
     if winfo != tmp[6:12]:
       print(f'Network Change {winfo} -> {tmp[6:12]}')
       network_disp.run()
