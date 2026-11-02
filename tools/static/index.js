@@ -52,6 +52,7 @@ function applyLang() {
     if (!el.value || el.value === T[key].ko || el.value === T[key].en) el.value = t(key);
   });
   updateLcdPreview();
+  if (devScreen !== 'text') devDraw();   // 카메라 화면 글자는 언어를 따른다. 보낸 글자는 그대로
   syncConn();
 
   const ts = document.getElementById('tts-status');
@@ -87,6 +88,50 @@ function switchTab(name, btn) {
   if (name === 'lcd') updateLcdPreview();
 }
 
+/* ── 기기 그림(261102) ────────────────────────────────────────
+   오른쪽 PiBrain 그림의 LED·버튼·화면을 이 페이지가 보낸 상태로 바꾼다. 실제 기기에서 읽어 오지 않는다 —
+   학생 프로그램·로봇 놀이가 바꾼 LED·화면은 모른다(그림 아래 안내). 버튼은 실제 눌림(SSE) 그대로 */
+let devScreen = 'ip';          // ip | text | clear | camera — 언어를 바꾸면 다시 그린다
+let devClearBg = '#000000';
+function devLed(r, g, b) {
+  const on = r + g + b > 0, c = `rgb(${r},${g},${b})`;
+  const led = document.getElementById('dev-led'), glow = document.getElementById('dev-led-glow');
+  if (!led) return;
+  led.setAttribute('fill', on ? c : '#f2f3f4');
+  glow.setAttribute('fill', c);
+  glow.setAttribute('opacity', on ? '0.9' : '0');
+}
+function devBtn(k, on) {
+  const g = document.getElementById('dev-btn-' + k);
+  if (g) g.classList.toggle('on', on);
+}
+function devDraw() {
+  const cv = document.getElementById('dev-screen');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  const font = getComputedStyle(document.body).fontFamily;
+  if (devScreen === 'text') {
+    ctx.drawImage(document.getElementById('lcd-canvas'), 0, 0);   // 보낼 때의 미리보기를 그대로 옮긴다
+    return;
+  }
+  ctx.fillStyle = devScreen === 'clear' ? devClearBg : '#000';
+  ctx.fillRect(0, 0, 240, 320);
+  if (devScreen === 'ip') {                 // system/network_disp.py 와 같은 줄 자리(글꼴 20). 모르는 값(공유기·일련번호)은 비운다
+    ctx.fillStyle = '#fff'; ctx.font = `20px ${font}`; ctx.textBaseline = 'top';
+    ctx.fillText('*Wifi ------------', 15, 50);
+    ctx.fillText(`i p : ${location.hostname}`, 15, 85);
+    ctx.fillText('*System ---------', 15, 180);
+  } else if (devScreen === 'camera') {
+    ctx.strokeStyle = '#9fb3c8'; ctx.lineWidth = 6;
+    ctx.strokeRect(70, 130, 100, 70); ctx.beginPath(); ctx.arc(120, 165, 20, 0, Math.PI * 2); ctx.stroke();
+    ctx.fillStyle = '#9fb3c8'; ctx.fillRect(95, 118, 30, 12);
+    ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    ctx.font = `bold 26px ${font}`; ctx.fillText(t('dev_cam'), 120, 222);
+    ctx.textAlign = 'start';
+  }
+}
+function devSetScreen(kind) { devScreen = kind; devDraw(); }
+
 /* ── Button SSE ──────────────────────────────────────────────*/
 function startButtonStream() {
   btnSrc = new EventSource('/button_stream');
@@ -97,6 +142,7 @@ function startButtonStream() {
       const on = v === 'on';
       el.classList.toggle('on', on);
       el.querySelector('.lbl').textContent = t(on ? 'btn_on' : 'btn_off');
+      devBtn(k, on);
       if (on) {
         const time = new Date().toLocaleTimeString();
         const log = document.getElementById('btn-log');
@@ -139,8 +185,8 @@ function applyColorPicker(hex) {
   syncLed('b', parseInt(hex.slice(5, 7), 16));
 }
 
-function applyLed() { fetch(`/led?r=${R}&g=${G}&b=${B}`); }
-function ledOff()   { syncLed('r', 0); syncLed('g', 0); syncLed('b', 0); fetch('/led_off'); }
+function applyLed() { fetch(`/led?r=${R}&g=${G}&b=${B}`); devLed(R, G, B); }
+function ledOff()   { syncLed('r', 0); syncLed('g', 0); syncLed('b', 0); fetch('/led_off'); devLed(0, 0, 0); }
 function setPreset(r, g, b) { syncLed('r', r); syncLed('g', g); syncLed('b', b); applyLed(); }
 
 /* ── Camera ──────────────────────────────────────────────────*/
@@ -165,12 +211,14 @@ function toggleCamera() {
     document.getElementById('cam-ph').textContent    = t('cam_off_msg');
     document.getElementById('cam-wrap').style.display = 'none';
     document.getElementById('cam-ph').style.display   = '';
+    devSetScreen('ip');                 // 카메라를 끄면 서버가 network_disp(IP 화면)를 다시 띄운다
   } else {
     fetch('/camera?d=on');
     camOn = true;
     setCamLabel('cam_off_btn');
     document.getElementById('btn-capture').disabled  = false;
     document.getElementById('cam-ph').textContent    = t('cam_streaming');
+    devSetScreen('camera');
   }
 }
 
@@ -305,6 +353,7 @@ async function sendLcdText() {
     `&r=${fg.r}&g=${fg.g}&b=${fg.b}&bg_r=${bg.r}&bg_g=${bg.g}&bg_b=${bg.b}`;
 
   const res = await fetch(url).then(r => r.json());
+  if (res.ok) { updateLcdPreview(); devSetScreen('text'); }
   document.getElementById('lcd-status').textContent =
     res.ok ? t('lcd_done') : `${t('error_prefix')}${t(res.error || '')}`;
 }
@@ -313,6 +362,7 @@ async function clearLcd() {
   const bg = hexToRgb(document.getElementById('lcd-bg').value);
   document.getElementById('lcd-status').textContent = t('lcd_clearing');
   const res = await fetch(`/oled_clear?bg_r=${bg.r}&bg_g=${bg.g}&bg_b=${bg.b}`).then(r => r.json());
+  if (res.ok) { devClearBg = document.getElementById('lcd-bg').value; devSetScreen('clear'); }
   document.getElementById('lcd-status').textContent =
     res.ok ? t('lcd_cleared') : `${t('error_prefix')}${t(res.error || '')}`;
   updateLcdPreview();
@@ -321,6 +371,7 @@ async function clearLcd() {
 async function resetOled() {
   document.getElementById('oled-reset-status').textContent = t('lcd_resetting');
   const res = await fetch('/oled_reset').then(r => r.json());
+  if (res.ok) devSetScreen('ip');
   document.getElementById('oled-reset-status').textContent =
     res.ok ? t('lcd_reset_done') : `${t('error_prefix')}${t(res.error || '')}`;
 }
@@ -400,4 +451,5 @@ function syncConn() {
 document.addEventListener('DOMContentLoaded', () => {
   applyLang();
   markSwatch();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (devScreen !== 'text') devDraw(); });
 });

@@ -3,8 +3,9 @@
 <!--
   Tools for PiBrain — 화면 v2 (260924, Pibo IDE v2 와 같은 모양)
     상단바(노랑)  PiBrain · 도구 | IDE · 전체화면 · 화면 밝기 · 언어(한국어/English) — 파이보 도구·분류기와 같은 순서
-    왼쪽 레일     버튼 · LED · 카메라 · 음성 · LCD
+    왼쪽 레일     버튼 · LED · 카메라 · 음성 · 화면
     본문          카드. 넓으면 두 칸
+    오른쪽        기기 그림(LED·버튼·화면 상태, 261102). 좁으면 본문 위
   동작은 index.js(REST/SSE) 그대로다. id·onclick 은 바꾸지 않았다.
   색은 index.css 의 --c-* (IDE v2/ide.css 와 같은 값). 밝기는 쿠키 pibo_theme — IDE 에서 고른 값이 따라온다.
 -->
@@ -14,7 +15,7 @@
   <link rel="shortcut icon" href="/static/icon.png" type="image/x-icon"/>
   <link rel="stylesheet" href="/static/all.min.css"/>
   <link rel="stylesheet" href="/static/pibo-ui.css?ver=261027v4"/>
-  <link rel="stylesheet" href="/static/index.css?ver=261027v5"/>
+  <link rel="stylesheet" href="/static/index.css?ver=261102v1"/>
   <title data-key="title">도구</title>
   <script>/* 화면 밝기를 첫 페인트 전에 (쿠키 pibo_theme, 기본 soft) */
     (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
@@ -214,11 +215,39 @@
 </section>
 
 </main>
+
+<!-- ── 기기 그림(261102) ─────────────────────────────────────────
+     모든 탭에서 보이는 PiBrain 그림. LED(흰 네모)·버튼 4개·화면이 도구가 보낸 상태를 따라 바뀐다.
+     버튼 자리(사용자 확인 261102): 위 4 · 왼쪽 1 · 가운데 2 · 오른쪽 3. LED 는 오른쪽 흰 네모(NeoPixel 1개).
+     화면은 도구가 보낸 것만 안다(학생 프로그램·로봇 놀이가 그린 화면은 모른다). 처음·카메라 끈 뒤·[처음 화면으로] 는 IP 화면 -->
+<aside class="tl-device" aria-label="PiBrain">
+  <div class="dev">
+    <svg class="dev-svg" viewBox="0 0 680 520" role="img" aria-hidden="true">
+      <defs>
+        <filter id="dev-glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="14"/></filter>
+      </defs>
+      <rect x="250" y="436" width="154" height="80" rx="6" fill="#3a91cb"/>
+      <rect x="262" y="414" width="130" height="30" rx="4" fill="#3187c0"/>
+      <rect x="4" y="4" width="672" height="440" rx="20" fill="#41a0dc" stroke="#2f86c1" stroke-width="3"/>
+      <text x="34" y="74" class="dev-logo">piBrain</text>
+      <rect x="166" y="100" width="230" height="300" rx="8" fill="#14171c"/>
+      <circle cx="515" cy="130" r="23" fill="#14171c"/><circle cx="515" cy="130" r="10" fill="#2a3442"/><circle cx="511" cy="126" r="3" fill="#6b7a8f"/>
+      <rect id="dev-led-glow" x="592" y="192" width="60" height="60" rx="8" fill="#000" opacity="0" filter="url(#dev-glow)"/>
+      <rect id="dev-led" x="596" y="196" width="52" height="52" rx="6" fill="#f2f3f4" stroke="#d4d8dc" stroke-width="2"/>
+      <g class="dev-btn" id="dev-btn-4"><circle cx="505" cy="318" r="26"/><text x="505" y="326">4</text></g>
+      <g class="dev-btn" id="dev-btn-1"><circle cx="447" cy="380" r="26"/><text x="447" y="388">1</text></g>
+      <g class="dev-btn" id="dev-btn-2"><circle cx="505" cy="380" r="26"/><text x="505" y="388">2</text></g>
+      <g class="dev-btn" id="dev-btn-3"><circle cx="563" cy="380" r="26"/><text x="563" y="388">3</text></g>
+    </svg>
+    <canvas class="dev-screen" id="dev-screen" width="240" height="320"></canvas>
+  </div>
+  <p class="dev-note" data-key="dev_note">이 페이지에서 보낸 것만 그림에 보여요.</p>
+</aside>
 </div>
 
-<script src="/static/ko2en.js?ver=261101v1"></script>
+<script src="/static/ko2en.js?ver=261102v1"></script>
 <script src="/static/pibo-ui.js?ver=261030v1"></script>
-<script src="/static/index.js?ver=261027v4"></script>
+<script src="/static/index.js?ver=261102v1"></script>
 <script>/* 언어 select 를 지금 언어에 맞춘다(바꾸는 건 toggleLang → applyLang) */
   (function () { var sel = document.getElementById('lang_sel'); if (!sel) return;
     var sync = function () { sel.value = lang; }; sync();

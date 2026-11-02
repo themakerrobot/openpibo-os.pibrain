@@ -134,6 +134,10 @@ const T = {
   // 상단바 연결 칩(파이보 도구의 '로봇 연결됨' 과 같은 모양). /health 로 판단
   conn_ready:        { ko: "PiBrain 연결됨", en: "PiBrain connected" },
   conn_wait:         { ko: "연결 중…", en: "Connecting…" },
+
+  /* ── 261102 — 기기 그림 ──────────────────────────────────── */
+  dev_note:          { ko: "이 페이지에서 보낸 것만 그림에 보여요.", en: "The picture shows only what this page sent." },
+  dev_cam:           { ko: "카메라 화면", en: "Camera view" },
 };
 
 /**
