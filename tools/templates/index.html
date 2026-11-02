@@ -14,7 +14,7 @@
   <link rel="shortcut icon" href="/static/icon.png" type="image/x-icon"/>
   <link rel="stylesheet" href="/static/all.min.css"/>
   <link rel="stylesheet" href="/static/pibo-ui.css?ver=261027v4"/>
-  <link rel="stylesheet" href="/static/index.css?ver=261102v3"/>
+  <link rel="stylesheet" href="/static/index.css?ver=261102v4"/>
   <title data-key="title">도구</title>
   <script>/* 화면 밝기를 첫 페인트 전에 (쿠키 pibo_theme, 기본 soft) */
     (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
@@ -64,6 +64,8 @@
     </svg>
     <canvas class="dev-screen" id="dev-screen" width="240" height="320"></canvas>
     <span class="dev-badge" id="dev-badge" data-key="dev_preview" hidden>미리보기</span>
+    <!-- [음성] 말하는 동안만 뜨는 말풍선(261102). 스피커 자리는 확인 전이라 그리지 않고 기기 전체에서 나오는 것처럼 둔다 -->
+    <div class="dev-say" id="dev-say" hidden><span class="dev-say__wave" aria-hidden="true"><i></i><i></i><i></i></span><span class="dev-say__text" id="dev-say-text"></span></div>
   </div>
   <p class="dev-note" data-key="dev_note">이 페이지에서 보낸 것만 그림에 보여요.</p>
 </aside>
@@ -235,7 +237,7 @@
 
 <script src="/static/ko2en.js?ver=261102v3"></script>
 <script src="/static/pibo-ui.js?ver=261030v1"></script>
-<script src="/static/index.js?ver=261102v3"></script>
+<script src="/static/index.js?ver=261102v4"></script>
 <script>/* 언어 select 를 지금 언어에 맞춘다(바꾸는 건 toggleLang → applyLang) */
   (function () { var sel = document.getElementById('lang_sel'); if (!sel) return;
     var sync = function () { sel.value = lang; }; sync();
