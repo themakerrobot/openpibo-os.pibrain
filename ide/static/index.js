@@ -620,6 +620,30 @@ stop.addEventListener("click", function () {
   stop.disabled = true;
 });
 
+// 파일 목록 아이콘 — 종류마다 모양·색(261102). data-kind 는 클릭 처리가 html 에서 folder/file 을 찾는 데 쓴다
+const FM_ICONS = [
+  [["py"], "fa-file-code", "code"],
+  [["json"], "fa-puzzle-piece", "block"],
+  [["png", "jpg", "jpeg", "gif", "bmp", "webp"], "fa-file-image", "image"],
+  [["mp3", "wav", "ogg"], "fa-file-audio", "audio"],
+  [["mp4", "avi", "h264", "mov"], "fa-file-video", "video"],
+  [["onnx", "tflite", "task", "bin", "gguf"], "fa-cube", "model"],
+  [["txt", "md", "csv", "log"], "fa-file-lines", "text"],
+  [["zip", "tar", "gz"], "fa-file-zipper", "zip"],
+];
+function fmIcon(item) {
+  if (item.type === "") return "<i class='fa-solid fa-arrow-turn-up fm-ic fm-ic--up'></i>";
+  if (item.type === "folder") {
+    if (item.name === "usb") return "<i class='fa-brands fa-usb fm-ic fm-ic--usb' data-kind='folder'></i>";
+    return "<i class='fa-solid fa-folder fm-ic fm-ic--folder' data-kind='folder'></i>";
+  }
+  const dot = item.name.lastIndexOf(".");
+  const ext = dot > 0 ? item.name.slice(dot + 1).toLowerCase() : "";
+  for (const [exts, icon, cls] of FM_ICONS)
+    if (exts.includes(ext)) return `<i class='fa-solid ${icon} fm-ic fm-ic--${cls}' data-kind='file'></i>`;
+  return "<i class='fa-solid fa-file fm-ic' data-kind='file'></i>";
+}
+
 socket.on("update_file_manager", (d) => {
   CURRENT_DIR = "path" in d ? d["path"].split("/") : CURRENT_DIR;
   $('#path').text(CURRENT_DIR.join("/"));
@@ -641,12 +665,8 @@ socket.on("update_file_manager", (d) => {
     $("#fm_table > tbody").append(
       $("<tr>")
         .append(
-          $("<td style='width:30px;text-align:center'>").append(`<i class='fa-solid fa-${data[i].type}'></i>`),
+          $("<td style='width:30px;text-align:center'>").append(fmIcon(data[i])),
           $("<td>").text(data[i].name)
-            .hover(
-              function () { $(this).animate({ opacity: "0.3" }, 100); $(this).css("cursor", "pointer"); },
-              function () { $(this).animate({ opacity: "1" }, 100); $(this).css("cursor", "default"); }
-            )
             .click(async function () {
               let idx = $(this).closest('tr').index();
               let type = $(`#fm_table tr:eq(${idx}) td:eq(0)`).html()
@@ -704,16 +724,8 @@ socket.on("update_file_manager", (d) => {
           ,
           $("<td style='width:15px;text-align:center'>").append(data[i].type == "" || data[i].protect == true ? "" : $("<a>").attr("href", "/download?filename=" + encodeURIComponent(data[i].name)).attr("download", "").append("<i class='fa-solid fa-circle-down'></i>"))
             //$("<td style='width:15px;text-align:center'>").append(["", "folder"].includes(data[i].type) || data[i].protect==true?"":`<a href='/download?filename=${data[i].name}'><i class='fa-solid fa-circle-down'></i></a>`)
-            .hover(
-              function () { $(this).animate({ opacity: "0.3" }, 100); },
-              function () { $(this).animate({ opacity: "1" }, 100); }
-            )
           ,
           $("<td style='width:15px;text-align:center'>").append([""].includes(data[i].type) || data[i].protect == true ? "" : "<i class='fa-solid fa-pencil-alt'></i>")
-            .hover(
-              function () { $(this).animate({ opacity: "0.3" }, 100); },
-              function () { $(this).animate({ opacity: "1" }, 100); }
-            )
             .click(async function () {
               if ($(this).html() == "") return;
 
@@ -757,10 +769,6 @@ socket.on("update_file_manager", (d) => {
             })
           ,
           $("<td style='width:15px;text-align:center'>").append([""].includes(data[i].type) || data[i].protect == true ? "" : "<i class='fa-solid fa-trash-can'></i>")
-            .hover(
-              function () { $(this).animate({ opacity: "0.3" }, 100); $(this).css("cursor", "pointer"); },
-              function () { $(this).animate({ opacity: "1" }, 100); $(this).css("cursor", "default"); }
-            )
             .click(async function () {
               if ($(this).html() == "") return;
 

@@ -502,6 +502,10 @@ sudo raspi-config nonint get_wifi_country
 | `jquery-3.7.1.min.js` | Pibo | 3.1.1 을 지우고 올렸다 |
 | `tools/templates/index.html` `static/index.css` | **PiBrain 전용**(Pibo 도구와 마크업이 다르다) | 새로 짰다 — 아래 '도구 화면' |
 
+### 파일 목록 아이콘 (261102) — Pibo 와 같다
+
+`index.js` 의 `fmIcon()` · `v2/ide.css` 의 `--fm-*` 는 파이보와 같은 코드다(설명은 파이보 CLAUDE.md '파일 목록 아이콘'). 아이콘에 `data-kind='folder|file'` 을 꼭 넣을 것 — 클릭 처리가 그걸 본다
+
 ### 전체화면 (260930) — Pibo 와 같다
 
 키트(`pibo-ui.js`)가 IDE·도구·분류기의 전체화면 버튼을 맡는다. 탭을 바꾸면 브라우저가 풀고, 돌아오면 한 번 눌러 복귀.

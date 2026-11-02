@@ -383,6 +383,25 @@ body[data-running] #execute { background: var(--c-press); color: var(--c-ink-3);
 #fm_table tr:hover td { background: var(--c-hover); }
 #fm_table tr.is-current td { background: var(--c-sel); font-weight: 700; }
 #fm_table tr.is-current td:first-child { color: var(--c-sel-ink); }
+/* 파일 종류 아이콘 색(261102) — 채도를 낮춘 한 벌, 어둡게는 밝은 판. 고른 줄에서도 제 색 */
+.v2-app { --fm-folder:#d99a0b; --fm-code:#2f6fe0; --fm-block:#8a63c9; --fm-image:#1f9d62; --fm-audio:#d4527c;
+  --fm-video:#c4623a; --fm-model:#0f8f8f; --fm-zip:#8a6d4b; --fm-usb:#4d6fa8; }
+html[data-theme="dark"] .v2-app { --fm-folder:#f2bd4b; --fm-code:#7aa7ff; --fm-block:#b79cf0; --fm-image:#5fd09a; --fm-audio:#f08bab;
+  --fm-video:#f0a07c; --fm-model:#5cc9c9; --fm-zip:#c8a986; --fm-usb:#93b0e6; }
+#fm_table .fm-ic { font-size: 15px; width: 18px; text-align: center; }
+#fm_table .fm-ic--folder { color: var(--fm-folder); }
+#fm_table .fm-ic--usb    { color: var(--fm-usb); }
+#fm_table .fm-ic--code   { color: var(--fm-code); }
+#fm_table .fm-ic--block  { color: var(--fm-block); }
+#fm_table .fm-ic--image  { color: var(--fm-image); }
+#fm_table .fm-ic--audio  { color: var(--fm-audio); }
+#fm_table .fm-ic--video  { color: var(--fm-video); }
+#fm_table .fm-ic--model  { color: var(--fm-model); }
+#fm_table .fm-ic--zip    { color: var(--fm-zip); }
+#fm_table .fm-ic--up     { font-size: 13px; transform: scaleX(-1); }
+#fm_table td:nth-child(n+3) i { transition: color .12s, transform .12s; }
+#fm_table td:nth-child(n+3):hover i, #fm_table td a:hover i { transform: scale(1.12); }
+#fm_table td:last-child:hover i { color: var(--c-red); }
 #browser_en.dragover .v2-files { outline: 2px dashed var(--c-accent); outline-offset: -4px; background: var(--c-accent-t); }
 
 .v2-preview {
@@ -657,6 +676,7 @@ body:not([data-offline]) .v2-dot { animation: pb-breathe 2.4s ease-out infinite;
 @media (prefers-reduced-motion: reduce) {
   .v2-dot, .v2-side__page, .v2-pop,
   .v2-app .wifi-popup-content, .v2-app .alert-popup-content, .v2-app .prompt-popup-content, .v2-app .confirm-popup-content { animation: none !important; }
+  #fm_table td i { transition: none !important; transform: none !important; }
 }
 
 /* 빈 폴더 안내(index.js update_file_manager) — 키트 .pb-empty 를 표 칸 안에 */
