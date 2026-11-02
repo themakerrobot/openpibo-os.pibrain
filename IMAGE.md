@@ -223,6 +223,28 @@ IDE → 푸터의 **시리얼번호 클릭** → 검수 페이지(50050).
 **검수 서버가 살아 있는 채로 카드를 뜨지 말 것.** 탭을 닫으면 내려가지만,
 확실히 하려면 `pgrep -f test/test.py` 가 비어 있는지 본다.
 
+### USB 메모리 자동 마운트 — `/etc/fstab` (261102, 이미지당 1회)
+
+리포에는 USB 를 붙이는 코드가 없다(`system/init` 맨 위 복구용 `/media/usb/update.zip` 검사는 이미 붙어 있다는 전제). 260624 이미지부터 자동으로 안 붙었다.
+OS 설정으로 `/media/usb` 에 붙인다. 파이보 cd488e95 에서 FAT32·exFAT(커널 6.6.62, `exfat` 드라이버 있음 — 패키지 불필요) 확인, 재부팅 뒤 자동으로 붙음.
+
+```bash
+cat /etc/fstab                               # /media/usb 줄이 이미 있으면 넣지 말 것
+sudo cp /etc/fstab /etc/fstab.bak
+echo '/dev/sda1  /media/usb  auto  nofail,noauto,x-systemd.automount,x-systemd.device-timeout=3s,x-systemd.idle-timeout=60,uid=1000,gid=1000,umask=002  0  0' | sudo tee -a /etc/fstab
+sudo mkdir -p /media/usb
+sudo systemctl daemon-reload && sudo systemctl restart local-fs.target
+ls /media/usb                                # 꽂혀 있으면 파일이 보인다
+```
+
+- `x-systemd.automount`: `/media/usb` 를 여는 순간 붙인다(부팅 뒤에 꽂아도 됨, `system/init` 의 `update.zip` 검사도 이때 붙음). `nofail`·`device-timeout=3s` 라 USB 가 없어도 부팅이 멈추지 않는다
+- `idle-timeout=60`: 60초 안 쓰면 뗀다. 쓰는 중에 뽑으면 파일이 깨질 수 있다
+- `uid=1000,gid=1000,umask=002`: `pi` 소유로 붙는다. **FAT32·exFAT 전용 옵션이라 ext4 메모리는 안 붙는다**
+- `/dev/sda1` 기준 — USB 저장장치는 하나만 꽂는다고 전제. 특정 메모리만 쓰려면 `LABEL=<이름>` 으로
+- 메모리는 MBR · 파티션 1개 · FAT32 또는 exFAT(4GB 넘는 파일은 exFAT)
+- 되돌리기: `sudo cp /etc/fstab.bak /etc/fstab && sudo systemctl daemon-reload`
+- **확인 필요:** 뽑았다 다시 꽂을 때 다시 붙는지, PiBrain 기기
+
 ## 2. 뜨기 전 청소
 
 이미지에 개인 정보와 기기별 상태가 딸려간다. 전원 끄기 전에 지운다.
