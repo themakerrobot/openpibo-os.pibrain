@@ -699,11 +699,11 @@ docs 는 `CustomClassifier.load` 변경 뒤 다시 빌드했다(261001, 'docs' �
 - 검수 보고서(`test/`)에 녹음 항목 없음. 스피커(`audio`)만 검사한다.
 - `tools` 에 녹음·STT 엔드포인트 없음.
 
-남은 음성 블록은 `speech_otts` `speech_otts_play`(온디바이스 TTS),
-`speech_etts_play`(espeak), `speech_start_llm` `speech_call_llm` `speech_stop_llm` 여섯이다.
+남은 음성 블록은 `speech_tts` `speech_tts_play`(261102 — 예전 `speech_otts*`·`speech_etts*` 를 합침, 목소리에 espeak 포함. Pibo CLAUDE.md '예제 주의사항'),
+`speech_start_llm` `speech_call_llm` `speech_stop_llm` 등이다.
 전부 출력 쪽이라 마이크와 무관하다.
 
-`speech_otts_play` 에는 `voice` 만 있고 `lang` 필드는 없다. 예제를 손볼 때 주의할 것.
+`speech_tts_play` 에는 `voice` 만 있고 `lang` 필드는 없다. 예제를 손볼 때 주의할 것.
 
 ### 알면서 남겨 둔 것
 
@@ -880,7 +880,7 @@ PiBrain 에서 바뀐 것: 도구 상단바를 키트 모양으로(`PiBrain · �
 - **WiFi 저장(`booting.py` `POST /wifi`)**: SSID 1~32바이트, WPA-PSK 비밀번호 8~63바이트(16진수 64자)를 conwifi.sh 전에 검사한다(conwifi.sh 가 쓰던 연결을 먼저 지우므로).
   실패는 `{'result':'fail','reason':wifi_err_ssid|wifi_err_psk|wifi_err_connect}` — IDE 가 `reason` 으로 안내하고 창을 닫지 않는다.
   conwifi.sh 가 실패로 끝나도 **연결 정보가 저장됐으면 예전처럼 재부팅**한다(`wifi_saved` — 지금 없는 공유기를 미리 넣을 때는 `connection up` 만 실패한다). 저장도 안 됐을 때만 재부팅하지 않는다
-- **말하기 블록(`speech_otts_play`·`speech_etts_play`)은 말을 다 하고 다음 블록으로 간다**(`background=False`). 전엔 둘을 이어 쓰면 같은 `/home/pi/tmp.mp3` 를 덮어써 겹치거나 잘렸다
+- **말하기 블록(지금 `speech_tts_play`)은 말을 다 하고 다음 블록으로 간다**(`background=False`). 전엔 둘을 이어 쓰면 같은 `/home/pi/tmp.mp3` 를 덮어써 겹치거나 잘렸다
 - **`Audio.play(background=True)` 는 `play` 를 따로 띄운다**(`Popen`, 셸 안 씀). 스레드 안에서 부르면 바로 끝나는 프로그램은 `play` 가 시작되기 전에 파이썬이 끝나 소리가 안 났다. 소리는 프로그램이 끝나도 계속 나고 [정지] 때 꺼진다
 - **파이썬 변수 이름**: `Blockly.Python.nameDB_.safeName` 을 바꿔 끼운다(`index.js`) — 영문·숫자·`_`·한글 음절(가-힣)은 그대로, 나머지는 `_`. 전엔 `_XX` 를 모두 되살려서 `pos_10`·`pos_11` 이 둘 다 `pos_` 가 됐다. 겹치는 이름은 Blockly 가 숫자를 붙인다
 - 실행 출력은 서버·화면 모두 마지막 약 200KB 만 둔다(`record_*`, 400KB 넘으면 자름). 폴더 내려받기는 요청마다 따로 압축(스레드)
