@@ -1,10 +1,37 @@
 #!/bin/sh -e
 #
-# recovery usb
+# recovery usb (261102)
+# USB(/media/usb — fstab automount, IMAGE.md) 에 update.zip 이 있으면 /home/pi 에 풀고 _update 를 돌린다.
+# 결과는 USB 의 update.log 에 남기고, update.zip 을 update.done 으로 바꾼 뒤 재부팅한다(꽂아 둔 채여도 다시 안 돈다).
+# 이름을 못 바꾸면(읽기 전용 등) 재부팅하지 않고 아래 정상 부팅을 잇는다 — 재부팅이 끝없이 되풀이되지 않게.
 if [ -f /media/usb/update.zip ]; then
-  sudo unzip /media/usb/update.zip -d /home/pi/
-  sudo bash /home/pi/_update
-  exit 0
+  set +e
+  USB=/media/usb
+  LOG=$USB/update.log
+  PY=/home/pi/.pyenv/bin/python3
+  DISP=/home/pi/openpibo-os/system/msg_disp.py
+  echo "== $(date '+%Y-%m-%d %H:%M:%S') $(hostname) $(cat /home/pi/.OS_VERSION 2>/dev/null)" >> $LOG
+  timeout 20 $PY $DISP "USB update" "running..." >/dev/null 2>&1
+  rm -f /home/pi/_update                                  # 지난번 _update 가 다시 돌지 않게
+  if unzip -o $USB/update.zip -d /home/pi/ >> $LOG 2>&1 && [ -f /home/pi/_update ]; then
+    bash /home/pi/_update >> $LOG 2>&1
+    rc=$?
+  else
+    echo "unzip failed or no _update in zip" >> $LOG
+    rc=1
+  fi
+  echo "== exit $rc" >> $LOG
+  if mv -f $USB/update.zip $USB/update.done; then
+    sync
+    if [ $rc -eq 0 ]; then MSG="done"; else MSG="failed ($rc)"; fi
+    timeout 20 $PY $DISP "USB update" "$MSG" "rebooting..." >/dev/null 2>&1
+    sleep 5
+    shutdown -r now
+    exit 0
+  fi
+  echo "cannot rename update.zip - continue normal boot" >> $LOG
+  sync
+  set -e
 fi
 
 # hostname management

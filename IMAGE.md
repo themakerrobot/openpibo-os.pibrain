@@ -250,6 +250,31 @@ sudo ln -sfn /media/usb /home/pi/usb         # IDE [파일] 에 usb 폴더로 �
 - IDE [파일] 의 `usb` 폴더 = `/home/pi/usb` 링크. USB 가 없으면 폴더는 보여도 비어 있다. 보호 목록 밖이라 학생이 USB 안 파일을 지울 수 있다
 - **확인 필요:** 뽑았다 다시 꽂을 때 다시 붙는지, PiBrain 에 넣은 뒤 결과
 
+### USB 로 업데이트·설정 — `update.zip` (261102, `system/init`)
+
+USB 자동 마운트(위 절)가 있어야 한다. 부팅 때 `system/init`(rc.local) 이 `/media/usb/update.zip` 을 찾으면:
+
+1. 화면(파이보 OLED · PiBrain LCD)에 `USB update / running...` (`system/msg_disp.py`, 영문만)
+2. `/home/pi` 에 풀고(`unzip -o`, 덮어씀) **`/home/pi/_update` 를 root 로 실행** — 지난번 `_update` 는 먼저 지운다
+3. 결과를 USB 의 `update.log` 에 덧붙인다(날짜·기기·버전, 출력, `== exit <코드>`)
+4. `update.zip` → `update.done` 으로 이름을 바꾸고 화면에 `done` / `failed (코드)` → 5초 뒤 재부팅. 꽂아 둔 채여도 다시 안 돈다
+   - 이름을 못 바꾸면(쓰기 막힌 USB) 재부팅하지 않고 정상 부팅을 잇는다(재부팅 반복 방지). 이때는 부팅마다 다시 돈다 — USB 를 뺄 것
+
+`update.zip` 만들기: zip **맨 위**에 `_update`(bash 스크립트)를 두고, `/home/pi` 아래에 놓을 파일을 같은 상대 경로로 넣는다.
+
+```bash
+# 예: 해외(필리핀) 설정으로 바꾸기
+cat > _update <<'X'
+#!/bin/bash
+bash /home/pi/openpibo-os/system/setup_country.sh PH --regdom=KR
+X
+zip update.zip _update          # USB(FAT32·exFAT) 맨 위에 update.zip 으로 복사
+```
+
+- **아무 USB 의 `_update` 나 root 로 돈다**(확인 파일 없음 — 261102 사용자 결정). 교실에서 USB 를 함부로 꽂지 않게 안내할 것
+- 부팅 때 USB 가 3초(`device-timeout`) 안에 안 잡히면 이번 부팅은 건너뛴다 — 다시 재부팅
+- 컨테이너에서 성공·`_update` 실패·`_update` 없음·꽂아 둔 채 재부팅·쓰기 막힌 USB 를 확인했다. **실기기 확인 필요**(화면 글자 위치 포함)
+
 ## 2. 뜨기 전 청소
 
 이미지에 개인 정보와 기기별 상태가 딸려간다. 전원 끄기 전에 지운다.
