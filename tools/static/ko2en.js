@@ -138,6 +138,9 @@ const T = {
   /* ── 261102 — 기기 그림 ──────────────────────────────────── */
   dev_note:          { ko: "이 페이지에서 보낸 것만 그림에 보여요.", en: "The picture shows only what this page sent." },
   dev_cam:           { ko: "카메라 화면", en: "Camera view" },
+  dev_preview:       { ko: "미리보기", en: "Preview" },
+  button_log_title:  { ko: "누른 기록", en: "Press log" },
+  button_hint:       { ko: "PiBrain 버튼을 누르면 그림에서도 그 버튼이 켜져요.", en: "Press a PiBrain button and it lights up in the picture too." },
 };
 
 /**

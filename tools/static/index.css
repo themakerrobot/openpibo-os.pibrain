@@ -77,22 +77,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .tl-hbtn:active { background: var(--v2-frame-3); }
 
 /* ── 본문 틀: 왼쪽 레일 + 카드 ───────────────────────────────────────── */
-.tl-body { flex: 1 1 auto; min-height: 0; display: flex; }
-.tl-rail {
-  flex: none; width: 72px; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0;
-  background: var(--c-side); border-right: 1px solid var(--c-line); overflow-y: auto;
-}
-/* 레일: 파이보 도구 왼쪽 메뉴와 같은 모양(폭 72 · 아이콘 19 · 이름 12px 굵게 · 고른 것은 옅은 파랑) */
-.tl-rail button {
-  width: 60px; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 2px 8px;
-  border: 0; border-radius: 10px; background: transparent; color: var(--c-ink-2);
-  font-size: var(--fs-xs); font-weight: var(--fw-b); line-height: 1.1; cursor: pointer;
-}
-.tl-rail button > i { font-size: 19px; color: var(--c-ink-3); }
-.tl-rail button:hover { background: var(--c-hover); color: var(--c-ink); }
-.tl-rail button.active { background: var(--c-accent-t); color: var(--v2-accent-ink); }
-.tl-rail button.active > i { color: var(--v2-accent-ink); }
-
+.tl-body { flex: 1 1 auto; min-height: 0; }
 .tl-main { flex: 1 1 auto; min-width: 0; overflow-y: auto; padding: var(--sp-4); background: var(--c-bg); }
 .tab { display: none; }
 /* 본문 폭: 파이보 도구와 같게 가운데 · 바깥 16 · 카드 사이 12. 폭은 탭마다 — [카메라] 최대 1600px(화면 칸이 커진다), 나머지 1180px
@@ -164,18 +149,6 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .tl input[type=range]:focus::-webkit-slider-thumb { box-shadow: 0 0 0 4px var(--c-ring); }
 .tl input[type=color] { width: 48px; height: var(--ctl-md); padding: 2px; border: 0; border-radius: var(--r-ctl); background: var(--c-raise); box-shadow: inset 0 0 0 1px var(--c-line-2); cursor: pointer; }
 
-/* ── 버튼 탭 ─────────────────────────────────────────────────────────── */
-.button-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-.bi {
-  padding: 22px 8px; border-radius: var(--r-card); text-align: center;
-  background: var(--c-raise); box-shadow: inset 0 0 0 1.5px var(--c-line-2);
-  transition: background .15s, box-shadow .15s;
-}
-.bi .num { font-size: 32px; font-weight: 900; line-height: 1; color: var(--c-ink-3); }
-.bi .lbl { margin-top: 6px; font-size: 12px; font-weight: 700; color: var(--c-ink-3); letter-spacing: .04em; }
-.bi.on { background: var(--c-sel); box-shadow: inset 0 0 0 2px var(--c-accent), 0 0 0 4px var(--c-ring); }   /* 눌린 버튼 = '고른 것' 의 옅은 파랑 */
-.bi.on .num, .bi.on .lbl { color: var(--c-sel-ink); }
-
 /* ── LED 탭 ──────────────────────────────────────────────────────────── */
 .led-top { display: flex; align-items: center; gap: 18px; margin-bottom: 14px; }
 .led-preview {
@@ -204,20 +177,6 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .swatch[aria-pressed="true"] { background: var(--c-sel); color: var(--c-sel-ink); box-shadow: inset 0 0 0 1px var(--c-accent); }   /* 지금 RGB 와 같은 색 = '고른 것' */
 
 /* ── 카메라 · 비전 ───────────────────────────────────────────────────── */
-/* 카메라 칸 = 키트 .pb-stage(파이보 도구·분류기와 같은 바탕·빈 화면 안내). 바탕·모서리는 키트가 */
-/* PiBrain 카메라·LCD 는 세로 3:4(480x640 · 240x320). 칸도 세로 3:4 로 두고 사진은 비율 그대로 담는다(260930).
-   aspect-ratio 대신 높이 0 + padding-top(폭 min(100%, 360px) 의 4/3 = min(133.33%, 480px)) */
-.cam-stage { position: relative; width: min(100%, 360px); height: 0; padding-top: min(133.333%, 480px); margin: 0 auto; }
-/* 넓고 높은 화면은 카메라 칸을 450×600 으로(세로 카메라 3:4). 1366×768 같은 화면은 그대로 360×480 */
-@media (min-width: 1400px) and (min-height: 860px) {
-  .cam-stage { width: min(100%, 450px); padding-top: min(133.333%, 600px); }
-}
-#cam-wrap { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-#cam-img { display: block; width: 100%; height: 100%; object-fit: contain; }
-.cam-stage + .btn-row { justify-content: center; }
-#cam-ph { position: absolute; top: 0; right: 0; bottom: 0; left: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--sp-2);
-  padding: var(--sp-4); text-align: center; color: var(--v2-stage-ink); font-size: var(--fs-sm); line-height: 1.5; }
-#cam-ph::before { content: "\f030"; font: var(--fa-font-solid, 900 1em "Font Awesome 6 Free"); font-size: 26px; opacity: .8; }
 .vision-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(86px, 1fr)); gap: 8px; }
 /* 넓은 화면은 5칸 고정(파이보 도구 비전 타일과 같다) — auto-fill 이면 1600 폭에서 한 줄에 8~9칸이 된다 */
 @media (min-width: 1200px) { .vision-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
@@ -238,26 +197,26 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .voice-btn { min-height: 56px; }
 
 /* ── LCD ─────────────────────────────────────────────────────────────── */
-.lcd-preview {
-  width: 100%; max-width: 252px; margin: 0 auto; padding: 6px;
-  border-radius: var(--r-card); background: var(--v2-stage); box-shadow: 0 0 0 1px var(--c-line-2);
-}
-.lcd-preview canvas { display: block; width: 100%; height: auto; border-radius: var(--r-chip); }   /* 비율은 canvas 의 width·height 속성(240×320)이 정한다 */
 .field-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px 14px; margin-top: 12px; }
 .field-grid label { display: flex; flex-direction: column; gap: 5px; font-size: var(--fs-xs); font-weight: var(--fw-b); color: var(--c-ink-2); }
 .field-grid input[type=number] { width: 100%; }
 
-/* ── 기기 그림(261102) ───────────────────────────────────────────────────
-   오른쪽 칸에 늘 보인다. 기기 색은 밝기와 상관없이 실물 색(파랑 몸체). 화면은 canvas 를 그림의 화면 자리에 겹친다
-   (자리 = viewBox 680×520 의 160,84 / 240×320 — 바꾸면 아래 % 도 같이) */
+/* ── 2분할(261102) — 왼쪽 PiBrain 그림 · 오른쪽 탭 줄 + 조작 카드 ─────────────
+   그림 색은 밝기와 상관없이 실물 색(파랑 몸체). 화면은 canvas 를 그림의 화면 자리에 겹친다
+   (자리 = viewBox 680×520 의 160,84 / 240×320 — 바꾸면 .dev-screen·.dev-badge 의 % 도 같이) */
+.tl-body { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(380px, 1fr); }
 .tl-device {
-  flex: none; width: clamp(220px, 24vw, 340px); padding: var(--sp-4) var(--sp-3);
-  border-left: 1px solid var(--c-line); background: var(--c-side); overflow-y: auto;
-  display: flex; flex-direction: column; align-items: center; gap: var(--sp-2);
+  min-width: 0; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--sp-3);
+  padding: var(--sp-5); background: var(--c-side); border-right: 1px solid var(--c-line); overflow: hidden;
 }
-.dev { position: relative; width: 100%; }
+/* 그림 폭 = 칸 폭과 '남는 높이 × 680/520' 중 작은 것(그림이 칸에 다 들어오게) */
+.dev { position: relative; width: min(100%, calc((100vh - var(--header-h) - 90px) * 1.3077)); }
 .dev-svg { display: block; width: 100%; height: auto; }
 .dev-screen { position: absolute; left: 23.529%; top: 16.154%; width: 35.294%; height: 61.538%; background: #000; border-radius: 2px; }
+/* '미리보기' 표시는 화면 위 테두리에 걸쳐(글자를 가리지 않게) */
+.dev-badge { position: absolute; left: 41.176%; top: calc(16.154% - 30px); transform: translateX(-50%); padding: 2px 10px; white-space: nowrap; border-radius: var(--r-pill);
+  background: var(--v2-accent); color: #fff; font-size: var(--fs-xs); font-weight: var(--fw-b); line-height: 1.5; pointer-events: none; }
+.dev-badge[hidden] { display: none; }
 .dev-logo { font: 700 34px var(--font); fill: #2c80bb; letter-spacing: 1px; }
 .dev-btn circle { fill: #f4f2ec; stroke: #d3d0c6; stroke-width: 2; transition: fill .12s, stroke .12s; }
 .dev-btn text { font: 700 22px var(--font); fill: #9a968b; text-anchor: middle; transition: fill .12s; }
@@ -266,18 +225,29 @@ button, input, textarea, select { font: inherit; color: inherit; }
 #dev-led, #dev-led-glow { transition: fill .15s, opacity .15s; }
 .dev-note { margin: 0; font-size: var(--fs-xs); color: var(--c-ink-3); text-align: center; }
 
-/* [버튼] 탭의 상태 칸도 실물 배치로: 위 4 · 왼쪽 1 · 가운데 2 · 오른쪽 3 */
-.button-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: ". b4 ." "b1 b2 b3"; max-width: 480px; margin: 0 auto; }
-#bi-1 { grid-area: b1; } #bi-2 { grid-area: b2; } #bi-3 { grid-area: b3; } #bi-4 { grid-area: b4; }
+.tl-side { min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+/* 탭 줄(예전 왼쪽 레일): 아이콘 + 이름, 고른 것은 옅은 파랑 */
+.tl-tabs { flex: none; display: flex; gap: 4px; padding: var(--sp-2) var(--sp-3); background: var(--c-side); border-bottom: 1px solid var(--c-line); overflow-x: auto; }
+.tl-tabs button {
+  flex: 1 0 auto; display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: var(--ctl-md); padding: 0 12px;
+  border: 0; border-radius: var(--r-ctl); background: transparent; color: var(--c-ink-2);
+  font-size: var(--fs-sm); font-weight: var(--fw-b); white-space: nowrap; cursor: pointer;
+}
+.tl-tabs button > i { font-size: 15px; color: var(--c-ink-3); }
+.tl-tabs button:hover { background: var(--c-hover); color: var(--c-ink); }
+.tl-tabs button.active { background: var(--c-accent-t); color: var(--v2-accent-ink); }
+.tl-tabs button.active > i { color: var(--v2-accent-ink); }
+.tl-side .tl-main { flex: 1 1 auto; }
+/* 오른쪽 칸은 좁으니 카드는 한 줄에 하나 */
+.tl-side .tab.active, .tl-side #tab-camera.active { grid-template-columns: minmax(0, 1fr); max-width: 720px; }
 
 @media (max-width: 900px) {
-  .tl-body { display: grid; grid-template-columns: 72px minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
-  .tl-rail { grid-row: 1 / 3; }
-  .tl-device { grid-column: 2; grid-row: 1; width: auto; flex-direction: row; justify-content: center; padding: var(--sp-2) var(--sp-3);
-               border-left: 0; border-bottom: 1px solid var(--c-line); overflow: visible; }
-  .tl-device .dev { width: 200px; }
-  .tl-device .dev-note { max-width: 160px; text-align: left; }
-  .tl-main { grid-column: 2; grid-row: 2; }
+  .tl-body { display: flex; flex-direction: column; overflow-y: auto; }
+  .tl-device { flex: none; padding: var(--sp-3); border-right: 0; border-bottom: 1px solid var(--c-line); }
+  .dev { width: min(100%, 440px); }
+  .tl-side { flex: none; }
+  .tl-tabs { position: sticky; top: 0; z-index: 2; }
+  .tl-side .tl-main { overflow: visible; }
 }
 
 /* ── 폭에 따라 ───────────────────────────────────────────────────────── */
@@ -288,11 +258,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
   .voice-grid { grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); }
 }
 @media (max-width: 560px) {
-  .tl-body { display: flex; flex-direction: column; }
-  .tl-rail { width: auto; flex-direction: row; padding: 6px; border-right: 0; border-bottom: 1px solid var(--c-line); overflow-x: auto; }
-  .tl-device { order: 1; } .tl-main { order: 2; }
-  .tl-device .dev { width: 150px; }
-  .tl-rail button { flex: 1 0 64px; }
+  .tl-tabs button { padding: 0 8px; gap: 6px; }
   .tl-main { padding: 12px; }
   .tab.active { grid-template-columns: minmax(0, 1fr); }
 }

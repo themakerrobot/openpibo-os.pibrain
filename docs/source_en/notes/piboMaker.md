@@ -37,7 +37,7 @@ Everything runs **inside PiBrain** (voices, chat and the classifier included). O
 ## Tools
 
 Try PiBrain's features one at a time, without code. Pick [Buttons], [LED], [Camera], [Speech] or [Screen] on the left.
-The PiBrain picture on the right follows along: a pressed button lights up, the white square (LED) takes the LED color, and the screen shows the text you send (only what this page sent appears in the picture).
+The PiBrain picture on the left follows along: a pressed button lights up, the white square (LED) takes the LED color, and the screen shows the text you send. A [Show here] photo from [Camera] appears on the picture's screen, and unsent text on the [Screen] tab shows as a preview (only what this page sent appears in the picture).
 
 - **Buttons**: shows live whether each of the 4 buttons is pressed
 
