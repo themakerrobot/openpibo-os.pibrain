@@ -195,6 +195,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
 /* ── 음성 ────────────────────────────────────────────────────────────── */
 .voice-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
 .voice-btn { min-height: 56px; }
+.voice-btn--wide { grid-column: 1 / -1; flex-direction: row; min-height: 44px; }   /* 기계 목소리는 한 줄 전체 */
 
 /* ── LCD ─────────────────────────────────────────────────────────────── */
 .field-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px 14px; margin-top: 12px; }

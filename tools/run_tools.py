@@ -484,13 +484,18 @@ async def button_stream(request: Request):
 # ── TTS ──────────────────────────────────────────────────────
 @app.get('/tts')
 async def tts(text: str, voice: str = 'f1'):
-    valid = ('m1','m2','m3','m4','m5','f1','f2','f3','f4','f5')
+    valid = ('m1','m2','m3','m4','m5','f1','f2','f3','f4','f5','espeak')
     if voice not in valid:
         return JSONResponse({"ok": False, "error": "tts_err_voice"})
     try:
-        sp = await ensure_speech()
+        if voice == 'espeak':
+            # 기계 목소리(261102, 파이보 도구·IDE 블록과 같다). 목소리 모델(약 330MB)을 올리지 않는다. 영어 글자만 제대로 읽는다
+            from openpibo.speech import Speech
+            await asyncio.to_thread(Speech().tts, text, filename=TTS_FILE, voice='espeak')
+        else:
+            sp = await ensure_speech()
+            await asyncio.to_thread(sp.tts, text, filename=TTS_FILE, voice=voice)
         au = await ensure_audio()
-        await asyncio.to_thread(sp.tts, text, filename=TTS_FILE, voice=voice)
         await asyncio.to_thread(au.play, TTS_FILE, volume=100, background=False)
         return JSONResponse({"ok": True})
     except Exception as e:
