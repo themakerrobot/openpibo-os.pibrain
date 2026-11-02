@@ -14,7 +14,7 @@
   <link rel="shortcut icon" href="/static/icon.png" type="image/x-icon"/>
   <link rel="stylesheet" href="/static/all.min.css"/>
   <link rel="stylesheet" href="/static/pibo-ui.css?ver=261027v4"/>
-  <link rel="stylesheet" href="/static/index.css?ver=261102v4"/>
+  <link rel="stylesheet" href="/static/index.css?ver=261102v5"/>
   <title data-key="title">도구</title>
   <script>/* 화면 밝기를 첫 페인트 전에 (쿠키 pibo_theme, 기본 soft) */
     (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
@@ -186,6 +186,7 @@
       <button class="voice-btn" onclick="setVoice('f3',this)"><i class="fa-solid fa-person-dress"></i><span data-key="voice_f3">여성 3</span></button>
       <button class="voice-btn" onclick="setVoice('f4',this)"><i class="fa-solid fa-person-dress"></i><span data-key="voice_f4">여성 4</span></button>
       <button class="voice-btn" onclick="setVoice('f5',this)"><i class="fa-solid fa-person-dress"></i><span data-key="voice_f5">여성 5</span></button>
+      <button class="voice-btn voice-btn--wide" onclick="setVoice('espeak',this)"><i class="fa-solid fa-robot"></i><span data-key="voice_espeak">기계 목소리 (espeak) · 영어 글자만</span></button>
     </div>
   </div>
   <div class="card">
@@ -235,7 +236,7 @@
 </div>
 </div>
 
-<script src="/static/ko2en.js?ver=261102v3"></script>
+<script src="/static/ko2en.js?ver=261102v5"></script>
 <script src="/static/pibo-ui.js?ver=261030v1"></script>
 <script src="/static/index.js?ver=261102v4"></script>
 <script>/* 언어 select 를 지금 언어에 맞춘다(바꾸는 건 toggleLang → applyLang) */

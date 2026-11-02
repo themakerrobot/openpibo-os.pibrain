@@ -113,6 +113,7 @@ const T = {
   voice_f3: { ko: "여성 3", en: "Female 3" },
   voice_f4: { ko: "여성 4", en: "Female 4" },
   voice_f5: { ko: "여성 5", en: "Female 5" },
+  voice_espeak: { ko: "기계 목소리 (espeak) · 영어 글자만", en: "Robot voice (espeak) · English text only" },
 
   /* ── Common ──────────────────────────────────────────────── */
   waiting:           { ko: "대기 중…", en: "Waiting…" },
