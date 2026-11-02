@@ -227,8 +227,8 @@ IDE → 푸터의 **시리얼번호 클릭** → 검수 페이지(50050).
 
 리포에는 USB 를 붙이는 코드가 없다(`system/init` 맨 위 복구용 `/media/usb/update.zip` 검사는 이미 붙어 있다는 전제). 260624 이미지부터 자동으로 안 붙었다.
 OS 설정으로 `/media/usb` 에 붙인다. 파이보 cd488e95 에서 exFAT 를 손으로 붙여 읽음 확인(커널 6.6.62, `exfat` 드라이버 있음 — 패키지 불필요).
-**확인 중(261102):** 같은 기기가 fstab 에 줄이 없는데도 재부팅 뒤 `/media/usb` 가 붙어 있었다 — 이미 다른 자동 마운트(예: usbmount)가 있을 수 있다.
-그게 무엇인지 확인하기 전에는 아래 fstab 줄을 넣지 말 것(둘이 같은 자리를 붙이려고 다툰다). 확인: `findmnt /media/usb` · `ls -l /media` · `dpkg -l | grep -i usbmount` · `ls /etc/udev/rules.d`
+**확인(261102):** 파이보 cd488e95 — 아래 줄로 `media-usb.automount`(`Loaded: /etc/fstab; generated`)가 생기고, 재부팅 뒤·부팅 때 `system/init` 의 `update.zip` 검사에서 붙음.
+PiBrain fc1a8f31 — 원래 자동 마운트가 전혀 없었다(`usbmount`·fstab 줄·udev 규칙 없음, `sda1 exfat` 만 잡힘). 같은 줄을 넣는다
 
 ```bash
 cat /etc/fstab                               # /media/usb 줄이 이미 있으면 넣지 말 것
@@ -237,6 +237,8 @@ echo '/dev/sda1  /media/usb  auto  nofail,noauto,x-systemd.automount,x-systemd.d
 sudo mkdir -p /media/usb
 sudo systemctl daemon-reload && sudo systemctl restart local-fs.target
 ls /media/usb                                # 꽂혀 있으면 파일이 보인다
+systemctl status media-usb.automount --no-pager | head -n 3   # Loaded: (/etc/fstab; generated)
+sudo ln -sfn /media/usb /home/pi/usb         # IDE [파일] 에 usb 폴더로 보이게(IDE 는 /home/pi 위로 못 올라간다)
 ```
 
 - `x-systemd.automount`: `/media/usb` 를 여는 순간 붙인다(부팅 뒤에 꽂아도 됨, `system/init` 의 `update.zip` 검사도 이때 붙음). `nofail`·`device-timeout=3s` 라 USB 가 없어도 부팅이 멈추지 않는다
@@ -245,7 +247,8 @@ ls /media/usb                                # 꽂혀 있으면 파일이 보인
 - `/dev/sda1` 기준 — USB 저장장치는 하나만 꽂는다고 전제. 특정 메모리만 쓰려면 `LABEL=<이름>` 으로
 - 메모리는 MBR · 파티션 1개 · FAT32 또는 exFAT(4GB 넘는 파일은 exFAT)
 - 되돌리기: `sudo cp /etc/fstab.bak /etc/fstab && sudo systemctl daemon-reload`
-- **확인 필요:** 뽑았다 다시 꽂을 때 다시 붙는지, PiBrain 기기
+- IDE [파일] 의 `usb` 폴더 = `/home/pi/usb` 링크. USB 가 없으면 폴더는 보여도 비어 있다. 보호 목록 밖이라 학생이 USB 안 파일을 지울 수 있다
+- **확인 필요:** 뽑았다 다시 꽂을 때 다시 붙는지, PiBrain 에 넣은 뒤 결과
 
 ## 2. 뜨기 전 청소
 

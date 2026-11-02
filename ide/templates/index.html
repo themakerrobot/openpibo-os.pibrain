@@ -21,7 +21,7 @@
   <link rel="stylesheet" href="../static/codemirror.css" />
   <link rel="stylesheet" href="../static/jquery.jsonview.min.css" />
   <link rel="stylesheet" href="../static/pibo-ui.css?ver=261027v4" />
-  <link rel="stylesheet" href="../static/v2/ide.css?ver=261027v4" />
+  <link rel="stylesheet" href="../static/v2/ide.css?ver=261102v1" />
   <link rel="shortcut icon" href="../static/icon.png?ver=240319v1" type="image/x-icon" />
 
   <script src="../static/ko2en.js?ver=261029v3"></script>
@@ -110,14 +110,14 @@
   <main>
     <div class="content pb-panes">
       <!-- ── 왼쪽 패널: [PiBrain | 파일] + 실행·정지 ──────────────────────────── -->
-      <aside class="pb-pane pb-pane--fixed v2-side" id="v2_side" data-tab="robot">
+      <aside class="pb-pane pb-pane--fixed v2-side" id="v2_side" data-tab="files">   <!-- 처음엔 [파일](261102, 수업 현장 요청). 실행·화면 출력 때는 ide.js 가 [로봇] 탭으로 -->
         <div class="v2-tabs" role="tablist">
-          <button type="button" role="tab" data-side-tab="robot" aria-selected="true"><span class="v2-dot" aria-hidden="true"></span><span data-key="v2_tab_robot"></span></button>
-          <button type="button" role="tab" data-side-tab="files" aria-selected="false"><span data-key="nav_files"></span></button>
+          <button type="button" role="tab" data-side-tab="robot" aria-selected="false"><span class="v2-dot" aria-hidden="true"></span><span data-key="v2_tab_robot"></span></button>
+          <button type="button" role="tab" data-side-tab="files" aria-selected="true"><span data-key="nav_files"></span></button>
         </div>
 
         <!-- [PiBrain] -->
-        <section class="v2-side__page" data-page="robot" id="result_en">
+        <section class="v2-side__page" data-page="robot" id="result_en" hidden>
           <figure class="v2-live" id="v2_live">
             <img id="v2_live_img" alt="" />
             <figcaption class="v2-live__empty"><i class="fa-solid fa-camera"></i><span data-key="v2_live_empty"></span></figcaption>
@@ -151,7 +151,7 @@
         </section>
 
         <!-- [파일] -->
-        <section class="v2-side__page" data-page="files" id="browser_en" hidden>
+        <section class="v2-side__page" data-page="files" id="browser_en">
           <div class="v2-fbar">
             <div class="v2-crumb"><i class="fa-solid fa-folder"></i><span id="path"></span></div>
             <details class="v2-menu" id="add_menu">

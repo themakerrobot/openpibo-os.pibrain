@@ -377,13 +377,12 @@ body[data-running] #execute { background: var(--c-press); color: var(--c-ink-3);
 #fm_table td:nth-child(2) { width: 100%; max-width: 0; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
 #fm_table td i { font-size: 13px; }
 #fm_table td a, #fm_table td:nth-child(n+3) { color: var(--c-ink-3); }
-#fm_table td:nth-child(n+3) { opacity: 0; transition: opacity .12s; cursor: pointer; }
-#fm_table tr:hover td:nth-child(n+3), #fm_table tr.is-current td:nth-child(n+3) { opacity: 1; }
+/* 내려받기·이름 바꾸기·지우기 아이콘은 늘 보인다(261102 — 전엔 줄에 마우스를 올려야 보여서 학생들이 못 찾았다) */
+#fm_table td:nth-child(n+3) { cursor: pointer; }
 #fm_table td:nth-child(n+3):hover, #fm_table td a:hover { color: var(--c-ink); }
 #fm_table tr:hover td { background: var(--c-hover); }
 #fm_table tr.is-current td { background: var(--c-sel); font-weight: 700; }
 #fm_table tr.is-current td:first-child { color: var(--c-sel-ink); }
-@media (hover: none) { #fm_table td:nth-child(n+3) { opacity: 1; } }
 #browser_en.dragover .v2-files { outline: 2px dashed var(--c-accent); outline-offset: -4px; background: var(--c-accent-t); }
 
 .v2-preview {
