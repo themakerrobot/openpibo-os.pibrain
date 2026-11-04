@@ -34,11 +34,12 @@ adafruit-circuitpython-rgb-display==3.13
 picamera2==0.3.21
 
 # ── 영상 · 인식 ──────────────────────────────────────────────────
-numpy==1.26.4                   # 2.x 로 올리지 말 것 — mediapipe·openvino 가 1.x 기준
+numpy==1.26.4                   # 2.x 로 올리지 말 것 — tflite-runtime·mediapipe·openvino 가 1.x 기준
 pillow==11.0.0
 opencv-contrib-python==4.11.0.86   # 마커(aruco)·트래커가 contrib 에 있다
 pyzbar==0.1.9
 mediapipe==0.10.18
+tflite-runtime==2.14.0          # TeachableMachine(.tflite) 만. 분류기·MoveNet 은 onnxruntime
 onnxruntime==1.20.1             # 사물 인식(easydetect ed) · 분류기 사진 특징 · MoveNet · TTS
 openvino==2024.5.0              # 얼굴 찾기·나이·성별·감정·얼굴 구분(retail-0095)
 

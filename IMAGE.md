@@ -171,7 +171,7 @@ sudo systemctl restart ide.service booting.service
   `av`(picamera2 가 요구), `matplotlib`(mediapipe 가 실제로 불러온다), `sympy`(onnxruntime 이 요구), `uvicorn[standard]`(uvloop·httptools·websockets —
   socket.io 웹소켓)
 - `openpibo-face-models`(약 90MB)는 **지운다.** 얼굴 모델은 `/home/pi/.model/face` 에서 읽는다(`vision_face.py`). 이름은 예전 `setup.py` 에만 남아 있다
-- **`tflite-runtime`·`openpibo-detect-models`(약 80MB)는 261104 부터 지운다.** 분류기 사진 특징·MoveNet 을 리포 안의 ONNX(`openpibo/modules/teachlab/`·`pose/`)로 onnxruntime 에서 돌린다 — 새 태그를 올린 **뒤에** 돌릴 것
+- **`openpibo-detect-models`(약 80MB)는 261104 부터 지운다**(`tflite-runtime` 은 `TeachableMachine` 이 쓰므로 남긴다). 분류기 사진 특징·MoveNet 을 리포 안의 ONNX(`openpibo/modules/teachlab/`·`pose/`)로 onnxruntime 에서 돌린다 — 새 태그를 올린 **뒤에** 돌릴 것
 - 새 기능이 패키지를 쓰게 되면 스크립트의 `ROOTS` 와 `requirements.txt` 에 **둘 다** 넣을 것(Pibo·PiBrain 같은 파일, 원본은 openpibo-os.pibo)
 
 **처음부터 다시 만들기(선택) — `system/venv_rebuild.sh`.** 정리 대신 가상환경을 새로 만든다. `requirements.txt` 만으로 다시 만들 수 있는지

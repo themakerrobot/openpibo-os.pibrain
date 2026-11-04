@@ -25,11 +25,53 @@ msgstr ""
 msgid "분류기 화면에서 가르친 모델로 이미지를 분류합니다."
 msgstr "Classifies images with a model taught in the classifier screen."
 
-msgid "Class: :obj:`~openpibo.vision_classify.CustomClassifier`"
+msgid "Class: :obj:`~openpibo.vision_classify.TeachableMachine` :obj:`~openpibo.vision_classify.CustomClassifier`"
 msgstr ""
 
-msgid "TensorFlow·TFLite 를 쓰지 않습니다. 이미지 모델은 onnxruntime 으로, 손·얼굴·포즈 모델은 MediaPipe 로 돌립니다."
-msgstr "Does not use TensorFlow or TFLite. Image models run on onnxruntime; hand, face and pose models run on MediaPipe."
+msgid "TensorFlow 를 쓰지 않습니다. 분류기 이미지 모델은 onnxruntime 으로, 손·얼굴·포즈 모델은 MediaPipe 로 돌립니다. ``TeachableMachine`` (Teachable Machine 에서 받은 .tflite) 만 TFLite 런타임(LiteRT / tflite_runtime)을 씁니다."
+msgstr "Does not use TensorFlow. Classifier image models run on onnxruntime; hand, face and pose models run on MediaPipe. Only ``TeachableMachine`` (a .tflite downloaded from Teachable Machine) uses a TFLite runtime (LiteRT / tflite_runtime)."
+
+msgid "Functions: :meth:`~openpibo.vision_classify.TeachableMachine.load` :meth:`~openpibo.vision_classify.TeachableMachine.predict`"
+msgstr ""
+
+msgid "파이보의 카메라 Teachable Machine 기능을 사용합니다."
+msgstr "Uses the Teachable Machine feature with piBo's camera."
+
+msgid "``이미지 프로젝트`` 의 ``표준 이미지 모델`` 을 사용합니다."
+msgstr "Uses the ``Standard image model`` of an ``Image project``."
+
+msgid "``Teachable Machine`` 에서 학습한 모델을 적용하여 추론할 수 있습니다."
+msgstr "Applies a model trained in ``Teachable Machine`` for inference."
+
+msgid "학습한 모델은 ``Tensorflow Lite`` 형태로 다운로드 해주세요."
+msgstr "Download the trained model in ``Tensorflow Lite`` format."
+
+msgid "example::"
+msgstr ""
+
+msgid "Tflite 모델로 불러옵니다. (부동소수점/양자화) 모두 가능"
+msgstr "Loads a Tflite model. Both (floating point/quantized) are supported"
+
+msgid "Parameters"
+msgstr ""
+
+msgid "Teachable Machine의 모델파일"
+msgstr "Teachable Machine model file"
+
+msgid "Teachable Machine의 라벨파일"
+msgstr "Teachable Machine label file"
+
+msgid "Tflite 모델로 추론합니다."
+msgstr "Runs inference with the Tflite model."
+
+msgid "이미지 객체"
+msgstr "Image object"
+
+msgid "Returns"
+msgstr ""
+
+msgid "가장 높은 확률을 가진 클래스 명, 결과(raw 데이터)"
+msgstr "Class name with the highest probability, result (raw data)"
 
 msgid "Functions: :meth:`~openpibo.vision_classify.CustomClassifier.load` :meth:`~openpibo.vision_classify.CustomClassifier.predict` :meth:`~openpibo.vision_classify.CustomClassifier.draw`"
 msgstr ""
@@ -46,14 +88,8 @@ msgstr "Saving in the classifier screen creates the folder ``/home/pi/mymodel/<m
 msgid "예전 분류기의 keras 모델(``model.keras``)은 더 이상 쓸 수 없습니다. 다시 학습해 저장하세요."
 msgstr "Keras models (``model.keras``) from the old classifier can no longer be used. Train and save again."
 
-msgid "example::"
-msgstr ""
-
 msgid "분류기 화면에서 저장한 모델을 불러옵니다. 종류 이름은 모델 폴더 안에 들어 있습니다."
 msgstr "Loads a model saved in the classifier screen. The class names are stored in the model folder."
-
-msgid "Parameters"
-msgstr ""
 
 msgid "모델 폴더 (``/home/pi/mymodel/<모델 이름>``) 또는 모델 이름"
 msgstr "Model folder (``/home/pi/mymodel/<model name>``) or model name"
@@ -70,17 +106,8 @@ msgstr "If the highest probability is lower than this value, ``None`` is returne
 msgid "``True`` 면 분류하면서 ``img`` 에 바로 그립니다(:meth:`draw` 와 같음). 손·포즈는 점과 뼈대, 얼굴은 점, 그리고 모든 모델은 종류 이름과 확률"
 msgstr "If ``True``, draws directly on ``img`` while classifying (same as :meth:`draw`). Points and skeleton for hand and pose, points for face, and the class name and probability for all models"
 
-msgid "Returns"
-msgstr ""
-
 msgid "``(종류 이름, 종류별 확률)``  손·얼굴·포즈 모델은 화면에 손·얼굴·몸이 안 보이면 ``(None, None)`` 을 돌려줍니다."
 msgstr "``(class name, per-class probabilities)``  Hand, face and pose models return ``(None, None)`` if no hand, face or body is visible in the image."
-
-msgid "``(종류 이름, 종류별 확률)``"
-msgstr "``(class name, per-class probabilities)``"
-
-msgid "손·얼굴·포즈 모델은 화면에 손·얼굴·몸이 안 보이면 ``(None, None)`` 을 돌려줍니다."
-msgstr "Hand, face and pose models return ``(None, None)`` if no hand, face or body is visible in the image."
 
 msgid "바로 전 :meth:`predict` 가 본 것을 이미지에 그립니다. ``img`` 를 바로 고치고 그대로 돌려줍니다."
 msgstr "Draws what the previous :meth:`predict` saw onto the image. Modifies ``img`` in place and returns it."
@@ -105,4 +132,16 @@ msgstr ""
 
 msgid "불러온 모델을 내려놓습니다. (다른 모델을 ``load`` 하면 알아서 부릅니다)"
 msgstr "Unloads the loaded model. (Called automatically when you ``load`` another model)"
+
+#~ msgid "Class: :obj:`~openpibo.vision_classify.CustomClassifier`"
+#~ msgstr ""
+
+#~ msgid "TensorFlow·TFLite 를 쓰지 않습니다. 이미지 모델은 onnxruntime 으로, 손·얼굴·포즈 모델은 MediaPipe 로 돌립니다."
+#~ msgstr "Does not use TensorFlow or TFLite. Image models run on onnxruntime; hand, face and pose models run on MediaPipe."
+
+#~ msgid "``(종류 이름, 종류별 확률)``"
+#~ msgstr "``(class name, per-class probabilities)``"
+
+#~ msgid "손·얼굴·포즈 모델은 화면에 손·얼굴·몸이 안 보이면 ``(None, None)`` 을 돌려줍니다."
+#~ msgstr "Hand, face and pose models return ``(None, None)`` if no hand, face or body is visible in the image."
 
