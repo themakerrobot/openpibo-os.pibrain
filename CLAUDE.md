@@ -649,11 +649,11 @@ Pibo 와 같다. Teachable Machine 계열(`vision_load_tm` `vision_predict_tm`
 | 카메라 | PiBrain → 태블릿 | socket.io `camera_image`, 320×240 JPEG |
 | 특징 뽑기·학습 | 태블릿 브라우저 | MediaPipe wasm(`classifier/static/vendor/tasks-vision`) + TF.js 작은 MLP |
 | 저장 | PiBrain | `POST /api/models` → `/home/pi/mymodel/<이름>/` |
-| 추론 | PiBrain | `CustomClassifier` — LiteRT/tflite_runtime(이미지) · MediaPipe(손·얼굴·포즈) + numpy |
+| 추론 | PiBrain | `CustomClassifier` — onnxruntime(이미지, 261104) · MediaPipe(손·얼굴·포즈) + numpy |
 
 - 입력 4가지: 이미지 / 손(한·두 손) / 얼굴 / 포즈(상반신·전신). 학습·시험·보관함 세 탭
 - 가져온 파일: `classifier/` 전부, `openpibo/vision_classify.py`, `openpibo/modules/teachlab/`,
-  `openpibo/modules/pose/movenet.py`(TensorFlow 대체 분기를 `load_interpreter()` 로). 교체 직전의
+  `openpibo/modules/pose/movenet.py`(261104 부터 onnxruntime — TFLite 를 뺐다, Pibo CLAUDE.md '분류기 → 기기 요구'). 교체 직전의
   PiBrain 파일은 Pibo 교체 직전과 공백만 달랐다
 - PiBrain 에서 바꾼 것: 화면 문구의 이름(PiBrain), `ko2en.js` 1·2행과 언어 저장 키 `classifier_language`
   (`global` 델타 그대로)
@@ -661,7 +661,7 @@ Pibo 와 같다. Teachable Machine 계열(`vision_load_tm` `vision_predict_tm`
   **예전 `model.keras` 는 못 읽는다**(불러오면 다시 학습하라는 오류). 의도한 호환 단절이다
 - 지운 것: `tf.min-3.11.0.js` · MobileNetV2 가중치 · `model.json` · `jszip` · `tfjs_to_keras.py`(`/convert`)
 - 사물 인식(`vision_detect`)은 260930 에 Pibo 의 onnxruntime 방식으로 바꿨다(위 '사물 인식' 참고)
-- 기기 런타임(`tflite-runtime`·`mediapipe`)은 **PiBrain 기기에서 확인 전** — IMAGE.md '분류기 런타임 확인'
+- 기기 런타임(`onnxruntime`·`mediapipe`)은 **PiBrain 기기에서 확인 전** — IMAGE.md '분류기 런타임 확인'
 - PiBrain 카메라가 좌우 반전 없이 들어오는지 **확인 필요.** 브라우저·파이썬 모두 뒤집지 않는다는 전제다
 
 검증(컨테이너, 가짜 카메라 + headless Chromium): 학습·저장·시험·보관함 e2e 25/25.

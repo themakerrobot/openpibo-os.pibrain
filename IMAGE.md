@@ -113,20 +113,20 @@ AP(핫스팟)는 국가 설정과 무관하다. `hotspot.sh` 가 2.4GHz 채널 1
 
 | 쓰는 곳 | 패키지 | Pibo 기기(260923) 에서 확인한 버전 |
 |---|---|---|
-| 이미지 · movenet(포즈) | `tflite-runtime` (또는 `ai-edge-litert`, 없으면 TensorFlow 로 떨어진다) | 2.14.0 |
+| 이미지 · movenet(포즈) | `onnxruntime` (261104 부터 — 리포 안의 ONNX 파일. TFLite 런타임 안 씀) | 1.20.1 |
 | 손 · 얼굴 · 포즈 | `mediapipe` | 0.10.18 |
 | 전부 | `numpy` | 1.26.4 |
 
 **PiBrain 기기에 무엇이 깔려 있는지는 아직 확인 전이다.** 아래를 돌려 값을 받아 적을 것. 추측으로 채우지 말 것.
 
 ```bash
-/home/pi/.pyenv/bin/python3 -m pip list 2>/dev/null | grep -i -E "tflite|litert|tensorflow|mediapipe|numpy|onnxruntime"
-/home/pi/.pyenv/bin/python3 -c "from openpibo.modules.teachlab import load_interpreter; print(load_interpreter())"
-#   tflite_runtime / ai_edge_litert 가 나오면 된다. tensorflow 가 나오면 동작은 하지만 무겁다
+/home/pi/.pyenv/bin/python3 -m pip list 2>/dev/null | grep -i -E "mediapipe|numpy|onnxruntime"
+/home/pi/.pyenv/bin/python3 -c "from openpibo.modules.teachlab.embedder import ImageEmbedder; from openpibo.modules.pose.movenet import Movenet; ImageEmbedder('mobilenet_v3_small_embedder.tflite'); Movenet(); print('onnx ok')"
+#   onnx ok 가 나오면 된다
 /home/pi/.pyenv/bin/python3 -c "import mediapipe; print(mediapipe.__version__)"
 ```
 
-- `tflite_runtime`·`ai_edge_litert` 가 둘 다 없고 TensorFlow 도 없으면 분류기(이미지)와 movenet 이 못 뜬다
+- `onnxruntime` 이 없으면 분류기(이미지)·movenet·사물 인식·TTS 가 못 뜬다
 - `mediapipe` 가 없으면 손·얼굴·포즈 모델만 못 쓴다(이미지 모델은 된다)
 - TensorFlow 를 지우는 건 **위 확인이 끝난 뒤에만.** 사물 인식(`vision_detect`)은 260930 부터 ultralytics·torch 를
   import 하지 않는다(onnxruntime). 코드 쪽에서는 `ultralytics`·`torch` 를 지워도 된다 — 다른 데서 쓰는지 `pip show` 로 한 번 볼 것
@@ -149,7 +149,7 @@ sudo $PY /home/pi/openpibo-os/system/venv_prune.py | head -40
 
 # 2) 지운다. 지우기 전 목록을 /home/pi/venv_backup_<날짜>.txt 로 남기고, 지운 뒤 pip check 와 import 확인을 돌린다
 sudo $PY /home/pi/openpibo-os/system/venv_prune.py --apply
-#    import 확인 끝줄이 'N/N 모듈 import 됨 · 분류기 추론기: tflite_runtime.interpreter' 여야 한다
+#    import 확인 끝줄이 'N/N 모듈 import 됨 · 분류기 사진 특징·MoveNet: onnx ok' 여야 한다
 
 # 3) 서비스 다시 켜고 IDE·도구·분류기를 한 번씩 열어 본다
 sudo systemctl restart ide.service booting.service
@@ -167,11 +167,11 @@ sudo systemctl restart ide.service booting.service
 알아 둘 것:
 - **가상환경 밖은 건드리지 않는다.** `/home/pi/.pyenv` 는 시스템 패키지를 보는 가상환경이라 `gpiozero` `lgpio` `spidev` `python-apt` 등
   apt 패키지가 목록에 같이 보이지만(크기 0) 지울 대상에서 뺀다
-- 남기는 것 중 눈여겨볼 것: `lxml`(뉴스 블록), `tflite-runtime`(분류기·movenet — 없으면 TensorFlow 를 찾는다), `openvino`(얼굴 분석),
+- 남기는 것 중 눈여겨볼 것: `lxml`(뉴스 블록), `openvino`(얼굴 분석),
   `av`(picamera2 가 요구), `matplotlib`(mediapipe 가 실제로 불러온다), `sympy`(onnxruntime 이 요구), `uvicorn[standard]`(uvloop·httptools·websockets —
   socket.io 웹소켓)
 - `openpibo-face-models`(약 90MB)는 **지운다.** 얼굴 모델은 `/home/pi/.model/face` 에서 읽는다(`vision_face.py`). 이름은 예전 `setup.py` 에만 남아 있다
-- `openpibo-detect-models`(약 80MB)는 `movenet_lightning.tflite` 하나 때문에 남는다. 그 파일을 `/home/pi/.model` 로 옮기면 뺄 수 있다(아직 안 함)
+- **`tflite-runtime`·`openpibo-detect-models`(약 80MB)는 261104 부터 지운다.** 분류기 사진 특징·MoveNet 을 리포 안의 ONNX(`openpibo/modules/teachlab/`·`pose/`)로 onnxruntime 에서 돌린다 — 새 태그를 올린 **뒤에** 돌릴 것
 - 새 기능이 패키지를 쓰게 되면 스크립트의 `ROOTS` 와 `requirements.txt` 에 **둘 다** 넣을 것(Pibo·PiBrain 같은 파일, 원본은 openpibo-os.pibo)
 
 **처음부터 다시 만들기(선택) — `system/venv_rebuild.sh`.** 정리 대신 가상환경을 새로 만든다. `requirements.txt` 만으로 다시 만들 수 있는지

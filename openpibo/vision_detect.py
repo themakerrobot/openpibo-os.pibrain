@@ -16,7 +16,6 @@ from .modules.card.decode_card import get_card
 from PIL import Image,ImageDraw,ImageFont
 import openpibo_dlib_models
 import openpibo_models
-import openpibo_detect_models
 import logging
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # TensorFlow C++ 로그 제거
@@ -114,7 +113,7 @@ Functions:
     # 사물 인식 모델은 처음 detect_object 를 부를 때 올린다 (QR·마커만 쓰면 메모리를 안 쓴다)
     self.object_detector = None
     self.object_model_path = object_model or OBJECT_MODEL
-    self.pose_detector = Movenet(openpibo_detect_models.filepath("movenet_lightning.tflite"))
+    self.pose_detector = Movenet()   # openpibo/modules/pose/movenet_lightning.onnx (onnxruntime, 261104)
 
     # marker
     self.camera_matrix = np.array([

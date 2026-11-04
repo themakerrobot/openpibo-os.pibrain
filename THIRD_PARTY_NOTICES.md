@@ -24,6 +24,8 @@ in each file are kept as they are.
 | openpibo-chat (themakerrobot) a9072ff — `tools.py` `pibo_chat.py` `pibrain_chat.py` | `chat/` | Apache-2.0 |
 | teach-lab (themakerrobot) 74f421a | `classifier/static/tl/`, `openpibo/modules/teachlab/` | MIT |
 | TensorFlow Lite pose example (MoveNet helpers) | `openpibo/modules/pose/` | Apache-2.0 |
+| MoveNet SinglePose Lightning (Google), converted to ONNX (tf2onnx, opset 17) | `openpibo/modules/pose/movenet_lightning.onnx` | Apache-2.0 |
+| MediaPipe MobileNetV3 small image embedder, converted to ONNX (tf2onnx, opset 17) | `openpibo/modules/teachlab/mobilenet_v3_small_embedder.onnx` | Apache-2.0 |
 | Adafruit CircuitPython display drivers | `openpibo/modules/oled/` | MIT |
 | Supertonic (Supertone) `py/helper.py` | `openpibo/modules/speech/mtts.py` | MIT |
 | Sphinx · Furo 테마 · sphinx-copybutton | `docs/build/html/_static/` | BSD-2-Clause / MIT / MIT |

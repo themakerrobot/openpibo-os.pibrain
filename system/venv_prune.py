@@ -49,13 +49,13 @@ ROOTS = [
   'adafruit-circuitpython-ssd1306', 'adafruit-circuitpython-rgb-display', 'picamera2',
   # 영상 · 인식
   'numpy', 'pillow', 'opencv-contrib-python', 'pyzbar', 'dlib', 'mediapipe',
-  'tflite-runtime', 'onnxruntime', 'openvino',
+  'onnxruntime', 'openvino',
   # 음성
   'soundfile', 'sherpa-onnx', 'sherpa-onnx-core',
   # 수집 블록
   'beautifulsoup4', 'lxml',
   # 모델·글꼴 데이터 (openpibo-face-models 는 안 쓴다 — 얼굴 모델은 /home/pi/.model/face)
-  'openpibo-models', 'openpibo-detect-models', 'openpibo-dlib-models',
+  'openpibo-models', 'openpibo-dlib-models',
 ]
 TOOLS = ['pip', 'setuptools', 'wheel']
 OPTIONAL = ['pandas', 'scikit-learn', 'seaborn']
@@ -64,10 +64,10 @@ JAX = ['jax', 'jaxlib', 'ml-dtypes', 'opt-einsum']
 # 지운 뒤 import 해 볼 것 (모듈 이름)
 SMOKE = [
   'fastapi', 'fastapi_socketio', 'socketio', 'uvicorn', 'starlette', 'jinja2', 'python_multipart', 'requests',
-  'bs4', 'lxml', 'numpy', 'cv2', 'PIL', 'pyzbar.pyzbar', 'dlib', 'mediapipe', 'tflite_runtime.interpreter',
+  'bs4', 'lxml', 'numpy', 'cv2', 'PIL', 'pyzbar.pyzbar', 'dlib', 'mediapipe',
   'onnxruntime', 'openvino', 'soundfile', 'serial', 'RPi.GPIO', 'rpi_ws281x', 'board', 'busio', 'digitalio',
   'adafruit_ssd1306', 'adafruit_rgb_display.ili9341', 'picamera2',
-  'openpibo_models', 'openpibo_dlib_models', 'openpibo_detect_models',
+  'openpibo_models', 'openpibo_dlib_models',
   'openpibo.audio', 'openpibo.motion', 'openpibo.device', 'openpibo.oled', 'openpibo.collect',
   'openpibo.speech', 'openpibo.vision_camera', 'openpibo.vision_detect', 'openpibo.vision_face',
   'openpibo.vision_classify',
@@ -160,11 +160,14 @@ def smoke():
     if r.returncode != 0:
       last = (r.stderr.strip().splitlines() or ['?'])[-1]
       bad.append((m, last))
+  # 분류기 사진 특징·MoveNet 은 onnxruntime 으로 돈다(261104) — 두 ONNX 를 실제로 올려 본다
   r = subprocess.run([sys.executable, '-c',
-                      'from openpibo.modules.teachlab import load_interpreter; print(load_interpreter().__module__)'],
+                      'from openpibo.modules.teachlab.embedder import ImageEmbedder; '
+                      'from openpibo.modules.pose.movenet import Movenet; '
+                      'ImageEmbedder("mobilenet_v3_small_embedder.tflite"); Movenet(); print("onnx ok")'],
                      capture_output=True, text=True, timeout=180)
   lite = r.stdout.strip() or ((r.stderr.strip().splitlines() or ['?'])[-1])
-  return bad, lite     # tflite_runtime.interpreter 여야 한다
+  return bad, lite     # onnx ok 여야 한다
 
 
 def main():
@@ -180,8 +183,8 @@ def main():
     bad, lite = smoke()
     for m, e in bad:
       print(f'  !! {m}: {e}')
-    print(f'  {len(SMOKE) - len(bad)}/{len(SMOKE)} 모듈 import 됨 · 분류기 추론기: {lite}')
-    sys.exit(1 if bad or 'tflite_runtime' not in lite else 0)
+    print(f'  {len(SMOKE) - len(bad)}/{len(SMOKE)} 모듈 import 됨 · 분류기 사진 특징·MoveNet: {lite}')
+    sys.exit(1 if bad or 'onnx ok' not in lite else 0)
 
   repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
   dists = load_dists()
@@ -246,7 +249,7 @@ def main():
   bad, lite = smoke()
   for m, e in bad:
     print(f'  !! {m}: {e}')
-  print(f'  {len(SMOKE) - len(bad)}/{len(SMOKE)} 모듈 import 됨 · 분류기 추론기: {lite}')
+  print(f'  {len(SMOKE) - len(bad)}/{len(SMOKE)} 모듈 import 됨 · 분류기 사진 특징·MoveNet: {lite}')
   if bad:
     print(f'  문제가 있으면 되돌리기: sudo {sys.executable} -m pip install -r {backup}')
 

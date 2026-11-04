@@ -13,7 +13,7 @@
   --image 파일   이 사진으로 잰다. 없으면 카메라에서 한 장 찍는다(얼굴이 보이게 앉아 있을 것).
                  카메라도 안 되면 회색 그림으로 재고 '얼굴 없음' 이라고 적는다 — 그때 얼굴·손 모델은 시간만 참고
   --repeat N     잴 횟수(기본 20, 첫 회는 따로 적는다)
-  --threads N    onnxruntime·tflite 스레드(기본 4 — EdOnnx·Movenet 과 같다)
+  --threads N    onnxruntime 스레드(기본 4 — EdOnnx·Movenet 과 같다)
   --fetch        OMZ face-detection-retail-0005 · face-reidentification-retail-0095(FP16)를
                  storage.openvinotoolkit.org(open_model_zoo 2023.0)에서 /home/pi/.model/face/ 아래로 받는다. 인터넷 필요
   --combo        **서비스를 끈다**: tools·classify·llama-server@* 를 멈추고 llama-server@<--llm> 을 띄운 뒤
@@ -219,24 +219,14 @@ def case_ed_s_320(a, img, face, small):
   return lib, (lambda: det(img)), {'input': det.size}
 
 
-def case_embedder_tflite(a, img, face, small):
+def case_embedder(a, img, face, small):
   import cv2
-  from openpibo.modules.teachlab import load_interpreter
-  load_interpreter()
+  import onnxruntime  # noqa
   from openpibo.modules.teachlab.embedder import ImageEmbedder
   lib = rss()
-  emb = ImageEmbedder(os.path.join(EXTRACTOR_DIR, 'mobilenet_v3_small_embedder.tflite'))
+  emb = ImageEmbedder('mobilenet_v3_small_embedder.tflite', threads=a.threads)   # 같은 모델의 ONNX 로 돈다
   rgb = cv2.cvtColor(small, cv2.COLOR_BGR2RGB)
-  return lib, (lambda: emb.embed_rgb(rgb)), {'dim': emb.dim, 'runtime': load_interpreter().__module__}
-
-
-def case_embedder_onnx(a, img, face, small):
-  path = a.embedder_onnx or os.path.join(EXTRACTOR_DIR, 'mobilenet_v3_small_embedder.onnx')
-  if not os.path.isfile(path):
-    raise FileNotFoundError(f'없음(2단계에서 만든다): {path}')
-  import onnxruntime  # noqa
-  lib = rss()
-  return lib, ort_runner(path, small, a.threads, scale=1.0 / 255), {}
+  return lib, (lambda: emb.embed_rgb(rgb)), {'dim': emb.dim}
 
 
 def _landmark(source, file, variant=None):
@@ -265,12 +255,12 @@ def case_mp_gesture(a, img, face, small):
   return lib, (lambda: rec.recognize(im)), {}
 
 
-def case_movenet_tflite(a, img, face, small):
+def case_movenet(a, img, face, small):
   import cv2
-  import openpibo_detect_models
+  import onnxruntime  # noqa
   from openpibo.modules.pose.movenet import Movenet
   lib = rss()
-  mv = Movenet(openpibo_detect_models.filepath('movenet_lightning.tflite'))
+  mv = Movenet()
   rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
   return lib, (lambda: mv.detect(rgb, reset_crop_region=True)), {}
 
@@ -314,13 +304,12 @@ def case_mask_onnx(a, img, face, small):
 
 CASES = {
   'ed_s_320': ('사물 ed-s-320 (onnxruntime)', case_ed_s_320),
-  'embedder_tflite': ('사진 특징 mobilenet_v3_small (tflite)', case_embedder_tflite),
-  'embedder_onnx': ('사진 특징 mobilenet_v3_small (onnxruntime)', case_embedder_onnx),
+  'embedder': ('사진 특징 mobilenet_v3_small (onnxruntime)', case_embedder),
   'mp_hand': ('MediaPipe 손 (두 손)', _landmark('hand', 'hand_landmarker.task', 'two')),
   'mp_face': ('MediaPipe 얼굴 + 표정', _landmark('face', 'face_landmarker.task')),
   'mp_pose': ('MediaPipe 자세 lite', _landmark('pose', 'pose_landmarker_lite.task')),
   'mp_gesture': ('MediaPipe 손동작 8종', case_mp_gesture),
-  'movenet_tflite': ('MoveNet lightning (tflite)', case_movenet_tflite),
+  'movenet': ('MoveNet lightning (onnxruntime)', case_movenet),
   'omz_face_0004': ('얼굴 찾기 retail-0004', _omz('detection/face-detection-retail-0004.xml', False)),
   'omz_face_0005': ('얼굴 찾기 retail-0005', _omz('detection/face-detection-retail-0005.xml', False)),
   'omz_age_gender_0013': ('나이·성별 retail-0013', _omz('age-gender/age-gender-recognition-retail-0013.xml', True)),
@@ -357,8 +346,6 @@ def child(args):
 def run_child(name, args):
   cmd = [sys.executable, os.path.abspath(__file__), '--case', name,
          '--repeat', str(args.repeat), '--threads', str(args.threads)]
-  if args.embedder_onnx:
-    cmd += ['--embedder-onnx', args.embedder_onnx]
   if args.mask:
     cmd += ['--mask', args.mask]
   env = dict(os.environ, PYTHONDONTWRITEBYTECODE='1', TF_CPP_MIN_LOG_LEVEL='3', GLOG_minloglevel='2')
@@ -563,7 +550,7 @@ def combo(args):
     t = time.perf_counter()
     det = EdOnnx(os.path.join(MODEL, 'object', 'ed-s-320.onnx'), threads=args.threads)
     face = LandmarkExtractor('face', os.path.join(EXTRACTOR_DIR, 'face_landmarker.task'))
-    emb = ImageEmbedder(os.path.join(EXTRACTOR_DIR, 'mobilenet_v3_small_embedder.tflite'))
+    emb = ImageEmbedder('mobilenet_v3_small_embedder.tflite')
     det(img)
     face.vector(rgb)
     emb.embed_rgb(rgb)
@@ -619,7 +606,7 @@ def device_info():
     'throttled': th, 'throttled_flags': flags,
     'llama_running': llama_rss() > 0,
     'versions': {k: version_of(k) for k in ('numpy', 'opencv-contrib-python', 'onnxruntime', 'openvino', 'mediapipe',
-                                            'tflite-runtime', 'ai-edge-litert', 'dlib', 'sherpa-onnx')},
+                                            'dlib', 'sherpa-onnx')},
   }
 
 
@@ -630,7 +617,6 @@ def main():
   ap.add_argument('--image', default='')
   ap.add_argument('--repeat', type=int, default=20)
   ap.add_argument('--threads', type=int, default=4)
-  ap.add_argument('--embedder-onnx', default='')
   ap.add_argument('--mask', default='')
   ap.add_argument('--fetch', action='store_true')
   ap.add_argument('--combo', action='store_true')
