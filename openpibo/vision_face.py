@@ -26,6 +26,9 @@ AGE_GENDER_XML = f'{FACE_DIR}/age-gender/age-gender-recognition-retail-0013.xml'
 EMOTION_XML = f'{FACE_DIR}/emotion/emotions-recognition-retail-0003.xml'
 REID_XML = f'{FACE_DIR}/reid/face-reidentification-retail-0095.xml'
 LANDMARK_TASK = f'{FACE_DIR}/landmark/face_landmarker.task'
+#: 마스크 판별 — edge-lab 과 같은 파일(임베더 + 분류기 한 개, 입력 RGB 0~255 1x224x224x3). 처음 부를 때 올린다
+MASK_ONNX = '/home/pi/.model/mask/mask.onnx'
+MASK_MARGIN = 0.3     # edge-lab 얼굴 찾기와 같은 30% 여유를 둘레에 붙여 자른다
 
 #: 얼굴 정보 파일(save_db) 안에 적는 이름. 다른 모델로 만든 파일은 열지 않는다
 DB_FORMAT = 'openpibo-facedb'
@@ -113,6 +116,7 @@ Functions:
 :meth:`~openpibo.vision_face.Face.detect_face`
 :meth:`~openpibo.vision_face.Face.landmark_face`
 :meth:`~openpibo.vision_face.Face.analyze_face`
+:meth:`~openpibo.vision_face.Face.mask_face`
 :meth:`~openpibo.vision_face.Face.init_db`
 :meth:`~openpibo.vision_face.Face.train_face`
 :meth:`~openpibo.vision_face.Face.delete_face`
@@ -177,6 +181,7 @@ Functions:
         output_face_blendshapes=True,
         )
     )
+    self.mask_session = None
     self.IRIS_REAL_DIAMETER_MM = 11.7
     self.FOCAL_LENGTH_MM = 3.6
     self.PIXEL_PITCH_MM = 0.0014 * 2592 / 640
@@ -385,6 +390,44 @@ Functions:
     x1, y1, x2, y2 = item['box']
     age, gender, emotion = item['age'], item['gender'], item['emotion']
     putTextPIL(img, f'{age}/{gender}/{emotion}', (x1, y1-30), 30, (255, 255, 255))
+
+  def mask_face(self, img, item):
+    """
+    마스크를 썼는지 판별합니다. edge-lab(PC)과 같은 모델·같은 계산입니다.
+
+    example::
+
+      img = camera.read()
+      items = face.detect_face(img)
+      face.mask_face(img, items[0])
+
+    :param numpy.ndarray img: 이미지 객체
+    :param numpy.ndarray item: 얼굴의 좌표 (x1, y1, x2, y2)
+    :returns: ``{"mask": True/False, "score": 0~100 (고른 쪽 확률 %), "box": 좌표}``
+    """
+
+    self._check(img, item)
+    if self.mask_session is None:
+      if not os.path.isfile(MASK_ONNX):
+        raise FileNotFoundError(f'마스크 모델 파일이 없어요 / mask model file not found: {MASK_ONNX}')
+      from .modules.teachlab import onnx_session
+      self.mask_session = onnx_session(MASK_ONNX)
+      meta = self.mask_session.get_modelmeta().custom_metadata_map or {}
+      self.mask_classes = [str(c).strip().lower() for c in json.loads(meta.get('edge-lab.classes', '["with_mask", "without_mask"]'))]
+    from .modules.teachlab.preprocess import crop_to
+
+    h, w = img.shape[:2]
+    x1, y1, x2, y2 = [int(v) for v in item]
+    mx, my = (x2 - x1) * MASK_MARGIN, (y2 - y1) * MASK_MARGIN
+    cx1, cy1 = int(max(0, x1 - mx)), int(max(0, y1 - my))
+    cx2, cy2 = int(min(w, x2 + mx)), int(min(h, y2 + my))
+    rgb = cv2.cvtColor(img[cy1:cy2, cx1:cx2], cv2.COLOR_BGR2RGB)
+    x = crop_to(rgb, 224).astype(np.float32)[np.newaxis]      # Teachable Machine cropTo, 0~255 그대로(/255 는 모델 안에서)
+    s = self.mask_session
+    probs = np.asarray(s.run(None, {s.get_inputs()[0].name: x})[0], np.float32).reshape(-1)
+    best = int(np.argmax(probs))
+    return {"mask": self.mask_classes[best] in ('with_mask', 'mask'),
+            "score": int(round(float(probs[best]) * 100)), "box": (x1, y1, x2, y2)}
 
   def init_db(self):
     """

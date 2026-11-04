@@ -36,6 +36,7 @@ in each file are kept as they are.
 |---|---|---|---|
 | OpenVINO Open Model Zoo — face-detection-retail-0005 · age-gender-recognition-retail-0013 · emotions-recognition-retail-0003 · face-reidentification-retail-0095 (FP16) | `face/{detection,age-gender,emotion,reid}/` | Apache-2.0 | — |
 | MediaPipe face landmarker | `face/landmark/face_landmarker.task` | Apache-2.0 | — |
+| edge-lab mask classifier (MediaPipe mobilenet_v3_small embedder + classifier, one ONNX) | `mask/mask.onnx` | Apache-2.0 | — |
 | easydetect ed-s COCO (ONNX, 320) | `object/ed-s-320.onnx` | Apache-2.0 (easydetect · D-FINE; weights license to be confirmed on the HF model card) | — |
 | Models trained in the easydetect lab (`job<N>.onnx`) | wherever the user puts them | Apache-2.0 code; weights belong to whoever trained them | — |
 | Supertonic 3 TTS (int8 conversion) | `tts/assets/` | OpenRAIL-M | `LICENSE-OpenRAIL-M.txt`, `MODIFICATIONS.md` |
