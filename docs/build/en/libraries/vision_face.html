@@ -348,8 +348,39 @@
 <span id="vision-face-face-recognition"></span><h1>vision_face · Face recognition<a class="headerlink" href="#module-openpibo.vision_face" title="Link to this heading">¶</a></h1>
 <p>Finds faces, analyzes age, gender and emotion, and learns faces to recognize who they are.</p>
 <p>Class:
-<a class="reference internal" href="vision_detect.html#openpibo.vision_detect.putTextPIL" title="openpibo.vision_detect.putTextPIL"><code class="xref py py-meth docutils literal notranslate"><span class="pre">putTextPIL()</span></code></a>
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">Face</span></code></p>
+<a class="reference internal" href="#openpibo.vision_face.putTextPIL" title="openpibo.vision_face.putTextPIL"><code class="xref py py-meth docutils literal notranslate"><span class="pre">putTextPIL()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_face.Face" title="openpibo.vision_face.Face"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Face</span></code></a></p>
+<p>Face detection, age, gender, emotion and face recognition use OpenVINO (OMZ models); face landmarks, direction and distance use MediaPipe. dlib is not used (261104).</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="openpibo.vision_face.MASK_ONNX">
+<span class="sig-prename descclassname"><span class="pre">openpibo.vision_face.</span></span><span class="sig-name descname"><span class="pre">MASK_ONNX</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/home/pi/.model/mask/mask.onnx'</span></span><a class="headerlink" href="#openpibo.vision_face.MASK_ONNX" title="Link to this definition">¶</a></dt>
+<dd><p>Mask classifier — the same file as edge-lab (embedder + classifier in one, input RGB 0-255 1x224x224x3). Loaded on first use</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="openpibo.vision_face.DB_FORMAT">
+<span class="sig-prename descclassname"><span class="pre">openpibo.vision_face.</span></span><span class="sig-name descname"><span class="pre">DB_FORMAT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'openpibo-facedb'</span></span><a class="headerlink" href="#openpibo.vision_face.DB_FORMAT" title="Link to this definition">¶</a></dt>
+<dd><p>Names written inside the face database file (save_db). Files made with another model are not opened</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="openpibo.vision_face.THRESHOLD">
+<span class="sig-prename descclassname"><span class="pre">openpibo.vision_face.</span></span><span class="sig-name descname"><span class="pre">THRESHOLD</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.6</span></span><a class="headerlink" href="#openpibo.vision_face.THRESHOLD" title="Link to this definition">¶</a></dt>
+<dd><p>Maximum error (cosine distance, 0-2) still counted as the same person. On 1000 pairs of the public adult LFW photos (261104), 0.6 gave 0% false matches and 2.2% missed matches (best accuracy 99.5% at 0.676). The lower side was chosen so that nobody is called by the wrong name — to be re-checked with children’s faces in the classroom</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="openpibo.vision_face.MP_TO_DLIB68">
+<span class="sig-prename descclassname"><span class="pre">openpibo.vision_face.</span></span><span class="sig-name descname"><span class="pre">MP_TO_DLIB68</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(127,</span> <span class="pre">234,</span> <span class="pre">93,</span> <span class="pre">132,</span> <span class="pre">58,</span> <span class="pre">136,</span> <span class="pre">150,</span> <span class="pre">176,</span> <span class="pre">152,</span> <span class="pre">400,</span> <span class="pre">379,</span> <span class="pre">365,</span> <span class="pre">288,</span> <span class="pre">361,</span> <span class="pre">323,</span> <span class="pre">454,</span> <span class="pre">356,</span> <span class="pre">70,</span> <span class="pre">63,</span> <span class="pre">105,</span> <span class="pre">66,</span> <span class="pre">107,</span> <span class="pre">336,</span> <span class="pre">296,</span> <span class="pre">334,</span> <span class="pre">293,</span> <span class="pre">300,</span> <span class="pre">168,</span> <span class="pre">197,</span> <span class="pre">5,</span> <span class="pre">4,</span> <span class="pre">75,</span> <span class="pre">97,</span> <span class="pre">2,</span> <span class="pre">326,</span> <span class="pre">305,</span> <span class="pre">33,</span> <span class="pre">160,</span> <span class="pre">158,</span> <span class="pre">133,</span> <span class="pre">153,</span> <span class="pre">144,</span> <span class="pre">362,</span> <span class="pre">385,</span> <span class="pre">387,</span> <span class="pre">263,</span> <span class="pre">373,</span> <span class="pre">380,</span> <span class="pre">61,</span> <span class="pre">39,</span> <span class="pre">37,</span> <span class="pre">0,</span> <span class="pre">267,</span> <span class="pre">269,</span> <span class="pre">291,</span> <span class="pre">405,</span> <span class="pre">314,</span> <span class="pre">17,</span> <span class="pre">84,</span> <span class="pre">181,</span> <span class="pre">78,</span> <span class="pre">82,</span> <span class="pre">13,</span> <span class="pre">312,</span> <span class="pre">308,</span> <span class="pre">317,</span> <span class="pre">14,</span> <span class="pre">87)</span></span><a class="headerlink" href="#openpibo.vision_face.MP_TO_DLIB68" title="Link to this definition">¶</a></dt>
+<dd><p>dlib 68-point index → MediaPipe face landmark index, so that landmark_face keeps the old (dlib) numbering (jaw 0-16 · eyebrows 17-26 · nose 27-35 · eyes 36-47 · mouth 48-67)</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="openpibo.vision_face.REID_REF5">
+<span class="sig-prename descclassname"><span class="pre">openpibo.vision_face.</span></span><span class="sig-name descname"><span class="pre">REID_REF5</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">array([[0.31556875,</span> <span class="pre">0.46157411],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[0.68262292,</span> <span class="pre">0.45983393],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[0.5002625</span> <span class="pre">,</span> <span class="pre">0.64050536],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[0.34947188,</span> <span class="pre">0.82469196],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[0.65343646,</span> <span class="pre">0.82325089]])</span></span><a class="headerlink" href="#openpibo.vision_face.REID_REF5" title="Link to this definition">¶</a></dt>
+<dd><p>Alignment reference points for face-reidentification-retail-0095 (ratios of 128x128, same values as the OMZ face_recognition_demo). Image-left eye · image-right eye · nose tip · left mouth corner · right mouth corner</p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="openpibo.vision_face.putTextPIL">
 <span class="sig-prename descclassname"><span class="pre">openpibo.vision_face.</span></span><span class="sig-name descname"><span class="pre">putTextPIL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(255,</span> <span class="pre">255,</span> <span class="pre">255)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_face.html#putTextPIL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_face.putTextPIL" title="Link to this definition">¶</a></dt>
@@ -372,17 +403,18 @@
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">openpibo.vision_face.</span></span><span class="sig-name descname"><span class="pre">Face</span></span><a class="reference internal" href="../_modules/openpibo/vision_face.html#Face"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_face.Face" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Functions:
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">detect()</span></code>
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">get_ageGender()</span></code>
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">get_age()</span></code>
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">get_gender()</span></code>
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">init_db()</span></code>
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">train_face()</span></code>
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">delete_face()</span></code>
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">recognize()</span></code>
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">get_db()</span></code>
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">save_db()</span></code>
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">load_db()</span></code></p>
+<a class="reference internal" href="#openpibo.vision_face.Face.detect_face" title="openpibo.vision_face.Face.detect_face"><code class="xref py py-meth docutils literal notranslate"><span class="pre">detect_face()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_face.Face.landmark_face" title="openpibo.vision_face.Face.landmark_face"><code class="xref py py-meth docutils literal notranslate"><span class="pre">landmark_face()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_face.Face.analyze_face" title="openpibo.vision_face.Face.analyze_face"><code class="xref py py-meth docutils literal notranslate"><span class="pre">analyze_face()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_face.Face.mask_face" title="openpibo.vision_face.Face.mask_face"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mask_face()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_face.Face.init_db" title="openpibo.vision_face.Face.init_db"><code class="xref py py-meth docutils literal notranslate"><span class="pre">init_db()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_face.Face.train_face" title="openpibo.vision_face.Face.train_face"><code class="xref py py-meth docutils literal notranslate"><span class="pre">train_face()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_face.Face.delete_face" title="openpibo.vision_face.Face.delete_face"><code class="xref py py-meth docutils literal notranslate"><span class="pre">delete_face()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_face.Face.recognize" title="openpibo.vision_face.Face.recognize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">recognize()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_face.Face.get_db" title="openpibo.vision_face.Face.get_db"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_db()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_face.Face.save_db" title="openpibo.vision_face.Face.save_db"><code class="xref py py-meth docutils literal notranslate"><span class="pre">save_db()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_face.Face.load_db" title="openpibo.vision_face.Face.load_db"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_db()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_face.Face.detect_mesh" title="openpibo.vision_face.Face.detect_mesh"><code class="xref py py-meth docutils literal notranslate"><span class="pre">detect_mesh()</span></code></a></p>
 <blockquote>
 <div><p>A class that performs various face-related functions. It can do the following.</p>
 <ul class="simple">
@@ -394,12 +426,12 @@
 <dl class="field-list">
 <dt class="field-odd">Face database<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Refers to the instance variable <strong>facedb</strong>, where face data is registered, loaded and deleted.</p>
-<p>The face database format is a nested list <code class="docutils literal notranslate"><span class="pre">[[],</span> <span class="pre">[]]</span></code>; the first list holds the face names and the second list holds the encoded learned face data.</p>
+<p>The face database format is a nested list <code class="docutils literal notranslate"><span class="pre">[[],</span> <span class="pre">[]]</span></code>; the first list holds the face names and the second list holds the trained face data (256 numbers each).</p>
 <p>It can also be saved to a file so the face information is kept after the instance is deleted.</p>
 </dd>
 </dl>
 <p>example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">openpibo.vision_detect</span><span class="w"> </span><span class="kn">import</span> <span class="n">Face</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">openpibo.vision_face</span><span class="w"> </span><span class="kn">import</span> <span class="n">Face</span>
 
 <span class="n">face</span> <span class="o">=</span> <span class="n">Face</span><span class="p">()</span>
 <span class="c1"># 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
@@ -420,7 +452,7 @@
 <dd class="field-odd"><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Array of (x, y, w, h) of the detected faces.  It is a list; if several faces are detected in one image, the coordinates of all detected faces are included.  example::    [(10, 10, 40, 50), (120, 30, 160, 70), (130, 140, 200, 260)]</p>
+<dd class="field-even"><p>Array of (x1, y1, x2, y2) of the detected faces.  It is a list; if several faces are detected in one image, the coordinates of all of them are included.  example::    [[10, 10, 40, 50], [120, 30, 160, 70], [130, 140, 200, 260]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -442,10 +474,11 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.vision_face.Face.landmark_face">
 <span class="sig-name descname"><span class="pre">landmark_face</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_face.html#Face.landmark_face"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_face.Face.landmark_face" title="Link to this definition">¶</a></dt>
-<dd><p>Detects facial landmarks.</p>
+<dd><p>Detects facial landmarks (68 points). The point numbering is the same as before (dlib 68 points).</p>
 <p>example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">img</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="n">face</span><span class="o">.</span><span class="n">landmark_face</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">items</span> <span class="o">=</span> <span class="n">face</span><span class="o">.</span><span class="n">detect_face</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">face</span><span class="o">.</span><span class="n">landmark_face</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
@@ -456,7 +489,7 @@
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>List of coordinates</p>
+<dd class="field-even"><p>List of coordinates (68x2). An empty array if no face landmarks are found</p>
 </dd>
 </dl>
 </dd></dl>
@@ -464,21 +497,20 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.vision_face.Face.landmark_face_vis">
 <span class="sig-name descname"><span class="pre">landmark_face_vis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_face.html#Face.landmark_face_vis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_face.Face.landmark_face_vis" title="Link to this definition">¶</a></dt>
-<dd><p>Detects facial landmarks.</p>
+<dd><p>Draws facial landmarks.</p>
 <p>example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">img</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="n">face</span><span class="o">.</span><span class="n">landmark_face</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">items</span> <span class="o">=</span> <span class="n">face</span><span class="o">.</span><span class="n">detect_face</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">coords</span> <span class="o">=</span> <span class="n">face</span><span class="o">.</span><span class="n">landmark_face</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">face</span><span class="o">.</span><span class="n">landmark_face_vis</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">coords</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p></li>
-<li><p><strong>item</strong> (<em>array</em>) – Face coordinates (x1,y1,x2,y2)</p></li>
+<li><p><strong>coords</strong> (<em>array</em>) – Coordinate list returned by landmark_face</p></li>
 </ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>List of coordinates</p>
 </dd>
 </dl>
 </dd></dl>
@@ -498,7 +530,7 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p></li>
-<li><p><strong>item</strong> (<em>numpy.ndarray</em>) – Face coordinates (x, y, w, h)</p></li>
+<li><p><strong>item</strong> (<em>numpy.ndarray</em>) – Face coordinates (x1, y1, x2, y2)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -510,13 +542,36 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.vision_face.Face.analyze_face_vis">
 <span class="sig-name descname"><span class="pre">analyze_face_vis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_face.html#Face.analyze_face_vis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_face.Face.analyze_face_vis" title="Link to this definition">¶</a></dt>
-<dd><p>Estimates the age, gender and emotion of a face.</p>
+<dd><p>Draws the age, gender and emotion of a face.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p></li>
 <li><p><strong>item</strong> (<em>numpy.ndarray</em>) – Face analysis result</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_face.Face.mask_face">
+<span class="sig-name descname"><span class="pre">mask_face</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_face.html#Face.mask_face"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_face.Face.mask_face" title="Link to this definition">¶</a></dt>
+<dd><p>Tells whether a mask is worn. Same model and same computation as edge-lab (PC).</p>
+<p>example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">img</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">items</span> <span class="o">=</span> <span class="n">face</span><span class="o">.</span><span class="n">detect_face</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">face</span><span class="o">.</span><span class="n">mask_face</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p></li>
+<li><p><strong>item</strong> (<em>numpy.ndarray</em>) – Face coordinates (x1, y1, x2, y2)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">{&quot;mask&quot;:</span> <span class="pre">True/False,</span> <span class="pre">&quot;score&quot;:</span> <span class="pre">0-100</span> <span class="pre">(probability</span> <span class="pre">%</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">chosen</span> <span class="pre">side),</span> <span class="pre">&quot;box&quot;:</span> <span class="pre">coordinates}</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -587,11 +642,11 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p></li>
-<li><p><strong>item</strong> (<em>numpy.ndarray</em>) – Face coordinates (x, y, w, h)</p></li>
+<li><p><strong>item</strong> (<em>numpy.ndarray</em>) – Face coordinates (x1, y1, x2, y2)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">{&quot;name&quot;:</span> <span class="pre">name,</span> <span class="pre">&quot;score&quot;:</span> <span class="pre">error}</span></code>  The more similar the faces, the lower the error.  Faces with an error of 0.4 or less are judged to be the same person.</p>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">{&quot;name&quot;:</span> <span class="pre">name,</span> <span class="pre">&quot;score&quot;:</span> <span class="pre">error,</span> <span class="pre">&quot;max&quot;:</span> <span class="pre">closest</span> <span class="pre">name}</span></code>  The more similar the faces, the lower the error (0-2).  Judged as the same person when the error is below <code class="docutils literal notranslate"><span class="pre">face.threshold</span></code> (default 0.6).</p>
 </dd>
 </dl>
 </dd></dl>
@@ -606,7 +661,7 @@
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>facedb</strong> (type <code class="docutils literal notranslate"><span class="pre">list(list,</span> <span class="pre">list)</span></code>)  example::    [     [‘honggildong’],     [array([-0.06423206,  0.12474005,  0.0511112 , -0.05676335, -0.07211345,             -0.03123881, -0.04119622, -0.12800875,  0.11717855, -0.11079554,              0.22952782, -0.02007426, -0.17457265, -0.13562854, -0.04972655,              0.15810637, -0.12785575, -0.16479518, -0.07002968, -0.00208595,              0.169218  ,  0.03144928, -0.01074579,  0.04103286, -0.09245337,             …             -0.00706697,  0.06025593, -0.0049719 ])]   ]</p>
+<dd class="field-odd"><p><strong>facedb</strong> (<code class="docutils literal notranslate"><span class="pre">list(list,</span> <span class="pre">list)</span></code> type)  example::    [     [‘honggildong’],     [array([ 0.0412, -0.0731,  0.1093, …, -0.0158], dtype=float32)]   # 256 numbers   ]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -614,7 +669,7 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.vision_face.Face.save_db">
 <span class="sig-name descname"><span class="pre">save_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_face.html#Face.save_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_face.Face.save_db" title="Link to this definition">¶</a></dt>
-<dd><p>Saves the face database to a file.</p>
+<dd><p>Saves the face database to a file (JSON).</p>
 <p>example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">face</span><span class="o">.</span><span class="n">save_db</span><span class="p">(</span><span class="s1">'/home/pi/facedb'</span><span class="p">)</span>
 </pre></div>
@@ -630,6 +685,7 @@
 <dt class="sig sig-object py" id="openpibo.vision_face.Face.load_db">
 <span class="sig-name descname"><span class="pre">load_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_face.html#Face.load_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_face.Face.load_db" title="Link to this definition">¶</a></dt>
 <dd><p>Loads a face database file.</p>
+<p>Files saved the old (dlib) way are not opened — please register the faces again and save.</p>
 <p>example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">face</span><span class="o">.</span><span class="n">load_db</span><span class="p">(</span><span class="s1">'/home/pi/facedb'</span><span class="p">)</span>
 </pre></div>
@@ -662,7 +718,15 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.vision_face.Face.detect_mesh">
 <span class="sig-name descname"><span class="pre">detect_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_face.html#Face.detect_mesh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_face.Face.detect_mesh" title="Link to this definition">¶</a></dt>
-<dd><p>Detect mesh and return distance, direction, and image with landmarks.</p>
+<dd><p>Detects facial landmarks and estimates distance and direction</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of {face distance, direction, landmarks} (up to 2 faces)</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -718,6 +782,11 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">vision_face · Face recognition</a><ul>
+<li><a class="reference internal" href="#openpibo.vision_face.MASK_ONNX"><code class="docutils literal notranslate"><span class="pre">MASK_ONNX</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_face.DB_FORMAT"><code class="docutils literal notranslate"><span class="pre">DB_FORMAT</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_face.THRESHOLD"><code class="docutils literal notranslate"><span class="pre">THRESHOLD</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_face.MP_TO_DLIB68"><code class="docutils literal notranslate"><span class="pre">MP_TO_DLIB68</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_face.REID_REF5"><code class="docutils literal notranslate"><span class="pre">REID_REF5</span></code></a></li>
 <li><a class="reference internal" href="#openpibo.vision_face.putTextPIL"><code class="docutils literal notranslate"><span class="pre">putTextPIL()</span></code></a></li>
 <li><a class="reference internal" href="#openpibo.vision_face.Face"><code class="docutils literal notranslate"><span class="pre">Face</span></code></a><ul>
 <li><a class="reference internal" href="#openpibo.vision_face.Face.detect_face"><code class="docutils literal notranslate"><span class="pre">Face.detect_face()</span></code></a></li>
@@ -726,6 +795,7 @@
 <li><a class="reference internal" href="#openpibo.vision_face.Face.landmark_face_vis"><code class="docutils literal notranslate"><span class="pre">Face.landmark_face_vis()</span></code></a></li>
 <li><a class="reference internal" href="#openpibo.vision_face.Face.analyze_face"><code class="docutils literal notranslate"><span class="pre">Face.analyze_face()</span></code></a></li>
 <li><a class="reference internal" href="#openpibo.vision_face.Face.analyze_face_vis"><code class="docutils literal notranslate"><span class="pre">Face.analyze_face_vis()</span></code></a></li>
+<li><a class="reference internal" href="#openpibo.vision_face.Face.mask_face"><code class="docutils literal notranslate"><span class="pre">Face.mask_face()</span></code></a></li>
 <li><a class="reference internal" href="#openpibo.vision_face.Face.init_db"><code class="docutils literal notranslate"><span class="pre">Face.init_db()</span></code></a></li>
 <li><a class="reference internal" href="#openpibo.vision_face.Face.train_face"><code class="docutils literal notranslate"><span class="pre">Face.train_face()</span></code></a></li>
 <li><a class="reference internal" href="#openpibo.vision_face.Face.delete_face"><code class="docutils literal notranslate"><span class="pre">Face.delete_face()</span></code></a></li>
