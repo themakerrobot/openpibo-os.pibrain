@@ -573,6 +573,7 @@ Pibo 에서도 같다), 560~1960px 한/영 상단바 넘침 0, 편집기 폭 0, 
 시험 PiBrain 은 RAM 7.7GB 라 `--combo` 의 메모리 판단은 파이보(1.8GB) 값으로 한다. 납품 PiBrain 은 2GB
 
 - 2단계(261104): 분류기 사진 특징·MoveNet 을 onnxruntime 으로, TFLite·`openpibo-detect-models` 제거 — Pibo CLAUDE.md '분류기 → 기기 요구'
+- 5단계(인증)는 넣지 않는다(사용자). 7단계(261104): edge-lab 가르치기가 로봇 형식으로 저장하고 [로봇으로 보내기] 로 분류기 `POST /api/models`(50010)에 보낸다 — Pibo CLAUDE.md '로봇 연동 일원화'
 - 3단계(261104): 얼굴 dlib 제거(찾기 0005 · 구분 0095 · 점은 MediaPipe 에서 dlib 68점 번호로 · 파일 JSON · 추적기 OpenCV CSRT) — Pibo CLAUDE.md '얼굴 (261104)'. `vision_face.py` 는 Pibo 와 `detect_mesh_vis` 글자 위치 한 줄만 다르다
 
 ## 파이보와 다른 점
