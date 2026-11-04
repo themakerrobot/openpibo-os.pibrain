@@ -342,11 +342,10 @@
 <span class="sd">분류기 화면에서 가르친 모델로 이미지를 분류합니다.</span>
 
 <span class="sd">Class:</span>
-<span class="sd">:obj:`~openpibo.vision_classify.TeachableMachine`</span>
 <span class="sd">:obj:`~openpibo.vision_classify.CustomClassifier`</span>
 
-<span class="sd">TensorFlow 를 쓰지 않습니다. 분류기 이미지 모델은 onnxruntime 으로, 손·얼굴·포즈 모델은 MediaPipe 로 돌립니다.</span>
-<span class="sd">``TeachableMachine`` (Teachable Machine 에서 받은 .tflite) 만 TFLite 런타임(LiteRT / tflite_runtime)을 씁니다.</span>
+<span class="sd">TensorFlow·TFLite 를 쓰지 않습니다. 이미지 모델은 onnxruntime 으로,</span>
+<span class="sd">손·얼굴·포즈 모델은 MediaPipe 로 돌립니다.</span>
 <span class="sd">"""</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
@@ -354,7 +353,6 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.modules.teachlab</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_interpreter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.modules.teachlab.classifier</span><span class="w"> </span><span class="kn">import</span> <span class="n">Classifier</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.modules.teachlab.embedder</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImageEmbedder</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.modules.teachlab.landmarks</span><span class="w"> </span><span class="kn">import</span> <span class="n">LandmarkExtractor</span>
@@ -374,98 +372,6 @@
 <span class="n">STREAM_SHORT_SIDE</span> <span class="o">=</span> <span class="mi">240</span>
 
 <span class="n">LANDMARK_SOURCES</span> <span class="o">=</span> <span class="p">(</span><span class="s1">'hand'</span><span class="p">,</span> <span class="s1">'face'</span><span class="p">,</span> <span class="s1">'pose'</span><span class="p">)</span>
-
-
-<div class="viewcode-block" id="TeachableMachine">
-<a class="viewcode-back" href="../../libraries/vision_classify.html#openpibo.vision_classify.TeachableMachine">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">TeachableMachine</span><span class="p">:</span>
-<span class="w">  </span><span class="sd">"""</span>
-<span class="sd">Functions:</span>
-<span class="sd">:meth:`~openpibo.vision_classify.TeachableMachine.load`</span>
-<span class="sd">:meth:`~openpibo.vision_classify.TeachableMachine.predict`</span>
-
-<span class="sd">  파이보의 카메라 Teachable Machine 기능을 사용합니다.</span>
-
-<span class="sd">  * ``이미지 프로젝트`` 의 ``표준 이미지 모델`` 을 사용합니다.</span>
-<span class="sd">  * ``Teachable Machine`` 에서 학습한 모델을 적용하여 추론할 수 있습니다.</span>
-<span class="sd">  * 학습한 모델은 ``Tensorflow Lite`` 형태로 다운로드 해주세요.</span>
-
-<span class="sd">  example::</span>
-
-<span class="sd">    from openpibo.vision_classify import TeachableMachine</span>
-
-<span class="sd">    tm = TeachableMachine()</span>
-<span class="sd">    # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
-<span class="sd">  """</span>
-
-<div class="viewcode-block" id="TeachableMachine.load">
-<a class="viewcode-back" href="../../libraries/vision_classify.html#openpibo.vision_classify.TeachableMachine.load">[docs]</a>
-  <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_path</span><span class="p">,</span> <span class="n">label_path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Tflite 모델로 불러옵니다. (부동소수점/양자화) 모두 가능</span>
-
-<span class="sd">    example::</span>
-
-<span class="sd">      tm.load('model_unquant.tflite', 'labels.txt')</span>
-
-<span class="sd">    :param str model_path: Teachable Machine의 모델파일</span>
-<span class="sd">    :param str label_path: Teachable Machine의 라벨파일</span>
-<span class="sd">    """</span>
-
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">label_path</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-      <span class="n">c</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
-      <span class="n">class_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">c</span><span class="p">]</span>
-
-    <span class="n">Interpreter</span> <span class="o">=</span> <span class="n">load_interpreter</span><span class="p">()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">interpreter</span> <span class="o">=</span> <span class="n">Interpreter</span><span class="p">(</span><span class="n">model_path</span><span class="o">=</span><span class="n">model_path</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">interpreter</span><span class="o">.</span><span class="n">allocate_tensors</span><span class="p">()</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">input_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpreter</span><span class="o">.</span><span class="n">get_input_details</span><span class="p">()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">output_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpreter</span><span class="o">.</span><span class="n">get_output_details</span><span class="p">()</span>
-
-    <span class="c1"># 입력이 float 이면 -1~1 로 정규화, 양자화 모델이면 uint8 그대로</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">floating_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_details</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'dtype'</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_details</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'shape'</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_details</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'shape'</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">class_names</span> <span class="o">=</span> <span class="n">class_names</span></div>
-
-
-<div class="viewcode-block" id="TeachableMachine.predict">
-<a class="viewcode-back" href="../../libraries/vision_classify.html#openpibo.vision_classify.TeachableMachine.predict">[docs]</a>
-  <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Tflite 모델로 추론합니다.</span>
-
-<span class="sd">    example::</span>
-
-<span class="sd">      cm = Camera()</span>
-<span class="sd">      img = cm.read()</span>
-<span class="sd">      tm.predict(img)</span>
-
-<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
-
-<span class="sd">    :returns: 가장 높은 확률을 가진 클래스 명, 결과(raw 데이터)</span>
-<span class="sd">    """</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'interpreter'</span><span class="p">):</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'Teachable Machine Model did not load properly.'</span><span class="p">)</span>
-
-    <span class="n">rgb</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">)),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">)</span>
-    <span class="n">input_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">floating_model</span><span class="p">:</span>
-      <span class="n">input_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span> <span class="o">-</span> <span class="mf">127.5</span><span class="p">)</span> <span class="o">/</span> <span class="mf">127.5</span>
-    <span class="k">else</span><span class="p">:</span>
-      <span class="n">input_data</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_details</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'dtype'</span><span class="p">])</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">interpreter</span><span class="o">.</span><span class="n">set_tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_details</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'index'</span><span class="p">],</span> <span class="n">input_data</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">interpreter</span><span class="o">.</span><span class="n">invoke</span><span class="p">()</span>
-
-    <span class="n">preds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interpreter</span><span class="o">.</span><span class="n">get_tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_details</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'index'</span><span class="p">]))</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_names</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">preds</span><span class="p">))],</span> <span class="n">preds</span></div>
-</div>
-
 
 
 <div class="viewcode-block" id="CustomClassifier">

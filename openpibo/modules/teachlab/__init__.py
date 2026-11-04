@@ -31,27 +31,3 @@ def onnx_session(path, threads=4):
   with open(path, 'rb') as f:
     return ort.InferenceSession(f.read(), opt, providers=['CPUExecutionProvider'])
 
-
-def load_interpreter():
-  """TFLite 인터프리터 클래스를 찾는다. LiteRT(ai_edge_litert) → tflite_runtime → TensorFlow 순서.
-
-  분류기·MoveNet 은 261104 부터 onnxruntime 으로 돌고, 이건 ``TeachableMachine`` (사용자가 받은 .tflite) 만 쓴다.
-  부를 때만 찾으므로 TFLite 런타임이 없어도 openpibo 를 불러오는 데는 문제가 없다.
-  """
-  try:
-    from ai_edge_litert.interpreter import Interpreter
-    return Interpreter
-  except ImportError:
-    pass
-  try:
-    from tflite_runtime.interpreter import Interpreter
-    return Interpreter
-  except ImportError:
-    pass
-  try:
-    import tensorflow as tf
-    return tf.lite.Interpreter
-  except ImportError as e:
-    raise ImportError(
-      'TFLite 런타임이 없습니다:  pip install ai-edge-litert  (또는 tflite-runtime)'
-    ) from e

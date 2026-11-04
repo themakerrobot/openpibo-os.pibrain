@@ -22,7 +22,7 @@ autodoc_mock_imports = [m for m in (
     'bs4', 'serial', 'openpibo_models',
     'board', 'busio', 'digitalio', 'adafruit_ssd1306', 'adafruit_rgb_display',
     'soundfile', 'picamera2', 'libcamera', 'openvino', 'rpi_ws281x', 'RPi', 'pyzbar',
-    'mediapipe', 'onnxruntime', 'tflite_runtime', 'sherpa_onnx', 'requests', 'cv2', 'spidev',
+    'mediapipe', 'onnxruntime', 'sherpa_onnx', 'requests', 'cv2', 'spidev',
 ) if importlib.util.find_spec(m) is None]
 
 # -- Project information -----------------------------------------------------

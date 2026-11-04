@@ -15,7 +15,6 @@ requirements = [
         # 'RPi.gpio>=0.7.0',
         # 'pyserial>=3.5',
         # 'requests>=2.28.1',
-        # 'tflite-runtime>=2.5.0',
         'openpibo_models>=0.4.9',
         'openpibo_face_models>=0.4.3',
 ]

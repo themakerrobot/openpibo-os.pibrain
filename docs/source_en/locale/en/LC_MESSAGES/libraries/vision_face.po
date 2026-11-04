@@ -184,16 +184,6 @@ msgstr "Recognizes registered faces."
 msgid "``{\"name\": 이름, \"score\": 오차도, \"max\": 가장 가까운 이름}``  얼굴이 비슷할수록 오차도가 낮게 측정됩니다.  오차도가 ``face.threshold`` (기본 0.4) 보다 낮을 때 동일인으로 판정합니다."
 msgstr "``{\"name\": name, \"score\": error, \"max\": closest name}``  The more similar the faces, the lower the error.  Judged to be the same person when the error is lower than ``face.threshold`` (default 0.4)."
 
-#, python-brace-format
-msgid "``{\"name\": 이름, \"score\": 오차도, \"max\": 가장 가까운 이름}``"
-msgstr "``{\"name\": name, \"score\": error, \"max\": closest name}``"
-
-msgid "얼굴이 비슷할수록 오차도가 낮게 측정됩니다."
-msgstr "The more similar the faces, the lower the error."
-
-msgid "오차도가 ``face.threshold`` (기본 0.4) 보다 낮을 때 동일인으로 판정합니다."
-msgstr "Judged to be the same person when the error is lower than ``face.threshold`` (default 0.4)."
-
 msgid "사용 중인 얼굴 데이터베이스를 확인합니다."
 msgstr "Checks the face database in use."
 
@@ -245,4 +235,13 @@ msgstr "List of {face distance, direction, landmarks} (up to 2 faces)"
 
 #~ msgid "**facedb** (``list(list, list)`` 타입)"
 #~ msgstr "**facedb** (``list(list, list)`` type)"
+
+#~ msgid "``{\"name\": 이름, \"score\": 오차도, \"max\": 가장 가까운 이름}``"
+#~ msgstr "``{\"name\": name, \"score\": error, \"max\": closest name}``"
+
+#~ msgid "얼굴이 비슷할수록 오차도가 낮게 측정됩니다."
+#~ msgstr "The more similar the faces, the lower the error."
+
+#~ msgid "오차도가 ``face.threshold`` (기본 0.4) 보다 낮을 때 동일인으로 판정합니다."
+#~ msgstr "Judged to be the same person when the error is lower than ``face.threshold`` (default 0.4)."
 

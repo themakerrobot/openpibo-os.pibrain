@@ -49,7 +49,7 @@ ROOTS = [
   'adafruit-circuitpython-ssd1306', 'adafruit-circuitpython-rgb-display', 'picamera2',
   # 영상 · 인식
   'numpy', 'pillow', 'opencv-contrib-python', 'pyzbar', 'mediapipe',
-  'tflite-runtime', 'onnxruntime', 'openvino',
+  'onnxruntime', 'openvino',
   # 음성
   'soundfile', 'sherpa-onnx', 'sherpa-onnx-core',
   # 수집 블록
@@ -64,7 +64,7 @@ JAX = ['jax', 'jaxlib', 'ml-dtypes', 'opt-einsum']
 # 지운 뒤 import 해 볼 것 (모듈 이름)
 SMOKE = [
   'fastapi', 'fastapi_socketio', 'socketio', 'uvicorn', 'starlette', 'jinja2', 'python_multipart', 'requests',
-  'bs4', 'lxml', 'numpy', 'cv2', 'PIL', 'pyzbar.pyzbar', 'mediapipe', 'tflite_runtime.interpreter',
+  'bs4', 'lxml', 'numpy', 'cv2', 'PIL', 'pyzbar.pyzbar', 'mediapipe',
   'onnxruntime', 'openvino', 'soundfile', 'serial', 'RPi.GPIO', 'rpi_ws281x', 'board', 'busio', 'digitalio',
   'adafruit_ssd1306', 'adafruit_rgb_display.ili9341', 'picamera2',
   'openpibo_models',

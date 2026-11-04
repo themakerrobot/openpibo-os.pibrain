@@ -879,22 +879,6 @@ Blockly.Python.forBlock['vision_hand_gesture_vis'] = function(block) {
   const v = Blockly.Python.valueToCode(block, 'v', Blockly.Python.ORDER_ATOMIC);
   return `detect.recognize_hand_gesture_vis(${img}, ${v})\n`;
 }
-// Blockly.Python.forBlock['vision_load_tm'] = function(block) {
-//   Blockly.Python.definitions_['from_vision_import_TeachableMachine'] = 'from openpibo.vision_classify import TeachableMachine';
-//   Blockly.Python.definitions_['assign_tm'] = 'tm = TeachableMachine()';
-
-//   const dir = block.getFieldValue("dir");
-//   const modelpath = Blockly.Python.valueToCode(block, 'modelpath', Blockly.Python.ORDER_ATOMIC);
-//   const labelpath = Blockly.Python.valueToCode(block, 'labelpath', Blockly.Python.ORDER_ATOMIC);
-//   return `tm.load('${dir}'+${modelpath}, '${dir}'+${labelpath})\n`;
-// }
-// Blockly.Python.forBlock['vision_predict_tm'] = function(block) {
-//   Blockly.Python.definitions_['from_vision_import_TeachableMachine'] = 'from openpibo.vision_classify import TeachableMachine';
-//   Blockly.Python.definitions_['assign_tm'] = 'tm = TeachableMachine()';
-
-//   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
-//   return [`tm.predict(${img})[0]`, Blockly.Python.ORDER_ATOMIC];
-// }
 Blockly.Python.forBlock['vision_load_cf'] = function(block) {
   Blockly.Python.definitions_['from_vision_import_CustomClassifier'] = 'from openpibo.vision_classify import CustomClassifier';
   Blockly.Python.definitions_['assign_cf'] = 'cf = CustomClassifier()';

@@ -572,7 +572,7 @@ Pibo 에서도 같다), 560~1960px 한/영 상단바 넘침 0, 편집기 폭 0, 
 기준·순서는 Pibo CLAUDE.md '로봇 연동 일원화'. 실측 스크립트 `system/bench_models.py` 는 **Pibo 와 같은 파일**(고치면 같이) — 사용법은 Pibo CLAUDE.md '모델 실측 스크립트'.
 시험 PiBrain 은 RAM 7.7GB 라 `--combo` 의 메모리 판단은 파이보(1.8GB) 값으로 한다. 납품 PiBrain 은 2GB
 
-- 2단계(261104): 분류기 사진 특징·MoveNet 을 onnxruntime 으로, `openpibo-detect-models` 제거(`TeachableMachine` 은 남김 — TFLite 런타임은 그것만 쓴다) — Pibo CLAUDE.md '분류기 → 기기 요구'
+- 2단계(261104): 분류기 사진 특징·MoveNet 을 onnxruntime 으로, `TeachableMachine`·TFLite 런타임·`openpibo-detect-models` 제거(TM 블록 주석 코드도 지움) — Pibo CLAUDE.md '분류기 → 기기 요구'
 - 6단계(261104): 같은 점수 점검 — `system/score_check.py`(Pibo · edge-lab 과 같은 파일) · `classifier/static/check.html`(Pibo 와 같은 파일). 쓰는 법은 Pibo CLAUDE.md '로봇 연동 일원화'
 - 5단계(인증)는 넣지 않는다(사용자). 7단계(261104): edge-lab 가르치기가 로봇 형식으로 저장하고 [로봇으로 보내기] 로 분류기 `POST /api/models`(50010)에 보낸다 — Pibo CLAUDE.md '로봇 연동 일원화'
 - **파이썬 API·블록은 그대로 호환, 바꾸는 건 함수 안에서만(261104, 사용자)** — Pibo CLAUDE.md '로봇 연동 일원화'
@@ -636,8 +636,7 @@ Pibo 와 같다. Teachable Machine 계열(`vision_load_tm` `vision_predict_tm`
 `vision_classification`)은 **양쪽 리포 모두 정의·생성기·툴박스에서 비활성**이고,
 살아 있는 것은 `vision_load_cf` / `vision_predict_cf`(`CustomClassifier`) 뿐이다.
 
-`openpibo/vision_classify.py` 에 `class TeachableMachine` 이 남아 있는 것도 Pibo 와 같다.
-라이브러리 코드일 뿐 블록으로 노출되지 않는다.
+`openpibo/vision_classify.py` 의 `class TeachableMachine` 과 주석으로 남아 있던 TM 블록 코드는 261104 에 지웠다(Pibo 와 같이, 사용자).
 
 ### 분류기 (260924) — Pibo 와 같은 teach-lab 방식
 
@@ -793,7 +792,7 @@ classifier 언어 토글, 검수 보고서 구조, Tools 서비스.
   코드 생성에서 터진다. 셋 중 가장 위험한 조합이다.
   블록을 비활성화할 때는 **정의·생성기·툴박스 셋을 같이** 막는다.
   PiBrain 에 없는 하드웨어(`motion_*` 서보, `device_eye_*`·`device_get_*` MCU 센서,
-  `audio_record` 마이크, `vision_*_tm` Teachable Machine)가 그렇게 막혀 있다.
+  `audio_record` 마이크)가 그렇게 막혀 있다. Teachable Machine 블록(`vision_*_tm`)은 261104 에 코드째 지웠다.
   `vision_load_cf`/`vision_predict_cf`(CustomClassifier)가 TM 의 대체다.
   확인 방법 — 주석을 걷어낸 뒤 세 집합을 비교한다. 툴박스 개수와 생성기 개수가 같아야 한다.
 
