@@ -14,8 +14,8 @@
                  카메라도 안 되면 회색 그림으로 재고 '얼굴 없음' 이라고 적는다 — 그때 얼굴·손 모델은 시간만 참고
   --repeat N     잴 횟수(기본 20, 첫 회는 따로 적는다)
   --threads N    onnxruntime 스레드(기본 4 — EdOnnx·Movenet 과 같다)
-  --fetch        OMZ face-detection-retail-0005 · face-reidentification-retail-0095(FP16)를
-                 storage.openvinotoolkit.org(open_model_zoo 2023.0)에서 /home/pi/.model/face/ 아래로 받는다. 인터넷 필요
+  --fetch        새로 쓰는 모델을 받는다(있으면 건너뜀, 인터넷 필요) — 얼굴 찾기 0005 · 얼굴 구분 0095(OMZ 2023.0 FP16,
+                 /home/pi/.model/face/), 마스크 mask.onnx(HF leeyunjai/edge-lab, /home/pi/.model/mask/)
   --combo        **서비스를 끈다**: tools·classify·llama-server@* 를 멈추고 llama-server@<--llm> 을 띄운 뒤
                  TTS·STT·사물·얼굴·사진 특징을 같이 올려 메모리·스왑·한 바퀴 시간을 잰다. 끝나면 llama-server 를 끈다
   --llm 이름     --combo 의 대화 모델(general · themaker-ko · themaker-en, 기본 general — 가장 크다)
@@ -56,6 +56,7 @@ OMZ_FETCH = {
   'face-detection-retail-0005': os.path.join(FACE_DIR, 'detection'),
   'face-reidentification-retail-0095': os.path.join(FACE_DIR, 'reid'),
 }
+MASK_URL = 'https://huggingface.co/leeyunjai/edge-lab/resolve/main/mask/mask.onnx'   # edge-lab 과 같은 마스크 모델
 
 
 # ── 공통 ────────────────────────────────────────────────────────────
@@ -422,20 +423,20 @@ def prepare_inputs(image):
 def fetch():
   import hashlib
   import requests
-  for m, d in OMZ_FETCH.items():
-    os.makedirs(d, exist_ok=True)
-    for ext in ('xml', 'bin'):
-      dst = os.path.join(d, f'{m}.{ext}')
-      if os.path.isfile(dst) and os.path.getsize(dst) > 0:
-        print(f'  있음  {dst}')
-        continue
-      url = OMZ_URL.format(m=m, ext=ext)
-      r = requests.get(url, timeout=60)
-      r.raise_for_status()
-      with open(dst + '.part', 'wb') as f:
-        f.write(r.content)
-      os.replace(dst + '.part', dst)
-      print(f'  받음  {dst}  {len(r.content) / 1e6:.2f}MB  sha256 {hashlib.sha256(r.content).hexdigest()[:16]}…')
+  jobs = [(OMZ_URL.format(m=m, ext=ext), os.path.join(d, f'{m}.{ext}'))
+          for m, d in OMZ_FETCH.items() for ext in ('xml', 'bin')]
+  jobs.append((MASK_URL, os.path.join(MODEL, 'mask', 'mask.onnx')))
+  for url, dst in jobs:
+    os.makedirs(os.path.dirname(dst), exist_ok=True)
+    if os.path.isfile(dst) and os.path.getsize(dst) > 0:
+      print(f'  있음  {dst}')
+      continue
+    r = requests.get(url, timeout=60)
+    r.raise_for_status()
+    with open(dst + '.part', 'wb') as f:
+      f.write(r.content)
+    os.replace(dst + '.part', dst)
+    print(f'  받음  {dst}  {len(r.content) / 1e6:.2f}MB  sha256 {hashlib.sha256(r.content).hexdigest()[:16]}…')
 
 
 # ── --combo ─────────────────────────────────────────────────────────
@@ -638,7 +639,7 @@ def main():
     print('  ※ llama-server 가 떠 있습니다. 모델별 값(프로세스 RSS)은 그대로지만 스왑이 끼면 시간이 늘어납니다.')
 
   if args.fetch:
-    print('[받기] OMZ open_model_zoo 2023.0 FP16')
+    print('[받기] 얼굴 0005·0095 (OMZ 2023.0 FP16) · 마스크 mask.onnx')
     try:
       fetch()
     except Exception as e:
