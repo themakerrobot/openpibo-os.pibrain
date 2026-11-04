@@ -12,10 +12,10 @@
 #   4) requirements.txt 만 설치한다. 버전은 1) 의 목록을 제약(-c)으로 줘서 지금 기기와 같게 한다
 #      → 코드가 안 쓰는 패키지(TF·torch·MeloTTS 잔재 등)는 저절로 빠진다
 #   5) openpibo-src.pth 를 옮긴다(리포 openpibo 를 import 하게 하는 것)
-#   6) venv_prune.py --check(주요 모듈 import) + dlib 을 한 번 돌려 본다
+#   6) venv_prune.py --check(주요 모듈 import · 분류기 ONNX 올리기)
 #   어느 단계든 실패하면 새 것을 지우고 옛 가상환경으로 되돌린다
 #
-# PyPI 에 aarch64 wheel 이 없어 컴파일하는 것: dlib(오래 걸린다) · RPi.GPIO · rpi-ws281x · PiDNG · python-prctl(picamera2 의존)
+# PyPI 에 aarch64 wheel 이 없어 컴파일하는 것: RPi.GPIO · rpi-ws281x · PiDNG · python-prctl(picamera2 의존). dlib 은 261104 에 뺐다
 # 컴파일한 wheel 은 /home/pi/wheels 에 남겨 다음에 다시 쓴다. 메모리가 큰 기기(PiBrain)에서 먼저 돌리고
 # /home/pi/wheels 를 파이보로 복사해 두면 파이보(램 1.8GB)는 컴파일 없이 설치한다.
 #
@@ -32,7 +32,7 @@ NOSVC=${NOSVC:-0}            # 1 이면 서비스를 건드리지 않는다(시�
 STAMP=$(date +%y%m%d_%H%M%S)
 LOCK=${LOCK:-/home/pi/venv_lock_$STAMP.txt}
 SERVICES="ide.service booting.service tools.service classify.service"
-BUILD="dlib rpi-gpio rpi-ws281x pidng python-prctl"      # aarch64 wheel 이 PyPI 에 없는 것 (norm 이름)
+BUILD="rpi-gpio rpi-ws281x pidng python-prctl"      # aarch64 wheel 이 PyPI 에 없는 것 (norm 이름)
 
 say() { echo "== $*"; }
 die() { echo "!! $*"; exit 1; }
@@ -118,9 +118,6 @@ chown -R "$OWNER" "$VENV" 2>/dev/null || true
 # ── 6) 확인 ─────────────────────────────────────────────────────────
 say "확인: import"
 "$PY" "$REPO/system/venv_prune.py" --check || fail "import 확인 실패"
-say "확인: dlib 실제로 돌리기(다른 기기에서 만든 wheel 이 이 CPU 에서 도는지)"
-[ "${SKIP_DLIB:-0}" = 1 ] || "$PY" -c "import dlib, numpy as np; dlib.get_frontal_face_detector()(np.zeros((64, 64), np.uint8)); print('   dlib ok')" \
-  || fail "dlib 실행 실패 — /home/pi/wheels 의 dlib wheel 을 지우고 이 기기에서 다시 컴파일할 것"
 say "pip check (참고)"
 $PIP check || true
 

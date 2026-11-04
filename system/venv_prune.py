@@ -48,14 +48,14 @@ ROOTS = [
   'rpi.gpio', 'rpi-lgpio', 'rpi-ws281x', 'pyserial', 'adafruit-blinka',
   'adafruit-circuitpython-ssd1306', 'adafruit-circuitpython-rgb-display', 'picamera2',
   # 영상 · 인식
-  'numpy', 'pillow', 'opencv-contrib-python', 'pyzbar', 'dlib', 'mediapipe',
+  'numpy', 'pillow', 'opencv-contrib-python', 'pyzbar', 'mediapipe',
   'onnxruntime', 'openvino',
   # 음성
   'soundfile', 'sherpa-onnx', 'sherpa-onnx-core',
   # 수집 블록
   'beautifulsoup4', 'lxml',
   # 모델·글꼴 데이터 (openpibo-face-models 는 안 쓴다 — 얼굴 모델은 /home/pi/.model/face)
-  'openpibo-models', 'openpibo-dlib-models',
+  'openpibo-models',
 ]
 TOOLS = ['pip', 'setuptools', 'wheel']
 OPTIONAL = ['pandas', 'scikit-learn', 'seaborn']
@@ -64,10 +64,10 @@ JAX = ['jax', 'jaxlib', 'ml-dtypes', 'opt-einsum']
 # 지운 뒤 import 해 볼 것 (모듈 이름)
 SMOKE = [
   'fastapi', 'fastapi_socketio', 'socketio', 'uvicorn', 'starlette', 'jinja2', 'python_multipart', 'requests',
-  'bs4', 'lxml', 'numpy', 'cv2', 'PIL', 'pyzbar.pyzbar', 'dlib', 'mediapipe',
+  'bs4', 'lxml', 'numpy', 'cv2', 'PIL', 'pyzbar.pyzbar', 'mediapipe',
   'onnxruntime', 'openvino', 'soundfile', 'serial', 'RPi.GPIO', 'rpi_ws281x', 'board', 'busio', 'digitalio',
   'adafruit_ssd1306', 'adafruit_rgb_display.ili9341', 'picamera2',
-  'openpibo_models', 'openpibo_dlib_models',
+  'openpibo_models',
   'openpibo.audio', 'openpibo.motion', 'openpibo.device', 'openpibo.oled', 'openpibo.collect',
   'openpibo.speech', 'openpibo.vision_camera', 'openpibo.vision_detect', 'openpibo.vision_face',
   'openpibo.vision_classify',

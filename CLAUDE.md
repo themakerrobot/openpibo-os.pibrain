@@ -572,6 +572,9 @@ Pibo 에서도 같다), 560~1960px 한/영 상단바 넘침 0, 편집기 폭 0, 
 기준·순서는 Pibo CLAUDE.md '로봇 연동 일원화'. 실측 스크립트 `system/bench_models.py` 는 **Pibo 와 같은 파일**(고치면 같이) — 사용법은 Pibo CLAUDE.md '모델 실측 스크립트'.
 시험 PiBrain 은 RAM 7.7GB 라 `--combo` 의 메모리 판단은 파이보(1.8GB) 값으로 한다. 납품 PiBrain 은 2GB
 
+- 2단계(261104): 분류기 사진 특징·MoveNet 을 onnxruntime 으로, TFLite·`openpibo-detect-models` 제거 — Pibo CLAUDE.md '분류기 → 기기 요구'
+- 3단계(261104): 얼굴 dlib 제거(찾기 0005 · 구분 0095 · 점은 MediaPipe 에서 dlib 68점 번호로 · 파일 JSON · 추적기 OpenCV CSRT) — Pibo CLAUDE.md '얼굴 (261104)'. `vision_face.py` 는 Pibo 와 `detect_mesh_vis` 글자 위치 한 줄만 다르다
+
 ## 파이보와 다른 점
 
 Pibo 리포의 변경을 가져올 때 **항목마다 적용 여부를 먼저 판단한다.** 소스를 통째로 덮어쓰지 말 것.
@@ -722,8 +725,7 @@ docs 는 `CustomClassifier.load` 변경 뒤 다시 빌드했다(261001, 'docs' �
 
 ### 알면서 남겨 둔 것
 
-- `openpibo/vision_detect.py` 의 `pickle` · `openpibo_dlib_models` import 는 쓰이지 않는다.
-  이번 작업 이전부터 그랬고, 모델 경로 등록 부작용이 있을 수 있어 건드리지 않았다.
+- (261104) `vision_detect.py` 의 `pickle` · `openpibo_dlib_models` · `dlib` import 를 지웠다(추적기를 OpenCV CSRT 로 바꾸면서).
 - `system/openpibo_python-*.whl` — 위 'openpibo 는 리포 소스로 임포트한다' 참고.
 
 ### 이번에 가져온 것 / 안 가져온 것

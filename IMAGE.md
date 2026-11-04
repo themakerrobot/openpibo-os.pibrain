@@ -176,7 +176,7 @@ sudo systemctl restart ide.service booting.service
 
 **처음부터 다시 만들기(선택) — `system/venv_rebuild.sh`.** 정리 대신 가상환경을 새로 만든다. `requirements.txt` 만으로 다시 만들 수 있는지
 확인할 때 쓴다(새 OS 로 이미지를 처음부터 만들 때). 옛 가상환경은 `/home/pi/.pyenv.old` 로 옮겨 두고, 지금 버전 목록(`pip freeze`)을
-제약으로 줘서 같은 버전으로 설치한 뒤 import 확인·dlib 실행까지 본다. **어느 단계든 실패하면 옛 것으로 되돌린다.**
+제약으로 줘서 같은 버전으로 설치한 뒤 import 확인까지 본다. **어느 단계든 실패하면 옛 것으로 되돌린다.**
 
 ```bash
 sudo bash /home/pi/openpibo-os/system/venv_rebuild.sh            # 인터넷 필요, 약 1.5GB 받는다
@@ -184,18 +184,17 @@ sudo bash /home/pi/openpibo-os/system/venv_rebuild.sh rollback   # 되돌리기
 sudo rm -rf /home/pi/.pyenv.old                                  # 잘 되면 옛 것 지우기
 ```
 
-- PyPI 에 aarch64 wheel 이 없어 **컴파일하는 것 5개**: `dlib`(오래 걸린다) · `RPi.GPIO` · `rpi-ws281x` · `PiDNG` · `python-prctl`(picamera2 의존).
+- PyPI 에 aarch64 wheel 이 없어 **컴파일하는 것 4개**: `RPi.GPIO` · `rpi-ws281x` · `PiDNG` · `python-prctl`(picamera2 의존). `dlib` 은 261104 에 뺐다(얼굴 구분 → OpenVINO retail-0095).
   빌드 도구(`build-essential` `cmake` `libcap-dev` `python3-dev`)는 두 기기에 이미 있다(260930 확인)
 - 컴파일한 wheel 은 `/home/pi/wheels` 에 남는다. **램이 큰 PiBrain(7.6GB)에서 먼저 돌리고 그 폴더를 파이보(1.8GB)로 복사**하면 파이보는 컴파일하지 않는다.
-  다른 기기에서 만든 dlib 이 그 CPU 에서 도는지는 스크립트가 dlib 을 한 번 돌려 확인한다(안 되면 되돌리고 그 wheel 을 지우라고 알린다)
-- 가상환경은 `--system-site-packages` 로 만든다(`libcamera` 는 apt 의 `python3-libcamera`). `RPi.GPIO`·`picamera2`·`rpi_ws281x`·`dlib` 은 가상환경 안 pip 설치본을 쓴다(260930 두 기기 확인)
+- 가상환경은 `--system-site-packages` 로 만든다(`libcamera` 는 apt 의 `python3-libcamera`). `RPi.GPIO`·`picamera2`·`rpi_ws281x` 는 가상환경 안 pip 설치본을 쓴다(260930 두 기기 확인)
 - 컨테이너에서 성공·실패(자동 되돌리기)·`rollback` 경로를 시험했다. **기기에서는 아직 안 돌렸다**
 
 ### 모델 폴더 `/home/pi/.model` (260930~, 이미지당 1회)
 
 **Pibo 이미지의 `/home/pi/.model` 을 그대로 넣는다**(구성·파일별 sha256 은 그 폴더의 `VERSION`, 만드는 법은 Pibo IMAGE.md
 '파이썬 패키지 · 모델 폴더'). PiBrain 코드가 읽는 경로는 Pibo 의 부분집합이라 그대로 맞는다:
-`tts/assets/{onnx,voice_styles}` · `object/ed-s-320.onnx` · `hand/*.task` · `face/{detection,age-gender,emotion,landmark}`.
+`tts/assets/{onnx,voice_styles}` · `object/ed-s-320.onnx` · `hand/*.task` · `face/{detection,age-gender,emotion,landmark,reid}`(261104 — 얼굴 찾기 0005·얼굴 구분 0095, `system/bench_models.py --fetch` 로 받는다. **코드보다 먼저 넣을 것**).
 
 - `stt/`(약 230MB)는 마이크를 달면 쓴다(STT 소스는 이미 들어 있다, 블록만 막힘). **지우지 말고 그대로 둔다**
 - `object/` 에는 `ed-s-320.onnx` 하나만 있어야 한다(261026 에 예전 사물 인식 가중치·고지 파일을 지웠다)

@@ -315,7 +315,7 @@ CASES = {
   'omz_age_gender_0013': ('나이·성별 retail-0013', _omz('age-gender/age-gender-recognition-retail-0013.xml', True)),
   'omz_emotion_0003': ('감정 retail-0003', _omz('emotion/emotions-recognition-retail-0003.xml', True)),
   'omz_reid_0095': ('얼굴 구분 retail-0095', _omz('reid/face-reidentification-retail-0095.xml', True)),
-  'dlib_68_resnet': ('얼굴 구분 dlib 68점 + resnet', case_dlib_68_resnet),
+  'dlib_68_resnet': ('얼굴 구분 dlib 68점 + resnet (예전, 비교용)', case_dlib_68_resnet),
   'mask_onnx': ('마스크 mask.onnx (onnxruntime)', case_mask_onnx),
 }
 
@@ -336,7 +336,7 @@ def child(args):
     res['rss_peak'] = peak()
     res.update(extra)
     res['ok'] = True
-  except FileNotFoundError as e:
+  except (FileNotFoundError, ImportError) as e:   # 파일·패키지가 없는 비교 대상(예: dlib 을 지운 뒤)은 건너뛴다
     res.update(ok=False, skip=True, error=str(e))
   except Exception as e:
     res.update(ok=False, error=f'{type(e).__name__}: {e}')

@@ -5,8 +5,8 @@ Class:
 :meth:`~openpibo.vision_detect.putTextPIL`
 :obj:`~openpibo.vision_detect.Detect`
 """
-import cv2,dlib
-import os,pickle,math
+import cv2
+import os,math
 import numpy as np
 from pyzbar import pyzbar
 from .modules.ed_onnx import EdOnnx
@@ -14,7 +14,6 @@ from .modules.pose.movenet import Movenet
 from .modules.pose.utils import visualize_pose
 from .modules.card.decode_card import get_card
 from PIL import Image,ImageDraw,ImageFont
-import openpibo_dlib_models
 import openpibo_models
 import logging
 
@@ -416,9 +415,12 @@ Functions:
     if not type(img) is np.ndarray:
       raise Exception('"img" must be image data from opencv')
 
-    self.tracker = dlib.correlation_tracker()
-    x1,y1,x2,y2 = p
-    self.tracker.start_track(cv2.cvtColor(img, cv2.COLOR_BGR2RGB), dlib.rectangle(x1,y1,x2,y2))
+    # OpenCV CSRT 추적기(opencv-contrib). 261104 전엔 dlib.correlation_tracker 였다
+    make = getattr(cv2, 'TrackerCSRT_create', None) or cv2.legacy.TrackerCSRT_create
+    self.tracker = make()
+    x1,y1,x2,y2 = [int(v) for v in p]
+    self.tracker.init(img, (x1, y1, max(1, x2 - x1), max(1, y2 - y1)))
+    self.track_box = (x1, y1, x2, y2)
 
   def track_object(self, img):
     """
@@ -438,13 +440,13 @@ Functions:
     if not type(img) is np.ndarray:
       raise Exception('"img" must be image data from opencv')
 
-    self.tracker.update(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-    box = self.tracker.get_position()
-
-    x1 = int(box.left())
-    y1 = int(box.top())
-    x2 = int(box.right())
-    y2 = int(box.bottom())
+    if self.tracker is None:
+      raise Exception('"object_tracker_init" must be called')
+    ok, box = self.tracker.update(img)
+    if not ok:   # 놓치면 마지막 위치를 그대로 돌려준다(dlib 때도 상자는 늘 나왔다)
+      return self.track_box
+    x1, y1 = int(box[0]), int(box[1])
+    x2, y2 = int(box[0] + box[2]), int(box[1] + box[3])
     
     height, width = img.shape[:2]
     x1 = max(0, int(x1))
@@ -452,6 +454,7 @@ Functions:
     x2 = min(width - 1, int(x2))
     y2 = min(height - 1, int(y2))
 
+    self.track_box = (x1, y1, x2, y2)
     return (x1, y1, x2, y2)
 
   def track_object_vis(self, img, item):
