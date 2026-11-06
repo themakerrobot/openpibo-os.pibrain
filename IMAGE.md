@@ -194,7 +194,7 @@ sudo rm -rf /home/pi/.pyenv.old                                  # 잘 되면 �
 
 **Pibo 이미지의 `/home/pi/.model` 을 그대로 넣는다**(구성·파일별 sha256 은 그 폴더의 `VERSION`, 만드는 법은 Pibo IMAGE.md
 '파이썬 패키지 · 모델 폴더'). PiBrain 코드가 읽는 경로는 Pibo 의 부분집합이라 그대로 맞는다:
-`tts/assets/{onnx,voice_styles}` · `object/ed-s-320.onnx` · `hand/*.task` · `face/{detection,age-gender,emotion,landmark,reid}`(261104 — 얼굴 찾기 0005·얼굴 구분 0095, `system/bench_models.py --fetch` 로 받는다. **코드보다 먼저 넣을 것**) · `mask/mask.onnx`(261104 — 마스크 판별, HF `leeyunjai/edge-lab` 의 `mask/mask.onnx`).
+`tts/assets/{onnx,voice_styles}` · `object/ed-s-320.onnx` · `hand/*.task` · `face/{detection,age-gender,emotion,landmark,reid}`(261104 — 얼굴 찾기 0005·얼굴 구분 0095, 파이보 IMAGE.md '261104 에 새로 쓰는 모델 넣기' 명령으로 넣는다. **코드보다 먼저 넣을 것**) · `mask/mask.onnx`(261104 — 마스크 판별, HF `leeyunjai/edge-lab` 의 `mask/mask.onnx`).
 
 - `stt/`(약 230MB)는 마이크를 달면 쓴다(STT 소스는 이미 들어 있다, 블록만 막힘). **지우지 말고 그대로 둔다**
 - `object/` 에는 `ed-s-320.onnx` 하나만 있어야 한다(261026 에 예전 사물 인식 가중치·고지 파일을 지웠다)

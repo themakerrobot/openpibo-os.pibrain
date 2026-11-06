@@ -3,10 +3,9 @@
 """로봇(Pi 4)에서 인식 모델의 속도·메모리를 잰다 (261104). 파이보·PiBrain 같은 파일.
 
 모델마다 **새 파이썬 프로세스**를 띄워 잰다 — 앞 모델이 올린 메모리가 다음 모델 값에 섞이지 않게.
-기기를 바꾸지 않는다(--fetch · --combo 만 예외, 아래). 결과는 표로 보이고 JSON 으로도 남긴다.
+기기를 바꾸지 않는다(--combo 만 예외, 아래). 인터넷을 쓰지 않는다 — 모델은 /home/pi/.model 에 미리 넣어 둔다(IMAGE.md). 결과는 표로 보이고 JSON 으로도 남긴다.
 
   sudo /home/pi/.pyenv/bin/python3 /home/pi/openpibo-os/system/bench_models.py                # 모델별
-  sudo /home/pi/.pyenv/bin/python3 /home/pi/openpibo-os/system/bench_models.py --fetch        # 아직 없는 OMZ 모델 받기(0005·0095) 후 모델별
   sudo /home/pi/.pyenv/bin/python3 /home/pi/openpibo-os/system/bench_models.py --combo        # LLM + TTS + STT + 인식 함께
   sudo /home/pi/.pyenv/bin/python3 /home/pi/openpibo-os/system/bench_models.py --only ed_s_320,omz_face_0005
 
@@ -14,8 +13,6 @@
                  카메라도 안 되면 회색 그림으로 재고 '얼굴 없음' 이라고 적는다 — 그때 얼굴·손 모델은 시간만 참고
   --repeat N     잴 횟수(기본 20, 첫 회는 따로 적는다)
   --threads N    onnxruntime 스레드(기본 4 — EdOnnx·Movenet 과 같다)
-  --fetch        새로 쓰는 모델을 받는다(있으면 건너뜀, 인터넷 필요) — 얼굴 찾기 0005 · 얼굴 구분 0095(OMZ 2023.0 FP16,
-                 /home/pi/.model/face/), 마스크 mask.onnx(HF leeyunjai/edge-lab, /home/pi/.model/mask/)
   --combo        **서비스를 끈다**: tools·classify·llama-server@* 를 멈추고 llama-server@<--llm> 을 띄운 뒤
                  TTS·STT·사물·얼굴·사진 특징을 같이 올려 메모리·스왑·한 바퀴 시간을 잰다. 끝나면 llama-server 를 끈다
   --llm 이름     --combo 의 대화 모델(general · themaker-ko · themaker-en, 기본 general — 가장 크다)
@@ -51,12 +48,6 @@ FACE_DIR = os.path.join(MODEL, 'face')
 TMP = '/tmp/pibo_bench'
 MARK = '@@BENCH@@'
 
-OMZ_URL = 'https://storage.openvinotoolkit.org/repositories/open_model_zoo/2023.0/models_bin/1/{m}/FP16/{m}.{ext}'
-OMZ_FETCH = {
-  'face-detection-retail-0005': os.path.join(FACE_DIR, 'detection'),
-  'face-reidentification-retail-0095': os.path.join(FACE_DIR, 'reid'),
-}
-MASK_URL = 'https://huggingface.co/leeyunjai/edge-lab/resolve/main/mask/mask.onnx'   # edge-lab 과 같은 마스크 모델
 
 
 # ── 공통 ────────────────────────────────────────────────────────────
@@ -270,7 +261,7 @@ def _omz(rel, use_face):
   def run(a, img, face, small):
     path = os.path.join(FACE_DIR, rel)
     if not os.path.isfile(path):
-      raise FileNotFoundError(f'없음: {path}' + ('  (--fetch 로 받기)' if 'retail-0005' in rel or '0095' in rel else ''))
+      raise FileNotFoundError(f'없음: {path}' + ('  (IMAGE.md 모델 폴더 표대로 넣기)' if 'retail-0005' in rel or '0095' in rel else ''))
     import openvino  # noqa
     lib = rss()
     return lib, ov_runner(path, face if use_face else img), {}
@@ -417,26 +408,6 @@ def prepare_inputs(image):
   if out.startswith('NOFACE'):
     return {'image': image or 'camera', 'face': False, 'detail': out}
   return {'image': None, 'face': False, 'detail': (p.stderr.strip().splitlines() or ['그림 없음'])[-1]}
-
-
-# ── --fetch ─────────────────────────────────────────────────────────
-def fetch():
-  import hashlib
-  import requests
-  jobs = [(OMZ_URL.format(m=m, ext=ext), os.path.join(d, f'{m}.{ext}'))
-          for m, d in OMZ_FETCH.items() for ext in ('xml', 'bin')]
-  jobs.append((MASK_URL, os.path.join(MODEL, 'mask', 'mask.onnx')))
-  for url, dst in jobs:
-    os.makedirs(os.path.dirname(dst), exist_ok=True)
-    if os.path.isfile(dst) and os.path.getsize(dst) > 0:
-      print(f'  있음  {dst}')
-      continue
-    r = requests.get(url, timeout=60)
-    r.raise_for_status()
-    with open(dst + '.part', 'wb') as f:
-      f.write(r.content)
-    os.replace(dst + '.part', dst)
-    print(f'  받음  {dst}  {len(r.content) / 1e6:.2f}MB  sha256 {hashlib.sha256(r.content).hexdigest()[:16]}…')
 
 
 # ── --combo ─────────────────────────────────────────────────────────
@@ -619,7 +590,6 @@ def main():
   ap.add_argument('--repeat', type=int, default=20)
   ap.add_argument('--threads', type=int, default=4)
   ap.add_argument('--mask', default='')
-  ap.add_argument('--fetch', action='store_true')
   ap.add_argument('--combo', action='store_true')
   ap.add_argument('--llm', default='general', choices=('general', 'themaker-ko', 'themaker-en'))
   ap.add_argument('--out', default='')
@@ -637,13 +607,6 @@ def main():
   print('[버전] ' + ' · '.join(f'{k} {v}' for k, v in info['versions'].items() if v))
   if info['llama_running'] and not args.combo:
     print('  ※ llama-server 가 떠 있습니다. 모델별 값(프로세스 RSS)은 그대로지만 스왑이 끼면 시간이 늘어납니다.')
-
-  if args.fetch:
-    print('[받기] 얼굴 0005·0095 (OMZ 2023.0 FP16) · 마스크 mask.onnx')
-    try:
-      fetch()
-    except Exception as e:
-      print(f'  !! 받기 실패: {e}')
 
   inp = prepare_inputs(args.image)
   print(f"[입력] {inp['image'] or '회색 그림'} · 얼굴 {'있음' if inp['face'] else '없음'} · {inp['detail']}")
