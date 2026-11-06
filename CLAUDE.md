@@ -579,6 +579,7 @@ Pibo 에서도 같다), 560~1960px 한/영 상단바 넘침 0, 편집기 폭 0, 
 - **오프라인 전용 — 로봇이 돌 때 실행되는 코드는 모델을 내려받지 않는다(261104, 사용자).** 모델은 이미지 작업 때 `sudo bash system/fetch_models.sh`(사람이 따로 돌리는 도구, 파이보와 같은 파일)로 `/home/pi/.model` 에 넣는다. `bench_models.py --fetch` 는 뺐다
 - **파이썬 API·블록은 그대로 호환, 바꾸는 건 함수 안에서만(261104, 사용자)** — Pibo CLAUDE.md '로봇 연동 일원화'
 - 3단계(261104): 얼굴 dlib 제거(찾기 0005 · 구분 0095 · 점은 MediaPipe 에서 dlib 68점 번호로 · 파일 JSON · 추적기 OpenCV CSRT) — Pibo CLAUDE.md '얼굴 (261104)'. `vision_face.py` 는 Pibo 와 `detect_mesh_vis` 글자 위치 한 줄만 다르다
+- **얼굴 등록·구분 웹 `system/face_web.py`(261106, 파이보·PiBrain 같은 파일)** — 손으로 띄우는 시험 화면(메뉴에 없음, 유닛 없음). 도구·분류기를 끄고 `sudo /home/pi/.pyenv/bin/python3 /home/pi/openpibo-os/system/face_web.py` → `http://<IP>:50070`. 이름 넣고 [등록](가장 큰 얼굴) · 이름·오차도 상자 · 지우기 · 기준 막대. 얼굴 정보는 `/home/pi/face_web.json`(`Face.save_db` 형식)에 바뀔 때마다 저장, 보는 화면이 10초 없으면 인식을 쉰다. 확인(컨테이너, LFW 가짜 카메라): 같은 사람 0.13~0.15 · 다른 사람 0.57~0.68 · 390px 넘침 0. **실기기 확인 필요**
 
 ## 파이보와 다른 점
 
