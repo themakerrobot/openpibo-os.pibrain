@@ -142,11 +142,15 @@ PAGE = r'''<!doctype html>
   body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.5 "Pretendard", system-ui, sans-serif; }
   header { height: 48px; background: var(--bar); color: var(--barink); display: flex; align-items: center; padding: 0 16px; font-weight: 700; font-size: 16px; }
   main { display: flex; flex-wrap: wrap; gap: 16px; padding: 16px; }
+  /* 넓은 화면: 페이지는 화면 높이에 고정하고 카메라 칸이 남는 자리를 채운다(스크롤 없음). 좁은 화면은 위아래로 쌓고 스크롤 */
+  @media (min-width: 800px) { main { flex-wrap: nowrap; height: calc(100vh - 48px); } .side { overflow: auto; } }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
-  .view { flex: 1 1 420px; min-width: 0; }
-  .side { flex: 0 1 340px; min-width: 0; }
+  .view { flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; }
+  .stage { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; }
+  @media (max-width: 799px) { .stage { flex: none; height: 65vh; } .side { flex: 1 1 100%; } }
+  .side { flex: 0 0 340px; min-width: 0; }
   h2 { font-size: 16px; margin: 0 0 12px; padding-left: 10px; border-left: 4px solid var(--bar); }
-  canvas { width: 100%; height: auto; background: #10131a; border-radius: 8px; display: block; }
+  canvas { background: #10131a; border-radius: 8px; display: block; }   /* 크기는 fit() 이 카메라 칸에 맞춘다(비율 유지) */
   .row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
   input[type=text] { flex: 1; min-width: 0; height: 40px; border: 1px solid var(--line); border-radius: 8px; padding: 0 12px; font: inherit; background: var(--card); color: var(--ink); }
   button { height: 40px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--ink); padding: 0 14px; font: inherit; cursor: pointer; }
@@ -167,7 +171,7 @@ PAGE = r'''<!doctype html>
 <header>얼굴 구분</header>
 <main>
   <section class="card view">
-    <canvas id="cv" width="640" height="480"></canvas>
+    <div class="stage" id="stage"><canvas id="cv" width="640" height="480"></canvas></div>
     <div class="result" id="result"></div>
     <p class="muted" id="info"></p>
   </section>
@@ -201,9 +205,18 @@ async function post(url, body) {
   return r.json();
 }
 
+// 그림을 카메라 칸(남는 자리) 안에 비율을 지켜 맞춘다 — 폭만 맞추면 넓은 모니터·세로 카메라에서 화면을 넘어 스크롤이 생겼다
+function fit() {
+  const st = $('stage'), s = Math.min(st.clientWidth / cv.width, st.clientHeight / cv.height);
+  if (!(s > 0)) return;
+  const w = Math.floor(cv.width * s) + 'px', h = Math.floor(cv.height * s) + 'px';
+  if (cv.style.width !== w || cv.style.height !== h) { cv.style.width = w; cv.style.height = h; }
+}
+addEventListener('resize', fit);
+
 function draw() {
   if (!last || !last.w) return;
-  if (cv.width !== last.w || cv.height !== last.h) { cv.width = last.w; cv.height = last.h; }
+  if (cv.width !== last.w || cv.height !== last.h) { cv.width = last.w; cv.height = last.h; fit(); }
   ctx.drawImage(img, 0, 0, cv.width, cv.height);
   const lw = Math.max(2, Math.round(cv.width / 200)), fs = Math.max(16, Math.round(cv.width / 22));
   ctx.font = `700 ${fs}px Pretendard, system-ui, sans-serif`;
@@ -231,6 +244,7 @@ function render(j) {
   const html = j.names.map(n => `<li><span>${esc(n)}</span><button class="del" data-n="${esc(n)}">지우기</button></li>`).join('')
     || '<li class="muted">아직 없어요</li>';
   if ($('names').innerHTML !== html) $('names').innerHTML = html;
+  fit();
   if (!thTouched) { $('th').value = j.threshold; $('thv').textContent = j.threshold.toFixed(2); }
 }
 
@@ -256,6 +270,7 @@ $('clear').onclick = async () => { if (confirm('등록한 얼굴을 모두 지�
 $('th').oninput = () => { thTouched = true; $('thv').textContent = Number($('th').value).toFixed(2); };
 $('th').onchange = async () => { await post('/api/threshold', { value: $('th').value }); thTouched = false; };
 
+fit();
 tick();
 </script>
 </body>
