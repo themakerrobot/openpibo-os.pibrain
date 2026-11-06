@@ -571,6 +571,7 @@ Pibo 에서도 같다), 560~1960px 한/영 상단바 넘침 0, 편집기 폭 0, 
 
 기준·순서는 Pibo CLAUDE.md '로봇 연동 일원화'. 실측 스크립트 `system/bench_models.py` 는 **Pibo 와 같은 파일**(고치면 같이) — 사용법은 Pibo CLAUDE.md '모델 실측 스크립트'.
 시험 PiBrain 은 RAM 7.7GB 라 `--combo` 의 메모리 판단은 파이보(1.8GB) 값으로 한다. 납품 PiBrain 은 2GB
+- **모델별 실측(261106, fc1a8f31)** 표는 Pibo CLAUDE.md '모델 실측 스크립트'. 요점: 얼굴 구분 0095 33ms(dlib 489ms), 찾기 0005 64ms, 사물 ed-s-320 376ms, MediaPipe 손·자세 약 200ms, throttled 0x0
 
 - 2단계(261104): 분류기 사진 특징·MoveNet 을 onnxruntime 으로, `TeachableMachine`·TFLite 런타임·`openpibo-detect-models` 제거(TM 블록 주석 코드도 지움) — Pibo CLAUDE.md '분류기 → 기기 요구'
 - 6단계(261104): 같은 점수 점검 — `system/score_check.py`(Pibo · edge-lab 과 같은 파일) · `classifier/static/check.html`(Pibo 와 같은 파일). 쓰는 법은 Pibo CLAUDE.md '로봇 연동 일원화'
