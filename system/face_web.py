@@ -25,8 +25,8 @@ from openpibo.vision_face import Face
 
 DB_FILE = '/home/pi/face_web.json'
 IDLE_SEC = 10        # 마지막 요청 뒤 이만큼 지나면 인식을 쉰다
-SHORT = 240          # 보내는 그림의 짧은 변(분류기 스트림과 같은 크기)
-JPEG_QUALITY = 75
+SHORT = 480          # 보내는 그림의 짧은 변 — 480 이면 카메라 그림 그대로(파이보 640x480 · PiBrain 480x640). --short 로 줄일 수 있다
+JPEG_QUALITY = 85
 
 lock = threading.Lock()          # Face 를 한 스레드씩
 state = {'jpeg': b'', 'w': 0, 'h': 0, 'faces': [], 'frame': None, 'boxes': [], 'ms': 0, 'seen': 0.0, 'error': ''}
@@ -267,8 +267,10 @@ if __name__ == '__main__':
   ap = argparse.ArgumentParser(description='얼굴 등록·구분 웹')
   ap.add_argument('--port', type=int, default=50070)
   ap.add_argument('--db', default=DB_FILE, help='얼굴 정보 파일(JSON)')
+  ap.add_argument('--short', type=int, default=SHORT, help='보내는 그림의 짧은 변(px). 무선이 느리면 240')
   a = ap.parse_args()
   DB_FILE = a.db
+  SHORT = a.short
 
   cam = Camera()
   face = Face()
