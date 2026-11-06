@@ -80,7 +80,7 @@ app = FastAPI()
 
 @app.get('/', response_class=HTMLResponse)
 def index():
-  return PAGE
+  return HTMLResponse(PAGE, headers={'Cache-Control': 'no-store'})   # 고친 화면이 바로 보이게
 
 
 @app.get('/api/snap')
@@ -224,7 +224,8 @@ function draw() {
     const [x1, y1, x2, y2] = f.box, known = f.name !== 'Guest';
     const col = known ? '#2563eb' : '#8c94a7';
     ctx.lineWidth = lw; ctx.strokeStyle = col; ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
-    const label = `${known ? f.name : '모르는 사람'} ${f.score.toFixed(2)}`;
+    // 등록한 얼굴이 없으면 recognize 가 오차도 0 을 돌려준다 — 점수 없이 '등록 전'
+    const label = !last.count ? '등록 전' : `${known ? f.name : '모르는 사람'} ${f.score.toFixed(2)}`;
     const tw = ctx.measureText(label).width + 12, ty = Math.max(0, y1 - fs - 8);
     ctx.fillStyle = col; ctx.fillRect(x1, ty, tw, fs + 8);
     ctx.fillStyle = '#fff'; ctx.fillText(label, x1 + 6, ty + fs);
@@ -236,9 +237,9 @@ function render(j) {
   last = j;
   if (j.img) img.src = 'data:image/jpeg;base64,' + j.img;
   $('result').innerHTML = j.faces.length
-    ? j.faces.map(f => f.name !== 'Guest'
+    ? (!j.count ? '<span>얼굴을 찾았어요 — 오른쪽에서 이름을 넣고 [등록]을 누르세요</span>' : j.faces.map(f => f.name !== 'Guest'
         ? `<span>${esc(f.name)} · 오차도 ${f.score.toFixed(2)}</span>`
-        : `<span>모르는 사람 · 오차도 ${f.score.toFixed(2)}${f.near ? ' (가장 가까운: ' + esc(f.near) + ')' : ''}</span>`).join('')
+        : `<span>모르는 사람 · 오차도 ${f.score.toFixed(2)}${f.near ? ' (가장 가까운: ' + esc(f.near) + ')' : ''}</span>`).join(''))
     : '<span>얼굴이 안 보여요</span>';
   $('info').textContent = j.error ? '오류: ' + j.error : `얼굴 ${j.faces.length}명 · 처리 ${j.ms}ms · 등록 ${j.count}장`;
   const html = j.names.map(n => `<li><span>${esc(n)}</span><button class="del" data-n="${esc(n)}">지우기</button></li>`).join('')
