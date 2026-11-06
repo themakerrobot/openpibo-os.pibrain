@@ -70,8 +70,6 @@ Functions:
 :meth:`~openpibo.vision_detect.Detect.detect_pose`
 :meth:`~openpibo.vision_detect.Detect.analyze_pose`
 :meth:`~openpibo.vision_detect.Detect.classify_image`
-:meth:`~openpibo.vision_detect.Detect.object_tracker_init`
-:meth:`~openpibo.vision_detect.Detect.track_object`
 :meth:`~openpibo.vision_detect.Detect.detect_marker`
 :meth:`~openpibo.vision_detect.Detect.detect_marker_vis`
 
@@ -123,7 +121,6 @@ Functions:
     #self.dictionary = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_50)
     self.dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
     self.parameters = cv2.aruco.DetectorParameters()
-    self.tracker = None
     self.hand_gesture_recognizer =  None
 
   def load_hand_gesture_model(self, modelpath='/home/pi/.model/hand/gesture_recognizer.task'):
@@ -399,77 +396,6 @@ Functions:
       res.append("clap")
 
     return res
-
-  def object_tracker_init(self, img, p):
-    """
-    이미지 안의 사물 트래커를 설정합니다.
-
-    example::
-
-      img = camera.read()
-      detect.object_tracker_init(img)
-
-    :param numpy.ndarray img: 이미지 객체
-    """
-
-    if not type(img) is np.ndarray:
-      raise Exception('"img" must be image data from opencv')
-
-    # OpenCV CSRT 추적기(opencv-contrib). 261104 전엔 dlib.correlation_tracker 였다
-    make = getattr(cv2, 'TrackerCSRT_create', None) or cv2.legacy.TrackerCSRT_create
-    self.tracker = make()
-    x1,y1,x2,y2 = [int(v) for v in p]
-    self.tracker.init(img, (x1, y1, max(1, x2 - x1), max(1, y2 - y1)))
-    self.track_box = (x1, y1, x2, y2)
-
-  def track_object(self, img):
-    """
-    이미지 안의 사물 트래커를 갱신합니다.
-
-    example::
-
-      img = camera.read()
-      detect.object_tracker_init(img, (10,10,100,100))
-      position = detect.track_object(img)
-
-    :param numpy.ndarray img: 이미지 객체
-
-    :returns: x1,y1,x2,y2 업데이트 된 사물 위치
-    """
-
-    if not type(img) is np.ndarray:
-      raise Exception('"img" must be image data from opencv')
-
-    if self.tracker is None:
-      raise Exception('"object_tracker_init" must be called')
-    ok, box = self.tracker.update(img)
-    if not ok:   # 놓치면 마지막 위치를 그대로 돌려준다(dlib 때도 상자는 늘 나왔다)
-      return self.track_box
-    x1, y1 = int(box[0]), int(box[1])
-    x2, y2 = int(box[0] + box[2]), int(box[1] + box[3])
-    
-    height, width = img.shape[:2]
-    x1 = max(0, int(x1))
-    y1 = max(0, int(y1))
-    x2 = min(width - 1, int(x2))
-    y2 = min(height - 1, int(y2))
-
-    self.track_box = (x1, y1, x2, y2)
-    return (x1, y1, x2, y2)
-
-  def track_object_vis(self, img, item):
-    """
-    마커 결과를 표시합니다.
-
-    :param numpy.ndarray img: 이미지 객체
-    :param array items: 마커 결과
-    """
-
-    if not type(img) is np.ndarray:
-      raise Exception('"img" must be image data from opencv')
-
-    x1,y1,x2,y2 = item
-    cv2.rectangle(img, (x1,y1), (x2,y2), (255,50,255), 2)
 
   def detect_marker(self, img, marker_length=2):
     """

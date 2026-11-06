@@ -415,8 +415,6 @@
 <span class="sd">:meth:`~openpibo.vision_detect.Detect.detect_pose`</span>
 <span class="sd">:meth:`~openpibo.vision_detect.Detect.analyze_pose`</span>
 <span class="sd">:meth:`~openpibo.vision_detect.Detect.classify_image`</span>
-<span class="sd">:meth:`~openpibo.vision_detect.Detect.object_tracker_init`</span>
-<span class="sd">:meth:`~openpibo.vision_detect.Detect.track_object`</span>
 <span class="sd">:meth:`~openpibo.vision_detect.Detect.detect_marker`</span>
 <span class="sd">:meth:`~openpibo.vision_detect.Detect.detect_marker_vis`</span>
 
@@ -468,7 +466,6 @@
     <span class="c1">#self.dictionary = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_50)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">dictionary</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">aruco</span><span class="o">.</span><span class="n">getPredefinedDictionary</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">aruco</span><span class="o">.</span><span class="n">DICT_4X4_50</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">aruco</span><span class="o">.</span><span class="n">DetectorParameters</span><span class="p">()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">tracker</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">hand_gesture_recognizer</span> <span class="o">=</span>  <span class="kc">None</span>
 
 <div class="viewcode-block" id="Detect.load_hand_gesture_model">
@@ -776,86 +773,6 @@
       <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"clap"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">res</span></div>
-
-
-<div class="viewcode-block" id="Detect.object_tracker_init">
-<a class="viewcode-back" href="../../libraries/vision_detect.html#openpibo.vision_detect.Detect.object_tracker_init">[docs]</a>
-  <span class="k">def</span><span class="w"> </span><span class="nf">object_tracker_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    이미지 안의 사물 트래커를 설정합니다.</span>
-
-<span class="sd">    example::</span>
-
-<span class="sd">      img = camera.read()</span>
-<span class="sd">      detect.object_tracker_init(img)</span>
-
-<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
-<span class="sd">    """</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
-
-    <span class="c1"># OpenCV CSRT 추적기(opencv-contrib). 261104 전엔 dlib.correlation_tracker 였다</span>
-    <span class="n">make</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cv2</span><span class="p">,</span> <span class="s1">'TrackerCSRT_create'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">cv2</span><span class="o">.</span><span class="n">legacy</span><span class="o">.</span><span class="n">TrackerCSRT_create</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">tracker</span> <span class="o">=</span> <span class="n">make</span><span class="p">()</span>
-    <span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">y2</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">p</span><span class="p">]</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">tracker</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">y2</span> <span class="o">-</span> <span class="n">y1</span><span class="p">)))</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">track_box</span> <span class="o">=</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="Detect.track_object">
-<a class="viewcode-back" href="../../libraries/vision_detect.html#openpibo.vision_detect.Detect.track_object">[docs]</a>
-  <span class="k">def</span><span class="w"> </span><span class="nf">track_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    이미지 안의 사물 트래커를 갱신합니다.</span>
-
-<span class="sd">    example::</span>
-
-<span class="sd">      img = camera.read()</span>
-<span class="sd">      detect.object_tracker_init(img, (10,10,100,100))</span>
-<span class="sd">      position = detect.track_object(img)</span>
-
-<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
-
-<span class="sd">    :returns: x1,y1,x2,y2 업데이트 된 사물 위치</span>
-<span class="sd">    """</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tracker</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"object_tracker_init" must be called'</span><span class="p">)</span>
-    <span class="n">ok</span><span class="p">,</span> <span class="n">box</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tracker</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">ok</span><span class="p">:</span>   <span class="c1"># 놓치면 마지막 위치를 그대로 돌려준다(dlib 때도 상자는 늘 나왔다)</span>
-      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_box</span>
-    <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">box</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">box</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-    <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">box</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">box</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">box</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">box</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
-    
-    <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
-    <span class="n">x1</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">x1</span><span class="p">))</span>
-    <span class="n">y1</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">y1</span><span class="p">))</span>
-    <span class="n">x2</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">width</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">x2</span><span class="p">))</span>
-    <span class="n">y2</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">height</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">y2</span><span class="p">))</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">track_box</span> <span class="o">=</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="Detect.track_object_vis">
-<a class="viewcode-back" href="../../libraries/vision_detect.html#openpibo.vision_detect.Detect.track_object_vis">[docs]</a>
-  <span class="k">def</span><span class="w"> </span><span class="nf">track_object_vis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    마커 결과를 표시합니다.</span>
-
-<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
-<span class="sd">    :param array items: 마커 결과</span>
-<span class="sd">    """</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
-
-    <span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">y2</span> <span class="o">=</span> <span class="n">item</span>
-    <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">),</span> <span class="p">(</span><span class="n">x2</span><span class="p">,</span><span class="n">y2</span><span class="p">),</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Detect.detect_marker">

@@ -579,6 +579,7 @@ Pibo 에서도 같다), 560~1960px 한/영 상단바 넘침 0, 편집기 폭 0, 
 - **오프라인 전용 — 로봇이 돌 때 실행되는 코드는 모델을 내려받지 않는다(261104, 사용자).** 모델은 이미지 작업 때 `sudo bash system/fetch_models.sh`(사람이 따로 돌리는 도구, 파이보와 같은 파일)로 `/home/pi/.model` 에 넣는다. `bench_models.py --fetch` 는 뺐다
 - **파이썬 API·블록은 그대로 호환, 바꾸는 건 함수 안에서만(261104, 사용자)** — Pibo CLAUDE.md '로봇 연동 일원화'
 - 3단계(261104): 얼굴 dlib 제거(찾기 0005 · 구분 0095 · 점은 MediaPipe 에서 dlib 68점 번호로 · 파일 JSON · 추적기 OpenCV CSRT) — Pibo CLAUDE.md '얼굴 (261104)'. `vision_face.py` 는 Pibo 와 `detect_mesh_vis` 글자 위치 한 줄만 다르다
+- **사물 추적 삭제(261106, 사용자)** — 라이브러리 함수 3개·IDE 블록 3개(예전 프로그램은 불러올 때 걷어낸다). PiBrain 도구에는 원래 없었다. 자세한 건 Pibo CLAUDE.md '얼굴 (261104)' 의 '사물 추적 삭제'
 - **얼굴 등록·구분 웹 `system/face_web.py`(261106, 파이보·PiBrain 같은 파일)** — 손으로 띄우는 시험 화면(메뉴에 없음, 유닛 없음). 도구·분류기를 끄고 `sudo /home/pi/.pyenv/bin/python3 /home/pi/openpibo-os/system/face_web.py` → `http://<IP>:50070`. 이름 넣고 [등록](가장 큰 얼굴) · 이름·오차도 상자 · 지우기 · 기준 막대. 얼굴 정보는 `/home/pi/face_web.json`(`Face.save_db` 형식)에 바뀔 때마다 저장, 보는 화면이 10초 없으면 인식을 쉰다. 화면은 카메라 그림 그대로(짧은 변 480, JPEG 85 — `--short 240` 으로 줄임). 확인(컨테이너, LFW 가짜 카메라): 같은 사람 0.13~0.15 · 다른 사람 0.57~0.68 · 390px 넘침 0. **실기기 확인 필요**
 
 ## 파이보와 다른 점
@@ -730,7 +731,7 @@ docs 는 `CustomClassifier.load` 변경 뒤 다시 빌드했다(261001, 'docs' �
 
 ### 알면서 남겨 둔 것
 
-- (261104) `vision_detect.py` 의 `pickle` · `openpibo_dlib_models` · `dlib` import 를 지웠다(추적기를 OpenCV CSRT 로 바꾸면서).
+- (261104) `vision_detect.py` 의 `pickle` · `openpibo_dlib_models` · `dlib` import 를 지웠다(추적기를 OpenCV CSRT 로 바꾸면서). 추적기 자체도 261106 에 지웠다
 - `system/openpibo_python-*.whl` — 위 'openpibo 는 리포 소스로 임포트한다' 참고.
 
 ### 이번에 가져온 것 / 안 가져온 것

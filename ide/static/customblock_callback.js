@@ -806,33 +806,6 @@ Blockly.Python.forBlock['vision_analyze_pose'] = function(block) {
 //   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
 //   return [`[ item['name'] for item in detect.classify_image(${img})]`, Blockly.Python.ORDER_ATOMIC];
 // }
-Blockly.Python.forBlock['vision_object_tracker_init'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_detect import Detect';
-  Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
-
-  const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
-  const x1 = Blockly.Python.valueToCode(block, 'x1', Blockly.Python.ORDER_ATOMIC);
-  const y1 = Blockly.Python.valueToCode(block, 'y1', Blockly.Python.ORDER_ATOMIC);
-  const x2 = Blockly.Python.valueToCode(block, 'x2', Blockly.Python.ORDER_ATOMIC);
-  const y2 = Blockly.Python.valueToCode(block, 'y2', Blockly.Python.ORDER_ATOMIC);
-
-  return `detect.object_tracker_init(${img}, (${x1},${y1},${x2},${y2}))\n`;
-}
-Blockly.Python.forBlock['vision_object_track'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_detect import Detect';
-  Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
-
-  const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
-  return [`detect.track_object(${img})`, Blockly.Python.ORDER_ATOMIC];
-}
-Blockly.Python.forBlock['vision_object_track_vis'] = function(block) {
-  Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_detect import Detect';
-  Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
-
-  const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
-  const v = Blockly.Python.valueToCode(block, 'v', Blockly.Python.ORDER_ATOMIC);
-  return `detect.track_object_vis(${img}, ${v})\n`;
-}
 Blockly.Python.forBlock['vision_marker_detect'] = function(block) {
   Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_detect import Detect';
   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
@@ -1065,6 +1038,44 @@ Blockly.Python.forBlock['utils_calculate_angle'] = function(block) {
     if (st.next) { renameTts(st.next.block); renameTts(st.next.shadow); }
   }
 
+  // 사물 추적 블록 3개는 261106 에 지웠다(사용자). 저장된 프로그램에 있으면 Blockly 가 모르는 블록이라 불러오기가 멈추므로
+  // 불러오기 전에 걷어낸다 — 문장 블록(설정·표시)은 빼고 뒤 블록을 당기고, 값 블록(추적하기)은 그 칸을 비운다
+  const TRACK_STMT = { vision_object_tracker_init: 1, vision_object_track_vis: 1 };
+  const TRACK_VALUE = { vision_object_track: 1 };
+  function skipTrack(st) {
+    while (st && TRACK_STMT[st.type]) st = st.next && st.next.block;
+    return st || null;
+  }
+  function dropTrack(st) {
+    for (const name in (st.inputs || {})) {
+      const slot = st.inputs[name];
+      if (!slot) continue;
+      if (slot.block && TRACK_VALUE[slot.block.type]) delete slot.block;
+      else if (slot.block && TRACK_STMT[slot.block.type]) {
+        const rest = skipTrack(slot.block);
+        if (rest) slot.block = rest; else delete slot.block;
+      }
+      if (slot.block) dropTrack(slot.block);
+      if (!slot.block && !slot.shadow) delete st.inputs[name];
+    }
+    if (st.next && st.next.block) {
+      const rest = skipTrack(st.next.block);
+      if (rest) { st.next.block = rest; dropTrack(rest); } else delete st.next.block;
+      if (!st.next.block && !st.next.shadow) delete st.next;
+    }
+  }
+  function dropTrackTop(st) {
+    if (TRACK_VALUE[st.type]) return null;
+    if (TRACK_STMT[st.type]) {
+      const rest = skipTrack(st);
+      if (!rest) return null;
+      rest.x = st.x; rest.y = st.y;
+      st = rest;
+    }
+    dropTrack(st);
+    return st;
+  }
+
   const load = Blockly.serialization.workspaces.load;
   Blockly.serialization.workspaces.load = function (state, workspace, opts) {
     try {
@@ -1083,6 +1094,13 @@ Blockly.Python.forBlock['utils_calculate_angle'] = function(block) {
       if (state && state.blocks && Array.isArray(state.blocks.blocks)) state.blocks.blocks.forEach(renameTts);
     } catch (e) {
       console.warn('legacy tts fix', e);
+    }
+    try {
+      if (state && state.blocks && Array.isArray(state.blocks.blocks) && JSON.stringify(state.blocks).includes('vision_object_track')) {
+        state.blocks.blocks = state.blocks.blocks.map(dropTrackTop).filter(Boolean);
+      }
+    } catch (e) {
+      console.warn('legacy track fix', e);
     }
     return load.call(this, state, workspace, opts);
   };
