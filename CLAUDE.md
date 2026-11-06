@@ -575,7 +575,7 @@ Pibo 에서도 같다), 560~1960px 한/영 상단바 넘침 0, 편집기 폭 0, 
 - 2단계(261104): 분류기 사진 특징·MoveNet 을 onnxruntime 으로, `TeachableMachine`·TFLite 런타임·`openpibo-detect-models` 제거(TM 블록 주석 코드도 지움) — Pibo CLAUDE.md '분류기 → 기기 요구'
 - 6단계(261104): 같은 점수 점검 — `system/score_check.py`(Pibo · edge-lab 과 같은 파일) · `classifier/static/check.html`(Pibo 와 같은 파일). 쓰는 법은 Pibo CLAUDE.md '로봇 연동 일원화'
 - 5단계(인증)는 넣지 않는다(사용자). 7단계(261104): edge-lab 가르치기가 로봇 형식으로 저장하고 [로봇으로 보내기] 로 분류기 `POST /api/models`(50010)에 보낸다 — Pibo CLAUDE.md '로봇 연동 일원화'
-- **오프라인 전용 — 리포 코드(main)에 모델을 내려받는 코드를 넣지 말 것(261104, 사용자).** 모델은 이미지 작업 때 `/home/pi/.model` 에 넣는다(파이보 IMAGE.md '261104 에 새로 쓰는 모델 넣기'). `bench_models.py --fetch` 는 지웠다
+- **오프라인 전용 — 로봇이 돌 때 실행되는 코드는 모델을 내려받지 않는다(261104, 사용자).** 모델은 이미지 작업 때 `sudo bash system/fetch_models.sh`(사람이 따로 돌리는 도구, 파이보와 같은 파일)로 `/home/pi/.model` 에 넣는다. `bench_models.py --fetch` 는 뺐다
 - **파이썬 API·블록은 그대로 호환, 바꾸는 건 함수 안에서만(261104, 사용자)** — Pibo CLAUDE.md '로봇 연동 일원화'
 - 3단계(261104): 얼굴 dlib 제거(찾기 0005 · 구분 0095 · 점은 MediaPipe 에서 dlib 68점 번호로 · 파일 JSON · 추적기 OpenCV CSRT) — Pibo CLAUDE.md '얼굴 (261104)'. `vision_face.py` 는 Pibo 와 `detect_mesh_vis` 글자 위치 한 줄만 다르다
 
