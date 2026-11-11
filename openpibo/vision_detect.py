@@ -5,8 +5,8 @@ Class:
 :meth:`~openpibo.vision_detect.putTextPIL`
 :obj:`~openpibo.vision_detect.Detect`
 """
-import cv2,dlib
-import os,pickle,math
+import cv2
+import os,math
 import numpy as np
 from pyzbar import pyzbar
 from .modules.ed_onnx import EdOnnx
@@ -14,9 +14,7 @@ from .modules.pose.movenet import Movenet
 from .modules.pose.utils import visualize_pose
 from .modules.card.decode_card import get_card
 from PIL import Image,ImageDraw,ImageFont
-import openpibo_dlib_models
 import openpibo_models
-import openpibo_detect_models
 import logging
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # TensorFlow C++ 로그 제거
@@ -72,8 +70,6 @@ Functions:
 :meth:`~openpibo.vision_detect.Detect.detect_pose`
 :meth:`~openpibo.vision_detect.Detect.analyze_pose`
 :meth:`~openpibo.vision_detect.Detect.classify_image`
-:meth:`~openpibo.vision_detect.Detect.object_tracker_init`
-:meth:`~openpibo.vision_detect.Detect.track_object`
 :meth:`~openpibo.vision_detect.Detect.detect_marker`
 :meth:`~openpibo.vision_detect.Detect.detect_marker_vis`
 
@@ -114,7 +110,7 @@ Functions:
     # 사물 인식 모델은 처음 detect_object 를 부를 때 올린다 (QR·마커만 쓰면 메모리를 안 쓴다)
     self.object_detector = None
     self.object_model_path = object_model or OBJECT_MODEL
-    self.pose_detector = Movenet(openpibo_detect_models.filepath("movenet_lightning.tflite"))
+    self.pose_detector = Movenet()   # openpibo/modules/pose/movenet_lightning.onnx (onnxruntime, 261104)
 
     # marker
     self.camera_matrix = np.array([
@@ -125,7 +121,6 @@ Functions:
     #self.dictionary = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_50)
     self.dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
     self.parameters = cv2.aruco.DetectorParameters()
-    self.tracker = None
     self.hand_gesture_recognizer =  None
 
   def load_hand_gesture_model(self, modelpath='/home/pi/.model/hand/gesture_recognizer.task'):
@@ -401,73 +396,6 @@ Functions:
       res.append("clap")
 
     return res
-
-  def object_tracker_init(self, img, p):
-    """
-    이미지 안의 사물 트래커를 설정합니다.
-
-    example::
-
-      img = camera.read()
-      detect.object_tracker_init(img)
-
-    :param numpy.ndarray img: 이미지 객체
-    """
-
-    if not type(img) is np.ndarray:
-      raise Exception('"img" must be image data from opencv')
-
-    self.tracker = dlib.correlation_tracker()
-    x1,y1,x2,y2 = p
-    self.tracker.start_track(cv2.cvtColor(img, cv2.COLOR_BGR2RGB), dlib.rectangle(x1,y1,x2,y2))
-
-  def track_object(self, img):
-    """
-    이미지 안의 사물 트래커를 갱신합니다.
-
-    example::
-
-      img = camera.read()
-      detect.object_tracker_init(img, (10,10,100,100))
-      position = detect.track_object(img)
-
-    :param numpy.ndarray img: 이미지 객체
-
-    :returns: x1,y1,x2,y2 업데이트 된 사물 위치
-    """
-
-    if not type(img) is np.ndarray:
-      raise Exception('"img" must be image data from opencv')
-
-    self.tracker.update(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-    box = self.tracker.get_position()
-
-    x1 = int(box.left())
-    y1 = int(box.top())
-    x2 = int(box.right())
-    y2 = int(box.bottom())
-    
-    height, width = img.shape[:2]
-    x1 = max(0, int(x1))
-    y1 = max(0, int(y1))
-    x2 = min(width - 1, int(x2))
-    y2 = min(height - 1, int(y2))
-
-    return (x1, y1, x2, y2)
-
-  def track_object_vis(self, img, item):
-    """
-    마커 결과를 표시합니다.
-
-    :param numpy.ndarray img: 이미지 객체
-    :param array items: 마커 결과
-    """
-
-    if not type(img) is np.ndarray:
-      raise Exception('"img" must be image data from opencv')
-
-    x1,y1,x2,y2 = item
-    cv2.rectangle(img, (x1,y1), (x2,y2), (255,50,255), 2)
 
   def detect_marker(self, img, marker_length=2):
     """

@@ -348,18 +348,6 @@ Show pose data in the image.
 
 Evaluate and interpret pose data from the image and save the results. *returns a value*
 
-<img src="img/vision_object_tracker_init.png" alt="Setting tracker at coordinates ([0]) ([0]) , ([0]) ([0]) of image ([item ▾])" width="735" class="blk">
-
-Set a tracker for a specific location in the image.
-
-<img src="img/vision_object_track.png" alt="Track thing in the image ([item ▾])" width="381" class="blk">
-
-Track thing in the image. *returns a value*
-
-<img src="img/vision_object_track_vis.png" alt="Show tracking result ([item ▾]) in the image ([item ▾])" width="565" class="blk">
-
-Show tracking result in the image.
-
 <img src="img/vision_hand_gesture_load.png" alt="Load Hand gesture model [gesture_recognizer ▾]" width="533" class="blk">
 
 Load Hand gesture model.

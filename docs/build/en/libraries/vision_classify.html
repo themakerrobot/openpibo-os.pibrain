@@ -348,71 +348,8 @@
 <span id="vision-classify-classifier-models"></span><h1>vision_classify · Classifier models<a class="headerlink" href="#module-openpibo.vision_classify" title="Link to this heading">¶</a></h1>
 <p>Classifies images with a model taught in the classifier screen.</p>
 <p>Class:
-<a class="reference internal" href="#openpibo.vision_classify.TeachableMachine" title="openpibo.vision_classify.TeachableMachine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TeachableMachine</span></code></a>
 <a class="reference internal" href="#openpibo.vision_classify.CustomClassifier" title="openpibo.vision_classify.CustomClassifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CustomClassifier</span></code></a></p>
-<p>Does not use TensorFlow. Image models run on the TFLite runtime (LiteRT / tflite_runtime); hand, face and pose models run on MediaPipe.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="openpibo.vision_classify.TeachableMachine">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">openpibo.vision_classify.</span></span><span class="sig-name descname"><span class="pre">TeachableMachine</span></span><a class="reference internal" href="../_modules/openpibo/vision_classify.html#TeachableMachine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_classify.TeachableMachine" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Functions:
-<a class="reference internal" href="#openpibo.vision_classify.TeachableMachine.load" title="openpibo.vision_classify.TeachableMachine.load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load()</span></code></a>
-<a class="reference internal" href="#openpibo.vision_classify.TeachableMachine.predict" title="openpibo.vision_classify.TeachableMachine.predict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">predict()</span></code></a></p>
-<blockquote>
-<div><p>Uses the Teachable Machine feature with piBo’s camera.</p>
-<ul class="simple">
-<li><p>Uses the <code class="docutils literal notranslate"><span class="pre">Standard</span> <span class="pre">image</span> <span class="pre">model</span></code> of an <code class="docutils literal notranslate"><span class="pre">Image</span> <span class="pre">project</span></code>.</p></li>
-<li><p>Applies a model trained in <code class="docutils literal notranslate"><span class="pre">Teachable</span> <span class="pre">Machine</span></code> for inference.</p></li>
-<li><p>Download the trained model in <code class="docutils literal notranslate"><span class="pre">Tensorflow</span> <span class="pre">Lite</span></code> format.</p></li>
-</ul>
-<p>example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">openpibo.vision_classify</span><span class="w"> </span><span class="kn">import</span> <span class="n">TeachableMachine</span>
-
-<span class="n">tm</span> <span class="o">=</span> <span class="n">TeachableMachine</span><span class="p">()</span>
-<span class="c1"># 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
-</pre></div>
-</div>
-</div></blockquote>
-<dl class="py method">
-<dt class="sig sig-object py" id="openpibo.vision_classify.TeachableMachine.load">
-<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_classify.html#TeachableMachine.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_classify.TeachableMachine.load" title="Link to this definition">¶</a></dt>
-<dd><p>Loads a Tflite model. Both (floating point/quantized) are supported</p>
-<p>example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tm</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'model_unquant.tflite'</span><span class="p">,</span> <span class="s1">'labels.txt'</span><span class="p">)</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model_path</strong> (<em>str</em>) – Teachable Machine model file</p></li>
-<li><p><strong>label_path</strong> (<em>str</em>) – Teachable Machine label file</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="openpibo.vision_classify.TeachableMachine.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_classify.html#TeachableMachine.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_classify.TeachableMachine.predict" title="Link to this definition">¶</a></dt>
-<dd><p>Runs inference with the Tflite model.</p>
-<p>example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cm</span> <span class="o">=</span> <span class="n">Camera</span><span class="p">()</span>
-<span class="n">img</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="n">tm</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Class name with the highest probability, result (raw data)</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
+<p>Does not use TensorFlow or TFLite. Image models run on onnxruntime; hand, face and pose models run on MediaPipe.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="openpibo.vision_classify.CustomClassifier">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">openpibo.vision_classify.</span></span><span class="sig-name descname"><span class="pre">CustomClassifier</span></span><a class="reference internal" href="../_modules/openpibo/vision_classify.html#CustomClassifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_classify.CustomClassifier" title="Link to this definition">¶</a></dt>
@@ -568,11 +505,6 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">vision_classify · Classifier models</a><ul>
-<li><a class="reference internal" href="#openpibo.vision_classify.TeachableMachine"><code class="docutils literal notranslate"><span class="pre">TeachableMachine</span></code></a><ul>
-<li><a class="reference internal" href="#openpibo.vision_classify.TeachableMachine.load"><code class="docutils literal notranslate"><span class="pre">TeachableMachine.load()</span></code></a></li>
-<li><a class="reference internal" href="#openpibo.vision_classify.TeachableMachine.predict"><code class="docutils literal notranslate"><span class="pre">TeachableMachine.predict()</span></code></a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#openpibo.vision_classify.CustomClassifier"><code class="docutils literal notranslate"><span class="pre">CustomClassifier</span></code></a><ul>
 <li><a class="reference internal" href="#openpibo.vision_classify.CustomClassifier.load"><code class="docutils literal notranslate"><span class="pre">CustomClassifier.load()</span></code></a></li>
 <li><a class="reference internal" href="#openpibo.vision_classify.CustomClassifier.predict"><code class="docutils literal notranslate"><span class="pre">CustomClassifier.predict()</span></code></a></li>

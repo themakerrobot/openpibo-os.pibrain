@@ -229,7 +229,7 @@ span 이 날아가면 시리얼이 영영 안 돌아온다.
 [대화 서버 시작하기(LLM)]                ← 예전 블록 그대로 — 고른 모델, 안 골랐으면 general
 ```
 
-| 이름(표시) | 별칭 링크(`/home/pi/.model/llm/`) → 파일 | 도구 | 시스템 글 |
+| 이름(표시) | 파일(`/home/pi/.model/llm/`, 261106 부터 링크 아닌 실제 파일) ← 원래 판 | 도구 | 시스템 글 |
 |---|---|---|---|
 | `general`(일반) | `general.gguf` → `gemma-3-1b-it-Q4_K_M.gguf`(806,058,272 B) | **없음** | 블록이 준 것 / 대화 화면은 `SYSTEM` |
 | `themaker-ko`(더메이커 KO) | `themaker-ko.gguf` → `themaker-0.8b-Q4_K_M.gguf`(337,040,032 B) | **있음**(불빛·보기·움직이기) | 대화 화면: `tools.SYSTEM` + 도구 목록 / 블록: 준 것 |
@@ -243,7 +243,7 @@ span 이 날아가면 시리얼이 영영 안 돌아온다.
   고르기 전엔 상태 줄을 숨기고 빈 화면이 '위에서 대화 모델을 골라 주세요.'(`chat_pick_model`). 새로 고쳐도 서버의 `model` 로 선택이 남는다. [다시 켜기] 는 같은 모델로 `switch_model`.
   시스템 글은 `pick_system(모델)` — 이름이나 **링크가 가리키는 실제 파일 이름**에 `themaker` 가 있으면(`is_tool_model`) `tools.SYSTEMS[ko|en]`, 아니면 `DEVICE_SYSTEM`(PiBrain 은 이름만 바꿈). general 링크를 다른 모델로 바꿔도 맞게. `--model-dir` 은 시험용(미리보기는 가짜 파일)
 - **템플릿 유닛 `llama-server@.service`**(리포 밖, 이미지 작업 — IMAGE.md): `-m /home/pi/.model/llm/%i.gguf`, `Restart=no`, `[Install]` 없음(enable 안 됨 — `static`).
-  템플릿끼리는 서로 끄지 않으므로 켜기 전에 늘 다 끈다. **이 코드를 기기에 올리기 전에 유닛·별칭 링크가 있어야 한다** — 없으면 대화 화면도 블록도 모델을 못 띄운다
+  템플릿끼리는 서로 끄지 않으므로 켜기 전에 늘 다 끈다. **이 코드를 기기에 올리기 전에 유닛·모델 파일이 있어야 한다**(261106 부터 `general.gguf` 등은 링크가 아니라 실제 파일 — 판 이름은 `.model/VERSION` 의 `llm/<이름>.gguf = …` 줄) — 없으면 대화 화면도 블록도 모델을 못 띄운다
 - **끄는 곳(`ide/run_ide.py`)은 전부 `systemctl stop 'llama-server@*'`** — `/tools` `/classifier` `/hwtest` `/kids` `/llm` 켜기·끄기, 코드 실행(`execute`·`executeb`). [정지] 는 `pkill llama-server`.
   새로 끄는 곳을 만들면 `@*` 를 빠뜨리지 말 것(모델 둘이 램에 올라간다)
 - **도구(261029, 대화 화면만)**: 더메이커를 고르면 도구 3개(불빛·보기·움직이기)를 실제로 실행한다. 학습 PC 리포 `themakerrobot/openpibo-chat`(브랜치 `claude/inspiring-curie-s3a7wn`, a9072ff)의
@@ -567,6 +567,21 @@ Pibo 도구와 기능·마크업이 달라(REST/SSE, 5탭) 키트의 `pb-v2` 층
 Pibo 에서도 같다), 560~1960px 한/영 상단바 넘침 0, 편집기 폭 0, pageerror 0. v1 삭제(260929) 뒤에도 같은 결과.
 **실기기로는 아직 안 봤다.**
 
+## 로봇 연동 일원화 (261104 착수)
+
+기준·순서는 Pibo CLAUDE.md '로봇 연동 일원화'. 실측 스크립트 `system/bench_models.py` 는 **Pibo 와 같은 파일**(고치면 같이) — 사용법은 Pibo CLAUDE.md '모델 실측 스크립트'.
+시험 PiBrain 은 RAM 7.7GB 라 `--combo` 의 메모리 판단은 파이보(1.8GB) 값으로 한다. 납품 PiBrain 은 2GB
+- **모델별 실측(261106, fc1a8f31)** 표는 Pibo CLAUDE.md '모델 실측 스크립트'. 요점: 얼굴 구분 0095 33ms(dlib 489ms), 찾기 0005 64ms, 사물 ed-s-320 376ms, MediaPipe 손·자세 약 200ms, throttled 0x0
+
+- 2단계(261104): 분류기 사진 특징·MoveNet 을 onnxruntime 으로, `TeachableMachine`·TFLite 런타임·`openpibo-detect-models` 제거(TM 블록 주석 코드도 지움) — Pibo CLAUDE.md '분류기 → 기기 요구'
+- 6단계(261104): 같은 점수 점검 — `system/score_check.py`(Pibo · edge-lab 과 같은 파일) · `classifier/static/check.html`(Pibo 와 같은 파일). 쓰는 법은 Pibo CLAUDE.md '로봇 연동 일원화'
+- 5단계(인증)는 넣지 않는다(사용자). 7단계(261104): edge-lab 가르치기가 로봇 형식으로 저장하고 [로봇으로 보내기] 로 분류기 `POST /api/models`(50010)에 보낸다 — Pibo CLAUDE.md '로봇 연동 일원화'
+- **오프라인 전용 — 로봇이 돌 때 실행되는 코드는 모델을 내려받지 않는다(261104, 사용자).** 모델은 이미지 작업 때 `sudo bash system/fetch_models.sh`(사람이 따로 돌리는 도구, 파이보와 같은 파일)로 `/home/pi/.model` 에 넣는다. `bench_models.py --fetch` 는 뺐다
+- **파이썬 API·블록은 그대로 호환, 바꾸는 건 함수 안에서만(261104, 사용자)** — Pibo CLAUDE.md '로봇 연동 일원화'
+- 3단계(261104): 얼굴 dlib 제거(찾기 0005 · 구분 0095 · 점은 MediaPipe 에서 dlib 68점 번호로 · 파일 JSON · 추적기 OpenCV CSRT) — Pibo CLAUDE.md '얼굴 (261104)'. `vision_face.py` 는 Pibo 와 `detect_mesh_vis` 글자 위치 한 줄만 다르다
+- **사물 추적 삭제(261106, 사용자)** — 라이브러리 함수 3개·IDE 블록 3개(예전 프로그램은 불러올 때 걷어낸다). PiBrain 도구에는 원래 없었다. 자세한 건 Pibo CLAUDE.md '얼굴 (261104)' 의 '사물 추적 삭제'
+- **얼굴 등록·구분 웹 `system/face_web.py`(261106, 파이보·PiBrain 같은 파일)** — 손으로 띄우는 시험 화면(메뉴에 없음, 유닛 없음). 도구·분류기를 끄고 `sudo /home/pi/.pyenv/bin/python3 /home/pi/openpibo-os/system/face_web.py` → `http://<IP>:50070`. 이름 넣고 [등록](가장 큰 얼굴) · 이름·오차도 상자 · 지우기 · 기준 막대. 얼굴 정보는 `/home/pi/face_web.json`(`Face.save_db` 형식)에 바뀔 때마다 저장, 보는 화면이 10초 없으면 인식을 쉰다. 화면은 카메라 그림 그대로(짧은 변 480, JPEG 85 — `--short 240` 으로 줄임). 확인(컨테이너, LFW 가짜 카메라): 같은 사람 0.13~0.15 · 다른 사람 0.57~0.68 · 390px 넘침 0. **실기기 확인 필요**
+
 ## 파이보와 다른 점
 
 Pibo 리포의 변경을 가져올 때 **항목마다 적용 여부를 먼저 판단한다.** 소스를 통째로 덮어쓰지 말 것.
@@ -625,8 +640,7 @@ Pibo 와 같다. Teachable Machine 계열(`vision_load_tm` `vision_predict_tm`
 `vision_classification`)은 **양쪽 리포 모두 정의·생성기·툴박스에서 비활성**이고,
 살아 있는 것은 `vision_load_cf` / `vision_predict_cf`(`CustomClassifier`) 뿐이다.
 
-`openpibo/vision_classify.py` 에 `class TeachableMachine` 이 남아 있는 것도 Pibo 와 같다.
-라이브러리 코드일 뿐 블록으로 노출되지 않는다.
+`openpibo/vision_classify.py` 의 `class TeachableMachine` 과 주석으로 남아 있던 TM 블록 코드는 261104 에 지웠다(Pibo 와 같이, 사용자).
 
 ### 분류기 (260924) — Pibo 와 같은 teach-lab 방식
 
@@ -644,11 +658,11 @@ Pibo 와 같다. Teachable Machine 계열(`vision_load_tm` `vision_predict_tm`
 | 카메라 | PiBrain → 태블릿 | socket.io `camera_image`, 320×240 JPEG |
 | 특징 뽑기·학습 | 태블릿 브라우저 | MediaPipe wasm(`classifier/static/vendor/tasks-vision`) + TF.js 작은 MLP |
 | 저장 | PiBrain | `POST /api/models` → `/home/pi/mymodel/<이름>/` |
-| 추론 | PiBrain | `CustomClassifier` — LiteRT/tflite_runtime(이미지) · MediaPipe(손·얼굴·포즈) + numpy |
+| 추론 | PiBrain | `CustomClassifier` — onnxruntime(이미지, 261104) · MediaPipe(손·얼굴·포즈) + numpy |
 
 - 입력 4가지: 이미지 / 손(한·두 손) / 얼굴 / 포즈(상반신·전신). 학습·시험·보관함 세 탭
 - 가져온 파일: `classifier/` 전부, `openpibo/vision_classify.py`, `openpibo/modules/teachlab/`,
-  `openpibo/modules/pose/movenet.py`(TensorFlow 대체 분기를 `load_interpreter()` 로). 교체 직전의
+  `openpibo/modules/pose/movenet.py`(261104 부터 onnxruntime — TFLite 를 뺐다, Pibo CLAUDE.md '분류기 → 기기 요구'). 교체 직전의
   PiBrain 파일은 Pibo 교체 직전과 공백만 달랐다
 - PiBrain 에서 바꾼 것: 화면 문구의 이름(PiBrain), `ko2en.js` 1·2행과 언어 저장 키 `classifier_language`
   (`global` 델타 그대로)
@@ -656,7 +670,7 @@ Pibo 와 같다. Teachable Machine 계열(`vision_load_tm` `vision_predict_tm`
   **예전 `model.keras` 는 못 읽는다**(불러오면 다시 학습하라는 오류). 의도한 호환 단절이다
 - 지운 것: `tf.min-3.11.0.js` · MobileNetV2 가중치 · `model.json` · `jszip` · `tfjs_to_keras.py`(`/convert`)
 - 사물 인식(`vision_detect`)은 260930 에 Pibo 의 onnxruntime 방식으로 바꿨다(위 '사물 인식' 참고)
-- 기기 런타임(`tflite-runtime`·`mediapipe`)은 **PiBrain 기기에서 확인 전** — IMAGE.md '분류기 런타임 확인'
+- 기기 런타임(`onnxruntime`·`mediapipe`)은 **PiBrain 기기에서 확인 전** — IMAGE.md '분류기 런타임 확인'
 - PiBrain 카메라가 좌우 반전 없이 들어오는지 **확인 필요.** 브라우저·파이썬 모두 뒤집지 않는다는 전제다
 
 검증(컨테이너, 가짜 카메라 + headless Chromium): 학습·저장·시험·보관함 e2e 25/25.
@@ -717,8 +731,7 @@ docs 는 `CustomClassifier.load` 변경 뒤 다시 빌드했다(261001, 'docs' �
 
 ### 알면서 남겨 둔 것
 
-- `openpibo/vision_detect.py` 의 `pickle` · `openpibo_dlib_models` import 는 쓰이지 않는다.
-  이번 작업 이전부터 그랬고, 모델 경로 등록 부작용이 있을 수 있어 건드리지 않았다.
+- (261104) `vision_detect.py` 의 `pickle` · `openpibo_dlib_models` · `dlib` import 를 지웠다(추적기를 OpenCV CSRT 로 바꾸면서). 추적기 자체도 261106 에 지웠다
 - `system/openpibo_python-*.whl` — 위 'openpibo 는 리포 소스로 임포트한다' 참고.
 
 ### 이번에 가져온 것 / 안 가져온 것
@@ -783,7 +796,7 @@ classifier 언어 토글, 검수 보고서 구조, Tools 서비스.
   코드 생성에서 터진다. 셋 중 가장 위험한 조합이다.
   블록을 비활성화할 때는 **정의·생성기·툴박스 셋을 같이** 막는다.
   PiBrain 에 없는 하드웨어(`motion_*` 서보, `device_eye_*`·`device_get_*` MCU 센서,
-  `audio_record` 마이크, `vision_*_tm` Teachable Machine)가 그렇게 막혀 있다.
+  `audio_record` 마이크)가 그렇게 막혀 있다. Teachable Machine 블록(`vision_*_tm`)은 261104 에 코드째 지웠다.
   `vision_load_cf`/`vision_predict_cf`(CustomClassifier)가 TM 의 대체다.
   확인 방법 — 주석을 걷어낸 뒤 세 집합을 비교한다. 툴박스 개수와 생성기 개수가 같아야 한다.
 

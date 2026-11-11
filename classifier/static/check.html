@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>같은 점수 점검</title>
+<link rel="icon" href="/static/icon.png">
+<!-- 같은 점수 점검(브라우저 몫) — system/score_check.py 와 같은 결과 파일을 만든다 (261104).
+     분류기 화면과 같은 tl/ 코드·같은 모델 파일로 특징을 뽑고, 로봇이 저장한 분류기로 점수를 낸다.
+     그림은 짧은 변 240 으로 줄여서 넣는다(로봇 _as_stream_rgb · edge-lab _stream_rgb 와 같은 크기). -->
+<style>
+  :root { --bg:#f5f6fa; --card:#fff; --ink:#1a1e29; --ink2:#5f6779; --line:#dfe2ea; --acc:#2563eb; --red:#d6393f; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#1a1e27; --card:#232834; --ink:#e8eaf0; --ink2:#8c94a7; --line:#333a49; --acc:#7aa7ff; --red:#ff7a7f; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; background: var(--bg); color: var(--ink); font: 14px/1.5 system-ui, sans-serif; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  p { margin: 4px 0; color: var(--ink2); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin: 12px 0; max-width: 960px; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  select, button, input[type=file] { font: inherit; height: 40px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--ink); padding: 0 12px; }
+  button.main { background: var(--acc); border-color: var(--acc); color: #fff; }
+  button:disabled { opacity: .5; }
+  table { border-collapse: collapse; width: 100%; margin-top: 8px; }
+  td, th { text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--line); }
+  .miss { color: var(--red); }
+  #msg { min-height: 1.5em; }
+</style>
+</head>
+<body>
+<h1>같은 점수 점검 · 브라우저</h1>
+<p>같은 사진을 로봇 · PC 에서도 돌려 <code>score_check.py compare</code> 로 견줍니다.</p>
+
+<div class="card">
+  <div class="row">
+    <select id="model"><option value="">모델 불러오는 중…</option></select>
+    <input id="files" type="file" accept="image/*" multiple>
+    <label><input id="shrink" type="checkbox" checked> 짧은 변 240 으로 줄이기</label>
+  </div>
+  <div class="row" style="margin-top:8px">
+    <button id="run" class="main" disabled>점수 내기</button>
+    <button id="save" disabled>결과 파일 받기</button>
+  </div>
+  <p id="msg"></p>
+  <table id="out"></table>
+</div>
+
+<script type="module">
+import { loadEmbedder, cropTo, EMBEDDER } from './tl/embedder.js';
+import { loadLandmarker } from './tl/landmarker.js';
+import { extract } from './tl/features.js';
+import { deserialize, predict, bytesToB64 } from './tl/classifier.js';
+
+const SHORT = 240;
+const $ = id => document.getElementById(id);
+const msg = s => { $('msg').textContent = s; };
+let report = null;
+
+// MediaPipe 사용 기록 전송 막기 (app.js 와 같다)
+const _fetch = window.fetch;
+window.fetch = (u, o) => (String(u).includes('odml.pa.googleapis.com') ? Promise.resolve(new Response(null, { status: 204 })) : _fetch(u, o));
+
+async function listModels() {
+  const j = await (await fetch('/api/models')).json();
+  $('model').innerHTML = j.models.length ? '' : '<option value="">저장한 모델이 없어요</option>';
+  for (const m of j.models) $('model').add(new Option(m.name, m.name));
+  ready();
+}
+
+function ready() { $('run').disabled = !($('model').value && $('files').files.length); }
+$('model').onchange = ready;
+$('files').onchange = ready;
+
+async function fetchModel(name) {
+  const base = '/api/models/' + encodeURIComponent(name) + '/file/';
+  const [pj, cj, cb] = await Promise.all([
+    fetch(base + 'project.json').then(r => (r.ok ? r.json() : {})),
+    fetch(base + 'classifier.json').then(r => r.json()),
+    fetch(base + 'classifier.bin').then(r => r.arrayBuffer()),
+  ]);
+  return { project: pj, json: cj, clf: deserialize(cj, cb) };
+}
+
+// 로봇 _as_stream_rgb 와 같은 크기(짧은 변 240, 작은 그림은 키우지 않음)
+function streamCanvas(img, shrink) {
+  const w = img.naturalWidth, h = img.naturalHeight;
+  const s = shrink ? Math.min(1, SHORT / Math.min(w, h)) : 1;
+  const cv = document.createElement('canvas');
+  cv.width = Math.round(w * s); cv.height = Math.round(h * s);
+  cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+  return cv;
+}
+
+function loadImage(file) {
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file);
+    const im = new Image();
+    im.onload = () => { URL.revokeObjectURL(url); res(im); };
+    im.onerror = () => { URL.revokeObjectURL(url); rej(new Error('decode')); };
+    im.src = url;
+  });
+}
+
+$('run').onclick = async () => {
+  $('run').disabled = true; $('save').disabled = true;
+  try {
+    const name = $('model').value;
+    msg('모델 불러오는 중…');
+    const m = await fetchModel(name);
+    const source = m.project.source || 'image';
+    const variant = m.project.variant || (source === 'hand' ? 'one' : source === 'pose' ? 'upper' : null);
+    const ext = source === 'image' ? await loadEmbedder() : await loadLandmarker(source);
+    const crop = document.createElement('canvas');
+    const items = [];
+    const files = [...$('files').files];
+    for (let i = 0; i < files.length; i++) {
+      const f = files[i];
+      msg(`점수 내는 중… ${i + 1}/${files.length}`);
+      let img;
+      try { img = await loadImage(f); } catch (e) { items.push({ file: f.name, found: false, error: 'decode' }); continue; }
+      const cv = streamCanvas(img, $('shrink').checked);
+      let vec = null;
+      if (source === 'image') {
+        cropTo(cv, crop, EMBEDDER.inputSize, false);
+        vec = ext.embed(crop);
+      } else {
+        vec = extract(source, ext.detect(cv, performance.now()), variant);
+      }
+      if (!vec) { items.push({ file: f.name, found: false }); continue; }
+      const p = predict(m.clf, vec);
+      let best = 0;
+      for (let k = 1; k < p.length; k++) if (p[k] > p[best]) best = k;
+      items.push({ file: f.name, found: true, label: m.json.classes[best],
+                   probs: Array.from(p, x => Math.round(x * 1e6) / 1e6),
+                   feature: bytesToB64(new Uint8Array(Float32Array.from(vec).buffer)) });
+    }
+    report = { tool: 'teachlab-score-check', version: 1, where: 'browser', model: name, source, variant,
+               classes: m.json.classes, items, shrink: $('shrink').checked, ua: navigator.userAgent };
+    $('out').innerHTML = '<tr><th>사진</th><th>답</th><th>확률</th></tr>' + items.map(it => it.found
+      ? `<tr><td>${esc(it.file)}</td><td>${esc(it.label)}</td><td>${(Math.max(...it.probs) * 100).toFixed(1)}%</td></tr>`
+      : `<tr><td>${esc(it.file)}</td><td class="miss" colspan="2">못 찾음</td></tr>`).join('');
+    const found = items.filter(x => x.found).length;
+    msg(`사진 ${items.length}장 · 찾음 ${found} — [결과 파일 받기] 로 저장하세요.`);
+    $('save').disabled = false;
+  } catch (e) {
+    console.error(e);
+    msg('점수를 내지 못했어요. ' + e.message);
+  }
+  ready();
+};
+
+$('save').onclick = () => {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(report)], { type: 'application/json' }));
+  a.download = 'browser.json';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+};
+
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+
+listModels().catch(() => msg('모델 목록을 받지 못했어요.'));
+</script>
+</body>
+</html>

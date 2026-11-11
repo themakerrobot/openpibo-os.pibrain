@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Code to run a pose estimation with a TFLite MoveNet model."""
+"""Code to run a pose estimation with a MoveNet model (ONNX, onnxruntime)."""
 
 import os
 from typing import Dict, List
@@ -22,13 +22,15 @@ from .data import Person
 from .data import person_from_keypoints_with_scores
 import numpy as np
 
-# TFLite 런타임만 쓴다 (LiteRT → tflite_runtime). TensorFlow 로 대신 돌리던 분기는 뺐다
-from ..teachlab import load_interpreter
-Interpreter = load_interpreter()
+# onnxruntime 으로 돈다(261104). movenet_lightning.tflite 를 tf2onnx(opset 17)로 바꾼 파일 —
+# 같은 입력에서 TFLite 와 최대 차이 2e-6, 코사인 1.000000(40장 확인). TFLite 런타임은 쓰지 않는다
+from ..teachlab import onnx_session
+
+MOVENET_ONNX = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'movenet_lightning.onnx')
 
 
 class Movenet(object):
-  """A wrapper class for a Movenet TFLite pose estimation model."""
+  """A wrapper class for a Movenet pose estimation model (ONNX)."""
 
   # Configure how confidence the model should be on the detected keypoints to
   # proceed with using smart cropping logic.
@@ -36,29 +38,22 @@ class Movenet(object):
   _TORSO_EXPANSION_RATIO = 1.9
   _BODY_EXPANSION_RATIO = 1.2
 
-  def __init__(self, model_name: str) -> None:
+  def __init__(self, model_name: str = None) -> None:
     """Initialize a MoveNet pose estimation model.
 
     Args:
-      model_name: Name of the TFLite MoveNet model.
+      model_name: MoveNet .onnx file. Anything else (or None) uses MOVENET_ONNX.
     """
 
-    # Append TFLITE extension to model_name if there's no extension
-    _, ext = os.path.splitext(model_name)
-    if not ext:
-      model_name += '.tflite'
+    # 예전처럼 .tflite 경로(openpibo_detect_models)를 넘겨도 같은 모델의 ONNX 를 쓴다
+    if not model_name or os.path.splitext(model_name)[1].lower() != '.onnx':
+      model_name = MOVENET_ONNX
 
-    # Initialize model
-    interpreter = Interpreter(model_path=model_name, num_threads=4)
-    interpreter.allocate_tensors()
-
-    self._input_index = interpreter.get_input_details()[0]['index']
-    self._output_index = interpreter.get_output_details()[0]['index']
-
-    self._input_height = interpreter.get_input_details()[0]['shape'][1]
-    self._input_width = interpreter.get_input_details()[0]['shape'][2]
-
-    self._interpreter = interpreter
+    self._session = onnx_session(model_name, threads=4)
+    inp = self._session.get_inputs()[0]
+    self._input_name = inp.name
+    self._input_height = int(inp.shape[1])
+    self._input_width = int(inp.shape[2])
     self._crop_region = None
 
   def init_crop_region(self, image_height: int,
@@ -297,11 +292,8 @@ class Movenet(object):
     input_image = self._crop_and_resize(image, crop_region, crop_size=crop_size)
     input_image = input_image.astype(dtype=np.uint8)
 
-    self._interpreter.set_tensor(self._input_index,
-                                 np.expand_dims(input_image, axis=0))
-    self._interpreter.invoke()
-
-    keypoints_with_scores = self._interpreter.get_tensor(self._output_index)
+    keypoints_with_scores = self._session.run(
+        None, {self._input_name: np.expand_dims(input_image, axis=0)})[0]
     keypoints_with_scores = np.squeeze(keypoints_with_scores)
 
     # Update the coordinates.

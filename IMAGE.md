@@ -113,20 +113,20 @@ AP(핫스팟)는 국가 설정과 무관하다. `hotspot.sh` 가 2.4GHz 채널 1
 
 | 쓰는 곳 | 패키지 | Pibo 기기(260923) 에서 확인한 버전 |
 |---|---|---|
-| 이미지 · movenet(포즈) | `tflite-runtime` (또는 `ai-edge-litert`, 없으면 TensorFlow 로 떨어진다) | 2.14.0 |
+| 이미지 · movenet(포즈) | `onnxruntime` (261104 부터 — 리포 안의 ONNX 파일. TFLite 런타임 안 씀) | 1.20.1 |
 | 손 · 얼굴 · 포즈 | `mediapipe` | 0.10.18 |
 | 전부 | `numpy` | 1.26.4 |
 
 **PiBrain 기기에 무엇이 깔려 있는지는 아직 확인 전이다.** 아래를 돌려 값을 받아 적을 것. 추측으로 채우지 말 것.
 
 ```bash
-/home/pi/.pyenv/bin/python3 -m pip list 2>/dev/null | grep -i -E "tflite|litert|tensorflow|mediapipe|numpy|onnxruntime"
-/home/pi/.pyenv/bin/python3 -c "from openpibo.modules.teachlab import load_interpreter; print(load_interpreter())"
-#   tflite_runtime / ai_edge_litert 가 나오면 된다. tensorflow 가 나오면 동작은 하지만 무겁다
+/home/pi/.pyenv/bin/python3 -m pip list 2>/dev/null | grep -i -E "mediapipe|numpy|onnxruntime"
+/home/pi/.pyenv/bin/python3 -c "from openpibo.modules.teachlab.embedder import ImageEmbedder; from openpibo.modules.pose.movenet import Movenet; ImageEmbedder('mobilenet_v3_small_embedder.tflite'); Movenet(); print('onnx ok')"
+#   onnx ok 가 나오면 된다
 /home/pi/.pyenv/bin/python3 -c "import mediapipe; print(mediapipe.__version__)"
 ```
 
-- `tflite_runtime`·`ai_edge_litert` 가 둘 다 없고 TensorFlow 도 없으면 분류기(이미지)와 movenet 이 못 뜬다
+- `onnxruntime` 이 없으면 분류기(이미지)·movenet·사물 인식·TTS 가 못 뜬다
 - `mediapipe` 가 없으면 손·얼굴·포즈 모델만 못 쓴다(이미지 모델은 된다)
 - TensorFlow 를 지우는 건 **위 확인이 끝난 뒤에만.** 사물 인식(`vision_detect`)은 260930 부터 ultralytics·torch 를
   import 하지 않는다(onnxruntime). 코드 쪽에서는 `ultralytics`·`torch` 를 지워도 된다 — 다른 데서 쓰는지 `pip show` 로 한 번 볼 것
@@ -149,7 +149,7 @@ sudo $PY /home/pi/openpibo-os/system/venv_prune.py | head -40
 
 # 2) 지운다. 지우기 전 목록을 /home/pi/venv_backup_<날짜>.txt 로 남기고, 지운 뒤 pip check 와 import 확인을 돌린다
 sudo $PY /home/pi/openpibo-os/system/venv_prune.py --apply
-#    import 확인 끝줄이 'N/N 모듈 import 됨 · 분류기 추론기: tflite_runtime.interpreter' 여야 한다
+#    import 확인 끝줄이 'N/N 모듈 import 됨 · 분류기 사진 특징·MoveNet: onnx ok' 여야 한다
 
 # 3) 서비스 다시 켜고 IDE·도구·분류기를 한 번씩 열어 본다
 sudo systemctl restart ide.service booting.service
@@ -167,16 +167,16 @@ sudo systemctl restart ide.service booting.service
 알아 둘 것:
 - **가상환경 밖은 건드리지 않는다.** `/home/pi/.pyenv` 는 시스템 패키지를 보는 가상환경이라 `gpiozero` `lgpio` `spidev` `python-apt` 등
   apt 패키지가 목록에 같이 보이지만(크기 0) 지울 대상에서 뺀다
-- 남기는 것 중 눈여겨볼 것: `lxml`(뉴스 블록), `tflite-runtime`(분류기·movenet — 없으면 TensorFlow 를 찾는다), `openvino`(얼굴 분석),
+- 남기는 것 중 눈여겨볼 것: `lxml`(뉴스 블록), `openvino`(얼굴 분석),
   `av`(picamera2 가 요구), `matplotlib`(mediapipe 가 실제로 불러온다), `sympy`(onnxruntime 이 요구), `uvicorn[standard]`(uvloop·httptools·websockets —
   socket.io 웹소켓)
 - `openpibo-face-models`(약 90MB)는 **지운다.** 얼굴 모델은 `/home/pi/.model/face` 에서 읽는다(`vision_face.py`). 이름은 예전 `setup.py` 에만 남아 있다
-- `openpibo-detect-models`(약 80MB)는 `movenet_lightning.tflite` 하나 때문에 남는다. 그 파일을 `/home/pi/.model` 로 옮기면 뺄 수 있다(아직 안 함)
+- **`tflite-runtime`·`openpibo-detect-models`(약 80MB)는 261104 부터 지운다.** 분류기 사진 특징·MoveNet 을 리포 안의 ONNX(`openpibo/modules/teachlab/`·`pose/`)로 onnxruntime 에서 돌린다 — 새 태그를 올린 **뒤에** 돌릴 것
 - 새 기능이 패키지를 쓰게 되면 스크립트의 `ROOTS` 와 `requirements.txt` 에 **둘 다** 넣을 것(Pibo·PiBrain 같은 파일, 원본은 openpibo-os.pibo)
 
 **처음부터 다시 만들기(선택) — `system/venv_rebuild.sh`.** 정리 대신 가상환경을 새로 만든다. `requirements.txt` 만으로 다시 만들 수 있는지
 확인할 때 쓴다(새 OS 로 이미지를 처음부터 만들 때). 옛 가상환경은 `/home/pi/.pyenv.old` 로 옮겨 두고, 지금 버전 목록(`pip freeze`)을
-제약으로 줘서 같은 버전으로 설치한 뒤 import 확인·dlib 실행까지 본다. **어느 단계든 실패하면 옛 것으로 되돌린다.**
+제약으로 줘서 같은 버전으로 설치한 뒤 import 확인까지 본다. **어느 단계든 실패하면 옛 것으로 되돌린다.**
 
 ```bash
 sudo bash /home/pi/openpibo-os/system/venv_rebuild.sh            # 인터넷 필요, 약 1.5GB 받는다
@@ -184,24 +184,23 @@ sudo bash /home/pi/openpibo-os/system/venv_rebuild.sh rollback   # 되돌리기
 sudo rm -rf /home/pi/.pyenv.old                                  # 잘 되면 옛 것 지우기
 ```
 
-- PyPI 에 aarch64 wheel 이 없어 **컴파일하는 것 5개**: `dlib`(오래 걸린다) · `RPi.GPIO` · `rpi-ws281x` · `PiDNG` · `python-prctl`(picamera2 의존).
+- PyPI 에 aarch64 wheel 이 없어 **컴파일하는 것 4개**: `RPi.GPIO` · `rpi-ws281x` · `PiDNG` · `python-prctl`(picamera2 의존). `dlib` 은 261104 에 뺐다(얼굴 구분 → OpenVINO retail-0095).
   빌드 도구(`build-essential` `cmake` `libcap-dev` `python3-dev`)는 두 기기에 이미 있다(260930 확인)
 - 컴파일한 wheel 은 `/home/pi/wheels` 에 남는다. **램이 큰 PiBrain(7.6GB)에서 먼저 돌리고 그 폴더를 파이보(1.8GB)로 복사**하면 파이보는 컴파일하지 않는다.
-  다른 기기에서 만든 dlib 이 그 CPU 에서 도는지는 스크립트가 dlib 을 한 번 돌려 확인한다(안 되면 되돌리고 그 wheel 을 지우라고 알린다)
-- 가상환경은 `--system-site-packages` 로 만든다(`libcamera` 는 apt 의 `python3-libcamera`). `RPi.GPIO`·`picamera2`·`rpi_ws281x`·`dlib` 은 가상환경 안 pip 설치본을 쓴다(260930 두 기기 확인)
+- 가상환경은 `--system-site-packages` 로 만든다(`libcamera` 는 apt 의 `python3-libcamera`). `RPi.GPIO`·`picamera2`·`rpi_ws281x` 는 가상환경 안 pip 설치본을 쓴다(260930 두 기기 확인)
 - 컨테이너에서 성공·실패(자동 되돌리기)·`rollback` 경로를 시험했다. **기기에서는 아직 안 돌렸다**
 
 ### 모델 폴더 `/home/pi/.model` (260930~, 이미지당 1회)
 
 **Pibo 이미지의 `/home/pi/.model` 을 그대로 넣는다**(구성·파일별 sha256 은 그 폴더의 `VERSION`, 만드는 법은 Pibo IMAGE.md
 '파이썬 패키지 · 모델 폴더'). PiBrain 코드가 읽는 경로는 Pibo 의 부분집합이라 그대로 맞는다:
-`tts/assets/{onnx,voice_styles}` · `object/ed-s-320.onnx` · `hand/*.task` · `face/{detection,age-gender,emotion,landmark}`.
+`tts/assets/{onnx,voice_styles}` · `object/ed-s-320.onnx` · `hand/*.task` · `face/{detection,age-gender,emotion,landmark,reid}`(261104 — 얼굴 찾기 0005·얼굴 구분 0095, `sudo bash system/fetch_models.sh` 로 넣는다(파이보와 같은 파일, 이미지 작업) **코드보다 먼저 넣을 것**) · `mask/mask.onnx`(261104 — 마스크 판별, HF `leeyunjai/edge-lab` 의 `mask/mask.onnx`).
 
 - `stt/`(약 230MB)는 마이크를 달면 쓴다(STT 소스는 이미 들어 있다, 블록만 막힘). **지우지 말고 그대로 둔다**
 - `object/` 에는 `ed-s-320.onnx` 하나만 있어야 한다(261026 에 예전 사물 인식 가중치·고지 파일을 지웠다)
-- `llm/` 은 별칭 링크 `general.gguf`·`themaker-ko.gguf`·`themaker-en.gguf` 를 템플릿 유닛 `llama-server@<이름>` 이 읽는다. 예전 `llm-model.gguf`·`llama-server.service` 는 261029 에 지웠다
-- **모델 고르기용 템플릿 유닛(261029)** `/etc/systemd/system/llama-server@.service` 와 모델별 별칭 링크(`general.gguf`·`themaker-ko.gguf`·`themaker-en.gguf`)는
-  파이보 리포 `IMAGE.md` '모델 고르기용 템플릿 유닛' 과 같다(유닛 내용·링크 명령 그대로, enable 안 함, 그 뒤 `daemon-reload`). CLAUDE.md '대화 모델 고르기' 참고
+- `llm/` 은 `general.gguf`·`themaker-ko.gguf`·`themaker-en.gguf`(**실제 파일**, 261106 — 판 이름은 `VERSION` 의 `llm/<이름>.gguf = …` 줄)를 템플릿 유닛 `llama-server@<이름>` 이 읽는다. 예전 `llm-model.gguf`·`llama-server.service` 는 261029 에 지웠다
+- **모델 고르기용 템플릿 유닛(261029)** `/etc/systemd/system/llama-server@.service` 와 모델 파일(`general.gguf`·`themaker-ko.gguf`·`themaker-en.gguf`, 실제 파일)은
+  파이보 리포 `IMAGE.md` '모델 고르기용 템플릿 유닛' 과 같다(유닛 내용 그대로, enable 안 함, 그 뒤 `daemon-reload`). CLAUDE.md '대화 모델 고르기' 참고
 
 ```bash
 PY=/home/pi/.pyenv/bin/python3

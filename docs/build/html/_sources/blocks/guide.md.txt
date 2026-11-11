@@ -344,18 +344,6 @@ USB 연결 해제합니다.
 
 포즈 데이터를 분석해 정해진 포즈를 알아냅니다. *값을 돌려주는 블록*
 
-<img src="img/vision_object_tracker_init.png" alt="이미지 ([변수 ▾]) 좌표 ([0]) ([0]) , ([0]) ([0]) 트래커 설정하기" width="600" class="blk">
-
-이미지의 특정 위치에 트래커를 설정합니다.
-
-<img src="img/vision_object_track.png" alt="이미지 ([변수 ▾]) 추적하기" width="293" class="blk">
-
-설정된 트래커로 이미지를 추적합니다. *값을 돌려주는 블록*
-
-<img src="img/vision_object_track_vis.png" alt="이미지 ([변수 ▾]) 추적 결과 ([변수 ▾]) 표시하기" width="461" class="blk">
-
-추적 결과를 표시합니다.
-
 <img src="img/vision_hand_gesture_load.png" alt="손 동작 모델 [gesture_recognizer ▾] 을 불러오기" width="495" class="blk">
 
 내장된 손 동작 모델을 불러옵니다.

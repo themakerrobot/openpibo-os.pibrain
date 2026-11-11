@@ -342,27 +342,75 @@
 <span class="sd">얼굴을 찾고 나이·성별·감정을 분석하며, 얼굴을 학습해 누구인지 알아봅니다.</span>
 
 <span class="sd">Class:</span>
-<span class="sd">:meth:`~openpibo.vision_detect.putTextPIL`</span>
-<span class="sd">:obj:`~openpibo.vision_detect.Face`</span>
+<span class="sd">:meth:`~openpibo.vision_face.putTextPIL`</span>
+<span class="sd">:obj:`~openpibo.vision_face.Face`</span>
+
+<span class="sd">얼굴 찾기·나이·성별·감정·얼굴 구분은 OpenVINO(OMZ 모델), 얼굴 점·방향·거리는 MediaPipe 로 합니다.</span>
+<span class="sd">dlib 은 쓰지 않습니다(261104).</span>
 <span class="sd">"""</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span><span class="o">,</span><span class="nn">dlib</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="nn">pickle</span><span class="o">,</span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">json</span><span class="o">,</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">mediapipe</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mp</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">mediapipe.tasks</span><span class="w"> </span><span class="kn">import</span> <span class="n">python</span> <span class="k">as</span> <span class="n">mp_python</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">mediapipe.tasks.python</span><span class="w"> </span><span class="kn">import</span> <span class="n">vision</span> <span class="k">as</span> <span class="n">mp_vision</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">openvino.runtime</span><span class="w"> </span><span class="kn">import</span> <span class="n">Core</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span><span class="p">,</span><span class="n">ImageDraw</span><span class="p">,</span><span class="n">ImageFont</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">openpibo_dlib_models</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">openpibo_models</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
-<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">'TF_CPP_MIN_LOG_LEVEL'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'3'</span>  <span class="c1"># TensorFlow C++ 로그 제거</span>
 <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">'LIBCAMERA_LOG_LEVELS'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'3'</span>
 
-<span class="c1"># ✅ 추가: TensorFlow 내부 디버그 메시지 완전 차단</span>
-<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"tensorflow"</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
-<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"ultralytics"</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+<span class="n">FACE_DIR</span> <span class="o">=</span> <span class="s1">'/home/pi/.model/face'</span>
+<span class="n">DETECT_XML</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">FACE_DIR</span><span class="si">}</span><span class="s1">/detection/face-detection-retail-0005.xml'</span>
+<span class="n">AGE_GENDER_XML</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">FACE_DIR</span><span class="si">}</span><span class="s1">/age-gender/age-gender-recognition-retail-0013.xml'</span>
+<span class="n">EMOTION_XML</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">FACE_DIR</span><span class="si">}</span><span class="s1">/emotion/emotions-recognition-retail-0003.xml'</span>
+<span class="n">REID_XML</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">FACE_DIR</span><span class="si">}</span><span class="s1">/reid/face-reidentification-retail-0095.xml'</span>
+<span class="n">LANDMARK_TASK</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">FACE_DIR</span><span class="si">}</span><span class="s1">/landmark/face_landmarker.task'</span>
+<span class="c1">#: 마스크 판별 — edge-lab 과 같은 파일(임베더 + 분류기 한 개, 입력 RGB 0~255 1x224x224x3). 처음 부를 때 올린다</span>
+<span class="n">MASK_ONNX</span> <span class="o">=</span> <span class="s1">'/home/pi/.model/mask/mask.onnx'</span>
+<span class="n">MASK_MARGIN</span> <span class="o">=</span> <span class="mf">0.3</span>     <span class="c1"># edge-lab 얼굴 찾기와 같은 30% 여유를 둘레에 붙여 자른다</span>
+
+<span class="c1">#: 얼굴 정보 파일(save_db) 안에 적는 이름. 다른 모델로 만든 파일은 열지 않는다</span>
+<span class="n">DB_FORMAT</span> <span class="o">=</span> <span class="s1">'openpibo-facedb'</span>
+<span class="n">DB_MODEL</span> <span class="o">=</span> <span class="s1">'face-reidentification-retail-0095'</span>
+
+<span class="c1">#: 같은 사람으로 보는 최대 오차도. 예전(dlib)과 같은 값 0.4 — 학생 코드·블록이 쓰던 기준이 그대로 통하게</span>
+<span class="c1">#: 오차도 = 코사인 거리(0~2) x SCORE_SCALE 로 예전 크기에 맞춘다. 코사인 거리 0.6 이 오차도 0.4.</span>
+<span class="c1">#: 성인 공개 사진 LFW 1000쌍(261104)에서 코사인 0.6 은 다른 사람 오인 0%, 같은 사람 놓침 2.2% — 교실 아이 얼굴로 다시 볼 것</span>
+<span class="n">THRESHOLD</span> <span class="o">=</span> <span class="mf">0.4</span>
+<span class="n">SCORE_SCALE</span> <span class="o">=</span> <span class="mf">0.4</span> <span class="o">/</span> <span class="mf">0.6</span>
+
+<span class="c1">#: dlib 68점 번호 → MediaPipe 얼굴 점 번호. landmark_face 가 예전(dlib) 번호 그대로 돌려주게 한다</span>
+<span class="c1">#: (턱 0~16 · 눈썹 17~26 · 코 27~35 · 눈 36~47 · 입 48~67)</span>
+<span class="n">MP_TO_DLIB68</span> <span class="o">=</span> <span class="p">(</span>
+  <span class="mi">127</span><span class="p">,</span> <span class="mi">234</span><span class="p">,</span> <span class="mi">93</span><span class="p">,</span> <span class="mi">132</span><span class="p">,</span> <span class="mi">58</span><span class="p">,</span> <span class="mi">136</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">176</span><span class="p">,</span> <span class="mi">152</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">379</span><span class="p">,</span> <span class="mi">365</span><span class="p">,</span> <span class="mi">288</span><span class="p">,</span> <span class="mi">361</span><span class="p">,</span> <span class="mi">323</span><span class="p">,</span> <span class="mi">454</span><span class="p">,</span> <span class="mi">356</span><span class="p">,</span>
+  <span class="mi">70</span><span class="p">,</span> <span class="mi">63</span><span class="p">,</span> <span class="mi">105</span><span class="p">,</span> <span class="mi">66</span><span class="p">,</span> <span class="mi">107</span><span class="p">,</span> <span class="mi">336</span><span class="p">,</span> <span class="mi">296</span><span class="p">,</span> <span class="mi">334</span><span class="p">,</span> <span class="mi">293</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span>
+  <span class="mi">168</span><span class="p">,</span> <span class="mi">197</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">97</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">326</span><span class="p">,</span> <span class="mi">305</span><span class="p">,</span>
+  <span class="mi">33</span><span class="p">,</span> <span class="mi">160</span><span class="p">,</span> <span class="mi">158</span><span class="p">,</span> <span class="mi">133</span><span class="p">,</span> <span class="mi">153</span><span class="p">,</span> <span class="mi">144</span><span class="p">,</span> <span class="mi">362</span><span class="p">,</span> <span class="mi">385</span><span class="p">,</span> <span class="mi">387</span><span class="p">,</span> <span class="mi">263</span><span class="p">,</span> <span class="mi">373</span><span class="p">,</span> <span class="mi">380</span><span class="p">,</span>
+  <span class="mi">61</span><span class="p">,</span> <span class="mi">39</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">267</span><span class="p">,</span> <span class="mi">269</span><span class="p">,</span> <span class="mi">291</span><span class="p">,</span> <span class="mi">405</span><span class="p">,</span> <span class="mi">314</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">181</span><span class="p">,</span> <span class="mi">78</span><span class="p">,</span> <span class="mi">82</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">312</span><span class="p">,</span> <span class="mi">308</span><span class="p">,</span> <span class="mi">317</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">87</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1">#: face-reidentification-retail-0095 의 정렬 기준점(128x128 기준 비율, OMZ face_recognition_demo 와 같은 값).</span>
+<span class="c1">#: 그림 왼쪽 눈 · 오른쪽 눈 · 코끝 · 입 왼쪽 끝 · 입 오른쪽 끝</span>
+<span class="n">REID_REF5</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+  <span class="p">(</span><span class="mf">30.2946</span> <span class="o">/</span> <span class="mi">96</span><span class="p">,</span> <span class="mf">51.6963</span> <span class="o">/</span> <span class="mi">112</span><span class="p">),</span> <span class="p">(</span><span class="mf">65.5318</span> <span class="o">/</span> <span class="mi">96</span><span class="p">,</span> <span class="mf">51.5014</span> <span class="o">/</span> <span class="mi">112</span><span class="p">),</span> <span class="p">(</span><span class="mf">48.0252</span> <span class="o">/</span> <span class="mi">96</span><span class="p">,</span> <span class="mf">71.7366</span> <span class="o">/</span> <span class="mi">112</span><span class="p">),</span>
+  <span class="p">(</span><span class="mf">33.5493</span> <span class="o">/</span> <span class="mi">96</span><span class="p">,</span> <span class="mf">92.3655</span> <span class="o">/</span> <span class="mi">112</span><span class="p">),</span> <span class="p">(</span><span class="mf">62.7299</span> <span class="o">/</span> <span class="mi">96</span><span class="p">,</span> <span class="mf">92.2041</span> <span class="o">/</span> <span class="mi">112</span><span class="p">)],</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="n">REID_SIZE</span> <span class="o">=</span> <span class="mi">128</span>
+
+<span class="c1">#: 얼굴 점을 못 찾았을 때 돌려주는 평균 68점(상자 기준 비율). 예전 dlib 처럼 늘 68점을 돌려주게 한다</span>
+<span class="c1">#: (LFW 300장에서 MediaPipe 점을 상자 비율로 평균, 261104)</span>
+<span class="n">MEAN68</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span>
+  <span class="p">(</span><span class="mf">0.009</span><span class="p">,</span> <span class="mf">0.428</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.017</span><span class="p">,</span> <span class="mf">0.503</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.026</span><span class="p">,</span> <span class="mf">0.580</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.045</span><span class="p">,</span> <span class="mf">0.662</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.079</span><span class="p">,</span> <span class="mf">0.751</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.178</span><span class="p">,</span> <span class="mf">0.872</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.243</span><span class="p">,</span> <span class="mf">0.916</span><span class="p">),</span>
+  <span class="p">(</span><span class="mf">0.360</span><span class="p">,</span> <span class="mf">0.973</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.522</span><span class="p">,</span> <span class="mf">0.996</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.685</span><span class="p">,</span> <span class="mf">0.966</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.803</span><span class="p">,</span> <span class="mf">0.903</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.868</span><span class="p">,</span> <span class="mf">0.856</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.962</span><span class="p">,</span> <span class="mf">0.729</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.989</span><span class="p">,</span> <span class="mf">0.640</span><span class="p">),</span>
+  <span class="p">(</span><span class="mf">1.000</span><span class="p">,</span> <span class="mf">0.556</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.001</span><span class="p">,</span> <span class="mf">0.477</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.999</span><span class="p">,</span> <span class="mf">0.402</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.096</span><span class="p">,</span> <span class="mf">0.341</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.136</span><span class="p">,</span> <span class="mf">0.314</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.198</span><span class="p">,</span> <span class="mf">0.299</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.284</span><span class="p">,</span> <span class="mf">0.301</span><span class="p">),</span>
+  <span class="p">(</span><span class="mf">0.384</span><span class="p">,</span> <span class="mf">0.310</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.587</span><span class="p">,</span> <span class="mf">0.304</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.687</span><span class="p">,</span> <span class="mf">0.290</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.774</span><span class="p">,</span> <span class="mf">0.284</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.841</span><span class="p">,</span> <span class="mf">0.296</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.887</span><span class="p">,</span> <span class="mf">0.321</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.491</span><span class="p">,</span> <span class="mf">0.392</span><span class="p">),</span>
+  <span class="p">(</span><span class="mf">0.493</span><span class="p">,</span> <span class="mf">0.468</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.495</span><span class="p">,</span> <span class="mf">0.535</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.497</span><span class="p">,</span> <span class="mf">0.576</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.413</span><span class="p">,</span> <span class="mf">0.621</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.446</span><span class="p">,</span> <span class="mf">0.637</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.502</span><span class="p">,</span> <span class="mf">0.639</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.559</span><span class="p">,</span> <span class="mf">0.634</span><span class="p">),</span>
+  <span class="p">(</span><span class="mf">0.591</span><span class="p">,</span> <span class="mf">0.616</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.192</span><span class="p">,</span> <span class="mf">0.412</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.235</span><span class="p">,</span> <span class="mf">0.393</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.302</span><span class="p">,</span> <span class="mf">0.389</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.375</span><span class="p">,</span> <span class="mf">0.415</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.315</span><span class="p">,</span> <span class="mf">0.423</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.248</span><span class="p">,</span> <span class="mf">0.427</span><span class="p">),</span>
+  <span class="p">(</span><span class="mf">0.614</span><span class="p">,</span> <span class="mf">0.409</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.683</span><span class="p">,</span> <span class="mf">0.379</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.750</span><span class="p">,</span> <span class="mf">0.380</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.797</span><span class="p">,</span> <span class="mf">0.396</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.741</span><span class="p">,</span> <span class="mf">0.414</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.673</span><span class="p">,</span> <span class="mf">0.414</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.323</span><span class="p">,</span> <span class="mf">0.748</span><span class="p">),</span>
+  <span class="p">(</span><span class="mf">0.400</span><span class="p">,</span> <span class="mf">0.716</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.451</span><span class="p">,</span> <span class="mf">0.708</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.507</span><span class="p">,</span> <span class="mf">0.713</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.564</span><span class="p">,</span> <span class="mf">0.705</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.618</span><span class="p">,</span> <span class="mf">0.711</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.701</span><span class="p">,</span> <span class="mf">0.739</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.623</span><span class="p">,</span> <span class="mf">0.805</span><span class="p">),</span>
+  <span class="p">(</span><span class="mf">0.572</span><span class="p">,</span> <span class="mf">0.821</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.512</span><span class="p">,</span> <span class="mf">0.827</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.454</span><span class="p">,</span> <span class="mf">0.824</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.404</span><span class="p">,</span> <span class="mf">0.811</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.341</span><span class="p">,</span> <span class="mf">0.748</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.462</span><span class="p">,</span> <span class="mf">0.737</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.509</span><span class="p">,</span> <span class="mf">0.738</span><span class="p">),</span>
+  <span class="p">(</span><span class="mf">0.557</span><span class="p">,</span> <span class="mf">0.736</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.685</span><span class="p">,</span> <span class="mf">0.740</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.559</span><span class="p">,</span> <span class="mf">0.776</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.511</span><span class="p">,</span> <span class="mf">0.780</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.463</span><span class="p">,</span> <span class="mf">0.777</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="putTextPIL">
 <a class="viewcode-back" href="../../libraries/vision_face.html#openpibo.vision_face.putTextPIL">[docs]</a>
@@ -401,22 +449,43 @@
   <span class="k">return</span> <span class="n">img</span></div>
 
 
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_similarity</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""점 src → dst 로 옮기는 닮음 변환(회전·크기·이동) 2x3 행렬 (Umeyama, 최소 제곱)"""</span>
+  <span class="n">src</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+  <span class="n">dst</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+  <span class="n">ms</span><span class="p">,</span> <span class="n">md</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">dst</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+  <span class="n">s</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">src</span> <span class="o">-</span> <span class="n">ms</span><span class="p">,</span> <span class="n">dst</span> <span class="o">-</span> <span class="n">md</span>
+  <span class="n">cov</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">s</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+  <span class="n">u</span><span class="p">,</span> <span class="n">sv</span><span class="p">,</span> <span class="n">vt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span>
+  <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">vt</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+  <span class="n">r</span> <span class="o">=</span> <span class="n">u</span> <span class="o">@</span> <span class="n">e</span> <span class="o">@</span> <span class="n">vt</span>
+  <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">sv</span><span class="p">)</span> <span class="o">@</span> <span class="n">e</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">s</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">src</span><span class="p">))</span>
+  <span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+  <span class="n">m</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">r</span>
+  <span class="n">m</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">md</span> <span class="o">-</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">r</span> <span class="o">@</span> <span class="n">ms</span>
+  <span class="k">return</span> <span class="n">m</span>
+
+
 <div class="viewcode-block" id="Face">
 <a class="viewcode-back" href="../../libraries/vision_face.html#openpibo.vision_face.Face">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Face</span><span class="p">:</span>
 <span class="w">  </span><span class="sd">"""</span>
 <span class="sd">Functions:</span>
-<span class="sd">:meth:`~openpibo.vision_detect.Face.detect`</span>
-<span class="sd">:meth:`~openpibo.vision_detect.Face.get_ageGender`</span>
-<span class="sd">:meth:`~openpibo.vision_detect.Face.get_age`</span>
-<span class="sd">:meth:`~openpibo.vision_detect.Face.get_gender`</span>
-<span class="sd">:meth:`~openpibo.vision_detect.Face.init_db`</span>
-<span class="sd">:meth:`~openpibo.vision_detect.Face.train_face`</span>
-<span class="sd">:meth:`~openpibo.vision_detect.Face.delete_face`</span>
-<span class="sd">:meth:`~openpibo.vision_detect.Face.recognize`</span>
-<span class="sd">:meth:`~openpibo.vision_detect.Face.get_db`</span>
-<span class="sd">:meth:`~openpibo.vision_detect.Face.save_db`</span>
-<span class="sd">:meth:`~openpibo.vision_detect.Face.load_db`</span>
+<span class="sd">:meth:`~openpibo.vision_face.Face.detect_face`</span>
+<span class="sd">:meth:`~openpibo.vision_face.Face.landmark_face`</span>
+<span class="sd">:meth:`~openpibo.vision_face.Face.analyze_face`</span>
+<span class="sd">:meth:`~openpibo.vision_face.Face.mask_face`</span>
+<span class="sd">:meth:`~openpibo.vision_face.Face.init_db`</span>
+<span class="sd">:meth:`~openpibo.vision_face.Face.train_face`</span>
+<span class="sd">:meth:`~openpibo.vision_face.Face.delete_face`</span>
+<span class="sd">:meth:`~openpibo.vision_face.Face.recognize`</span>
+<span class="sd">:meth:`~openpibo.vision_face.Face.get_db`</span>
+<span class="sd">:meth:`~openpibo.vision_face.Face.save_db`</span>
+<span class="sd">:meth:`~openpibo.vision_face.Face.load_db`</span>
+<span class="sd">:meth:`~openpibo.vision_face.Face.detect_mesh`</span>
 
 <span class="sd">  얼굴과 관련된 다양한 기능을 수행하는 클래스입니다. 다음 기능을 수행할 수 있습니다.</span>
 
@@ -427,13 +496,13 @@
 
 <span class="sd">  :얼굴 데이터베이스: 인스턴스 변수 **facedb** 를 의미하며, 여기에서 얼굴 데이터를 등록하고 불러오고 삭제합니다.</span>
 
-<span class="sd">    얼굴 데이터베이스의 포맷은 이중 list ``[[], []]`` 이며, 첫 번째 list에는 얼굴의 이름이, 두 번째 list에는 학습된 얼굴 데이터가 인코딩되어 들어갑니다.</span>
+<span class="sd">    얼굴 데이터베이스의 포맷은 이중 list ``[[], []]`` 이며, 첫 번째 list에는 얼굴의 이름이, 두 번째 list에는 학습된 얼굴 데이터(숫자 256개)가 들어갑니다.</span>
 
 <span class="sd">    또한 파일로 저장하여 인스턴스가 삭제된 후에도 얼굴 정보를 남겨둘 수 있습니다.</span>
 
 <span class="sd">  example::</span>
 
-<span class="sd">    from openpibo.vision_detect import Face</span>
+<span class="sd">    from openpibo.vision_face import Face</span>
 
 <span class="sd">    face = Face()</span>
 <span class="sd">    # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
@@ -441,28 +510,30 @@
 
   <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">facedb</span> <span class="o">=</span> <span class="p">[[],[]]</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="mf">0.4</span>
-    <span class="c1"># self.face_detector = dlib.get_frontal_face_detector()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">predictor</span> <span class="o">=</span> <span class="n">dlib</span><span class="o">.</span><span class="n">shape_predictor</span><span class="p">(</span><span class="n">openpibo_dlib_models</span><span class="o">.</span><span class="n">filepath</span><span class="p">(</span><span class="s2">"shape_predictor_68_face_landmarks.dat"</span><span class="p">))</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">face_encoder</span> <span class="o">=</span> <span class="n">dlib</span><span class="o">.</span><span class="n">face_recognition_model_v1</span><span class="p">(</span><span class="n">openpibo_dlib_models</span><span class="o">.</span><span class="n">filepath</span><span class="p">(</span><span class="s2">"dlib_face_recognition_resnet_model_v1.dat"</span><span class="p">))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">THRESHOLD</span>
 
-    <span class="c1"># Load OpenVINO models</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="p">(</span><span class="n">DETECT_XML</span><span class="p">,</span> <span class="n">AGE_GENDER_XML</span><span class="p">,</span> <span class="n">EMOTION_XML</span><span class="p">,</span> <span class="n">REID_XML</span><span class="p">,</span> <span class="n">LANDMARK_TASK</span><span class="p">):</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'얼굴 모델 파일이 없어요 / face model file not found: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+    <span class="c1"># OpenVINO 모델</span>
     <span class="n">ie</span> <span class="o">=</span> <span class="n">Core</span><span class="p">()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">face_detection_compiled</span> <span class="o">=</span> <span class="n">ie</span><span class="o">.</span><span class="n">compile_model</span><span class="p">(</span><span class="n">ie</span><span class="o">.</span><span class="n">read_model</span><span class="p">(</span><span class="s2">"/home/pi/.model/face/detection/face-detection-retail-0004.xml"</span><span class="p">),</span> <span class="s2">"CPU"</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">age_gender_compiled</span> <span class="o">=</span> <span class="n">ie</span><span class="o">.</span><span class="n">compile_model</span><span class="p">(</span><span class="n">ie</span><span class="o">.</span><span class="n">read_model</span><span class="p">(</span><span class="s2">"/home/pi/.model/face/age-gender/age-gender-recognition-retail-0013.xml"</span><span class="p">),</span> <span class="s2">"CPU"</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">emotion_compiled</span> <span class="o">=</span> <span class="n">ie</span><span class="o">.</span><span class="n">compile_model</span><span class="p">(</span><span class="n">ie</span><span class="o">.</span><span class="n">read_model</span><span class="p">(</span><span class="s2">"/home/pi/.model/face/emotion/emotions-recognition-retail-0003.xml"</span><span class="p">),</span> <span class="s2">"CPU"</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">face_detection_compiled</span> <span class="o">=</span> <span class="n">ie</span><span class="o">.</span><span class="n">compile_model</span><span class="p">(</span><span class="n">ie</span><span class="o">.</span><span class="n">read_model</span><span class="p">(</span><span class="n">DETECT_XML</span><span class="p">),</span> <span class="s2">"CPU"</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">age_gender_compiled</span> <span class="o">=</span> <span class="n">ie</span><span class="o">.</span><span class="n">compile_model</span><span class="p">(</span><span class="n">ie</span><span class="o">.</span><span class="n">read_model</span><span class="p">(</span><span class="n">AGE_GENDER_XML</span><span class="p">),</span> <span class="s2">"CPU"</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">emotion_compiled</span> <span class="o">=</span> <span class="n">ie</span><span class="o">.</span><span class="n">compile_model</span><span class="p">(</span><span class="n">ie</span><span class="o">.</span><span class="n">read_model</span><span class="p">(</span><span class="n">EMOTION_XML</span><span class="p">),</span> <span class="s2">"CPU"</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">reid_compiled</span> <span class="o">=</span> <span class="n">ie</span><span class="o">.</span><span class="n">compile_model</span><span class="p">(</span><span class="n">ie</span><span class="o">.</span><span class="n">read_model</span><span class="p">(</span><span class="n">REID_XML</span><span class="p">),</span> <span class="s2">"CPU"</span><span class="p">)</span>
 
-    <span class="c1"># Get input and output names for models</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">face_output_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">face_detection_compiled</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any_name</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">gender_output_name</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">age_gender_compiled</span><span class="o">.</span><span class="n">outputs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">any_name</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">age_output_name</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">age_gender_compiled</span><span class="o">.</span><span class="n">outputs</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">any_name</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">emotion_output_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">emotion_compiled</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">reid_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reid_compiled</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">emotions</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'neutral'</span><span class="p">,</span> <span class="s1">'happy'</span><span class="p">,</span> <span class="s1">'sad'</span><span class="p">,</span> <span class="s1">'surprise'</span><span class="p">,</span> <span class="s1">'anger'</span><span class="p">]</span>
 
-    <span class="c1"># mediapipe model</span>
+    <span class="c1"># MediaPipe 얼굴 점(478개) — 얼굴 점·정렬·방향·거리에 같이 쓴다</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">mesh_detector</span> <span class="o">=</span> <span class="n">mp_vision</span><span class="o">.</span><span class="n">FaceLandmarker</span><span class="o">.</span><span class="n">create_from_options</span><span class="p">(</span>
       <span class="n">mp_vision</span><span class="o">.</span><span class="n">FaceLandmarkerOptions</span><span class="p">(</span>
-        <span class="n">base_options</span><span class="o">=</span><span class="n">mp_python</span><span class="o">.</span><span class="n">BaseOptions</span><span class="p">(</span><span class="n">model_asset_path</span><span class="o">=</span><span class="s1">'/home/pi/.model/face/landmark/face_landmarker.task'</span><span class="p">),</span>
+        <span class="n">base_options</span><span class="o">=</span><span class="n">mp_python</span><span class="o">.</span><span class="n">BaseOptions</span><span class="p">(</span><span class="n">model_asset_path</span><span class="o">=</span><span class="n">LANDMARK_TASK</span><span class="p">),</span>
         <span class="n">running_mode</span><span class="o">=</span><span class="n">mp_vision</span><span class="o">.</span><span class="n">RunningMode</span><span class="o">.</span><span class="n">IMAGE</span><span class="p">,</span>
         <span class="n">num_faces</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
         <span class="n">min_face_detection_confidence</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
@@ -471,10 +542,64 @@
         <span class="n">output_face_blendshapes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">mask_session</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">IRIS_REAL_DIAMETER_MM</span> <span class="o">=</span> <span class="mf">11.7</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">FOCAL_LENGTH_MM</span> <span class="o">=</span> <span class="mf">3.6</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">PIXEL_PITCH_MM</span> <span class="o">=</span> <span class="mf">0.0014</span> <span class="o">*</span> <span class="mi">2592</span> <span class="o">/</span> <span class="mi">640</span>
 
+  <span class="nd">@staticmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">_check</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">item</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"item" must be [x1,y1,x2,y2]'</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    (내부 함수) 얼굴 상자 둘레를 25% 넓혀 잘라 MediaPipe 얼굴 점(478개)을 찾는다.</span>
+<span class="sd">    상자 가운데에 가장 가까운 얼굴의 점을 원래 그림 좌표(float, Nx2)로 돌려준다. 못 찾으면 None</span>
+<span class="sd">    """</span>
+    <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">item</span><span class="p">]</span>
+    <span class="n">mx</span><span class="p">,</span> <span class="n">my</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.25</span><span class="p">),</span> <span class="nb">int</span><span class="p">((</span><span class="n">y2</span> <span class="o">-</span> <span class="n">y1</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.25</span><span class="p">)</span>
+    <span class="n">cx1</span><span class="p">,</span> <span class="n">cy1</span><span class="p">,</span> <span class="n">cx2</span><span class="p">,</span> <span class="n">cy2</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x1</span> <span class="o">-</span> <span class="n">mx</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">y1</span> <span class="o">-</span> <span class="n">my</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">x2</span> <span class="o">+</span> <span class="n">mx</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">y2</span> <span class="o">+</span> <span class="n">my</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cx2</span> <span class="o">-</span> <span class="n">cx1</span> <span class="o">&lt;</span> <span class="mi">8</span> <span class="ow">or</span> <span class="n">cy2</span> <span class="o">-</span> <span class="n">cy1</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">crop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">[</span><span class="n">cy1</span><span class="p">:</span><span class="n">cy2</span><span class="p">,</span> <span class="n">cx1</span><span class="p">:</span><span class="n">cx2</span><span class="p">],</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">))</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_detector</span><span class="o">.</span><span class="n">detect</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">image_format</span><span class="o">=</span><span class="n">mp</span><span class="o">.</span><span class="n">ImageFormat</span><span class="o">.</span><span class="n">SRGB</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">crop</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">face_landmarks</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">cw</span><span class="p">,</span> <span class="n">ch</span> <span class="o">=</span> <span class="n">cx2</span> <span class="o">-</span> <span class="n">cx1</span><span class="p">,</span> <span class="n">cy2</span> <span class="o">-</span> <span class="n">cy1</span>
+    <span class="n">best</span><span class="p">,</span> <span class="n">best_d</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">lms</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">face_landmarks</span><span class="p">:</span>
+      <span class="n">pts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">lm</span><span class="o">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">cw</span> <span class="o">+</span> <span class="n">cx1</span><span class="p">,</span> <span class="n">lm</span><span class="o">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">ch</span> <span class="o">+</span> <span class="n">cy1</span><span class="p">)</span> <span class="k">for</span> <span class="n">lm</span> <span class="ow">in</span> <span class="n">lms</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+      <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pts</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="p">((</span><span class="n">x1</span> <span class="o">+</span> <span class="n">x2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">y1</span> <span class="o">+</span> <span class="n">y2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+      <span class="k">if</span> <span class="n">best_d</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">d</span> <span class="o">&lt;</span> <span class="n">best_d</span><span class="p">:</span>
+        <span class="n">best</span><span class="p">,</span> <span class="n">best_d</span> <span class="o">=</span> <span class="n">pts</span><span class="p">,</span> <span class="n">d</span>
+    <span class="k">return</span> <span class="n">best</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_embed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    (내부 함수) 얼굴 → 숫자 256개(L2 정규화). MediaPipe 점 5개로 정렬한 128x128 을 retail-0095 에 넣는다.</span>
+<span class="sd">    점을 못 찾으면 상자만 잘라 넣는다(정렬 없이 — 결과가 덜 정확하다)</span>
+<span class="sd">    """</span>
+    <span class="n">pts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_points</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">src</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="n">pts</span><span class="p">[[</span><span class="mi">33</span><span class="p">,</span> <span class="mi">133</span><span class="p">]]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>     <span class="c1"># 그림 왼쪽 눈 (가운데 = 두 눈꼬리 평균)</span>
+        <span class="n">pts</span><span class="p">[[</span><span class="mi">362</span><span class="p">,</span> <span class="mi">263</span><span class="p">]]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>    <span class="c1"># 그림 오른쪽 눈</span>
+        <span class="n">pts</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>                     <span class="c1"># 코끝</span>
+        <span class="n">pts</span><span class="p">[</span><span class="mi">61</span><span class="p">],</span>                    <span class="c1"># 입 왼쪽 끝</span>
+        <span class="n">pts</span><span class="p">[</span><span class="mi">291</span><span class="p">],</span>                   <span class="c1"># 입 오른쪽 끝</span>
+      <span class="p">])</span>
+      <span class="n">m</span> <span class="o">=</span> <span class="n">_similarity</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">REID_REF5</span> <span class="o">*</span> <span class="n">REID_SIZE</span><span class="p">)</span>
+      <span class="n">face</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">warpAffine</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="p">(</span><span class="n">REID_SIZE</span><span class="p">,</span> <span class="n">REID_SIZE</span><span class="p">),</span> <span class="n">flags</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_LINEAR</span><span class="p">,</span> <span class="n">borderMode</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">BORDER_REPLICATE</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">item</span><span class="p">]</span>
+      <span class="n">face</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">img</span><span class="p">[</span><span class="n">y1</span><span class="p">:</span><span class="n">y2</span><span class="p">,</span> <span class="n">x1</span><span class="p">:</span><span class="n">x2</span><span class="p">],</span> <span class="p">(</span><span class="n">REID_SIZE</span><span class="p">,</span> <span class="n">REID_SIZE</span><span class="p">))</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">face</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reid_compiled</span><span class="p">([</span><span class="n">x</span><span class="p">])[</span><span class="bp">self</span><span class="o">.</span><span class="n">reid_output</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">vec</span> <span class="o">/</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vec</span><span class="p">))</span> <span class="ow">or</span> <span class="mf">1.0</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Face.detect_face">
 <a class="viewcode-back" href="../../libraries/vision_face.html#openpibo.vision_face.Face.detect_face">[docs]</a>
@@ -489,18 +614,16 @@
 
 <span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
 
-<span class="sd">    :returns: 인식된 얼굴들의 (x, y, w, h) 배열 입니다.</span>
+<span class="sd">    :returns: 인식된 얼굴들의 (x1, y1, x2, y2) 배열 입니다.</span>
 
 <span class="sd">      list 타입으로, 이미지 하나에 얼굴이 여러 개 인식된 경우 인식된 얼굴의 좌표가 모두 입력됩니다.</span>
 
 <span class="sd">      example::</span>
 
-<span class="sd">        [(10, 10, 40, 50), (120, 30, 160, 70), (130, 140, 200, 260)]</span>
+<span class="sd">        [[10, 10, 40, 50], [120, 30, 160, 70], [130, 140, 200, 260]]</span>
 <span class="sd">    """</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span> 
-
+    <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
     <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
     <span class="n">input_frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">300</span><span class="p">))</span>
     <span class="n">input_frame</span> <span class="o">=</span> <span class="n">input_frame</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span>
@@ -523,8 +646,6 @@
         <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">items</span></div>
 
-    <span class="c1">#return [(d.left(), d.top(), d.right()-d.left(), d.bottom()-d.top()) for d in self.face_detector(img)]</span>
-    <span class="c1">#return self.face_detector.detectMultiScale(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), 1.1, 5) # [(x,y,w,h), ...]</span>
 
 <div class="viewcode-block" id="Face.detect_face_vis">
 <a class="viewcode-back" href="../../libraries/vision_face.html#openpibo.vision_face.Face.detect_face_vis">[docs]</a>
@@ -536,9 +657,7 @@
 <span class="sd">    :param array item: 얼굴 좌표 (x1,y1,x2,y2) 리스트</span>
 <span class="sd">    """</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
-
+    <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
       <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">item</span>
       <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">),</span> <span class="p">(</span><span class="n">x2</span><span class="p">,</span><span class="n">y2</span><span class="p">),</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">50</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span></div>
@@ -548,56 +667,47 @@
 <a class="viewcode-back" href="../../libraries/vision_face.html#openpibo.vision_face.Face.landmark_face">[docs]</a>
   <span class="k">def</span><span class="w"> </span><span class="nf">landmark_face</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    얼굴의 랜드마크를 탐색합니다.</span>
+<span class="sd">    얼굴의 랜드마크(68점)를 탐색합니다. 점 번호는 예전(dlib 68점)과 같습니다.</span>
 
 <span class="sd">    example::</span>
 
 <span class="sd">      img = camera.read()</span>
-<span class="sd">      face.landmark_face(img)</span>
+<span class="sd">      items = face.detect_face(img)</span>
+<span class="sd">      face.landmark_face(img, items[0])</span>
 
 <span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
 <span class="sd">    :param array item: 얼굴 좌표 (x1,y1,x2,y2)</span>
-<span class="sd">    :returns: 좌표 리스트</span>
+<span class="sd">    :returns: 좌표 리스트 (68x2)</span>
 <span class="sd">    """</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"item" must be [x1,y1,x2,y2]'</span><span class="p">)</span>
-
-    <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">item</span>
-    <span class="n">face_img</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="n">y1</span><span class="p">:</span><span class="n">y2</span><span class="p">,</span> <span class="n">x1</span><span class="p">:</span><span class="n">x2</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">rect</span> <span class="o">=</span> <span class="n">dlib</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x1</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y1</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">x2</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y2</span><span class="p">))</span>
-    <span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
-    <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predictor</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="n">rect</span><span class="p">)</span>
-    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">shape</span><span class="o">.</span><span class="n">num_parts</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"int"</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">shape</span><span class="o">.</span><span class="n">num_parts</span><span class="p">):</span>
-      <span class="n">coords</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">part</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">shape</span><span class="o">.</span><span class="n">part</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">coords</span></div>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+    <span class="n">pts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_points</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>   <span class="c1"># 예전(dlib)처럼 늘 68점 — 점을 못 찾으면 상자에 평균 얼굴 점을 맞춰 돌려준다</span>
+      <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">item</span><span class="p">]</span>
+      <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">MEAN68</span> <span class="o">*</span> <span class="p">(</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y2</span> <span class="o">-</span> <span class="n">y1</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"int"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">pts</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">MP_TO_DLIB68</span><span class="p">)])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"int"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Face.landmark_face_vis">
 <a class="viewcode-back" href="../../libraries/vision_face.html#openpibo.vision_face.Face.landmark_face_vis">[docs]</a>
   <span class="k">def</span><span class="w"> </span><span class="nf">landmark_face_vis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">coords</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    얼굴의 랜드마크를 탐색합니다.</span>
+<span class="sd">    얼굴의 랜드마크를 표시합니다.</span>
 
 <span class="sd">    example::</span>
 
 <span class="sd">      img = camera.read()</span>
-<span class="sd">      face.landmark_face(img)</span>
+<span class="sd">      items = face.detect_face(img)</span>
+<span class="sd">      coords = face.landmark_face(img, items[0])</span>
+<span class="sd">      face.landmark_face_vis(img, coords)</span>
 
 <span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
-<span class="sd">    :param array item: 얼굴 좌표 (x1,y1,x2,y2)</span>
-<span class="sd">    :returns: 좌표 리스트</span>
+<span class="sd">    :param array coords: landmark_face 가 돌려준 좌표 리스트</span>
 <span class="sd">    """</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
-
+    <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">coord</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coords</span><span class="p">):</span>
-      <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">coord</span>
+      <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">coord</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
       <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
       <span class="n">putTextPIL</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">-</span><span class="mi">15</span><span class="p">),</span> <span class="mi">15</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">))</span></div>
 
@@ -616,16 +726,11 @@
 <span class="sd">      face.analyze_face(img, item)</span>
 
 <span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
-<span class="sd">    :param numpy.ndarray item: 얼굴의 좌표 (x, y, w, h)</span>
+<span class="sd">    :param numpy.ndarray item: 얼굴의 좌표 (x1, y1, x2, y2)</span>
 <span class="sd">    :returns: {age: 0~100, gender: Male 또는 Female, emotions: ``neutral``, ``happy``, ``sad``, ``surprise``, ``anger``, box:좌표}</span>
 <span class="sd">    """</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"item" must be [x1,y1,x2,y2]'</span><span class="p">)</span>
-
+    <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
     <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">item</span>
     <span class="n">face_img</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="n">y1</span><span class="p">:</span><span class="n">y2</span><span class="p">,</span> <span class="n">x1</span><span class="p">:</span><span class="n">x2</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
@@ -643,31 +748,68 @@
     <span class="n">face_resized_emotion</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">face_img</span><span class="p">,</span> <span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">))</span>  <span class="c1"># 64x64 크기로 조정</span>
     <span class="n">face_input_emotion</span> <span class="o">=</span> <span class="n">face_resized_emotion</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span>
     <span class="n">face_input_emotion</span> <span class="o">=</span> <span class="n">face_input_emotion</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-    
+
     <span class="c1"># Emotion prediction</span>
     <span class="n">emotion_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">emotion_compiled</span><span class="p">([</span><span class="n">face_input_emotion</span><span class="p">])[</span><span class="bp">self</span><span class="o">.</span><span class="n">emotion_output_name</span><span class="p">]</span>
     <span class="n">emotion</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">emotions</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">emotion_result</span><span class="p">)]</span>
     <span class="k">return</span> <span class="p">{</span><span class="s2">"age"</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">age</span><span class="p">),</span> <span class="s2">"gender"</span><span class="p">:</span><span class="n">gender</span><span class="p">,</span> <span class="s2">"emotion"</span><span class="p">:</span><span class="n">emotion</span><span class="p">,</span> <span class="s2">"box"</span><span class="p">:</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">)}</span></div>
 
 
-
 <div class="viewcode-block" id="Face.analyze_face_vis">
 <a class="viewcode-back" href="../../libraries/vision_face.html#openpibo.vision_face.Face.analyze_face_vis">[docs]</a>
   <span class="k">def</span><span class="w"> </span><span class="nf">analyze_face_vis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    얼굴의 나이, 성별, 감정을 추정합니다.</span>
+<span class="sd">    얼굴의 나이, 성별, 감정을 표시합니다.</span>
 
 <span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
 <span class="sd">    :param numpy.ndarray item: 얼굴 분석 결과</span>
 <span class="sd">    """</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
-
+    <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
     <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s1">'box'</span><span class="p">]</span>
     <span class="n">age</span><span class="p">,</span> <span class="n">gender</span><span class="p">,</span> <span class="n">emotion</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s1">'age'</span><span class="p">],</span> <span class="n">item</span><span class="p">[</span><span class="s1">'gender'</span><span class="p">],</span> <span class="n">item</span><span class="p">[</span><span class="s1">'emotion'</span><span class="p">]</span>
     <span class="n">putTextPIL</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">age</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">gender</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">emotion</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="o">-</span><span class="mi">30</span><span class="p">),</span> <span class="mi">30</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">))</span></div>
 
+
+<div class="viewcode-block" id="Face.mask_face">
+<a class="viewcode-back" href="../../libraries/vision_face.html#openpibo.vision_face.Face.mask_face">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">mask_face</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    마스크를 썼는지 판별합니다. edge-lab(PC)과 같은 모델·같은 계산입니다.</span>
+
+<span class="sd">    example::</span>
+
+<span class="sd">      img = camera.read()</span>
+<span class="sd">      items = face.detect_face(img)</span>
+<span class="sd">      face.mask_face(img, items[0])</span>
+
+<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
+<span class="sd">    :param numpy.ndarray item: 얼굴의 좌표 (x1, y1, x2, y2)</span>
+<span class="sd">    :returns: ``{"mask": True/False, "score": 0~100 (고른 쪽 확률 %), "box": 좌표}``</span>
+<span class="sd">    """</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_session</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">MASK_ONNX</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'마스크 모델 파일이 없어요 / mask model file not found: </span><span class="si">{</span><span class="n">MASK_ONNX</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+      <span class="kn">from</span><span class="w"> </span><span class="nn">.modules.teachlab</span><span class="w"> </span><span class="kn">import</span> <span class="n">onnx_session</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">mask_session</span> <span class="o">=</span> <span class="n">onnx_session</span><span class="p">(</span><span class="n">MASK_ONNX</span><span class="p">)</span>
+      <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_session</span><span class="o">.</span><span class="n">get_modelmeta</span><span class="p">()</span><span class="o">.</span><span class="n">custom_metadata_map</span> <span class="ow">or</span> <span class="p">{}</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">mask_classes</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'edge-lab.classes'</span><span class="p">,</span> <span class="s1">'["with_mask", "without_mask"]'</span><span class="p">))]</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.modules.teachlab.preprocess</span><span class="w"> </span><span class="kn">import</span> <span class="n">crop_to</span>
+
+    <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">item</span><span class="p">]</span>
+    <span class="n">mx</span><span class="p">,</span> <span class="n">my</span> <span class="o">=</span> <span class="p">(</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span><span class="p">)</span> <span class="o">*</span> <span class="n">MASK_MARGIN</span><span class="p">,</span> <span class="p">(</span><span class="n">y2</span> <span class="o">-</span> <span class="n">y1</span><span class="p">)</span> <span class="o">*</span> <span class="n">MASK_MARGIN</span>
+    <span class="n">cx1</span><span class="p">,</span> <span class="n">cy1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x1</span> <span class="o">-</span> <span class="n">mx</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">y1</span> <span class="o">-</span> <span class="n">my</span><span class="p">))</span>
+    <span class="n">cx2</span><span class="p">,</span> <span class="n">cy2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">x2</span> <span class="o">+</span> <span class="n">mx</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">y2</span> <span class="o">+</span> <span class="n">my</span><span class="p">))</span>
+    <span class="n">rgb</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">[</span><span class="n">cy1</span><span class="p">:</span><span class="n">cy2</span><span class="p">,</span> <span class="n">cx1</span><span class="p">:</span><span class="n">cx2</span><span class="p">],</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">crop_to</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="mi">224</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>      <span class="c1"># Teachable Machine cropTo, 0~255 그대로(/255 는 모델 안에서)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_session</span>
+    <span class="n">probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">{</span><span class="n">s</span><span class="o">.</span><span class="n">get_inputs</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">x</span><span class="p">})[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">best</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">probs</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"mask"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_classes</span><span class="p">[</span><span class="n">best</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'with_mask'</span><span class="p">,</span> <span class="s1">'mask'</span><span class="p">),</span>
+            <span class="s2">"score"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">probs</span><span class="p">[</span><span class="n">best</span><span class="p">])</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)),</span> <span class="s2">"box"</span><span class="p">:</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">)}</span></div>
 
 
 <div class="viewcode-block" id="Face.init_db">
@@ -706,23 +848,10 @@
 <span class="sd">    :param str name: 디텍팅한 얼굴에 붙일 이름</span>
 <span class="sd">    """</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span> 
-
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"item" must be [x,y,w,h]'</span><span class="p">)</span>
-
-    <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">item</span>
-    <span class="n">face_img</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="n">y1</span><span class="p">:</span><span class="n">y2</span><span class="p">,</span> <span class="n">x1</span><span class="p">:</span><span class="n">x2</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">rect</span> <span class="o">=</span> <span class="n">dlib</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x1</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y1</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">x2</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y2</span><span class="p">))</span>
-    <span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
-    <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predictor</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="n">rect</span><span class="p">)</span>
-    <span class="n">face_encoding</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">face_encoder</span><span class="o">.</span><span class="n">compute_face_descriptor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-
+    <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">facedb</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">facedb</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">face_encoding</span><span class="p">)</span></div>
+    <span class="bp">self</span><span class="o">.</span><span class="n">facedb</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_embed</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">item</span><span class="p">))</span></div>
 
-    <span class="c1">#cv2.imwrite(self.data_path+"/{}.jpg".format(name), img[y+3:y+h-3, x+3:x+w-3]);</span>
 
 <div class="viewcode-block" id="Face.delete_face">
 <a class="viewcode-back" href="../../libraries/vision_face.html#openpibo.vision_face.Face.delete_face">[docs]</a>
@@ -743,7 +872,6 @@
     <span class="c1"># 같은 이름으로 여러 번 등록했으면 전부 지운다</span>
     <span class="k">while</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">facedb</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
       <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">facedb</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-      <span class="c1">#os.remove(self.data_path +"/" + name + ".jpg")</span>
       <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">facedb</span><span class="p">:</span>
         <span class="k">del</span> <span class="n">item</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
 
@@ -764,38 +892,25 @@
 <span class="sd">      face.recognize(img, item)</span>
 
 <span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
-<span class="sd">    :param numpy.ndarray item: 얼굴의 좌표 (x, y, w, h)</span>
+<span class="sd">    :param numpy.ndarray item: 얼굴의 좌표 (x1, y1, x2, y2)</span>
 
-<span class="sd">    :returns: ``{"name": 이름, "score": 오차도}``</span>
+<span class="sd">    :returns: ``{"name": 이름, "score": 오차도, "max": 가장 가까운 이름}``</span>
 
 <span class="sd">      얼굴이 비슷할수록 오차도가 낮게 측정됩니다.</span>
 
-<span class="sd">      오차도가 0.4 이하일 때 동일인으로 판정합니다.</span>
+<span class="sd">      오차도가 ``face.threshold`` (기본 0.4) 보다 낮을 때 동일인으로 판정합니다.</span>
 <span class="sd">    """</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span> 
-
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"item" must be [x,y,w,h]'</span><span class="p">)</span>
-
+    <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">facedb</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
       <span class="k">return</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span><span class="s2">"Guest"</span><span class="p">,</span> <span class="s2">"score"</span><span class="p">:</span><span class="mi">0</span><span class="p">}</span>
 
-    <span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
-    <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">"name"</span><span class="p">:</span><span class="s2">"Guest"</span><span class="p">,</span> <span class="s2">"score"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="s2">"max"</span><span class="p">:</span><span class="s2">""</span><span class="p">}</span>
-    <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">item</span>
-    <span class="n">rect</span> <span class="o">=</span> <span class="n">dlib</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x1</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y1</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">x2</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y2</span><span class="p">))</span>
-    <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predictor</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="n">rect</span><span class="p">)</span>
-    <span class="n">face_encoding</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">face_encoder</span><span class="o">.</span><span class="n">compute_face_descriptor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-    <span class="n">matches</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">matches</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">facedb</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">face_encoding</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-    <span class="n">data</span><span class="p">[</span><span class="s2">"score"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">matches</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="nb">min</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">:</span>
-      <span class="n">data</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">facedb</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">matches</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">matches</span><span class="p">))]</span>
-    
-    <span class="n">data</span><span class="p">[</span><span class="s2">"max"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">facedb</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">matches</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">matches</span><span class="p">))]</span>
+    <span class="n">vec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_embed</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">facedb</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">@</span> <span class="n">vec</span><span class="p">)</span> <span class="o">*</span> <span class="n">SCORE_SCALE</span>   <span class="c1"># 코사인 거리를 예전 오차도 크기로</span>
+    <span class="n">best</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">dist</span><span class="p">))</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span><span class="s2">"Guest"</span><span class="p">,</span> <span class="s2">"score"</span><span class="p">:</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">dist</span><span class="p">[</span><span class="n">best</span><span class="p">]),</span> <span class="mi">2</span><span class="p">),</span> <span class="s2">"max"</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">facedb</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">best</span><span class="p">]}</span>
+    <span class="k">if</span> <span class="n">dist</span><span class="p">[</span><span class="n">best</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">:</span>
+      <span class="n">data</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">facedb</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">best</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">data</span></div>
 
 
@@ -815,13 +930,7 @@
 
 <span class="sd">        [</span>
 <span class="sd">          ['honggildong'],</span>
-<span class="sd">          [array([-0.06423206,  0.12474005,  0.0511112 , -0.05676335, -0.07211345,</span>
-<span class="sd">                  -0.03123881, -0.04119622, -0.12800875,  0.11717855, -0.11079554,</span>
-<span class="sd">                   0.22952782, -0.02007426, -0.17457265, -0.13562854, -0.04972655,</span>
-<span class="sd">                   0.15810637, -0.12785575, -0.16479518, -0.07002968, -0.00208595,</span>
-<span class="sd">                   0.169218  ,  0.03144928, -0.01074579,  0.04103286, -0.09245337,</span>
-<span class="sd">                  ...</span>
-<span class="sd">                  -0.00706697,  0.06025593, -0.0049719 ])]</span>
+<span class="sd">          [array([ 0.0412, -0.0731,  0.1093, ..., -0.0158], dtype=float32)]   # 숫자 256개</span>
 <span class="sd">        ]</span>
 <span class="sd">    """</span>
 
@@ -832,7 +941,7 @@
 <a class="viewcode-back" href="../../libraries/vision_face.html#openpibo.vision_face.Face.save_db">[docs]</a>
   <span class="k">def</span><span class="w"> </span><span class="nf">save_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    얼굴 데이터베이스를 파일로 저장합니다.</span>
+<span class="sd">    얼굴 데이터베이스를 파일로 저장합니다(JSON).</span>
 
 <span class="sd">    example::</span>
 
@@ -841,8 +950,13 @@
 <span class="sd">    :param str filename: 저장할 얼굴 데이터베이스 파일의 경로입니다.</span>
 <span class="sd">    """</span>
 
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">"w+b"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-      <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">facedb</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="s2">"format"</span><span class="p">:</span> <span class="n">DB_FORMAT</span><span class="p">,</span> <span class="s2">"model"</span><span class="p">:</span> <span class="n">DB_MODEL</span><span class="p">,</span>
+      <span class="s2">"names"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">facedb</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+      <span class="s2">"vectors"</span><span class="p">:</span> <span class="p">[[</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vec</span><span class="p">]</span> <span class="k">for</span> <span class="n">vec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">facedb</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
+    <span class="p">}</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+      <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Face.load_db">
@@ -850,6 +964,8 @@
   <span class="k">def</span><span class="w"> </span><span class="nf">load_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    얼굴 데이터베이스 파일을 불러옵니다.</span>
+
+<span class="sd">    예전(dlib) 방식으로 저장한 파일은 열지 않습니다 — 얼굴을 다시 등록해서 저장해 주세요.</span>
 
 <span class="sd">    example::</span>
 
@@ -861,8 +977,19 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
       <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">" does not exist'</span><span class="p">)</span>
 
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span> <span class="p">:</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">facedb</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div>
+    <span class="n">old</span> <span class="o">=</span> <span class="s1">'얼굴 정보 파일이 예전 방식이에요. 얼굴을 다시 등록해 주세요 / old face file: please register faces again'</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+      <span class="n">raw</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">))</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">UnicodeDecodeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">old</span><span class="p">)</span>    <span class="c1"># 예전 pickle 파일 — 열지 않는다(남이 만든 pickle 은 코드를 실행할 수 있다)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"format"</span><span class="p">)</span> <span class="o">!=</span> <span class="n">DB_FORMAT</span> <span class="ow">or</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"model"</span><span class="p">)</span> <span class="o">!=</span> <span class="n">DB_MODEL</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">old</span><span class="p">)</span>
+    <span class="n">names</span><span class="p">,</span> <span class="n">vectors</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"names"</span><span class="p">,</span> <span class="p">[]),</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"vectors"</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vectors</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">" is broken'</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">facedb</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">names</span><span class="p">),</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vectors</span><span class="p">]]</span></div>
 
 
   <span class="c1"># face mesh</span>
@@ -877,7 +1004,7 @@
     <span class="n">nose_tip</span> <span class="o">=</span> <span class="n">keypoints</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">left_nose</span> <span class="o">=</span> <span class="n">keypoints</span><span class="p">[</span><span class="mi">279</span><span class="p">]</span>
     <span class="n">right_nose</span> <span class="o">=</span> <span class="n">keypoints</span><span class="p">[</span><span class="mi">49</span><span class="p">]</span>
-      
+
     <span class="c1"># Calculate midpoint</span>
     <span class="n">midpoint</span> <span class="o">=</span> <span class="p">{</span>
       <span class="s2">"x"</span><span class="p">:</span> <span class="p">(</span><span class="n">left_nose</span><span class="p">[</span><span class="s2">"x"</span><span class="p">]</span> <span class="o">+</span> <span class="n">right_nose</span><span class="p">[</span><span class="s2">"x"</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
@@ -895,9 +1022,6 @@
     <span class="c1"># Calculate yaw and turn</span>
     <span class="n">yaw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_angle_between_lines</span><span class="p">(</span><span class="n">midpoint</span><span class="p">,</span> <span class="n">nose_tip</span><span class="p">,</span> <span class="n">perpendicular_up</span><span class="p">)</span>
     <span class="n">turn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_angle_between_lines</span><span class="p">(</span><span class="n">midpoint</span><span class="p">,</span> <span class="n">right_nose</span><span class="p">,</span> <span class="n">nose_tip</span><span class="p">)</span>
-
-    <span class="c1"># Debug yaw and turn</span>
-    <span class="c1"># print(f"[DEBUG] Yaw: {yaw:.2f}, Turn: {turn:.2f}")</span>
 
     <span class="c1"># Determine direction based on angles</span>
     <span class="n">direction</span> <span class="o">=</span> <span class="s2">""</span>
@@ -922,17 +1046,13 @@
 <a class="viewcode-back" href="../../libraries/vision_face.html#openpibo.vision_face.Face.get_angle_between_lines">[docs]</a>
   <span class="k">def</span><span class="w"> </span><span class="nf">get_angle_between_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">point1</span><span class="p">,</span> <span class="n">point2</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Calculate angle between two lines defined by three points."""</span>
-    <span class="c1"># Vector 1: start -&gt; point1</span>
     <span class="n">vector1</span> <span class="o">=</span> <span class="p">(</span><span class="n">point1</span><span class="p">[</span><span class="s2">"x"</span><span class="p">]</span> <span class="o">-</span> <span class="n">start</span><span class="p">[</span><span class="s2">"x"</span><span class="p">],</span> <span class="n">point1</span><span class="p">[</span><span class="s2">"y"</span><span class="p">]</span> <span class="o">-</span> <span class="n">start</span><span class="p">[</span><span class="s2">"y"</span><span class="p">],</span> <span class="n">point1</span><span class="p">[</span><span class="s2">"z"</span><span class="p">]</span> <span class="o">-</span> <span class="n">start</span><span class="p">[</span><span class="s2">"z"</span><span class="p">])</span>
-    <span class="c1"># Vector 2: start -&gt; point2</span>
     <span class="n">vector2</span> <span class="o">=</span> <span class="p">(</span><span class="n">point2</span><span class="p">[</span><span class="s2">"x"</span><span class="p">]</span> <span class="o">-</span> <span class="n">start</span><span class="p">[</span><span class="s2">"x"</span><span class="p">],</span> <span class="n">point2</span><span class="p">[</span><span class="s2">"y"</span><span class="p">]</span> <span class="o">-</span> <span class="n">start</span><span class="p">[</span><span class="s2">"y"</span><span class="p">],</span> <span class="n">point2</span><span class="p">[</span><span class="s2">"z"</span><span class="p">]</span> <span class="o">-</span> <span class="n">start</span><span class="p">[</span><span class="s2">"z"</span><span class="p">])</span>
 
-    <span class="c1"># Dot product and magnitude</span>
     <span class="n">dot_product</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">v1</span> <span class="o">*</span> <span class="n">v2</span> <span class="k">for</span> <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">vector1</span><span class="p">,</span> <span class="n">vector2</span><span class="p">))</span>
     <span class="n">magnitude1</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">v</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vector1</span><span class="p">))</span>
     <span class="n">magnitude2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">v</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vector2</span><span class="p">))</span>
 
-    <span class="c1"># Calculate angle in degrees</span>
     <span class="n">angle</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">dot_product</span> <span class="o">/</span> <span class="p">(</span><span class="n">magnitude1</span> <span class="o">*</span> <span class="n">magnitude2</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">)))</span>
     <span class="k">return</span> <span class="n">angle</span></div>
 
@@ -961,26 +1081,21 @@
 <div class="viewcode-block" id="Face.detect_mesh">
 <a class="viewcode-back" href="../../libraries/vision_face.html#openpibo.vision_face.Face.detect_mesh">[docs]</a>
   <span class="k">def</span><span class="w"> </span><span class="nf">detect_mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Detect mesh and return distance, direction, and image with landmarks."""</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    얼굴의 랜드마크를 인식하고, 거리, 방향을 추정합니다</span>
 
 <span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
 
-<span class="sd">    :returns: {얼굴의 거리, 방향, 랜드마크}의 리스트 (얼굴 2개까지 인식) </span>
-
+<span class="sd">    :returns: {얼굴의 거리, 방향, 랜드마크}의 리스트 (얼굴 2개까지 인식)</span>
 <span class="sd">    """</span>
-    <span class="c1"># Convert the image from BGR to RGB</span>
     <span class="n">rgb_image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">)</span>
     <span class="n">mp_image</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">image_format</span><span class="o">=</span><span class="n">mp</span><span class="o">.</span><span class="n">ImageFormat</span><span class="o">.</span><span class="n">SRGB</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">rgb_image</span><span class="p">)</span>
 
     <span class="n">mesh_data</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="c1"># Perform inference</span>
     <span class="n">mesh_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_detector</span><span class="o">.</span><span class="n">detect</span><span class="p">(</span><span class="n">mp_image</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">mesh_result</span> <span class="ow">and</span> <span class="n">mesh_result</span><span class="o">.</span><span class="n">face_landmarks</span><span class="p">:</span>
       <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span>
       <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">face_landmarks</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mesh_result</span><span class="o">.</span><span class="n">face_landmarks</span><span class="p">):</span>
-        <span class="c1"># Convert landmarks to a dictionary-like structure</span>
         <span class="n">keypoints</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">"x"</span><span class="p">:</span> <span class="n">lm</span><span class="o">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">w</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="n">lm</span><span class="o">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">h</span><span class="p">,</span> <span class="s2">"z"</span><span class="p">:</span> <span class="n">lm</span><span class="o">.</span><span class="n">z</span> <span class="o">*</span> <span class="n">w</span><span class="p">}</span> <span class="k">for</span> <span class="n">lm</span> <span class="ow">in</span> <span class="n">face_landmarks</span><span class="p">]</span>
 
         <span class="c1"># Calculate head orientation</span>

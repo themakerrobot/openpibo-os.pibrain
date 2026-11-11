@@ -345,8 +345,8 @@
 <span class="sd">:meth:`~openpibo.vision_detect.putTextPIL`</span>
 <span class="sd">:obj:`~openpibo.vision_detect.Detect`</span>
 <span class="sd">"""</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span><span class="o">,</span><span class="nn">dlib</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="nn">pickle</span><span class="o">,</span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyzbar</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyzbar</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.modules.ed_onnx</span><span class="w"> </span><span class="kn">import</span> <span class="n">EdOnnx</span>
@@ -354,9 +354,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.modules.pose.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">visualize_pose</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.modules.card.decode_card</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_card</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span><span class="p">,</span><span class="n">ImageDraw</span><span class="p">,</span><span class="n">ImageFont</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">openpibo_dlib_models</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">openpibo_models</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">openpibo_detect_models</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
 <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">'TF_CPP_MIN_LOG_LEVEL'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'3'</span>  <span class="c1"># TensorFlow C++ 로그 제거</span>
@@ -417,8 +415,6 @@
 <span class="sd">:meth:`~openpibo.vision_detect.Detect.detect_pose`</span>
 <span class="sd">:meth:`~openpibo.vision_detect.Detect.analyze_pose`</span>
 <span class="sd">:meth:`~openpibo.vision_detect.Detect.classify_image`</span>
-<span class="sd">:meth:`~openpibo.vision_detect.Detect.object_tracker_init`</span>
-<span class="sd">:meth:`~openpibo.vision_detect.Detect.track_object`</span>
 <span class="sd">:meth:`~openpibo.vision_detect.Detect.detect_marker`</span>
 <span class="sd">:meth:`~openpibo.vision_detect.Detect.detect_marker_vis`</span>
 
@@ -459,7 +455,7 @@
     <span class="c1"># 사물 인식 모델은 처음 detect_object 를 부를 때 올린다 (QR·마커만 쓰면 메모리를 안 쓴다)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">object_detector</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">object_model_path</span> <span class="o">=</span> <span class="n">object_model</span> <span class="ow">or</span> <span class="n">OBJECT_MODEL</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">pose_detector</span> <span class="o">=</span> <span class="n">Movenet</span><span class="p">(</span><span class="n">openpibo_detect_models</span><span class="o">.</span><span class="n">filepath</span><span class="p">(</span><span class="s2">"movenet_lightning.tflite"</span><span class="p">))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">pose_detector</span> <span class="o">=</span> <span class="n">Movenet</span><span class="p">()</span>   <span class="c1"># openpibo/modules/pose/movenet_lightning.onnx (onnxruntime, 261104)</span>
 
     <span class="c1"># marker</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">camera_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
@@ -470,7 +466,6 @@
     <span class="c1">#self.dictionary = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_50)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">dictionary</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">aruco</span><span class="o">.</span><span class="n">getPredefinedDictionary</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">aruco</span><span class="o">.</span><span class="n">DICT_4X4_50</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">aruco</span><span class="o">.</span><span class="n">DetectorParameters</span><span class="p">()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">tracker</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">hand_gesture_recognizer</span> <span class="o">=</span>  <span class="kc">None</span>
 
 <div class="viewcode-block" id="Detect.load_hand_gesture_model">
@@ -778,82 +773,6 @@
       <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"clap"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">res</span></div>
-
-
-<div class="viewcode-block" id="Detect.object_tracker_init">
-<a class="viewcode-back" href="../../libraries/vision_detect.html#openpibo.vision_detect.Detect.object_tracker_init">[문서]</a>
-  <span class="k">def</span><span class="w"> </span><span class="nf">object_tracker_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    이미지 안의 사물 트래커를 설정합니다.</span>
-
-<span class="sd">    example::</span>
-
-<span class="sd">      img = camera.read()</span>
-<span class="sd">      detect.object_tracker_init(img)</span>
-
-<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
-<span class="sd">    """</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">tracker</span> <span class="o">=</span> <span class="n">dlib</span><span class="o">.</span><span class="n">correlation_tracker</span><span class="p">()</span>
-    <span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">y2</span> <span class="o">=</span> <span class="n">p</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">tracker</span><span class="o">.</span><span class="n">start_track</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">),</span> <span class="n">dlib</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">y2</span><span class="p">))</span></div>
-
-
-<div class="viewcode-block" id="Detect.track_object">
-<a class="viewcode-back" href="../../libraries/vision_detect.html#openpibo.vision_detect.Detect.track_object">[문서]</a>
-  <span class="k">def</span><span class="w"> </span><span class="nf">track_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    이미지 안의 사물 트래커를 갱신합니다.</span>
-
-<span class="sd">    example::</span>
-
-<span class="sd">      img = camera.read()</span>
-<span class="sd">      detect.object_tracker_init(img, (10,10,100,100))</span>
-<span class="sd">      position = detect.track_object(img)</span>
-
-<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
-
-<span class="sd">    :returns: x1,y1,x2,y2 업데이트 된 사물 위치</span>
-<span class="sd">    """</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">tracker</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">))</span>
-    <span class="n">box</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tracker</span><span class="o">.</span><span class="n">get_position</span><span class="p">()</span>
-
-    <span class="n">x1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">box</span><span class="o">.</span><span class="n">left</span><span class="p">())</span>
-    <span class="n">y1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">box</span><span class="o">.</span><span class="n">top</span><span class="p">())</span>
-    <span class="n">x2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">box</span><span class="o">.</span><span class="n">right</span><span class="p">())</span>
-    <span class="n">y2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">box</span><span class="o">.</span><span class="n">bottom</span><span class="p">())</span>
-    
-    <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
-    <span class="n">x1</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">x1</span><span class="p">))</span>
-    <span class="n">y1</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">y1</span><span class="p">))</span>
-    <span class="n">x2</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">width</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">x2</span><span class="p">))</span>
-    <span class="n">y2</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">height</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">y2</span><span class="p">))</span>
-
-    <span class="k">return</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="Detect.track_object_vis">
-<a class="viewcode-back" href="../../libraries/vision_detect.html#openpibo.vision_detect.Detect.track_object_vis">[문서]</a>
-  <span class="k">def</span><span class="w"> </span><span class="nf">track_object_vis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    마커 결과를 표시합니다.</span>
-
-<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
-<span class="sd">    :param array items: 마커 결과</span>
-<span class="sd">    """</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'"img" must be image data from opencv'</span><span class="p">)</span>
-
-    <span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">y2</span> <span class="o">=</span> <span class="n">item</span>
-    <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">),</span> <span class="p">(</span><span class="n">x2</span><span class="p">,</span><span class="n">y2</span><span class="p">),</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Detect.detect_marker">

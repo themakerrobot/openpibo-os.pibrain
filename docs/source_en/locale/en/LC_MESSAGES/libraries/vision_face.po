@@ -25,8 +25,29 @@ msgstr ""
 msgid "얼굴을 찾고 나이·성별·감정을 분석하며, 얼굴을 학습해 누구인지 알아봅니다."
 msgstr "Finds faces, analyzes age, gender and emotion, and learns faces to recognize who they are."
 
-msgid "Class: :meth:`~openpibo.vision_detect.putTextPIL` :obj:`~openpibo.vision_detect.Face`"
+msgid "Class: :meth:`~openpibo.vision_face.putTextPIL` :obj:`~openpibo.vision_face.Face`"
 msgstr ""
+
+msgid "얼굴 찾기·나이·성별·감정·얼굴 구분은 OpenVINO(OMZ 모델), 얼굴 점·방향·거리는 MediaPipe 로 합니다. dlib 은 쓰지 않습니다(261104)."
+msgstr "Face detection, age, gender, emotion and face recognition use OpenVINO (OMZ models); face landmarks, direction and distance use MediaPipe. dlib is not used (261104)."
+
+msgid "마스크 판별 — edge-lab 과 같은 파일(임베더 + 분류기 한 개, 입력 RGB 0~255 1x224x224x3). 처음 부를 때 올린다"
+msgstr "Mask classifier — the same file as edge-lab (embedder + classifier in one, input RGB 0-255 1x224x224x3). Loaded on first use"
+
+msgid "얼굴 정보 파일(save_db) 안에 적는 이름. 다른 모델로 만든 파일은 열지 않는다"
+msgstr "Names written inside the face database file (save_db). Files made with another model are not opened"
+
+msgid "같은 사람으로 보는 최대 오차도. 예전(dlib)과 같은 값 0.4 — 학생 코드·블록이 쓰던 기준이 그대로 통하게 오차도 = 코사인 거리(0~2) x SCORE_SCALE 로 예전 크기에 맞춘다. 코사인 거리 0.6 이 오차도 0.4. 성인 공개 사진 LFW 1000쌍(261104)에서 코사인 0.6 은 다른 사람 오인 0%, 같은 사람 놓침 2.2% — 교실 아이 얼굴로 다시 볼 것"
+msgstr "Maximum error still counted as the same person. Same value as before (dlib), 0.4, so thresholds used by student code and blocks keep working. Error = cosine distance (0-2) x SCORE_SCALE, matched to the old scale: cosine distance 0.6 is error 0.4. On 1000 pairs of the public adult LFW photos (261104), cosine 0.6 gave 0% false matches and 2.2% missed matches — to be re-checked with children's faces in the classroom"
+
+msgid "dlib 68점 번호 → MediaPipe 얼굴 점 번호. landmark_face 가 예전(dlib) 번호 그대로 돌려주게 한다 (턱 0~16 · 눈썹 17~26 · 코 27~35 · 눈 36~47 · 입 48~67)"
+msgstr "dlib 68-point index → MediaPipe face landmark index, so that landmark_face keeps the old (dlib) numbering (jaw 0-16 · eyebrows 17-26 · nose 27-35 · eyes 36-47 · mouth 48-67)"
+
+msgid "face-reidentification-retail-0095 의 정렬 기준점(128x128 기준 비율, OMZ face_recognition_demo 와 같은 값). 그림 왼쪽 눈 · 오른쪽 눈 · 코끝 · 입 왼쪽 끝 · 입 오른쪽 끝"
+msgstr "Alignment reference points for face-reidentification-retail-0095 (ratios of 128x128, same values as the OMZ face_recognition_demo). Image-left eye · image-right eye · nose tip · left mouth corner · right mouth corner"
+
+msgid "얼굴 점을 못 찾았을 때 돌려주는 평균 68점(상자 기준 비율). 예전 dlib 처럼 늘 68점을 돌려주게 한다 (LFW 300장에서 MediaPipe 점을 상자 비율로 평균, 261104)"
+msgstr "Mean 68 points (ratios of the face box) returned when no face landmarks are found, so that 68 points are always returned as with dlib before (MediaPipe points averaged over 300 LFW photos, 261104)"
 
 msgid "이미지에 문자를 입력합니다. (한/영 가능 - pillow 이용)- COPY"
 msgstr "Writes text on an image. (Korean/English supported - uses pillow)- COPY"
@@ -49,7 +70,7 @@ msgstr "Font size of the text"
 msgid "글자 색깔 BGR 값 (b, g, r) or 16진수 값 '#rrggbb'"
 msgstr "Text color BGR value (b, g, r) or hex value '#rrggbb'"
 
-msgid "Functions: :meth:`~openpibo.vision_detect.Face.detect` :meth:`~openpibo.vision_detect.Face.get_ageGender` :meth:`~openpibo.vision_detect.Face.get_age` :meth:`~openpibo.vision_detect.Face.get_gender` :meth:`~openpibo.vision_detect.Face.init_db` :meth:`~openpibo.vision_detect.Face.train_face` :meth:`~openpibo.vision_detect.Face.delete_face` :meth:`~openpibo.vision_detect.Face.recognize` :meth:`~openpibo.vision_detect.Face.get_db` :meth:`~openpibo.vision_detect.Face.save_db` :meth:`~openpibo.vision_detect.Face.load_db`"
+msgid "Functions: :meth:`~openpibo.vision_face.Face.detect_face` :meth:`~openpibo.vision_face.Face.landmark_face` :meth:`~openpibo.vision_face.Face.analyze_face` :meth:`~openpibo.vision_face.Face.mask_face` :meth:`~openpibo.vision_face.Face.init_db` :meth:`~openpibo.vision_face.Face.train_face` :meth:`~openpibo.vision_face.Face.delete_face` :meth:`~openpibo.vision_face.Face.recognize` :meth:`~openpibo.vision_face.Face.get_db` :meth:`~openpibo.vision_face.Face.save_db` :meth:`~openpibo.vision_face.Face.load_db` :meth:`~openpibo.vision_face.Face.detect_mesh`"
 msgstr ""
 
 msgid "얼굴과 관련된 다양한 기능을 수행하는 클래스입니다. 다음 기능을 수행할 수 있습니다."
@@ -73,8 +94,8 @@ msgstr "Face database"
 msgid "인스턴스 변수 **facedb** 를 의미하며, 여기에서 얼굴 데이터를 등록하고 불러오고 삭제합니다."
 msgstr "Refers to the instance variable **facedb**, where face data is registered, loaded and deleted."
 
-msgid "얼굴 데이터베이스의 포맷은 이중 list ``[[], []]`` 이며, 첫 번째 list에는 얼굴의 이름이, 두 번째 list에는 학습된 얼굴 데이터가 인코딩되어 들어갑니다."
-msgstr "The face database format is a nested list ``[[], []]``; the first list holds the face names and the second list holds the encoded learned face data."
+msgid "얼굴 데이터베이스의 포맷은 이중 list ``[[], []]`` 이며, 첫 번째 list에는 얼굴의 이름이, 두 번째 list에는 학습된 얼굴 데이터(숫자 256개)가 들어갑니다."
+msgstr "The face database format is a nested list ``[[], []]``; the first list holds the face names and the second list holds the trained face data (256 numbers each)."
 
 msgid "또한 파일로 저장하여 인스턴스가 삭제된 후에도 얼굴 정보를 남겨둘 수 있습니다."
 msgstr "It can also be saved to a file so the face information is kept after the instance is deleted."
@@ -85,8 +106,8 @@ msgstr ""
 msgid "Returns"
 msgstr ""
 
-msgid "인식된 얼굴들의 (x, y, w, h) 배열 입니다.  list 타입으로, 이미지 하나에 얼굴이 여러 개 인식된 경우 인식된 얼굴의 좌표가 모두 입력됩니다.  example::    [(10, 10, 40, 50), (120, 30, 160, 70), (130, 140, 200, 260)]"
-msgstr "Array of (x, y, w, h) of the detected faces.  It is a list; if several faces are detected in one image, the coordinates of all detected faces are included.  example::    [(10, 10, 40, 50), (120, 30, 160, 70), (130, 140, 200, 260)]"
+msgid "인식된 얼굴들의 (x1, y1, x2, y2) 배열 입니다.  list 타입으로, 이미지 하나에 얼굴이 여러 개 인식된 경우 인식된 얼굴의 좌표가 모두 입력됩니다.  example::    [[10, 10, 40, 50], [120, 30, 160, 70], [130, 140, 200, 260]]"
+msgstr "Array of (x1, y1, x2, y2) of the detected faces.  It is a list; if several faces are detected in one image, the coordinates of all of them are included.  example::    [[10, 10, 40, 50], [120, 30, 160, 70], [130, 140, 200, 260]]"
 
 msgid "얼굴 box 표시합니다."
 msgstr "Draws face boxes."
@@ -94,27 +115,43 @@ msgstr "Draws face boxes."
 msgid "얼굴 좌표 (x1,y1,x2,y2) 리스트"
 msgstr "List of face coordinates (x1,y1,x2,y2)"
 
-msgid "얼굴의 랜드마크를 탐색합니다."
-msgstr "Detects facial landmarks."
+msgid "얼굴의 랜드마크(68점)를 탐색합니다. 점 번호는 예전(dlib 68점)과 같습니다."
+msgstr "Detects facial landmarks (68 points). The point numbering is the same as before (dlib 68 points)."
 
 msgid "얼굴 좌표 (x1,y1,x2,y2)"
 msgstr "Face coordinates (x1,y1,x2,y2)"
 
-msgid "좌표 리스트"
-msgstr "List of coordinates"
+msgid "좌표 리스트 (68x2)"
+msgstr "List of coordinates (68x2)"
+
+msgid "얼굴의 랜드마크를 표시합니다."
+msgstr "Draws facial landmarks."
+
+msgid "landmark_face 가 돌려준 좌표 리스트"
+msgstr "Coordinate list returned by landmark_face"
 
 msgid "얼굴의 나이, 성별, 감정을 추정합니다."
 msgstr "Estimates the age, gender and emotion of a face."
 
-msgid "얼굴의 좌표 (x, y, w, h)"
-msgstr "Face coordinates (x, y, w, h)"
+msgid "얼굴의 좌표 (x1, y1, x2, y2)"
+msgstr "Face coordinates (x1, y1, x2, y2)"
 
 #, python-brace-format
 msgid "{age: 0~100, gender: Male 또는 Female, emotions: ``neutral``, ``happy``, ``sad``, ``surprise``, ``anger``, box:좌표}"
 msgstr "{age: 0~100, gender: Male or Female, emotions: ``neutral``, ``happy``, ``sad``, ``surprise``, ``anger``, box:coordinates}"
 
+msgid "얼굴의 나이, 성별, 감정을 표시합니다."
+msgstr "Draws the age, gender and emotion of a face."
+
 msgid "얼굴 분석 결과"
 msgstr "Face analysis result"
+
+msgid "마스크를 썼는지 판별합니다. edge-lab(PC)과 같은 모델·같은 계산입니다."
+msgstr "Tells whether a mask is worn. Same model and same computation as edge-lab (PC)."
+
+#, python-brace-format
+msgid "``{\"mask\": True/False, \"score\": 0~100 (고른 쪽 확률 %), \"box\": 좌표}``"
+msgstr "``{\"mask\": True/False, \"score\": 0-100 (probability % of the chosen side), \"box\": coordinates}``"
 
 msgid "얼굴 데이터베이스를 초기화합니다."
 msgstr "Initializes the face database."
@@ -144,23 +181,26 @@ msgid "등록된 얼굴을 인식합니다."
 msgstr "Recognizes registered faces."
 
 #, python-brace-format
-msgid "``{\"name\": 이름, \"score\": 오차도}``  얼굴이 비슷할수록 오차도가 낮게 측정됩니다.  오차도가 0.4 이하일 때 동일인으로 판정합니다."
-msgstr "``{\"name\": name, \"score\": error}``  The more similar the faces, the lower the error.  Faces with an error of 0.4 or less are judged to be the same person."
+msgid "``{\"name\": 이름, \"score\": 오차도, \"max\": 가장 가까운 이름}``  얼굴이 비슷할수록 오차도가 낮게 측정됩니다.  오차도가 ``face.threshold`` (기본 0.4) 보다 낮을 때 동일인으로 판정합니다."
+msgstr "``{\"name\": name, \"score\": error, \"max\": closest name}``  The more similar the faces, the lower the error.  Judged to be the same person when the error is lower than ``face.threshold`` (default 0.4)."
 
 msgid "사용 중인 얼굴 데이터베이스를 확인합니다."
 msgstr "Checks the face database in use."
 
-msgid "**facedb** (``list(list, list)`` 타입)  example::    [     ['honggildong'],     [array([-0.06423206,  0.12474005,  0.0511112 , -0.05676335, -0.07211345,             -0.03123881, -0.04119622, -0.12800875,  0.11717855, -0.11079554,              0.22952782, -0.02007426, -0.17457265, -0.13562854, -0.04972655,              0.15810637, -0.12785575, -0.16479518, -0.07002968, -0.00208595,              0.169218  ,  0.03144928, -0.01074579,  0.04103286, -0.09245337,             ...             -0.00706697,  0.06025593, -0.0049719 ])]   ]"
-msgstr "**facedb** (type ``list(list, list)``)  example::    [     ['honggildong'],     [array([-0.06423206,  0.12474005,  0.0511112 , -0.05676335, -0.07211345,             -0.03123881, -0.04119622, -0.12800875,  0.11717855, -0.11079554,              0.22952782, -0.02007426, -0.17457265, -0.13562854, -0.04972655,              0.15810637, -0.12785575, -0.16479518, -0.07002968, -0.00208595,              0.169218  ,  0.03144928, -0.01074579,  0.04103286, -0.09245337,             ...             -0.00706697,  0.06025593, -0.0049719 ])]   ]"
+msgid "**facedb** (``list(list, list)`` 타입)  example::    [     ['honggildong'],     [array([ 0.0412, -0.0731,  0.1093, ..., -0.0158], dtype=float32)]   # 숫자 256개   ]"
+msgstr "**facedb** (``list(list, list)`` type)  example::    [     ['honggildong'],     [array([ 0.0412, -0.0731,  0.1093, ..., -0.0158], dtype=float32)]   # 256 numbers   ]"
 
-msgid "얼굴 데이터베이스를 파일로 저장합니다."
-msgstr "Saves the face database to a file."
+msgid "얼굴 데이터베이스를 파일로 저장합니다(JSON)."
+msgstr "Saves the face database to a file (JSON)."
 
 msgid "저장할 얼굴 데이터베이스 파일의 경로입니다."
 msgstr "Path of the face database file to save."
 
 msgid "얼굴 데이터베이스 파일을 불러옵니다."
 msgstr "Loads a face database file."
+
+msgid "예전(dlib) 방식으로 저장한 파일은 열지 않습니다 — 얼굴을 다시 등록해서 저장해 주세요."
+msgstr "Files saved the old (dlib) way are not opened — please register the faces again and save."
 
 msgid "불러 올 ``facedb`` 파일의 경로입니다."
 msgstr "Path of the ``facedb`` file to load."
@@ -174,6 +214,34 @@ msgstr ""
 msgid "Draw connections between landmarks based on Mediapipe's face mesh."
 msgstr ""
 
-msgid "Detect mesh and return distance, direction, and image with landmarks."
-msgstr ""
+msgid "얼굴의 랜드마크를 인식하고, 거리, 방향을 추정합니다"
+msgstr "Detects facial landmarks and estimates distance and direction"
+
+#, python-brace-format
+msgid "{얼굴의 거리, 방향, 랜드마크}의 리스트 (얼굴 2개까지 인식)"
+msgstr "List of {face distance, direction, landmarks} (up to 2 faces)"
+
+#~ msgid "같은 사람으로 보는 최대 오차도(코사인 거리, 0~2). 성인 공개 사진 LFW 1000쌍(261104)에서 0.6 은 다른 사람 오인 0%, 같은 사람 놓침 2.2%(최고 정확도 99.5% 는 0.676). 다른 사람으로 잘못 부르지 않게 낮은 쪽을 골랐다 — 교실 아이 얼굴로 다시 볼 것"
+#~ msgstr "Maximum error (cosine distance, 0-2) still counted as the same person. On 1000 pairs of the public adult LFW photos (261104), 0.6 gave 0% false matches and 2.2% missed matches (best accuracy 99.5% at 0.676). The lower side was chosen so that nobody is called by the wrong name — to be re-checked with children's faces in the classroom"
+
+#~ msgid "인식된 얼굴들의 (x1, y1, x2, y2) 배열 입니다."
+#~ msgstr "Array of (x1, y1, x2, y2) of the detected faces."
+
+#~ msgid "list 타입으로, 이미지 하나에 얼굴이 여러 개 인식된 경우 인식된 얼굴의 좌표가 모두 입력됩니다."
+#~ msgstr "It is a list; if several faces are detected in one image, the coordinates of all of them are included."
+
+#~ msgid "좌표 리스트 (68x2). 얼굴 점을 못 찾으면 빈 배열"
+#~ msgstr "List of coordinates (68x2). An empty array if no face landmarks are found"
+
+#~ msgid "**facedb** (``list(list, list)`` 타입)"
+#~ msgstr "**facedb** (``list(list, list)`` type)"
+
+#~ msgid "``{\"name\": 이름, \"score\": 오차도, \"max\": 가장 가까운 이름}``"
+#~ msgstr "``{\"name\": name, \"score\": error, \"max\": closest name}``"
+
+#~ msgid "얼굴이 비슷할수록 오차도가 낮게 측정됩니다."
+#~ msgstr "The more similar the faces, the lower the error."
+
+#~ msgid "오차도가 ``face.threshold`` (기본 0.4) 보다 낮을 때 동일인으로 판정합니다."
+#~ msgstr "Judged to be the same person when the error is lower than ``face.threshold`` (default 0.4)."
 
