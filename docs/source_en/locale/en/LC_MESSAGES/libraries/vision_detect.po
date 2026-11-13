@@ -147,6 +147,6 @@ msgstr "``[{\"id\": marker number, \"center\":  }, ...]``"
 msgid "마커 결과를 표시합니다."
 msgstr "Displays the marker result."
 
-msgid "마커 결과과"
+msgid "마커 결과"
 msgstr "Marker result"
 

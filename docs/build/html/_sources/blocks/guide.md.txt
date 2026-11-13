@@ -33,7 +33,7 @@ PiBrain 메이커는 Blockly 기반의 블록 코딩을 지원합니다. 기본 
 | 화면 | 11 |
 | 음성 | 6 |
 | 시각 | 16 |
-| 인식 | 36 |
+| 인식 | 33 |
 | 기타 | 12 |
 
 ## PiBrain 전용 블록
@@ -120,7 +120,7 @@ USB 연결 해제합니다.
 
 화면에 선택한 이미지를 저장합니다.
 
-<img src="img/oled_draw_image.png" alt="이미지 [폴더 선택 ▾] ([sample]) . [jpg ▾] 화면에 저장하기" width="623" class="blk">
+<img src="img/oled_draw_image.png" alt="이미지 [폴더 선택 ▾] ([image]) . [jpg ▾] 화면에 저장하기" width="613" class="blk">
 
 화면에 입력한 이미지를 저장합니다.
 
