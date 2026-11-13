@@ -1293,7 +1293,7 @@ let toolbox = (lang) => {
                 "shadow": {
                   "type": "text",
                   "fields": {
-                    "TEXT": "sample"
+                    "TEXT": "image"
                     // "TEXT": translations['image_filename'][lang]
                   }
                 }
