@@ -25,6 +25,7 @@ buttons = None   # ButtonWatcher(261113) — 버튼만 10ms 마다 읽는 스레
 oled    = None
 camera  = None
 face    = None
+face_tool = None   # [얼굴 구분] 타일(261113) — 얼굴 인식을 올릴 때 같이 만든다
 detect  = None
 audio   = None
 speech  = None
@@ -154,6 +155,8 @@ def process_frame(img, vtype):
             mesh = face.detect_mesh(img)
             face.detect_mesh_vis(img, mesh)
             res = ' | '.join([f"{d['distance']}cm/{d['direction']}" for d in mesh])
+        elif vtype == 'face_id':
+            res = face_tool.process(img) if face_tool else ''
         elif vtype == 'object':
             items = detect.detect_object(img)
             detect.detect_object_vis(img, items)
@@ -247,7 +250,15 @@ async def ensure_face():
         with face_load_lock:
             if face: return
             from openpibo.vision_face import Face
-            face = Face()
+            f = Face()
+            global face_tool
+            try:
+                import openpibo_models
+                from openpibo.modules.face_tool import FaceTool
+                face_tool = FaceTool(f, font_path=openpibo_models.filepath('KDL.ttf'))
+            except Exception as e:
+                print(f'[face_tool] {e}')
+            face = f
     await asyncio.to_thread(_load)
     return face
 
@@ -431,11 +442,83 @@ async def set_vision_type(t: str, ml: float = 5.0):
     global vision_type, marker_length
     vision_type = t
     marker_length = ml
-    if t in ('face', 'face_landmark'):
+    if t in ('face', 'face_landmark', 'face_id'):
         asyncio.create_task(ensure_face())
     elif t in ('qr', 'object', 'hand', 'pose', 'marker'):
         asyncio.create_task(ensure_detect())
     return JSONResponse({"ok": True, "type": t})
+
+# ── [얼굴 구분] 타일(261113) ─────────────────────────────────
+# 파이보 도구와 같은 REST 모양이다(몸통은 openpibo/modules/face_tool.py — 두 리포 같은 파일).
+# 얼굴 정보는 /home/pi/code/facedb — IDE 블록 [얼굴 사전 불러오기] 의 기본값과 같다. 등록은 지금 카메라 그림으로 한다
+def _face_list(ok=True, msg='', count=0, name=''):
+    ft = face_tool
+    return JSONResponse({'ok': ok, 'msg': msg, 'count': count, 'name': name, 'names': ft.names() if ft else [],
+                         'ready': ft is not None, 'error': ft.error if ft else ''})
+
+async def _face_ready():
+    try:
+        await ensure_face()
+    except Exception as e:
+        print(f'[face] {e}')
+    return face_tool
+
+@app.get('/face/list')
+async def face_list():
+    await _face_ready()
+    return _face_list()
+
+@app.post('/face/train')
+async def face_train(request: Request):
+    ft = await _face_ready()
+    if ft is None:
+        return _face_list(False, 'face_err_loading')
+    if not vision_en or latest_img is None:
+        return _face_list(False, 'face_err_camera')
+    try:
+        body = await request.json()
+    except Exception:
+        body = {}
+    ok, msg, count = await asyncio.to_thread(ft.train, latest_img.copy(), body.get('name', ''))
+    if ok:
+        return _face_list(True, 'face_trained', count, msg)
+    return _face_list(False, msg)
+
+@app.post('/face/delete')
+async def face_delete(request: Request):
+    ft = await _face_ready()
+    if ft is None:
+        return _face_list(False, 'face_err_loading')
+    try:
+        body = await request.json()
+    except Exception:
+        body = {}
+    await asyncio.to_thread(ft.delete, str(body.get('name', '')))
+    return _face_list()
+
+@app.get('/face/export')
+async def face_export():
+    ft = await _face_ready()
+    if ft is None:
+        return JSONResponse({'ok': False, 'msg': 'face_err_loading'}, status_code=503)
+    data = await asyncio.to_thread(ft.export_bytes)
+    return Response(content=data, media_type='application/json',
+                    headers={'Content-Disposition': 'attachment; filename="facedb.json"'})
+
+@app.post('/face/import')
+async def face_import(request: Request):
+    ft = await _face_ready()
+    if ft is None:
+        return _face_list(False, 'face_err_loading')
+    data = await request.body()
+    if len(data) > 5 * 1024 * 1024:
+        return _face_list(False, 'face_err_file')
+    try:
+        await asyncio.to_thread(ft.import_bytes, data)
+    except Exception as e:
+        print(f'[face_import] {e}')
+        return _face_list(False, 'face_err_file')
+    return _face_list(True, 'face_imported')
 
 # ── LED ──────────────────────────────────────────────────────
 # rpi_ws281x 의 show() 는 앞 DMA 전송이 끝나길 기다린다. 이벤트 루프에서 직접 부르면 그게 멈췄을 때 서버 전체(버튼·카메라·

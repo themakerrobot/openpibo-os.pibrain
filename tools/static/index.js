@@ -63,6 +63,8 @@ function applyLang() {
 
   const ors = document.getElementById('oled-reset-status');
   if (isPlaceholder(ors, ['waiting'])) ors.textContent = t('waiting');
+
+  if (typeof paintFace === 'function' && document.getElementById('face_list')) paintFace();
 }
 
 function toggleLang() {
@@ -269,6 +271,7 @@ function resetVision() {
   clearInterval(resultInterval);
   setVisionResult('');
   document.getElementById('marker-row').style.display  = 'none';
+  document.getElementById('v_faceid').hidden = true;
 }
 
 /* 결과 칸(키트 .pb-result). 빈 결과면 안내 글(data-empty — 흐린 보통 글꼴) */
@@ -284,6 +287,8 @@ function setVision(type, btn) {
   btn.classList.add('active');
   const ml = document.getElementById('marker-len').value || 5;
   document.getElementById('marker-row').style.display = type === 'marker' ? 'flex' : 'none';
+  document.getElementById('v_faceid').hidden = type !== 'face_id';
+  if (type === 'face_id') faceLoad();
   fetch(`/vision_type?t=${type}&ml=${ml}`);
   clearInterval(resultInterval);
   const noResult = ['camera','grayscale','canny','edgePreservingFilter','cartoon','sketch_rgb','detail','pose'];
@@ -299,6 +304,94 @@ function setVision(type, btn) {
     setVisionResult('');
   }
 }
+
+/* ── 얼굴 구분(261113) — 파이보 도구와 같은 REST(/face/*). 등록은 지금 카메라 그림으로 한다.
+   얼굴 정보는 /home/pi/code/facedb 라 IDE 블록 [얼굴 사전 불러오기](code · facedb)가 그대로 불러 쓴다 */
+const face = { names: [], busy: false };
+function faceConfirm(msg) {
+  return new Promise((resolve) => {
+    const pop = document.getElementById('confirmPopup');
+    document.getElementById('confirmMessageElement').textContent = msg;
+    pop.hidden = false;
+    const done = (v) => { pop.hidden = true; ok.onclick = no.onclick = null; resolve(v); };
+    const ok = document.getElementById('confirmOkBtn'), no = document.getElementById('confirmCancelBtn');
+    ok.onclick = () => done(true); no.onclick = () => done(false);
+    no.focus();
+  });
+}
+function faceMsg(key, kind, ...args) {
+  const el = document.getElementById('face_msg');
+  el.textContent = key ? t(key, ...args) : '';
+  el.dataset.kind = kind || '';
+}
+function paintFace() {
+  const ul = document.getElementById('face_list');
+  ul.textContent = '';
+  if (!face.names.length) {
+    const li = document.createElement('li'); li.className = 'v-faceid__empty'; li.textContent = t('face_empty');
+    ul.appendChild(li);
+  }
+  face.names.forEach(({ name, count }) => {
+    const li = document.createElement('li');
+    const nm = document.createElement('span'); nm.className = 'v-faceid__name'; nm.textContent = name;
+    nm.addEventListener('click', () => { document.getElementById('face_name').value = name; });
+    const ct = document.createElement('span'); ct.className = 'v-faceid__count'; ct.textContent = t('face_count', count);
+    const del = document.createElement('button'); del.type = 'button'; del.className = 'v-faceid__del';
+    del.title = t('face_delete', name); del.setAttribute('aria-label', del.title);
+    del.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+    del.addEventListener('click', async () => {
+      if (await faceConfirm(t('face_confirm_delete', name))) faceCall('/face/delete', { name });
+    });
+    li.append(nm, ct, del);
+    ul.appendChild(li);
+  });
+  document.getElementById('face_clear_bt').disabled = !face.names.length;
+  document.getElementById('face_export_bt').classList.toggle('is-disabled', !face.names.length);
+  document.getElementById('face_train_bt').disabled = face.busy;
+}
+async function faceCall(url, body, raw) {
+  face.busy = true; paintFace();
+  try {
+    const res = await fetch(url, body === undefined ? {} : {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: raw ? body : JSON.stringify(body),
+    });
+    const r = await res.json();
+    face.names = r.names || [];
+    if (r.msg) faceMsg(r.msg, r.ok ? 'ok' : 'err', r.count, r.name);
+    else if (r.error) faceMsg('face_err_db', 'err', r.error);
+    else if (r.ok) faceMsg('');
+    return r;
+  } catch (e) {
+    faceMsg('face_err_net', 'err');
+    return {};
+  } finally {
+    face.busy = false; paintFace();
+  }
+}
+function faceLoad() { return faceCall('/face/list'); }
+async function faceTrain() {
+  const inp = document.getElementById('face_name');
+  const name = inp.value.trim();
+  if (!name) { faceMsg('face_err_name', 'err'); inp.focus(); return; }
+  await faceCall('/face/train', { name });
+}
+async function faceClear() {
+  if (await faceConfirm(t('face_confirm_clear'))) faceCall('/face/delete', { name: '*' });
+}
+document.getElementById('face_name').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); faceTrain(); }
+});
+document.getElementById('face_export_bt').addEventListener('click', (e) => {
+  if (!face.names.length) { e.preventDefault(); faceMsg('face_empty', 'err'); }
+});
+document.getElementById('face_import_file').addEventListener('change', async (e) => {
+  const f = e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  if (face.names.length && !(await faceConfirm(t('face_confirm_import')))) return;
+  faceCall('/face/import', await f.text(), true);
+});
+paintFace();
 
 function updateMarkerLen() {
   fetch(`/vision_type?t=marker&ml=${document.getElementById('marker-len').value}`);

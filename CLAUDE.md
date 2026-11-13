@@ -585,7 +585,7 @@ Pibo 에서도 같다), 560~1960px 한/영 상단바 넘침 0, 편집기 폭 0, 
 - **파이썬 API·블록은 그대로 호환, 바꾸는 건 함수 안에서만(261104, 사용자)** — Pibo CLAUDE.md '로봇 연동 일원화'
 - 3단계(261104): 얼굴 dlib 제거(찾기 0005 · 구분 0095 · 점은 MediaPipe 에서 dlib 68점 번호로 · 파일 JSON · 추적기 OpenCV CSRT) — Pibo CLAUDE.md '얼굴 (261104)'. `vision_face.py` 는 Pibo 와 `detect_mesh_vis` 글자 위치 한 줄만 다르다
 - **사물 추적 삭제(261106, 사용자)** — 라이브러리 함수 3개·IDE 블록 3개(예전 프로그램은 불러올 때 걷어낸다). PiBrain 도구에는 원래 없었다. 자세한 건 Pibo CLAUDE.md '얼굴 (261104)' 의 '사물 추적 삭제'
-- **얼굴 등록·구분 웹 `system/face_web.py`(261106, 파이보·PiBrain 같은 파일)** — 손으로 띄우는 시험 화면(메뉴에 없음, 유닛 없음). 도구·분류기를 끄고 `sudo /home/pi/.pyenv/bin/python3 /home/pi/openpibo-os/system/face_web.py` → `http://<IP>:50070`. 이름 넣고 [등록](가장 큰 얼굴) · 이름·오차도 상자 · 지우기 · 기준 막대. 얼굴 정보는 `/home/pi/face_web.json`(`Face.save_db` 형식)에 바뀔 때마다 저장, 보는 화면이 10초 없으면 인식을 쉰다. 화면은 카메라 그림 그대로(짧은 변 480, JPEG 85 — `--short 240` 으로 줄임). 확인(컨테이너, LFW 가짜 카메라): 같은 사람 0.13~0.15 · 다른 사람 0.57~0.68 · 390px 넘침 0. **실기기 확인 필요**
+- **도구 [카메라] '얼굴 구분' 타일(261113, 파이보·PiBrain 도구)** — 예전 시험 화면 `system/face_web.py`(261106)를 지우고 도구로 옮겼다. 몸통은 `openpibo/modules/face_tool.py`(`FaceTool`, 두 리포 **같은 파일**) — 라이브러리 `Face` 의 `train_face`·`recognize`·`delete_face`·`save_db`·`load_db` 만 쓴다. 타일을 고르면 패널: 이름 + [등록](지금 카메라 그림의 가장 큰 얼굴) · 등록한 얼굴 목록(이름·장수·×) · [모두 지우기] · [내보내기](`facedb.json`) · [가져오기](형식·모델이 틀리면 목록 그대로). 관리 탭은 따로 두지 않았다(사용자). REST 는 두 도구가 같다: `GET /face/list` · `POST /face/train {name}` · `POST /face/delete {name|'*'}` · `GET /face/export` · `POST /face/import`(본문 JSON, 5MB) → `{ok,msg,count,name,names,ready,error}`(msg 는 `ko2en.js` 키). 인식 결과는 다른 타일처럼(파이보 socket.io `stream`, PiBrain `/vision_result`) `민수 0.18 | ? 0.62`, 그림에는 파랑(등록)·회색 `?` 상자 + PIL 한글 이름표. **얼굴 정보는 `/home/pi/code/facedb`**(`Face.save_db` JSON, 바뀔 때마다 저장, pi 소유) — IDE 블록 [얼굴 사전 불러오기] 기본값(code · facedb)과 같아 도구에서 등록한 얼굴을 학생 프로그램이 바로 쓴다. 공장 초기화 때 `code/` 와 같이 지워진다. PiBrain 은 카메라가 꺼져 있으면 `face_err_camera`. 확인(컨테이너, LFW 가짜 카메라, 실제 서버 + 브라우저): 파이보 21/21 · PiBrain 22/22(등록·구분·지우기·내보내기·가져오기·잘못된 파일·파이보 파일을 PiBrain 에서 열기·한/영·390/768/1024 넘침 0). **실기기 확인 필요**
 
 ## 파이보와 다른 점
 
@@ -900,7 +900,6 @@ SSID 가 비면 실패 안내를 돌려준다(전엔 정의 안 된 `ex` 로 500
 - **상단바 왼쪽 로고를 누르면 LCD 가 IP 화면으로 돌아간다(261030, 사용자).** 키트 `pibo-ui.js` 의 `screenReset` → IDE(80) `POST /screen_reset` → `system/network_disp.py`([출력 지우기] 의 화면 초기화와 같음). 로봇 놀이 키우기 얼굴도 IP 로 덮는다
 PiBrain 에서 바뀐 것: 도구 상단바를 키트 모양으로(`PiBrain · 도구`, 'EN' 단추 → 지금 언어 select `#lang_sel`), 선택 표시 노랑(#fff1c2) → 옅은 파랑, 버튼·슬라이더를 키트 모양으로,
 `:where()`·`color-mix()`·`aspect-ratio` 제거, 버튼 상태 ON/OFF → 눌림/안 눌림, 음성 [말하기]·'다 말했어요'·'멈췄어요'. `design/` 의 키트 두 파일은 파이보와 바이트까지 같게 둔다(원본은 파이보).
-남은 것: PiBrain 도구의 밝기 버튼 순서가 부드럽게→밝게→어둡게(키트는 밝게→부드럽게→어둡게) — `tools/static/index.js`
 
 ### 전체 검토 수정 (261027v3)
 

@@ -276,3 +276,31 @@ button, input, textarea, select { font: inherit; color: inherit; }
   .tab.active { grid-template-columns: minmax(0, 1fr); }
 }
 @media (prefers-reduced-motion: reduce) { .tl * { transition: none !important; } }
+
+/* ── [카메라] 얼굴 구분 패널 (261113) — 파이보 도구와 같은 모양 ── */
+.v-faceid[hidden] { display: none; }
+.v-faceid { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+.v-faceid__add { display: flex; gap: 8px; flex-wrap: wrap; }
+.v-faceid__add .btn { flex: 0 0 auto; }
+.v-faceid__add input { flex: 1 1 160px; min-width: 0; height: var(--ctl-md); padding: 0 12px;
+  border: 1px solid var(--c-line-2); border-radius: var(--r-ctl); background: var(--c-raise); color: var(--c-ink); font: inherit; font-size: var(--fs-md); }
+.v-faceid__add input:focus { outline: 2px solid var(--c-accent); outline-offset: 1px; }
+.v-faceid__msg { min-height: 18px; font-size: var(--fs-sm); color: var(--c-ink-3); }
+.v-faceid__msg[data-kind="ok"] { color: var(--c-sel-ink); }
+.v-faceid__msg[data-kind="err"] { color: var(--c-red); }
+.v-faceid__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.v-faceid__head .form-label { margin: 0; }
+.v-faceid__tools { display: flex; gap: 4px; flex-wrap: wrap; }
+.v-faceid__tools a.btn { text-decoration: none; }
+.v-faceid__tools .is-disabled { opacity: .45; pointer-events: none; }
+.v-faceid__danger, .v-faceid__danger > i { color: var(--c-red); }
+.v-faceid__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; max-height: 220px; overflow: auto; }
+.v-faceid__list li { display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 12px;
+  border: 1px solid var(--c-line); border-radius: var(--r-ctl); background: var(--c-raise); }
+.v-faceid__name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: var(--fw-b); font-size: var(--fs-md); cursor: pointer; }
+.v-faceid__count { font-size: var(--fs-xs); color: var(--c-ink-3); white-space: nowrap; }
+.v-faceid__del { width: 28px; height: 28px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: var(--c-ink-3); cursor: pointer; }
+.v-faceid__del:hover { background: var(--c-hover); color: var(--c-red); }
+.v-faceid__list li.v-faceid__empty { justify-content: center; color: var(--c-ink-3); font-size: var(--fs-sm); border-style: dashed; background: transparent; padding: 10px; }
+.v-faceid__note { margin: 0; font-size: var(--fs-xs); line-height: 1.5; color: var(--c-ink-3); }
+.confirm-popup[hidden] { display: none; }
