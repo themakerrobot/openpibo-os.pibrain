@@ -14,7 +14,7 @@
   <link rel="shortcut icon" href="/static/icon.png?ver=261102v2" type="image/png"/>
   <link rel="stylesheet" href="/static/all.min.css"/>
   <link rel="stylesheet" href="/static/pibo-ui.css?ver=261102v2"/>
-  <link rel="stylesheet" href="/static/index.css?ver=261113v2"/>
+  <link rel="stylesheet" href="/static/index.css?ver=261113v3"/>
   <title data-key="title">도구</title>
   <script>/* 화면 밝기를 첫 페인트 전에 (쿠키 pibo_theme, 기본 soft) */
     (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
@@ -182,16 +182,20 @@
       </div>
       <div class="v-faceid__msg" id="face_msg" role="status"></div>
       <div class="v-faceid__head">
-        <span class="form-label" data-key="face_list">등록한 얼굴</span>
-        <span class="v-faceid__tools">
-          <a class="btn btn-sm" id="face_export_bt" href="/face/export" download="facedb.json"><i class="fa-solid fa-file-export"></i><span data-key="face_export">내보내기</span></a>
-          <button class="btn btn-sm" id="face_import_bt" onclick="document.getElementById('face_import_file').click()"><i class="fa-solid fa-file-import"></i><span data-key="face_import">가져오기</span></button>
-          <button class="btn btn-sm v-faceid__danger" id="face_clear_bt" onclick="faceClear()"><i class="fa-solid fa-trash-can"></i><span data-key="face_clear">모두 지우기</span></button>
-          <input type="file" id="face_import_file" accept=".json,application/json" hidden/>
+        <button type="button" id="face_fold" class="v-faceid__fold" aria-expanded="false" aria-controls="face_list"><i class="fa-solid fa-chevron-right"></i><span data-key="face_list">등록한 얼굴</span><b id="face_n"></b></button>
+        <button type="button" id="face_help_bt" class="v-faceid__icon" aria-expanded="false"><i class="fa-solid fa-circle-question"></i></button>
+        <span class="v-faceid__menu">
+          <button type="button" id="face_menu_bt" class="v-faceid__icon" aria-haspopup="true" aria-expanded="false"><i class="fa-solid fa-ellipsis"></i></button>
+          <span class="v-faceid__pop" id="face_menu" hidden>
+            <a id="face_export_bt" class="v-faceid__item" href="/face/export" download="facedb.json"><i class="fa-solid fa-file-export"></i><span data-key="face_export">내보내기</span></a>
+            <button type="button" id="face_import_bt" class="v-faceid__item"><i class="fa-solid fa-file-import"></i><span data-key="face_import">가져오기</span></button>
+            <button type="button" id="face_clear_bt" class="v-faceid__item v-faceid__danger"><i class="fa-solid fa-trash-can"></i><span data-key="face_clear">모두 지우기</span></button>
+          </span>
         </span>
+        <input type="file" id="face_import_file" accept=".json,application/json" hidden/>
       </div>
-      <ul class="v-faceid__list" id="face_list"></ul>
-      <p class="v-faceid__note" data-key="face_note"></p>
+      <ul class="v-faceid__list" id="face_list" hidden></ul>
+      <p class="v-faceid__note" id="face_note" data-key="face_note" hidden></p>
     </div>
     <div class="pb-result" id="vision-result" data-key="result_ph">결과가 여기에 나와요.</div>
   </div>
@@ -271,9 +275,9 @@
     </div>
   </div>
 </div>
-<script src="/static/ko2en.js?ver=261113v2"></script>
+<script src="/static/ko2en.js?ver=261113v3"></script>
 <script src="/static/pibo-ui.js?ver=261102v1"></script>
-<script src="/static/index.js?ver=261113v3"></script>
+<script src="/static/index.js?ver=261113v4"></script>
 <script>/* 언어 select 를 지금 언어에 맞춘다(바꾸는 건 toggleLang → applyLang) */
   (function () { var sel = document.getElementById('lang_sel'); if (!sel) return;
     var sync = function () { sel.value = lang; }; sync();
