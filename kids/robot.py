@@ -238,6 +238,13 @@ class PiBrainRobot(BaseRobot):
     self.d, self.a = DeviceByPiBrain(), Audio()
     self._lcd = None         # 처음 얼굴을 그릴 때 연다 — OledByPiBrain() 이 LCD 를 다시 초기화하고 검게 칠해서,
     self._pressed = set()    # 켜자마자 열면 booting 이 띄운 화면(IP 등)이 꺼진 것처럼 지워졌다
+    # 버튼은 따로 도는 스레드가 10ms 마다 읽어 눌림을 센다(261113). 전엔 키우기 반복(0.2초)에서 그 순간 상태만 읽었고,
+    # 같은 반복에서 LCD 를 다시 그리는 동안엔 더 벌어져 짧은 눌림을 놓쳤다. 없으면 예전 방식으로 읽는다
+    try:
+      from openpibo.modules.buttons import ButtonWatcher
+      self._buttons = ButtonWatcher(self.d)
+    except Exception:  # noqa: BLE001
+      self._buttons = None
 
   def play(self, path):
     if self.stop_flag.is_set():
@@ -259,6 +266,8 @@ class PiBrainRobot(BaseRobot):
     self._lcd.show()
 
   def poll_inputs(self):
+    if self._buttons is not None:
+      return [f'b{n}' for n in self._buttons.pop_presses()]
     out = []
     for n in range(1, 5):
       try:

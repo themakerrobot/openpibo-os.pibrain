@@ -162,19 +162,19 @@ function devSayEnd(no) { if (no === undefined || no === devSayNo) { const box = 
 function startButtonStream() {
   btnSrc = new EventSource('/button_stream');
   btnSrc.onmessage = e => {
-    const state = JSON.parse(e.data);
-    for (const [k, v] of Object.entries(state)) {
-      const on = v === 'on';
-      devBtn(k, on);   // 상태는 그림의 버튼으로 보인다(261102 — 예전 1~4 칸은 뺐다)
-      if (on) {
-        const time = new Date().toLocaleTimeString();
-        const log = document.getElementById('btn-log');
-        // 첫 기록이면 '기다리는 중…' 안내를 지우고 data-key 도 뗀다(언어를 바꿀 때 기록이 안내로 덮이지 않게)
-        if (log.hasAttribute('data-key')) { log.removeAttribute('data-key'); log.innerHTML = ''; }
-        log.innerHTML =
-          `<span class="log-time">${time}</span>${t('btn_pressed', k)}<br>` +
-          log.innerHTML;
-      }
+    // {"state": {"1": "on"|"off", ...}, "press": [눌린 번호...]} (261113). 그림은 상태로, 기록은 눌림으로 —
+    // 서버가 10ms 마다 읽어 눌림을 세므로, 짧게 눌러 상태 'on' 이 안 와도 기록은 남는다
+    const msg = JSON.parse(e.data);
+    const state = msg.state || msg;          // 예전 모양({"1":"on",...})도 받는다
+    for (const [k, v] of Object.entries(state)) devBtn(k, v === 'on');
+    for (const k of (msg.press || [])) {
+      const time = new Date().toLocaleTimeString();
+      const log = document.getElementById('btn-log');
+      // 첫 기록이면 '기다리는 중…' 안내를 지우고 data-key 도 뗀다(언어를 바꿀 때 기록이 안내로 덮이지 않게)
+      if (log.hasAttribute('data-key')) { log.removeAttribute('data-key'); log.innerHTML = ''; }
+      log.innerHTML =
+        `<span class="log-time">${time}</span>${t('btn_pressed', k)}<br>` +
+        log.innerHTML;
     }
   };
 }

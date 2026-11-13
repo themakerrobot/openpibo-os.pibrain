@@ -21,6 +21,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # ── 전역 리소스 ───────────────────────────────────────────────
 device  = None
+buttons = None   # ButtonWatcher(261113) — 버튼만 10ms 마다 읽는 스레드
 oled    = None
 camera  = None
 face    = None
@@ -290,11 +291,13 @@ async def ensure_speech():
 async def background_init():
     global device, oled
     def _init():
-        global device, oled
+        global device, oled, buttons
         try:
             from openpibo.device import DeviceByPiBrain
+            from openpibo.modules.buttons import ButtonWatcher
             device = DeviceByPiBrain()
             device.led_off()
+            buttons = ButtonWatcher(device)
         except Exception as e:
             print(f'[device] {e}')
         try:
@@ -466,18 +469,29 @@ async def led_off():
 # ── 버튼 ─────────────────────────────────────────────────────
 @app.get('/button_stream')
 async def button_stream(request: Request):
+    # 상태는 ButtonWatcher(10ms 마다 읽는 스레드)가 들고 있다. 여기서는 0.05초마다 바뀐 게 있는지만 보고
+    # {"state": {"1": "on"|"off", ...}, "press": [눌린 버튼 번호...]} 를 보낸다(261113).
+    # 전엔 여기서 직접 0.1초마다 그 순간 상태만 읽어, 서버가 바쁘거나 그 사이에 눌렀다 떼면 놓쳤다.
+    # 연결되자마자 지금 상태를 한 번 보낸다(다시 붙었을 때 화면이 옛 상태로 남지 않게)
     async def gen():
         import json
-        prev = {}
+        while buttons is None:                     # 장치를 올리는 중
+            if await request.is_disconnected(): return
+            await asyncio.sleep(0.2)
+        seq, state, counts = buttons.snapshot()
+        last = dict(counts)
+        yield "data: " + json.dumps({"state": {str(n): 'on' if v else 'off' for n, v in state.items()}, "press": []}) + "\n\n"
         while True:
             if await request.is_disconnected(): break
-            try:
-                cur = {str(i): device.get_button(i) for i in range(1, 5)}
-                if cur != prev:
-                    yield f"data: {json.dumps(cur)}\n\n"
-                    prev = cur.copy()
-            except: pass
-            await asyncio.sleep(0.1)
+            s2, state, counts = buttons.snapshot()
+            if s2 != seq:
+                seq = s2
+                press = []
+                for n, c in counts.items():
+                    press += [n] * max(0, c - last.get(n, 0))
+                last = dict(counts)
+                yield "data: " + json.dumps({"state": {str(n): 'on' if v else 'off' for n, v in state.items()}, "press": press}) + "\n\n"
+            await asyncio.sleep(0.05)
     return StreamingResponse(gen(), media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
