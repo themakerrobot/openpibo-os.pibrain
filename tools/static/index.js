@@ -358,6 +358,7 @@ async function faceCall(url, body, raw) {
     });
     const r = await res.json();
     face.names = r.names || [];
+    if (typeof r.threshold === 'number' && !thDrag) { thIn.value = r.threshold; showTh(r.threshold); }
     if (r.msg) faceMsg(r.msg, r.ok ? 'ok' : 'err', r.count, r.name);
     else if (r.error) faceMsg('face_err_db', 'err', r.error);
     else if (r.ok) faceMsg('');
@@ -369,6 +370,12 @@ async function faceCall(url, body, raw) {
     face.busy = false; paintFace();
   }
 }
+// 기준(261113): 낮출수록 엄격(같은 사람도 '?' 가 되기 쉽다), 올릴수록 느슨(다른 사람을 잘못 알아보기 쉽다). 놓을 때 보낸다
+const thIn = document.getElementById('face_th'), thVal = document.getElementById('face_th_val');
+let thDrag = false;
+const showTh = (v) => { thVal.textContent = Number(v).toFixed(2); };
+thIn.addEventListener('input', () => { thDrag = true; showTh(thIn.value); });
+thIn.addEventListener('change', () => { thDrag = false; faceCall('/face/threshold', { value: Number(thIn.value) }); });
 function faceLoad() { return faceCall('/face/list'); }
 async function faceTrain() {
   const inp = document.getElementById('face_name');

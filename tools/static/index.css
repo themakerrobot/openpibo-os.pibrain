@@ -304,3 +304,9 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .v-faceid__list li.v-faceid__empty { justify-content: center; color: var(--c-ink-3); font-size: var(--fs-sm); border-style: dashed; background: transparent; padding: 10px; }
 .v-faceid__note { margin: 0; font-size: var(--fs-xs); line-height: 1.5; color: var(--c-ink-3); }
 .confirm-popup[hidden] { display: none; }
+
+.v-faceid__th { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.v-faceid__th label { font-weight: 700; white-space: nowrap; }
+.v-faceid__th input[type="range"] { flex: 1 1 auto; min-width: 80px; }
+.v-faceid__thend { color: var(--c-ink-3); font-size: 12px; white-space: nowrap; }
+.v-faceid__th b { min-width: 3em; text-align: right; font-variant-numeric: tabular-nums; }

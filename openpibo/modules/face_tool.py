@@ -5,6 +5,8 @@
   도구에서 등록한 얼굴을 학생 프로그램이 바로 불러 쓴다. 사진은 저장하지 않는다(얼굴마다 숫자 256개)
 - 바뀔 때마다 저장하고, 켤 때 그 파일을 읽는다. 다른 모델·예전 형식 파일이면 비운 채로 시작하고 이유를 error 에 남긴다
 - 그림 위 이름표는 PIL 로 그린다(한글 이름). 등록한 사람은 파랑, 모르는 사람은 회색 '?'
+- 기준(오차도가 이보다 낮으면 같은 사람)은 화면에서 바꾼다(set_threshold, 0.1~0.8). 라이브러리 기본 0.4 는 그대로고,
+  도구를 다시 켜면 0.4 로 돌아간다. 학생 코드에서는 face.threshold = 0.3 처럼 바꾼다
 """
 import json
 import os
@@ -17,6 +19,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 DB_PATH = '/home/pi/code/facedb'
 NAME_MAX = 20
+TH_MIN, TH_MAX = 0.1, 0.8
 KNOWN = (235, 99, 37)        # BGR — 파랑(#2563eb)
 UNKNOWN = (150, 140, 130)    # BGR — 회색
 
@@ -59,6 +62,16 @@ class FaceTool:
       for n in self.face.facedb[0]:
         out[n] = out.get(n, 0) + 1
       return [{'name': k, 'count': v} for k, v in out.items()]
+
+  @property
+  def threshold(self):
+    return round(float(self.face.threshold), 2)
+
+  def set_threshold(self, value):
+    v = min(TH_MAX, max(TH_MIN, float(value)))
+    with self.lock:
+      self.face.threshold = round(v, 2)
+    return self.threshold
 
   def train(self, img, name):
     """img 의 가장 큰 얼굴을 name 으로 등록한다. 돌려주는 값: (ok, 키 또는 이름, 그 이름의 장수)"""

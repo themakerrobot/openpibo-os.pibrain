@@ -454,7 +454,7 @@ async def set_vision_type(t: str, ml: float = 5.0):
 def _face_list(ok=True, msg='', count=0, name=''):
     ft = face_tool
     return JSONResponse({'ok': ok, 'msg': msg, 'count': count, 'name': name, 'names': ft.names() if ft else [],
-                         'ready': ft is not None, 'error': ft.error if ft else ''})
+                         'threshold': ft.threshold if ft else 0.4, 'ready': ft is not None, 'error': ft.error if ft else ''})
 
 async def _face_ready():
     try:
@@ -494,6 +494,18 @@ async def face_delete(request: Request):
     except Exception:
         body = {}
     await asyncio.to_thread(ft.delete, str(body.get('name', '')))
+    return _face_list()
+
+@app.post('/face/threshold')
+async def face_threshold(request: Request):
+    ft = await _face_ready()
+    if ft is None:
+        return _face_list(False, 'face_err_loading')
+    try:
+        body = await request.json()
+        ft.set_threshold(body.get('value', 0.4))
+    except Exception:
+        return _face_list(False, 'face_err_threshold')
     return _face_list()
 
 @app.get('/face/export')

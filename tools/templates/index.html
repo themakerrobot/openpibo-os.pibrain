@@ -14,7 +14,7 @@
   <link rel="shortcut icon" href="/static/icon.png?ver=261102v2" type="image/png"/>
   <link rel="stylesheet" href="/static/all.min.css"/>
   <link rel="stylesheet" href="/static/pibo-ui.css?ver=261102v2"/>
-  <link rel="stylesheet" href="/static/index.css?ver=261113v1"/>
+  <link rel="stylesheet" href="/static/index.css?ver=261113v2"/>
   <title data-key="title">도구</title>
   <script>/* 화면 밝기를 첫 페인트 전에 (쿠키 pibo_theme, 기본 soft) */
     (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
@@ -173,6 +173,13 @@
         <input type="text" id="face_name" maxlength="20" data-key="face_name_ph"/>
         <button class="btn btn-primary" id="face_train_bt" onclick="faceTrain()"><i class="fa-solid fa-user-plus"></i><span data-key="face_train">등록</span></button>
       </div>
+      <div class="v-faceid__th">
+        <label for="face_th" data-key="face_th_label">기준</label>
+        <span class="v-faceid__thend" data-key="face_th_strict">엄격</span>
+        <input type="range" id="face_th" min="0.1" max="0.8" step="0.05" value="0.4"/>
+        <span class="v-faceid__thend" data-key="face_th_loose">느슨</span>
+        <b id="face_th_val">0.40</b>
+      </div>
       <div class="v-faceid__msg" id="face_msg" role="status"></div>
       <div class="v-faceid__head">
         <span class="form-label" data-key="face_list">등록한 얼굴</span>
@@ -264,9 +271,9 @@
     </div>
   </div>
 </div>
-<script src="/static/ko2en.js?ver=261113v1"></script>
+<script src="/static/ko2en.js?ver=261113v2"></script>
 <script src="/static/pibo-ui.js?ver=261102v1"></script>
-<script src="/static/index.js?ver=261113v2"></script>
+<script src="/static/index.js?ver=261113v3"></script>
 <script>/* 언어 select 를 지금 언어에 맞춘다(바꾸는 건 toggleLang → applyLang) */
   (function () { var sel = document.getElementById('lang_sel'); if (!sel) return;
     var sync = function () { sel.value = lang; }; sync();
