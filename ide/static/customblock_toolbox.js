@@ -349,6 +349,34 @@ let toolbox = (lang) => {
           },
           {
             "kind": "block",
+            "type": "text_print",
+            "inputs": {
+              "TEXT": {
+                "shadow": {
+                  "type": "text",
+                  "fields": {
+                    "TEXT": translations["abc"][lang]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "kind": "block",
+            "type": "text_prompt_ext",
+            "inputs": {
+              "TEXT": {
+                "shadow": {
+                  "type": "text",
+                  "fields": {
+                    "TEXT": ""
+                  }
+                }
+              }
+            }
+          },
+          {
+            "kind": "block",
             "type": "text_append",
             "inputs": {
               "TEXT": {
@@ -519,34 +547,6 @@ let toolbox = (lang) => {
           {
             "kind": "block",
             "type": "text_reverse",
-            "inputs": {
-              "TEXT": {
-                "shadow": {
-                  "type": "text",
-                  "fields": {
-                    "TEXT": translations["abc"][lang]
-                  }
-                }
-              }
-            }
-          },
-          {
-            "kind": "block",
-            "type": "text_print",
-            "inputs": {
-              "TEXT": {
-                "shadow": {
-                  "type": "text",
-                  "fields": {
-                    "TEXT": translations["abc"][lang]
-                  }
-                }
-              }
-            }
-          },
-          {
-            "kind": "block",
-            "type": "text_prompt_ext",
             "inputs": {
               "TEXT": {
                 "shadow": {
@@ -1672,6 +1672,7 @@ let toolbox = (lang) => {
               "color":{
                 "shadow":{
                   "type":"variables_get",
+                  "fields": { "VAR": { "name": lang === 'en' ? 'item' : '색상' } },
                 }
               },
               "tickness": {
@@ -1720,6 +1721,7 @@ let toolbox = (lang) => {
               "color":{
                 "shadow":{
                   "type":"variables_get",
+                  "fields": { "VAR": { "name": lang === 'en' ? 'item' : '색상' } },
                 }
               },
               "tickness": {
@@ -1776,6 +1778,7 @@ let toolbox = (lang) => {
               "color":{
                 "shadow":{
                   "type":"variables_get",
+                  "fields": { "VAR": { "name": lang === 'en' ? 'item' : '색상' } },
                 }
               },
               "tickness": {
@@ -1832,6 +1835,7 @@ let toolbox = (lang) => {
               "color":{
                 "shadow":{
                   "type":"variables_get",
+                  "fields": { "VAR": { "name": lang === 'en' ? 'item' : '색상' } },
                 }
               }
             }
@@ -1990,6 +1994,33 @@ let toolbox = (lang) => {
           },
           {
             "kind": "block",
+            "type": "vision_face_mesh",
+            "inputs":{
+              "img":{
+                "shadow": {
+                  "type": "variables_get",
+                }
+              }
+            }
+          },
+          {
+            "kind": "block",
+            "type": "vision_face_mesh_vis",
+            "inputs":{
+              "img":{
+                "shadow": {
+                  "type": "variables_get",
+                }
+              },
+              "v":{
+                "shadow": {
+                  "type": "variables_get",
+                }
+              }
+            }
+          },
+          {
+            "kind": "block",
             "type": "vision_facedb"
           },          
           {
@@ -2076,33 +2107,6 @@ let toolbox = (lang) => {
                   }
                 }
               },
-            }
-          },
-          {
-            "kind": "block",
-            "type": "vision_face_mesh",
-            "inputs":{
-              "img":{
-                "shadow": {
-                  "type": "variables_get",
-                }
-              }
-            }
-          },
-          {
-            "kind": "block",
-            "type": "vision_face_mesh_vis",
-            "inputs":{
-              "img":{
-                "shadow": {
-                  "type": "variables_get",
-                }
-              },
-              "v":{
-                "shadow": {
-                  "type": "variables_get",
-                }
-              }
             }
           },
           {

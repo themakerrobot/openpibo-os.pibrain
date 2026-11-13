@@ -393,7 +393,7 @@ as PiBrain, type <strong>PiBrain’s IP address</strong> (shown on the PiBrain s
 (brightness · font size · Python editor theme · language · factory reset · power off · source code and license)</p></li>
 <li><p><strong>Left panel</strong>: <strong>[Run] [Stop]</strong> at the bottom are always visible.</p>
 <ul>
-<li><p>[PiBrain] — screen output (pictures sent with the <code class="docutils literal notranslate"><span class="pre">Display</span> <span class="pre">image</span> <span class="pre">variable</span> <span class="pre">…</span> <span class="pre">on</span> <span class="pre">IDE</span></code> block), status (WiFi settings, temperature, memory, uptime, version), program output, sending input to the program</p></li>
+<li><p>[PiBrain] — screen output (pictures sent with the <code class="docutils literal notranslate"><span class="pre">Show</span> <span class="pre">image</span> <span class="pre">…</span> <span class="pre">on</span> <span class="pre">the</span> <span class="pre">monitor</span></code> block), status (WiFi settings, temperature, memory, uptime, version), program output, sending input to the program</p></li>
 <li><p>[Files] — the file list, new file / new folder / upload, and a preview for pictures and sounds</p></li>
 </ul>
 </li>
@@ -439,7 +439,7 @@ face analysis, object detection, hand gestures, pose, markers…) to apply it to
 <li><p>Name each <strong>class</strong> and keep pressing <strong>[Hold to collect]</strong> to collect examples. You can also upload files with [Photos]</p></li>
 <li><p><strong>[Teach the AI]</strong> — the tablet or laptop browser learns in a few seconds and shows the accuracy, a confusion table and live scores</p></li>
 <li><p><strong>[Save]</strong> (under Save to PiBrain) — saved on PiBrain in <code class="docutils literal notranslate"><span class="pre">/home/pi/mymodel/&lt;model</span> <span class="pre">name&gt;</span></code></p></li>
-<li><p>In the IDE use <code class="docutils literal notranslate"><span class="pre">Load</span> <span class="pre">classifier</span> <span class="pre">model</span> <span class="pre">(mymodel)</span> <span class="pre">(model</span> <span class="pre">name)</span></code> → <code class="docutils literal notranslate"><span class="pre">Classify</span> <span class="pre">(image)</span> <span class="pre">with</span> <span class="pre">classifier</span> <span class="pre">model</span></code>.
+<li><p>In the IDE use <code class="docutils literal notranslate"><span class="pre">Load</span> <span class="pre">classification</span> <span class="pre">model</span> <span class="pre">(mymodel)</span> <span class="pre">(model</span> <span class="pre">name)</span></code> → <code class="docutils literal notranslate"><span class="pre">Classify</span> <span class="pre">image</span> <span class="pre">(image)</span> <span class="pre">with</span> <span class="pre">the</span> <span class="pre">classification</span> <span class="pre">model</span></code>.
 <code class="docutils literal notranslate"><span class="pre">Draw</span> <span class="pre">what</span> <span class="pre">the</span> <span class="pre">classifier</span> <span class="pre">saw</span> <span class="pre">on</span> <span class="pre">image</span></code> draws the hand, face or body points and the class name on the picture</p></li>
 </ol>
 <p>The [Test] tab tries a saved model again. [Models] lets you test, keep training, rename, download (zip) or delete a model.</p>
