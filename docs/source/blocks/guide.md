@@ -398,11 +398,11 @@ USB 연결 해제합니다.
 
 항목이 리스트 안에 있는지 확인합니다. *값을 돌려주는 블록*
 
-<img src="img/utils_dict_get.png" alt="([사전 ▾]) 사전에서 ([키 이름]) 키의 값 가져오기" width="526" class="blk">
+<img src="img/utils_dict_get.png" alt="([사전 ▾]) 에서 ([키 이름]) 키의 값 가져오기" width="489" class="blk">
 
 사전에서 정해진 키에 해당하는 값을 가져옵니다. *값을 돌려주는 블록*
 
-<img src="img/utils_dict_set.png" alt="([사전 ▾]) 사전에 { ([키 이름]) : ( ) } 추가하기" width="533" class="blk">
+<img src="img/utils_dict_set.png" alt="([사전 ▾]) 에 { ([키 이름]) : ( ) } 추가하기" width="496" class="blk">
 
 사전에 정해진 키와 값을 추가합니다.
 
