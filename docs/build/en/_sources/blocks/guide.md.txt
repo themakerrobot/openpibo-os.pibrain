@@ -176,7 +176,7 @@ There are three models: **General** (Korean and English, no tools — currently 
 
 Start LLM server.
 
-<img src="img/speech_call_llm.png" alt="Respond to ([Hello]) , System prompt (값)" width="562" class="blk">
+<img src="img/speech_call_llm.png" alt="Say ([Hello]) to AI, as role (값)" width="449" class="blk">
 
 Send text to the LLM server and get a reply. The system prompt sets how piBo should answer. *returns a value*
 
@@ -206,31 +206,31 @@ Create a blank image filled with the chosen color. *returns a value*
 
 Save as an image file.
 
-<img src="img/vision_imshow_to_ide.png" alt="Display image variable ([item ▾]) on IDE" width="434" class="blk">
+<img src="img/vision_imshow_to_ide.png" alt="Show image ([item ▾]) on the monitor" width="416" class="blk">
 
 Display an image variable in IDE.
 
-<img src="img/vision_imshow_to_oled.png" alt="Show image variable ([item ▾]) on screen" width="451" class="blk">
+<img src="img/vision_imshow_to_oled.png" alt="Show image ([item ▾]) on the robot screen" width="464" class="blk">
 
 Show an image variable on the screen.
 
-<img src="img/vision_rectangle.png" alt="Display a rectangle with color ([item ▾]) and thickness ([2]) at coordinates ([0]) ([0]) ([0]) ([0]) of image ([item ▾]) ." width="1160" class="blk">
+<img src="img/vision_rectangle.png" alt="On image ([item ▾]) , draw a rectangle at ([0]) ([0]) , ([0]) ([0]) with thickness ([2]) and color ([item ▾])" width="1040" class="blk">
 
 Draws a rectangle on the image.
 
-<img src="img/vision_circle.png" alt="Display a circle with radius ([0]) , color ([item ▾]) , thickness ([2]) at coordinates ([0]) ([0]) of image ([item ▾]) ." width="1119" class="blk">
+<img src="img/vision_circle.png" alt="On image ([item ▾]) , draw a circle at center ([0]) ([0]) with radius ([0]) , thickness ([2]) and color ([item ▾])" width="1082" class="blk">
 
 Displays a circle in the image.
 
-<img src="img/vision_line.png" alt="Display a line with color ([item ▾]) and thickness ([2]) at coordinates from ([0]) ([0]) to ([0]) ([0]) of image ([item ▾]) ." width="1180" class="blk">
+<img src="img/vision_line.png" alt="On image ([item ▾]) , draw a line at ([0]) ([0]) , ([0]) ([0]) with thickness ([2]) and color ([item ▾])" width="983" class="blk">
 
 Displays a line in the image.
 
-<img src="img/vision_text.png" alt="Display ([Hello]) with size ([30]) and color ([item ▾]) at coordinates ([0]) and ([0]) of image ([item ▾]) ." width="1088" class="blk">
+<img src="img/vision_text.png" alt="On image ([item ▾]) , at ([0]) ([0]) with size ([30]) and color ([item ▾]) , write ([Hello])" width="921" class="blk">
 
 Display text on the image.
 
-<img src="img/vision_transfer.png" alt="Convert image ([item ▾]) to [cartoon ▾]" width="445" class="blk">
+<img src="img/vision_transfer.png" alt="Convert image ([item ▾]) to [cartoon ▾] style" width="499" class="blk">
 
 Transform image style. *returns a value*
 
@@ -260,11 +260,11 @@ Detect and identify faces in the specified image. *returns a value*
 
 Show faces in the image.
 
-<img src="img/vision_face_analyze.png" alt="Analyze face ([item ▾]) of image ([item ▾]) (age, gender, emotion)" width="690" class="blk">
+<img src="img/vision_face_analyze.png" alt="Get age·gender·emotion of face ([item ▾]) in image ([item ▾])" width="635" class="blk">
 
 Analyze face in image(age, gender, emotion) *returns a value*
 
-<img src="img/vision_face_analyze_vis.png" alt="Show face analysis ([item ▾]) in the image ([item ▾])" width="552" class="blk">
+<img src="img/vision_face_analyze_vis.png" alt="Show age·gender·emotion ([item ▾]) on image ([item ▾])" width="591" class="blk">
 
 Show face analysis in the image
 
@@ -276,37 +276,37 @@ Find face landmark in the image *returns a value*
 
 Show face landmark in the image.
 
+<img src="img/vision_face_mesh.png" alt="Get face direction·distance in image ([item ▾])" width="494" class="blk">
+
+Analyze face direction/distance in the image. *returns a value*
+
+<img src="img/vision_face_mesh_vis.png" alt="Show face direction·distance ([item ▾]) on image ([item ▾])" width="616" class="blk">
+
+Show face direction/distance in the image
+
 <img src="img/vision_facedb.png" alt="Face dictionary" width="214" class="blk">
 
 Get the list of names in the face dictionary. *returns a value*
 
-<img src="img/vision_facedb_train.png" alt="Train image ([item ▾]) face ([item ▾]) to name ([pibo])" width="621" class="blk">
+<img src="img/vision_facedb_train.png" alt="Train face ([item ▾]) in image ([item ▾]) as name ([pibo]) in the face dictionary" width="854" class="blk">
 
 Train face from image.
 
-<img src="img/vision_facedb_delete.png" alt="Delete face name ([pibo]) from face training data" width="579" class="blk">
+<img src="img/vision_facedb_delete.png" alt="Delete name ([pibo]) from the face dictionary" width="544" class="blk">
 
 Delete a specific face from training faces.
 
-<img src="img/vision_facedb_recognize.png" alt="Recognize who is image ([item ▾]) face ([item ▾])" width="524" class="blk">
+<img src="img/vision_facedb_recognize.png" alt="Find the name of face ([item ▾]) in image ([item ▾]) in the face dictionary" width="757" class="blk">
 
 Recognize who faces are in an image. *returns a value*
 
-<img src="img/vision_facedb_save.png" alt="Save face training data to file [Select folder ▾] ([facedb])" width="654" class="blk">
+<img src="img/vision_facedb_save.png" alt="Save the face dictionary to [Select folder ▾] ([facedb])" width="633" class="blk">
 
 Save face training data to file.
 
-<img src="img/vision_facedb_load.png" alt="Load face training data from file [Select folder ▾] ([facedb])" width="680" class="blk">
+<img src="img/vision_facedb_load.png" alt="Load the face dictionary from [Select folder ▾] ([facedb])" width="659" class="blk">
 
 Load face training data from file.
-
-<img src="img/vision_face_mesh.png" alt="Analyze face direction/distance in the image ([item ▾])" width="573" class="blk">
-
-Analyze face direction/distance in the image. *returns a value*
-
-<img src="img/vision_face_mesh_vis.png" alt="Show face direction/distance ([item ▾]) in the image ([item ▾])" width="647" class="blk">
-
-Show face direction/distance in the image
 
 <img src="img/vision_object_load_ext.png" alt="Load Object detection model [Select folder ▾] ([job1]) .onnx" width="686" class="blk">
 
@@ -316,7 +316,7 @@ Loads an object detection model. Type the name of a model file from easydetect (
 
 Find objects in the image. *returns a value*
 
-<img src="img/vision_object_raw.png" alt="Find objects in the image ([item ▾]) (Raw)" width="462" class="blk">
+<img src="img/vision_object_raw.png" alt="Find objects in the image ([item ▾]) (original values)" width="557" class="blk">
 
 Find objects in the image. (RAW) *returns a value*
 
@@ -328,7 +328,7 @@ Show objects in the image.
 
 Find QR in the image. *returns a value*
 
-<img src="img/vision_qr_raw.png" alt="Find QR in the image ([item ▾]) (RAW)" width="425" class="blk">
+<img src="img/vision_qr_raw.png" alt="Find QR in the image ([item ▾]) (original values)" width="515" class="blk">
 
 Find QR in the image. (RAW) *returns a value*
 
@@ -344,7 +344,7 @@ Identify and analyze human poses in the specified image. *returns a value*
 
 Show pose data in the image.
 
-<img src="img/vision_analyze_pose.png" alt="Analyze pose results in ([item ▾]) and save to [motion ▾]" width="606" class="blk">
+<img src="img/vision_analyze_pose.png" alt="Get [pose analysis ▾] from pose data ([item ▾])" width="511" class="blk">
 
 Evaluate and interpret pose data from the image and save the results. *returns a value*
 
@@ -356,7 +356,7 @@ Load Hand gesture model.
 
 Load Hand gesture model
 
-<img src="img/vision_hand_gesture.png" alt="Recognize Hand gesture in the image ([item ▾])" width="508" class="blk">
+<img src="img/vision_hand_gesture.png" alt="Check hand gesture in the image ([item ▾])" width="466" class="blk">
 
 Recognize Hand gesture in the image. *returns a value*
 
@@ -364,7 +364,7 @@ Recognize Hand gesture in the image. *returns a value*
 
 Show hand gesture in the image.
 
-<img src="img/vision_marker_detect.png" alt="Detect Marker length ([5]) in image ([item ▾])" width="491" class="blk">
+<img src="img/vision_marker_detect.png" alt="Find ([5]) cm markers in image ([item ▾])" width="447" class="blk">
 
 Detect Marker in the specified image. *returns a value*
 
@@ -372,15 +372,15 @@ Detect Marker in the specified image. *returns a value*
 
 Show marker in the image.
 
-<img src="img/vision_load_cf.png" alt="Load classifier model [Select folder ▾] ([model name])" width="630" class="blk">
+<img src="img/vision_load_cf.png" alt="Load classification model [Select folder ▾] ([model name])" width="669" class="blk">
 
 Load a model you taught and saved in the Classifier. Folder mymodel, then the model name. (image, hand, face, pose)
 
-<img src="img/vision_predict_cf.png" alt="Classify ([item ▾]) with classifier model" width="438" class="blk">
+<img src="img/vision_predict_cf.png" alt="Classify image ([item ▾]) with the classification model" width="577" class="blk">
 
 Classify the image with the loaded classifier model and return the best matching name. Hand, face and pose models return empty text when no hand, face or body is in view. *returns a value*
 
-<img src="img/vision_predict_cf_vis.png" alt="Draw what the classifier saw on image ([item ▾])" width="518" class="blk">
+<img src="img/vision_predict_cf_vis.png" alt="Show the classification result on image ([item ▾])" width="522" class="blk">
 
 Draws what the last [Classify with classifier model] saw on that image: points and bones for hand and pose, points for face, plus the class name and probability.
 
@@ -390,7 +390,7 @@ Draws what the last [Classify with classifier model] saw on that image: points a
 
 Pause the process for a specified duration of seconds.
 
-<img src="img/utils_time.png" alt="Get time value" width="204" class="blk">
+<img src="img/utils_time.png" alt="Get time data" width="196" class="blk">
 
 Retrieve the current time value. *returns a value*
 
@@ -414,19 +414,19 @@ Add a new key-value pair to an existing dictionary.
 
 Sets this variable to be equal to the input.
 
-<img src="img/utils_array_slice_set.png" alt="set array ([item ▾]) [ ([0]) : ([0]) , ([0]) : ([0]) ] to ([item ▾])" width="621" class="blk">
+<img src="img/utils_array_slice_set.png" alt="Set range [ ([0]) : ([0]) , ([0]) : ([0]) ] of ([item ▾]) to ([item ▾])" width="654" class="blk">
 
 Set the values of the specified range in the array.
 
-<img src="img/utils_check_path.png" alt="Check if [File ▾] ([Path]) exists" width="417" class="blk">
+<img src="img/utils_check_path.png" alt="Check if ([Path]) [File ▾] exists" width="417" class="blk">
 
 Confirm the existence of a file or directory. *returns a value*
 
-<img src="img/utils_typecast_string.png" alt="Convert ([1]) to String type" width="330" class="blk">
+<img src="img/utils_typecast_string.png" alt="Convert ([1]) to text" width="262" class="blk">
 
 Change a variable's type to String. *returns a value*
 
-<img src="img/utils_typecast_number.png" alt="Convert ([1]) to [Integer ▾] type" width="430" class="blk">
+<img src="img/utils_typecast_number.png" alt="Convert ([1]) to [Integer ▾] number" width="461" class="blk">
 
 Convert a variable to a specific numeric type. (Integer or Float) *returns a value*
 

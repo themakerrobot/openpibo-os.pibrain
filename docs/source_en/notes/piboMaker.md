@@ -23,7 +23,7 @@ Everything runs **inside PiBrain** (voices, chat and the classifier included). O
 - **Top bar**: switch the editor with [Blocks | Python]. On the right are Tools, Chat, Classifier, Guide, Full screen and [⋯] More
   (brightness · font size · Python editor theme · language · factory reset · power off · source code and license)
 - **Left panel**: **[Run] [Stop]** at the bottom are always visible.
-  - [PiBrain] — screen output (pictures sent with the `Display image variable … on IDE` block), status (WiFi settings, temperature, memory, uptime, version), program output, sending input to the program
+  - [PiBrain] — screen output (pictures sent with the `Show image … on the monitor` block), status (WiFi settings, temperature, memory, uptime, version), program output, sending input to the program
   - [Files] — the file list, new file / new folder / upload, and a preview for pictures and sounds
 - **Blocks**: drag blocks out of the categories on the left. Type a word such as "sound" or "face" into **Search blocks** at the top
   to find blocks. [Python code] shows the Python code your blocks make. See **Blocks** on the left for every block.
@@ -66,7 +66,7 @@ Collect examples with the camera and teach the AI, for example "this is a cat, t
 2. Name each **class** and keep pressing **[Hold to collect]** to collect examples. You can also upload files with [Photos]
 3. **[Teach the AI]** — the tablet or laptop browser learns in a few seconds and shows the accuracy, a confusion table and live scores
 4. **[Save]** (under Save to PiBrain) — saved on PiBrain in `/home/pi/mymodel/<model name>`
-5. In the IDE use `Load classifier model (mymodel) (model name)` → `Classify (image) with classifier model`.
+5. In the IDE use `Load classification model (mymodel) (model name)` → `Classify image (image) with the classification model`.
    `Draw what the classifier saw on image` draws the hand, face or body points and the class name on the picture
 
 The [Test] tab tries a saved model again. [Models] lets you test, keep training, rename, download (zip) or delete a model.
