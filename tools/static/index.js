@@ -63,6 +63,8 @@ function applyLang() {
 
   const ors = document.getElementById('oled-reset-status');
   if (isPlaceholder(ors, ['waiting'])) ors.textContent = t('waiting');
+
+  if (typeof paintFace === 'function' && document.getElementById('face_list')) paintFace();
 }
 
 function toggleLang() {
@@ -162,19 +164,19 @@ function devSayEnd(no) { if (no === undefined || no === devSayNo) { const box = 
 function startButtonStream() {
   btnSrc = new EventSource('/button_stream');
   btnSrc.onmessage = e => {
-    const state = JSON.parse(e.data);
-    for (const [k, v] of Object.entries(state)) {
-      const on = v === 'on';
-      devBtn(k, on);   // 상태는 그림의 버튼으로 보인다(261102 — 예전 1~4 칸은 뺐다)
-      if (on) {
-        const time = new Date().toLocaleTimeString();
-        const log = document.getElementById('btn-log');
-        // 첫 기록이면 '기다리는 중…' 안내를 지우고 data-key 도 뗀다(언어를 바꿀 때 기록이 안내로 덮이지 않게)
-        if (log.hasAttribute('data-key')) { log.removeAttribute('data-key'); log.innerHTML = ''; }
-        log.innerHTML =
-          `<span class="log-time">${time}</span>${t('btn_pressed', k)}<br>` +
-          log.innerHTML;
-      }
+    // {"state": {"1": "on"|"off", ...}, "press": [눌린 번호...]} (261113). 그림은 상태로, 기록은 눌림으로 —
+    // 서버가 10ms 마다 읽어 눌림을 세므로, 짧게 눌러 상태 'on' 이 안 와도 기록은 남는다
+    const msg = JSON.parse(e.data);
+    const state = msg.state || msg;          // 예전 모양({"1":"on",...})도 받는다
+    for (const [k, v] of Object.entries(state)) devBtn(k, v === 'on');
+    for (const k of (msg.press || [])) {
+      const time = new Date().toLocaleTimeString();
+      const log = document.getElementById('btn-log');
+      // 첫 기록이면 '기다리는 중…' 안내를 지우고 data-key 도 뗀다(언어를 바꿀 때 기록이 안내로 덮이지 않게)
+      if (log.hasAttribute('data-key')) { log.removeAttribute('data-key'); log.innerHTML = ''; }
+      log.innerHTML =
+        `<span class="log-time">${time}</span>${t('btn_pressed', k)}<br>` +
+        log.innerHTML;
     }
   };
 }
@@ -269,6 +271,7 @@ function resetVision() {
   clearInterval(resultInterval);
   setVisionResult('');
   document.getElementById('marker-row').style.display  = 'none';
+  document.getElementById('v_faceid').hidden = true;
 }
 
 /* 결과 칸(키트 .pb-result). 빈 결과면 안내 글(data-empty — 흐린 보통 글꼴) */
@@ -284,6 +287,8 @@ function setVision(type, btn) {
   btn.classList.add('active');
   const ml = document.getElementById('marker-len').value || 5;
   document.getElementById('marker-row').style.display = type === 'marker' ? 'flex' : 'none';
+  document.getElementById('v_faceid').hidden = type !== 'face_id';
+  if (type === 'face_id') faceLoad();
   fetch(`/vision_type?t=${type}&ml=${ml}`);
   clearInterval(resultInterval);
   const noResult = ['camera','grayscale','canny','edgePreservingFilter','cartoon','sketch_rgb','detail','pose'];
@@ -299,6 +304,126 @@ function setVision(type, btn) {
     setVisionResult('');
   }
 }
+
+/* ── 얼굴 구분(261113) — 파이보 도구와 같은 REST(/face/*). 등록은 지금 카메라 그림으로 한다.
+   얼굴 정보는 /home/pi/code/facedb 라 IDE 블록 [얼굴 사전 불러오기](code · facedb)가 그대로 불러 쓴다 */
+const face = { names: [], busy: false };
+
+// 목록 접기(261113): 평소엔 '등록한 얼굴 · N명' 한 줄. 펼침 상태는 브라우저에 기억한다.
+// 내보내기·가져오기·모두 지우기는 '⋯' 메뉴, 긴 안내는 '?' 를 눌러 펼친다(태블릿엔 마우스 올리기가 없다)
+const fFold = document.getElementById('face_fold'), fList = document.getElementById('face_list');
+const fNote = document.getElementById('face_note'), fHelp = document.getElementById('face_help_bt');
+const fMenuBt = document.getElementById('face_menu_bt'), fMenu = document.getElementById('face_menu');
+const setFold = (v) => {
+  fList.hidden = !v; fFold.setAttribute('aria-expanded', v ? 'true' : 'false');
+  try { localStorage.setItem('pibo_face_list', v ? '1' : '0'); } catch (e) {}
+};
+let foldInit = false;
+try { foldInit = localStorage.getItem('pibo_face_list') === '1'; } catch (e) {}
+setFold(foldInit);
+fFold.addEventListener('click', () => setFold(fList.hidden));
+fHelp.addEventListener('click', () => { fNote.hidden = !fNote.hidden; fHelp.setAttribute('aria-expanded', fNote.hidden ? 'false' : 'true'); });
+const closeMenu = () => { fMenu.hidden = true; fMenuBt.setAttribute('aria-expanded', 'false'); };
+fMenuBt.addEventListener('click', (e) => { e.stopPropagation(); fMenu.hidden = !fMenu.hidden; fMenuBt.setAttribute('aria-expanded', fMenu.hidden ? 'false' : 'true'); });
+fMenu.addEventListener('click', () => closeMenu());
+document.addEventListener('click', (e) => { if (!fMenu.hidden && !fMenu.contains(e.target)) closeMenu(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !fMenu.hidden) closeMenu(); });
+function faceConfirm(msg) {
+  return new Promise((resolve) => {
+    const pop = document.getElementById('confirmPopup');
+    document.getElementById('confirmMessageElement').textContent = msg;
+    pop.hidden = false;
+    const done = (v) => { pop.hidden = true; ok.onclick = no.onclick = null; resolve(v); };
+    const ok = document.getElementById('confirmOkBtn'), no = document.getElementById('confirmCancelBtn');
+    ok.onclick = () => done(true); no.onclick = () => done(false);
+    no.focus();
+  });
+}
+function faceMsg(key, kind, ...args) {
+  const el = document.getElementById('face_msg');
+  el.textContent = key ? t(key, ...args) : '';
+  el.dataset.kind = kind || '';
+}
+function paintFace() {
+  const ul = document.getElementById('face_list');
+  ul.textContent = '';
+  if (!face.names.length) {
+    const li = document.createElement('li'); li.className = 'v-faceid__empty'; li.textContent = t('face_empty');
+    ul.appendChild(li);
+  }
+  face.names.forEach(({ name, count }) => {
+    const li = document.createElement('li');
+    const nm = document.createElement('span'); nm.className = 'v-faceid__name'; nm.textContent = name;
+    nm.addEventListener('click', () => { document.getElementById('face_name').value = name; });
+    const ct = document.createElement('span'); ct.className = 'v-faceid__count'; ct.textContent = t('face_count', count);
+    const del = document.createElement('button'); del.type = 'button'; del.className = 'v-faceid__del';
+    del.title = t('face_delete', name); del.setAttribute('aria-label', del.title);
+    del.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+    del.addEventListener('click', async () => {
+      if (await faceConfirm(t('face_confirm_delete', name))) faceCall('/face/delete', { name });
+    });
+    li.append(nm, ct, del);
+    ul.appendChild(li);
+  });
+  document.getElementById('face_clear_bt').disabled = !face.names.length;
+  document.getElementById('face_export_bt').classList.toggle('is-disabled', !face.names.length);
+  document.getElementById('face_train_bt').disabled = face.busy;
+  document.getElementById('face_n').textContent = t('face_people', face.names.length);
+  fHelp.title = t('face_help'); fHelp.setAttribute('aria-label', fHelp.title);
+  fMenuBt.title = t('face_more'); fMenuBt.setAttribute('aria-label', fMenuBt.title);
+}
+async function faceCall(url, body, raw) {
+  face.busy = true; paintFace();
+  try {
+    const res = await fetch(url, body === undefined ? {} : {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: raw ? body : JSON.stringify(body),
+    });
+    const r = await res.json();
+    face.names = r.names || [];
+    if (typeof r.threshold === 'number' && !thDrag) { thIn.value = r.threshold; showTh(r.threshold); }
+    if (r.msg) faceMsg(r.msg, r.ok ? 'ok' : 'err', r.count, r.name);
+    else if (r.error) faceMsg('face_err_db', 'err', r.error);
+    else if (r.ok) faceMsg('');
+    return r;
+  } catch (e) {
+    faceMsg('face_err_net', 'err');
+    return {};
+  } finally {
+    face.busy = false; paintFace();
+  }
+}
+// 기준(261113): 낮출수록 엄격(같은 사람도 '?' 가 되기 쉽다), 올릴수록 느슨(다른 사람을 잘못 알아보기 쉽다). 놓을 때 보낸다
+const thIn = document.getElementById('face_th'), thVal = document.getElementById('face_th_val');
+let thDrag = false;
+const showTh = (v) => { thVal.textContent = Number(v).toFixed(2); };
+thIn.addEventListener('input', () => { thDrag = true; showTh(thIn.value); });
+thIn.addEventListener('change', () => { thDrag = false; faceCall('/face/threshold', { value: Number(thIn.value) }); });
+function faceLoad() { return faceCall('/face/list'); }
+async function faceTrain() {
+  const inp = document.getElementById('face_name');
+  const name = inp.value.trim();
+  if (!name) { faceMsg('face_err_name', 'err'); inp.focus(); return; }
+  await faceCall('/face/train', { name });
+}
+async function faceClear() {
+  if (await faceConfirm(t('face_confirm_clear'))) faceCall('/face/delete', { name: '*' });
+}
+document.getElementById('face_name').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); faceTrain(); }
+});
+document.getElementById('face_import_bt').addEventListener('click', () => document.getElementById('face_import_file').click());
+document.getElementById('face_clear_bt').addEventListener('click', faceClear);
+document.getElementById('face_export_bt').addEventListener('click', (e) => {
+  if (!face.names.length) { e.preventDefault(); faceMsg('face_empty', 'err'); }
+});
+document.getElementById('face_import_file').addEventListener('change', async (e) => {
+  const f = e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  if (face.names.length && !(await faceConfirm(t('face_confirm_import')))) return;
+  faceCall('/face/import', await f.text(), true);
+});
+paintFace();
 
 function updateMarkerLen() {
   fetch(`/vision_type?t=marker&ml=${document.getElementById('marker-len').value}`);

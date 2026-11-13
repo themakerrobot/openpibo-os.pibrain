@@ -240,6 +240,7 @@ Functions:
 
     # conf 는 파일 안의 easydetect.conf(없으면 0.5), iou 는 0.7 로 EdOnnx 가 정한다 — 여기서 넘기는 값은 쓰이지 않는다
     boxes, scores, classes = self.object_detector(img, conf=0.5, iou=0.4)
+
     data = []
     for (x1, y1, x2, y2), score, cls_id in zip(boxes, scores, classes):
       # 점수(%)는 반올림한다 — easydetect-lab·detect.py 가 보여 주는 소수 둘째 자리(:.2f)와 같게(261026, 전엔 버림)
@@ -449,7 +450,7 @@ Functions:
     마커 결과를 표시합니다.
 
     :param numpy.ndarray img: 이미지 객체
-    :param array items: 마커 결과과
+    :param array items: 마커 결과
     """
 
     if not type(img) is np.ndarray:

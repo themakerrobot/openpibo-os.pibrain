@@ -599,6 +599,7 @@
 
     <span class="c1"># conf 는 파일 안의 easydetect.conf(없으면 0.5), iou 는 0.7 로 EdOnnx 가 정한다 — 여기서 넘기는 값은 쓰이지 않는다</span>
     <span class="n">boxes</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">classes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">object_detector</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">conf</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">iou</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+
     <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">),</span> <span class="n">score</span><span class="p">,</span> <span class="n">cls_id</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">boxes</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">classes</span><span class="p">):</span>
       <span class="c1"># 점수(%)는 반올림한다 — easydetect-lab·detect.py 가 보여 주는 소수 둘째 자리(:.2f)와 같게(261026, 전엔 버림)</span>
@@ -832,7 +833,7 @@
 <span class="sd">    마커 결과를 표시합니다.</span>
 
 <span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
-<span class="sd">    :param array items: 마커 결과과</span>
+<span class="sd">    :param array items: 마커 결과</span>
 <span class="sd">    """</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>

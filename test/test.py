@@ -98,6 +98,13 @@ def init_hw(name, cls, wait=0):
 CAMERA_WAIT = 5     # 초
 
 device_obj = init_hw("device", Device)
+button_watch = None     # ButtonWatcher(261113) — 버튼을 10ms 마다 읽어 눌림을 센다. 검사 전에 미리 돌려 둔다
+if device_obj is not None:
+    try:
+        from openpibo.modules.buttons import ButtonWatcher
+        button_watch = ButtonWatcher(device_obj)
+    except Exception as e:
+        print(f"Error initializing button watcher: {e}")
 oled_obj = init_hw("lcd", Oled)
 camera_obj = init_hw("camera", Camera, CAMERA_WAIT)
 audio_obj = init_hw("audio", Audio)
@@ -221,20 +228,32 @@ BUTTON_SAMPLES = 30     # 1초 간격. 버튼 4개를 하나씩 눌러볼 시간
 
 
 async def button_stream_generator():
-    """버튼 4개 상태를 1초 간격으로 흘린다. 한 번이라도 눌린 버튼을 기억한다."""
+    """버튼 4개 상태를 1초 간격으로 흘린다. 한 번이라도 눌린 버튼을 기억한다.
+
+    눌림은 ButtonWatcher 가 10ms 마다 읽어 센다(261113). 전엔 1초에 한 번 그 순간 상태만 읽어서
+    200~400ms 짧게 누르면 대부분 놓쳤고 멀쩡한 버튼이 '눌리지 않음'으로 나왔다.
+    줄마다 보이는 on 은 '지금 눌려 있거나, 지난 1초 사이에 눌렸다' 는 뜻이다"""
+    global button_watch
+    if button_watch is None:   # 처음에 못 만들었으면 지금 만든다
+        from openpibo.modules.buttons import ButtonWatcher
+        button_watch = ButtonWatcher(device_obj)
+    _, _, start = button_watch.snapshot()
+    last = dict(start)
     seen = set()
     for i in range(BUTTON_SAMPLES):
         touch()   # 스트림이 도는 동안에는 워치독이 끼어들지 않게 한다
+        await asyncio.sleep(1)
+        _, now, counts = button_watch.snapshot()
         state = {}
         for n in range(1, 5):
-            v = device_obj.get_button(n)
-            state[f"b{n}"] = v
-            if v == "on":
+            pressed = counts[n] > last[n]
+            state[f"b{n}"] = "on" if (now[n] or pressed) else "off"
+            if counts[n] > start[n] or now[n]:
                 seen.add(n)
+        last = dict(counts)
         state["count"] = i + 1
         state["seen"] = sorted(seen)
         yield f"data: {json.dumps(state)}\n\n"
-        await asyncio.sleep(1)
 
 
 # ==============================================================================
