@@ -35,6 +35,8 @@ PiBrain OS 리포. 기기의 `/home/pi/openpibo-os` 가 이 리포의 작업본�
 | `260624` | 배포 완료 버전 스냅샷. GitHub Pages 소스 |
 | `claude/*` | 작업 브랜치. 리뷰 후 `main` 에 merge |
 
+**`main`·`global` 은 늘 최신으로 둔다(261113, 사용자).** 작업 브랜치에 push 할 때마다 `main` 에 merge(가능하면 fast-forward)·push 하고, 이어서 `global` 에 `main` 을 merge 해 push 한다. merge 뒤 `ko2en.js` 3종 1행(`blang = 'en'`)·`git diff --name-status main global`(델타 16개)·모드 차이 0줄을 볼 것. 태그는 여전히 사람이 찍는다
+
 `global` 은 **기존 `ph` 브랜치를 대체한 것**이다. 2026-09-16 에 이름만 바꿨고 히스토리는
 그대로 이어진다. 그래서 로그에 `Merge branch 'main' into ph` 같은 옛 커밋 제목이 남아 있다.
 `ph` 브랜치와 `-ph` 태그는 삭제됐다. 국가가 아니라 언어·배포 구분이므로 나라 이름을 쓰지 않는다.
