@@ -85,7 +85,7 @@ class BaseRobot:
     """[화면] 카드 — 그림(smile·heart·star·surprise·sad·sleep)·글자(text)·지우기(clear)"""
 
   def photo(self):
-    """[사진 찍기] — 찍어서 로봇 화면에 보여 주고 그 그림(BGR numpy)을 돌려준다. 파일로 남기지 않는다(261116)"""
+    """[사진 찍기] — 찍어서 그 그림(BGR numpy)을 돌려준다. 사진은 태블릿에만 보인다 — 로봇 화면(OLED·LCD)엔 안 띄운다, 파일로도 안 남긴다(261116, 사용자)"""
     return None
 
   def sensed(self, what):
@@ -282,9 +282,7 @@ class PiboRobot(BaseRobot):
       self._cam = Camera()
       self._cam.read()                       # 켠 직후 첫 장은 어둡게 나올 수 있다
     self.sound('shutter')
-    img = self._cam.read()
-    self._oled_open().imshow(img)
-    return img
+    return self._cam.read()
 
   def sense_begin(self, what):
     if what == 'pir' and not self._pir_on:
@@ -389,9 +387,7 @@ class PiBrainRobot(BaseRobot):
       self._cam = Camera()
       self._cam.read()
     self.sound('shutter')
-    img = self._cam.read()                   # 세로 480x640(카메라를 돌려 달았다 — vision_camera)
-    self._lcd_open().imshow(img)
-    return img
+    return self._cam.read()                  # 세로 480x640(카메라를 돌려 달았다 — vision_camera)
 
   def sense_begin(self, what):
     if self._buttons is not None:
