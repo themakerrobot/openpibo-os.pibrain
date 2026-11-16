@@ -296,25 +296,28 @@
       b.setAttribute('aria-checked', on ? 'true' : 'false');
     });
   }
-  function addMenu() {
-    var pop = document.querySelector('#more_menu .v2-pop');
-    var anchor = pop && pop.querySelector('label.v2-pop__item--field');      // 언어 줄 바로 위에
-    if (!pop || document.getElementById('level_seg')) return;
-    var row = document.createElement('div');
-    row.className = 'v2-pop__row v2-pop__row--stack';
-    row.innerHTML = '<span class="v2-pop__lbl"><i class="fa-solid fa-layer-group"></i><span data-key="v2_level"></span></span>' +
-      '<div class="v2-seg v2-seg--full" id="level_seg" role="radiogroup">' +
-      '<button type="button" role="radio" data-level="easy"><i class="fa-solid fa-seedling"></i><span data-key="v2_level_easy"></span></button>' +
-      '<button type="button" role="radio" data-level="all"><i class="fa-solid fa-cubes"></i><span data-key="v2_level_all"></span></button></div>';
-    pop.insertBefore(row, anchor ? anchor.previousElementSibling || anchor : null);
-    Array.prototype.forEach.call(row.querySelectorAll('[data-key]'), function (e) { e.textContent = tr(e.getAttribute('data-key')); });
-    row.title = tr('v2_level_tip');
-    seg = row.querySelector('#level_seg');
+  // 편집기 줄의 [파이썬 코드] 왼쪽에 [쉬움 | 전체] (261116, 사용자 — [더보기] 안은 찾기 어려워 밖으로). 블록 모드에서만 보인다
+  function addBar() {
+    var py = document.getElementById('pycode_bt');
+    if (!py || document.getElementById('level_seg')) return;
+    seg = document.createElement('div');
+    seg.className = 'v2-seg v2-seg--level';
+    seg.id = 'level_seg';
+    seg.setAttribute('role', 'radiogroup');
+    seg.innerHTML = '<button type="button" role="radio" data-level="easy"><i class="fa-solid fa-seedling"></i><span data-key="v2_level_easy"></span></button>' +
+      '<button type="button" role="radio" data-level="all"><i class="fa-solid fa-cubes"></i><span data-key="v2_level_all"></span></button>';
+    py.parentNode.insertBefore(seg, py);
+    Array.prototype.forEach.call(seg.querySelectorAll('[data-key]'), function (e) { e.textContent = tr(e.getAttribute('data-key')); });
+    seg.title = tr('v2_level') + ' — ' + tr('v2_level_tip');
+    seg.setAttribute('aria-label', tr('v2_level'));
     Array.prototype.forEach.call(seg.querySelectorAll('button'), function (b) {
       b.addEventListener('click', function () { setLevel(b.getAttribute('data-level')); });
     });
+    var sync = function () { seg.hidden = py.hidden; };       // [파이썬 코드] 와 같이(블록 모드에서만) 보이고 숨는다
+    new MutationObserver(sync).observe(py, { attributes: true, attributeFilter: ['hidden'] });
+    sync();
     paint();
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', addMenu); else addMenu();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', addBar); else addBar();
   window.PiboLevel = { get: function () { return LEVEL; }, set: setLevel };
 })();
