@@ -9,6 +9,8 @@ import base64
 import datetime
 import signal
 import subprocess
+import time
+import threading
 from pathlib import Path
 from typing import List, Union
 
@@ -326,6 +328,7 @@ async def hwtest(enable: str):
     await asyncio.sleep(3)
   elif enable == "off":
     stop_hwtest()
+  show_ip(keep=HWTEST_PY if enable == "on" else None)   # 나가거나 다른 앱으로 옮기면 로봇 화면은 늘 IP 화면(261116)
   return HTMLResponse(content="", status_code=200)
 
 # 세 서비스는 카메라·오디오·LCD 를 공유하므로 동시에 못 돈다. 하나를 켜면 나머지를 끈다.
@@ -342,6 +345,7 @@ async def tools(enable: str):
   elif enable == "off":
     subprocess.Popen(['systemctl', 'stop', 'tools.service'])
   await asyncio.sleep(2)
+  show_ip(keep='tools.service' if enable == "on" else None)   # 나가거나 다른 앱으로 옮기면 로봇 화면은 늘 IP 화면(261116)
   return HTMLResponse(content="", status_code=200)
 
 @app.get('/classifier')
@@ -357,6 +361,7 @@ async def classifier(enable: str):
   elif enable == "off":
     subprocess.Popen(['systemctl', 'stop', 'classify.service'])
   await asyncio.sleep(2)
+  show_ip(keep='classify.service' if enable == "on" else None)   # 나가거나 다른 앱으로 옮기면 로봇 화면은 늘 IP 화면(261116)
   return HTMLResponse(content="", status_code=200)
 
 # [대화] = 대화 웹(chat/run_chat.py, 50030, 261026). 파이보와 같은 코드 — 기기 차이는 --device
@@ -412,6 +417,7 @@ async def kids(enable: str):
       kids_proc = subprocess.Popen([f'{ENV_PATH}/python3', KIDS_PY, '--device', KIDS_DEVICE], cwd=KIDS_DIR)
   elif enable == "off":
     await asyncio.to_thread(stop_kids)
+  show_ip(keep=KIDS_PY if enable == "on" else None)   # 나가거나 다른 앱으로 옮기면 로봇 화면은 늘 IP 화면(261116)
   return HTMLResponse(content="", status_code=200)
 
 @app.get('/llm')
@@ -430,16 +436,43 @@ async def llm(enable: str):
     stop_chat()
     subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
   await asyncio.sleep(2)
+  show_ip(keep=CHAT_PY if enable == "on" else None)   # 나가거나 다른 앱으로 옮기면 로봇 화면은 늘 IP 화면(261116)
   return HTMLResponse(content="", status_code=200)
 
 # 로고 = 로봇 화면 처음으로(261030): 모든 앱 상단바 로고가 부른다(키트 pibo-ui.js 의 screenReset). [출력 지우기] 의 화면 초기화와 같다
 screen_proc = None
+screen_lock = threading.Lock()
+
+def draw_ip():
+  global screen_proc
+  with screen_lock:
+    if screen_proc is None or screen_proc.poll() is not None:   # 여러 번 불러도 하나만
+      screen_proc = subprocess.Popen([f'{ENV_PATH}/python3', '/home/pi/openpibo-os/system/network_disp.py'])
+
+def show_ip(keep=None):
+  """로봇 화면(파이보 OLED · PiBrain LCD)을 IP 화면으로 되돌린다(261116, 사용자 — 앱을 나가거나 다른 앱으로 옮기면 무조건).
+  끄이는 앱(도구·분류기·대화 웹·체험 앱·검수)이 다 내려간 뒤에 그린다 — 내려가는 앱이 마지막에 화면을 덮어쓰지 않게.
+  keep = 지금 켜는 앱(그 앱은 기다리지 않는다)"""
+  units = [u for u in ('tools.service', 'classify.service') if u != keep]
+  procs = [x for x in (CHAT_PY, KIDS_PY, HWTEST_PY) if x != keep]
+  def go():
+    end = time.time() + 20
+    while time.time() < end:
+      try:
+        busy = any(subprocess.run(['systemctl', 'is-active', '--quiet', u], timeout=5).returncode == 0 for u in units) or \
+               any(subprocess.run(['pgrep', '-f', x], stdout=subprocess.DEVNULL, timeout=5).returncode == 0 for x in procs)
+      except Exception:  # noqa: BLE001 — 못 물어보면 기다리지 않고 그린다
+        busy = False
+      if not busy:
+        break
+      time.sleep(0.3)
+    time.sleep(0.5)
+    draw_ip()
+  threading.Thread(target=go, daemon=True).start()
 
 @app.post('/screen_reset')
 async def screen_reset():
-  global screen_proc
-  if screen_proc is None or screen_proc.poll() is not None:   # 여러 번 눌러도 하나만
-    screen_proc = subprocess.Popen([f'{ENV_PATH}/python3', '/home/pi/openpibo-os/system/network_disp.py'])
+  draw_ip()
   return {'ok': True}
 
 @app.sio.on('reset_log')
@@ -771,6 +804,7 @@ async def handle_stop(sid):
   kill_run()
   if ps and ps.returncode is None:
     await ps.wait()
+  show_ip()   # 코드 [정지] 뒤에도 IP 화면(261116)
 
 @app.sio.on('prompt')
 async def handle_prompt(sid, s):

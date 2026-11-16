@@ -34,11 +34,46 @@ def _hex(rgb):
   return '#%02x%02x%02x' % tuple(int(v) for v in rgb)
 
 
-def card_block(card, device, say_text, voice, volume, sound_file):
-  """카드 하나를 블록 하나로. card 는 content.json 의 카드(kind·arg)"""
+def _blk(b):
+  return {'block': b}
+
+
+def sense_bool(what, device):
+  """센서 → 참/거짓 블록. 파이보 touch·pir(MCU), PiBrain b1~b4(GPIO)"""
+  if what == 'dice':
+    a = {'type': 'math_random_int', 'id': _id(), 'inputs': {'FROM': _num(1), 'TO': _num(2)}}
+    return {'type': 'logic_compare', 'id': _id(), 'fields': {'OP': 'EQ'}, 'inputs': {'A': _blk(a), 'B': _num(1)}}
+  if device == 'pibrain':
+    a = {'type': 'device_pibrain_button', 'id': _id(), 'fields': {'num': what[1:]}}
+    want = 'on'
+  else:
+    a = {'type': 'device_get_touch' if what == 'touch' else 'device_get_pir', 'id': _id()}
+    want = 'touch' if what == 'touch' else 'person'
+  return {'type': 'logic_compare', 'id': _id(), 'fields': {'OP': 'EQ'}, 'inputs': {'A': _blk(a), 'B': _text(want)}}
+
+
+def screen_blocks(kind, text, label):
+  """[화면] 카드 → 화면 지우기 · 글자 · 보여 주기. 그림 카드는 IDE 에 같은 그림 블록이 없어 그 이름을 글자로 쓴다"""
+  out = [{'type': 'oled_clear', 'id': _id()}]
+  if kind != 'clear':
+    out.append({'type': 'oled_set_font', 'id': _id(), 'inputs': {'size': _num(20)}})
+    out.append({'type': 'oled_draw_text', 'id': _id(), 'inputs': {'x': _num(4), 'y': _num(20), 'text': _text(text if kind == 'text' else label)}})
+  out.append({'type': 'oled_show', 'id': _id()})
+  return out
+
+
+def card_block(card, device, say_text, voice, volume, sound_file, v=None):
+  """카드 하나를 블록 하나로. card 는 content.json 의 카드(kind·arg). v = 내가 쓴 말·글자"""
   kind, arg = card['kind'], card['arg']
-  if kind == 'motion':
+  if kind in ('motion', 'move'):
     return {'type': 'motion_set_motion', 'id': _id(), 'inputs': {'name': _text(arg), 'cycle': _num(1)}}
+  if kind == 'mymotion':
+    return {'type': 'motion_set_mymotion', 'id': _id(), 'inputs': {'name': _text(arg), 'cycle': _num(1)}}
+  if kind == 'sense':
+    # '~할 때까지 기다리기' = 될 때까지 0.1초씩 기다리는 반복
+    return {'type': 'controls_whileUntil', 'id': _id(), 'fields': {'MODE': 'UNTIL'},
+            'inputs': {'BOOL': _blk(sense_bool(arg, device)),
+                       'DO': _blk({'type': 'utils_sleep', 'id': _id(), 'inputs': {'time': _num(0.1)}})}}
   if kind == 'colour':
     c = _hex(arg)
     if device == 'pibrain':
@@ -46,7 +81,7 @@ def card_block(card, device, say_text, voice, volume, sound_file):
     return {'type': 'device_eye_colour_on', 'id': _id(), 'inputs': {'left': _colour(c), 'right': _colour(c)}}
   if kind == 'say':
     return {'type': 'speech_tts_play', 'id': _id(), 'fields': {'voice': voice},
-            'inputs': {'text': _text(say_text(arg)), 'volume': _num(volume)}}
+            'inputs': {'text': _text(v.strip() if card.get('free') else say_text(arg)), 'volume': _num(volume)}}
   if kind == 'sound':
     # audio_play 의 폴더 선택지 중 code(/home/pi/code/) 에 소리 파일을 같이 복사한다(run_kids.py)
     return {'type': 'audio_play', 'id': _id(), 'fields': {'dir': '/home/pi/code/', 'extension': '.wav'},
@@ -82,13 +117,28 @@ def to_workspace(program, card_of, tricks, device, say_text, voice='f1', volume=
         if inner is not None:
           b['inputs']['DO'] = {'block': inner}
         out.append(b)
+      elif kind == 'if':
+        # 앱은 '만약' 을 3초 동안 살펴보지만 블록은 그 순간 한 번 본다(IDE 에서 기다리기를 더 넣어 볼 수 있다)
+        b = {'type': 'controls_if', 'id': _id(), 'inputs': {'IF0': _blk(sense_bool(card['arg'], device))}}
+        inner = _chain(build(n.get('body') or []))
+        if inner is not None:
+          b['inputs']['DO0'] = {'block': inner}
+        out.append(b)
+      elif kind == 'screen':
+        out += screen_blocks(card['arg'], (n.get('v') or '').strip(), card.get('ko', ''))
+      elif kind == 'photo':
+        # 사진 찍기 = 카메라 그림을 code/kids_photo.jpg 로 저장 + 화면에 보이기
+        out.append({'type': 'vision_imwrite', 'id': _id(), 'fields': {'dir': '/home/pi/code/', 'extension': '.jpg'},
+                    'inputs': {'filename': _text('kids_photo'), 'img': _blk({'type': 'vision_read', 'id': _id()})}})
+        out.append({'type': 'vision_imshow_to_oled', 'id': _id(),
+                    'inputs': {'img': _blk({'type': 'vision_read', 'id': _id()})}})
       elif kind == 'trick':
         tid = card['arg']
         if tid not in used:
           used.append(tid)
         out.append({'type': 'procedures_callnoreturn', 'id': _id(), 'extraState': {'name': tricks[tid]['name']}})
       else:
-        out.append(card_block(card, device, say_text, voice, volume, sound_file))
+        out.append(card_block(card, device, say_text, voice, volume, sound_file, n.get('v')))
         if kind == 'sound':
           # audio_play 는 소리를 배경으로 틀고 바로 다음 블록으로 간다 — 도레미가 한꺼번에 나지 않게 소리 길이만큼 기다린다.
           # '카드 한 장 = 블록 하나' 의 유일한 예외

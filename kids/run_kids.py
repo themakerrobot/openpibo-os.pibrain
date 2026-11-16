@@ -5,7 +5,8 @@
   [내 재주] 저장한 재주 모음 — 실행·고치기·지우기
   [키우기] 다마고치 — 배고픔·기분·졸림, 성격·이름·색. 앱이 떠 있을 때만 시간이 간다
 
-아이마다 프로필(번호 + 그림)이 있고, 재주·별·도달 기록·키우기가 프로필마다 따로 저장된다(로봇은 반마다 아이가 바뀐다).
+저장은 로봇 하나에 한 벌이다(261116, 사용자 — 예전 번호 고르기는 뺐다. 반이 바뀌면 선생님 잠금의 [처음부터 하기]).
+안쪽은 예전 구조(프로필 '1' 하나) 그대로 둔다.
 
 아직 IDE 에 버튼이 없다(시험 중). 기기에서 손으로 띄운다:
   sudo systemctl stop tools.service classify.service 'llama-server@*'
@@ -58,6 +59,12 @@ MAX_TRICKS = 24           # 한 아이가 저장할 수 있는 재주
 TRICK_DEPTH = 3           # 재주 안의 재주 안의 재주까지
 MAX_ACTIONS = 300         # 재주·반복을 다 펼쳤을 때 한 번에 하는 일(너무 오래 도는 것 막기)
 ROSTER_MAX = 40
+ONLY = '1'                # 저장 한 벌(프로필 '1')
+BOX = ('repeat', 'if')    # 안에 카드를 넣는 카드
+FREE_MAX = 20             # 내가 쓴 말·글자 카드의 글자 수
+SENSE_MAX = 30            # '~할 때까지' 카드가 기다리는 최대 초 — 아무도 안 만져도 줄이 영영 멈추지 않게
+IF_WAIT = 3               # '만약 ~하면' 이 살펴보는 초 — 그동안 일어나면 안의 카드를 한다
+MYMOTION_PATH = '/home/pi/mymotion.json'   # 도구 [동작] 에서 저장한 내 동작
 PET_REACT = {'eat': 'munch', 'full': 'oops', 'play': 'boing', 'tired': 'oops', 'starving': 'oops',
              'sleep': 'lullaby', 'notsleepy': 'oops', 'wash': 'bubble', 'pet': 'happy', 'woken': 'oops', 'wake': 'happy'}
 #: 반응 → 잠깐 보여 줄 포즈(pet.js). 태블릿 kids.js 의 REACT_POSE 와 같게. 거절(배불러 등)은 지금 얼굴 그대로
@@ -150,7 +157,7 @@ def content_for_device():
   lessons = []
   for l in CONTENT['lessons']:
     l = dict(l)
-    l['cards'] = [x for x in l['cards'] if x == 'tricks' or base_ok(x)]
+    l['cards'] = [x for x in l['cards'] if x == 'tricks' or (x == 'mymotions' and DEVICE == 'pibo') or base_ok(x)]
     lessons.append(l)
   return {
     'device': DEVICE, 'robot': ROBOTS[DEVICE],
@@ -162,6 +169,7 @@ def content_for_device():
     # 성격마다 '몇 초에 1' — 꾸미기·관찰 일기에서 보여 준다(학습: 성격 = 바뀌는 빠르기)
     'kind_rates': {k: {s: round(Pet(kind=k).rate(s)) for s in ('hunger', 'sleepy', 'mood')} for k in PERSONALITY},
     'max_cards': MAX_CARDS, 'max_tricks': MAX_TRICKS, 'lesson_max': LESSON_MAX,
+    'mymotions': mymotions(), 'free_max': FREE_MAX, 'sense_max': SENSE_MAX, 'if_wait': IF_WAIT,
   }
 
 
@@ -181,8 +189,51 @@ def resolver(tricks):
       if t is None:
         return None
       return {'kind': 'trick', 'arg': cid, 'icon': t['icon'], 'ko': t['name'], 'en': t['name']}
+    if isinstance(cid, str) and cid.startswith('mm:'):
+      name = cid[3:]
+      return mymotion_card(name) if name in mymotions() else None
     return CARDS.get(cid) if base_ok(cid) else None
   return card_of
+
+
+_mm = {'mtime': None, 'names': []}
+
+
+def mymotions():
+  """도구 [동작] 에서 저장한 내 동작 이름(파이보만). 파일이 바뀌면 다시 읽는다"""
+  if DEVICE != 'pibo':
+    return []
+  try:
+    mt = os.path.getmtime(MYMOTION_PATH)
+  except OSError:
+    return []
+  if mt != _mm['mtime']:
+    try:
+      with open(MYMOTION_PATH, encoding='utf-8') as f:
+        d = json.load(f)
+      _mm['names'] = [k for k in d if isinstance(k, str) and 0 < len(k) <= 40] if isinstance(d, dict) else []
+    except (OSError, ValueError):
+      _mm['names'] = []
+    _mm['mtime'] = mt
+  return _mm['names']
+
+
+def mymotion_card(name):
+  return {'kind': 'mymotion', 'arg': name, 'icon': 'fa-person-running', 'ko': name, 'en': name}
+
+
+def free_ok(v):
+  """내가 쓴 말·글자 — 1~20자, 줄바꿈·제어 문자 없음"""
+  return isinstance(v, str) and 0 < len(v.strip()) <= FREE_MAX and not any(ord(ch) < 32 for ch in v)
+
+
+def node_ok(node, card_of):
+  c = card_of(node.get('c')) if isinstance(node, dict) else None
+  if c is None:
+    return None
+  if c.get('free') and not free_ok(node.get('v')):
+    return None
+  return c
 
 
 def check_program(program, card_of):
@@ -191,15 +242,17 @@ def check_program(program, card_of):
     return 'bad'
   n = 0
   for node in program:
-    if not isinstance(node, dict) or card_of(node.get('c')) is None:
+    card = node_ok(node, card_of)
+    if card is None:
       return 'bad card'
     n += 1
     body = node.get('body')
-    if card_of(node['c'])['kind'] == 'repeat':
+    if card['kind'] in BOX:
       if not isinstance(body or [], list):
         return 'bad body'
       for b in body or []:
-        if not isinstance(b, dict) or card_of(b.get('c')) is None or card_of(b['c'])['kind'] == 'repeat' or b.get('body'):
+        inner = node_ok(b, card_of)
+        if inner is None or inner['kind'] in BOX or b.get('body'):
           return 'bad inner'
         n += 1
     elif body:
@@ -231,6 +284,9 @@ def trace_of(program, card_of, tricks, depth=0):
     if card['kind'] == 'repeat':
       for _ in range(card['arg']):
         out += trace_of(n.get('body') or [], card_of, tricks, depth)
+    elif card['kind'] == 'if':                 # 도전은 '일어났을 때' 차례로 본다
+      out.append(n['c'])
+      out += trace_of(n.get('body') or [], card_of, tricks, depth)
     elif card['kind'] == 'trick':
       out += trace_of(tricks['items'][n['c']]['program'], card_of, tricks, depth + 1)
     elif card['kind'] != 'wait':
@@ -285,6 +341,10 @@ def grade(ch, program, card_of, tricks):
   others = [x for x in row if card_of(x)['kind'] not in ('trick', 'repeat', 'wait')]
   if len(others) < c.get('others_min', 0):
     miss.append(['others_min', c['others_min']])
+  if 'if_has' in c:                            # [만약 카드, 안에 있어야 할 카드(None 이면 아무 카드)]
+    want_if, want_in = c['if_has']
+    if not any(n['c'] == want_if and any(want_in is None or b['c'] == want_in for b in n.get('body') or []) for n in program):
+      miss.append(['if_has', 1])
   if c.get('trick_in_repeat') and not any(
       card_of(n['c'])['kind'] == 'repeat' and any(b['c'].startswith('t:') for b in n.get('body') or []) for n in program):
     miss.append(['trick_in_repeat', 1])
@@ -310,6 +370,10 @@ def note_tried(program, card_of, tricks, ch=None):
     p['tried'].setdefault('repeat', now)
   if 'trick' in row:
     p['tried'].setdefault('reuse', now)
+  if 'sense' in row:
+    p['tried'].setdefault('event', now)
+  if 'if' in row:
+    p['tried'].setdefault('condition', now)
   if ch is not None and ch.get('start'):
     p['tried'].setdefault('debug', now)
 
@@ -341,7 +405,8 @@ def tricks_list():
 
 
 # ── 실행 ──────────────────────────────────────────────────────────────────
-run = {'running': False, 'path': None, 'iter': 0, 'error': '', 'result': None, 'seq': 0}
+run = {'running': False, 'path': None, 'iter': 0, 'error': '', 'result': None, 'seq': 0,
+       'photo': None, 'waiting': None, 'cond': None}
 run_lock = threading.Lock()
 
 
@@ -349,15 +414,29 @@ class Stop(Exception):
   pass
 
 
-def do_card(card, lang):
+def do_card(card, lang, v=None):
   k, a = card['kind'], card['arg']
-  if k == 'motion':
+  if k in ('motion', 'move'):
     robot.motion(a)
+  elif k == 'mymotion':
+    robot.mymotion(a)
+  elif k == 'screen':
+    robot.screen(a, (v or '').strip())
+  elif k == 'photo':
+    name = robot.photo(path('photos'))
+    if name:
+      run['photo'] = name
+  elif k == 'sense':
+    run['waiting'] = a
+    try:
+      robot.sense(a, SENSE_MAX)
+    finally:
+      run['waiting'] = None
   elif k == 'colour':
     robot.colour(a)
     robot.wait(0.3)       # 색만 바꾸면 순식간이라 아이가 차례를 못 본다
   elif k == 'say':
-    robot.say(say_text(a, lang))
+    robot.say(v.strip() if card.get('free') else say_text(a, lang))
   elif k == 'sound':
     robot.sound(a)
   elif k == 'wait':
@@ -368,14 +447,31 @@ def run_nodes(nodes, card_of, tricks, lang, mark):
   """카드 줄을 실행한다. mark 가 있으면 맨 바깥 줄의 위치를 화면에 알린다(재주 안은 재주 카드가 계속 빛난다)"""
   for i, node in enumerate(nodes):
     card = card_of(node['c'])
-    if card['kind'] == 'repeat':
+    if card['kind'] == 'if':
+      if robot.stop_flag.is_set():
+        raise Stop
+      if mark:
+        run.update(path=[i], iter=0, cond=None)
+      yes = random.random() < 0.5 if card['arg'] == 'dice' else check_sense(card['arg'])
+      if mark:
+        run['cond'] = yes
+      if yes:
+        for j, inner in enumerate(node.get('body') or []):
+          if robot.stop_flag.is_set():
+            raise Stop
+          if mark:
+            run.update(path=[i, j], iter=0)
+          run_one(card_of(inner['c']), card_of, tricks, lang, inner.get('v'))
+      else:
+        robot.wait(0.6)          # '안 했어요' 가 눈에 보이게 잠깐
+    elif card['kind'] == 'repeat':
       for r in range(card['arg']):
         for j, inner in enumerate(node.get('body') or []):
           if robot.stop_flag.is_set():
             raise Stop
           if mark:
             run.update(path=[i, j], iter=r + 1)
-          run_one(card_of(inner['c']), card_of, tricks, lang)
+          run_one(card_of(inner['c']), card_of, tricks, lang, inner.get('v'))
         if not node.get('body'):
           if mark:
             run.update(path=[i], iter=r + 1)
@@ -385,14 +481,23 @@ def run_nodes(nodes, card_of, tricks, lang, mark):
         raise Stop
       if mark:
         run.update(path=[i], iter=0)
-      run_one(card, card_of, tricks, lang)
+      run_one(card, card_of, tricks, lang, node.get('v'))
 
 
-def run_one(card, card_of, tricks, lang):
+def check_sense(what):
+  """'만약' — IF_WAIT 초 동안 살펴서 일어났으면 True"""
+  run['waiting'] = what
+  try:
+    return robot.sense(what, IF_WAIT)
+  finally:
+    run['waiting'] = None
+
+
+def run_one(card, card_of, tricks, lang, v=None):
   if card['kind'] == 'trick':
     run_nodes(tricks['items'][card['arg']]['program'], card_of, tricks, lang, False)
   else:
-    do_card(card, lang)
+    do_card(card, lang, v)
 
 
 def run_program(program, cid, lang, seq, tricks):
@@ -660,8 +765,8 @@ async def api_profile(body: dict = Body(...)):
   if run['running']:
     return bad('busy', 409)
   pid = body.get('id')
-  if pid is None:
-    load_profile(None)
+  if pid is None:                    # 저장 한 벌 — 나가기가 없다
+    ensure_only()
     return state()
   pid = str(pid)
   if not pid.isdigit() or not 1 <= int(pid) <= settings['roster']:
@@ -704,7 +809,7 @@ async def api_run(body: dict = Body(...)):
     pet_state['mode'] = False
     robot.stop_flag.clear()
     run['seq'] += 1
-    run.update(running=True, path=None, iter=0, error='', result=None)
+    run.update(running=True, path=None, iter=0, error='', result=None, photo=None, waiting=None, cond=None)
     threading.Thread(target=run_program, args=(program, cid, lang_of(body), run['seq'], tricks), daemon=True).start()
   finally:
     run_lock.release()
@@ -713,7 +818,47 @@ async def api_run(body: dict = Body(...)):
 
 @app.get('/api/run')
 async def api_run_state():
-  return {k: run[k] for k in ('running', 'path', 'iter', 'error', 'result')}
+  return {k: run[k] for k in ('running', 'path', 'iter', 'error', 'result', 'photo', 'waiting', 'cond')}
+
+
+@app.get('/api/photo/{name}')
+async def api_photo(name: str):
+  """[사진 찍기] 로 찍은 사진(태블릿에 보여 준다)"""
+  if not re.fullmatch(r'photo_\d+\.jpg', name) or not os.path.isfile(path('photos', name)):
+    return bad('no photo', 404)
+  return FileResponse(path('photos', name), media_type='image/jpeg')
+
+
+@app.get('/api/mymotions')
+async def api_mymotions():
+  return {'names': mymotions()}
+
+
+@app.post('/api/voice/prep')
+async def api_voice_prep(body: dict = Body(...)):
+  """[내가 쓴 말] 카드를 놓을 때 목소리를 미리 만든다(처음 한 번 몇 초 걸려서)"""
+  text = body.get('text')
+  if not free_ok(text):
+    return bad('bad text')
+  text = text.strip()
+  if robot.has_voice(text):
+    return {'ok': True, 'cached': True}
+  def go():
+    try:
+      robot.voice_file(text)
+    except Exception as exc:  # noqa: BLE001
+      print(f'[kids] 목소리 준비 오류: {exc}', flush=True)
+  threading.Thread(target=go, daemon=True).start()
+  return {'ok': True, 'cached': False}
+
+
+@app.post('/api/screen/home')
+async def api_screen_home():
+  """화면(OLED·LCD)을 IP 화면으로 — 만들기에서 나갈 때(그림·글자·사진 카드를 썼으면 남아 있으므로)"""
+  if run['running'] or pet_state['mode']:
+    return {'ok': False}
+  await asyncio.to_thread(robot.show_network)
+  return {'ok': True}
 
 
 @app.post('/api/stop')
@@ -950,8 +1095,19 @@ async def api_reset(body: dict = Body(...)):
     profiles.pop(pid, None)
     histories.pop(pid, None)
     shutil.rmtree(path('p', pid), ignore_errors=True)
+  shutil.rmtree(path('photos'), ignore_errors=True)
   write_json('profiles.json', profiles)
+  ensure_only()                       # 저장 한 벌 — 지운 뒤 바로 새로 시작
   return {'ok': True}
+
+
+def ensure_only():
+  """저장 한 벌(프로필 '1')을 만들고 지금 것으로"""
+  if ONLY not in profiles:
+    profiles[ONLY] = {'icon': 'fa-robot', 'made': int(time.time())}
+    write_json('profiles.json', profiles)
+  if cur['id'] != ONLY:
+    load_profile(ONLY)
 
 
 @app.post('/api/teacher/lock')
@@ -1025,7 +1181,7 @@ async def api_pet_profile(body: dict = Body(...)):
 
 
 def main():
-  global DEVICE, DATA_DIR, CODE_DIR, robot, settings, profiles
+  global DEVICE, DATA_DIR, CODE_DIR, MYMOTION_PATH, robot, settings, profiles
   p = argparse.ArgumentParser()
   p.add_argument('--port', type=int, default=50060)
   p.add_argument('--device', default='pibo', choices=('pibo', 'pibrain'))
@@ -1033,8 +1189,9 @@ def main():
   p.add_argument('--code-dir', default=CODE_DIR)
   p.add_argument('--fake', action='store_true', help='기기 없이 — 로봇이 하는 일을 흉내만 낸다')
   p.add_argument('--fake-speed', type=float, default=1.0, help='--fake 일 때 걸리는 시간 배수(시험용)')
+  p.add_argument('--mymotion', default=MYMOTION_PATH, help='내 동작 파일(시험용)')
   args = p.parse_args()
-  DEVICE, DATA_DIR, CODE_DIR = args.device, args.data_dir, args.code_dir
+  DEVICE, DATA_DIR, CODE_DIR, MYMOTION_PATH = args.device, args.data_dir, args.code_dir, args.mymotion
 
   saved = read_json('settings.json', {})
   settings = dict(DEFAULT_SETTINGS, **{k: v for k, v in saved.items() if k in DEFAULT_SETTINGS})
@@ -1044,6 +1201,7 @@ def main():
   if args.fake:
     kw['speed'] = args.fake_speed
   robot = make_robot(DEVICE, path('voice'), fake=args.fake, **kw)
+  ensure_only()
   app.state.robot = robot
   threading.Thread(target=react_worker, daemon=True).start()
   threading.Thread(target=pet_loop, daemon=True).start()
