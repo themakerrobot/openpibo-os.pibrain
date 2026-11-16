@@ -507,6 +507,22 @@ sudo raspi-config nonint get_wifi_country
 | `jquery-3.7.1.min.js` | Pibo | 3.1.1 을 지우고 올렸다 |
 | `tools/templates/index.html` `static/index.css` | **PiBrain 전용**(Pibo 도구와 마크업이 다르다) | 새로 짰다 — 아래 '도구 화면' |
 
+### 블록 수준 — 쉬움 / 전체 (261116, 사용자)
+
+edge-lab 의 블록 수준을 본떠 IDE 에 **2단계**(사용자: 3단계 대신 2단계)를 넣었다. [더보기] → **블록 수준** [쉬움 | 전체], 처음엔 **전체**(지금과 같음).
+- 코드는 `ide/static/v2/levels.js` 한 파일(**파이보·PiBrain 같은 파일**, 제품은 `<html data-product>`). `customblock.js`(수정 금지)·`customblock_toolbox.js`(영문판 델타)는 건드리지 않는다 —
+  `Blockly.WorkspaceSvg.prototype.updateToolbox` 를 감싸 `toolbox_dict[lang]` 이 오면 쉬움 툴박스로 바꿔 낀다. 그래서 델타 16개는 그대로
+- 쉬움 툴박스: 블록 찾기 · 시작·반복(클릭했을 때·**계속 반복**·N번 반복·기다리기) · 만약(만약·만약~아니면·비교·그리고/또는·아니다) · 동작(파이보) · 불빛 · 말·소리 · 화면 · 센서 · AI 눈 · 점수.
+  기존 블록은 전체 툴박스 항목(그림자·기본값)을 그대로 가져온다
+- 새 블록 `ez_*` 16개 — 카메라·변수·이미지를 블록 안에 숨기고 고르기만 한다: `ez_forever`(while True) · `ez_motion`(로봇 놀이와 같은 동작 16개) · `ez_sound`·`ez_note`(`kids/sounds/*.wav`) ·
+  `ez_picture`(`ide/static/ez/<그림>_<가로>x<세로>.png` — `kids/screen.py` 로 미리 그림, 128x64·240x320 두 벌) · `ez_text` · `ez_clear` · `ez_touch`·`ez_pir`(파이보, PIR 은 `send_cmd(30,'on')` 을 한 번) · `ez_button`(PiBrain) ·
+  `ez_seen`(얼굴·손·사람) · `ez_gesture`(손동작 7가지) · `ez_emotion`(표정 5가지, 도움 함수 `ez_emotion()`) · `ez_score_add`·`ez_score_reset`·`ez_score`(`ez_score = {'value': 0}` — 함수 안에서도 global 없이 쓰게)
+- 만드는 파이썬은 기존 블록과 **같은 definitions_ 열쇠·객체 이름**(camera·_face·detect·oled·device·motion·audio)을 쓴다 — 쉬움·전체 블록을 섞어도 한 번씩만 만든다. 센서·AI 블록은 그 순간 한 번 본다(계속 반복 안에서 쓰는 전제)
+- 수준은 브라우저에 기억(`localStorage 'pibo_block_level'`), **파일에는 넣지 않는다**(저장 표시 비교가 꼬인다). 툴박스만 바뀌므로 쉬움에서 전체 수준 파일을 열어도 블록은 다 보인다
+- 블록 문구는 `levels.js` 안의 ko/en(`Blockly.Msg.EZ_*`, 툴박스를 그릴 때마다 지금 언어로 넣는다). 메뉴 문구는 IDE `ko2en.js` 의 `v2_level*`
+- 확인(컨테이너): 파이보·PiBrain 11/11 — 메뉴, 쉬움 분류(파이보 9·PiBrain 8 + 찾기), 쉬움 블록 25·24개 만들기·코드, 섞은 프로그램의 파이썬(문법·가짜 라이브러리로 실행 순서), 새로 고침 뒤 유지·영문, 전체 예제 열기, 전체로 되돌리기, pageerror 0.
+  전체 툴박스 회귀 162·149 블록 오류 0. **실기기 확인 필요** — 센서·카메라 블록 결과, 그림 PNG 가 OLED·LCD 에 맞게 보이는지. 도움말 블록 가이드에는 아직 쉬움 블록이 없다
+
 ### 파일 목록 아이콘 (261102) — Pibo 와 같다
 
 `index.js` 의 `fmIcon()` · `v2/ide.css` 의 `--fm-*` 는 파이보와 같은 코드다(설명은 파이보 CLAUDE.md '파일 목록 아이콘'). 아이콘에 `data-kind='folder|file'` 을 꼭 넣을 것 — 클릭 처리가 그걸 본다

@@ -29,6 +29,10 @@ const translations = {
   nav_poweroff:   { ko: "전원 끄기",   en: "Power off" },
   // IDE 화면 (templates/index.html, 시안 B)
   v2_more:          { ko: "더보기",   en: "More" },
+  v2_level:         { ko: "블록 수준", en: "Block level" },
+  v2_level_easy:    { ko: "쉬움", en: "Easy" },
+  v2_level_all:     { ko: "전체", en: "All" },
+  v2_level_tip:     { ko: "쉬움: 초등 저학년(고르기만 하는 블록) · 전체: 모든 블록", en: "Easy: early grades (pick-only blocks) · All: every block" },
   v2_fontsize:      { ko: "글자 크기", en: "Font size" },
   v2_dark_editor:   { ko: "어두운 파이썬 편집기", en: "Dark Python editor" },
   v2_language:      { ko: "언어",     en: "Language" },
