@@ -1205,25 +1205,20 @@ body.pb-v2 .mlib__tools > button, body.pb-v2 .mlib__tools > label { width: var(-
 }
 @media (max-width: 1299px) and (min-width: 901px) {
   body.pb-v2 .mhead__keys { display: none; }
-  /* 태블릿 가로(1024~1280): 카드 폭이 좁아 사진이 폭에 걸려 가운데 줄의 절반~⅔ 만 찼다 →
-     조작 패널을 사진 아래로 내리고 두 칸(각도 | 시간·추가·수정)으로 편다. 사진 크기는 fitStage 가 남는 높이로 */
-  body.pb-v2 .mbody { flex-direction: column; justify-content: flex-start; gap: 12px; }
-  body.pb-v2 .mside { width: 100% !important; align-self: stretch !important; }
-  body.pb-v2 .mpanel { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 16px; row-gap: 8px; align-items: center; }
-  body.pb-v2 .mpanel > :not(.mpanel__add) { grid-column: 1; }
-  /* .mpanel__add 의 두 칸 모양은 아래 기본 규칙 뒤('조작 패널 아래' 끝)에 둔다 — 여기 두면 뒤의 border-top 이 이겨 선이 남았다 */
 }
-body.pb-v2 .mside { flex: none; width: 196px; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
-/* 조작 패널·장면 만들기·저장 칸은 같은 상자 모양 */
-body.pb-v2 .mpanel, body.pb-v2 .mlib {
+/* 저장 칸 상자 (261116 에 옆 조작 패널 .mside/.mpanel 은 없앴다 — 시간·[추가·수정] 은 윗줄, 레인지는 점에 붙는다) */
+body.pb-v2 .mlib {
   display: flex; flex-direction: column; gap: 10px;
   padding: var(--sp-3); border-radius: var(--r-card); background: var(--v2-raise); border: 1px solid var(--v2-line);
 }
-body.pb-v2 .mpanel__name { font-size: var(--fs-lg); font-weight: var(--fw-b); color: var(--v2-ink); }
-body.pb-v2 .mpanel > input[type="range"] { width: 100%; accent-color: var(--v2-accent); height: 28px; }
-body.pb-v2 .mpanel__lim { font-size: 12px; color: var(--v2-ink-3); text-align: center; font-variant-numeric: tabular-nums; }
+/* 고른 점에 붙는 레인지(261116): 점 옆 같은 높이 한 줄 상자. 자리는 index.js 의 placeSlide */
+body.pb-v2 #article_motion .mslide {
+  position: absolute; z-index: 3; display: flex; align-items: center; height: 30px; padding: 0 7px;
+  border-radius: 999px; background: var(--v2-raise); border: 2px solid var(--v2-accent); box-shadow: 0 2px 8px rgba(20, 24, 40, .2);
+}
+body.pb-v2 #article_motion .mslide > input[type="range"] { width: 76px; height: 22px; margin: 0; accent-color: var(--v2-accent); }
 @media (max-width: 900px) {
-  body.pb-v2 .mbody { justify-content: center; margin: 10px 0; } body.pb-v2 .mside { width: 240px; }
+  body.pb-v2 .mbody { justify-content: center; margin: 10px 0; }
   body.pb-v2 .mlib { margin-top: 10px; }
   body.pb-v2 #article_motion > .pibo-section { width: 100%; }
   body.pb-v2 .mstage { width: min(42vw, 340px); }
@@ -1231,23 +1226,20 @@ body.pb-v2 .mpanel__lim { font-size: 12px; color: var(--v2-ink-3); text-align: c
 
 /* 조작 패널 아래: 시간 · [추가·수정] · 한 줄 안내. 각도를 맞추고 바로 아래에서 누른다(260928).
    따로 상자로 두었을 땐 내용은 한 줄인데 상자만 커서(140px) 패널 안으로 넣었다 */
-body.pb-v2 .mpanel__add { display: flex; flex-direction: column; gap: 8px; margin-top: 2px; padding-top: 12px; border-top: 1px solid var(--v2-line); }
+/* 윗줄 오른쪽(261116): 시간 [  ]초 [+ 추가·수정] */
+body.pb-v2 .mhead > .mpanel__add { display: flex; flex-direction: row; align-items: center; gap: 8px; margin-left: auto; min-width: 0; }
 body.pb-v2 .mpanel__time { display: flex; align-items: center; gap: 6px; font-size: var(--fs-sm); font-weight: var(--fw-b); color: var(--v2-ink-2); }
 body.pb-v2 .mpanel__time > span:first-child { flex: none; min-width: 30px; white-space: nowrap; }   /* 영문 'Time' 이 30px 칸에서 두 줄로 접혔다(1024) */
 body.pb-v2 #ms_time_slot { display: contents; }
-body.pb-v2 .mpanel__add #m_time_val { flex: 1 1 0; min-width: 0; width: auto; height: var(--ctl-md); text-align: right; font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
+body.pb-v2 .mpanel__add #m_time_val { flex: none; width: 72px; height: var(--ctl-sm); text-align: right; font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
 body.pb-v2 .mpanel__add .motion-unit { margin: 0; flex: none; }
 body.pb-v2 #article_motion .mpanel__add #add_frame_bt {
-  width: 100%; height: var(--ctl-md); justify-content: center; font-size: var(--fs-md) !important; font-weight: var(--fw-b);
+  width: auto; height: var(--ctl-sm); padding: 0 14px !important; justify-content: center; font-size: var(--fs-sm) !important; font-weight: var(--fw-b);
   background: var(--v2-dark) !important; color: var(--v2-on-dark) !important; border-color: transparent !important; box-shadow: var(--v2-btn-sh) !important;
 }
 body.pb-v2 #article_motion .mpanel__add #add_frame_bt:hover { background: var(--v2-dark-hov) !important; }
 body.pb-v2 #article_motion .mpanel__add #add_frame_bt > i { color: inherit; }
-body.pb-v2 .mpanel__hint { font-size: var(--fs-xs); color: var(--v2-ink-3); text-align: center; }
-@media (max-width: 1299px) and (min-width: 901px) {
-  body.pb-v2 .mpanel__add { grid-column: 2; grid-row: 1 / span 5; align-self: stretch; justify-content: center;
-    margin: 0; padding: 0 0 0 16px; border-top: 0; border-left: 1px solid var(--v2-line); }
-}
+
 /* [이 줄 지우기]: 표를 고르면 표 버튼 줄의 [표 비우기] 옆에 나온다. 판 없는 빨간 글씨 */
 body.pb-v2 #article_motion #ms_delete {
   display: inline-flex; align-items: center; gap: 5px; margin-left: auto; white-space: nowrap;
@@ -1261,7 +1253,9 @@ body.pb-v2 #m_time_val.is-bumped { animation: pb-bump .6s ease-out; }
 /* 윗줄(왼쪽): [원래자세] · 키 안내 — 오른쪽 [반복·실행·정지] 줄과 높이를 맞춘다 */
 body.pb-v2 .mhead { display: flex; align-items: center; gap: 14px; min-width: 0; white-space: nowrap; }
 body.pb-v2 #article_motion .mhead > #init_bt { position: static !important; height: var(--ctl-sm); padding: 0 12px; font-size: var(--fs-sm); }
-body.pb-v2 .mhead__keys { margin-left: auto; font-size: var(--fs-xs); color: var(--v2-ink-3); overflow: hidden; text-overflow: ellipsis; }
+body.pb-v2 .mbody { position: relative; }
+body.pb-v2 .mhead__keys { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font-size: var(--fs-xs); color: var(--v2-ink-3);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
 @media (hover: none) { body.pb-v2 .mhead__keys { display: none; } }   /* 태블릿엔 키보드가 없다 */
 /* 고른 표 줄 */
 body.pb-v2 #motor_table tbody tr[data-sel] td { background: var(--v2-accent-t) !important; color: var(--v2-accent-ink); font-weight: var(--fw-b); }
@@ -1369,7 +1363,6 @@ body.pb-v2 #motor_table td { padding: 3px 4px; font-size: 13.5px; font-variant-n
   body.pb-v2 #article_motion .motion-record { display: contents; }
   body.pb-v2 #article_motion .motion-record > div:first-child { flex-wrap: nowrap; white-space: nowrap; min-width: 0; }
   body.pb-v2 #article_motion .motion-table-wrap { height: auto; min-height: 0; max-height: none; margin: 0; }
-  body.pb-v2 .mside { align-self: center; }
   body.pb-v2 #article_motion .motion-name-wrap { flex-wrap: nowrap; }
 }
 @media (min-width: 1300px) { body.pb-v2 #article_motion > .pibo-section { flex-grow: 1.2 !important; } }
