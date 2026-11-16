@@ -616,7 +616,7 @@ Pibo 리포의 변경을 가져올 때 **항목마다 적용 여부를 먼저 �
 라이브러리는 파일마다 Pibo 와 다를 수 있으니 통째로 덮어쓰지 말고 diff 를 보고 옮길 것.
 
 **사물 인식은 Pibo 와 같은 easydetect ed 모델 파일이다(261026)** — `openpibo/modules/ed_onnx.py`(Pibo 와 **같은 파일**, 같이 고칠 것)로 onnxruntime 만 쓴다.
-- **ed-s-320 은 261116 에 8비트(QDQ) 판으로 바뀌었다** — 파일 이름·입출력·메타데이터가 같아 코드는 그대로. 기기에는 새 파일 + `.model/VERSION` 다시 만들기. 자세한 건 Pibo CLAUDE.md '사물 인식'
+- **ed-s-320 은 261116 에 8비트(QDQ) 판으로 바뀌었다** — 파일 이름·입출력·메타데이터가 같아 코드는 그대로. 기기에는 새 파일 + `.model/VERSION` 다시 만들기. 파이보 실측 중간 316ms(예전 float 376ms). 자세한 건 Pibo CLAUDE.md '사물 인식'
 자세한 건 Pibo CLAUDE.md '사물 인식'. 요점:
 - 기본 `/home/pi/.model/object/ed-s-320.onnx`(`vision_detect.py` 의 `OBJECT_MODEL` 한 줄). lab 에서 받은 `job<번호>.onnx`(261028 전엔 `pibo-job<번호>.onnx`) 는 `load_object_model(파일)`·블록으로 고른다. 블록 기본 글자 `job1`.
   이름·conf 는 파일 안 메타데이터(`easydetect.names`·`easydetect.conf`), 입력 크기도 파일에서 읽는다
