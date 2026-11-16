@@ -144,6 +144,11 @@ body.v2-app a { color: inherit; text-decoration: none; cursor: pointer; }
   background: var(--c-raise); color: var(--c-ink); font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,.14);
 }
 .v2-seg--full { display: flex; width: 100%; }
+/* 편집기 줄의 블록 수준 [쉬움 | 전체] (261116) — [파이썬 코드] 버튼과 같은 높이 */
+.v2-seg--level { padding: 2px; flex: none; }
+.v2-seg--level > button { height: 28px; padding: 0 10px; font-size: 12.5px; gap: 5px; }
+.v2-seg--level[hidden] { display: none; }
+@media (max-width: 760px) { .v2-seg--level > button > span { display: none; } }
 .v2-seg--full > button { flex: 1 1 0; padding: 0 8px; font-size: 12.5px; gap: 5px; height: 30px; }
 .v2-top .v2-seg { background: var(--c-brand-seg); }
 .v2-top .v2-seg > button { color: var(--c-brand-ink); }
