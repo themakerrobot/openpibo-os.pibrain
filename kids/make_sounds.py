@@ -9,7 +9,7 @@ import numpy as np
 
 SR = 22050
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'sounds')
-NOTE = {'do': 523.25, 're': 587.33, 'mi': 659.25, 'fa': 698.46, 'sol': 783.99, 'la': 880.0, 'do2': 1046.5}
+NOTE = {'do': 523.25, 're': 587.33, 'mi': 659.25, 'fa': 698.46, 'sol': 783.99, 'la': 880.0, 'si': 987.77, 'do2': 1046.5}
 
 
 def t(sec):
@@ -54,7 +54,7 @@ def save(name, y, peak=0.7):
 
 def main():
   rng = np.random.default_rng(1)
-  for n in ('do', 're', 'mi', 'fa', 'sol'):
+  for n in ('do', 're', 'mi', 'fa', 'sol', 'la', 'si', 'do2'):
     save(n, tone(NOTE[n], 0.6, decay=5.0))
   save('ding', seq(tone(1318.5, 0.45, decay=4), tone(1046.5, 0.7, decay=4)))
   x = t(0.5)
