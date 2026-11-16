@@ -14,12 +14,12 @@
     program: [], cursor: -1, tab: null, running: false, token: null,
     pet: null, petTimer: null, lastInputT: 0
   };
-  var KIND_ORDER = ['motion', 'move', 'mymotion', 'colour', 'say', 'sound', 'screen', 'wait', 'sense', 'repeat', 'if', 'trick'];
+  var KIND_ORDER = ['motion', 'mymotion', 'colour', 'say', 'sound', 'screen', 'wait', 'sense', 'repeat', 'if', 'trick'];
   var KIND_ICON = { motion: 'fa-child-reaching', move: 'fa-person-walking', mymotion: 'fa-person-running', colour: 'fa-lightbulb',
                     say: 'fa-comment', sound: 'fa-music', screen: 'fa-display', wait: 'fa-hourglass-half', sense: 'fa-hand-pointer',
                     repeat: 'fa-repeat', 'if': 'fa-code-branch', trick: 'fa-wand-magic-sparkles' };
   function isBox(k) { return k === 'repeat' || k === 'if'; }          // 안에 카드를 넣는 카드
-  function tabOf(c) { return c.kind === 'photo' ? 'screen' : c.kind; }   // 사진 찍기는 [화면] 칸에
+  function tabOf(c) { return c.kind === 'photo' ? 'screen' : c.kind === 'move' ? 'motion' : c.kind; }   // 사진 찍기는 [화면] 칸, 이동은 [동작] 칸에(261116)
 
   function post(url, body) {
     return fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) })
