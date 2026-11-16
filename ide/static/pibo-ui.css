@@ -1164,7 +1164,7 @@ body.pb-v2 .mstage > img { display: block; width: 100%; height: auto; margin: 0;
 html[data-theme="dark"] body.pb-v2 .mstage > img { filter: opacity(.9); }
 body.pb-v2 #article_motion .mstage .mdot {
   position: absolute; transform: translate(-50%, -50%); display: inline-flex; align-items: center; gap: 5px;
-  height: 30px; padding: 0 9px 0 3px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  height: 30px; padding: 0 4px 0 3px; border-radius: 999px; cursor: text; white-space: nowrap;
   background: var(--v2-raise) !important; color: var(--v2-ink) !important; border: 2px solid var(--v2-accent) !important;
   box-shadow: 0 2px 6px rgba(20, 24, 40, .18) !important; font-size: 13px !important; font-weight: 700;
 }
@@ -1172,7 +1172,18 @@ body.pb-v2 #article_motion .mstage .mdot > b {
   display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%;
   background: var(--v2-accent); color: var(--v2-on-accent); font-size: 12px;
 }
-body.pb-v2 #article_motion .mstage .mdot .mdot__v { font-variant-numeric: tabular-nums; min-width: 1.6em; text-align: right; }
+/* 점 안 숫자칸(261116): 판 없이 점과 한 몸처럼. 눌러서 바로 친다 */
+body.pb-v2 #article_motion .mstage .mdot .mdot__in {
+  width: 2.7em; height: 24px; padding: 0 2px; margin: 0; border: 0 !important; border-radius: 6px; box-shadow: none !important;
+  background: transparent !important; color: inherit !important; font: inherit; font-size: 14px; font-weight: 700;
+  font-variant-numeric: tabular-nums; text-align: right; outline: none; -moz-appearance: textfield;
+}
+body.pb-v2 #article_motion .mstage .mdot .mdot__in::-webkit-outer-spin-button,
+body.pb-v2 #article_motion .mstage .mdot .mdot__in::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+body.pb-v2 #article_motion .mstage .mdot .mdot__in:focus { background: rgba(255, 255, 255, .22) !important; }
+body.pb-v2 #article_motion .mstage .mdot .mdot__in::selection { background: rgba(255, 255, 255, .45); color: inherit; }
+body.pb-v2 #article_motion .mstage .mdot.is-clamped { animation: pb-clamp .6s ease; }
+@keyframes pb-clamp { 0%, 60% { outline: 3px solid var(--v2-red); outline-offset: 1px; } }   /* 범위 밖 → 끝값으로 맞췄다는 표시 */
 body.pb-v2 #article_motion .mstage .mdot:hover { transform: translate(-50%, -50%) scale(1.06); }
 body.pb-v2 #article_motion .mstage .mdot[aria-pressed="true"] { background: var(--v2-accent) !important; color: var(--v2-on-accent) !important; }
 body.pb-v2 #article_motion .mstage .mdot[aria-pressed="true"] > b { background: var(--v2-raise); color: var(--v2-accent-ink); }
@@ -1209,19 +1220,7 @@ body.pb-v2 .mpanel, body.pb-v2 .mlib {
   padding: var(--sp-3); border-radius: var(--r-card); background: var(--v2-raise); border: 1px solid var(--v2-line);
 }
 body.pb-v2 .mpanel__name { font-size: var(--fs-lg); font-weight: var(--fw-b); color: var(--v2-ink); }
-body.pb-v2 .mpanel__val { display: flex; align-items: baseline; gap: 4px; }
-body.pb-v2 .mpanel__val > input {
-  width: 100%; height: var(--ctl-lg); padding: 0 8px; text-align: center; font-size: 26px; font-weight: var(--fw-b);
-  font-variant-numeric: tabular-nums; border-radius: var(--r-ctl);
-}
-/* 단위 '°' 는 시간 칸의 '초' 처럼 입력칸 가운데 높이에 작게(위첨자처럼 떠 보였다) */
-body.pb-v2 .mpanel__val { align-items: center; }
-body.pb-v2 .mpanel__val > span { flex: none; font-size: var(--fs-md); font-weight: var(--fw-b); color: var(--v2-ink-2); line-height: 1; }
 body.pb-v2 .mpanel > input[type="range"] { width: 100%; accent-color: var(--v2-accent); height: 28px; }
-body.pb-v2 .mpanel__steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-body.pb-v2 #article_motion .mpanel__steps > button {
-  height: var(--ctl-md); padding: 0 !important; font-size: 15px !important; font-weight: var(--fw-b); font-variant-numeric: tabular-nums;
-}
 body.pb-v2 .mpanel__lim { font-size: 12px; color: var(--v2-ink-3); text-align: center; font-variant-numeric: tabular-nums; }
 @media (max-width: 900px) {
   body.pb-v2 .mbody { justify-content: center; margin: 10px 0; } body.pb-v2 .mside { width: 240px; }
