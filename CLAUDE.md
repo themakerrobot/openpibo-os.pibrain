@@ -627,7 +627,7 @@ Pibo 리포의 변경을 가져올 때 **항목마다 적용 여부를 먼저 �
 
 **파이썬 패키지 (260930)** — `requirements.txt`(새로 만듦, Pibo 와 같은 목록)가 리포 코드가 import 하는 것이다. 예전 OS 에서 올린 기기의
 안 쓰는 패키지(TF·torch·ultralytics·MeloTTS 잔재 등, site-packages 5.5GB 의 대부분)는 `system/venv_prune.py` 로 걷어낸다(Pibo 와 **같은 파일**).
-기기 상태(261001, `fc1a8f31`): `venv_prune.py` 가 **지울 것 0개**(남김 111개) — 이미 정리돼 있다. **261116 에 4개(`dlib`·`openpibo-dlib-models`·`openpibo-detect-models`·`tflite-runtime`, 약 221MB)를 더 지웠다** — 261104 에 코드에서 뺀 것. 남김 105개, import 38/38, `pip check` 의 mediapipe→jax 줄은 예상된 것(jax 를 안 불러온다). 남은 선택 항목은 `--optional`(pandas·scikit-learn·seaborn 약 143MB)과 `--jax`(약 265MB)
+기기 상태(261001, `fc1a8f31`): `venv_prune.py` 가 **지울 것 0개**(남김 111개) — 이미 정리돼 있다. **261116 에 4개(`dlib`·`openpibo-dlib-models`·`openpibo-detect-models`·`tflite-runtime`, 약 221MB)를 더 지웠다** — 261104 에 코드에서 뺀 것. 남김 105개, import 38/38, `pip check` 의 mediapipe→jax 줄은 예상된 것(jax 를 안 불러온다). 남은 선택 항목 pandas·scikit-learn·seaborn(약 143MB)은 학생 수업용으로 남겨 둔다(사용자, 261116 — `--optional` 쓰지 말 것). `--jax`(약 265MB)는 260930 에 지웠다
 `ultralytics`·`torch` 는 이제 코드가 import 하지 않으므로 여기서 같이 빠진다. 사용법은 IMAGE.md '안 쓰는 패키지 걷어내기'
 
 ### PiBrain 전용 블록 — `device_pibrain_*`
