@@ -305,6 +305,8 @@ const translations = {
   kids_if_look:     { ko: "살펴보는 중", en: "Checking" },
   kids_if_yes:      { ko: "했어요!", en: "Yes!" },
   kids_if_no:       { ko: "안 했어요", en: "No" },
+  kids_warn_photo:  { ko: "사진을 찍지 못했어요. 다음 카드로 넘어갈게요.", en: "Could not take a photo. Going on to the next card." },
+  kids_run_error:   { ko: "로봇이 하다가 멈췄어요. 다시 해 볼까요?", en: "The robot stopped partway. Try again?" },
   kids_self:        { ko: "고치는 재주는 자기 안에 넣을 수 없어요.", en: "A trick can't go inside itself." },
   kids_no_tricks_yet: { ko: "아직 재주가 없어요. 줄을 만들고 [재주로 저장]을 눌러 봐!", en: "No tricks yet. Make a row and tap [Save as a trick]!" },
   kids_row_empty:   { ko: "아래 카드를 눌러 봐!", en: "Tap a card below!" },

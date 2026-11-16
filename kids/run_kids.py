@@ -406,7 +406,7 @@ def tricks_list():
 
 # ── 실행 ──────────────────────────────────────────────────────────────────
 run = {'running': False, 'path': None, 'iter': 0, 'error': '', 'result': None, 'seq': 0,
-       'photo': None, 'waiting': None, 'cond': None}
+       'photo': None, 'waiting': None, 'cond': None, 'warn': None}
 run_lock = threading.Lock()
 
 
@@ -423,7 +423,16 @@ def do_card(card, lang, v=None):
   elif k == 'screen':
     robot.screen(a, (v or '').strip())
   elif k == 'photo':
-    name = robot.photo(path('photos'))
+    # 카메라를 못 쓰면 이 카드만 건너뛰고 뒤 카드는 계속한다. 이유는 로그와 화면 알림(warn)에(261116)
+    try:
+      name = robot.photo(path('photos'))
+    except Exception as exc:  # noqa: BLE001
+      import traceback
+      traceback.print_exc()
+      print(f'[kids] 사진 오류: {exc!r}', flush=True)
+      run['warn'] = 'photo'
+      robot.reset_camera()
+      name = None
     if name:
       run['photo'] = name
   elif k == 'sense':
@@ -510,9 +519,11 @@ def run_program(program, cid, lang, seq, tricks):
         raise Stop
   except Stop:
     stopped = True
-  except Exception as exc:  # noqa: BLE001 — 아이 화면엔 오류 창이 없다. 로그와 상태에만
+  except Exception as exc:  # noqa: BLE001 — 아이 화면엔 오류 창이 없다. 로그와 상태에만(화면은 짧은 알림)
     run['error'] = str(exc)
-    print(f'[kids] 실행 오류: {exc}', flush=True)
+    import traceback
+    traceback.print_exc()
+    print(f'[kids] 실행 오류: {exc!r}', flush=True)
   finally:
     try:
       robot.rest()
@@ -810,7 +821,7 @@ async def api_run(body: dict = Body(...)):
     pet_state['mode'] = False
     robot.stop_flag.clear()
     run['seq'] += 1
-    run.update(running=True, path=None, iter=0, error='', result=None, photo=None, waiting=None, cond=None)
+    run.update(running=True, path=None, iter=0, error='', result=None, photo=None, waiting=None, cond=None, warn=None)
     threading.Thread(target=run_program, args=(program, cid, lang_of(body), run['seq'], tricks), daemon=True).start()
   finally:
     run_lock.release()
@@ -819,7 +830,7 @@ async def api_run(body: dict = Body(...)):
 
 @app.get('/api/run')
 async def api_run_state():
-  return {k: run[k] for k in ('running', 'path', 'iter', 'error', 'result', 'photo', 'waiting', 'cond')}
+  return {k: run[k] for k in ('running', 'path', 'iter', 'error', 'result', 'photo', 'waiting', 'cond', 'warn')}
 
 
 @app.get('/api/photo/{name}')
