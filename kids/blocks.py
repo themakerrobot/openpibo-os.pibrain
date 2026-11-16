@@ -127,9 +127,7 @@ def to_workspace(program, card_of, tricks, device, say_text, voice='f1', volume=
       elif kind == 'screen':
         out += screen_blocks(card['arg'], (n.get('v') or '').strip(), card.get('ko', ''))
       elif kind == 'photo':
-        # 사진 찍기 = 카메라 그림을 code/kids_photo.jpg 로 저장 + 화면에 보이기
-        out.append({'type': 'vision_imwrite', 'id': _id(), 'fields': {'dir': '/home/pi/code/', 'extension': '.jpg'},
-                    'inputs': {'filename': _text('kids_photo'), 'img': _blk({'type': 'vision_read', 'id': _id()})}})
+        # 사진 찍기 = 찍어서 로봇 화면에 보이기 한 블록(261116 — 파일로 저장하지 않는다)
         out.append({'type': 'vision_imshow_to_oled', 'id': _id(),
                     'inputs': {'img': _blk({'type': 'vision_read', 'id': _id()})}})
       elif kind == 'trick':

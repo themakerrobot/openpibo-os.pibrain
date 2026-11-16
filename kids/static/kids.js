@@ -412,6 +412,7 @@
     post('/api/run', { program: program, challenge: ch && ch.on === 'run' ? ch.id : null, lang: L() }).then(function (r) {
       if (r._status !== 200) { toast(tr(r._status === 409 ? 'kids_busy' : r.error === 'too long' ? 'kids_too_long' : 'kids_err')); return; }
       setRunning(true);
+      S.warned = false;
       poll();
     }).catch(function () { toast(tr('kids_err_conn'), 'error'); });
   }
@@ -420,9 +421,11 @@
       S.cond = r.cond;
       document.body.classList.toggle('is-waiting', !!(r.running && r.waiting));
       if (r.photo && r.photo !== S.photo) { S.photo = r.photo; showPhoto(r.photo); }
+      if (r.warn && !S.warned) { S.warned = true; toast(tr('kids_warn_' + r.warn), 'error'); }
       if (r.running) { if (S.view === 'make') mark(r.path, r.iter); setTimeout(poll, 250); return; }
       mark(null);
       setRunning(false);
+      if (r.error) toast(tr('kids_run_error'), 'error');
       if (r.result && S.ch) showResult(r.result);
     }).catch(function () { setTimeout(poll, 1000); });
   }

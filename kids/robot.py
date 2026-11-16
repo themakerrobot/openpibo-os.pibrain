@@ -92,6 +92,15 @@ class BaseRobot:
     """지금 그 센서가 느꼈는지(touch · pir · b1~b4)"""
     return False
 
+  def reset_camera(self):
+    """사진이 실패하면 카메라를 놓는다 — 다음 [사진 찍기] 때 처음부터 다시 연다"""
+    cam, self._cam = getattr(self, '_cam', None), None
+    if cam is not None:
+      try:
+        cam.release()
+      except Exception:  # noqa: BLE001
+        pass
+
   def sense_begin(self, what):
     """기다리기 시작 — 앞서 쌓인 눌림을 비운다"""
 
