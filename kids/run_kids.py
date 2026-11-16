@@ -658,8 +658,9 @@ def pet_loop():
           pet_state['last_need'] = now
           speak_async((None, need, f), pet_state['lang'])
         pet_state['face'] = f
-      # 화면이 있는 제품(PiBrain LCD)은 점수가 바뀌면 다시 그린다. 말하는 중(lock)이면 다음 점검에
-      if robot.has_screen and screen_key() != pet_state['screen'] and _react['next'] is None and robot.lock.acquire(blocking=False):
+      # 화면이 있는 제품(PiBrain LCD)은 [키우기] 화면일 때만 점수가 바뀌면 다시 그린다(261116 — 전엔 조건이 빠져
+      # 앱에 들어가기만 해도 LCD 가 키우기 얼굴로 바뀌었다). 말하는 중(lock)이면 다음 점검에
+      if robot.has_screen and pet_state['mode'] and not run['running'] and screen_key() != pet_state['screen'] and _react['next'] is None and robot.lock.acquire(blocking=False):
         try:
           robot.face(pet.face(), dict(pet_profile), screen_stats(pet_state['lang']))
           pet_state['screen'] = screen_key()
