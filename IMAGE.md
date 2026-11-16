@@ -207,6 +207,7 @@ PY=/home/pi/.pyenv/bin/python3
 cd /home/pi/.model
 sed -n '/^## sha256/,$p' VERSION | tail -n +2 | sha256sum -c --quiet && echo "VERSION 과 같음"
 ls -la /home/pi/.model/object/                   # ed-s-320.onnx 하나
+sha256sum /home/pi/.model/object/ed-s-320.onnx   # 261116 8비트 판: c019e6d72168f916c1038ec0059656db851030c8fda261aa3b4c26fe806ba040
 $PY -c "import numpy as np; from openpibo.vision_detect import Detect; print(Detect().detect_object(np.zeros((480,640,3),'uint8')))"
 #   []
 $PY -c "from openpibo.speech import SpeechOnDevice; SpeechOnDevice(); print('tts ok')"
