@@ -24,7 +24,14 @@
       EZ_MOTION: '%1 동작 %2 하기',
       EZ_SOUND: '%1 효과음 %2 내기',
       EZ_NOTE: '%1 음 %2 내기',
-      EZ_PICTURE: '%1 로봇 화면에 %2 그리기',
+      EZ_PICTURE: '%1 %2 에 %3 그리기',
+      EZ_MUSIC: '%1 음악 %2 틀기',
+      EZ_MUSIC_STOP: '%1 음악 멈추기',
+      EZ_MYMOTION: '%1 내 동작 %2 하기',
+      EZ_PHOTO: '%1 사진 찍어 %2 %3 에 보이기',
+      EZ_TIP_PHOTO: '계속 반복 안에 넣으면 동영상처럼 보여요.',
+      EZ_TIP_MUSIC: '음악을 틀어 두고 바로 다음 블록으로 가요.',
+      EZ_TIP_MINE: '도구 [동작]에서 저장한 동작이에요.',
       EZ_TEXT: '%1 로봇 화면에 %2 쓰기',
       EZ_CLEAR: '%1 로봇 화면 지우기',
       EZ_TOUCH: '머리를 만졌나?',
@@ -42,16 +49,19 @@
       EZ_TIP_SCORE: '점수는 실행 출력에 나와요.',
       CAT_START: '시작 · 반복', CAT_IF: '만약', CAT_MOTION: '동작', CAT_LIGHT: '불빛', CAT_SOUND: '말 · 소리',
       CAT_SCREEN: '화면', CAT_SENSOR: '센서', CAT_AI: 'AI 눈', CAT_SCORE: '점수',
-      M: { greeting: '인사', wave3: '춤', clapping1: '박수', cheer1: '만세', yes_h: '끄덕', no_h: '도리도리', bow: '꾸벅',
+      M: { stop: '멈추기 (처음 자세)', greeting: '인사', wave3: '춤', clapping1: '박수', cheer1: '만세', yes_h: '끄덕', no_h: '도리도리', bow: '꾸벅',
            welcome: '어서 와', happy1: '기뻐', excite1: '신나', sad3: '슬퍼', think1: '음…',
            forward1: '앞으로', backward1: '뒤로', left: '왼쪽으로 돌기', right: '오른쪽으로 돌기' },
       S: { ding: '딩동', boing: '뿅', drum: '둥둥', tada: '짜잔', oops: '이런', happy: '신나는 소리', shutter: '찰칵' },
-      N: { do: '도', re: '레', mi: '미', fa: '파', sol: '솔' },
+      N: { do: '도', re: '레', mi: '미', fa: '파', sol: '솔', la: '라', si: '시', do2: '높은 도' },
       P: { smile: '웃는 얼굴', heart: '하트', star: '별', surprise: '놀란 얼굴', sad: '슬픈 얼굴', sleep: '자는 얼굴' },
       SEE: { face: '얼굴', hand: '손', person: '사람' },
       G: { Thumb_Up: '엄지 척', Thumb_Down: '엄지 아래', Victory: '브이', Open_Palm: '손바닥', Closed_Fist: '주먹',
            Pointing_Up: '검지 위로', ILoveYou: '사랑해' },
       E: { happy: '웃는 얼굴', sad: '슬픈 얼굴', surprise: '놀란 얼굴', anger: '화난 얼굴', neutral: '무표정' },
+      TO: { robot: '로봇 화면', ide: '모니터 화면' },
+      V: { plain: '그대로', face: '얼굴 표시', object: '사물 표시' },
+      MINE: '내 음악 · ', NONE: '(없어요)', CAT_CAMERA: '카메라',
       HELLO: '안녕', SCORE: '점수'
     },
     en: {
@@ -59,7 +69,14 @@
       EZ_MOTION: '%1 do motion %2',
       EZ_SOUND: '%1 play sound %2',
       EZ_NOTE: '%1 play note %2',
-      EZ_PICTURE: '%1 draw %2 on robot screen',
+      EZ_PICTURE: '%1 draw %3 on %2',
+      EZ_MUSIC: '%1 play music %2',
+      EZ_MUSIC_STOP: '%1 stop music',
+      EZ_MYMOTION: '%1 do my motion %2',
+      EZ_PHOTO: '%1 take a photo %2 and show on %3',
+      EZ_TIP_PHOTO: 'Put it in forever to see it like a video.',
+      EZ_TIP_MUSIC: 'Starts the music and goes on to the next block.',
+      EZ_TIP_MINE: 'Motions you saved in Tools [Motion].',
       EZ_TEXT: '%1 write %2 on robot screen',
       EZ_CLEAR: '%1 clear robot screen',
       EZ_TOUCH: 'head touched?',
@@ -77,16 +94,19 @@
       EZ_TIP_SCORE: 'The score shows in the run output.',
       CAT_START: 'Start · Repeat', CAT_IF: 'If', CAT_MOTION: 'Motion', CAT_LIGHT: 'Light', CAT_SOUND: 'Speak · Sound',
       CAT_SCREEN: 'Screen', CAT_SENSOR: 'Sensors', CAT_AI: 'AI Eyes', CAT_SCORE: 'Score',
-      M: { greeting: 'Hello', wave3: 'Dance', clapping1: 'Clap', cheer1: 'Hooray', yes_h: 'Nod', no_h: 'Shake', bow: 'Bow',
+      M: { stop: 'Stop (home pose)', greeting: 'Hello', wave3: 'Dance', clapping1: 'Clap', cheer1: 'Hooray', yes_h: 'Nod', no_h: 'Shake', bow: 'Bow',
            welcome: 'Welcome', happy1: 'Happy', excite1: 'Excited', sad3: 'Sad', think1: 'Think',
            forward1: 'Forward', backward1: 'Backward', left: 'Turn left', right: 'Turn right' },
       S: { ding: 'Ding', boing: 'Boing', drum: 'Drum', tada: 'Ta-da', oops: 'Oops', happy: 'Happy tune', shutter: 'Click' },
-      N: { do: 'Do', re: 'Re', mi: 'Mi', fa: 'Fa', sol: 'Sol' },
+      N: { do: 'Do', re: 'Re', mi: 'Mi', fa: 'Fa', sol: 'Sol', la: 'La', si: 'Ti', do2: 'High Do' },
       P: { smile: 'smile', heart: 'heart', star: 'star', surprise: 'surprised face', sad: 'sad face', sleep: 'sleepy face' },
       SEE: { face: 'face', hand: 'hand', person: 'person' },
       G: { Thumb_Up: 'thumbs up', Thumb_Down: 'thumbs down', Victory: 'victory', Open_Palm: 'open palm', Closed_Fist: 'fist',
            Pointing_Up: 'pointing up', ILoveYou: 'I love you' },
       E: { happy: 'smiling', sad: 'sad', surprise: 'surprised', anger: 'angry', neutral: 'neutral' },
+      TO: { robot: 'robot screen', ide: 'monitor screen' },
+      V: { plain: 'as is', face: 'with faces', object: 'with objects' },
+      MINE: 'My music · ', NONE: '(none)', CAT_CAMERA: 'Camera',
       HELLO: 'Hello', SCORE: 'score'
     }
   };
@@ -101,11 +121,43 @@
   function opts(group, keys) { return function () { var g = M()[group]; return keys.map(function (k) { return [g[k], k]; }); }; }
   function icon(name) { return { type: 'field_image', src: 'svg/' + name + '.svg', width: 27, height: 27 }; }
 
+  /* ── 기기에 있는 것에서 고르는 목록(음악·내 음악·내 동작) — IDE 서버 /ez_lists ── */
+  var LISTS = { music: [], mine: [], mymotion: [] };
+  function loadLists() {
+    try {
+      fetch('/ez_lists').then(function (r) { return r.json(); }).then(function (j) {
+        if (j && typeof j === 'object') ['music', 'mine', 'mymotion'].forEach(function (k) { if (Array.isArray(j[k])) LISTS[k] = j[k]; });
+      }).catch(function () { /* 목록 없이 */ });
+    } catch (e) { /* 무시 */ }
+  }
+  loadLists();
+  function baseName(pth) { var n = String(pth).split('/').pop(); return n.replace(/\.(mp3|wav)$/i, ''); }
+  // 저장된 프로그램의 값이 지금 목록에 없어도(파일을 지웠거나 목록이 아직 안 왔을 때) 그 값을 그대로 둔다
+  function withCurrent(field, list) {
+    var v = field && field.getValue ? field.getValue() : null;
+    if (v && !list.some(function (o) { return o[1] === v; })) list.unshift([String(v).indexOf('/') >= 0 ? baseName(v) : String(v), v]);
+    if (!list.length) list.push([M().NONE, '']);
+    return list;
+  }
+  function musicOpts() {
+    var list = LISTS.music.map(function (f) { return [baseName(f), f]; })
+      .concat(LISTS.mine.map(function (f) { return [M().MINE + baseName(f), f]; }));
+    return withCurrent(this, list);
+  }
+  function mymotionOpts() { return withCurrent(this, LISTS.mymotion.map(function (n) { return [n, n]; })); }
+  Blockly.Extensions.register('ez_dyn', function () {
+    var f = this.getField('F');
+    if (!f) return;
+    f.doClassValidation_ = function (v) { return v == null ? null : String(v); };
+    var up = f.doValueUpdate_;
+    f.doValueUpdate_ = function (v) { this.value_ = v; this.generatedOptions = null; return up.call(this, v); };
+  });
+
   /* ── 블록 ─────────────────────────────────────────────────────────── */
   var MOTIONS = ['greeting', 'wave3', 'clapping1', 'cheer1', 'yes_h', 'no_h', 'bow', 'welcome', 'happy1', 'excite1',
-                 'sad3', 'think1', 'forward1', 'backward1', 'left', 'right'];
+                 'sad3', 'think1', 'forward1', 'backward1', 'left', 'right', 'stop'];
   var SOUNDS = ['ding', 'boing', 'drum', 'tada', 'oops', 'happy', 'shutter'];
-  var NOTES = ['do', 're', 'mi', 'fa', 'sol'];
+  var NOTES = ['do', 're', 'mi', 'fa', 'sol', 'la', 'si', 'do2'];
   var PICS = ['smile', 'heart', 'star', 'surprise', 'sad', 'sleep'];
   var GESTURES = ['Thumb_Up', 'Victory', 'Open_Palm', 'Closed_Fist', 'Pointing_Up', 'ILoveYou', 'Thumb_Down'];
   var EMOTIONS = ['happy', 'sad', 'surprise', 'anger', 'neutral'];
@@ -124,7 +176,16 @@
     def({ type: 'ez_note', message0: '%{BKY_EZ_NOTE}', colour: COL.sound,
           args0: [icon('file-audio-solid'), { type: 'field_dropdown', name: 'N', options: opts('N', NOTES) }] }),
     def({ type: 'ez_picture', message0: '%{BKY_EZ_PICTURE}', colour: COL.screen,
-          args0: [icon('display-solid'), { type: 'field_dropdown', name: 'P', options: opts('P', PICS) }] }),
+          args0: [icon('display-solid'), { type: 'field_dropdown', name: 'TO', options: opts('TO', ['robot', 'ide']) },
+                  { type: 'field_dropdown', name: 'P', options: opts('P', PICS) }] }),
+    def({ type: 'ez_music', message0: '%{BKY_EZ_MUSIC}', colour: COL.sound, tooltip: '%{BKY_EZ_TIP_MUSIC}', extensions: ['ez_dyn'],
+          args0: [icon('file-audio-solid'), { type: 'field_dropdown', name: 'F', options: musicOpts }] }),
+    def({ type: 'ez_music_stop', message0: '%{BKY_EZ_MUSIC_STOP}', colour: COL.sound, args0: [icon('stop-solid')] }),
+    def({ type: 'ez_mymotion', message0: '%{BKY_EZ_MYMOTION}', colour: COL.motion, tooltip: '%{BKY_EZ_TIP_MINE}', extensions: ['ez_dyn'],
+          args0: [icon('person-walking-solid'), { type: 'field_dropdown', name: 'F', options: mymotionOpts }] }),
+    def({ type: 'ez_photo', message0: '%{BKY_EZ_PHOTO}', colour: COL.ai, tooltip: '%{BKY_EZ_TIP_PHOTO}',
+          args0: [icon('camera-solid'), { type: 'field_dropdown', name: 'V', options: opts('V', ['plain', 'face', 'object']) },
+                  { type: 'field_dropdown', name: 'TO', options: opts('TO', ['ide', 'robot']) }] }),
     def({ type: 'ez_text', message0: '%{BKY_EZ_TEXT}', colour: COL.screen,
           args0: [icon('display-solid'), { type: 'input_value', name: 'TEXT', check: ['String', 'Number'] }] }),
     def({ type: 'ez_clear', message0: '%{BKY_EZ_CLEAR}', colour: COL.screen, args0: [icon('display-solid')] }),
@@ -179,8 +240,33 @@
     return 'audio.play(' + q(ROOT + '/kids/sounds/' + b.getFieldValue('N') + '.wav') + ', 80, background=False)\n';
   };
   G.ez_picture = function (b) {
+    if (b.getFieldValue('TO') === 'ide') {        // 모니터 화면(IDE [화면 출력])에는 큰 그림(240x320)
+      need('camera'); P.definitions_.import_cv2 = 'import cv2';
+      return 'camera.imshow_to_ide(cv2.imread(' + q(ROOT + '/ide/static/ez/' + b.getFieldValue('P') + '_240x320.png') + '), 1.0)\n';
+    }
     need('oled');
     return 'oled.draw_image(' + q(ROOT + '/ide/static/ez/' + b.getFieldValue('P') + '_' + W + 'x' + H + '.png') + ')\noled.show()\n';
+  };
+  G.ez_music = function (b) {
+    var f = b.getFieldValue('F');
+    if (!f) return '';
+    need('audio');
+    return 'audio.play(' + q(f) + ', 80)\n';
+  };
+  G.ez_music_stop = function () { need('audio'); return 'audio.stop()\n'; };
+  G.ez_mymotion = function (b) {
+    var f = b.getFieldValue('F');
+    if (!f) return '';
+    need('motion');
+    return 'motion.set_mymotion(' + q(f) + ', 1)\n';
+  };
+  G.ez_photo = function (b) {
+    var v = b.getFieldValue('V'), code = '_ez_img = camera.read()\n';
+    if (v === 'face') { need('face'); code += '_face.detect_face_vis(_ez_img, _face.detect_face(_ez_img))\n'; }
+    else if (v === 'object') { need('detect'); code += 'detect.detect_object_vis(_ez_img, detect.detect_object(_ez_img))\n'; }
+    else need('camera');
+    if (b.getFieldValue('TO') === 'robot') { need('oled'); return code + 'oled.imshow(_ez_img)\n'; }
+    return code + 'camera.imshow_to_ide(_ez_img, 0.5)\n';
   };
   G.ez_text = function (b) {
     need('oled');
@@ -244,6 +330,7 @@
              contents: items.filter(Boolean) };
   }
   function easyToolbox(full) {
+    loadLists();
     var pick = function (t) { var x = find(full, t); return x ? JSON.parse(JSON.stringify(x)) : null; };
     var blk = function (t, extra) { var o = { kind: 'block', type: t }; if (extra) Object.keys(extra).forEach(function (k) { o[k] = extra[k]; }); return o; };
     var c = [];
@@ -252,14 +339,15 @@
       pick('flag_event'), blk('ez_forever'), pick('controls_repeat_ext'), pick('utils_sleep')]));
     c.push(cat('CAT_IF', '#9C81BA', 'fa fa-code-branch', [
       blk('controls_if'), blk('controls_if', { extraState: { hasElse: true } }), pick('logic_compare'), pick('logic_operation'), pick('logic_negate')]));
-    if (!PIBRAIN) c.push(cat('CAT_MOTION', COL.motion, 'fa-solid fa-person-walking', [blk('ez_motion')]));
+    if (!PIBRAIN) c.push(cat('CAT_MOTION', COL.motion, 'fa-solid fa-person-walking', [blk('ez_motion'), blk('ez_mymotion')]));
     c.push(cat('CAT_LIGHT', COL.light, 'fa-solid fa-lightbulb', PIBRAIN
       ? [pick('device_pibrain_led_colour_on'), pick('device_pibrain_led_off')]
       : [pick('device_eye_colour_on'), pick('device_eye_off')]));
-    c.push(cat('CAT_SOUND', COL.sound, 'fa-solid fa-comment', [pick('speech_tts_play'), blk('ez_sound'), blk('ez_note')]));
+    c.push(cat('CAT_SOUND', COL.sound, 'fa-solid fa-comment', [pick('speech_tts_play'), blk('ez_sound'), blk('ez_note'), blk('ez_music'), blk('ez_music_stop')]));
     c.push(cat('CAT_SCREEN', COL.screen, 'fa-solid fa-display', [
       blk('ez_picture'), blk('ez_text', { inputs: { TEXT: txt(M().HELLO) } }), blk('ez_clear')]));
     c.push(cat('CAT_SENSOR', COL.sensor, 'fa-solid fa-hand-pointer', PIBRAIN ? [blk('ez_button')] : [blk('ez_touch'), blk('ez_pir')]));
+    c.push(cat('CAT_CAMERA', COL.ai, 'fa-solid fa-camera', [blk('ez_photo')]));
     c.push(cat('CAT_AI', COL.ai, 'fa-solid fa-eye', [blk('ez_seen'), blk('ez_gesture'), blk('ez_emotion')]));
     c.push(cat('CAT_SCORE', COL.score, 'fa-solid fa-star', [
       blk('ez_score_add', { inputs: { N: num(1) } }), blk('ez_score_reset'), blk('ez_score')]));

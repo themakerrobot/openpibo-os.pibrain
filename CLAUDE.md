@@ -517,6 +517,8 @@ edge-lab 의 블록 수준을 본떠 IDE 에 **2단계**(사용자: 3단계 대�
 - 새 블록 `ez_*` 16개 — 카메라·변수·이미지를 블록 안에 숨기고 고르기만 한다: `ez_forever`(while True) · `ez_motion`(로봇 놀이와 같은 동작 16개) · `ez_sound`·`ez_note`(`kids/sounds/*.wav`) ·
   `ez_picture`(`ide/static/ez/<그림>_<가로>x<세로>.png` — `kids/screen.py` 로 미리 그림, 128x64·240x320 두 벌) · `ez_text` · `ez_clear` · `ez_touch`·`ez_pir`(파이보, PIR 은 `send_cmd(30,'on')` 을 한 번) · `ez_button`(PiBrain) ·
   `ez_seen`(얼굴·손·사람) · `ez_gesture`(손동작 7가지) · `ez_emotion`(표정 5가지, 도움 함수 `ez_emotion()`) · `ez_score_add`·`ez_score_reset`·`ez_score`(`ez_score = {'value': 0}` — 함수 안에서도 global 없이 쓰게)
+- **더한 쉬움 블록(261116, 사용자)**: 동작에 '멈추기 (처음 자세)'(`stop`) · `ez_mymotion`(도구에서 저장한 `mymotion.json` 이름, 파이보) · `ez_music`(기본 음악 `openpibo-files/audio/music` + **내 음악** `code/`·`myaudio/` 의 mp3·wav, 틀어 두고 다음 블록으로) · `ez_music_stop` · 음 도~높은 도 8개(`kids/sounds/la·si·do2.wav` 추가 — `make_sounds.py`) · [카메라] 분류 `ez_photo`(그대로/얼굴 표시/사물 표시 × 모니터 화면/로봇 화면, 계속 반복 안이면 동영상처럼) · `ez_picture` 에 '모니터 화면' 선택(예전 프로그램은 로봇 화면으로 열림).
+  음악·내 동작 목록은 IDE `GET /ez_lists`(`run_ide.py`, 두 리포 같은 코드)에서 받는다. 저장한 값이 지금 목록에 없어도(파일을 지움) 그 값 그대로 열린다(`ez_dyn` 확장). 확인(컨테이너): 파이보 12/12 · PiBrain 11/11 + 기존 17/17. **실기기 확인 필요** — 음악 폴더 내용, `oled.imshow` 로 사진이 OLED 에 보이는 모양
 - 만드는 파이썬은 기존 블록과 **같은 definitions_ 열쇠·객체 이름**(camera·_face·detect·oled·device·motion·audio)을 쓴다 — 쉬움·전체 블록을 섞어도 한 번씩만 만든다. 센서·AI 블록은 그 순간 한 번 본다(계속 반복 안에서 쓰는 전제)
 - 수준은 브라우저에 기억(`localStorage 'pibo_block_level'`), **파일에는 넣지 않는다**(저장 표시 비교가 꼬인다). 툴박스만 바뀌므로 쉬움에서 전체 수준 파일을 열어도 블록은 다 보인다
 - 블록 문구는 `levels.js` 안의 ko/en(`Blockly.Msg.EZ_*`, 툴박스를 그릴 때마다 지금 언어로 넣는다). 메뉴 문구는 IDE `ko2en.js` 의 `v2_level*`

@@ -170,6 +170,32 @@ async def get_directory(folderName: str):
   return files
 
 
+# 쉬움 블록 드롭다운(261116): 음악 · 내 음악(code·myaudio 의 mp3/wav) · 내 동작(mymotion.json) 이름
+EZ_MUSIC_DIR = '/home/pi/openpibo-files/audio/music/'
+EZ_MINE_DIRS = ('/home/pi/code/', '/home/pi/myaudio/')
+
+def _ez_audio(folder):
+  try:
+    return sorted(n for n in os.listdir(folder)
+                  if not n.startswith('.') and n.lower().endswith(('.mp3', '.wav')) and os.path.isfile(os.path.join(folder, n)))
+  except OSError:
+    return []
+
+@app.get('/ez_lists')
+def ez_lists():
+  mym = []
+  try:
+    import json
+    with open('/home/pi/mymotion.json', encoding='utf-8') as f:
+      d = json.load(f)
+    if isinstance(d, dict):
+      mym = [k for k in d if isinstance(k, str) and 0 < len(k) <= 40]
+  except (OSError, ValueError):
+    pass
+  mine = [d + n for d in EZ_MINE_DIRS for n in _ez_audio(d)]
+  return {'music': [EZ_MUSIC_DIR + n for n in _ez_audio(EZ_MUSIC_DIR)], 'mine': mine, 'mymotion': mym}
+
+
 @app.get('/', response_class=HTMLResponse)
 async def read_root(request: Request):
   # 화면은 하나(시안 B). 예전 화면(v1)과 ?ui= · 쿠키 pibo_ui 전환은 260929 에 지웠다
