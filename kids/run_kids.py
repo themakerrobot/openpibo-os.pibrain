@@ -28,7 +28,7 @@ import tempfile
 import threading
 
 from fastapi import FastAPI, Body
-from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
@@ -425,7 +425,8 @@ def do_card(card, lang, v=None):
   elif k == 'photo':
     # 카메라를 못 쓰면 이 카드만 건너뛰고 뒤 카드는 계속한다. 이유는 로그와 화면 알림(warn)에(261116)
     try:
-      name = robot.photo(path('photos'))
+      img = robot.photo()
+      name = keep_photo(img) if img is not None else None
     except Exception as exc:  # noqa: BLE001
       import traceback
       traceback.print_exc()
@@ -491,6 +492,25 @@ def run_nodes(nodes, card_of, tricks, lang, mark):
       if mark:
         run.update(path=[i], iter=0)
       run_one(card, card_of, tricks, lang, node.get('v'))
+
+
+last_photo = {'name': None, 'jpg': b''}
+_photo_n = [0]
+
+
+def keep_photo(img):
+  """찍은 사진을 태블릿에 보여 주려고 마지막 한 장만 메모리에 둔다(파일로 남기지 않는다, 261116)"""
+  import cv2
+  h, w = img.shape[:2]
+  k = 480 / max(h, w)
+  if k < 1:
+    img = cv2.resize(img, (int(w * k), int(h * k)))
+  ok, buf = cv2.imencode('.jpg', img, [cv2.IMWRITE_JPEG_QUALITY, 80])
+  if not ok:
+    return None
+  _photo_n[0] += 1
+  last_photo.update(name='photo_%d.jpg' % _photo_n[0], jpg=buf.tobytes())
+  return last_photo['name']
 
 
 def check_sense(what):
@@ -835,10 +855,10 @@ async def api_run_state():
 
 @app.get('/api/photo/{name}')
 async def api_photo(name: str):
-  """[사진 찍기] 로 찍은 사진(태블릿에 보여 준다)"""
-  if not re.fullmatch(r'photo_\d+\.jpg', name) or not os.path.isfile(path('photos', name)):
+  """[사진 찍기] 로 찍은 마지막 사진(태블릿에 보여 준다). 메모리에만 있다"""
+  if name != last_photo['name'] or not last_photo['jpg']:
     return bad('no photo', 404)
-  return FileResponse(path('photos', name), media_type='image/jpeg')
+  return Response(last_photo['jpg'], media_type='image/jpeg', headers={'Cache-Control': 'no-store'})
 
 
 @app.get('/api/mymotions')
@@ -1107,7 +1127,8 @@ async def api_reset(body: dict = Body(...)):
     profiles.pop(pid, None)
     histories.pop(pid, None)
     shutil.rmtree(path('p', pid), ignore_errors=True)
-  shutil.rmtree(path('photos'), ignore_errors=True)
+  shutil.rmtree(path('photos'), ignore_errors=True)   # 261116 전 판이 남긴 사진 폴더
+  last_photo.update(name=None, jpg=b'')
   write_json('profiles.json', profiles)
   ensure_only()                       # 저장 한 벌 — 지운 뒤 바로 새로 시작
   return {'ok': True}

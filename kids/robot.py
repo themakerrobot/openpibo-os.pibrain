@@ -84,8 +84,8 @@ class BaseRobot:
   def screen(self, kind, text=''):
     """[화면] 카드 — 그림(smile·heart·star·surprise·sad·sleep)·글자(text)·지우기(clear)"""
 
-  def photo(self, folder):
-    """[사진 찍기] — 찍어서 화면에 보여 주고 folder 에 photo_<시각>.jpg 로 남긴다. 파일 이름을 돌려준다"""
+  def photo(self):
+    """[사진 찍기] — 찍어서 로봇 화면에 보여 주고 그 그림(BGR numpy)을 돌려준다. 파일로 남기지 않는다(261116)"""
     return None
 
   def sensed(self, what):
@@ -115,19 +115,6 @@ class BaseRobot:
         return True
       self.stop_flag.wait(0.05)
     return False
-
-  def _save_photo(self, folder, img):
-    import cv2
-    os.makedirs(folder, exist_ok=True)
-    name = 'photo_%d.jpg' % int(time.time() * 1000)
-    cv2.imwrite(os.path.join(folder, name), img)
-    old = sorted(f for f in os.listdir(folder) if f.startswith('photo_'))
-    for f in old[:-20]:                      # 마지막 20장만 남긴다
-      try:
-        os.remove(os.path.join(folder, f))
-      except OSError:
-        pass
-    return name
 
   def face(self, kind, look=None, stats=None, pose=None, bubble=None):
     """키우기 얼굴(sleep·hungry·sleepy·sad·happy·normal). look = 꾸미기 {color, hat, glasses}.
@@ -209,13 +196,13 @@ class FakeRobot(BaseRobot):
     import screen
     screen.draw(kind, 240 if self.has_screen else 128, 320 if self.has_screen else 64, self.has_screen, text)
 
-  def photo(self, folder):
+  def photo(self):
     import numpy as np
     img = np.zeros((480, 640, 3), np.uint8)
     img[:, :, 1] = 120
     self.log.append(('photo',))
     self.wait(0.3)
-    return self._save_photo(folder, img)
+    return img
 
   def sense_begin(self, what):
     self.log.append(('sense', what))
@@ -289,7 +276,7 @@ class PiboRobot(BaseRobot):
     o.image = screen.draw(kind, o.width, o.height, False, text)
     o.show()
 
-  def photo(self, folder):
+  def photo(self):
     if self._cam is None:
       from openpibo.vision_camera import Camera
       self._cam = Camera()
@@ -297,7 +284,7 @@ class PiboRobot(BaseRobot):
     self.sound('shutter')
     img = self._cam.read()
     self._oled_open().imshow(img)
-    return self._save_photo(folder, img)
+    return img
 
   def sense_begin(self, what):
     if what == 'pir' and not self._pir_on:
@@ -396,7 +383,7 @@ class PiBrainRobot(BaseRobot):
     lcd.image = screen.draw(kind, self.W, self.H, True, text)
     lcd.show()
 
-  def photo(self, folder):
+  def photo(self):
     if getattr(self, '_cam', None) is None:
       from openpibo.vision_camera import Camera
       self._cam = Camera()
@@ -404,7 +391,7 @@ class PiBrainRobot(BaseRobot):
     self.sound('shutter')
     img = self._cam.read()                   # 세로 480x640(카메라를 돌려 달았다 — vision_camera)
     self._lcd_open().imshow(img)
-    return self._save_photo(folder, img)
+    return img
 
   def sense_begin(self, what):
     if self._buttons is not None:
