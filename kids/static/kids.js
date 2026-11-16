@@ -14,9 +14,12 @@
     program: [], cursor: -1, tab: null, running: false, token: null,
     pet: null, petTimer: null, lastInputT: 0
   };
-  var KIND_ORDER = ['motion', 'colour', 'say', 'sound', 'wait', 'repeat', 'trick'];
-  var KIND_ICON = { motion: 'fa-child-reaching', colour: 'fa-lightbulb', say: 'fa-comment', sound: 'fa-music',
-                    wait: 'fa-hourglass-half', repeat: 'fa-repeat', trick: 'fa-wand-magic-sparkles' };
+  var KIND_ORDER = ['motion', 'move', 'mymotion', 'colour', 'say', 'sound', 'screen', 'wait', 'sense', 'repeat', 'if', 'trick'];
+  var KIND_ICON = { motion: 'fa-child-reaching', move: 'fa-person-walking', mymotion: 'fa-person-running', colour: 'fa-lightbulb',
+                    say: 'fa-comment', sound: 'fa-music', screen: 'fa-display', wait: 'fa-hourglass-half', sense: 'fa-hand-pointer',
+                    repeat: 'fa-repeat', 'if': 'fa-code-branch', trick: 'fa-wand-magic-sparkles' };
+  function isBox(k) { return k === 'repeat' || k === 'if'; }          // 안에 카드를 넣는 카드
+  function tabOf(c) { return c.kind === 'photo' ? 'screen' : c.kind; }   // 사진 찍기는 [화면] 칸에
 
   function post(url, body) {
     return fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) })
@@ -40,10 +43,12 @@
   var VIEWS = ['who', 'home', 'challenges', 'make', 'tricks', 'pet'];
   function show(view) {
     if (S.view === 'pet' && view !== 'pet') leavePet();
+    // 만들기·내 재주에서 처음으로 돌아오면 로봇 화면은 IP 로(261116 — 그림·글자·사진 카드가 남아 있지 않게). 키우기는 leavePet 이 한다
+    if (view === 'home' && (S.view === 'make' || S.view === 'tricks' || S.view === 'challenges')) post('/api/screen/home').catch(function () {});
     S.view = view;
     VIEWS.forEach(function (v) { $('v_' + v).hidden = v !== view; });
-    $('who_bt').hidden = !S.profile || view === 'who';
-    $('home_bt').hidden = !S.profile || view === 'who';
+    $('who_bt').hidden = true;                    // 저장 한 벌(261116) — 번호 고르기는 없다
+    $('home_bt').hidden = view === 'who';
     if (view === 'who') renderWho();
     if (view === 'home') renderHome();
     if (view === 'challenges') renderChallenges();
@@ -111,21 +116,23 @@
   /* ── 카드 ───────────────────────────────────────────────────────── */
   function trickById(id) { return S.tricks.filter(function (x) { return x.id === id; })[0]; }
   function cardOf(cid) {
+    if (cid && cid.indexOf('mm:') === 0) return { kind: 'mymotion', icon: 'fa-person-running', ko: cid.slice(3), en: cid.slice(3) };
     if (cid && cid.indexOf('t:') === 0) {
       var tk = trickById(cid);
       return tk ? { kind: 'trick', icon: tk.icon, ko: tk.name, en: tk.name } : { kind: 'trick', icon: 'fa-circle-question', ko: '?', en: '?' };
     }
     return C.cards[cid];
   }
-  function cardEl(cid, tag) {
+  function cardEl(cid, tag, node) {
     var c = cardOf(cid);
-    var b = el(tag || 'button', 'kcard k-' + c.kind);
+    var b = el(tag || 'button', 'kcard k-' + c.kind + (c.free ? ' is-free' : ''));
     if (b.tagName === 'BUTTON') b.type = 'button';
     var ic = c.kind === 'colour'
       ? '<span class="kcard__dot" style="background:' + c.hex + '"></span>'
       : (c.kind === 'sound' && /^a:(do|re|mi|fa|sol)$/.test(cid) ? '<span class="kcard__note">' + txt(c) + '</span>' : icon(c.icon));
     b.innerHTML = '<span class="kcard__ic">' + ic + '</span><span class="kcard__t"></span>';
-    b.lastChild.textContent = txt(c);
+    b.lastChild.textContent = node && node.v ? node.v : txt(c);
+    if (node && node.v) b.title = node.v;
     b.setAttribute('data-card', cid);
     return b;
   }
@@ -180,7 +187,11 @@
     var n = lessonNow(), out = [], tricks = false;
     C.lessons.forEach(function (l) {
       if (l.n > n) return;
-      l.cards.forEach(function (c) { if (c === 'tricks') tricks = true; else if (C.cards[c] && out.indexOf(c) < 0) out.push(c); });
+      l.cards.forEach(function (c) {
+        if (c === 'tricks') tricks = true;
+        else if (c === 'mymotions') (C.mymotions || []).forEach(function (m) { if (out.indexOf('mm:' + m) < 0) out.push('mm:' + m); });
+        else if (C.cards[c] && out.indexOf(c) < 0) out.push(c);
+      });
     });
     if (tricks) S.tricks.forEach(function (tk) { out.push(tk.id); });
     return { cards: out, tricks: tricks };
@@ -196,6 +207,9 @@
     renderPalette();
     renderRow();
     if (ch) listen();
+    if (C.device === 'pibo') get('/api/mymotions').then(function (r) {     // 도구에서 방금 저장한 내 동작도
+      if (r && r.names && r.names.join('|') !== (C.mymotions || []).join('|')) { C.mymotions = r.names; renderPalette(); }
+    }).catch(function () {});
   }
   function renderTask() {
     var ch = S.ch, tk = S.editing ? trickById(S.editing) : null;
@@ -217,10 +231,11 @@
   function renderPalette() {
     var u = unlocked();
     var kinds = KIND_ORDER.filter(function (k) {
-      return u.cards.some(function (c) { return cardOf(c).kind === k; }) || (k === 'trick' && u.tricks);
+      return u.cards.some(function (c) { return tabOf(cardOf(c)) === k; }) || (k === 'trick' && u.tricks);
     });
     if (!S.tab || kinds.indexOf(S.tab) < 0) {
-      var want = S.ch && S.ch.check.want ? cardOf(S.ch.check.want[0]).kind : null;
+      var w0 = S.ch && (S.ch.check.want ? S.ch.check.want[0] : S.ch.check.if_has ? S.ch.check.if_has[0] : null);
+      var want = w0 ? tabOf(cardOf(w0)) : null;
       S.tab = want && kinds.indexOf(want) >= 0 ? want : kinds[0];
     }
     var tabs = $('pal_tabs');
@@ -233,12 +248,16 @@
     });
     var pal = $('palette');
     pal.innerHTML = '';
-    u.cards.filter(function (c) { return cardOf(c).kind === S.tab; }).forEach(function (cid) {
+    u.cards.filter(function (c) { return tabOf(cardOf(c)) === S.tab; }).forEach(function (cid) {
       var b = cardEl(cid);
       if (cid === S.editing) { b.disabled = true; b.title = tr('kids_self'); }      // 재주 안에 자기 자신은 못 넣는다
       b.addEventListener('click', function () { addCard(cid); });
       pal.appendChild(b);
     });
+    if (S.tab === 'mymotion' && !(C.mymotions || []).length) {
+      pal.appendChild(el('p', 'kids-note kids-pal-empty', icon('fa-screwdriver-wrench') + ' <span></span>'));
+      pal.lastChild.lastChild.textContent = tr('kids_no_mymotion');
+    }
     if (S.tab === 'trick' && !S.tricks.length) {
       pal.appendChild(el('p', 'kids-note kids-pal-empty', icon('fa-floppy-disk') + ' <span></span>'));
       pal.lastChild.lastChild.textContent = tr('kids_no_tricks_yet');
@@ -248,15 +267,56 @@
   function addCard(cid) {
     if (S.running) return;
     if (count() >= C.max_cards) { toast(tr('kids_full')); return; }
-    if (cardOf(cid).kind === 'repeat') {
+    var c = cardOf(cid);
+    if (c.free) { askText(c, function (v) { putNode({ c: cid, v: v }); }); return; }
+    if (isBox(c.kind)) {
       S.program.push({ c: cid, body: [] });
-      S.cursor = S.program.length - 1;           // 다음 카드는 반복 안으로
-    } else if (S.cursor >= 0 && S.program[S.cursor]) {
-      S.program[S.cursor].body.push({ c: cid });
-    } else {
-      S.program.push({ c: cid });
+      S.cursor = S.program.length - 1;           // 다음 카드는 반복·만약 안으로
+      renderRow(true);
+      return;
     }
+    putNode({ c: cid });
+  }
+  function putNode(node) {
+    if (S.cursor >= 0 && S.program[S.cursor]) S.program[S.cursor].body.push(node);
+    else S.program.push(node);
     renderRow(true);
+  }
+  /* 내가 쓴 말·글자 — 작은 입력 창. 말이면 목소리를 미리 만들어 둔다(처음 한 번 몇 초) */
+  var TX = null;
+  function askText(c, done) {
+    if (!TX) {
+      TX = el('div', 'kids-modal');
+      TX.innerHTML = '<div class="kids-modal__box kids-textbox"><h2 class="pb-title"></h2>' +
+        '<input class="pb-field kids-namein kids-textin" autocomplete="off">' +
+        '<p class="kids-note"></p><div class="kids-modal__btns">' +
+        '<button type="button" class="kids-btn" data-x>' + '<span></span></button>' +
+        '<button type="button" class="kids-btn kids-btn--main" data-ok>' + icon('fa-check') + '<span></span></button></div></div>';
+      document.body.appendChild(TX);
+      TX.querySelector('[data-x]').addEventListener('click', function () { TX.hidden = true; });
+      var go = function () {
+        var v = TX.querySelector('input').value.replace(/[\u0000-\u001f]/g, '').trim();
+        if (!v) { TX.querySelector('input').focus(); return; }
+        TX.hidden = true;
+        TX._done(v);
+      };
+      TX.querySelector('[data-ok]').addEventListener('click', go);
+      TX.querySelector('input').addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.isComposing) go(); });
+    }
+    TX.querySelector('h2').textContent = txt(c);
+    TX.querySelector('[data-x] span').textContent = tr('kids_cancel');
+    TX.querySelector('[data-ok] span').textContent = tr('kids_ok');
+    TX.querySelector('.kids-note').textContent = tr(c.kind === 'say' ? 'kids_text_say_hint' : 'kids_text_screen_hint', C.free_max || 20);
+    var inp = TX.querySelector('input');
+    inp.maxLength = C.free_max || 20;
+    inp.value = '';
+    inp.placeholder = tr(c.kind === 'say' ? 'kids_text_say_ph' : 'kids_text_screen_ph');
+    TX._done = function (v) {
+      if (c.kind === 'say') post('/api/voice/prep', { text: v }).catch(function () {});
+      done(v);
+    };
+    TX.hidden = false;
+    setTimeout(function () { inp.focus(); }, 50);
   }
   function removeAt(i, j) {
     if (S.running) return;
@@ -287,17 +347,17 @@
     S.program.forEach(function (n, i) {
       if (i) row.appendChild(el('span', 'kids-arrow', icon('fa-chevron-right')));
       var c = cardOf(n.c);
-      if (c.kind === 'repeat') {
-        var loop = el('div', 'kids-loop' + (S.cursor === i ? ' is-open' : ''));
+      if (isBox(c.kind)) {
+        var loop = el('div', 'kids-loop' + (c.kind === 'if' ? ' kids-loop--if' : '') + (S.cursor === i ? ' is-open' : ''));
         loop.setAttribute('data-path', String(i));
-        var head = btn('kids-loop__head', icon('fa-repeat') + '<b></b><span class="kids-loop__iter"></span>');
+        var head = btn('kids-loop__head', icon(c.kind === 'if' ? c.icon : 'fa-repeat') + '<b></b><span class="kids-loop__iter"></span>');
         head.querySelector('b').textContent = txt(c);
         head.title = tr('kids_remove');
         head.addEventListener('click', function () { removeAt(i); });
         loop.appendChild(head);
         var body = el('div', 'kids-loop__body');
         n.body.forEach(function (x, j) {
-          var b = cardEl(x.c);
+          var b = cardEl(x.c, null, x);
           b.setAttribute('data-path', i + ',' + j);
           b.title = tr('kids_remove');
           b.addEventListener('click', function () { removeAt(i, j); });
@@ -307,7 +367,7 @@
         loop.appendChild(body);
         row.appendChild(loop);
       } else {
-        var b = cardEl(n.c);
+        var b = cardEl(n.c, null, n);
         b.setAttribute('data-path', String(i));
         b.title = tr('kids_remove');
         b.addEventListener('click', function () { removeAt(i); });
@@ -336,9 +396,14 @@
     if (!path) return;
     var e = document.querySelector('#row [data-path="' + path.join(',') + '"]');
     if (e) { e.classList.add('is-now'); if (e.scrollIntoView) e.scrollIntoView({ block: 'nearest', inline: 'center' }); }
-    if (path.length > 1 || iter) {
+    var top = S.program[path[0]], tc = top ? cardOf(top.c) : null;
+    if (tc && isBox(tc.kind) && (path.length > 1 || iter || tc.kind === 'if')) {
       var loop = document.querySelector('#row .kids-loop[data-path="' + path[0] + '"]');
-      if (loop) { loop.classList.add('is-now'); loop.querySelector('.kids-loop__iter').textContent = iter + ' / ' + cardOf(S.program[path[0]].c).arg; }
+      if (loop) {
+        loop.classList.add('is-now');
+        loop.querySelector('.kids-loop__iter').textContent = tc.kind === 'repeat' ? iter + ' / ' + tc.arg
+          : S.cond === true ? tr('kids_if_yes') : S.cond === false ? tr('kids_if_no') : tr('kids_if_look');
+      }
     }
   }
   function runProgram(program, ch) {
@@ -352,11 +417,25 @@
   }
   function poll() {
     get('/api/run').then(function (r) {
+      S.cond = r.cond;
+      document.body.classList.toggle('is-waiting', !!(r.running && r.waiting));
+      if (r.photo && r.photo !== S.photo) { S.photo = r.photo; showPhoto(r.photo); }
       if (r.running) { if (S.view === 'make') mark(r.path, r.iter); setTimeout(poll, 250); return; }
       mark(null);
       setRunning(false);
       if (r.result && S.ch) showResult(r.result);
     }).catch(function () { setTimeout(poll, 1000); });
+  }
+  /* [사진 찍기] 로 찍은 사진 — 화면 구석에 띄운다. 누르면 닫힘 */
+  var PH = null;
+  function showPhoto(name) {
+    if (!PH) {
+      PH = btn('kids-photo', '<img alt=""><span>' + icon('fa-xmark') + '</span>');
+      PH.addEventListener('click', function () { PH.hidden = true; });
+      document.body.appendChild(PH);
+    }
+    PH.querySelector('img').src = '/api/photo/' + encodeURIComponent(name);
+    PH.hidden = false;
   }
   $('run_bt').addEventListener('click', function () { runProgram(S.program, S.ch); });
   $('stop_bt').addEventListener('click', function () { post('/api/stop').catch(function () {}); });
@@ -504,13 +583,13 @@
     row.innerHTML = '';
     tk.program.forEach(function (n) {
       var c = cardOf(n.c);
-      if (c.kind === 'repeat') {
-        var loop = el('span', 'kids-loop kids-loop--mini', '<span class="kids-loop__head">' + icon('fa-repeat') + '<b></b></span><span class="kids-loop__body"></span>');
+      if (isBox(c.kind)) {
+        var loop = el('span', 'kids-loop kids-loop--mini' + (c.kind === 'if' ? ' kids-loop--if' : ''), '<span class="kids-loop__head">' + icon(c.kind === 'if' ? c.icon : 'fa-repeat') + '<b></b></span><span class="kids-loop__body"></span>');
         loop.querySelector('b').textContent = txt(c);
-        (n.body || []).forEach(function (x) { var m = cardEl(x.c, 'span'); m.classList.add('kcard--mini'); loop.lastChild.appendChild(m); });
+        (n.body || []).forEach(function (x) { var m = cardEl(x.c, 'span', x); m.classList.add('kcard--mini'); loop.lastChild.appendChild(m); });
         row.appendChild(loop);
       } else {
-        var m = cardEl(n.c, 'span'); m.classList.add('kcard--mini'); row.appendChild(m);
+        var m = cardEl(n.c, 'span', n); m.classList.add('kcard--mini'); row.appendChild(m);
       }
     });
     $('dlg_trick').hidden = false;
@@ -829,7 +908,6 @@
     C.lessons.forEach(function (l) { var o = el('option'); o.value = String(l.n); o.textContent = tr('kids_lesson_n', l.n, txt(l)); ls.appendChild(o); });
     ls.value = String(T.lesson);
     lessonHelp();
-    $('t_roster').value = T.roster;
     $('t_lang').value = L();
     var vs = $('t_voice');
     vs.innerHTML = '';
@@ -851,7 +929,7 @@
   $('t_save').addEventListener('click', function () {
     var p = $('t_pin').value.trim();
     if (p && !/^\d{4}$/.test(p)) { toast(tr('kids_t_pin_ph'), 'error'); return; }
-    var body = { token: S.token, settings: { lesson: Number($('t_lesson').value), roster: Number($('t_roster').value),
+    var body = { token: S.token, settings: { lesson: Number($('t_lesson').value),
       voice: $('t_voice').value, volume: Number($('t_volume').value), pin: p } };
     post('/api/teacher/settings', body).then(function (r) {
       if (!r.ok) { toast(tr('kids_err'), 'error'); return; }
@@ -860,7 +938,7 @@
       if (nl !== L()) { lang = nl; store('language', nl); applyLanguage(); }
       $('dlg_teacher').hidden = true;
       toast(tr('kids_saved'), 'ok');
-      show(S.profile ? (S.view === 'make' ? 'home' : S.view) : 'who');
+      show(S.view === 'make' ? 'home' : S.view);
     }).catch(function () { toast(tr('kids_err_conn'), 'error'); });
   });
   $('t_lock').addEventListener('click', function () {
@@ -874,7 +952,7 @@
     post('/api/teacher/reset', { token: S.token, what: 'all' }).then(function (r) {
       if (!r.ok) { toast(tr(r.error === 'busy' ? 'kids_busy' : 'kids_err'), 'error'); return; }
       toast(tr('kids_saved'), 'ok');
-      refreshState().then(function () { $('dlg_teacher').hidden = true; show('who'); });
+      refreshState().then(function () { $('dlg_teacher').hidden = true; show('home'); });
     });
   });
 
@@ -904,7 +982,7 @@
           if (!window.confirm(tr('kids_t_reset_one_q', id))) return;
           post('/api/teacher/reset', { token: S.token, what: 'profile', id: id }).then(function (x) {
             if (!x.ok) { toast(tr(x.error === 'busy' ? 'kids_busy' : 'kids_err'), 'error'); return; }
-            refreshState().then(function () { openReport(); if (!S.profile) show('who'); });
+            refreshState().then(function () { openReport(); show('home'); });
           });
         });
       });
@@ -938,7 +1016,7 @@
       }
       document.querySelector('.pb-header .pb-iconbar').appendChild($('lock_bt'));   // 키트가 붙이는 밝기 버튼보다 오른쪽 구석에
       applyLanguage();
-      show(S.profile ? 'home' : 'who');
+      show('home');
       if (a[1].running) { setRunning(true); poll(); }
     }).catch(function () {
       document.body.appendChild(el('p', 'kids-dead', icon('fa-plug-circle-xmark') + ' ' + tr('kids_err_conn')));

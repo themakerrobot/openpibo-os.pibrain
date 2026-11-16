@@ -78,6 +78,48 @@ class BaseRobot:
   def colour(self, rgb):
     raise NotImplementedError
 
+  def mymotion(self, name):
+    """도구 [동작] 에서 저장한 내 동작(파이보만)"""
+
+  def screen(self, kind, text=''):
+    """[화면] 카드 — 그림(smile·heart·star·surprise·sad·sleep)·글자(text)·지우기(clear)"""
+
+  def photo(self, folder):
+    """[사진 찍기] — 찍어서 화면에 보여 주고 folder 에 photo_<시각>.jpg 로 남긴다. 파일 이름을 돌려준다"""
+    return None
+
+  def sensed(self, what):
+    """지금 그 센서가 느꼈는지(touch · pir · b1~b4)"""
+    return False
+
+  def sense_begin(self, what):
+    """기다리기 시작 — 앞서 쌓인 눌림을 비운다"""
+
+  def sense(self, what, timeout):
+    """what 이 일어날 때까지 기다린다(최대 timeout 초, 정지에 바로 반응). 일어났으면 True"""
+    self.sense_begin(what)
+    end = time.time() + timeout
+    while time.time() < end:
+      if self.stop_flag.is_set():
+        return False
+      if self.sensed(what):
+        return True
+      self.stop_flag.wait(0.05)
+    return False
+
+  def _save_photo(self, folder, img):
+    import cv2
+    os.makedirs(folder, exist_ok=True)
+    name = 'photo_%d.jpg' % int(time.time() * 1000)
+    cv2.imwrite(os.path.join(folder, name), img)
+    old = sorted(f for f in os.listdir(folder) if f.startswith('photo_'))
+    for f in old[:-20]:                      # 마지막 20장만 남긴다
+      try:
+        os.remove(os.path.join(folder, f))
+      except OSError:
+        pass
+    return name
+
   def face(self, kind, look=None, stats=None, pose=None, bubble=None):
     """키우기 얼굴(sleep·hungry·sleepy·sad·happy·normal). look = 꾸미기 {color, hat, glasses}.
     화면이 있는 제품은 stats(점수 [(이름, 값, 열쇠)]) · pose(반응 포즈, 없으면 kind) · bubble(말풍선 글)도 그린다.
@@ -150,13 +192,38 @@ class FakeRobot(BaseRobot):
   def colour(self, rgb):
     self._do(('colour', tuple(rgb)), 0.05)
 
+  def mymotion(self, name):
+    self._do(('mymotion', name), 1.0)
+
+  def screen(self, kind, text=''):
+    self.log.append(('screen_card', kind, text))
+    import screen
+    screen.draw(kind, 240 if self.has_screen else 128, 320 if self.has_screen else 64, self.has_screen, text)
+
+  def photo(self, folder):
+    import numpy as np
+    img = np.zeros((480, 640, 3), np.uint8)
+    img[:, :, 1] = 120
+    self.log.append(('photo',))
+    self.wait(0.3)
+    return self._save_photo(folder, img)
+
+  def sense_begin(self, what):
+    self.log.append(('sense', what))
+
+  def sensed(self, what):
+    if what in self.inputs:
+      self.inputs.remove(what)
+      return True
+    return False
+
   def face(self, kind, look=None, stats=None, pose=None, bubble=None):
     self.log.append(('face', kind))
     if self.has_screen:
       self.log.append(('screen', pose or kind, bubble, [v for _, v, _ in (stats or [])]))
 
   def poll_inputs(self):
-    out, self.inputs = self.inputs, []
+    out, self.inputs = [x for x in self.inputs if x in ('touch', 'b1', 'b2', 'b3', 'b4')], []
     return out
 
   def show_network(self):
@@ -179,6 +246,9 @@ class PiboRobot(BaseRobot):
     from openpibo.device import Device
     from openpibo.audio import Audio
     self.m, self.d, self.a = Motion(), Device(), Audio()
+    self._oled = None        # 처음 [화면]·[사진] 카드에서 연다(Oled() 가 화면을 지운다)
+    self._cam = None
+    self._pir_on = False
 
   def play(self, path):
     if self.stop_flag.is_set():
@@ -192,6 +262,48 @@ class PiboRobot(BaseRobot):
 
   def colour(self, rgb):
     self.d.eye_on(*[int(v) for v in rgb])
+
+  def mymotion(self, name):
+    if self.stop_flag.is_set():
+      return
+    self.m.set_mymotion(name)
+
+  def _oled_open(self):
+    if self._oled is None:
+      from openpibo.oled import Oled
+      self._oled = Oled()
+    return self._oled
+
+  def screen(self, kind, text=''):
+    import screen
+    o = self._oled_open()
+    o.image = screen.draw(kind, o.width, o.height, False, text)
+    o.show()
+
+  def photo(self, folder):
+    if self._cam is None:
+      from openpibo.vision_camera import Camera
+      self._cam = Camera()
+      self._cam.read()                       # 켠 직후 첫 장은 어둡게 나올 수 있다
+    self.sound('shutter')
+    img = self._cam.read()
+    self._oled_open().imshow(img)
+    return self._save_photo(folder, img)
+
+  def sense_begin(self, what):
+    if what == 'pir' and not self._pir_on:
+      self.d.send_cmd(30, 'on')              # PIR 켜기(MCU). 켠 뒤 안정되기까지 걸리는 시간은 확인 필요
+      self._pir_on = True
+
+  def sensed(self, what):
+    try:
+      if what == 'touch':
+        return self.d.get_touch() == 'touch'
+      if what == 'pir':
+        return self.d.get_pir() == 'person'
+    except Exception:  # noqa: BLE001
+      pass
+    return False
 
   def face(self, kind, look=None, stats=None, pose=None, bubble=None):
     self.colour(self.FACE_EYE.get(kind, (255, 255, 255)))
@@ -257,13 +369,48 @@ class PiBrainRobot(BaseRobot):
   def colour(self, rgb):
     self.d.led_on(*[int(v) for v in rgb])
 
-  def face(self, kind, look=None, stats=None, pose=None, bubble=None):
-    from face import draw_face
+  def _lcd_open(self):
     if self._lcd is None:
       from openpibo.oled import OledByPiBrain
       self._lcd = OledByPiBrain(self.W, self.H)
-    self._lcd.image = draw_face(pose or kind, self.W, self.H, look, stats, bubble)
-    self._lcd.show()
+    return self._lcd
+
+  def face(self, kind, look=None, stats=None, pose=None, bubble=None):
+    from face import draw_face
+    lcd = self._lcd_open()
+    lcd.image = draw_face(pose or kind, self.W, self.H, look, stats, bubble)
+    lcd.show()
+
+  def screen(self, kind, text=''):
+    import screen
+    lcd = self._lcd_open()
+    lcd.image = screen.draw(kind, self.W, self.H, True, text)
+    lcd.show()
+
+  def photo(self, folder):
+    if getattr(self, '_cam', None) is None:
+      from openpibo.vision_camera import Camera
+      self._cam = Camera()
+      self._cam.read()
+    self.sound('shutter')
+    img = self._cam.read()                   # 세로 480x640(카메라를 돌려 달았다 — vision_camera)
+    self._lcd_open().imshow(img)
+    return self._save_photo(folder, img)
+
+  def sense_begin(self, what):
+    if self._buttons is not None:
+      self._buttons.pop_presses()            # 앞서 눌린 것은 치지 않는다
+
+  def sensed(self, what):
+    if not what.startswith('b'):
+      return False
+    n = int(what[1:])
+    if self._buttons is not None:
+      return n in self._buttons.pop_presses()
+    try:
+      return self.d.get_button(n) == 'on'
+    except Exception:  # noqa: BLE001
+      return False
 
   def poll_inputs(self):
     if self._buttons is not None:

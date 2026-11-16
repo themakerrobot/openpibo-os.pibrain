@@ -767,7 +767,8 @@ classifier 언어 토글, 검수 보고서 구조, Tools 서비스.
 설계·차시·도전 규칙·확인 필요는 **파이보 리포 `KIDS.md`**.
 
 - **IDE [로봇 놀이] 버튼으로 연다(261028, 사용자 — 시험 편하게. 안 쓰기로 하면 `ide/templates/index.html` 의 `#kids_bt` 만 지우면 된다).** 대기 페이지 `launch.html?svc=kids` → `/kids?enable=on`(IDE 가 `kids_proc` 로 띄움) → 50060. 체험 앱 상단바 [IDE], 탭을 닫으면 `beforeunload` 가 `/kids?enable=off`(keepalive). `LAUNCH_VER` 261028v1. 손으로 띄울 때는 `sudo /home/pi/.pyenv/bin/python3 kids/run_kids.py --device <제품>`
-- **아이 프로필**: 번호(선생님이 정한 수, **기본 4** — 로봇 한 대를 모둠이 같이 쓰는 기준, 261028 사용자. 잠금에서 최대 40) + 그림. 재주·별·도달 기록·키우기가 `/home/pi/.kids/p/<번호>/` 에 따로. 운영 전제는 '같은 아이 = 같은 번호 로봇'
+- **저장 한 벌(261116, 사용자)**: 번호·그림 고르기를 뺐다 — 앱을 켜면 바로 처음 화면, 저장은 `/home/pi/.kids/p/1/` 하나. 반이 바뀌면 선생님 잠금 [처음부터 하기]
+- **카드 더(261116, 사용자)**: 동작·이동·내 동작(도구에서 저장한 `mymotion.json`, 파이보) · 내가 쓴 말(20자) · 화면(그림·글자, `kids/screen.py`) · 사진 찍기 · 센서 '~할 때까지'(파이보 터치·PIR, PiBrain 버튼) · '만약 ~하면'(3초 동안 살핌, 주사위) · 차시 9(이벤트)·10(조건). 자세한 건 파이보 리포 `KIDS.md` '0-1'. **실기기 확인 필요** — 터치·PIR 읽기, 동작 이름, 카메라
 - **차시·도전은 `kids/content.json` 만 고친다**(`concepts` `lessons` `challenges`, 정답형 `want`·열린형 조건 열쇠). 코드는 안 바뀐다
 - 재주 한도: 24개 · 3겹 · 펼쳐 300번 · 줄 20장. 자기 자신을 부르는 재주(`cycle`)·쓰이는 재주 지우기는 막는다. [블록으로 보기] 에서 재주는 IDE **함수 블록**
 - 로봇 말은 처음 한 번 6~15초라 **`kids/make_voice.py --device <제품>` 으로 미리** 만든다. 문구는 IDE `ko2en.js` 끝의 `kids_*` 키(두 리포 같은 블록)
@@ -903,6 +904,7 @@ SSID 가 비면 실패 안내를 돌려준다(전엔 정의 안 된 `ex` 로 500
 파이보와 같은 규칙이다 — Pibo CLAUDE.md '디자인 시스템 · 문구 규칙 (261028)' (구형 브라우저 기준, 키트 한 곳의 색, A안 강조색, 크기 기준, 상단바·제목 형식, 꽉 찬 버튼 하나, 해요체·용어 표).
 
 - **아이콘(261102) — 파이보와 같다**(Pibo CLAUDE.md '아이콘 (261102)'): 제품 마크는 PiBrain 보드 그림(`design/marks/pibrain.svg`, 키트 CSS 가 `fa-brain` 글리프를 바꿈), 탭 아이콘 `icon.png` 도 같은 그림, 앱 아이콘 도구 `fa-screwdriver-wrench`·대화 `fa-comments`·분류기 `fa-graduation-cap`. 도구 [음성]의 espeak 버튼 `fa-robot` 은 제품 마크가 아니라 그대로 둔다
+- **앱을 나가거나 다른 앱으로 옮기면 로봇 화면은 무조건 IP 화면(261116, 사용자).** IDE `run_ide.py` 의 `show_ip(keep)` — `/tools` `/classifier` `/llm` `/kids` `/hwtest` 의 켜기·끄기와 코드 [정지] 때, 끄이는 앱(유닛·대화 웹·체험 앱·검수)이 다 내려간 뒤(최대 20초 기다림) `network_disp.py` 를 띄운다. 코드 실행을 시작할 때는 하지 않는다(학생 프로그램이 그린 것을 덮지 않게). 체험 앱 안에서도 처음 화면으로 돌아오면 IP 화면
 - **상단바 왼쪽 로고를 누르면 LCD 가 IP 화면으로 돌아간다(261030, 사용자).** 키트 `pibo-ui.js` 의 `screenReset` → IDE(80) `POST /screen_reset` → `system/network_disp.py`([출력 지우기] 의 화면 초기화와 같음). 로봇 놀이 키우기 얼굴도 IP 로 덮는다
 PiBrain 에서 바뀐 것: 도구 상단바를 키트 모양으로(`PiBrain · 도구`, 'EN' 단추 → 지금 언어 select `#lang_sel`), 선택 표시 노랑(#fff1c2) → 옅은 파랑, 버튼·슬라이더를 키트 모양으로,
 `:where()`·`color-mix()`·`aspect-ratio` 제거, 버튼 상태 ON/OFF → 눌림/안 눌림, 음성 [말하기]·'다 말했어요'·'멈췄어요'. `design/` 의 키트 두 파일은 파이보와 바이트까지 같게 둔다(원본은 파이보).

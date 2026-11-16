@@ -79,6 +79,10 @@ def main():
   save('bubble', seq(blip(500), blip(700), blip(600), blip(900), gap=0.05))
   save('lullaby', seq(*[tone(NOTE[n], 0.45, decay=3, harm=(1.0, 0.2)) for n in ('sol', 'mi', 'sol', 'do')]), peak=0.5)
   save('happy', seq(*[tone(NOTE[n], 0.12, decay=9) for n in ('do', 'mi', 'sol', 'mi', 'do2')]))
+  def click(sec, decay):
+    x = t(sec)
+    return rng.standard_normal(len(x)) * env(len(x), decay=decay)
+  save('shutter', seq(click(0.05, 60), click(0.12, 25), gap=0.06), peak=0.6)   # [사진 찍기] 찰칵
   print('->', OUT, sorted(os.listdir(OUT)))
 
 
