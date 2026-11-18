@@ -670,7 +670,7 @@ body[data-side="closed"] .pb-resizer[data-target="v2_side"] { display: none; }
 /* ── 움직임 (260929) — 키트 pibo-ui.css '움직임' 과 같은 규칙(키프레임은 거기 있다) ─────────── */
 /* 연결됨 점이 숨 쉬듯 퍼진다. 끊기면(data-offline) 빨강으로 멈춘다 */
 body:not([data-offline]) .v2-dot { animation: pb-breathe 2.4s ease-out infinite; }
-/* [파이보 | 파일] 탭을 바꾸면 새 칸이 살짝 떠오른다 */
+/* [PiBrain | 파일] 탭을 바꾸면 새 칸이 살짝 떠오른다 */
 .v2-side__page:not([hidden]) { animation: pb-tab-in .22s ease-out backwards; }
 /* 대화상자(와이파이 설정 포함)가 살짝 튀며 나타난다. 키트의 .pb .alert-popup-content(pb-pop)보다 우선하게 .v2-app 을 붙인다 */
 .v2-app .alert-popup-content, .v2-app .prompt-popup-content, .v2-app .confirm-popup-content,
@@ -691,3 +691,69 @@ body:not([data-offline]) .v2-dot { animation: pb-breathe 2.4s ease-out infinite;
 /* 빈 폴더 안내(index.js update_file_manager) — 키트 .pb-empty 를 표 칸 안에 */
 #fm_table tr.v2-fm-empty > td { padding: 16px 8px; border: 0; background: transparent; cursor: default; white-space: normal; max-width: 0; }
 #fm_table tr.v2-fm-empty .pb-empty p { white-space: normal; overflow-wrap: break-word; }
+
+/* ══ A안 배치 (261118) ═══════════════════════════════════════════════════════
+   파일 = 편집기 위로 열리는 서랍(#v2_side) · 오른쪽 = 실행 화면(#v2_stage: 실행·정지 · 화면 출력 · 출력 · 입력)
+   · 아래 = 상태 줄(#v2_status: 연결 · 버전 · 시리얼 | WiFi · 온도 · 메모리 · 켜진 시간 · 배터리).
+   body[data-side] 서랍 열림, body[data-stage] 실행 화면 펼침 — ide.js 1) */
+:root { --pane-stage: 340px; }
+.v2-app .pb-panes { position: relative; }
+
+/* 파일 서랍 */
+.v2-drawer {
+  position: absolute; top: 0; bottom: 0; left: 0; z-index: 80;   /* Blockly 분류(70) 위 */
+  width: min(340px, 88vw); display: flex; flex-direction: column; gap: 10px; padding: 12px;
+  background: var(--c-side); box-shadow: 4px 0 18px rgba(0,0,0,.18); border-right: 1px solid var(--c-line);
+  transform: translateX(0); transition: transform .18s ease-out, visibility .18s;
+}
+body[data-side="closed"] .v2-drawer { transform: translateX(-105%); visibility: hidden; box-shadow: none; }
+body[data-side="closed"] #v2_side { display: flex; }   /* 예전 규칙(접으면 display:none)을 덮는다 — 미끄러져 닫히게 */
+.v2-drawer__head { flex: none; display: flex; align-items: center; gap: 8px; height: 32px; font-size: 15px; color: var(--c-ink); }
+.v2-drawer__head > i { color: var(--c-ink-3); }
+.v2-drawer__head > b { flex: 1 1 auto; }
+.v2-drawer .v2-side__page { flex: 1 1 auto; min-height: 0; }
+.v2-top .v2-side-toggle[aria-pressed="false"] { background: transparent; }
+.v2-file { cursor: pointer; border-radius: 6px; padding: 2px 6px; margin-left: -6px; }
+.v2-file:hover { background: var(--c-hover); }
+
+/* 오른쪽 실행 화면 */
+.v2-stage.pb-pane {
+  flex: 0 0 var(--pane-stage); display: flex; flex-direction: column; gap: 10px; min-width: 0;
+  padding: 10px; background: var(--c-side); overflow: hidden;
+}
+.v2-stage__body { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 10px; }
+.v2-stage .v2-run { align-items: center; }
+.v2-stage .v2-run .pb-runstat { flex: none; margin-left: 2px; height: 26px; font-size: 12px; }
+.v2-stage .v2-run .pb-runstat[hidden] { display: none; }
+body[data-stage="closed"] .v2-stage,
+body[data-stage="closed"] .pb-resizer[data-target="v2_stage"] { display: none; }
+.v2-editor__bar .v2-stage-toggle { flex: none; }
+.v2-editor__bar .v2-stage-toggle[aria-pressed="true"] { background: var(--c-press); color: var(--c-ink); }
+.v2-app .pb-resizer[data-target="v2_side"] { display: none; }
+
+/* 아래 상태 줄 */
+.v2-status {
+  flex: none; display: flex; align-items: center; gap: 16px; height: 30px; padding: 0 14px;
+  background: var(--c-side); border-top: 1px solid var(--c-line); color: var(--c-ink-2); font-size: 12.5px;
+  white-space: nowrap; overflow: hidden;
+}
+.v2-status .v2-stat { flex: none; overflow: visible; }
+.v2-status .v2-stat > span { overflow: visible; }
+.v2-status__conn { display: inline-flex; align-items: center; gap: 7px; font-weight: 700; color: var(--c-ink); }
+.v2-status .v2-stat--wide { order: 3; margin-left: auto; font-weight: 600; color: var(--c-ink); }
+.v2-status .v2-stat--wide .v2-stat__more { display: none; }
+.v2-status [data-title-key="v2_tip_version"], .v2-status #usedata_bt { order: 1; }
+.v2-status [data-title-key="v2_tip_temp"], .v2-status [data-title-key="v2_tip_mem"],
+.v2-status [data-title-key="v2_tip_uptime"], .v2-status [data-title-key="v2_tip_battery"] { order: 4; }
+
+/* 폭이 좁을 때: 실행 화면은 편집기 위에 뜬다(태블릿 세로) · 상태 줄은 덜 중요한 것부터 숨긴다 */
+@media (max-width: 1100px) { :root { --pane-stage: 300px; } .v2-status [data-title-key="v2_tip_uptime"] { display: none; } }
+@media (max-width: 900px) {
+  .v2-stage.pb-pane { position: absolute; top: 44px; right: 0; bottom: 0; z-index: 80; width: min(340px, 88vw); flex: none; box-shadow: -4px 0 18px rgba(0,0,0,.18); }
+  .v2-app .pb-resizer[data-target="v2_stage"] { display: none; }
+  .v2-status [data-title-key="v2_tip_mem"], .v2-status #usedata_bt { display: none; }
+}
+@media (max-width: 560px) { .v2-status [data-title-key="v2_tip_version"] { display: none; } }
+@media (prefers-reduced-motion: reduce) { .v2-drawer { transition: none; } }
+.v2-status__conn .v2-off, body[data-offline] .v2-status__conn .v2-on { display: none; }
+body[data-offline] .v2-status__conn .v2-off { display: inline; color: var(--c-red); }

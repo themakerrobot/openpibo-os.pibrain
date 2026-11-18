@@ -403,7 +403,12 @@ const translations = {
   kids_t_reset_one_q: { ko: (n) => `${n}번 학생의 재주·별·기록·키우기를 지울까요?`, en: (n) => `Delete student ${n}'s tricks, stars, records and pet?` },
   kids_t_lock:      { ko: "잠그기", en: "Lock" },
   kids_t_save:      { ko: "저장", en: "Save" },
-  kids_saved:       { ko: "저장했어요.", en: "Saved." }
+  kids_saved:       { ko: "저장했어요.", en: "Saved." },
+  // A안 배치(261118): 파일 서랍 · 오른쪽 실행 화면 · 아래 상태 줄
+  v2_stage:         { ko: "실행 화면 접기/펴기", en: "Show or hide run panel" },
+  v2_files_open:    { ko: "파일 열기", en: "Open files" },
+  v2_connected:     { ko: "연결됨", en: "Connected" },
+  v2_disconnected:  { ko: "연결 끊김", en: "Disconnected" }
 };
 
 // 키 → 현재 언어 문자열. 모르는 키(일반 문자열)는 그대로 반환.
