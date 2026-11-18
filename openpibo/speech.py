@@ -309,21 +309,27 @@ Functions:
     peak = float(np.abs(audio).max())
     if 0 < peak < 0.5:
       audio = audio * min(0.5 / peak, 20.0)
-    if len(audio) <= 25 * sample_rate:
-      return self._decode(audio, sample_rate)
+    full, full_sr = audio, sample_rate
     if sample_rate != self.SAMPLE_RATE:   # VAD 는 16kHz 만 받는다
       idx = np.arange(0, len(audio), sample_rate / self.SAMPLE_RATE)
       audio = np.interp(idx, np.arange(len(audio)), audio).astype(np.float32)
       sample_rate = self.SAMPLE_RATE
+    # 말 구간을 먼저 찾는다. 하나도 없으면(조용한 소리) 빈 글자 — 모델에 그냥 넣으면 '그.' 같은 글자를 지어낸다(261118 컨테이너 재현).
+    # edge-lab speech_routes._SenseVoice 와 같은 계산 — 한쪽을 고치면 같이 고칠 것
     vad = self._vad(len(audio) / sample_rate)
     w = self._vad_cfg.silero_vad.window_size
     for i in range(0, len(audio), w):
       vad.accept_waveform(audio[i:i + w])
     vad.flush()
-    texts = []
+    segs = []
     while not vad.empty():
-      texts.append(self._decode(np.asarray(vad.front.samples, dtype=np.float32), sample_rate))
+      segs.append(np.asarray(vad.front.samples, dtype=np.float32))
       vad.pop()
+    if not segs:
+      return ''
+    if len(full) <= 25 * full_sr:          # 짧으면 통째로(전과 같은 글자)
+      return self._decode(full, full_sr)
+    texts = [self._decode(x, sample_rate) for x in segs]
     return ' '.join(t for t in texts if t)
 
   def transcribe_file(self, filename):
