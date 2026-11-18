@@ -2,12 +2,12 @@
    IDE v2 (시안 B) — templates/index.html 전용. index.js 다음에 싣는다.
    index.js 는 고치지 않는다. 여기서는 v2 배치에만 필요한 것을 붙인다.
 
-     1) 왼쪽 패널: 접기/펴기(기억), [PiBrain | 파일] 탭
+     1) 파일 서랍(편집기 위로 열림) · 오른쪽 실행 화면 접기/펴기(기억) — A안 배치(261118)
      2) 펼침 메뉴(<details>): 바깥을 누르거나 Esc 면 닫힌다
      3) 편집기 줄의 파일 이름: #codepath(전체 경로, index.js 가 채운다)에서 이름만
      4) 글자 크기 [-][+]
      5) data-ph-key / data-title-key / data-aria-key 번역 (index.js 의 setLanguage 는 textContent 만 바꾼다)
-     6) 화면 출력: [IDE에 보기] 블록의 그림 → [PiBrain] 탭 위쪽. 파일 미리보기와 가른다
+     6) 화면 출력: [IDE에 보기] 블록의 그림 → 오른쪽 실행 화면 위쪽. 파일 미리보기와 가른다
      7) 크게 보기(사진·화면 출력, 화면 출력은 실시간)
      8) 화면 밝기: 어둡게면 파이썬 편집기도 어둡게
      9) 툴박스: 색 타일 분류 + 블록 찾기(@blockly/toolbox-search 1.2.11, Blockly 10 용)
@@ -24,44 +24,50 @@
     set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) { /* 무시 */ } }
   };
 
-  /* 1) 왼쪽 패널 ────────────────────────────────────────────────────────── */
+  /* 1) 파일 서랍 · 오른쪽 실행 화면 (A안, 261118) ─────────────────────────── */
+  // 파일은 편집기 위로 열리는 서랍(#v2_side, data-side=open|closed). 처음엔 열고, 파일을 열면 닫는다.
+  // 실행 화면(#v2_stage, data-stage=open|closed)은 접기를 기억한다. 실행하거나 화면 출력이 오면 다시 편다
   var side = $id('v2_side'), sideBtn = $id('v2_side_toggle');
-  function setSide(open, keep) {
+  function setSide(open) {
     document.body.setAttribute('data-side', open ? 'open' : 'closed');
     sideBtn.setAttribute('aria-pressed', open ? 'true' : 'false');
-    if (keep) store.set('pibo_v2_side', open ? 'open' : 'closed');
-    fire();
   }
-  var sideSaved = store.get('pibo_v2_side');
-  setSide(sideSaved ? sideSaved === 'open' : window.innerWidth >= 760, false);
-  sideBtn.addEventListener('click', function () { setSide(document.body.getAttribute('data-side') !== 'open', true); });
-  // 좁은 화면에선 패널이 편집기 위에 뜬다(ide.css 760px). 편집기를 누르면 닫는다
-  var narrow = window.matchMedia('(max-width: 760px)');
-  document.querySelector('.v2-editor').addEventListener('pointerdown', function () {
-    if (narrow.matches && document.body.getAttribute('data-side') === 'open') setSide(false, false);
-  }, true);   // Blockly 가 전파를 막으므로 캡처 단계에서 받는다
-
-  var tabs = document.querySelectorAll('[data-side-tab]');
-  function setTab(name) {
-    side.setAttribute('data-tab', name);
-    Array.prototype.forEach.call(tabs, function (b) {
-      b.setAttribute('aria-selected', b.getAttribute('data-side-tab') === name ? 'true' : 'false');
-    });
-    Array.prototype.forEach.call(side.querySelectorAll('[data-page]'), function (p) {
-      p.hidden = p.getAttribute('data-page') !== name;
-    });
-    fire();
-  }
-  Array.prototype.forEach.call(tabs, function (b) {
-    b.addEventListener('click', function () { setTab(b.getAttribute('data-side-tab')); });
+  setSide(true);
+  sideBtn.addEventListener('click', function () { setSide(document.body.getAttribute('data-side') !== 'open'); });
+  $id('v2_drawer_close').addEventListener('click', function () { setSide(false); });
+  $id('v2_file').addEventListener('click', function () { setSide(true); });
+  // 편집기·실행 화면을 누르면 서랍을 닫는다(Blockly 가 전파를 막으므로 캡처 단계에서 받는다)
+  Array.prototype.forEach.call(document.querySelectorAll('.v2-editor__stage, .v2-stage'), function (el) {
+    el.addEventListener('pointerdown', function () { if (document.body.getAttribute('data-side') === 'open') setSide(false); }, true);
   });
-  // 실행을 시작하면 [PiBrain] 탭으로 — 출력과 화면을 봐야 한다
+  // 파일을 열면(#codepath 가 바뀌면) 닫는다
+  new MutationObserver(function () { if (($id('codepath').textContent || '').trim()) setSide(false); })
+    .observe($id('codepath'), { childList: true, characterData: true, subtree: true });
+
+  var stageBtn = $id('v2_stage_toggle');
+  // 좁은 화면(900px 이하)에선 실행 화면이 블록 위에 뜬다(ide.css). 블록 쪽을 누르면 접는다(기억하지 않음)
+  var narrowStage = window.matchMedia('(max-width: 900px)');
+  document.querySelector('.v2-editor__stage').addEventListener('pointerdown', function () {
+    if (narrowStage.matches && document.body.getAttribute('data-stage') === 'open') setStage(false, false);
+  }, true);
+  function setStage(open, keep) {
+    document.body.setAttribute('data-stage', open ? 'open' : 'closed');
+    stageBtn.setAttribute('aria-pressed', open ? 'true' : 'false');
+    if (keep) store.set('pibo_v2_stage', open ? 'open' : 'closed');
+    fire();
+  }
+  var stageSaved = store.get('pibo_v2_stage');
+  setStage(stageSaved ? stageSaved === 'open' : window.innerWidth >= 900, false);
+  stageBtn.addEventListener('click', function () {
+    var open = document.body.getAttribute('data-stage') !== 'open';
+    if (!open && document.body.hasAttribute('data-running')) liveClosed = true;   // 실행 중에 접으면 그 실행 동안은 다시 펴지 않는다
+    setStage(open, true);
+  });
   var liveClosed = false;
   new MutationObserver(function () {
     if (document.body.hasAttribute('data-running')) {
       liveClosed = false;
-      if (side.getAttribute('data-tab') !== 'robot') setTab('robot');
-      if (document.body.getAttribute('data-side') !== 'open') setSide(true, false);
+      if (document.body.getAttribute('data-stage') !== 'open') setStage(true, false);
     }
   }).observe(document.body, { attributes: true, attributeFilter: ['data-running'] });
 
@@ -146,7 +152,7 @@
 
   /* 6) 화면 출력 ─────────────────────────────────────────────────────────── */
   /* [IDE에 보기] 블록(camera.imshow_to_ide → POST /show)은 index.js 가 파일 미리보기와 같은
-     #image 에 넣고 경로를 /home/pi/.tmp.jpg 로 준다. 파일이 아니라 실행 결과라서 [PiBrain] 탭
+     #image 에 넣고 경로를 /home/pi/.tmp.jpg 로 준다. 파일이 아니라 실행 결과라서 실행 화면
      위쪽 칸으로 옮긴다. run_ide.py 의 /show 저장 경로를 바꾸면 여기도 바꿀 것 */
   var LIVE_PATH = '/home/pi/.tmp.jpg';
   var browser = $id('browser_en'), live = $id('v2_live'), liveImg = $id('v2_live_img'), liveTimer = 0;
@@ -159,8 +165,7 @@
     clearTimeout(liveTimer);
     liveTimer = setTimeout(function () { live.removeAttribute('data-fresh'); }, 1500);
     if (liveClosed) return;
-    if (document.body.getAttribute('data-side') !== 'open') setSide(true, false);
-    if (side.getAttribute('data-tab') !== 'robot') setTab('robot');
+    if (document.body.getAttribute('data-stage') !== 'open') setStage(true, false);
   }
   new MutationObserver(function () {
     var src = $id('image').getAttribute('src');

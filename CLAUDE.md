@@ -497,11 +497,11 @@ sudo raspi-config nonint get_wifi_country
 | `design/fonts/` (Pretendard 보통·굵게 두 벌, SIL OFL) | Pibo `design/fonts/` | 없음. 원본 배포판 파일 그대로 — 이유는 Pibo CLAUDE.md '다듬기'. **파일은 `ide/static/fonts/` 에만** 있고 도구·분류기 서버가 IDE(80) 로 넘긴다(`SharedFonts`, 260929) |
 | `ide/static/pibo-ui.*`, `tools/static/pibo-ui.*`, `classifier/static/pibo-ui.*`, `*/static/fonts/` | `design/sync.sh` 가 만든 사본 | 직접 고치지 말 것. `bash design/sync.sh --check` |
 | `ide/static/launch.html` | Pibo | 제목·브랜드만(도구 포트는 260930 부터 Pibo 와 같은 50000) |
-| `ide/templates/index.html` (전 `index_v2.html`) | Pibo | 브랜드 `PiBrain`(fa-brain), 패널 탭 [PiBrain], **배터리 칸 없음**, `?ver` |
+| `ide/templates/index.html` (전 `index_v2.html`) | Pibo | 브랜드 `PiBrain`(fa-brain), **상태 줄에 배터리 칸 없음**, 버전 아이콘 fa-brain, 소스 링크. 배치는 261118 부터 **A안**(파일 서랍 · 오른쪽 실행 화면 · 아래 상태 줄 — Pibo CLAUDE.md 'A안 배치') |
 | `ide/static/v2/ide.css` `ide.js` `vendor/toolbox-search.*` | Pibo | 주석의 탭 이름만 |
 | `ide/static/index.js` | Pibo 를 기준으로 | H/W 검수(50050, 4초 뒤 열기). `langFileVersion` 은 260929 부터 Pibo 와 같다(`ko.js`·`en.js` 가 같은 파일) |
 | `ide/run_ide.py` | 항목별로 | gzip, `run_blocking`, 실행 로그 `record`/`record_add`, 저장 확인 `saved`, `/` 는 늘 `index.html`. MCU 조회(`get_device`)는 안 가져왔다 |
-| `ide/static/ko2en.js` | Pibo 의 새 키 53개를 앞에 끼움 | `v2_tab_robot` = PiBrain. 1·2행은 그대로(`global` 델타) |
+| `ide/static/ko2en.js` | Pibo 의 새 키 53개를 앞에 끼움 | `v2_tab_robot` = PiBrain. 1·2행은 그대로(`global` 델타). A안 키 4개(`v2_stage` 등)는 Pibo 와 같은 자리(파일 끝) |
 | `customblock.js` | | `color_type` **색 값만**(한글 줄 그대로). 261101 중간안 색(260624v1 계열 + 흰 글자 3.3:1, 시작은 조금만 진하게 #D1A909) — 값·이유는 Pibo CLAUDE.md '블록 색' |
 | `customblock_toolbox.js` | | 기본 분류 8개의 `"colour"` 값만. **`global` 델타 파일이다** — merge 때 Collect 분류와 떨어져 있어 보통 자동으로 합쳐지지만 확인할 것 |
 | `jquery-3.7.1.min.js` | Pibo | 3.1.1 을 지우고 올렸다 |

@@ -3,9 +3,11 @@
 <!--
   IDE 화면 (시안 B, 260924~). 예전 화면(v1)은 260929 에 지웠다.
   요소 id 는 index.html 과 전부 같다 — index.js 를 그대로 쓴다. 바뀐 건 배치와 모양뿐이다.
-    상단바       브랜드 | 블록/파이썬 | 도구·대화·분류기·도움말·더보기
-    왼쪽 패널    [PiBrain] 화면 출력·상태·출력·입력  /  [파일] 목록·추가·미리보기  +  실행·정지(늘 아래)
-    가운데       파일 이름·미저장·파이썬 코드·저장 | 블록 찾기 + 분류 + 작업판
+    상단바       [파일] · 브랜드 | 블록/파이썬 | 도구·대화·분류기·도움말·더보기
+    파일 서랍    [파일] 목록·추가·미리보기 — 편집기 위로 열린다(A안, 261118)
+    가운데       파일 이름·미저장·쉬움|전체·파이썬 코드·저장·실행 화면 접기 | 블록 찾기 + 분류 + 작업판
+    오른쪽       실행·정지·실행 상태 · 화면 출력 · 출력 · 입력 (접을 수 있다)
+    아래 상태 줄 연결 · 버전 · 시리얼 | WiFi · 온도 · 메모리 · 켜진 시간 · 배터리
 -->
 <head>
   <title data-key="v2_brand">메이커</title>
@@ -21,10 +23,10 @@
   <link rel="stylesheet" href="../static/codemirror.css" />
   <link rel="stylesheet" href="../static/jquery.jsonview.min.css" />
   <link rel="stylesheet" href="../static/pibo-ui.css?ver=261102v2" />
-  <link rel="stylesheet" href="../static/v2/ide.css?ver=261116v1" />
+  <link rel="stylesheet" href="../static/v2/ide.css?ver=261118v1" />
   <link rel="shortcut icon" href="../static/icon.png?ver=261102v2" type="image/png" />
 
-  <script src="../static/ko2en.js?ver=261116v3"></script>
+  <script src="../static/ko2en.js?ver=261118v1"></script>
   <script src="../static/blockly_compressed.js?ver=240319v1"></script>
   <script src="../static/blocks_compressed.js?ver=240319v1"></script>
   <script src="../static/python_compressed.js?ver=240319v1"></script>
@@ -46,7 +48,7 @@
   <!-- ── 상단바 ─────────────────────────────────────────────────────────── -->
   <header class="pb-header v2-top">
     <div class="v2-top__left">
-      <button type="button" class="v2-icon v2-side-toggle" id="v2_side_toggle" data-title-key="v2_panel" aria-pressed="true"><i class="fa-solid fa-table-columns"></i></button>
+      <button type="button" class="v2-icon v2-side-toggle" id="v2_side_toggle" data-title-key="nav_files" aria-pressed="false"><i class="fa-solid fa-folder-open"></i></button>
       <span class="v2-brand"><i class="fa-solid fa-brain"></i><b>PiBrain</b><span data-key="v2_brand"></span></span>
     </div>
 
@@ -110,47 +112,10 @@
 
   <main>
     <div class="content pb-panes">
-      <!-- ── 왼쪽 패널: [PiBrain | 파일] + 실행·정지 ──────────────────────────── -->
-      <aside class="pb-pane pb-pane--fixed v2-side" id="v2_side" data-tab="files">   <!-- 처음엔 [파일](261102, 수업 현장 요청). 실행·화면 출력 때는 ide.js 가 [로봇] 탭으로 -->
-        <div class="v2-tabs" role="tablist">
-          <button type="button" role="tab" data-side-tab="robot" aria-selected="false"><span class="v2-dot" aria-hidden="true"></span><span data-key="v2_tab_robot"></span></button>
-          <button type="button" role="tab" data-side-tab="files" aria-selected="true"><span data-key="nav_files"></span></button>
-        </div>
-
-        <!-- [PiBrain] -->
-        <section class="v2-side__page" data-page="robot" id="result_en" hidden>
-          <figure class="v2-live" id="v2_live">
-            <img id="v2_live_img" alt="" />
-            <figcaption class="v2-live__empty"><i class="fa-solid fa-camera"></i><span data-key="v2_live_empty"></span></figcaption>
-            <span class="v2-live__badge"><span class="v2-live__dot"></span><span data-key="v2_live"></span></span>
-            <button type="button" class="v2-live__zoom" id="v2_live_zoom" data-title-key="v2_zoom"><i class="fa-solid fa-expand"></i></button>
-          </figure>
-
-          <div class="v2-stats">
-            <a class="v2-stat v2-stat--wide" id="showNetwork"><span id="s_network"></span><span class="v2-stat__more"><span data-key="v2_settings"></span> ›</span></a>
-            <span class="v2-stat" data-title-key="v2_tip_temp"><i class="fa-solid fa-temperature-half"></i><span id="s_cpu_temp"></span></span>
-            <span class="v2-stat" data-title-key="v2_tip_mem"><i class="fa-solid fa-memory"></i><span id="s_memory"></span></span>
-            <span class="v2-stat" data-title-key="v2_tip_uptime"><i class="fa-solid fa-clock"></i><span id="s_runtime"></span></span>
-            <span class="v2-stat" data-title-key="v2_tip_version"><i class="fa-solid fa-brain"></i><span id="s_os_version"></span></span>
-            <a class="v2-stat" id="usedata_bt" data-title-key="v2_tip_serial"><i class="fa-solid fa-tag"></i><span id="s_serial"></span></a>
-          </div>
-
-          <div class="v2-term">
-            <div class="v2-term__bar">
-              <span class="v2-term__title" data-key="v2_output"></span>
-              <span class="v2-term__path" id="respath"></span>
-              <span id="run_status" class="pb-runstat" hidden aria-live="polite"></span>
-              <button id="eraser" class="v2-icon" data-title-key="v2_clear"><i class="fa-solid fa-eraser"></i></button>
-            </div>
-            <textarea id="result" class="result" disabled aria-label="Output" data-aria-key="v2_output"></textarea>
-            <div class="v2-term__input">
-              <span class="v2-term__caret">&gt;</span>
-              <input type="text" id="prompt" name="prompt" autocomplete="off" aria-label="Send input to the program" data-aria-key="v2_prompt_ph" data-ph-key="v2_prompt_ph" />
-              <button id="prompt_bt" class="v2-icon" data-title-key="enter"><i class="fa-solid fa-arrow-right"></i></button>
-            </div>
-          </div>
-        </section>
-
+      <!-- ── 파일 서랍(A안, 261118): 왼쪽 위 [파일]·파일 이름을 누르면 편집기 위로 열린다. 파일을 열면 닫힌다 ── -->
+      <aside class="v2-drawer" id="v2_side" data-tab="files">
+        <div class="v2-drawer__head"><i class="fa-solid fa-folder-open"></i><b data-key="nav_files"></b>
+          <button type="button" class="v2-icon" id="v2_drawer_close" data-title-key="close"><i class="fa-solid fa-xmark"></i></button></div>
         <!-- [파일] -->
         <section class="v2-side__page" data-page="files" id="browser_en">
           <div class="v2-fbar">
@@ -184,13 +149,7 @@
           </div>
         </section>
 
-        <div class="v2-run">
-          <button id="execute" class="v2-btn v2-btn--run"><i class="fa-solid fa-flag"></i><span data-key="execute"></span></button>
-          <button id="stop" class="v2-btn v2-btn--stop disabled"><i class="fa-solid fa-stop"></i><span data-key="stop"></span></button>
-        </div>
       </aside>
-
-      <div class="pb-resizer" data-pane="side" data-target="v2_side" data-side="left" data-min="280" role="separator" aria-orientation="vertical" aria-label="Resize" data-aria-key="v2_resize"></div>
 
       <!-- ── 편집기 ────────────────────────────────────────────────────── -->
       <section class="pb-pane pb-pane--grow v2-editor">
@@ -203,6 +162,7 @@
           </div>
           <button type="button" class="v2-btn v2-btn--sm v2-btn--ghost" id="pycode_bt" hidden><i class="fa-solid fa-code"></i><span data-key="pycode"></span></button>
           <button type="button" id="save" class="v2-btn v2-btn--sm v2-btn--tint"><i class="fa-solid fa-floppy-disk"></i><span data-key="save"></span></button>
+          <button type="button" class="v2-icon v2-stage-toggle" id="v2_stage_toggle" data-title-key="v2_stage" aria-pressed="true"><i class="fa-solid fa-table-columns"></i></button>
         </div>
         <div class="v2-editor__stage">
           <div id="blocklyDiv" class="blocklyDiv"></div>
@@ -213,8 +173,52 @@
           </div>
         </div>
       </section>
+
+      <div class="pb-resizer" data-pane="stage" data-target="v2_stage" data-side="right" data-min="280" role="separator" aria-orientation="vertical" aria-label="Resize" data-aria-key="v2_resize"></div>
+
+      <!-- ── 오른쪽 실행 화면(A안): 실행·정지 · 화면 출력 · 출력 · 입력 ─────────── -->
+      <aside class="pb-pane pb-pane--fixed v2-stage" id="v2_stage">
+        <div class="v2-run">
+          <button id="execute" class="v2-btn v2-btn--run"><i class="fa-solid fa-flag"></i><span data-key="execute"></span></button>
+          <button id="stop" class="v2-btn v2-btn--stop disabled"><i class="fa-solid fa-stop"></i><span data-key="stop"></span></button>
+          <span id="run_status" class="pb-runstat" hidden aria-live="polite"></span>
+        </div>
+        <section class="v2-stage__body" id="result_en">
+          <figure class="v2-live" id="v2_live">
+            <img id="v2_live_img" alt="" />
+            <figcaption class="v2-live__empty"><i class="fa-solid fa-camera"></i><span data-key="v2_live_empty"></span></figcaption>
+            <span class="v2-live__badge"><span class="v2-live__dot"></span><span data-key="v2_live"></span></span>
+            <button type="button" class="v2-live__zoom" id="v2_live_zoom" data-title-key="v2_zoom"><i class="fa-solid fa-expand"></i></button>
+          </figure>
+
+          <div class="v2-term">
+            <div class="v2-term__bar">
+              <span class="v2-term__title" data-key="v2_output"></span>
+              <span class="v2-term__path" id="respath"></span>
+              <button id="eraser" class="v2-icon" data-title-key="v2_clear"><i class="fa-solid fa-eraser"></i></button>
+            </div>
+            <textarea id="result" class="result" disabled aria-label="Output" data-aria-key="v2_output"></textarea>
+            <div class="v2-term__input">
+              <span class="v2-term__caret">&gt;</span>
+              <input type="text" id="prompt" name="prompt" autocomplete="off" aria-label="Send input to the program" data-aria-key="v2_prompt_ph" data-ph-key="v2_prompt_ph" />
+              <button id="prompt_bt" class="v2-icon" data-title-key="enter"><i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+          </div>
+        </section>
+      </aside>
     </div>
   </main>
+
+  <!-- ── 아래 상태 줄(A안): 연결 · 버전 · 시리얼 | WiFi · 온도 · 메모리 · 켜진 시간 · 배터리 ── -->
+  <footer class="v2-status" id="v2_status">
+    <span class="v2-status__conn"><span class="v2-dot" aria-hidden="true"></span><span class="v2-on" data-key="v2_connected"></span><span class="v2-off" data-key="v2_disconnected"></span></span>
+            <a class="v2-stat v2-stat--wide" id="showNetwork"><span id="s_network"></span><span class="v2-stat__more"><span data-key="v2_settings"></span> ›</span></a>
+            <span class="v2-stat" data-title-key="v2_tip_temp"><i class="fa-solid fa-temperature-half"></i><span id="s_cpu_temp"></span></span>
+            <span class="v2-stat" data-title-key="v2_tip_mem"><i class="fa-solid fa-memory"></i><span id="s_memory"></span></span>
+            <span class="v2-stat" data-title-key="v2_tip_uptime"><i class="fa-solid fa-clock"></i><span id="s_runtime"></span></span>
+            <span class="v2-stat" data-title-key="v2_tip_version"><i class="fa-solid fa-brain"></i><span id="s_os_version"></span></span>
+            <a class="v2-stat" id="usedata_bt" data-title-key="v2_tip_serial"><i class="fa-solid fa-tag"></i><span id="s_serial"></span></a>
+  </footer>
 
   <!-- ── 대화상자 ───────────────────────────────────────────────────────── -->
   <div class="wifi-popup" id="wifiPopup" style="display:none;">
@@ -302,7 +306,7 @@
   <script src="../static/pibo-ui.js?ver=261102v1"></script>
   <script src="../static/index.js?ver=261113v2"></script>
   <script src="../static/v2/vendor/toolbox-search.js?ver=1.2.11"></script>
-  <script src="../static/v2/ide.js?ver=261027v3"></script>
+  <script src="../static/v2/ide.js?ver=261118v1"></script>
 </body>
 
 </html>
