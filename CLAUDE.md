@@ -724,7 +724,7 @@ docs 는 `CustomClassifier.load` 변경 뒤 다시 빌드했다(261001, 'docs' �
 블록만 막는다.**
 
 - **STT 소스(260930)**: `openpibo/speech.py` 는 Pibo 와 설명문만 다르다(SenseVoice + silero VAD, 마이크 DC 제거까지 같음 —
-  Pibo CLAUDE.md '음성 인식 · TTS · 메모리'). 고치면 두 리포를 같이 고칠 것. 모델은 `.model/stt`(Pibo `.model` 그대로 넣으면 있다),
+  Pibo CLAUDE.md '음성 인식 · TTS · 메모리'). 고치면 두 리포를 같이 고칠 것. 말 구간이 없으면 `transcribe()` 가 빈 글자를 돌려준다(261118, Pibo·edge-lab 과 같은 계산). SenseVoice 모델 라이선스(FunASR 1.1)는 261118 원문 확인 — 상업 사용 허락, 출처 표시 의무(Pibo CLAUDE.md 같은 절). 모델은 `.model/stt`(Pibo `.model` 그대로 넣으면 있다),
   패키지 `sherpa-onnx`·`sherpa-onnx-core` 1.13.8 은 `pip install` 로 설치(마이크보다 먼저 깔아도 된다)
   - **기기에 설치함(261001)**: `pip check` 깨진 것 없음, numpy 1.26.4·onnxruntime 1.20.1 그대로, `.model/stt` 세 파일 있음(model.int8.onnx 239MB),
     `SpeechToText()` 모델 적재 확인. 마이크가 없어 `listen` 은 아직 못 봤다
