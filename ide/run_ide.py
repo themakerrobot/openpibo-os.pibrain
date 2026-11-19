@@ -119,6 +119,16 @@ async def run_blocking(fn, *args):
   # 루프 안에서 돌리면 그동안 IDE 전체(실행 출력·저장·파일 목록)가 멈춘다
   return await asyncio.get_running_loop().run_in_executor(None, fn, *args)
 
+def stop_units_wait():
+  # 코드 실행 전에 카메라·마이크·모터를 쥔 서비스가 실제로 내려갈 때까지 기다린다(261119).
+  # 전엔 Popen 으로 끄라고만 하고 바로 학생 프로그램을 띄워서, 도구·분류기가 아직 카메라를 쥔 순간에
+  # Camera() 가 'Failed to start camera' 로 죽을 수 있었다. systemctl stop 은 다 내려간 뒤에 돌아온다
+  try:
+    subprocess.run(['systemctl', 'stop', 'tools.service', 'classify.service', 'llama-server@*'],
+                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=20)
+  except (subprocess.TimeoutExpired, OSError):
+    pass
+
 def get_system_info():
   return subprocess.check_output(['/home/pi/openpibo-os/system/system.sh'], timeout=5).decode().strip().split(',')
 
@@ -777,9 +787,7 @@ async def handle_execute(sid, d):
   stop_hwtest()   # 사용자 코드가 카메라·LCD 를 쓰므로 검수 서버를 먼저 내린다
   stop_kids()     # 체험 앱도 모터·소리를 쓴다
   stop_chat()
-  subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
-  subprocess.Popen(['systemctl', 'stop', 'classify.service'])
-  subprocess.Popen(['systemctl', 'stop', 'tools.service'])
+  await run_blocking(stop_units_wait)   # 도구·분류기·대화 모델이 카메라 등을 놓을 때까지
   try:
     if is_protect(d['codepath']) or is_protect(os.path.dirname(d['codepath'])):
       await app.sio.emit('update', {'dialog': 'err_run_protected', 'exit': True})
@@ -804,9 +812,7 @@ async def handle_executeb(sid, d):
   stop_hwtest()   # 〃
   stop_kids()     # 체험 앱도 모터·소리를 쓴다
   stop_chat()
-  subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
-  subprocess.Popen(['systemctl', 'stop', 'classify.service'])
-  subprocess.Popen(['systemctl', 'stop', 'tools.service'])
+  await run_blocking(stop_units_wait)   # 도구·분류기·대화 모델이 카메라 등을 놓을 때까지
   try:
     kill_run()
     if ps and ps.returncode is None:

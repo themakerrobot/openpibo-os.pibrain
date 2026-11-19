@@ -374,6 +374,10 @@ socket.on("update", async (data) => {
 
   // 서버는 시작할 때 전체(record)를 한 번 보내고, 그 뒤로는 늘어난 부분(record_add)만 보낸다
   if ("record" in data || "record_add" in data) {
+    // 라이브러리 로그의 터미널 색 코드(ESC[1;31m 등)는 글자 칸에 그대로 보이므로 지운다(261119)
+    const noAnsi = (s) => String(s).replace(/\x1b\[[0-9;?]*[A-Za-z]/g, "");
+    if ("record" in data) data["record"] = noAnsi(data["record"]);
+    if ("record_add" in data) data["record_add"] = noAnsi(data["record_add"]);
     if ("record" in data) result.value = data["record"];
     else {
       // 뒤쪽 RESULT_MAX 글자만 둔다(서버 RECORD_MAX 와 같다, 261027). 전엔 끝없이 늘어 무한 반복 print 면 화면이 점점 느려졌다.

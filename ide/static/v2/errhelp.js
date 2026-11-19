@@ -14,9 +14,16 @@
 
   // ── 규칙 표 ─────────────────────────────────────────────────────────────
   // type: 오류 이름(정규식), msg: 메시지(정규식, 없으면 아무거나), $1·$2 는 메시지에서 잡은 것
-  const R = (type, msg, ko, en, hko, hen) => ({ type, msg, ko, en, hko, hen });
+  const R = (type, msg, ko, en, hko, hen, raw) => ({ type, msg, ko, en, hko, hen, raw });
   const ERR_RULES = [
     // 우리 라이브러리
+    R(/./, /Failed to start camera|Failed to start streaming|Input\/output error/i,
+      '카메라를 켜지 못했어요.', 'Could not start the camera.',
+      '도구·분류기 탭을 닫고 다시 실행해 보세요. 그래도 안 되면 카메라 선이 꽂혀 있는지 보고 로봇을 다시 켜 보세요.',
+      'Close the Tools/Classifier tab and run again. If it still fails, check the camera cable and restart the robot.'),
+    R(/^IndexError$/, null,
+      '카메라를 찾지 못했어요.', 'No camera was found.',
+      '카메라 선이 꽂혀 있는지 보고 로봇을 다시 켜 보세요.', 'Check the camera cable and restart the robot.', /picamera2/),
     R(/./, /Failed to acquire camera|Device or resource busy|Camera __init__ sequence did not complete/i,
       '카메라를 다른 곳에서 쓰고 있어요.', 'The camera is being used by something else.',
       '도구·분류기 탭을 닫거나, 앞에서 실행한 프로그램을 정지한 뒤 다시 실행해 보세요.', 'Close the Tools/Classifier tab or stop the previous program, then run again.'),
@@ -177,12 +184,12 @@
   const TXT = {
     line:      { ko: (n) => `${n}번째 줄`, en: (n) => `Line ${n}` },
     inblock:   { ko: '빨갛게 표시한 블록', en: 'The block marked in red' },
+    setup:     { ko: (c) => `프로그램 준비 단계(${c})`, en: (c) => `Program setup (${c})` },
     other:     { ko: '오류가 났어요', en: 'An error occurred' },
     hint:      { ko: '이렇게 해 보세요', en: 'Try this' },
     show:      { ko: '블록 보기', en: 'Show block' },
     showline:  { ko: '줄 보기', en: 'Show line' },
     close:     { ko: '닫기', en: 'Close' },
-    raw:       { ko: '원래 오류', en: 'Original error' },
     generic:   { ko: (name) => `${name}가 났어요.`, en: (name) => `${name}.` },
   };
   const L = () => (typeof lang !== 'undefined' && lang === 'en') ? 'en' : 'ko';
@@ -234,6 +241,7 @@
     const k = L();
     for (const r of ERR_RULES) {
       if (!r.type.test(info.type)) continue;
+      if (r.raw && !r.raw.test(info.raw)) continue;
       let m = null;
       if (r.msg) { m = info.msg.match(r.msg); if (!m) continue; }
       const sub = (s) => s.replace(/\$(\d)/g, (_, d) => (m && m[+d] !== undefined) ? m[+d] : '');
@@ -247,6 +255,7 @@
   const MARK = '#@@pibo%1\n';
   const MARK_RE = /^\s*#@@pibo'(.*)'\s*$/;
   let lineMap = null;      // 실행 코드 줄 번호(1부터) → 블록 id
+  let codeLines = [];      // 블록이 만든 실행 코드(줄 → 블록이 없는 맨 앞 준비 줄을 보여 줄 때)
 
   function blockCode(ws) {
     const gen = Blockly.Python;
@@ -280,6 +289,7 @@
     if (out.join('\n') === normal) {
       lineMap = {}; ids.forEach((id, n) => { if (id) lineMap[n + 1] = id; });
     }
+    codeLines = normal.split('\n');
     return normal;
   }
 
@@ -294,7 +304,7 @@
     try {
       if (markedBlock && typeof workspace !== 'undefined') {
         const b = workspace.getBlockById(markedBlock);
-        if (b) { b.setWarningText(null, 'pibo_err'); const g = b.getSvgRoot(); if (g) g.classList.remove('pibo-errblock'); }
+        if (b) { const g = b.getSvgRoot(); if (g) g.classList.remove('pibo-errblock'); }
       }
     } catch (e) { /* 블록이 지워졌으면 그만 */ }
     markedBlock = null;
@@ -322,7 +332,11 @@
   function render() {
     const b = box(); if (!b || !last) return;
     const ex = explain(last.info);
-    const where = last.block ? tx('inblock') : (last.info.line && run.mode !== 'block' ? tx('line', last.info.line) : tx('other'));
+    // 블록 모드인데 블록이 없는 줄 = 블록이 맨 앞에 넣는 준비 코드(import·camera = Camera() 등)
+    const setupLine = (!last.block && run.mode === 'block' && last.info.line) ? (codeLines[last.info.line - 1] || '').trim() : '';
+    const where = last.block ? tx('inblock')
+      : setupLine ? tx('setup', setupLine.length > 40 ? setupLine.slice(0, 40) + '…' : setupLine)
+      : (last.info.line && run.mode !== 'block' ? tx('line', last.info.line) : tx('other'));
     const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
     const canShow = last.block || (last.info.line && run.mode !== 'block');
     b.innerHTML =
@@ -330,7 +344,6 @@
       '<div class="v2-err__body">' +
         '<div class="v2-err__title"><b>' + esc(where) + '</b> · ' + esc(ex.title) + '</div>' +
         (ex.hint ? '<div class="v2-err__hint">→ ' + esc(ex.hint) + '</div>' : '') +
-        '<details class="v2-err__raw"><summary>' + esc(tx('raw')) + '</summary><pre>' + esc(last.info.raw) + '</pre></details>' +
       '</div>' +
       '<div class="v2-err__acts">' +
         (canShow ? '<button type="button" class="v2-err__go">' + esc(last.block ? tx('show') : tx('showline')) + '</button>' : '') +
@@ -339,13 +352,14 @@
     b.hidden = false;
     const go = b.querySelector('.v2-err__go'); if (go) go.onclick = focusTarget;
     b.querySelector('.v2-err__x').onclick = clear;
-    // 블록 말풍선 문구도 지금 언어로
-    if (last.block && typeof workspace !== 'undefined') {
+    // 오류 블록에 빨간 테두리
+    if (last.block && !last.unmarked && typeof workspace !== 'undefined') {
       const blk = workspace.getBlockById(last.block);
       if (blk) {
         try {
-          blk.setWarningText(ex.title + (ex.hint ? '\n→ ' + ex.hint : ''), 'pibo_err'); markedBlock = last.block;
-          const g = blk.getSvgRoot(); if (g) g.classList.add('pibo-errblock');   // 빨간 테두리(ide.css)
+          // 빨간 테두리만(ide.css). 느낌표(경고 말풍선)는 쓰지 않는다 — 설명은 위 상자에 있다(261119 사용자)
+          markedBlock = last.block;
+          const g = blk.getSvgRoot(); if (g) g.classList.add('pibo-errblock');
         } catch (e) { /* 그만 */ }
       }
     }
@@ -356,7 +370,7 @@
     clear();
     run = { mode, path };
     if (mode === 'block') return blockCode(ws);
-    lineMap = null;
+    lineMap = null; codeLines = [];
     return null;
   }
 
@@ -382,6 +396,17 @@
     if (sel) sel.addEventListener('change', () => setTimeout(render, 0));
     const er = document.getElementById('eraser');
     if (er) er.addEventListener('click', clear);
+    // 블록을 고치면(바꾸기·옮기기·끼우기·지우기) 빨간 테두리를 바로 지운다(설명 상자는 남김, 261119 사용자)
+    if (typeof workspace !== 'undefined') workspace.addChangeListener((ev) => {
+      if (!markedBlock || ev.isUiEvent) return;
+      const T = Blockly.Events;
+      if (ev.type === T.BLOCK_CHANGE || ev.type === T.BLOCK_MOVE || ev.type === T.BLOCK_CREATE || ev.type === T.BLOCK_DELETE) {
+        const b = workspace.getBlockById(markedBlock);
+        if (b) { try { const g = b.getSvgRoot(); if (g) g.classList.remove('pibo-errblock'); } catch (e) { /* 그만 */ } }
+        markedBlock = null;
+        if (last) last.unmarked = true;   // 상자를 다시 그려도(언어 바꾸기) 지운 표시를 되살리지 않는다
+      }
+    });
     // 파이썬 편집기에서 고치기 시작하면 빨간 줄 표시만 지운다(설명 상자는 남김)
     if (typeof codeEditor !== 'undefined') codeEditor.on('change', () => {
       if (markedLine === null) return;
