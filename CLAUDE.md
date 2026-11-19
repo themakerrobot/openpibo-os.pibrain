@@ -167,6 +167,29 @@ sudo mv /home/pi/.openpibo-os.new     /home/pi/.openpibo-os.pibrain
 # 4) 정상 확인 후에 백업 삭제
 sudo rm -rf /home/pi/.openpibo-os.old
 ```
+#### 태그 없이 브랜치 끝으로 시험 업데이트 (261119, 사용자)
+
+태그를 찍기 전에 시험 기기만 `main`(영문판은 `global`) 끝으로 올릴 때. 순서는 위와 같다 — **받아서 확인한 뒤에 교체, 지우는 건 마지막**.
+현장 기기는 공식 태그로만 올릴 것. `.OS_VERSION` 은 건드리지 않는다(IDE 버전 표시·소스 링크는 예전 태그 그대로 보인다).
+
+```bash
+B=main      # 영문판 시험이면 B=global
+ping -c2 -W3 github.com || echo "!! 인터넷 없음 (AP 모드?). WiFi/유선 연결 후 다시 시작"
+cd /home/pi && sudo rm -rf /home/pi/.openpibo-os.new
+git clone --depth 1 --branch $B https://github.com/themakerrobot/openpibo-os.pibrain.git .openpibo-os.new
+git -C /home/pi/.openpibo-os.new log --oneline -1            # 받은 커밋 확인
+head -n1 /home/pi/.openpibo-os.new/ide/static/ko2en.js        # main 이면 navigator..., global 이면 const blang = 'en';
+sudo systemctl stop ide.service booting.service
+sudo rm -rf /home/pi/.openpibo-os.old
+sudo mv /home/pi/.openpibo-os.pibrain /home/pi/.openpibo-os.old
+mv /home/pi/.openpibo-os.new /home/pi/.openpibo-os.pibrain
+sudo chown -R pi:pi /home/pi/.openpibo-os.pibrain
+sudo systemctl start ide.service booting.service; sleep 3
+systemctl is-active ide.service booting.service               # 둘 다 active 를 본 뒤에
+sudo rm -rf /home/pi/.openpibo-os.old
+```
+브라우저는 Ctrl+Shift+R.
+
 
 - 3번이 끝나도 링크는 그대로 `.openpibo-os.pibrain` 을 가리킨다. 그래서 링크를 다시 걸 필요가 없다.
 - 되돌리려면 3번의 두 `mv` 를 반대로 하면 된다. 링크는 여전히 안 건드린다.
