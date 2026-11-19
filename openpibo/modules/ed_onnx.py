@@ -45,15 +45,15 @@ def _ort():
   try:
     import onnxruntime as ort
   except ImportError as exc:
-    raise ImportError('사물 인식에 onnxruntime 이 필요합니다: pip3 install onnxruntime  ({})'.format(exc)) from exc
+    raise ImportError('사물 인식에 onnxruntime 이 필요해요 / Object detection needs onnxruntime: pip3 install onnxruntime  ({})'.format(exc)) from exc
   ver = getattr(ort, '__version__', '0')
   try:
     nums = tuple(int(x) for x in ver.split('+')[0].split('.')[:2])
   except ValueError:
     nums = (0, 0)
   if nums < ORT_MIN:
-    raise RuntimeError('onnxruntime {} 은(는) 사물 인식 모델(ONNX opset 17)을 못 읽습니다. '
-                       '{}.{} 이상이 필요합니다: pip3 install -U onnxruntime'.format(ver, *ORT_MIN))
+    raise RuntimeError('onnxruntime {} 으로는 사물 인식 모델(ONNX opset 17)을 못 읽어요 / Too old for the model. '
+                       '{}.{} 이상 / or newer: pip3 install -U onnxruntime'.format(ver, *ORT_MIN))
   return ort
 
 
@@ -127,7 +127,7 @@ class EdOnnx:
   def __init__(self, model_path, threads=4, conf=None, iou=IOU):
     path = os.path.expanduser(str(model_path or ''))
     if not os.path.isfile(path):
-      raise FileNotFoundError('사물 인식 모델 파일을 찾지 못했습니다: {} (easydetect 의 .onnx 파일)'.format(path))
+      raise FileNotFoundError('사물 인식 모델 파일을 찾지 못했어요 / Object model file not found: {} (easydetect .onnx)'.format(path))
     ort = _ort()
     self.path = path
     opt = ort.SessionOptions()
@@ -136,7 +136,7 @@ class EdOnnx:
     try:
       self.session = ort.InferenceSession(path, opt, providers=['CPUExecutionProvider'])
     except Exception as exc:
-      raise RuntimeError('사물 인식 모델을 읽지 못했습니다: {} (onnxruntime {}, 모델은 ONNX opset 17): {}'.format(
+      raise RuntimeError('사물 인식 모델을 읽지 못했어요 / Could not read the object model: {} (onnxruntime {}, ONNX opset 17): {}'.format(
         path, getattr(ort, '__version__', '?'), exc)) from exc
     inp = self.session.get_inputs()[0]
     self.input_name = inp.name

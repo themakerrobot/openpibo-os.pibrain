@@ -209,7 +209,7 @@ Functions:
       raise Exception('"img" must be image data from opencv')
 
     if type(degree) is not int or abs(degree) >= 360:
-      raise Exception(f'{degree} must be integer type and -360~360')
+      raise Exception(f'"{degree}" must be integer type and -359~359')
 
     if type(ratio) not in (int, float) or ratio <= 0:
       raise Exception(f'"{ratio}" must be a number greater than 0')
@@ -242,11 +242,11 @@ Functions:
     try:
       values = [int(v.strip()) for v in val.split(',')]
     except ValueError:
-      raise ValueError("val 인자는 쉼표로 구분된 정수 문자열이어야 합니다.")
+      raise ValueError("val 은 쉼표로 나눈 정수 글자여야 해요 / val must be comma-separated integers")
     
     # 2. w*h 크기에 맞는 값인지 확인
     if len(values) != w * h:
-      raise ValueError(f"val의 길이가 w*h와 일치하지 않습니다: {len(values)} != {w * h}")
+      raise ValueError(f"val 의 개수가 w*h 와 달라요 / val length must be w*h: {len(values)} != {w * h}")
     
     # 3. 1차원 리스트를 2차원 배열로 변환 (행: h, 열: w)
     bitmap = np.array(values).reshape((h, w))
@@ -334,7 +334,7 @@ Functions:
       raise Exception(f'len({p}) must be 2')
 
     if type(r) is not int:
-      raise Exception(f'len({r}) must be Integer type')
+      raise Exception(f'"{r}" must be integer type')
 
     if type(colors) is str:
       colors = (int(colors[5:7], 16), int(colors[3:5], 16), int(colors[1:3], 16))

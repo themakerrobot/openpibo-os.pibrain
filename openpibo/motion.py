@@ -129,7 +129,7 @@ Functions:
     if type(n) is not int:
       raise Exception (f'"{n}" must be integer type')
 
-    if abs(n) > 9:
+    if not 0 <= n <= 9:   # 전엔 abs(n) > 9 라 -9~-1 도 통과해 없는 모터 번호가 서보로 갔다
       raise Exception (f'"{n}" must be 0~9')
 
     if type(pos) is not int:
@@ -189,13 +189,13 @@ Functions:
     if type(n) is not int:
       raise Exception (f'"{n}" must be integer type')
 
-    if abs(n) > 9:
+    if not 0 <= n <= 9:   # 전엔 abs(n) > 9 라 -9~-1 도 통과해 없는 모터 번호가 서보로 갔다
       raise Exception (f'"{n}" must be 0~9')
 
     if type(speed) is not int:
       raise Exception (f'"{speed}" must be integer type')
 
-    if abs(speed) > 255:
+    if not 0 <= speed <= 255:
       raise Exception (f'"{speed}" must be 0~255')
 
     _servo('speed', n, speed)
@@ -240,13 +240,13 @@ Functions:
     if type(n) is not int:
       raise Exception (f'"{n}" must be integer type')
 
-    if abs(n) > 9:
+    if not 0 <= n <= 9:   # 전엔 abs(n) > 9 라 -9~-1 도 통과해 없는 모터 번호가 서보로 갔다
       raise Exception (f'"{n}" must be 0~9')
 
     if type(accel) is not int:
       raise Exception (f'"{accel}" must be integer type')
 
-    if abs(accel) > 255:
+    if not 0 <= accel <= 255:
       raise Exception (f'"{accel}" must be 0~255')
 
     _servo('accelerate', n, accel)
@@ -357,7 +357,7 @@ Functions:
       raise Exception(f'"{exe}" is not motion data')
 
     if type(cycle) is not int or cycle < 1:
-      raise Exception(f'"{cycle} must be integer type and positive number')
+      raise Exception(f'"{cycle}" must be integer type and positive number')
 
     seq,cnt,cycle_cnt = 0,0,0
     self.stopped = False

@@ -473,9 +473,9 @@ Functions:
 
     model = self._LLM_ALIAS.get(model, model)
     if model not in self.LLM_MODELS:
-      raise ValueError("모델 이름은 general, themaker-ko, themaker-en 중 하나")
+      raise ValueError("모델 이름은 general, themaker-ko, themaker-en 중 하나예요 / Model must be general, themaker-ko or themaker-en")
     if not os.path.isfile(os.path.join(self.LLM_DIR, f'{model}.gguf')):    # 깨진 링크(파일이 아직 안 옴)도 여기서 걸린다
-      raise FileNotFoundError(f"{model} 모델 파일이 아직 없어요")
+      raise FileNotFoundError(f"{model} 모델 파일이 아직 없어요 / Model file not found: {model}")
     self.llm_model = model
     if self._llm_port is not None:
       return self.start_llm(self._llm_port)
@@ -547,7 +547,7 @@ Functions:
       response = requests.post(url, json=payload, timeout=timeout)
       response.raise_for_status()  # 4xx, 5xx 에러 발생 시 예외 처리
     except requests.RequestException as e:
-      raise Exception(f"LLM 서버 호출 실패: {e}")
+      raise Exception(f"대화 모델 서버를 부르지 못했어요 / Could not reach the LLM server: {e}")
 
     data = response.json()
 

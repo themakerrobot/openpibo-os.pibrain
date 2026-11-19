@@ -36,13 +36,13 @@ Functions:
       raise Exception(f'"{filename}" must be (mp3|wav)')
 
     if type(volume) is not int or (volume < 0 or volume > 100):
-      raise Exception(f'"{volume}" is Number(0~100)')
+      raise Exception(f'"{volume}" must be 0~100')
 
     if type(background) is not bool:
-      raise Exception(f'"{background}" is not bool')
+      raise Exception(f'"{background}" must be True or False')
 
     if type(volume2) not in (int, float) or (volume2 < 0.0 or volume2 > 3.0):
-      raise Exception(f'"{volume2}" is Number(0.0~3.0)')
+      raise Exception(f'"{volume2}" must be 0.0~3.0')
 
     volume = 40 + volume * 60 // 100   # 0~100 을 실제 40~100% 로 편다(40% 아래는 소리가 너무 작음). 전엔 /2+40 이라 최대 90% 였다(261026)
     # 셸을 거치지 않는다 — 파일 이름에 따옴표·; 가 있어도 명령이 되지 않게

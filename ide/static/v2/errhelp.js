@@ -31,12 +31,50 @@
       '예전 형식의 얼굴 정보 파일이에요.', 'This face data file is in the old format.'),
     R(/./, /모델 파일이 없어요|model file not found/i,
       '모델 파일이 없어요.', 'The model file is missing.'),
-    R(/./, /"(.+?)" does not exist/,
+    R(/./, /"(.+?)" does not exist$/,
       "'$1' 파일이 없어요.", "File '$1' does not exist."),
     R(/./, /"(.+?)" is broken/,
       "'$1' 파일이 깨졌어요.", "File '$1' is broken."),
     R(/./, /must be tuple type|len\(.+\) must be [23]/,
       '좌표나 색 값의 모양이 맞지 않아요.', 'A position or color value has the wrong shape.'),
+
+    // 라이브러리의 값 검사(영문 메시지, 261119 전수 조사)
+    R(/./, /All color must be 0~255/,
+      '색 값은 0~255 사이여야 해요.', 'Color values must be 0~255.'),
+    R(/./, /color is required/,
+      '색 값을 넣어야 해요.', 'A color is required.'),
+    R(/./, /must be \(mp3\|wav\)/,
+      'mp3·wav 파일만 틀 수 있어요.', 'Only mp3 and wav files can be played.'),
+    R(/./, /"(.*)" does not exist in motion profile/,
+      "동작 목록에 없는 이름이에요: '$1'", "Not in the motion list: '$1'"),
+    R(/./, /is not motion data/,
+      '동작 데이터가 아니에요.', 'This is not motion data.'),
+    R(/./, /"item" must be \[x1,y1,x2,y2\]/,
+      '상자 값은 [x1, y1, x2, y2] 네 개여야 해요.', 'A box must be [x1, y1, x2, y2].'),
+    R(/./, /"(.*)" must be integer type/,
+      "정수(소수점 없는 숫자)를 넣어야 해요: '$1'", "Use a whole number: '$1'"),
+    R(/./, /"(.*)" (?:must be a positive (?:number|integer)|must be a number greater than 0)/,
+      "0보다 큰 숫자를 넣어야 해요: '$1'", "Use a number greater than 0: '$1'"),
+    R(/./, /"(.*)" is not a number/,
+      "숫자를 넣어야 해요: '$1'", "Use a number: '$1'"),
+    R(/./, /"(.*)" must be \(None\|True\|False\)/,
+      "참·거짓·None 중 하나를 넣어야 해요: '$1'", "Use True, False or None: '$1'"),
+    R(/./, /voice must be m1~m5\/f1~f5, got (.*)/,
+      "목소리는 남성 1~5·여성 1~5 중에서 골라야 해요: '$1'", "Voice must be male 1~5 or female 1~5: '$1'"),
+    R(/./, /Unsupported lang: (.*)/,
+      "지원하지 않는 언어예요: '$1'", "Unsupported language: '$1'"),
+    R(/./, /model folder not found/i,
+      '분류 모델 폴더를 찾지 못했어요.', 'The classifier model folder was not found.'),
+    R(/./, /"(.*)" must be True or False/,
+      "참 또는 거짓을 넣어야 해요: '$1'", "Use True or False: '$1'"),
+    R(/./, /"(.*)" must be str type/,
+      "글자를 넣어야 해요: '$1'", "Use text: '$1'"),
+    R(/./, /"(.*)" is not supported/,
+      "지원하지 않는 값이에요: '$1'", "Not supported: '$1'"),
+    R(/./, /"(.*)" must be (-?[\d.]+)~(-?[\d.]+)/,
+      "값이 범위를 벗어났어요: '$1' (가능: $2~$3)", "Value out of range: '$1' (allowed $2~$3)"),
+    R(/./, /len\(.*\) must be (\d+)/,
+      '값의 개수가 맞지 않아요($1개여야 해요).', 'Wrong number of values (expected $1).'),
 
     // 이름·변수
     R(/^UnboundLocalError$/, /'(\w+)'/,
@@ -189,6 +227,13 @@
     return { type, msg, line, raw };
   }
 
+  // '한국어 / English' 두 말 메시지(라이브러리) → 지금 언어 쪽
+  const TWO = /^(.*[가-힣].*?) \/ ([^가-힣]+)$/;
+  function loc(text) {
+    const m2 = String(text).match(TWO);
+    return m2 ? (L() === 'en' ? m2[2] : m2[1]) : text;
+  }
+
   function explain(info) {
     const k = L();
     for (const r of ERR_RULES) {
@@ -196,10 +241,12 @@
       if (r.raw && !r.raw.test(info.raw)) continue;
       let m = null;
       if (r.msg) { m = info.msg.match(r.msg); if (!m) continue; }
-      const sub = (s) => s.replace(/\$(\d)/g, (_, d) => (m && m[+d] !== undefined) ? m[+d] : '');
+      const sub = (s) => s.replace(/\$(\d)/g, (_, d) => (m && m[+d] !== undefined) ? loc(m[+d]) : '');
       return { title: sub(k === 'en' ? r.en : r.ko) };
     }
     const nm = TYPE_NAMES[info.type] ? TYPE_NAMES[info.type][k === 'en' ? 1 : 0] : info.type;
+    // 라이브러리 메시지 중 '한국어 / English' 로 두 말을 담은 것은 이미 쉬운 말이라 지금 언어 쪽을 그대로 제목으로
+    if (TWO.test(info.msg)) return { title: loc(info.msg).slice(0, 160) };
     return { title: tx('generic', nm) + (info.msg ? ' (' + info.msg.slice(0, 120) + ')' : '') };
   }
 

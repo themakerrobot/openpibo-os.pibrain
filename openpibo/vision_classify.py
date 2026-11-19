@@ -101,7 +101,7 @@ Functions:
         return self._last_result
       self.extractor.detect = _keep
     else:
-      raise Exception(f'"{self.source}" 모델은 파이보에서 쓸 수 없습니다. (이미지·손·얼굴·포즈만 가능)')
+      raise Exception(f'"{self.source}" 모델은 이 로봇에서 쓸 수 없어요(이미지·손·얼굴·포즈만 가능) / This model type is not supported (image, hand, face, pose only)')
 
     self.folder = folder
 
@@ -130,7 +130,7 @@ Functions:
     """
 
     if getattr(self, 'extractor', None) is None:
-      raise Exception('Classifier Model did not load properly.')
+      raise Exception('분류 모델을 먼저 불러오세요 / Load the classifier model first (load)')
     if not isinstance(img, np.ndarray):
       raise ValueError('"img" must be a valid OpenCV image (np.ndarray).')
 
@@ -240,7 +240,7 @@ def _model_folder(path):
   """모델 이름·폴더·폴더 안의 파일 경로 → classifier.json 이 있는 폴더"""
   path = str(path)
   if path.lower().endswith(('.keras', '.h5')):
-    raise Exception('keras 모델(예전 분류기)은 더 이상 쓸 수 없습니다. 분류기에서 다시 학습해 저장하세요.')
+    raise Exception('keras 모델(예전 분류기)은 더 이상 쓸 수 없어요. 분류기에서 다시 학습해 저장하세요 / Old keras model is no longer supported: train and save it again in the classifier')
 
   candidates = [path]
   if not os.path.isabs(path):
@@ -252,7 +252,7 @@ def _model_folder(path):
     for folder in (p, os.path.join(p, 'model')):
       if os.path.isfile(os.path.join(folder, 'classifier.json')):
         return folder
-  raise FileNotFoundError(f'모델 폴더를 찾지 못했습니다: {path}  (분류기에서 저장한 /home/pi/mymodel/<이름> 폴더)')
+  raise FileNotFoundError(f'모델 폴더를 찾지 못했어요 / Model folder not found: {path}  (/home/pi/mymodel/<이름>)')
 
 
 def _extractor_path(folder, spec, source):
@@ -271,7 +271,7 @@ def _extractor_path(folder, spec, source):
       p = os.path.join(d, name)
       if os.path.isfile(p):
         return p
-  raise FileNotFoundError(f'특징 뽑는 모델 파일을 찾지 못했습니다: {spec.get("file") or default}')
+  raise FileNotFoundError(f'특징 모델 파일을 찾지 못했어요 / Feature model file not found: {spec.get("file") or default}')
 
 
 # draw() 색(BGR) — 선은 흰색, 점은 IDE 주 동작 파랑(#2563eb)

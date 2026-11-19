@@ -266,7 +266,7 @@ Functions:
     """
 
     if not str(code) in self.code_val_list:
-      raise Exception(f'"{code}" not support')
+      raise Exception(f'"{code}" is not supported')
 
     return self.send_raw("#{}:{}!".format(code, data))
 
