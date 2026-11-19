@@ -213,6 +213,12 @@ const translations = {
   chat_try_dino:    { ko: "공룡은 왜 사라졌어?", en: "Why did the dinosaurs disappear?" },
   chat_try_school:  { ko: "학교에서 친구랑 싸웠어", en: "I had a fight with my friend at school" },
   chat_try_english: { ko: "영어로 인사하는 법 알려 줘", en: "How do I say hello in another language?" },
+  // 더메이커(도구 모델) 예시 — 도구를 쓰는 말(261119)
+  chat_try_eye_red:   { ko: "눈에 빨간불 켜 줘", en: "Turn your eyes red" },
+  chat_try_look:      { ko: "앞에 뭐가 보여?", en: "What do you see in front of you?" },
+  chat_try_wave:      { ko: "손 흔들어 줘", en: "Wave your hand" },
+  chat_try_light_red: { ko: "빨간불 켜 줘", en: "Turn the light red" },
+  chat_try_light_off: { ko: "불 꺼 줘", en: "Turn off the light" },
   chat_speak:       { ko: "소리로 말하기", en: "Speak out loud" },
   chat_speaking:    { ko: "말하는 중", en: "Speaking" },
   chat_hush:        { ko: "그만 말하기", en: "Stop speaking" },

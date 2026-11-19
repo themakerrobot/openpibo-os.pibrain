@@ -248,6 +248,9 @@ span 이 날아가면 시리얼이 영영 안 돌아온다.
   템플릿끼리는 서로 끄지 않으므로 켜기 전에 늘 다 끈다. **이 코드를 기기에 올리기 전에 유닛·모델 파일이 있어야 한다**(261106 부터 `general.gguf` 등은 링크가 아니라 실제 파일 — 판 이름은 `.model/VERSION` 의 `llm/<이름>.gguf = …` 줄) — 없으면 대화 화면도 블록도 모델을 못 띄운다
 - **끄는 곳(`ide/run_ide.py`)은 전부 `systemctl stop 'llama-server@*'`** — `/tools` `/classifier` `/hwtest` `/kids` `/llm` 켜기·끄기, 코드 실행(`execute`·`executeb`). [정지] 는 `pkill llama-server`.
   새로 끄는 곳을 만들면 `@*` 를 빠뜨리지 말 것(모델 둘이 램에 올라간다)
+- **첫 화면 예시(261119, 사용자)**: 더메이커(이름이나 실제 파일에 `themaker`)를 고르면 도구를 쓰는 말 3개 — 파이보 `눈에 빨간불 켜 줘`·`앞에 뭐가 보여?`·`손 흔들어 줘`,
+  PiBrain(`<html data-product>`)은 몸이 없어 `빨간불 켜 줘`·`앞에 뭐가 보여?`·`불 꺼 줘`. 일반 모델은 예전 4개. 문구는 IDE `ko2en.js` 의 `chat_try_*`(영문 함께), 코드는 `chat.js` 의 `renderTry`(두 리포 같은 파일).
+  모델이 이 말로 실제 도구를 부르는지는 **실기기 확인 필요**
 - **도구(261029, 대화 화면만)**: 더메이커를 고르면 도구 3개(불빛·보기·움직이기)를 실제로 실행한다. 학습 PC 리포 `themakerrobot/openpibo-chat`(브랜치 `claude/inspiring-curie-s3a7wn`, a9072ff)의
   `tools.py` · `pibo_chat.py` · `pibrain_chat.py` 를 `chat/` 에 **글자 그대로** 둔다 — 시스템 글(`tools.SYSTEM`/`SYSTEM_EN`)·도구 목록(`tools.TOOLS`)은 학습 때와 글자까지 같아야 해서 고치지 말 것(바꾸면 재학습).
   지시서는 openpibo-chat `docs/pibo-tools-handoff.md` · `pibrain-tools-handoff.md`. 새로 받으면 세 파일을 통째로 바꾼다
