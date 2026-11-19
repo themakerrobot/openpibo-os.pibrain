@@ -6,6 +6,7 @@ Class:
 """
 import cv2,requests
 import os
+import time
 import numpy as np
 from PIL import Image,ImageDraw,ImageFont
 from picamera2 import Picamera2
@@ -73,19 +74,35 @@ Functions:
       self.width, self.height = w, h
     cv2.setUseOptimized(True)
     cv2.setNumThreads(cv2.getNumberOfCPUs())
-    cap = Picamera2()
-    config = cap.create_still_configuration(
-              main={
-                'size': (1280, 960),
-                'format': 'RGB888'
-              },
-              #transform=Transform(hflip=False, vflip=False),
-              buffer_count=2
-            )
+    # 앞 프로그램·도구 서비스가 카메라를 막 놓는 중이면 'Failed to start camera' 가 날 수 있다.
+    # 1초씩 쉬며 세 번까지 해 본다(261119). 카메라가 아예 안 잡히면(IndexError) 바로 오류
+    cap = None
+    for attempt in range(3):
+      try:
+        cap = Picamera2()
+        config = cap.create_still_configuration(
+                  main={
+                    'size': (1280, 960),
+                    'format': 'RGB888'
+                  },
+                  #transform=Transform(hflip=False, vflip=False),
+                  buffer_count=2
+                )
 
-    cap.configure(config)
-    cap.set_controls({'AwbEnable': True, 'AwbMode': 0})
-    cap.start()
+        cap.configure(config)
+        cap.set_controls({'AwbEnable': True, 'AwbMode': 0})
+        cap.start()
+        break
+      except (RuntimeError, IndexError) as ex:
+        if cap is not None:
+          try:
+            cap.close()
+          except Exception as close_err:   # 열다 만 카메라라 닫기도 실패할 수 있다 — 다시 여는 데는 지장 없다
+            logging.debug('camera close after failed start: %s', close_err)
+          cap = None
+        if attempt == 2 or isinstance(ex, IndexError):
+          raise
+        time.sleep(1.0)
     self.cap = cap
 
 
