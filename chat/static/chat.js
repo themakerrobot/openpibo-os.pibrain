@@ -186,9 +186,18 @@
   text.addEventListener('input', autosize);
 
   /* ── 해 볼 말 ─────────────────────────────────────────────────────── */
+  // 더메이커(도구 모델)면 도구를 쓰는 말 3개 — 파이보는 눈 불빛·보기·움직이기, PiBrain 은 몸이 없어 불빛·보기·불 끄기(261119, 사용자).
+  // 일반 모델은 도구가 없어 예전 예시 그대로
   function renderTry() {
     var box = $('try'); box.innerHTML = '';
-    ['chat_try_hello', 'chat_try_dino', 'chat_try_school', 'chat_try_english'].forEach(function (k) {
+    var cur = null;
+    modelList.forEach(function (m) { if (m.name === st.model) cur = m; });
+    var tool = /themaker/.test(st.model || '') || !!(cur && /themaker/.test(cur.file || ''));
+    var pibrain = document.documentElement.getAttribute('data-product') === 'PiBrain';
+    var keys = !tool ? ['chat_try_hello', 'chat_try_dino', 'chat_try_school', 'chat_try_english']
+      : pibrain ? ['chat_try_light_red', 'chat_try_look', 'chat_try_light_off']
+      : ['chat_try_eye_red', 'chat_try_look', 'chat_try_wave'];
+    keys.forEach(function (k) {
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'pb-btn pb-btn--sm';
       b.textContent = tr(k);
@@ -273,6 +282,7 @@
     $('model_file').textContent = cur && cur.file ? cur.file + (cur.mb ? ' · ' + cur.mb + 'MB' : '') : '';
     $('empty_txt').textContent = tr(st.model ? 'chat_empty' : 'chat_pick_model');
     $('try').hidden = !st.model;
+    renderTry();   // 모델에 따라 예시가 바뀐다
   }
   function loadModels() {
     return fetch('/api/models', { cache: 'no-store' }).then(function (r) { return r.json(); })
