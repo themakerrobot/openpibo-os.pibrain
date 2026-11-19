@@ -275,7 +275,14 @@
     if (!last) return;
     if (last.block && typeof workspace !== 'undefined') {
       const b = workspace.getBlockById(last.block);
-      if (b) { try { workspace.centerOnBlock(last.block); } catch (e) { /* 그만 */ } }
+      if (b) {
+        try {
+          // [블록 보기]는 빨간 테두리를 다시 단다(고치다가 지워졌어도, 261119 사용자) — 다시 고치면 또 지워진다
+          const g = b.getSvgRoot(); if (g) g.classList.add('pibo-errblock');
+          markedBlock = last.block; last.unmarked = false;
+          workspace.centerOnBlock(last.block);
+        } catch (e) { /* 그만 */ }
+      }
     } else if (last.info.line && run.mode !== 'block' && typeof codeEditor !== 'undefined') {
       try { codeEditor.setCursor({ line: last.info.line - 1, ch: 0 }); codeEditor.scrollIntoView({ line: last.info.line - 1, ch: 0 }, 80); codeEditor.focus(); } catch (e) { /* 그만 */ }
     }
