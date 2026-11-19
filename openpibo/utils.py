@@ -19,7 +19,7 @@ def calculate_angle(p1, p2, p3):
   mag2 = math.sqrt(v2[0]**2 + v2[1]**2)
 
   if mag1 == 0 or mag2 == 0:
-    raise ValueError("p2와 동일한 점이 포함되어 각도를 계산할 수 없습니다.")
+    raise ValueError("꼭짓점(p2)과 같은 점이 있어 각도를 계산할 수 없어요 / Cannot compute the angle: a point equals p2")
 
   # 내적과 크기를 이용한 각도 계산 (코사인 값의 범위 보정)
   cos_theta = dot / (mag1 * mag2)

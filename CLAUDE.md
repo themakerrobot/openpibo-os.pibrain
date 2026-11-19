@@ -840,6 +840,14 @@ classifier 언어 토글, 검수 보고서 구조, Tools 서비스.
   블록을 고치면(바꾸기·옮기기·끼우기·지우기) 테두리를 바로 지우고, 다음 실행·닫기·지우개에서도 지운다. [블록 보기]는 그 블록으로 옮기면서 테두리를 다시 단다. 파이썬 모드는 그 줄을 빨갛게(`cm-pibo-errline`, 고치기 시작하면 지움).
   블록 모드인데 블록이 없는 줄(블록이 맨 앞에 넣는 `camera = Camera()` 같은 준비 코드)은 '프로그램 준비 단계(그 코드)' 로 보인다.
   상자에는 원래 오류 전문을 넣지 않는다 — 아래 출력에 그대로 있어 겹친다(사용자)
+- **라이브러리 오류 메시지 전수 조사(261119, 사용자)**: `openpibo/` 의 `raise` 약 190개(가져온 코드 teachlab·mtts·oled vendor 제외)를 두 리포에서 봤다. 빈 메시지는 없었다. 고친 것:
+  ① 검사와 메시지가 어긋남 — `Motion.set_motor`·`set_speed`·`set_acceleration` 의 모터 번호가 `abs(n) > 9` 라 -9~-1 도 통과해 없는 번호가 서보로 갔다 → `0~9`(메시지대로), 속도·가속도도 `0~255`.
+  `Camera.circle` 이 `len(r) must be Integer` → `"r" must be integer type`, `rotate` 메시지 `-360~360` → 실제 검사대로 `-359~359`, `set_motion_raw` 따옴표 빠짐
+  ② PiBrain 에서도 '파이보에서 쓸 수 없습니다'(분류 모델 종류) → '이 로봇에서'(두 리포 같은 문장)
+  ③ 한국어로만 된 메시지(영문판 학생이 못 읽음)는 **`한국어 / English` 두 말**로 — usb_uart·utils·draw_bitmap·대화 모델(`set_llm_model`·`call_llm`)·분류(`vision_classify`)·사물 인식(`ed_onnx`). 영어 쪽은 대문자로 시작
+  ④ 어색한 영어 — `is Number(0~100)` → `must be 0~100`, `is not bool` → `must be True or False`, `not support` → `is not supported`
+  오류 상자(`errhelp.js`)는 영문 검사 메시지 모양(`"x" must be 0~9`·`must be integer type`·`is not supported`·`len(...) must be N` 등)을 쉬운 말로 바꾸고,
+  `한국어 / English` 메시지는 이미 쉬운 말이라 지금 언어 쪽만 그대로 보인다. **새 오류 메시지를 쓸 때는 이 두 모양 중 하나로 쓸 것**(`"값" must be …` 또는 `한국어 / English`)
 - 출력의 터미널 색 코드(libcamera 로그의 `ESC[1;31m` 등)는 `index.js` 가 붙이기 전에 지운다(글자 칸이라 `←[1;31m` 으로 보였다)
 - **카메라 실패 줄이기(261119, 기기에서 `Failed to start camera: Input/output error`)**: ① `run_ide.py` 의 코드 실행(`execute`·`executeb`)이 도구·분류기·대화 모델을
   `stop_units_wait()`(`systemctl stop` 을 기다림, 20초 한도)로 **다 내려간 뒤에** 학생 프로그램을 띄운다 — 전엔 Popen 으로 끄라고만 하고 바로 띄워 아직 카메라를 쥔 서비스와 겹칠 수 있었다.

@@ -198,7 +198,7 @@ Functions:
 
         region = Weather.region_list.get(search_region)
         if region == None:
-          raise Exception(f'"{search_region}" not support')
+          raise Exception(f'"{search_region}" is not supported')
 
         _forecast = ''
         _today = {}
@@ -365,7 +365,7 @@ Functions:
 
         topic = News.topic_list.get(search_topic)
         if topic == None:
-          raise Exception(f'"{search_topic}" not support')
+          raise Exception(f'"{search_topic}" is not supported')
 
         _articles = []
         url = f'https://fs.jtbc.joins.com//RSS/{topic}.xml'

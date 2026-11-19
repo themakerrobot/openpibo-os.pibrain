@@ -23,7 +23,7 @@ class UsbUart:
     try:
       self.conn = serial.Serial(devname, baudrate, timeout=timeout)
     except serial.SerialException as e:
-      raise ConnectionError(f"시리얼 포트 {devname} 열기에 실패했습니다: {e}")
+      raise ConnectionError(f"시리얼 포트를 열지 못했어요 / Could not open serial port {devname}: {e}")
   
   def write(self, text):
     """
@@ -35,7 +35,7 @@ class UsbUart:
     if self.conn.is_open:
       return self.conn.write(str(text).encode('utf-8'))
     else:
-      raise ConnectionError("시리얼 포트가 열려 있지 않습니다.")
+      raise ConnectionError("시리얼 포트가 열려 있지 않아요 / Serial port is not open")
 
   def read(self):
     """
@@ -47,7 +47,7 @@ class UsbUart:
       response = self.conn.read_all()
       return response.decode('utf-8', errors='ignore') if response else ""
     else:
-      raise ConnectionError("시리얼 포트가 열려 있지 않습니다.")
+      raise ConnectionError("시리얼 포트가 열려 있지 않아요 / Serial port is not open")
   
   def close(self):
     """

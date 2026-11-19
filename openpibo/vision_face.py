@@ -169,7 +169,7 @@ Functions:
 
     for path in (DETECT_XML, AGE_GENDER_XML, EMOTION_XML, REID_XML, LANDMARK_TASK):
       if not os.path.isfile(path):
-        raise FileNotFoundError(f'얼굴 모델 파일이 없어요 / face model file not found: {path}')
+        raise FileNotFoundError(f'얼굴 모델 파일이 없어요 / Face model file not found: {path}')
 
     # OpenVINO 모델
     ie = Core()
@@ -426,7 +426,7 @@ Functions:
     self._check(img, item)
     if self.mask_session is None:
       if not os.path.isfile(MASK_ONNX):
-        raise FileNotFoundError(f'마스크 모델 파일이 없어요 / mask model file not found: {MASK_ONNX}')
+        raise FileNotFoundError(f'마스크 모델 파일이 없어요 / Mask model file not found: {MASK_ONNX}')
       from .modules.teachlab import onnx_session
       self.mask_session = onnx_session(MASK_ONNX)
       meta = self.mask_session.get_modelmeta().custom_metadata_map or {}
@@ -591,7 +591,7 @@ Functions:
     if not os.path.isfile(filename):
       raise Exception(f'"{filename}" does not exist')
 
-    old = '얼굴 정보 파일이 예전 방식이에요. 얼굴을 다시 등록해 주세요 / old face file: please register faces again'
+    old = '얼굴 정보 파일이 예전 방식이에요. 얼굴을 다시 등록해 주세요 / Old face file: please register faces again'
     with open(filename, "rb") as f:
       raw = f.read()
     try:
