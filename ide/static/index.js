@@ -599,12 +599,15 @@ execute.addEventListener("click", async function () {
     });
     update_block();
     // for block
-    socket.emit("executeb", { codetype: "python", codepath: "/home/pi/.tmp.py", codetext: Blockly.Python.workspaceToCode(workspace) });
+    // 오류 쉬운 말(v2/errhelp.js): 줄 → 블록 표를 같이 만든다. 실행 코드는 예전 workspaceToCode 와 같다
+    const blockCodeText = window.PiboErr ? PiboErr.prepare("block", "/home/pi/.tmp.py", workspace) : Blockly.Python.workspaceToCode(workspace);
+    socket.emit("executeb", { codetype: "python", codepath: "/home/pi/.tmp.py", codetext: blockCodeText });
   }
   else {
     saveCode = codeEditor.getValue();
     codepath = $("#codepath").text();
     CodeMirror.signal(codeEditor, "change");
+    if (window.PiboErr) PiboErr.prepare("python", codepath);
     socket.emit("execute", { codetype: codetype, codepath: codepath, codetext: saveCode });
   }
 
@@ -1616,6 +1619,7 @@ function onSaveFailed() {
     const err = /Traceback \(most recent call last\)|^\w*(Error|Exception):/m.test(result.value);
     if (err) {
       result.classList.add("has-error");
+      if (window.PiboErr) PiboErr.show(result.value);   // 몇 번째 줄 · 무슨 뜻 · 어떻게 (v2/errhelp.js)
       set("error", t("run_error"));
       PiboUI.toast(t("run_toast_error", sec), "error", 3500);
     } else {

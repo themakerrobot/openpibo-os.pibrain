@@ -757,3 +757,29 @@ body[data-stage="closed"] .pb-resizer[data-target="v2_stage"] { display: none; }
 @media (prefers-reduced-motion: reduce) { .v2-drawer { transition: none; } }
 .v2-status__conn .v2-off, body[data-offline] .v2-status__conn .v2-on { display: none; }
 body[data-offline] .v2-status__conn .v2-off { display: inline; color: var(--c-red); }
+
+/* ── 오류 쉬운 말 (261119, v2/errhelp.js) — 출력 칸 위 빨간 상자 · 블록 말풍선 · 파이썬 빨간 줄 ── */
+.v2-err {
+  flex: none; display: flex; align-items: flex-start; gap: 10px; max-height: 45%; overflow: auto;
+  margin: 8px 8px 0; padding: 10px 8px 10px 12px; border-radius: 8px;
+  background: var(--c-red-t); color: var(--c-red-ink); border-left: 3px solid var(--c-red);
+  font-size: 13px; line-height: 1.5;
+}
+.v2-err[hidden] { display: none; }
+.v2-err__icon { flex: none; margin-top: 2px; color: var(--c-red); }
+.v2-err__body { flex: 1 1 auto; min-width: 0; word-break: keep-all; overflow-wrap: anywhere; }
+.v2-err__title b { font-weight: 700; }
+.v2-err__hint { margin-top: 4px; color: var(--c-ink); }
+.v2-err__raw { margin-top: 6px; color: var(--c-ink-2); font-size: 12px; }
+.v2-err__raw summary { cursor: pointer; }
+.v2-err__raw pre { margin: 4px 0 0; padding: 6px 8px; border-radius: 6px; background: var(--c-card); color: var(--c-ink); font: 11.5px/1.5 var(--mono); white-space: pre-wrap; word-break: break-all; }
+.v2-err__acts { flex: none; display: flex; align-items: center; gap: 4px; }
+.v2-err__go {
+  height: 28px; padding: 0 10px; border: 1px solid var(--c-red); border-radius: 6px;
+  background: var(--c-card); color: var(--c-red-ink); font: 700 12px inherit; font-family: inherit; cursor: pointer;
+}
+.v2-err__go:hover { background: var(--c-hover); }
+.v2-err__x { width: 28px; height: 28px; border: 0; border-radius: 6px; background: transparent; color: var(--c-red-ink); cursor: pointer; }
+.v2-err__x:hover { background: var(--c-hover); }
+.CodeMirror .cm-pibo-errline { background: var(--c-red-t); }
+.pibo-errblock > .blocklyPath { stroke: var(--c-red) !important; stroke-width: 4px !important; }

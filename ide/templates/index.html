@@ -23,7 +23,7 @@
   <link rel="stylesheet" href="../static/codemirror.css" />
   <link rel="stylesheet" href="../static/jquery.jsonview.min.css" />
   <link rel="stylesheet" href="../static/pibo-ui.css?ver=261102v2" />
-  <link rel="stylesheet" href="../static/v2/ide.css?ver=261118v1" />
+  <link rel="stylesheet" href="../static/v2/ide.css?ver=261119v1" />
   <link rel="shortcut icon" href="../static/icon.png?ver=261102v2" type="image/png" />
 
   <script src="../static/ko2en.js?ver=261118v1"></script>
@@ -197,6 +197,7 @@
               <span class="v2-term__path" id="respath"></span>
               <button id="eraser" class="v2-icon" data-title-key="v2_clear"><i class="fa-solid fa-eraser"></i></button>
             </div>
+            <div id="v2_errbox" class="v2-err" hidden role="alert"></div>
             <textarea id="result" class="result" disabled aria-label="Output" data-aria-key="v2_output"></textarea>
             <div class="v2-term__input">
               <span class="v2-term__caret">&gt;</span>
@@ -304,7 +305,8 @@
   </div>
 
   <script src="../static/pibo-ui.js?ver=261102v1"></script>
-  <script src="../static/index.js?ver=261113v2"></script>
+  <script src="../static/index.js?ver=261119v1"></script>
+  <script src="../static/v2/errhelp.js?ver=261119v1"></script>
   <script src="../static/v2/vendor/toolbox-search.js?ver=1.2.11"></script>
   <script src="../static/v2/ide.js?ver=261118v1"></script>
 </body>
