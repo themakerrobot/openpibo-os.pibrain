@@ -769,7 +769,6 @@ body[data-offline] .v2-status__conn .v2-off { display: inline; color: var(--c-re
 .v2-err__icon { flex: none; margin-top: 2px; color: var(--c-red); }
 .v2-err__body { flex: 1 1 auto; min-width: 0; word-break: keep-all; overflow-wrap: anywhere; }
 .v2-err__title b { font-weight: 700; }
-.v2-err__hint { margin-top: 4px; color: var(--c-ink); }
 .v2-err__acts { flex: none; display: flex; align-items: center; gap: 4px; }
 .v2-err__go {
   height: 28px; padding: 0 10px; border: 1px solid var(--c-red); border-radius: 6px;
