@@ -267,7 +267,7 @@ span 이 날아가면 시리얼이 영영 안 돌아온다.
 - **대화 화면(`chat/`)**: 상단 [대화 모델] select 하나(`#model_sel`, 처음엔 '고르세요') + 옆에 고른 것의 판·크기(`#model_file`, 예 `themaker-0.8b-Q4_K_M · 321MB` — 261120 부터 `.model/VERSION` 의 `llm/<이름>.gguf = …` 줄에서 읽는다(`run_chat.model_version`). 그 줄이 없으면 파일 이름 `themaker-ko`. 기기 VERSION 줄 모양은 **확인 필요**). 세 개를 늘어놓지 말 것(사용자).
   파일이 없는 모델은 '(없음)' 으로 못 고른다(`/api/models` 의 `have`·`file`·`mb`). 고르면 `POST /api/model` → `switch_model()`(스레드)이
   대답 중이면 끝난 뒤 기록·말하기를 비우고, 다 끈 다음 `llama-server@<이름>` 을 `--no-block` 으로 켠다. 준비는 예전처럼 `warm_loop` 가 `/health` → 미리 읽기. 바꾸는 동안(`_switching`)은 옛 서버를 보지 않는다.
-  고르기 전엔 상태 줄을 숨기고 빈 화면이 '위에서 대화 모델을 골라 주세요.'(`chat_pick_model`). 새로 고쳐도 서버의 `model` 로 선택이 남는다. [다시 켜기] 는 같은 모델로 `switch_model`.
+  고르기 전엔 상태 줄을 숨기고 빈 화면에 모델 카드(261120 — '빈 화면 안내' B, 목록을 못 받으면 예전 한 줄 '위에서 대화 모델을 골라 주세요.' `chat_pick_model`). 새로 고쳐도 서버의 `model` 로 선택이 남는다. [다시 켜기] 는 같은 모델로 `switch_model`.
   시스템 글은 `pick_system(모델)` — 이름이나 **링크가 가리키는 실제 파일 이름**에 `themaker` 가 있으면(`is_tool_model`) `tools.SYSTEMS[ko|en]`, 아니면 `DEVICE_SYSTEM`(PiBrain 은 이름만 바꿈). general 링크를 다른 모델로 바꿔도 맞게. `--model-dir` 은 시험용(미리보기는 가짜 파일)
 - **템플릿 유닛 `llama-server@.service`**(리포 밖, 이미지 작업 — IMAGE.md): `-m /home/pi/.model/llm/%i.gguf`, `Restart=no`, `[Install]` 없음(enable 안 됨 — `static`).
   템플릿끼리는 서로 끄지 않으므로 켜기 전에 늘 다 끈다. **이 코드를 기기에 올리기 전에 유닛·모델 파일이 있어야 한다**(261106 부터 `general.gguf` 등은 링크가 아니라 실제 파일 — 판 이름은 `.model/VERSION` 의 `llm/<이름>.gguf = …` 줄) — 없으면 대화 화면도 블록도 모델을 못 띄운다
