@@ -27,8 +27,8 @@ MODEL_ROOT = '/home/pi/mymodel'
 EXTRACTOR_DIR = os.path.join(
   os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'classifier', 'static', 'models')
 
-# 분류기 화면이 학습할 때 본 그림의 짧은 변. 파이보 카메라(640x480)를 320x240 으로 줄여
-# 보낸다(classifier/run_classify.py). 추론할 때도 같은 크기로 줄여야 같은 숫자가 나온다.
+# 분류기 화면이 학습할 때 본 그림의 짧은 변. 로봇 카메라 그림을 짧은 변 240 으로 줄여(파이보 640x480 → 320x240,
+# PiBrain 480x640 → 240x320) 보낸다(classifier/run_classify.py). 추론할 때도 같은 크기로 줄여야 같은 숫자가 나온다.
 STREAM_SHORT_SIDE = 240
 
 LANDMARK_SOURCES = ('hand', 'face', 'pose')
@@ -41,7 +41,7 @@ Functions:
 :meth:`~openpibo.vision_classify.CustomClassifier.predict`
 :meth:`~openpibo.vision_classify.CustomClassifier.draw`
 
-  파이보의 분류기(classifier) 화면에서 학습한 모델을 사용합니다.
+  로봇의 분류기(classifier) 화면에서 학습한 모델을 사용합니다.
 
   * 이미지 · 손 · 얼굴 · 포즈 네 가지로 가르칠 수 있습니다.
   * 분류기 화면에서 저장하면 ``/home/pi/mymodel/<모델 이름>/`` 폴더가 생깁니다.
@@ -307,7 +307,7 @@ def _put_label(img, text, xy, size):
 def _as_stream_rgb(img):
   """카메라 그림을 분류기 화면이 학습할 때 본 크기로 줄이고 RGB 로 바꾼다.
 
-  파이보 카메라 640x480 → 320x240 (run_classify.py 와 같은 cv2.resize).
+  파이보 640x480 → 320x240, PiBrain 480x640 → 240x320 (run_classify.py 와 같은 cv2.resize).
   비율은 그대로 두고 짧은 변만 맞춘다. 더 작은 그림은 키우지 않는다.
   """
   if img.ndim == 2:

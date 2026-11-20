@@ -47,7 +47,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LLM = 'http://127.0.0.1:50020'
 MODELS = ('general', 'themaker-ko', 'themaker-en')  # openpibo Dialog.LLM_MODELS 와 같게. general 은 지금 젬마3
-MODEL_DIR = '/home/pi/.model/llm'                   # <이름>.gguf 별칭 링크(이미지 작업)
+MODEL_DIR = '/home/pi/.model/llm'                   # <이름>.gguf 실제 파일(261106~, 이미지 작업). 판 이름은 .model/VERSION
 
 #: 일반(젬마3)에 보내는 시스템 글(예전 Qwen 학습 판의 글을 그대로 둔다). 더메이커는 tools.SYSTEM / SYSTEM_EN
 SYSTEM = ("너는 초등학생부터 고등학생까지와 이야기하는 교육용 로봇 파이보야. "
@@ -59,8 +59,27 @@ def model_file(model):
   return os.path.join(MODEL_DIR, f'{model}.gguf')
 
 
+def model_version(model):
+  """`.model/VERSION` 의 `llm/<이름>.gguf = <원래 파일 이름>` 줄에서 판 이름(확장자 뺌). 없으면 ''.
+  261106 부터 llm/ 의 파일이 링크가 아닌 실제 파일이라 파일 이름만으로는 어느 판인지 모른다"""
+  try:
+    with open(os.path.join(os.path.dirname(MODEL_DIR), 'VERSION'), encoding='utf-8') as f:
+      lines = f.read().splitlines()
+  except OSError:
+    return ''
+  key = f'llm/{model}.gguf'
+  for line in lines:
+    if line.startswith('## sha256'):
+      break
+    k, sep, v = line.partition('=')
+    if sep and k.strip().lstrip('#-* ').strip('` ') == key:
+      v = v.strip().strip('`').strip()
+      return v[:-5] if v.endswith('.gguf') else v
+  return ''
+
+
 def is_tool_model(model):
-  """도구를 배운 모델(더메이커)인지. 이름이나 별칭 링크가 가리키는 실제 파일로 가른다(general 링크를 바꿔도 맞게)"""
+  """도구를 배운 모델(더메이커)인지. 이름이나 실제 파일 이름(예전 별칭 링크면 가리키는 파일)으로 가른다"""
   if not model:
     return False
   name = os.path.basename(os.path.realpath(model_file(model))).lower()
@@ -569,7 +588,8 @@ async def models():
     f = model_file(m)
     have = os.path.isfile(f)
     real = os.path.realpath(f)
-    out.append({'name': m, 'have': have, 'file': os.path.basename(real)[:-5] if have and real.endswith('.gguf') else '',
+    name = (model_version(m) or (os.path.basename(real)[:-5] if real.endswith('.gguf') else '')) if have else ''
+    out.append({'name': m, 'have': have, 'file': name,
                 'mb': round(os.path.getsize(real) / 2 ** 20) if have else 0})
   return {'models': out, 'model': state['model']}
 

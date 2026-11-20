@@ -354,9 +354,12 @@
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">openpibo.vision_camera.</span></span><span class="sig-name descname"><span class="pre">Camera</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cam</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Functions:
+<a class="reference internal" href="#openpibo.vision_camera.Camera.usb_cameras" title="openpibo.vision_camera.Camera.usb_cameras"><code class="xref py py-meth docutils literal notranslate"><span class="pre">usb_cameras()</span></code></a>
 <a class="reference internal" href="#openpibo.vision_camera.Camera.imread" title="openpibo.vision_camera.Camera.imread"><code class="xref py py-meth docutils literal notranslate"><span class="pre">imread()</span></code></a>
 <a class="reference internal" href="#openpibo.vision_camera.Camera.read" title="openpibo.vision_camera.Camera.read"><code class="xref py py-meth docutils literal notranslate"><span class="pre">read()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.release" title="openpibo.vision_camera.Camera.release"><code class="xref py py-meth docutils literal notranslate"><span class="pre">release()</span></code></a>
 <a class="reference internal" href="#openpibo.vision_camera.Camera.create_matte" title="openpibo.vision_camera.Camera.create_matte"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create_matte()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_camera.Camera.imshow" title="openpibo.vision_camera.Camera.imshow"><code class="xref py py-meth docutils literal notranslate"><span class="pre">imshow()</span></code></a>
 <a class="reference internal" href="#openpibo.vision_camera.Camera.imshow_to_ide" title="openpibo.vision_camera.Camera.imshow_to_ide"><code class="xref py py-meth docutils literal notranslate"><span class="pre">imshow_to_ide()</span></code></a>
 <a class="reference internal" href="#openpibo.vision_camera.Camera.resize" title="openpibo.vision_camera.Camera.resize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">resize()</span></code></a>
 <a class="reference internal" href="#openpibo.vision_camera.Camera.rotate" title="openpibo.vision_camera.Camera.rotate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">rotate()</span></code></a>
@@ -373,16 +376,19 @@
 <a class="reference internal" href="#openpibo.vision_camera.Camera.edgePreservingFilter" title="openpibo.vision_camera.Camera.edgePreservingFilter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">edgePreservingFilter()</span></code></a>
 <a class="reference internal" href="#openpibo.vision_camera.Camera.flip" title="openpibo.vision_camera.Camera.flip"><code class="xref py py-meth docutils literal notranslate"><span class="pre">flip()</span></code></a></p>
 <blockquote>
-<div><p>Controls piBo’s camera.</p>
+<div><p>Takes pictures with the camera and edits images.</p>
 <ul class="simple">
-<li><p>Provides basic camera functions such as taking, reading and writing pictures.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Camera()</span></code> (<code class="docutils literal notranslate"><span class="pre">cam=0</span></code>) is the board camera; <code class="docutils literal notranslate"><span class="pre">Camera(1)</span></code> and <code class="docutils literal notranslate"><span class="pre">Camera(2)</span></code> are USB cameras (any model that supports V4L2). USB camera numbers follow the USB port order of the connected cameras; see <a class="reference internal" href="#openpibo.vision_camera.Camera.usb_cameras" title="openpibo.vision_camera.Camera.usb_cameras"><code class="xref py py-meth docutils literal notranslate"><span class="pre">usb_cameras()</span></code></a>.</p></li>
+<li><p>The board camera opens on the first <a class="reference internal" href="#openpibo.vision_camera.Camera.read" title="openpibo.vision_camera.Camera.read"><code class="xref py py-meth docutils literal notranslate"><span class="pre">read()</span></code></a>, so an error opening the camera is raised by <code class="docutils literal notranslate"><span class="pre">read()</span></code>.</p></li>
+<li><p>Without a size, <code class="docutils literal notranslate"><span class="pre">read()</span></code> returns a 480x640 (portrait) image. USB cameras give the same size; if the camera’s aspect ratio differs, the center is cropped to fit.</p></li>
 <li><p>Adds shapes/text to images.</p></li>
 <li><p>Transforms images.</p></li>
 </ul>
 <p>example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">openpibo.vision_camera</span><span class="w"> </span><span class="kn">import</span> <span class="n">Camera</span>
 
-<span class="n">camera</span> <span class="o">=</span> <span class="n">Camera</span><span class="p">()</span>
+<span class="n">camera</span> <span class="o">=</span> <span class="n">Camera</span><span class="p">()</span>        <span class="c1"># 보드 카메라</span>
+<span class="c1"># camera = Camera(1)     # USB 카메라 cam1</span>
 <span class="c1"># 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
 </pre></div>
 </div>
@@ -406,7 +412,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.vision_camera.Camera.release">
 <span class="sig-name descname"><span class="pre">release</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.release"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.release" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Releases the camera so another program can use it. Calling <code class="docutils literal notranslate"><span class="pre">read()</span></code> again afterwards reopens it.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.vision_camera.Camera.imread">
@@ -425,10 +432,11 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.vision_camera.Camera.read">
 <span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.read" title="Link to this definition">¶</a></dt>
-<dd><p>Captures an image with the camera. Changing the resolution may corrupt the image, so the default resolution is recommended.</p>
+<dd><p>Takes a picture with the camera.</p>
+<p>The board camera opens on the first call (if the previous program is still releasing the camera, it retries up to three times, one second apart). If a USB camera fails while reading (unplugged and plugged back in, etc.), it is found and opened again once.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Image object of type <code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+<dd class="field-odd"><p>Image object of type <code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> (BGR)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -436,7 +444,21 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.vision_camera.Camera.create_matte">
 <span class="sig-name descname"><span class="pre">create_matte</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(255,</span> <span class="pre">255,</span> <span class="pre">255)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.create_matte"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.create_matte" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Makes a blank image (matte) filled with one color, the same size as <code class="docutils literal notranslate"><span class="pre">read()</span></code>. It does not open the camera.</p>
+<p>example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">img</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">create_matte</span><span class="p">((</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">))</span>   <span class="c1"># 흰 바탕</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">create_matte</span><span class="p">(</span><span class="s1">'#ff0000'</span><span class="p">)</span>         <span class="c1"># 빨간 바탕</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>colors</strong> (<em>tuple</em><em> or </em><em>str</em>) – Color — a (b, g, r) tuple or a <code class="docutils literal notranslate"><span class="pre">'#rrggbb'</span></code> string</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Image object of type <code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.vision_camera.Camera.imshow">

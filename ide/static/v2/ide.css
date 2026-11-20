@@ -2,15 +2,16 @@
    IDE v2 (시안 B) — templates/index.html 전용. index.css 는 싣지 않는다.
    pibo-ui.css(키트: 셸·리사이저·모달·알림·배너) 위에 얹는다.
 
-   배치
-     상단바 48px  노랑 브랜드 | 블록/파이썬 | 도구·대화·분류기·도움말·더보기
-     왼쪽 패널    [PiBrain | 파일] 탭 + 실행·정지(늘 맨 아래)
-     가운데       파일 이름 줄 + Blockly(블록 찾기 · 색 타일 분류)
+   배치 (A안, 261118)
+     상단바 48px  노랑 [파일] · 브랜드 | 블록/파이썬 | 도구·대화·분류기·로봇 놀이·도움말·전체화면 · 더보기
+     파일 서랍    편집기 위로 열린다(#v2_side.v2-drawer) — 파일을 열면 닫힌다
+     가운데       편집기 줄(파일 이름 · [쉬움|전체] · 파이썬 코드 · 저장) + Blockly(블록 찾기 · 색 타일 분류)
+     오른쪽       실행 화면(#v2_stage) — 실행·정지 · 화면 출력 · 출력 · 입력
+     아래 30px    상태 줄(#v2_status)
 
-   색
+   색 (값은 키트 --v2-*, 261028)
      노랑   상단바(브랜드) 한 곳. 넓은 면은 여기뿐이다
-     먹색   주 동작 버튼(실행 · 저장 · 추가)
-     인디고 포커스 · 스위치 · 선택 표시
+     파랑   주 동작 버튼(실행) · 포커스 · 스위치 · 선택 표시. 어둡게에서는 주 동작이 노랑
      빨강   정지 · 지울 것
 
    화면 밝기 — html[data-theme] (쿠키 pibo_theme, 기본 soft). 순백·순흑을 넓게 쓰지 않는다
@@ -421,7 +422,7 @@ html[data-theme="dark"] .v2-app { --fm-folder:#f2bd4b; --fm-code:#7aa7ff; --fm-b
 .v2-preview__img img:not([src]), .v2-preview__img img[src=""] { display: none; }
 .v2-preview__empty { margin: 0; padding: 0 16px; text-align: center; font-size: 12px; color: var(--c-ink-3); }
 .v2-preview__img img[src]:not([src=""]) ~ .v2-preview__empty { display: none; }
-#browser_en[data-live] .v2-preview__img img { display: none; }            /* 코드가 보낸 그림은 [PiBrain] 쪽 */
+#browser_en[data-live] .v2-preview__img img { display: none; }            /* 코드가 보낸 그림은 실행 화면의 [화면 출력] 쪽 */
 #browser_en[data-live] .v2-preview__img img ~ .v2-preview__empty { display: block; }
 #browser_en[data-live] #mediapath { visibility: hidden; }
 .v2-preview audio { display: block; width: 100%; height: 34px; }
@@ -670,7 +671,7 @@ body[data-side="closed"] .pb-resizer[data-target="v2_side"] { display: none; }
 /* ── 움직임 (260929) — 키트 pibo-ui.css '움직임' 과 같은 규칙(키프레임은 거기 있다) ─────────── */
 /* 연결됨 점이 숨 쉬듯 퍼진다. 끊기면(data-offline) 빨강으로 멈춘다 */
 body:not([data-offline]) .v2-dot { animation: pb-breathe 2.4s ease-out infinite; }
-/* [PiBrain | 파일] 탭을 바꾸면 새 칸이 살짝 떠오른다 */
+/* 서랍 칸이 보일 때 살짝 떠오른다(예전 [파이보 | 파일] 탭 시절부터 쓰던 규칙) */
 .v2-side__page:not([hidden]) { animation: pb-tab-in .22s ease-out backwards; }
 /* 대화상자(와이파이 설정 포함)가 살짝 튀며 나타난다. 키트의 .pb .alert-popup-content(pb-pop)보다 우선하게 .v2-app 을 붙인다 */
 .v2-app .alert-popup-content, .v2-app .prompt-popup-content, .v2-app .confirm-popup-content,

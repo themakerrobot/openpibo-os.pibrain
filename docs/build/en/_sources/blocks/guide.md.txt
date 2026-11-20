@@ -172,7 +172,7 @@ Make speech on the robot and say it. Korean and English are detected automatical
 
 Choose the model before starting the chat server. Without it, the general model starts.
 
-There are three models: **General** (Korean and English, no tools — currently Google Gemma3 1B), **TheMaker KO** (Korean only, short and polite) and **TheMaker EN** (English only). Both TheMaker models learned tools (light, look, move), but the chat block is text only — if the model tries to answer with a tool, that part is dropped and you get only the text. This block only chooses, so put it **before [Start LLM server]**. Without it the general model starts, and the choice lasts only in that program. TheMaker already has its speaking style inside the model, so it works best with the system prompt of the chat block **left empty**. Only one model runs at a time.
+There are three models: **General** (Korean and English, no tools — currently Google Gemma3 1B), **TheMaker KO** (Korean only, short and polite) and **TheMaker EN** (English only). Both TheMaker models learned tools (light, look, move), but the [Say … to AI] block is text only — if the model tries to answer with a tool, that part is dropped and you get only the text. This block only chooses, so put it **before [Start LLM server]**. Without it the general model starts, and the choice lasts only in that program. TheMaker already has its speaking style inside the model, so it works best with the role of the [Say … to AI] block **left empty**. Only one model runs at a time.
 
 <img src="img/speech_start_llm.png" alt="Start LLM server" width="218" class="blk">
 
@@ -180,7 +180,7 @@ Start LLM server.
 
 <img src="img/speech_call_llm.png" alt="Say ([Hello]) to AI, as role (값)" width="449" class="blk">
 
-Send text to the LLM server and get a reply. The system prompt sets how piBo should answer. *returns a value*
+Send text to the LLM server and get a reply. The role sets how the robot should answer. *returns a value*
 
 <img src="img/speech_stop_llm.png" alt="Stop LLM server" width="215" class="blk">
 
@@ -384,11 +384,11 @@ Load a model you taught and saved in the Classifier. Folder mymodel, then the mo
 
 <img src="img/vision_predict_cf.png" alt="Classify image ([item ▾]) with the classification model" width="577" class="blk">
 
-Classify the image with the loaded classifier model and return the best matching name. Hand, face and pose models return empty text when no hand, face or body is in view. *returns a value*
+Classify the image with the loaded classification model and return the best matching name. Hand, face and pose models return empty text when no hand, face or body is in view. *returns a value*
 
 <img src="img/vision_predict_cf_vis.png" alt="Show the classification result on image ([item ▾])" width="522" class="blk">
 
-Draws what the last [Classify with classifier model] saw on that image: points and bones for hand and pose, points for face, plus the class name and probability.
+Draws what the last [Classify image … with the classification model] saw on that image: points and bones for hand and pose, points for face, plus the class name and probability.
 
 ### Utilities
 

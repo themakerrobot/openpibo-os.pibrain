@@ -1,6 +1,6 @@
 openpibo-python
 ===============
 
-This is a package for the educational robot, pibo.
+The ``openpibo`` Python library and OS software for the educational AI kit PiBrain.
 
 See `openpibo-Guide <https://themakerrobot.github.io/openpibo-os.pibrain/build/html/index.html>`__ for more information.

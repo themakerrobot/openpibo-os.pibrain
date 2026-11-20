@@ -124,9 +124,8 @@ PAD = 4
 async def main():
     img_dir = os.path.join(os.path.dirname(OUT), 'img')
     os.makedirs(img_dir, exist_ok=True)
-    for f in glob.glob(os.path.join(img_dir, '*.png')):   # 없어진 블록 그림이 남지 않게
-        os.remove(f)
-    exe = sorted(glob.glob('/opt/pw-browsers/chromium-*/chrome-linux/chrome'))
+    drawn = set()                                          # 이번에 그린 블록 — 끝까지 그린 뒤에만 나머지(없어진 블록) 그림을 지운다
+    exe =sorted(glob.glob('/opt/pw-browsers/chromium-*/chrome-linux/chrome'))
     async with async_playwright() as p:
         b = await p.chromium.launch(**({'executable_path': exe[0]} if exe else {}), args=['--no-proxy-server'])
         ctx = await b.new_context(viewport={'width': 1800, 'height': 1100}, device_scale_factor=2)
@@ -155,7 +154,12 @@ async def main():
                     im.quantize(colors=256, method=Image.Quantize.FASTOCTREE).save(path, optimize=True)
                 except Exception:
                     pass
+                drawn.add(r['type'])
         await b.close()
+    # 여기까지 오면 다 그렸다. 전엔 시작할 때 지워서, IDE 주소가 틀리거나 서버가 꺼져 있으면 그림이 다 지워진 채 멈췄다(261120)
+    for f in glob.glob(os.path.join(img_dir, '*.png')):
+        if os.path.splitext(os.path.basename(f))[0] not in drawn:
+            os.remove(f)
 
     basic = [c for c in cats if c['basic']]
     custom = [c for c in cats if not c['basic'] and c['rows']]
@@ -166,13 +170,13 @@ async def main():
     EXTRA = {
       'speech_set_llm_model': (
         '모델은 셋입니다. **일반** 한국어·영어, 도구 없음(지금은 구글 젬마3 1B) / **더메이커 KO** 한국어 전용, 짧은 존댓말 / **더메이커 EN** 영어 전용. '
-        '더메이커 둘은 도구(불빛·보기·움직이기)를 배운 모델이지만 [대화하기] 블록은 글자 대화만 합니다 — 도구로 답하려 하면 그 부분은 빠지고 글만 옵니다. '
+        '더메이커 둘은 도구(불빛·보기·움직이기)를 배운 모델이지만 [AI에게 … 말하기] 블록은 글자 대화만 합니다 — 도구로 답하려 하면 그 부분은 빠지고 글만 옵니다. '
         '이 블록은 고르기만 하므로 **[대화 서버 시작하기] 앞에** 놓습니다. 안 고르면 일반 모델로 시작하고, 고른 모델은 그 프로그램 안에서만 씁니다. '
-        '더메이커는 학습한 말투가 모델 안에 들어 있어 [대화하기]의 시스템 글을 **비워 두는 것**이 가장 자연스럽습니다. 램 때문에 모델은 한 번에 하나만 뜹니다.',
+        '더메이커는 학습한 말투가 모델 안에 들어 있어 [AI에게 … 말하기]의 역할 칸을 **비워 두는 것**이 가장 자연스럽습니다. 램 때문에 모델은 한 번에 하나만 뜹니다.',
         'There are three models: **General** (Korean and English, no tools — currently Google Gemma3 1B), **TheMaker KO** (Korean only, short and polite) and **TheMaker EN** (English only). '
-        'Both TheMaker models learned tools (light, look, move), but the chat block is text only — if the model tries to answer with a tool, that part is dropped and you get only the text. '
+        'Both TheMaker models learned tools (light, look, move), but the [Say … to AI] block is text only — if the model tries to answer with a tool, that part is dropped and you get only the text. '
         'This block only chooses, so put it **before [Start LLM server]**. Without it the general model starts, and the choice lasts only in that program. '
-        'TheMaker already has its speaking style inside the model, so it works best with the system prompt of the chat block **left empty**. Only one model runs at a time.'),
+        'TheMaker already has its speaking style inside the model, so it works best with the role of the [Say … to AI] block **left empty**. Only one model runs at a time.'),
     }
     # 분류는 표로(261027v4 — 전엔 코드 블록 안 ├── 나무 그림이었다). 안내 상자에는 인터넷이 필요한 분류만 적는다
     if ko:

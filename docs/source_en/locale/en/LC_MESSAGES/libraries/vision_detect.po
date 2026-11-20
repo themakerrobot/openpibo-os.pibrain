@@ -49,7 +49,7 @@ msgstr "Font size of the text"
 msgid "글자 색깔 BGR 값 (b, g, r) or 16진수 값 '#rrggbb'"
 msgstr "Text color BGR value (b, g, r) or hex value '#rrggbb'"
 
-msgid "Functions: :meth:`~openpibo.vision_detect.Detect.load_hand_gesture_model` :meth:`~openpibo.vision_detect.Detect.detect_object` :meth:`~openpibo.vision_detect.Detect.detect_qr` :meth:`~openpibo.vision_detect.Detect.detect_pose` :meth:`~openpibo.vision_detect.Detect.analyze_pose` :meth:`~openpibo.vision_detect.Detect.classify_image` :meth:`~openpibo.vision_detect.Detect.detect_marker` :meth:`~openpibo.vision_detect.Detect.detect_marker_vis`"
+msgid "Functions: :meth:`~openpibo.vision_detect.Detect.load_object_model` :meth:`~openpibo.vision_detect.Detect.detect_object` :meth:`~openpibo.vision_detect.Detect.detect_object_vis` :meth:`~openpibo.vision_detect.Detect.detect_qr` :meth:`~openpibo.vision_detect.Detect.detect_qr_vis` :meth:`~openpibo.vision_detect.Detect.detect_pose` :meth:`~openpibo.vision_detect.Detect.detect_pose_vis` :meth:`~openpibo.vision_detect.Detect.analyze_pose` :meth:`~openpibo.vision_detect.Detect.load_hand_gesture_model` :meth:`~openpibo.vision_detect.Detect.recognize_hand_gesture` :meth:`~openpibo.vision_detect.Detect.recognize_hand_gesture_vis` :meth:`~openpibo.vision_detect.Detect.detect_marker` :meth:`~openpibo.vision_detect.Detect.detect_marker_vis`"
 msgstr ""
 
 msgid "인식과 관련된 다양한 기능을 사용할 수 있는 클래스입니다."
@@ -61,11 +61,14 @@ msgstr "Object detection (easydetect ed, 80 COCO classes by default · models tr
 msgid "QR/바코드 인식 (pyzbar)"
 msgstr "QR/barcode detection (pyzbar)"
 
-msgid "Pose 인식"
-msgstr "Pose detection"
+msgid "Pose 인식 (MoveNet)"
+msgstr "Pose detection (MoveNet)"
 
-msgid "이미지 분류"
-msgstr "Image classification"
+msgid "손동작 인식 (MediaPipe)"
+msgstr "Hand gesture recognition (MediaPipe)"
+
+msgid "마커 인식 (ArUco)"
+msgstr "Marker detection (ArUco)"
 
 msgid "example::"
 msgstr ""
@@ -149,4 +152,13 @@ msgstr "Displays the marker result."
 
 msgid "마커 결과"
 msgstr "Marker result"
+
+#~ msgid "Functions: :meth:`~openpibo.vision_detect.Detect.load_hand_gesture_model` :meth:`~openpibo.vision_detect.Detect.detect_object` :meth:`~openpibo.vision_detect.Detect.detect_qr` :meth:`~openpibo.vision_detect.Detect.detect_pose` :meth:`~openpibo.vision_detect.Detect.analyze_pose` :meth:`~openpibo.vision_detect.Detect.classify_image` :meth:`~openpibo.vision_detect.Detect.detect_marker` :meth:`~openpibo.vision_detect.Detect.detect_marker_vis`"
+#~ msgstr ""
+
+#~ msgid "Pose 인식"
+#~ msgstr "Pose detection"
+
+#~ msgid "이미지 분류"
+#~ msgstr "Image classification"
 

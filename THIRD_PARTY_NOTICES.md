@@ -36,6 +36,8 @@ in each file are kept as they are.
 |---|---|---|---|
 | OpenVINO Open Model Zoo — face-detection-retail-0005 · age-gender-recognition-retail-0013 · emotions-recognition-retail-0003 · face-reidentification-retail-0095 (FP16) | `face/{detection,age-gender,emotion,reid}/` | Apache-2.0 | — |
 | MediaPipe face landmarker | `face/landmark/face_landmarker.task` | Apache-2.0 | — |
+| MediaPipe hand gesture recognizer (8 gestures) | `hand/gesture_recognizer.task` | Apache-2.0 per the MediaPipe model card — to be confirmed for this file | — |
+| Rock-paper-scissors gesture model (`rps_recognizer`, block option) | `hand/rps_recognizer.task` | Origin and license to be confirmed | — |
 | edge-lab mask classifier (MediaPipe mobilenet_v3_small embedder + classifier, one ONNX) | `mask/mask.onnx` | Apache-2.0 | — |
 | easydetect ed-s COCO (ONNX, 320, 8-bit) | `object/ed-s-320.onnx` | Apache-2.0 (easydetect · D-FINE weights, per the HF model card; COCO annotations CC BY 4.0) | — |
 | Models trained in the easydetect lab (`job<N>.onnx`) | wherever the user puts them | Apache-2.0 code; weights belong to whoever trained them | — |

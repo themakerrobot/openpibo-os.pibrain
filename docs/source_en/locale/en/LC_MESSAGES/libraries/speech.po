@@ -133,8 +133,8 @@ msgstr "On piBo (Pi 4, 2GB) it transcribes 5 seconds of speech in about 1.3 seco
 msgid "소리(숫자 배열)를 글자로 바꿉니다."
 msgstr "Converts sound (a number array) to text."
 
-msgid "25초보다 길면 말 단위로 잘라 받아 적고 이어 붙입니다(통째로 넣으면 글자가 뒤섞입니다)."
-msgstr "If longer than 25 seconds, it is split into speech segments, transcribed and joined (feeding it whole mixes up the text)."
+msgid "25초보다 길면 말 단위로 잘라 받아 적고 이어 붙입니다(통째로 넣으면 글자가 뒤섞입니다). 말소리가 하나도 없으면(무음·잡음) 빈 글자 ``''`` 를 돌려줍니다."
+msgstr "If longer than 25 seconds, it is split into speech segments, transcribed and joined (feeding it whole mixes up the text). If there is no speech at all (silence or noise), it returns an empty string ``''``."
 
 msgid "-1~1 사이 float 소리. 두 채널이면 평균을 냅니다"
 msgstr "Sound as float between -1 and 1. If two channels, they are averaged"
@@ -142,14 +142,17 @@ msgstr "Sound as float between -1 and 1. If two channels, they are averaged"
 msgid "샘플레이트 (16000 이 아니어도 됩니다)"
 msgstr "Sample rate (does not have to be 16000)"
 
-msgid "인식된 문자열"
-msgstr "Recognized string"
+msgid "인식된 문자열(말이 없으면 ``''``)"
+msgstr "Recognized text (``''`` if there was no speech)"
 
 msgid "소리 파일을 글자로 바꿉니다."
 msgstr "Converts a sound file to text."
 
 msgid "소리 파일 경로 (wav 등 soundfile 이 읽는 형식)"
 msgstr "Sound file path (wav or other formats soundfile can read)"
+
+msgid "인식된 문자열"
+msgstr "Recognized string"
 
 msgid "파이보 마이크로 듣고, 말이 끝나면 글자로 바꿉니다."
 msgstr "Listens with piBo's microphone and converts speech to text when it ends."
@@ -172,8 +175,8 @@ msgstr "Sends questions to an LLM (llama-server) running on the device and recei
 msgid "n-gram 챗봇(``load`` ``reset`` ``ngram`` ``diff_ngram`` ``get_dialog``), 서버 기반 대화·분석(``get_dialog_dl`` ``nlp_dl``), 번역(``translate``)은 제거했습니다. ``dialog.csv`` 가 한글 전용이고, 나머지는 자사 서버·Google 에 의존했습니다."
 msgstr "The n-gram chatbot (``load`` ``reset`` ``ngram`` ``diff_ngram`` ``get_dialog``), server-based conversation/analysis (``get_dialog_dl`` ``nlp_dl``) and translation (``translate``) have been removed. ``dialog.csv`` was Korean-only, and the rest depended on our own servers or Google."
 
-msgid "고를 수 있는 대화 모델. 파일은 ``/home/pi/.model/llm/<이름>.gguf`` (이미지 만들 때 만든 별칭 링크)"
-msgstr "Chat models you can choose. The file is ``/home/pi/.model/llm/<name>.gguf`` (an alias link made with the system image)"
+msgid "고를 수 있는 대화 모델. 파일은 ``/home/pi/.model/llm/<이름>.gguf`` (이미지 만들 때 넣는 실제 파일, 판은 ``.model/VERSION``)"
+msgstr "Chat models you can choose. The file is ``/home/pi/.model/llm/<name>.gguf`` (a real file put in with the system image; its version is in ``.model/VERSION``)"
 
 msgid "대화 서버를 시작하기 전에 쓸 모델을 고릅니다. 고르지 않으면 ``general`` 로 시작합니다. 고른 모델은 이 ``Dialog`` 안에서만 기억합니다. 이미 서버를 띄운 뒤에 고르면 고른 모델로 다시 띄웁니다."
 msgstr "Chooses the model to use before starting the chat server. Without it, ``general`` starts. The choice is kept only in this ``Dialog``. If the server is already running, it restarts with the chosen model."
@@ -193,8 +196,8 @@ msgstr "when that model file is not on the robot yet"
 msgid "LLM 서비스를 시작하고, 모델이 다 올라와 대답할 수 있을 때까지 기다립니다. (Chat 모드)"
 msgstr "Starts the LLM service and waits until the model is loaded and can answer. (Chat mode)"
 
-msgid "llama-server 포트"
-msgstr "llama-server port"
+msgid "준비를 확인할 llama-server 포트. 서비스는 늘 50020 으로 뜨므로 기본값 그대로 씁니다"
+msgstr "llama-server port to check for readiness. The service always listens on 50020, so keep the default"
 
 msgid "최대로 기다리는 시간(초)"
 msgstr "Maximum waiting time (seconds)"
@@ -228,4 +231,7 @@ msgstr "Stops the LLM service."
 
 #~ msgid "Functions: :meth:`~openpibo.speech.Dialog.start_llm` :meth:`~openpibo.speech.Dialog.call_llm` :meth:`~openpibo.speech.Dialog.stop_llm`"
 #~ msgstr ""
+
+#~ msgid "llama-server 포트"
+#~ msgstr "llama-server port"
 

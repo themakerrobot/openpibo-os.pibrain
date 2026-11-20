@@ -21,9 +21,12 @@ os.environ['LIBCAMERA_LOG_LEVELS'] = '3'
 class Camera:
   """
 Functions:
+:meth:`~openpibo.vision_camera.Camera.usb_cameras`
 :meth:`~openpibo.vision_camera.Camera.imread`
 :meth:`~openpibo.vision_camera.Camera.read`
+:meth:`~openpibo.vision_camera.Camera.release`
 :meth:`~openpibo.vision_camera.Camera.create_matte`
+:meth:`~openpibo.vision_camera.Camera.imshow`
 :meth:`~openpibo.vision_camera.Camera.imshow_to_ide`
 :meth:`~openpibo.vision_camera.Camera.resize`
 :meth:`~openpibo.vision_camera.Camera.rotate`
@@ -40,9 +43,12 @@ Functions:
 :meth:`~openpibo.vision_camera.Camera.edgePreservingFilter`
 :meth:`~openpibo.vision_camera.Camera.flip`
 
-  파이보의 카메라를 제어합니다.
+  카메라로 사진을 찍고 이미지를 편집합니다.
 
-  * 사진 촬영, 읽기, 쓰기 등 카메라 기본 기능을 사용할 수 있습니다.
+  * ``Camera()`` (``cam=0``) 는 보드 카메라, ``Camera(1)`` · ``Camera(2)`` 는 USB 카메라입니다(V4L2 를 지원하면 기종 상관없음).
+    USB 카메라 번호는 꽂힌 카메라의 USB 포트 순서이고, :meth:`~openpibo.vision_camera.Camera.usb_cameras` 로 볼 수 있습니다.
+  * 보드 카메라는 처음 :meth:`~openpibo.vision_camera.Camera.read` 를 부를 때 엽니다. 그래서 카메라를 못 열 때의 오류는 ``read()`` 에서 납니다.
+  * ``read()`` 는 크기를 주지 않으면 480x640(세로) 그림을 돌려줍니다. USB 카메라도 같은 크기이고, 카메라 비율이 다르면 가운데를 잘라 맞춥니다.
   * 이미지에 도형/글자를 추가할 수 있습니다.
   * 이미지를 변환할 수 있습니다.
 
@@ -50,7 +56,8 @@ Functions:
 
     from openpibo.vision_camera import Camera
 
-    camera = Camera()
+    camera = Camera()        # 보드 카메라
+    # camera = Camera(1)     # USB 카메라 cam1
     # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.
   """
 
@@ -171,6 +178,11 @@ Functions:
     return n
 
   def release(self):
+    """
+    카메라를 놓습니다. 다른 프로그램이 같은 카메라를 쓸 수 있게 됩니다.
+    놓은 뒤에 다시 ``read()`` 하면 다시 엽니다.
+    """
+
     if self.cap is not None and self.usb:
       self.cap.close()
       self.cap = None
@@ -191,10 +203,12 @@ Functions:
 
   def read(self):
     """
-    카메라를 통해 이미지를 촬영합니다.
-    해상도 변경 시 이미지가 깨질 수 있으므로, 기본 해상도를 권장합니다.
+    카메라로 사진을 찍습니다.
 
-    :returns: ``numpy.ndarray`` 타입 이미지 객체
+    보드 카메라는 처음 부를 때 엽니다(앞 프로그램이 카메라를 막 놓는 중이면 1초씩 쉬며 세 번까지 해 봅니다).
+    USB 카메라는 읽다가 실패하면(뽑았다 꽂음 등) 한 번 다시 찾아 엽니다.
+
+    :returns: ``numpy.ndarray`` 타입 이미지 객체(BGR)
     """
 
     if self.usb:
@@ -209,6 +223,18 @@ Functions:
     #return self.cap.capture_array()
 
   def create_matte(self, colors=(255,255,255)):
+    """
+    한 가지 색으로 채운 빈 이미지(매트)를 만듭니다. 크기는 ``read()`` 와 같습니다. 카메라는 열지 않습니다.
+
+    example::
+
+      img = camera.create_matte((255, 255, 255))   # 흰 바탕
+      img = camera.create_matte('#ff0000')         # 빨간 바탕
+
+    :param tuple or str colors: 색 — (b, g, r) 튜플 또는 ``'#rrggbb'`` 글자
+    :returns: ``numpy.ndarray`` 타입 이미지 객체
+    """
+
     if type(colors) is str:
       colors = (int(colors[5:7], 16), int(colors[3:5], 16), int(colors[1:3], 16))
 

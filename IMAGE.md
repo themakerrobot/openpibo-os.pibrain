@@ -111,13 +111,13 @@ AP(핫스팟)는 국가 설정과 무관하다. `hotspot.sh` 가 2.4GHz 채널 1
 
 분류기가 TF.js→keras 방식에서 teach-lab 방식으로 바뀌었다(CLAUDE.md '분류기'). 기기에서 추론하려면:
 
-| 쓰는 곳 | 패키지 | Pibo 기기(260923) 에서 확인한 버전 |
+| 쓰는 곳 | 패키지 | 확인한 버전(Pibo 260923 · PiBrain 260930 pip 목록) |
 |---|---|---|
 | 이미지 · movenet(포즈) | `onnxruntime` (261104 부터 — 리포 안의 ONNX 파일. TFLite 런타임 안 씀) | 1.20.1 |
 | 손 · 얼굴 · 포즈 | `mediapipe` | 0.10.18 |
 | 전부 | `numpy` | 1.26.4 |
 
-**PiBrain 기기에 무엇이 깔려 있는지는 아직 확인 전이다.** 아래를 돌려 값을 받아 적을 것. 추측으로 채우지 말 것.
+PiBrain 기기(fc1a8f31)도 같은 버전이다(260930 pip 목록 — `requirements.txt`, 261116 `venv_prune.py` 뒤 import 38/38). **새 이미지를 만들면** 아래로 다시 확인할 것. 추측으로 채우지 말 것.
 
 ```bash
 /home/pi/.pyenv/bin/python3 -m pip list 2>/dev/null | grep -i -E "mediapipe|numpy|onnxruntime"
@@ -128,8 +128,7 @@ AP(핫스팟)는 국가 설정과 무관하다. `hotspot.sh` 가 2.4GHz 채널 1
 
 - `onnxruntime` 이 없으면 분류기(이미지)·movenet·사물 인식·TTS 가 못 뜬다
 - `mediapipe` 가 없으면 손·얼굴·포즈 모델만 못 쓴다(이미지 모델은 된다)
-- TensorFlow 를 지우는 건 **위 확인이 끝난 뒤에만.** 사물 인식(`vision_detect`)은 260930 부터 ultralytics·torch 를
-  import 하지 않는다(onnxruntime). 코드 쪽에서는 `ultralytics`·`torch` 를 지워도 된다 — 다른 데서 쓰는지 `pip show` 로 한 번 볼 것
+- TensorFlow·torch·ultralytics 는 시험 기기(fc1a8f31)에서 이미 지웠다(`venv_prune.py`, 아래 절). 새 이미지에서 지울 때도 **위 확인을 먼저** 할 것 — 사물 인식(`vision_detect`)은 260930 부터 onnxruntime 만 쓴다
 
 ### 안 쓰는 패키지 걷어내기 — `system/venv_prune.py` (260930~, 이미지당 1회)
 
@@ -292,6 +291,7 @@ sudo rm -rf /home/pi/code/* /home/pi/myimage/* /home/pi/myaudio/* /home/pi/mymod
 sudo rm -rf /home/pi/.npm /home/pi/openpibo-files/.git               # 용량
 sudo rm -f  /home/pi/.bash_history /root/.bash_history
 sudo rm -f  /tmp/pibrain_capture.jpg                                 # 검수 흔적
+sudo find /home/pi/.kids -mindepth 1 -maxdepth 1 ! -name voice -exec rm -rf {} + 2>/dev/null   # 로봇 놀이 기록·재주·사진(미리 만든 목소리 voice/ 는 남긴다)
 
 # 로그
 sudo journalctl --rotate && sudo journalctl --vacuum-time=1s
@@ -365,7 +365,7 @@ ls /home/pi/examples/                                          # main 11개 / gl
 
 echo "===== 서비스 ====="
 systemctl is-active ide booting                                # active active
-systemctl is-active tools classify llama-server                # 전부 inactive 가 정상
+systemctl is-active tools classify 'llama-server@*'            # 전부 inactive 가 정상(대화 모델은 템플릿 유닛)
 pgrep -f test/test.py                                          # 비어 있어야 한다
 curl -s -o /dev/null -w "ide:%{http_code}\n" http://localhost/
 curl -s http://localhost:8080/wifi_scan | head -c 200; echo
@@ -390,5 +390,5 @@ dmesg | grep -iE "error|fail" | tail
 `/dev/ttyGS0` 는 USB gadget serial 이다 (`system/uart_ctrl.py` 가 1000000 baud 로 연다).
 `openpibo/usb_uart.py` 의 기본값 `/dev/ttyUSB0` 은 사용자가 USB 장치를 붙였을 때 쓰는 별개 경로다.
 
-LCD·LED·버튼·카메라·마이크는 파일 존재만으로는 알 수 없다.
+LCD·LED·버튼·카메라는 파일 존재만으로는 알 수 없다(PiBrain 은 마이크가 없다).
 **1번 항목의 H/W 검수를 통과했는지로 판단한다.**

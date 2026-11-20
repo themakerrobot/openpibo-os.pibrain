@@ -16,7 +16,7 @@ openpibo
 ├── speech.py           목소리 만들기(TTS)·대화(LLM)·음성 인식(STT, 마이크를 달면)
 ├── usb_uart.py         USB 시리얼
 ├── utils.py            그 밖의 도구
-├── vision_camera.py    카메라·이미지 편집
+├── vision_camera.py    카메라(보드·USB)·이미지 편집
 ├── vision_detect.py    사물·QR·포즈·손동작·마커 인식
 ├── vision_face.py      얼굴 찾기·분석·학습
 └── vision_classify.py  분류기 화면에서 가르친 모델 불러오기

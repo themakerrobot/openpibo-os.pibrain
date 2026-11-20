@@ -17,11 +17,10 @@ from PIL import Image,ImageDraw,ImageFont
 import openpibo_models
 import logging
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # TensorFlow C++ 로그 제거
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # MediaPipe(손동작) 안의 TFLite C++ 로그 줄이기 — TensorFlow 는 쓰지 않는다
 os.environ['LIBCAMERA_LOG_LEVELS'] = '3'
 
-# ✅ 추가: TensorFlow 내부 디버그 메시지 완전 차단
-logging.getLogger("tensorflow").setLevel(logging.ERROR)
+logging.getLogger("tensorflow").setLevel(logging.ERROR)   # 같은 이름의 파이썬 로거가 있으면 조용히(없으면 하는 일 없음)
 
 # 기본 사물 인식 모델 (easydetect ed-s 320, COCO 80종 — 이름·conf 가 파일 안에 있다). 261026, easydetect-lab 지시서.
 # 다른 기본 모델을 쓰려면 이 한 줄만 바꾼다. lab 에서 받은 모델(job<번호>.onnx)은 load_object_model(파일) 로 고른다
@@ -64,12 +63,17 @@ def putTextPIL(img, text, points, size=30, colors=(255,255,255)):
 class Detect:
   """
 Functions:
-:meth:`~openpibo.vision_detect.Detect.load_hand_gesture_model`
+:meth:`~openpibo.vision_detect.Detect.load_object_model`
 :meth:`~openpibo.vision_detect.Detect.detect_object`
+:meth:`~openpibo.vision_detect.Detect.detect_object_vis`
 :meth:`~openpibo.vision_detect.Detect.detect_qr`
+:meth:`~openpibo.vision_detect.Detect.detect_qr_vis`
 :meth:`~openpibo.vision_detect.Detect.detect_pose`
+:meth:`~openpibo.vision_detect.Detect.detect_pose_vis`
 :meth:`~openpibo.vision_detect.Detect.analyze_pose`
-:meth:`~openpibo.vision_detect.Detect.classify_image`
+:meth:`~openpibo.vision_detect.Detect.load_hand_gesture_model`
+:meth:`~openpibo.vision_detect.Detect.recognize_hand_gesture`
+:meth:`~openpibo.vision_detect.Detect.recognize_hand_gesture_vis`
 :meth:`~openpibo.vision_detect.Detect.detect_marker`
 :meth:`~openpibo.vision_detect.Detect.detect_marker_vis`
 
@@ -77,8 +81,9 @@ Functions:
 
   * 사물 인식 (easydetect ed, 기본 COCO 80개 class · lab 에서 학습한 모델, onnxruntime)
   * QR/바코드 인식 (pyzbar)
-  * Pose 인식
-  * 이미지 분류
+  * Pose 인식 (MoveNet)
+  * 손동작 인식 (MediaPipe)
+  * 마커 인식 (ArUco)
 
   example::
 
@@ -89,24 +94,6 @@ Functions:
   """
 
   def __init__(self, object_model=None):
-    #self.object_class = ['background', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',
-    #                     'bus', 'train', 'truck', 'boat', 'traffic light', 'fire hydrant',
-    #                     'None', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog',
-    #                     'horse', 'sheep', 'cow', 'elephant', 'bear', 'zebra', 'giraffe', 'None',
-    #                     'backpack', 'umbrella', 'None', 'None', 'handbag', 'tie', 'suitcase', 'frisbee',
-    #                     'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove',
-    #                     'skateboard', 'surfboard', 'tennis racket', 'bottle', 'None', 'wine glass', 'cup',
-    #                     'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple', 'sandwich', 'orange',
-    #                     'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch',
-    #                     'potted plant', 'bed', 'None', 'dining table', 'None', 'None', 'toilet', 'None', 'tv',
-    #                     'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave', 'oven',
-    #                     'toaster', 'sink', 'refrigerator', 'None', 'book', 'clock', 'vase', 'scissors',
-    #                     'teddy bear', 'hair drier'] 
-
-    #self.mobilenet = cv2.dnn.readNet(
-    #                    openpibo_detect_models.filepath("frozen_inference_graph.pb"),
-    #                    openpibo_detect_models.filepath("ssd_mobilenet_v2_coco_2018_03_29.pbtxt")
-    #                )
     # 사물 인식 모델은 처음 detect_object 를 부를 때 올린다 (QR·마커만 쓰면 메모리를 안 쓴다)
     self.object_detector = None
     self.object_model_path = object_model or OBJECT_MODEL

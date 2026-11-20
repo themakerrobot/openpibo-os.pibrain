@@ -499,7 +499,7 @@
 <dt class="sig sig-object py" id="openpibo.speech.SpeechToText.transcribe">
 <span class="sig-name descname"><span class="pre">transcribe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">audio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/speech.html#SpeechToText.transcribe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.speech.SpeechToText.transcribe" title="Link to this definition">¶</a></dt>
 <dd><p>Converts sound (a number array) to text.</p>
-<p>If longer than 25 seconds, it is split into speech segments, transcribed and joined (feeding it whole mixes up the text).</p>
+<p>If longer than 25 seconds, it is split into speech segments, transcribed and joined (feeding it whole mixes up the text). If there is no speech at all (silence or noise), it returns an empty string <code class="docutils literal notranslate"><span class="pre">''</span></code>.</p>
 <p>example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="n">stt</span><span class="o">.</span><span class="n">transcribe</span><span class="p">(</span><span class="n">audio</span><span class="p">,</span> <span class="mi">16000</span><span class="p">)</span>
 </pre></div>
@@ -512,7 +512,7 @@
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Recognized string</p>
+<dd class="field-even"><p>Recognized text (<code class="docutils literal notranslate"><span class="pre">''</span></code> if there was no speech)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -583,7 +583,7 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="openpibo.speech.Dialog.LLM_MODELS">
 <span class="sig-name descname"><span class="pre">LLM_MODELS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('general',</span> <span class="pre">'themaker-ko',</span> <span class="pre">'themaker-en')</span></span><a class="headerlink" href="#openpibo.speech.Dialog.LLM_MODELS" title="Link to this definition">¶</a></dt>
-<dd><p>Chat models you can choose. The file is <code class="docutils literal notranslate"><span class="pre">/home/pi/.model/llm/&lt;name&gt;.gguf</span></code> (an alias link made with the system image)</p>
+<dd><p>Chat models you can choose. The file is <code class="docutils literal notranslate"><span class="pre">/home/pi/.model/llm/&lt;name&gt;.gguf</span></code> (a real file put in with the system image; its version is in <code class="docutils literal notranslate"><span class="pre">.model/VERSION</span></code>)</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -624,7 +624,7 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>port</strong> (<em>int</em>) – llama-server port</p></li>
+<li><p><strong>port</strong> (<em>int</em>) – llama-server port to check for readiness. The service always listens on 50020, so keep the default</p></li>
 <li><p><strong>timeout</strong> (<em>int</em>) – Maximum waiting time (seconds)</p></li>
 </ul>
 </dd>
