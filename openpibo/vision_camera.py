@@ -56,14 +56,17 @@ Functions:
     """
     Camera 클래스를 초기화합니다.
 
-    :param int cam: 사용하지 않습니다 (카메라는 하나)
+    :param int cam: 쓸 카메라. ``0`` 은 보드 카메라(기본), ``1`` 부터는 USB 카메라(V4L2 를 지원하면 기종 상관없음,
+      꽂은 USB 포트 순서 — :meth:`~openpibo.vision_camera.Camera.usb_cameras` 로 볼 수 있습니다).
+      USB 카메라는 크기를 주지 않으면 640x480 이고, 카메라 비율이 다르면 가운데를 잘라 맞춥니다
     :param int width: ``read()`` 가 돌려줄 그림의 가로(px). 없으면 480
     :param int height: ``read()`` 가 돌려줄 그림의 세로(px). 없으면 640
 
       하나만 주면 다른 쪽은 기본 비율(480:640)로 맞춥니다.
     """
 
-    self.width, self.height = 480, 640
+    self.usb = self._cam_no(cam)   # 0 = 보드 카메라, 1~ = USB 카메라(261120)
+    self.width, self.height = (640, 480) if self.usb else (480, 640)
     if width is not None or height is not None:
       w = self._size(width, 'width') if width is not None else None
       h = self._size(height, 'height') if height is not None else None
@@ -74,6 +77,10 @@ Functions:
       self.width, self.height = w, h
     cv2.setUseOptimized(True)
     cv2.setNumThreads(cv2.getNumberOfCPUs())
+    if self.usb:
+      from .modules.usbcam import UsbCam
+      self.cap = UsbCam(self.usb - 1, self.width, self.height)
+      return
     # 앞 프로그램·도구 서비스가 카메라를 막 놓는 중이면 'Failed to start camera' 가 날 수 있다.
     # 1초씩 쉬며 세 번까지 해 본다(261119). 카메라가 아예 안 잡히면(IndexError) 바로 오류
     cap = None
@@ -107,6 +114,30 @@ Functions:
 
 
   @staticmethod
+  def _cam_no(cam):
+    if type(cam) is bool or not isinstance(cam, int):
+      raise ValueError('"cam" must be integer type')
+    if not 0 <= cam <= 9:
+      raise ValueError('"cam" must be 0~9')
+    return cam
+
+  @staticmethod
+  def usb_cameras():
+    """
+    꽂혀 있는 USB 카메라 목록을 돌려줍니다. 보드 카메라는 들어가지 않습니다.
+
+    example::
+
+      Camera.usb_cameras()
+      # [{'cam': 1, 'dev': '/dev/video1', 'name': 'USB Camera: USB Camera'}]
+
+    :returns: ``cam`` (``Camera(cam=…)`` 에 넣을 번호) · ``dev`` (장치 파일) · ``name`` (카메라가 알려 준 이름) 의 목록
+    """
+
+    from .modules.usbcam import list_usb
+    return [{'cam': i + 1, 'dev': c['dev'], 'name': c['name']} for i, c in enumerate(list_usb())]
+
+  @staticmethod
   def _size(v, name):
     if type(v) is bool:
       raise ValueError(f'"{name}" must be a positive integer')
@@ -119,6 +150,9 @@ Functions:
     return n
 
   def release(self):
+    if self.cap is not None and self.usb:
+      self.cap.close()
+      self.cap = None
     if self.cap is not None:
       self.cap.stop()
       self.cap.close()
@@ -142,6 +176,8 @@ Functions:
     :returns: ``numpy.ndarray`` 타입 이미지 객체
     """
 
+    if self.usb:
+      return self.cap.read()
     return cv2.rotate(cv2.resize(self.cap.capture_array(), (self.height, self.width)),cv2.ROTATE_90_COUNTERCLOCKWISE)
     # return cv2.rotate(self.cap.capture_array(),cv2.ROTATE_90_COUNTERCLOCKWISE)
     #return self.cap.capture_array()
