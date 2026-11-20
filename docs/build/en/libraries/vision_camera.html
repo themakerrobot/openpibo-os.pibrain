@@ -388,6 +388,22 @@
 </div>
 </div></blockquote>
 <dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_camera.Camera.usb_cameras">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">usb_cameras</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.usb_cameras"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.usb_cameras" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the list of connected USB cameras. The board camera is not included.</p>
+<p>example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Camera</span><span class="o">.</span><span class="n">usb_cameras</span><span class="p">()</span>
+<span class="c1"># [{'cam': 1, 'dev': '/dev/video1', 'name': 'USB Camera: USB Camera'}]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of <code class="docutils literal notranslate"><span class="pre">cam</span></code> (the number to pass to <code class="docutils literal notranslate"><span class="pre">Camera(cam=…)</span></code>) · <code class="docutils literal notranslate"><span class="pre">dev</span></code> (device file) · <code class="docutils literal notranslate"><span class="pre">name</span></code> (the name the camera reports)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="openpibo.vision_camera.Camera.release">
 <span class="sig-name descname"><span class="pre">release</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_camera.html#Camera.release"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_camera.Camera.release" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -755,6 +771,7 @@
             <ul>
 <li><a class="reference internal" href="#">vision_camera · Camera and images</a><ul>
 <li><a class="reference internal" href="#openpibo.vision_camera.Camera"><code class="docutils literal notranslate"><span class="pre">Camera</span></code></a><ul>
+<li><a class="reference internal" href="#openpibo.vision_camera.Camera.usb_cameras"><code class="docutils literal notranslate"><span class="pre">Camera.usb_cameras()</span></code></a></li>
 <li><a class="reference internal" href="#openpibo.vision_camera.Camera.release"><code class="docutils literal notranslate"><span class="pre">Camera.release()</span></code></a></li>
 <li><a class="reference internal" href="#openpibo.vision_camera.Camera.imread"><code class="docutils literal notranslate"><span class="pre">Camera.imread()</span></code></a></li>
 <li><a class="reference internal" href="#openpibo.vision_camera.Camera.read"><code class="docutils literal notranslate"><span class="pre">Camera.read()</span></code></a></li>
