@@ -304,7 +304,7 @@ Functions:
     얼굴 box 표시합니다.
 
     :param numpy.ndarray img: 이미지 객체
-    :param array item: 얼굴 좌표 (x1,y1,x2,y2) 리스트
+    :param array items: 얼굴 좌표 (x1,y1,x2,y2) 리스트
     """
 
     self._check(img)
@@ -686,7 +686,7 @@ Functions:
     """
     얼굴의 랜드마크를 인식하고, 거리, 방향을 추정합니다
 
-    :param numpy.ndarray img: 이미지 객체
+    :param numpy.ndarray image: 이미지 객체
 
     :returns: {얼굴의 거리, 방향, 랜드마크}의 리스트 (얼굴 2개까지 인식)
     """

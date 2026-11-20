@@ -491,7 +491,7 @@
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    손동작을 인식합니다.</span>
 
-<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
+<span class="sd">    :param numpy.ndarray image: 이미지 객체</span>
 <span class="sd">    </span>
 <span class="sd">    :returns: 모델에 따른 손동작 인식 결과</span>
 <span class="sd">    """</span>
@@ -578,10 +578,10 @@
 <a class="viewcode-back" href="../../libraries/vision_detect.html#openpibo.vision_detect.Detect.detect_object">[docs]</a>
   <span class="k">def</span><span class="w"> </span><span class="nf">detect_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    사물 인식 결과를 표시합니다.</span>
+<span class="sd">    이미지에서 사물을 찾습니다(모델은 ``load_object_model`` 로 바꿀 수 있습니다).</span>
 
 <span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
-<span class="sd">    :param array items: 사물 인식 결과</span>
+<span class="sd">    :returns: ``[{"name": 이름, "score": 점수(%), "box": (x1, y1, x2, y2)}, ...]``</span>
 <span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
       <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'"img" must be a valid OpenCV image (np.ndarray).'</span><span class="p">)</span>

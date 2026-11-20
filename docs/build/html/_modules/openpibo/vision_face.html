@@ -659,7 +659,7 @@
 <span class="sd">    얼굴 box 표시합니다.</span>
 
 <span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
-<span class="sd">    :param array item: 얼굴 좌표 (x1,y1,x2,y2) 리스트</span>
+<span class="sd">    :param array items: 얼굴 좌표 (x1,y1,x2,y2) 리스트</span>
 <span class="sd">    """</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
@@ -1089,7 +1089,7 @@
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    얼굴의 랜드마크를 인식하고, 거리, 방향을 추정합니다</span>
 
-<span class="sd">    :param numpy.ndarray img: 이미지 객체</span>
+<span class="sd">    :param numpy.ndarray image: 이미지 객체</span>
 
 <span class="sd">    :returns: {얼굴의 거리, 방향, 랜드마크}의 리스트 (얼굴 2개까지 인식)</span>
 <span class="sd">    """</span>

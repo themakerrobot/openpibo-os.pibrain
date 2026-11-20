@@ -1,6 +1,6 @@
 # 전수 조사 체크리스트
 
-**"전수 조사" 하라고 하면 이 표를 위에서부터 그대로 한다(261120, 사용자).** 그때그때 시험 스크립트를 새로 만들지 않는다 —
+**"전수 조사" 하라고 하면 이 표를 위에서부터 그대로 한다(261120, 사용자).** **태그를 딴다고 하면 먼저 이 전수 조사를 하고, FAIL 이 0 이 된 뒤에 태그 명령을 준다(261120, 사용자)** — 도움말 빌드(S9)·영문판 merge(S8)도 여기서 같이 확인된다. 그때그때 시험 스크립트를 새로 만들지 않는다 —
 자동으로 볼 수 있는 것은 `design/audit/` 의 검사 도구가 보고, 사람이 판단할 것은 아래 'M' 항목을 하나씩 본다.
 결과는 **항목 ID 마다 OK / FAIL / 해당 없음** 으로 보고하고, FAIL 은 고친 뒤 다시 돌려 OK 를 본다.
 새 규칙이 생기면(사용자가 정함) **이 표와 검사 도구에 먼저 넣고** 일을 한다. 한 번 지적받은 것은 다시 지적받지 않게 여기에 남긴다.
@@ -33,6 +33,7 @@ PY=<파이썬> bash design/audit/run.sh ../openpibo-os.pibrain --quick    # 폭 
 | S8 | 영문판 | `origin/main`↔`origin/global` 차이 = 16개(CLAUDE.md 표), 모드 차이 0, global `ko2en.js` 3종 1행 `const blang = 'en';`, main 은 아님, global 이 main 을 다 받음 |
 | S9 | 도움말 | 원본(`docs/source*`·`openpibo/`·블록 문구)이 마지막 빌드 뒤에 안 바뀜, `update_po.py --check` 빈 번역 0 |
 | S10 | CLAUDE.md 규칙 | `circul.us` 서버 주소 0 · 옛 `llama-server.service` 0 · 옛 `TemplateResponse(이름, …)` 0 · `enable=off` fetch 는 모두 `keepalive` · `sio.on('connection')` 0 · `run_ide.py` 문자열에 한글 0(키를 보낸다) |
+| S12 | API 설명 | `openpibo/*.py`(modules 제외) 함수 설명의 `:param 이름` 이 실제 인자에 있음(261120 — 손으로 찾던 것을 자동으로) |
 | S11 | 작업본 | (정보) 커밋 안 한 변경 목록 |
 
 ## B — 화면 검사 (`browser_check.js`, 자동, 미리보기)
@@ -55,6 +56,7 @@ PY=<파이썬> bash design/audit/run.sh ../openpibo-os.pibrain --quick    # 폭 
 3. 오른쪽 순서: **(앱 동작) → IDE → 전체화면 → 밝기 → 언어**. 앱 동작(새 대화·처음·선생님 잠금 등)은 IDE 왼쪽
 4. 버튼 높이 32px. IDE·전체화면·밝기는 **아이콘 + 글자**(13px, 굵게), **999px 이하는 아이콘만**(키트 기준과 같이)
 5. 언어는 늘 지금 언어를 보여 주는 select — 모든 앱에(로봇 놀이도 — 261120, 사용자)
+6. IDE 상단바의 앱 버튼 글자 = 그 앱 상단바의 앱 이름(예: 영문 IDE [Help] ↔ 도움말 `Help · piBo`, 261120 — `Guide` 로 달랐다)
 
 **예외(이유가 있어 일부러 다른 것 — 늘리지 말 것)**
 

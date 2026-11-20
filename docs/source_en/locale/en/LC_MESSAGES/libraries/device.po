@@ -118,9 +118,6 @@ msgstr "DC connector connection information response. With ``v=True``, an empty 
 msgid "시스템 메시지를 요청합니다."
 msgstr "Requests the system message."
 
-msgid "가져올 값 선택 ('pir'|'touch'|'dc'|'button'|'all')"
-msgstr "Value to get ('pir'|'touch'|'dc'|'button'|'all')"
-
 msgid "시스템 메시지 정보 응답 (pir-touch-dc-button). 응답이 없으면 ``v=True`` 일 때 빈 문자열 ``''``"
 msgstr "System message information response (pir-touch-dc-button). With ``v=True``, an empty string ``''`` if there is no response"
 
@@ -234,4 +231,7 @@ msgstr "RGB hex string #ffffff"
 
 #~ msgid "버튼 번호 (1 ~ 4)"
 #~ msgstr "Button number (1 ~ 4)"
+
+#~ msgid "가져올 값 선택 ('pir'|'touch'|'dc'|'button'|'all')"
+#~ msgstr "Value to get ('pir'|'touch'|'dc'|'button'|'all')"
 
