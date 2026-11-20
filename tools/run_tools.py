@@ -396,7 +396,7 @@ app.add_middleware(GZipExceptSSE)
 app.add_middleware(SharedFonts)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 # all.min.css 가 ../webfonts/ 를 찾는다. 없으면 아이콘이 빈칸으로 나온다(260924 전에는 그래서 이모지를 썼다)
-app.mount("/webfonts", StaticFiles(directory="webfonts"), name="webfonts")
+# /webfonts 는 마운트하지 않는다 — SharedFonts 가 fa-* 요청을 IDE(80)로 넘긴다(261120, 쓰지 않던 사본 폴더를 지움)
 
 @app.get('/', response_class=HTMLResponse)
 async def index(request: Request):

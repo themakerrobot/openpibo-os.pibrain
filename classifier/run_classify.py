@@ -141,7 +141,7 @@ class SharedFonts:
 
 app = FastAPI(lifespan=lifespan)
 app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
-app.mount("/webfonts", StaticFiles(directory=os.path.join(BASE_DIR, "webfonts")), name="webfonts")
+# /webfonts 는 마운트하지 않는다 — SharedFonts 가 fa-* 요청을 IDE(80)로 넘긴다(261120, 쓰지 않던 사본 폴더를 지움)
 app.add_middleware(
   CORSMiddleware,
   allow_origins=["*"],

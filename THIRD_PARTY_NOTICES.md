@@ -16,7 +16,7 @@ in each file are kept as they are.
 | jQuery 3.7.1 | `ide/static/jquery-3.7.1.min.js` | MIT |
 | jquery-jsonview | `ide/static/jquery.jsonview.min.*` | MIT |
 | Socket.IO client 4.x | `ide/static/`, `classifier/static/` `socket.io.min.js` | MIT |
-| Font Awesome Free 6.2.0 | `*/static/all.min.css`, `*/webfonts/` | Icons CC BY 4.0, Fonts SIL OFL 1.1, Code MIT |
+| Font Awesome Free 6.2.0 | `*/static/all.min.css`, `ide/webfonts/` | Icons CC BY 4.0, Fonts SIL OFL 1.1, Code MIT |
 | Pretendard 1.3.9 | `design/fonts/`, `ide/static/fonts/`, `docs/source/_static/fonts/` (`LICENSE.txt`) | SIL OFL 1.1 |
 | TensorFlow.js 4.22.0 | `classifier/static/vendor/tfjs/tf.min.js` | Apache-2.0 |
 | MediaPipe Tasks Vision (wasm) | `classifier/static/vendor/tasks-vision/` | Apache-2.0 |
@@ -37,7 +37,7 @@ in each file are kept as they are.
 | OpenVINO Open Model Zoo — face-detection-retail-0005 · age-gender-recognition-retail-0013 · emotions-recognition-retail-0003 · face-reidentification-retail-0095 (FP16) | `face/{detection,age-gender,emotion,reid}/` | Apache-2.0 | — |
 | MediaPipe face landmarker | `face/landmark/face_landmarker.task` | Apache-2.0 | — |
 | MediaPipe hand gesture recognizer (8 gestures) | `hand/gesture_recognizer.task` | Apache-2.0 per the MediaPipe model card — to be confirmed for this file | — |
-| Rock-paper-scissors gesture model (`rps_recognizer`, block option) | `hand/rps_recognizer.task` | Origin and license to be confirmed | — |
+| Rock-paper-scissors gesture model (`rps_recognizer`, block option) — trained by Circulus with MediaPipe Model Maker on Google's tutorial sample `rps_data_sample.zip` | `hand/rps_recognizer.task` | Model Maker and base models: Apache-2.0. The sample dataset has no license statement (zip, tutorial page checked 2026-11) — to be confirmed with Google | — |
 | edge-lab mask classifier (MediaPipe mobilenet_v3_small embedder + classifier, one ONNX) | `mask/mask.onnx` | Apache-2.0 | — |
 | easydetect ed-s COCO (ONNX, 320, 8-bit) | `object/ed-s-320.onnx` | Apache-2.0 (easydetect · D-FINE weights, per the HF model card; COCO annotations CC BY 4.0) | — |
 | Models trained in the easydetect lab (`job<N>.onnx`) | wherever the user puts them | Apache-2.0 code; weights belong to whoever trained them | — |
