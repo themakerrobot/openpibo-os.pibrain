@@ -179,8 +179,8 @@ const T = {
   // [카메라] 고르기(261120) — 보드 카메라 + 꽂혀 있는 USB 카메라
   cam_pick:           { ko: "카메라 고르기", en: "Choose camera" },
   cam_board:          { ko: "보드 카메라", en: "Board camera" },
-  cam_usb:            { ko: (n, name) => name ? `USB 카메라 · ${name}` : "USB 카메라", en: (n, name) => name ? `USB camera · ${name}` : "USB camera" },   // USB 카메라는 하나만(첫 번째) — 블록 [USB 카메라로 사진 찍기] 와 같다
-  cam_missing:        { ko: (n) => "USB 카메라 · (빠짐)", en: (n) => "USB camera · (unplugged)" },
+  cam_usb:            { ko: (n, name) => `cam${n} · ${name || "USB 카메라"}`, en: (n, name) => `cam${n} · ${name || "USB camera"}` },   // 블록 [USB 카메라 (cam1) 로 사진 찍기] 와 같은 이름(cam1·cam2)
+  cam_missing:        { ko: (n) => `cam${n} · (빠짐)`, en: (n) => `cam${n} · (unplugged)` },
   cam_switching:      { ko: "카메라를 바꾸는 중…", en: "Switching the camera…" },
   cam_sel_fail:       { ko: (e) => { const m = String(e).match(/^(.*[가-힣].*?) \/ ([^가-힣]+)$/); return `카메라를 바꾸지 못했어요. (${m ? m[1] : e})`; },
                         en: (e) => { const m = String(e).match(/^(.*[가-힣].*?) \/ ([^가-힣]+)$/); return `Could not switch the camera. (${m ? m[2] : e})`; } },
