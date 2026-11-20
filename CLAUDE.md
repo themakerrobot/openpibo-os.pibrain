@@ -586,7 +586,8 @@ Pibo 도구와 기능·마크업이 달라(REST/SSE, 5탭) 키트의 `pb-v2` 층
   화면: 처음·카메라 끔·[처음 화면으로] = IP 화면 흉내(`network_disp.py` 줄 자리, IP 는 주소창 호스트), [화면에 보내기] = 미리보기 canvas 복사, 지우기 = 배경색, 카메라 켬 = 카메라 아이콘(영상은 안 받는다 — 대역폭)
 - 색은 `tools/static/index.css` 의 `--c-*` — **IDE `v2/ide.css` 와 같은 값.** 같이 고칠 것
 - 이모지를 Font Awesome 아이콘으로 바꿨다. 그러려고 `tools/webfonts/`(fa-solid·brands)를 두고
-  `run_tools.py` 에 `/webfonts` 를 마운트했다. 전에는 마운트가 없어 아이콘이 빈칸이라 이모지를 썼다
+  `run_tools.py` 에 `/webfonts` 를 마운트했다. 전에는 마운트가 없어 아이콘이 빈칸이라 이모지를 썼다.
+  **261120 에 `tools/webfonts/`·`classifier/webfonts/` 와 그 마운트를 지웠다** — 260929 부터 `SharedFonts` 가 fa-* 를 IDE(80)로 넘겨서 사본이 한 번도 안 쓰였다(파이보도 같음)
 - `ko2en.js` 의 문구에서 이모지·✓ 를 뺐다. 1·2행은 그대로(`global` 델타)
 - 버튼 안 아이콘을 지우지 않게 카메라 버튼은 라벨 `<span>` 만 바꾼다(`setCamLabel`)
 - 서비스 꺼짐: `/health` 를 5초마다 보고 두 번 연속 실패하면 배너 + [다시 켜기](`launch.html` 로 다시 연다).
@@ -881,6 +882,7 @@ IDE 화면 출력 안내·툴팁을 블록 이름(`모니터 화면에 보여주
 `design/README.md`(두 리포 같은 파일로), 손동작 모델 라이선스 줄(**확인 필요**),
 대화 화면 `#model_file` 이 `.model/VERSION` 에서 판 이름을 읽게(261106 실제 파일 뒤로 `themaker-ko` 만 보였다), `gen_block_guide.py` 가 그림을 **다 그린 뒤에만** 옛 그림을 지우게(전엔 IDE 주소가 틀리면 그림이 다 지워진 채 멈췄다), `ide.css` 머리 주석(A안 배치·파랑).
 PiBrain 만: IMAGE.md 패키지 버전 확인 문구(이미 확인함)·마이크 없음, CLAUDE.md 서비스 표(대화 웹·로봇 놀이)·대화 도구 다시 넣은 것·A안·분류기 세로 스트림
+**사용자 결정(261120)**: 안 쓰던 백업 파일 2개(`ide/static/disable-top-blocks.js.bak`·`system/pibrain320.jpg.bak`)를 지웠다(`test/test` 는 H/W 검수를 손으로 띄우는 스크립트라 남김). 도구·분류기의 `webfonts/` 사본과 마운트를 지웠다(위 '이모지' 줄). `rps_recognizer.task` 데이터셋 라이선스는 적혀 있지 않다 — 파이보 CLAUDE.md '2차 전수조사'
 
 ## 오류 쉬운 말 (261119) — 실행 출력 위 빨간 상자
 
