@@ -381,7 +381,10 @@ async def tools(enable: str):
   elif enable == "off":
     subprocess.Popen(['systemctl', 'stop', 'tools.service'])
   await asyncio.sleep(2)
-  show_ip(keep='tools.service' if enable == "on" else None)   # 나가거나 다른 앱으로 옮기면 로봇 화면은 늘 IP 화면(261116)
+  # 나가거나 다른 앱으로 옮기면 로봇 화면은 늘 IP 화면(261116). 도구는 켜질 때 스스로 IP 화면을 그리므로 켤 때는 그리지 않는다 —
+  # 같이 그리면 화면이 두 번 깜빡이고, 예전엔 두 프로그램이 동시에 써서 PiBrain LCD 가 반전됐다(261120)
+  if enable != "on":
+    show_ip()
   return HTMLResponse(content="", status_code=200)
 
 @app.get('/classifier')

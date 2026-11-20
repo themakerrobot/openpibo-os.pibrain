@@ -19,7 +19,6 @@ import os
 import numpy as np
 import openpibo_models
 import fcntl
-import time
 from contextlib import contextmanager
 
 # 로봇 화면(SPI)은 한 번에 한 프로세스만 쓴다(261120). 도구·IP 화면(network_disp)·체험 앱·학생 프로그램이 따로 화면을 열어
@@ -45,10 +44,10 @@ def _screen_lock():
 
 def _ili9341_reset(lcd):
   # LCD 리셋 핀이 연결돼 있지 않아(rst=None) 재부팅해도 LCD 는 앞 상태(반전 등)를 그대로 들고 있다.
-  # 라이브러리 초기화 순서에는 소프트 리셋·반전 끄기가 없어서, 소프트 리셋(0x01) 뒤 다시 초기화한다(261120)
-  lcd.write(0x01)
-  time.sleep(0.15)
-  lcd.init()
+  # 라이브러리 초기화 순서에는 반전 끄기가 없어서 여기서 보낸다(261120): 반전 끔(0x20) · 보통 표시(0x13) · 8색 모드 끔(0x38).
+  # 소프트 리셋(0x01)은 화면이 잠깐 하얗게 깜빡여서 쓰지 않는다(261120 실기기)
+  for cmd in (0x20, 0x13, 0x38):
+    lcd.write(cmd)
 
 class Oled:
   """
