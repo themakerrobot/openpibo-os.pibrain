@@ -86,7 +86,7 @@ Functions:
     cap = None
     for attempt in range(3):
       try:
-        cap = Picamera2()
+        cap = Picamera2(self._board_num())
         config = cap.create_still_configuration(
                   main={
                     'size': (1280, 960),
@@ -112,6 +112,15 @@ Functions:
         time.sleep(1.0)
     self.cap = cap
 
+
+  @staticmethod
+  def _board_num():
+    # libcamera 는 USB(UVC) 카메라도 카메라로 센다(261120 PiBrain: 0 ov5647, 1 USB 2.0 PC Cam).
+    # 순서에 기대지 않고 USB 가 아닌 첫 카메라(보드 카메라)를 연다
+    for c in Picamera2.global_camera_info():
+      if 'usb' not in str(c.get('Id', '')).lower():
+        return c.get('Num', 0)
+    raise IndexError('보드 카메라를 찾지 못했어요 / The board camera was not found')
 
   @staticmethod
   def _cam_no(cam):
