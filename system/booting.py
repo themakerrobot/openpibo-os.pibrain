@@ -1,9 +1,8 @@
 from openpibo.oled import OledByPiBrain as Oled
 from openpibo.audio import Audio
 from fastapi import FastAPI, Body, Request
-from fastapi.responses import JSONResponse,HTMLResponse
+from fastapi.responses import JSONResponse,HTMLResponse,FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 
@@ -31,12 +30,13 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, 
 apmode = False
 nw = netwatch.NetWatch()   # 학교 WiFi ↔ AP 전환 판단(netwatch.py — 파이보와 같은 파일, 261102 에 옮김)
 
-templates = Jinja2Templates(directory="/home/pi/openpibo-os/docs")
 app.mount("/build", StaticFiles(directory="/home/pi/openpibo-os/docs/build"), name="build")
 
 @app.get('/', response_class=HTMLResponse)
 async def read_root(request: Request):
-  return templates.TemplateResponse("index.html", {"request": request})
+  # 도움말 첫 화면(언어에 따라 build/html·build/en 으로 보냄). Jinja 문법이 없어 파일 그대로 보낸다 —
+  # 예전 TemplateResponse("index.html", {"request": …}) 순서는 starlette 1.0 부터 500(261120 전수 조사, IDE 와 같은 방식)
+  return FileResponse("/home/pi/openpibo-os/docs/index.html", media_type="text/html", headers={"Cache-Control": "no-cache"})
 
 
 @app.get('/wifi_scan')

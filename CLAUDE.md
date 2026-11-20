@@ -26,6 +26,15 @@ PiBrain OS 리포. 기기의 `/home/pi/openpibo-os` 가 이 리포의 작업본�
   라이선스 고지(`THIRD_PARTY_NOTICES.md`·`LICENSE`)에 필요한 저작권자 이름과 자사(Circulus)는 예외
 - 출하 기본 WiFi(`pibo` / `!pibo0314`)가 문서에 있는 것은 괜찮다(261101, 사용자). 다시 문제 삼지 말 것
 
+## 전수 조사 — `AUDIT.md` 체크리스트 (261120, 사용자)
+
+**"전수 조사" 하라고 하면 리포 맨 위 `AUDIT.md` 를 위에서부터 그대로 한다.** 그때그때 시험 스크립트를 새로 만들지 말 것.
+자동 항목(S 파일·B 화면)은 파이보 리포의 `PY=<파이썬> bash design/audit/run.sh ../openpibo-os.pibrain`, 사람이 볼 항목(M)·기기 항목(D)은 표대로 보고 항목 ID 마다 OK/FAIL 로 보고한다.
+**일관성은 기본이다**(사용자) — 화면마다 같은 부품·순서·크기, 다르면 고친다. 일부러 다른 것은 `AUDIT.md` '예외' 표에만 둔다.
+새 규칙이 생기면 `AUDIT.md`·검사 도구에 먼저 넣는다. `AUDIT.md` 는 두 리포 같은 파일, 도구(`design/audit/`)는 파이보 리포에만 있다.
+
+---
+
 ## 브랜치
 
 | 브랜치 | 용도 |
@@ -819,7 +828,7 @@ classifier 언어 토글, 검수 보고서 구조, Tools 서비스.
 - **차시·도전은 `kids/content.json` 만 고친다**(`concepts` `lessons` `challenges`, 정답형 `want`·열린형 조건 열쇠). 코드는 안 바뀐다
 - 재주 한도: 24개 · 3겹 · 펼쳐 300번 · 줄 20장. 자기 자신을 부르는 재주(`cycle`)·쓰이는 재주 지우기는 막는다. [블록으로 보기] 에서 재주는 IDE **함수 블록**
 - 로봇 말은 처음 한 번 6~15초라 **`kids/make_voice.py --device <제품>` 으로 미리** 만든다. 문구는 IDE `ko2en.js` 끝의 `kids_*` 키(두 리포 같은 블록)
-- 선생님 잠금: 상단바 자물쇠 3초 → 숫자 4개(기본 1234) → 오늘 차시(목표·발문)·번호 수·도달 기록
+- 선생님 잠금: 상단바 자물쇠 3초 → 숫자 4개(기본 1234) → 오늘 차시(목표·발문)·번호 수·도달 기록. **한/영은 다른 앱처럼 상단바 언어 select**(261120, 사용자 — 전엔 잠금 안에만 있었다), 자물쇠는 앱 동작이라 IDE 왼쪽
 - **키트 변경**: body `pb-plain` 이면 `pibo-ui.js` 가 `pb-v2` 층을 얹지 않는다(그 층의 앱 버튼 규칙이 카드 색을 덮었다). `design/sync.sh` 가 `kids/static` 에도 복사
 - **키우기 친구는 써큘러스 캐릭터(261028, 사용자 — 원본 그림이 없어 SVG 로 그림)**: `kids/static/pet.js`(`PetArt.svg(포즈, {color, hat, glasses})`). 상태 6(normal·happy·hungry·sleepy·sleep·sad) + 돌보기 반응(밥 eat · 놀기 ball · 씻기 wash, 2.5초) + 도전 결과(cheer·oops). 꾸미기: 색(안테나·모자·팻말·밥그릇) · 머리 소품(안테나/모자) · 안경. 돌보기는 **PiBrain 버튼 4개에 맞춰 4가지**(밥·놀기·재우기·씻기 — 늘리지 말 것, 사용자). PiBrain LCD 는 `kids/make_pet_png.py` 가 미리 만든 PNG(`static/pet/lcd/`, 36장 — 상태 6 + 반응 3 × 소품·안경 4벌)를 `face.py` 가 친구 색으로 바꿔 띄운다. LCD 에는 **점수 세 줄**(배고픔·기분·졸림, 바뀌면 다시 그림)과 **말풍선**(버튼·화면으로 돌보면 반응 포즈 + 로봇이 하는 말, 2.5초 이상)도 그린다. 글꼴은 리포의 Pretendard(woff2 — 기기 PIL 이 못 읽으면 KDL.ttf, **확인 필요**) — **pet.js 를 고치면 PNG 를 다시 만들 것**
 - 세로 스크롤: 키트 `.pb-shell` 이 body 스크롤을 막으므로 `.kids-main` 이 스크롤 칸이다(261028 — 전엔 작은 화면에서 아래가 잘렸다)
@@ -942,6 +951,7 @@ PiBrain 만: IMAGE.md 패키지 버전 확인 문구(이미 확인함)·마이�
   템플릿에 Jinja 문법이 없어서다. 전에 쓰던 `TemplateResponse(이름, {"request": ...})` 는 starlette 1.0 부터
   받지 않아 첫 화면이 500 이 된다(컨테이너 starlette 1.7 에서 확인). 템플릿에 Jinja 를 쓰게 되면
   `TemplateResponse(request, 이름)` 새 순서로 쓸 것
+  - **도움말(8080, `system/booting.py` 의 `/`)도 261120 에 `FileResponse(docs/index.html)` 로 바꿨다** — 그때까지 옛 순서라 기기 starlette 가 1.0 이상이면 [도움말] 첫 화면이 500 이었을 것(전수 조사 S10 이 찾음, 기기 starlette 버전은 확인 필요)
 - `restore` 의 `except` 는 `app.sio.emit(..., to=sid)`. 전엔 정의 안 된 `sio` 를 불러 오류 안내가 안 나갔다
 - **`utils_dict_create` 는 값 블록이다(260924v3).** 전엔 위아래로 끼우는 모양인데 생성기가 값을 돌려줘서
   코드 생성이 실패했다(`[변수 = 빈 사전]` 을 만들 수 없었다). 예전 모양으로 저장된 파일은 불러오면

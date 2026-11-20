@@ -12,7 +12,7 @@
   <link rel="shortcut icon" href="../static/icon.png?ver=261102v2" type="image/png" />
   <!-- 문구는 IDE 의 ko2en.js 를 같이 쓴다(kids_* 키, 영문판 델타를 늘리지 않으려고). IDE(80)는 늘 떠 있다 -->
   <script>(function () { var p = new URLSearchParams(location.search).get('ide') || 80;   /* ?ide= 는 시험용 */
-    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261116v2"><\/script>'); })();</script>
+    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261120v2"><\/script>'); })();</script>
 </head>
 
 <!-- pb-plain: 키트의 pb-v2 층을 얹지 않는다(그 층의 앱 버튼 규칙이 카드 색을 덮는다) -->
@@ -25,10 +25,11 @@
     <div class="pb-iconbar">
       <button type="button" class="pb-iconbtn kids-whobt" id="who_bt" data-title-key="kids_switch" hidden><i class="fa-solid fa-user" id="who_icon"></i><span class="pb-iconbtn__label" id="who_no"></span></button>
       <button type="button" class="pb-iconbtn" id="home_bt" hidden><i class="fa-solid fa-house"></i><span class="pb-iconbtn__label" data-key="kids_home"></span></button>
-      <button type="button" class="pb-iconbtn" id="ide_bt" title="IDE"><i class="fa-solid fa-code"></i><span class="pb-iconbtn__label">IDE</span></button>
-      <a class="pb-iconbtn" id="fullscreen_bt" data-title-key="kids_fullscreen"><span id="fullscreen_txt"></span></a>
-      <!-- 선생님 잠금: 3초 길게 누르기 → 숫자 4개 -->
+      <!-- 선생님 잠금: 3초 길게 누르기 → 숫자 4개. 앱 동작이라 IDE 왼쪽(상단바 규칙 — AUDIT.md B2) -->
       <button type="button" class="pb-iconbtn kids-lockbt" id="lock_bt" data-title-key="kids_teacher_hold"><i class="fa-solid fa-lock"></i><svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="16"/></svg></button>
+      <button type="button" class="pb-iconbtn" id="ide_bt" title="IDE"><i class="fa-solid fa-code"></i><span class="pb-iconbtn__label">IDE</span></button>
+      <a class="pb-iconbtn" id="fullscreen_bt" data-title-key="kids_fullscreen"><span id="fullscreen_txt"></span><span class="pb-iconbtn__label" data-key="kids_fullscreen"></span></a>
+      <select class="pb-field pb-field--sm" id="language" aria-label="Language"><option value="ko">한국어</option><option value="en">English</option></select>
     </div>
   </header>
 
@@ -257,8 +258,6 @@
       <div class="kids-form">
         <span class="pb-label" data-key="kids_t_lesson"></span>
         <div><select class="pb-field" id="t_lesson"></select><p class="kids-lhelp" id="t_lesson_help"></p></div>
-        <span class="pb-label" data-key="kids_t_lang"></span>
-        <select class="pb-field" id="t_lang"><option value="ko">한국어</option><option value="en">English</option></select>
         <span class="pb-label" data-key="kids_t_voice"></span>
         <div><select class="pb-field" id="t_voice"></select><p class="kids-note" data-key="kids_t_voice_note"></p></div>
         <span class="pb-label" data-key="kids_t_volume"></span>
@@ -292,6 +291,6 @@
 
   <script src="../static/pibo-ui.js?ver=261102v1"></script>
   <script src="../static/pet.js?ver=261028v3"></script>
-  <script src="../static/kids.js?ver=261116v3"></script>
+  <script src="../static/kids.js?ver=261120v1"></script>
 </body>
 </html>

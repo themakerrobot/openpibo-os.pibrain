@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=4e20442a" />
+    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=ff6fa555" />
     
     
 
@@ -109,18 +109,23 @@
   </a>
   <div class="pb-topbar__right">
     <a class="pb-topbar__btn pb-topbar__ide" href="/" title="PiBrain IDE">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 7 3.5 12l5 5M15.5 7l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>IDE</span>
+      <svg viewBox="0 0 640 512" fill="currentColor" aria-hidden="true"><path d="M415 41 287 489Q283 502 272 508Q260 514 247 511Q234 507 228 496Q222 484 225 471L353 23Q357 10 368 4Q380 -2 393 1Q406 5 412 16Q418 28 415 41ZM519 121 631 233Q640 243 640 256Q640 269 631 279L519 391Q509 400 496 400Q483 400 473 391Q464 381 464 368Q464 355 473 345L563 256L473 167Q464 157 464 144Q464 131 473 121Q483 112 496 112Q509 112 519 121ZM167 167 77 256 167 345Q176 355 176 368Q176 381 167 391Q157 400 144 400Q131 400 121 391L9 279Q0 269 0 256Q0 243 9 233L121 121Q131 112 144 112Q157 112 167 121Q176 131 176 144Q176 157 167 167Z"/></svg><span>IDE</span>
     </a>
+    <button type="button" class="pb-topbar__btn pb-topbar__fs" title="전체화면" hidden>
+      <svg class="pb-ic-max" viewBox="0 0 448 512" fill="currentColor" aria-hidden="true"><path d="M447 319V454Q445 476 424 477H289Q268 476 259 458Q252 439 266 423L296 393L224 324L153 395L183 425Q197 441 190 460Q181 479 160 479H24Q3 477 1 456V321Q2 300 21 291Q26 288 32 288Q45 288 55 297L85 327L156 256L85 185L55 215Q39 229 20 222Q1 213 0 191V56Q2 35 23 33H158Q179 34 188 53Q192 58 191 63Q191 63 191 63Q191 76 182 86L153 117L224 188L295 117L265 87Q251 71 258 52Q267 33 288 32H423Q445 34 446 55V190Q445 211 426 220Q408 227 392 213L362 183L290 254L362 326L392 296Q407 282 426 289Q447 300 447 319Z"/></svg>
+      <svg class="pb-ic-min" viewBox="0 0 512 512" fill="currentColor" aria-hidden="true"><path d="M200 287H64Q43 288 34 307Q27 326 41 342L71 372L9 434Q0 444 0 456Q0 469 9 479L32 502Q42 511 55 511Q67 511 77 502L139 440L169 470Q179 479 192 479Q198 479 204 477Q223 468 224 447V311Q224 301 217 294Q210 287 200 287ZM312 224H447Q468 223 477 204Q484 185 470 169L440 139L502 77Q511 67 511 55Q511 42 502 32L479 9Q469 0 456 0Q444 0 434 9L372 71L342 41Q326 27 307 34Q289 43 288 64V199Q290 222 312 224ZM204 34Q185 27 169 41L139 71L77 9Q67 0 55 0Q42 0 31 9L8 32Q-1 42 -1 55Q-1 67 8 77L71 139L41 169Q32 179 32 192Q32 198 34 204Q43 223 64 224H199Q221 222 222 201V64Q224 43 204 34ZM441 373 471 343Q485 327 478 308Q469 288 448 287H313Q291 289 290 310V445Q291 466 310 475Q329 482 344 468L374 438L437 500Q446 509 459 509Q472 509 482 500L504 477Q514 467 514 455Q514 442 504 432L441 373Z"/></svg>
+      <span>전체화면</span>
+    </button>
+    <button type="button" class="pb-topbar__btn pb-topbar__theme">
+      <svg class="pb-ic-light" viewBox="0 0 512 512" fill="currentColor" aria-hidden="true"><path d="M256 159Q215 160 189 187Q162 214 161 254Q162 294 188 322Q215 350 256 351Q297 350 324 323Q350 296 351 256Q350 216 323 188Q297 160 256 159ZM509 347 446 255 509 164Q514 157 511 150Q508 142 499 140L390 121L371 12Q369 3 362 0Q354 -3 347 2L256 66L164 3Q157 -2 150 1Q142 4 140 13L122 122L13 141Q4 143 1 150Q-2 157 3 164L66 256L3 347Q-2 354 1 362Q4 369 13 371L122 390L141 499Q143 508 150 511Q158 514 165 509L256 446L347 509Q354 514 362 511Q369 508 371 499L390 390L499 371Q508 369 511 362Q514 354 509 347ZM256 383Q202 382 166 346Q130 310 129 256Q130 202 166 166Q202 130 256 129Q310 130 346 166Q382 202 383 256Q382 310 346 346Q310 382 256 383Z"/></svg>
+      <svg class="pb-ic-soft" viewBox="0 0 512 512" fill="currentColor" aria-hidden="true"><path d="M512 256Q511 328 477 385Q443 443 385 477Q328 511 256 512Q184 511 127 477Q69 443 35 385Q1 328 0 256Q1 184 35 127Q69 69 127 35Q184 1 256 0Q328 1 385 35Q443 69 477 127Q511 184 512 256ZM256 64V448Q338 446 392 392Q446 338 448 256Q446 174 392 120Q338 66 256 64Z"/></svg>
+      <svg class="pb-ic-dark" viewBox="0 0 512 512" fill="currentColor" aria-hidden="true"><path d="M32 256Q33 193 63 143Q92 92 143 63Q193 33 256 32Q265 32 276 33Q288 34 297 36Q304 38 305 44Q306 51 300 55Q258 79 235 120Q212 160 211 208Q212 263 241 306Q270 348 317 369Q364 390 420 380Q427 379 430 385Q434 391 430 397Q398 436 353 458Q308 480 256 480Q193 479 143 449Q92 420 63 369Q33 319 32 256Z"/></svg>
+      <span class="pb-topbar__theme-txt"></span>
+    </button>
     <select class="pb-topbar__lang" aria-label="Language" hidden>
       <option value="ko" selected>한국어</option>
       <option value="en">English</option>
     </select>
-    <button class="theme-toggle pb-topbar__btn pb-topbar__m" aria-label="화면 밝기">
-      <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
-      <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
-      <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-      <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-    </button>
     <label class="pb-topbar__btn pb-topbar__m" for="__toc" aria-label="이 페이지 목차">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h11M4 12h16M4 18h11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
     </label>

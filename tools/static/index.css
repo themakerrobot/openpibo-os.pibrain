@@ -264,9 +264,13 @@ button, input, textarea, select { font: inherit; color: inherit; }
 }
 
 /* ── 폭에 따라 ───────────────────────────────────────────────────────── */
+/* 상단바 버튼 글자는 키트(.pb-iconbtn__label)와 같이 999px 이하에서 접는다(261120 전수 조사 B2 — 전엔 720px) */
+@media (max-width: 999px) {
+  .tl-hbtn { padding: 0 8px; }
+  .tl-hbtn > span:not(:only-child) { display: none; }
+}
 @media (max-width: 720px) {
   .tl .pb-header__app { display: none; }
-  .tl-hbtn > span:not(:only-child) { display: none; }
   .tab.active { grid-template-columns: minmax(0, 1fr); }
   .voice-grid { grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); }
 }
