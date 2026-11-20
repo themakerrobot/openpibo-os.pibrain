@@ -18,6 +18,37 @@ from PIL import Image, ImageDraw, ImageFont, ImageOps
 import os
 import numpy as np
 import openpibo_models
+import fcntl
+import time
+from contextlib import contextmanager
+
+# 로봇 화면(SPI)은 한 번에 한 프로세스만 쓴다(261120). 도구·IP 화면(network_disp)·체험 앱·학생 프로그램이 따로 화면을 열어
+# 동시에 쓰면 D/C 핀이 섞여 그림 바이트가 명령으로 들어간다 — PiBrain LCD 가 반전(INVON)되거나 방향·색이 틀어졌다.
+# 프로세스·스레드를 가리지 않고 잠그도록 파일 잠금(flock)을 쓴다. 잠금 파일을 못 열면 예전처럼 잠그지 않고 그린다.
+SCREEN_LOCK = '/tmp/openpibo_screen.lock'
+
+@contextmanager
+def _screen_lock():
+  fd = None
+  try:
+    fd = os.open(SCREEN_LOCK, os.O_RDONLY | os.O_CREAT, 0o666)
+    fcntl.flock(fd, fcntl.LOCK_EX)
+  except OSError:
+    if fd is not None:
+      os.close(fd)
+    fd = None
+  try:
+    yield
+  finally:
+    if fd is not None:
+      os.close(fd)
+
+def _ili9341_reset(lcd):
+  # LCD 리셋 핀이 연결돼 있지 않아(rst=None) 재부팅해도 LCD 는 앞 상태(반전 등)를 그대로 들고 있다.
+  # 라이브러리 초기화 순서에는 소프트 리셋·반전 끄기가 없어서, 소프트 리셋(0x01) 뒤 다시 초기화한다(261120)
+  lcd.write(0x01)
+  time.sleep(0.15)
+  lcd.init()
 
 class Oled:
   """
@@ -53,11 +84,12 @@ Functions:
     cs_pin = digitalio.DigitalInOut(board.D8)    # any pin!
     dc_pin = digitalio.DigitalInOut(board.D23)    # any pin!
 
-    self.oled = ssd1306.SSD1306_SPI(self.width, self.height, spi, dc_pin, rst_pin, cs_pin)
     self.font = ImageFont.truetype(self.font_path, self.font_size)
     self.image = Image.new("1", (self.width, self.height))
-    self.oled.fill(0)
-    self.oled.show()
+    with _screen_lock():
+      self.oled = ssd1306.SSD1306_SPI(self.width, self.height, spi, dc_pin, rst_pin, cs_pin)
+      self.oled.fill(0)
+      self.oled.show()
 
   def show(self):
     """
@@ -66,8 +98,9 @@ Functions:
     **이 메소드를 사용하지 않으면 그림을 그려도 oled 화면에 아무것도 출력되지 않습니다.**
     """
 
-    self.oled.image(self.image)
-    self.oled.show()
+    with _screen_lock():
+      self.oled.image(self.image)
+      self.oled.show()
 
   def clear(self, image=True, fill=True, show=True):
     """
@@ -80,10 +113,11 @@ Functions:
 
     if image == True:
       self.image = Image.new("1", (self.width, self.height))
-    if fill == True:
-      self.oled.fill(0)
-    if show == True:
-      self.oled.show()
+    with _screen_lock():
+      if fill == True:
+        self.oled.fill(0)
+      if show == True:
+        self.oled.show()
 
   def set_font(self, filename=None, size=None):
     """
@@ -250,10 +284,12 @@ Functions:
     cs_pin.switch_to_output(value=0)
     dc_pin = digitalio.DigitalInOut(board.D23)    # any pin!
   
-    self.oled = ili9341.ILI9341(spi, rotation=0, rst=rst_pin, cs=cs_pin, dc=dc_pin, baudrate=36000000)
     self.font = ImageFont.truetype(self.font_path, self.font_size)
     self.image = Image.new("RGB", (self.width, self.height), (0,0,0))
-    self.oled.fill(0)
+    with _screen_lock():
+      self.oled = ili9341.ILI9341(spi, rotation=0, rst=rst_pin, cs=cs_pin, dc=dc_pin, baudrate=36000000)
+      _ili9341_reset(self.oled)
+      self.oled.fill(0)
 
   def show(self):
     """
@@ -262,7 +298,8 @@ Functions:
     **이 메소드를 사용하지 않으면 그림을 그려도 oled 화면에 아무것도 출력되지 않습니다.**
     """
 
-    self.oled.image(self.image)
+    with _screen_lock():
+      self.oled.image(self.image)
 
   def clear(self, image=True, fill=True, show=True):
     """
@@ -275,10 +312,11 @@ Functions:
 
     if image == True:
       self.image = Image.new("RGB", (self.width, self.height), (0,0,0))
-    if fill == True:
-      self.oled.fill(0)
-    if show == True:
-      self.oled.image(self.image)
+    with _screen_lock():
+      if fill == True:
+        self.oled.fill(0)
+      if show == True:
+        self.oled.image(self.image)
 
   def set_font(self, filename=None, size=None):
     """
