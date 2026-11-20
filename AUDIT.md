@@ -32,7 +32,7 @@ PY=<파이썬> bash design/audit/run.sh ../openpibo-os.pibrain --quick    # 폭 
 | S7 | 유출 | 세션 링크·`Claude-Session`·개인 메일·키·토큰 0, 261102 뒤 커밋 메시지에 세션 링크 0, 업체·제품 이름 0(목록이 있을 때) |
 | S8 | 영문판 | `origin/main`↔`origin/global` 차이 = 16개(CLAUDE.md 표), 모드 차이 0, global `ko2en.js` 3종 1행 `const blang = 'en';`, main 은 아님, global 이 main 을 다 받음 |
 | S9 | 도움말 | 원본(`docs/source*`·`openpibo/`·블록 문구)이 마지막 빌드 뒤에 안 바뀜, `update_po.py --check` 빈 번역 0 |
-| S10 | CLAUDE.md 규칙 | `circul.us` 서버 주소 0 · 옛 `llama-server.service` 0 · 옛 `TemplateResponse(이름, …)` 0 · `enable=off` fetch 는 모두 `keepalive` · `sio.on('connection')` 0 · `run_ide.py` 문자열에 한글 0(키를 보낸다) |
+| S10 | CLAUDE.md 규칙 | `circul.us` 서버 주소 0 · 옛 `llama-server.service` 0 · 옛 `TemplateResponse(이름, …)` 0 · `enable=off` fetch 는 모두 `keepalive` · `sio.on('connection')` 0 · `run_ide.py` 문자열에 한글 0(키를 보낸다) · 도움말 `html_baseurl` = 그 리포의 GitHub Pages 주소 |
 | S12 | API 설명 | `openpibo/*.py`(modules 제외) 함수 설명의 `:param 이름` 이 실제 인자에 있음(261120 — 손으로 찾던 것을 자동으로) |
 | S11 | 작업본 | (정보) 커밋 안 한 변경 목록 |
 
