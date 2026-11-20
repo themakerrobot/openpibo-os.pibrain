@@ -9,6 +9,7 @@ as PiBrain, type **PiBrain's IP address** (shown on the PiBrain screen at startu
 | **Tools** | Try the buttons, LED, camera, voice and screen right away, without code | [Tools] at the top of the IDE |
 | **Chat** | Chat in text with the language model (LLM) running inside PiBrain | [Chat] at the top of the IDE |
 | **Classifier** | Collect examples with the camera and teach your own AI | [Classifier] at the top of the IDE |
+| **Robot Play** | Elementary students teach the robot friend tricks with cards (no coding) | [Robot Play] at the top of the IDE |
 | **Guide** | This document | [Guide] at the top of the IDE |
 
 ```{note}
@@ -20,17 +21,22 @@ Everything runs **inside PiBrain** (voices, chat and the classifier included). O
 
 ![IDE with blocks](images/ide_block.png)
 
-- **Top bar**: switch the editor with [Blocks | Python]. On the right are Tools, Chat, Classifier, Guide, Full screen and [⋯] More
+- **Top bar**: the folder button on the far left opens the **file drawer**. [Blocks | Python] in the middle switches the editor. On the right are Tools, Chat, Classifier, Robot Play, Guide, Full screen and [⋯] More
   (brightness · font size · Python editor theme · language · factory reset · power off · source code and license)
-- **Left panel**: **[Run] [Stop]** at the bottom are always visible.
-  - [PiBrain] — screen output (pictures sent with the `Show image … on the monitor` block), status (WiFi settings, temperature, memory, uptime, version), program output, sending input to the program
-  - [Files] — the file list, new file / new folder / upload, and a preview for pictures and sounds
-- **Blocks**: drag blocks out of the categories on the left. Type a word such as "sound" or "face" into **Search blocks** at the top
-  to find blocks. [Python code] shows the Python code your blocks make. See **Blocks** on the left for every block.
+- **File drawer**: the file list, [Add] (new file / new folder / upload) and a preview for pictures and sounds. It is open at first and closes when you open a file or tap the editor.
+  Tapping the file name in the editor bar opens it again
+- **Run panel on the right**: **[Run] [Stop]** with the run status, screen output (pictures sent with the `Show image … on the monitor` block), program output and sending input to the program.
+  The button at the right end of the editor bar hides or shows it, and it opens again when you run a program. Hide both the drawer and the run panel to give the blocks the whole width
+- **Status bar at the bottom**: connection · version · serial | WiFi (tap for WiFi settings) · temperature · memory · uptime
+- **Blocks**: drag blocks out of the categories on the left. Type a word such as "sound" or "face" into **Search blocks** at the top to find blocks.
+  Choose [Easy] in **[Easy | All]** on the editor bar to see only beginner blocks (repeat forever, motions, lights, sounds, sensors, AI eyes, score and more).
+  [Python code] shows the Python code your blocks make. See **Blocks** on the left for every block.
+- **When there is an error**: a red box above the output says where (the block outlined in red in block mode, or the line number in Python) and what went wrong in plain words.
+  [Show block] / [Show line] takes you there, and the red outline goes away when you change the block
 
 ![IDE with Python](images/ide_python.png)
 
-- **Python**: the `openpibo` package gives you every PiBrain feature. `print` goes to [Output] on the left and `input` reads from the input box.
+- **Python**: the `openpibo` package gives you every PiBrain feature. `print` goes to [Output] on the right and `input` reads from the input box below it.
   See **Python** on the left for the API
 - Programs run inside PiBrain. Press [Stop] to stop one
 

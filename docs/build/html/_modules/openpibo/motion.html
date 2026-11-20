@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="색인" href="../../genindex.html"><link rel="search" title="검색" href="../../search.html">
         <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/_modules/openpibo/motion.html">
 
-    <link rel="shortcut icon" href="../../_static/icon.png"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+    <link rel="shortcut icon" href="../../_static/icon.png"><!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
         <title>openpibo.motion - 도움말 · PiBrain</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
@@ -473,7 +473,7 @@
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">Exception</span> <span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">" must be integer type'</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">9</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">:</span>   <span class="c1"># 전엔 abs(n) &gt; 9 라 -9~-1 도 통과해 없는 모터 번호가 서보로 갔다</span>
       <span class="k">raise</span> <span class="ne">Exception</span> <span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">" must be 0~9'</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span><span class="p">:</span>
@@ -539,13 +539,13 @@
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">Exception</span> <span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">" must be integer type'</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">9</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">:</span>   <span class="c1"># 전엔 abs(n) &gt; 9 라 -9~-1 도 통과해 없는 모터 번호가 서보로 갔다</span>
       <span class="k">raise</span> <span class="ne">Exception</span> <span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">" must be 0~9'</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">speed</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">Exception</span> <span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">speed</span><span class="si">}</span><span class="s1">" must be integer type'</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">speed</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">speed</span> <span class="o">&lt;=</span> <span class="mi">255</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">Exception</span> <span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">speed</span><span class="si">}</span><span class="s1">" must be 0~255'</span><span class="p">)</span>
 
     <span class="n">_servo</span><span class="p">(</span><span class="s1">'speed'</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">speed</span><span class="p">)</span></div>
@@ -596,13 +596,13 @@
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">Exception</span> <span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">" must be integer type'</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">9</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">:</span>   <span class="c1"># 전엔 abs(n) &gt; 9 라 -9~-1 도 통과해 없는 모터 번호가 서보로 갔다</span>
       <span class="k">raise</span> <span class="ne">Exception</span> <span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">" must be 0~9'</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">accel</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">Exception</span> <span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">accel</span><span class="si">}</span><span class="s1">" must be integer type'</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">accel</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">accel</span> <span class="o">&lt;=</span> <span class="mi">255</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">Exception</span> <span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">accel</span><span class="si">}</span><span class="s1">" must be 0~255'</span><span class="p">)</span>
 
     <span class="n">_servo</span><span class="p">(</span><span class="s1">'accelerate'</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">accel</span><span class="p">)</span></div>
@@ -722,7 +722,7 @@
       <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">exe</span><span class="si">}</span><span class="s1">" is not motion data'</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">cycle</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span> <span class="ow">or</span> <span class="n">cycle</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">cycle</span><span class="si">}</span><span class="s1"> must be integer type and positive number'</span><span class="p">)</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">cycle</span><span class="si">}</span><span class="s1">" must be integer type and positive number'</span><span class="p">)</span>
 
     <span class="n">seq</span><span class="p">,</span><span class="n">cnt</span><span class="p">,</span><span class="n">cycle_cnt</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span> <span class="o">=</span> <span class="kc">False</span>

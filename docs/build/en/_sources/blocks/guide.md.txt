@@ -36,6 +36,8 @@ Everything runs **inside PiBrain**. Only the [Collect] category needs the intern
 | Recognition | 33 |
 | Utilities | 12 |
 
+**Easy blocks** — 16 beginner blocks shown when you choose [Easy] in [Easy | All] on the editor bar (see 'Easy blocks' below)
+
 ## PiBrain blocks
 
 ### Start
@@ -208,7 +210,7 @@ Save as an image file.
 
 <img src="img/vision_imshow_to_ide.png" alt="Show image ([item ▾]) on the monitor" width="416" class="blk">
 
-Display an image variable in IDE.
+Show an image variable on the monitor (IDE run panel).
 
 <img src="img/vision_imshow_to_oled.png" alt="Show image ([item ▾]) on the robot screen" width="464" class="blk">
 
@@ -433,3 +435,85 @@ Convert a variable to a specific numeric type. (Integer or Float) *returns a val
 <img src="img/utils_calculate_angle.png" alt="Get angle of ([item ▾]) - ([item ▾]) - ([item ▾])" width="490" class="blk">
 
 Get angle *returns a value*
+
+## Easy blocks
+
+Choose [Easy] in **[Easy | All]** on the editor bar to get fewer categories and the blocks below. They hide the camera, variables and images inside the block so you only pick. The Easy toolbox also has basic blocks such as [if], [repeat], lights and speak, and you can mix Easy and All blocks in one program.
+
+### Easy · Start · Repeat
+
+<img src="img/ez_forever.png" alt="forever ?" width="168" class="blk">
+
+Repeats the blocks inside until you stop.
+
+### Easy · Speak · Sound
+
+<img src="img/ez_sound.png" alt="play sound Ding" width="250" class="blk">
+
+Goes on to the next block when the sound is done.
+
+<img src="img/ez_note.png" alt="play note Do" width="217" class="blk">
+
+Goes on to the next block when the sound is done.
+
+<img src="img/ez_music.png" alt="play music (none)" width="266" class="blk">
+
+Starts the music and goes on to the next block.
+
+<img src="img/ez_music_stop.png" alt="stop music" width="163" class="blk">
+
+Stops the music that is playing.
+
+### Easy · Screen
+
+<img src="img/ez_picture.png" alt="draw smile on robot screen" width="397" class="blk">
+
+Draws the picture you chose on the screen.
+
+<img src="img/ez_text.png" alt="write (“ Hello ”) on robot screen" width="401" class="blk">
+
+Writes text or a number on the robot screen.
+
+<img src="img/ez_clear.png" alt="clear robot screen" width="232" class="blk">
+
+Clears the robot screen.
+
+### Easy · Sensors
+
+<img src="img/ez_button.png" alt="button 1 pressed?" width="259" class="blk">
+
+Checks right now. Use it inside forever to wait for it. *returns a value*
+
+### Easy · Camera
+
+<img src="img/ez_photo.png" alt="take a photo as is and show on monitor screen" width="581" class="blk">
+
+Put it in forever to see it like a video.
+
+### Easy · AI Eyes
+
+<img src="img/ez_seen.png" alt="camera sees a face ?" width="290" class="blk">
+
+Takes one camera picture and looks. *returns a value*
+
+<img src="img/ez_gesture.png" alt="hand is thumbs up ?" width="280" class="blk">
+
+Takes one camera picture and looks. *returns a value*
+
+<img src="img/ez_emotion.png" alt="face is smiling ?" width="239" class="blk">
+
+Takes one camera picture and looks. *returns a value*
+
+### Easy · Score
+
+<img src="img/ez_score_add.png" alt="add 1 to score" width="195" class="blk">
+
+The score shows in the run output.
+
+<img src="img/ez_score_reset.png" alt="set score to 0" width="154" class="blk">
+
+Sets the score back to 0.
+
+<img src="img/ez_score.png" alt="score" width="85" class="blk">
+
+The score shows in the run output. *returns a value*
