@@ -780,3 +780,46 @@ body[data-offline] .v2-status__conn .v2-off { display: inline; color: var(--c-re
 .v2-err__x:hover { background: var(--c-hover); }
 .CodeMirror .cm-pibo-errline { background: var(--c-red-t); }
 .pibo-errblock > .blocklyPath { stroke: var(--c-red) !important; stroke-width: 4px !important; }
+
+/* ══ 빈 작업판 안내 (261120) — ide.js 3-1 ════════════════════════════════════
+   파일을 안 열었을 때만(#v2_start). left 는 ide.js 가 툴박스 폭으로 준다. 바탕은 pointer-events 없음 →
+   툴박스·블록 찾기·작업판은 그대로 쓰고 카드만 누른다. 꽉 찬 버튼은 [실행] 하나라 카드는 판(옅은 색) */
+.v2-start {
+  position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 4;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+  padding: 24px; pointer-events: none;
+}
+.v2-start[hidden] { display: none; }
+.v2-start__title { margin: 0; font-size: 20px; font-weight: 700; color: var(--c-ink); letter-spacing: -.01em; text-align: center; }
+.v2-start__cards { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; max-width: 600px; }
+.v2-start__card {
+  pointer-events: auto; width: 176px; min-height: 148px; padding: 20px 14px 16px;
+  display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center;
+  border: 1px solid var(--c-line); border-radius: 12px; background: var(--c-card); color: var(--c-ink);
+  box-shadow: 0 1px 2px rgba(16, 24, 40, .06); font-family: inherit; cursor: pointer;
+  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+.v2-start__card:hover { transform: translateY(-2px); border-color: var(--c-accent); box-shadow: 0 6px 18px rgba(16, 24, 40, .10); }
+.v2-start__card:focus { outline: none; }
+.v2-start__card:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--c-ring); border-color: var(--c-accent); }
+.v2-start__card > b { font-size: 15px; font-weight: 700; line-height: 1.3; }
+.v2-start__card > small { font-size: 12.5px; line-height: 1.45; color: var(--c-ink-3); word-break: keep-all; }
+.v2-start__ic {
+  width: 48px; height: 48px; margin-bottom: 6px; border-radius: 14px;
+  display: grid; place-items: center; font-size: 21px;
+  background: var(--c-accent-t); color: var(--c-accent-ink);
+}
+.v2-start__ic--ex { background: var(--v2-yellow-t); color: var(--v2-yellow-ink); }
+.v2-start__ic--open { background: var(--c-press); color: var(--c-ink-2); }
+@media (max-width: 700px), (max-height: 560px) {
+  .v2-start { gap: 12px; }
+  .v2-start__title { font-size: 17px; }
+  .v2-start__card { width: 150px; min-height: 0; padding: 14px 10px 12px; }
+  .v2-start__card > small { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .v2-start__card { transition: none; } .v2-start__card:hover { transform: none; } }
+
+/* 화면 출력 빈 칸(261120): 긴 안내는 title 로 옮기고 한 줄만. 좁은 칸에서 두 줄로 쪼개졌다 */
+.v2-live:not([data-has]) .v2-live__empty > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+/* 파일 경로 `code ›` (261120): 고정폭 글꼴이면 › 가 떠 보여 본문 글꼴로 */
+.v2-file__dir { font-family: var(--font); font-size: 13px; margin-right: -2px; }

@@ -634,11 +634,37 @@ function renderClassCard(i) {
   if (clr) clr.disabled = !c.vecs.length;
 }
 
+// 학습 단계(261120): 1 모으기(종류 2개 이상) → 2 가르치기(지금 소스로 배우고 그 뒤 안 바뀜) → 3 저장
+// 각 단계는 done(다 함) · now(지금 할 것) · todo. 'now' 는 처음으로 안 끝난 단계 하나
+function renderSteps(usable) {
+  const box = $('learn_steps');
+  if (!box) return;
+  const total = S.classes.reduce((n, c) => n + c.vecs.length, 0);
+  const tr = S.trained;
+  const match = tr && tr.source === S.source && tr.variant === S.variant;
+  const done = { collect: usable >= 2, train: !!(match && !tr.stale && !S.training), save: !!(match && tr.saved && !tr.stale) };
+  let now = ['collect', 'train', 'save'].find(k => !done[k]) || '';
+  box.querySelectorAll('li').forEach(li => {
+    const k = li.dataset.step;
+    li.dataset.state = done[k] ? 'done' : k === now ? 'now' : 'todo';
+  });
+  $('step_collect_sub').textContent = usable >= 2 ? t('step_collect_sub', usable, total) : t('need_two');
+  $('step_cls').innerHTML = S.classes.map(c =>
+    `<span class="steps__chip${c.vecs.length ? ' is-on' : ''}">${c.vecs.length ? '<i class="fa-solid fa-check"></i>' : ''}${esc(c.name)} <em>${c.vecs.length}</em></span>`).join('');
+  $('step_train_sub').textContent = S.training ? t('step_training')
+    : match && tr.stale ? t('step_train_stale')
+    : done.train ? t('step_train_done', Math.round(tr.accuracy * 100))
+    : usable >= 2 ? t('step_train_ready') : t('step_train_wait');
+  $('step_save_sub').textContent = done.save ? t('step_save_done', tr.savedName)
+    : done.train ? t('step_save_ready') : t('step_save_wait');
+}
+
 function renderLearnRight() {
   const usable = S.classes.filter(c => c.vecs.length > 0).length;
   const tb = $('train_btn');
   tb.disabled = S.training || usable < 2;
-  $('train_need').hidden = usable >= 2;
+  renderSteps(usable);
+  $('train_need').hidden = usable >= 2 || !!$('learn_steps');   // 단계 1 이 같은 말을 한다
   $('train_prog').hidden = !S.training;
   if (window.PiboUI) PiboUI.busy(tb, S.training);
 

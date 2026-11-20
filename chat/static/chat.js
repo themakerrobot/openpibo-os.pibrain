@@ -280,9 +280,44 @@
     });
     modelSel.value = st.model || '';
     $('model_file').textContent = cur && cur.file ? cur.file + (cur.mb ? ' · ' + cur.mb + 'MB' : '') : '';
-    $('empty_txt').textContent = tr(st.model ? 'chat_empty' : 'chat_pick_model');
+    // 고르기 전에는 빈 화면에 모델 카드(261120). 목록을 못 받았으면 예전처럼 '위에서 골라 주세요' 한 줄
+    var cards = !st.model && modelList.length > 0;
+    $('empty_txt').textContent = tr(st.model ? 'chat_empty' : cards ? 'chat_pick_title' : 'chat_pick_model');
+    $('empty').classList.toggle('is-pick', cards);
+    renderCards(cards);
     $('try').hidden = !st.model;
     renderTry();   // 모델에 따라 예시가 바뀐다
+  }
+  function renderCards(show) {
+    var box = $('model_cards');
+    box.innerHTML = '';
+    box.hidden = !show;
+    if (!show) return;
+    var pibrain = document.documentElement.getAttribute('data-product') === 'PiBrain';
+    modelList.forEach(function (m) {
+      var key = m.name.replace('-', '_');
+      var tool = /themaker/.test(m.name) || /themaker/.test(m.file || '');
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'chat-card' + (tool ? ' chat-card--tool' : '');
+      b.disabled = !m.have;
+      b.innerHTML = '<span class="chat-card__ic"><i class="fa-solid ' + (tool ? (pibrain ? 'fa-lightbulb' : 'fa-robot') : 'fa-comments') + '"></i></span>' +
+        '<b class="chat-card__name"></b><span class="chat-card__desc"></span><span class="chat-card__tags"></span>';
+      b.querySelector('.chat-card__name').textContent = tr('chat_model_' + key);
+      b.querySelector('.chat-card__desc').textContent = tr('chat_desc_' + key);
+      var tags = b.querySelector('.chat-card__tags');
+      function tag(txt, cls) { var s = document.createElement('span'); s.className = 'chat-card__tag' + (cls ? ' ' + cls : ''); s.textContent = txt; tags.appendChild(s); }
+      if (!m.have) tag(tr('chat_model_off'), 'is-off');
+      else {
+        if (tool) tag(tr(pibrain ? 'chat_tag_tools_pb' : 'chat_tag_tools'), 'is-tool');
+        if (m.mb) tag(m.mb + 'MB');
+      }
+      if (!m.have) b.title = tr('chat_model_missing');
+      b.addEventListener('click', function () { if (m.have) chooseModel(m.name); });
+      box.appendChild(b);
+    });
+    var hint = document.createElement('p');
+    hint.className = 'chat-cards__hint'; hint.textContent = tr('chat_pick_hint');
+    box.appendChild(hint);
   }
   function loadModels() {
     return fetch('/api/models', { cache: 'no-store' }).then(function (r) { return r.json(); })

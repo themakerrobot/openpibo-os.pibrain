@@ -95,8 +95,9 @@
   });
 
   /* 3) 파일 이름 ─────────────────────────────────────────────────────────── */
-  // 폴더(/home/pi/code/)는 흐리게, 이름은 굵게. 파이썬에서 사진·모델 파일을 경로로 다루므로
-  // 폴더가 보여야 한다. 좁으면 폴더가 앞쪽부터 줄어든다(…/code/). LRM 은 rtl 에서 '/' 가 끝으로 튀지 않게
+  // 폴더는 흐리게, 이름은 굵게 — `code › face.json`(261120). 파이썬에서 사진·모델 파일을 경로로 다루므로
+  // 폴더는 보이게 두되 모두 같은 /home/pi/ 는 뺀다(전체 경로는 마우스를 올리면 title 로).
+  // 좁으면 폴더가 앞쪽부터 줄어든다(…code ›). LRM 은 rtl 에서 기호가 끝으로 튀지 않게
   var cp = $id('codepath'), nameEl = $id('v2_file_name'), dirEl = $id('v2_file_dir'), fileBox = $id('v2_file');
   function showName() {
     var full = (cp.textContent || '').trim();
@@ -107,14 +108,56 @@
       fileBox.removeAttribute('title');
     } else {
       var cut = full.lastIndexOf('/') + 1;
+      var dir = full.slice(0, cut).replace(/^\/home\/pi\//, '').replace(/\/$/, '');
       nameEl.textContent = full.slice(cut);
-      if (dirEl) dirEl.textContent = '\u200E' + full.slice(0, cut) + '\u200E';
+      if (dirEl) dirEl.textContent = dir ? '‎' + dir.split('/').join(' › ') + ' ›‎' : '';
       fileBox.removeAttribute('data-empty');
       fileBox.title = full;
     }
   }
   new MutationObserver(showName).observe(cp, { childList: true, characterData: true, subtree: true });
   showName();
+
+  /* 3-1) 빈 작업판 안내 (261120) ───────────────────────────────────────────── */
+  // 파일을 안 열었을 때 작업판 가운데에 [새 파일][예제 열기][내 파일 열기]. 전엔 빈 작업판뿐이고 블록을 끌면
+  // '파일을 고르거나…' 경고창이 떴다(그 경고는 그대로 둔다). 바탕은 눌러도 지나가서 툴박스·블록 찾기는 그대로 쓴다
+  var start = $id('v2_start');
+  if (start) {
+    var placeStart = function () {
+      // 블록 모드면 툴박스 오른쪽 작업판 가운데에(툴박스를 가리지 않게)
+      var bd = $id('blocklyDiv'), tb = document.querySelector('#blocklyDiv .blocklyToolboxDiv');
+      var blockOn = bd && bd.offsetParent !== null;
+      start.style.left = (blockOn && tb ? tb.offsetWidth : 0) + 'px';
+    };
+    var syncStart = function () {
+      start.hidden = !!(cp.textContent || '').trim();
+      if (!start.hidden) placeStart();
+    };
+    new MutationObserver(syncStart).observe(cp, { childList: true, characterData: true, subtree: true });
+    window.addEventListener('resize', placeStart);
+    Array.prototype.forEach.call(document.querySelectorAll('div[name=codetype] button'), function (b) {
+      b.addEventListener('click', function () { setTimeout(placeStart, 60); });
+    });
+    setTimeout(placeStart, 300);   // 툴박스가 그려진 뒤
+    syncStart();
+    start.addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('[data-start]');
+      if (!b) return;
+      var k = b.getAttribute('data-start');
+      if (k === 'new') {
+        var add = $id('add_file');   // 서랍 [추가] 의 새 파일과 같은 처리(이름 묻기 → 지금 폴더에 만들기)
+        if (add) add.click();
+      } else if (k === 'example') {
+        // 예제는 블록 파일이라 블록 모드로 바꾸고 예제 폴더를 연다
+        var blk = document.querySelector('div[name=codetype] button[name=block]');
+        if (blk && !blk.classList.contains('checked')) blk.click();
+        if (typeof socket !== 'undefined') socket.emit('load_directory', '/home/pi/examples');
+        setSide(true);
+      } else {
+        setSide(true);
+      }
+    });
+  }
 
   /* 4) 글자 크기 ─────────────────────────────────────────────────────────── */
   var fs = $id('fontsize');

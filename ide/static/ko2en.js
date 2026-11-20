@@ -414,7 +414,24 @@ const translations = {
   v2_stage:         { ko: "실행 화면 접기/펴기", en: "Show or hide run panel" },
   v2_files_open:    { ko: "파일 열기", en: "Open files" },
   v2_connected:     { ko: "연결됨", en: "Connected" },
-  v2_disconnected:  { ko: "연결 끊김", en: "Disconnected" }
+  v2_disconnected:  { ko: "연결 끊김", en: "Disconnected" },
+  // 빈 작업판 안내(261120) · 화면 출력 한 줄
+  v2_start_title:   { ko: "무엇을 만들어 볼까요?", en: "What would you like to make?" },
+  v2_start_new:     { ko: "새 파일", en: "New file" },
+  v2_start_new_d:   { ko: "빈 파일에서 시작해요", en: "Start from a blank file" },
+  v2_start_ex:      { ko: "예제 열기", en: "Open an example" },
+  v2_start_ex_d:    { ko: "만들어 둔 예제로 시작해요", en: "Start from an example" },
+  v2_start_open:    { ko: "내 파일 열기", en: "Open my file" },
+  v2_start_open_d:  { ko: "저장해 둔 파일을 열어요", en: "Open a saved file" },
+  // 대화 화면 모델 카드(261120) — 고르기 전 빈 화면
+  chat_pick_title:  { ko: "어떤 모델과 이야기할까요?", en: "Which model would you like to talk to?" },
+  chat_pick_hint:   { ko: "고르면 그 모델을 켜요. 위 [대화 모델] 에서 언제든 바꿀 수 있어요.", en: "Pick one to start it. You can change it any time from [Chat model] above." },
+  chat_desc_general:     { ko: "자유롭게 이야기해요. 로봇 기능은 쓰지 않아요.", en: "Free conversation. It does not control the robot." },
+  chat_desc_themaker_ko: { ko: "한국어로 이야기하고 로봇 기능도 써요.", en: "Talks in Korean and can use the robot." },
+  chat_desc_themaker_en: { ko: "영어로 이야기하고 로봇 기능도 써요.", en: "Talks in English and can use the robot." },
+  chat_tag_tools:   { ko: "불빛 · 보기 · 움직이기", en: "Lights · Look · Move" },
+  chat_tag_tools_pb:{ ko: "불빛 · 보기", en: "Lights · Look" },
+  v2_live_hint:     { ko: "그림을 보여주는 블록을 쓰면 여기에 나와요", en: "Pictures from your program appear here" }
 };
 
 // 키 → 현재 언어 문자열. 모르는 키(일반 문자열)는 그대로 반환.
