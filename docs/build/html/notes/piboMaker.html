@@ -397,6 +397,8 @@
 (화면 밝기 · 글자 크기 · 파이썬 편집기 테마 · 언어 · 공장 초기화 · 전원 끄기 · 소스 코드와 라이선스)</p></li>
 <li><p><strong>파일 서랍</strong>: 파일 목록, [추가](새 파일·새 폴더·올리기), 사진·소리 미리보기. 처음 열면 펼쳐져 있고, 파일을 열거나 편집기를 누르면 접힙니다.
 편집기 줄의 파일 이름을 눌러도 열립니다</p></li>
+<li><p><strong>처음 화면</strong>: 파일을 열기 전에는 작업판 가운데에 <strong>[새 파일] · [예제 열기] · [내 파일 열기]</strong> 가 나옵니다. [예제 열기]는 블록 모드로 바꾸고 예제 폴더를 엽니다.
+파일을 열면 편집기 줄에 <code class="docutils literal notranslate"><span class="pre">code</span> <span class="pre">›</span> <span class="pre">손동작.json</span></code> 처럼 폴더와 이름이 보입니다(전체 경로는 마우스를 올리면 나옵니다)</p></li>
 <li><p><strong>오른쪽 실행 화면</strong>: <strong>[실행] [정지]</strong> 와 실행 상태, 화면 출력(<code class="docutils literal notranslate"><span class="pre">(이미지)</span> <span class="pre">이미지를</span> <span class="pre">모니터</span> <span class="pre">화면에</span> <span class="pre">보여주기</span></code> 블록으로 보낸 그림), 실행 출력, 프로그램에 입력 보내기.
 편집기 줄 오른쪽 끝 단추로 접고 펼 수 있고, 실행하면 다시 펼쳐집니다. 서랍과 실행 화면을 둘 다 접으면 블록을 넓게 씁니다</p></li>
 <li><p><strong>아래 상태 줄</strong>: 연결 상태 · 버전 · 시리얼 | WiFi(누르면 WiFi 설정) · 온도 · 메모리 · 켜진 시간</p></li>
@@ -442,6 +444,7 @@ USB 카메라를 꽂았으면 [여기에 보기] 옆 고르는 칸에서 <strong
 <h2>분류기<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
 <p><img alt="분류기 학습" src="../_images/classifier_learn.jpg" /></p>
 <p>카메라로 예시를 모아 AI 에게 ‘이건 고양이, 이건 음식’ 처럼 가르칩니다. PiBrain 카메라는 세로(3:4)라 화면도 세로로 나옵니다.</p>
+<p>오른쪽 칸 위의 <strong>학습 순서</strong>(① 예시 모으기 → ② AI 가르치기 → ③ 저장하고 시험하기)가 지금 할 단계를 파랑 테두리로, 끝난 단계를 체크로 보여 줍니다.</p>
 <ol class="arabic simple">
 <li><p><strong>무엇으로 가르칠까요?</strong> — 이미지(사진 전체) · 손(손 모양) · 얼굴(표정) · 포즈(몸 자세) 중에서 고릅니다</p></li>
 <li><p><strong>종류</strong> 마다 이름을 적고 <strong>[꾹 눌러 모으기]</strong> 를 누르고 있는 동안 예시가 모입니다. [사진] 으로 파일을 올려도 됩니다.
@@ -459,7 +462,7 @@ USB 카메라를 꽂았으면 [여기에 보기] 옆 고르는 칸에서 <strong
 </section>
 <section id="id3">
 <h2>대화<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
-<p>PiBrain 안에서 도는 언어 모델(LLM)과 글로 대화합니다. 화면 위 <strong>[대화 모델]</strong> 에서 모델을 고르면 그때 모델을 올립니다
+<p>PiBrain 안에서 도는 언어 모델(LLM)과 글로 대화합니다. 처음 화면의 <strong>모델 카드</strong>(또는 위 <strong>[대화 모델]</strong>)에서 모델을 고르면 그때 모델을 올립니다
 (처음 한 번은 준비하는 데 수십 초 걸립니다). 모델을 바꾸면 대화가 처음부터 다시 시작됩니다.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">

@@ -397,6 +397,8 @@ as PiBrain, type <strong>PiBrain’s IP address</strong> (shown on the PiBrain s
 (brightness · font size · Python editor theme · language · factory reset · power off · source code and license)</p></li>
 <li><p><strong>File drawer</strong>: the file list, [Add] (new file / new folder / upload) and a preview for pictures and sounds. It is open at first and closes when you open a file or tap the editor.
 Tapping the file name in the editor bar opens it again</p></li>
+<li><p><strong>Start screen</strong>: before you open a file, the workspace shows <strong>[New file] · [Open an example] · [Open my file]</strong>. [Open an example] switches to blocks and opens the examples folder.
+Once a file is open, the editor bar shows the folder and name, like <code class="docutils literal notranslate"><span class="pre">code</span> <span class="pre">›</span> <span class="pre">hand.json</span></code> (hover to see the full path)</p></li>
 <li><p><strong>Run panel on the right</strong>: <strong>[Run] [Stop]</strong> with the run status, screen output (pictures sent with the <code class="docutils literal notranslate"><span class="pre">Show</span> <span class="pre">image</span> <span class="pre">…</span> <span class="pre">on</span> <span class="pre">the</span> <span class="pre">monitor</span></code> block), program output and sending input to the program.
 The button at the right end of the editor bar hides or shows it, and it opens again when you run a program. Hide both the drawer and the run panel to give the blocks the whole width</p></li>
 <li><p><strong>Status bar at the bottom</strong>: connection · version · serial | WiFi (tap for WiFi settings) · temperature · memory · uptime</p></li>
@@ -442,6 +444,7 @@ If a USB camera is plugged in, switch between the <strong>board camera and USB c
 <h2>Classifier<a class="headerlink" href="#classifier" title="Link to this heading">¶</a></h2>
 <p><img alt="Classifier: Train" src="../_images/classifier_learn.jpg" /></p>
 <p>Collect examples with the camera and teach the AI, for example “this is a cat, this is food”. The PiBrain camera is portrait (3:4), so the view is portrait too.</p>
+<p><strong>Training steps</strong> at the top of the right panel (① Collect examples → ② Teach the AI → ③ Save and test) outline the step to do now in blue and check off finished steps.</p>
 <ol class="arabic simple">
 <li><p><strong>What should it learn from?</strong> — Image (the whole picture) · Hand (hand shape) · Face (expression) · Pose (body posture)</p></li>
 <li><p>Name each <strong>class</strong> and keep pressing <strong>[Hold to collect]</strong> to collect examples. You can also upload files with [Photos].
@@ -460,7 +463,7 @@ will start right away during class.</p>
 </section>
 <section id="chat">
 <h2>Chat<a class="headerlink" href="#chat" title="Link to this heading">¶</a></h2>
-<p>Chat in text with the language model (LLM) that runs inside PiBrain. Choose a model in <strong>[Chat model]</strong> at the top, and the model loads then
+<p>Chat in text with the language model (LLM) that runs inside PiBrain. Choose a model from the <strong>model cards</strong> on the start screen (or <strong>[Chat model]</strong> at the top), and the model loads then
 (the first time takes several tens of seconds). Changing the model starts the chat over.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
