@@ -188,9 +188,9 @@ USB 연결 해제합니다.
 
 카메라로 사진을 찍습니다. *값을 돌려주는 블록*
 
-<img src="img/vision_read_usb.png" alt="USB 카메라 [cam1 ▾] 로 사진 찍기" width="373" class="blk">
+<img src="img/vision_read_usb.png" alt="USB 카메라로 사진 찍기" width="272" class="blk">
 
-USB 카메라로 사진을 찍습니다. cam1·cam2·cam3 은 꽂은 USB 포트 순서예요(도구·분류기의 카메라 고르기와 같은 이름). 보드 카메라는 [사진 찍기] 블록을 씁니다. *값을 돌려주는 블록*
+USB 카메라로 사진을 찍습니다(V4L2 를 지원하면 기종 상관없음, 여러 대면 첫 번째 포트의 카메라). 보드 카메라는 [사진 찍기] 블록을 씁니다. *값을 돌려주는 블록*
 
 <img src="img/vision_imread_dynamic.png" alt="이미지 [폴더 선택 ▾] [파일 선택 ▾] 을(를) 불러오기" width="507" class="blk">
 
