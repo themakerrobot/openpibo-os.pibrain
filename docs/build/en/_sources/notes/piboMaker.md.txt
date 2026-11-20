@@ -25,6 +25,8 @@ Everything runs **inside PiBrain** (voices, chat and the classifier included). O
   (brightness · font size · Python editor theme · language · factory reset · power off · source code and license)
 - **File drawer**: the file list, [Add] (new file / new folder / upload) and a preview for pictures and sounds. It is open at first and closes when you open a file or tap the editor.
   Tapping the file name in the editor bar opens it again
+- **Start screen**: before you open a file, the workspace shows **[New file] · [Open an example] · [Open my file]**. [Open an example] switches to blocks and opens the examples folder.
+  Once a file is open, the editor bar shows the folder and name, like `code › hand.json` (hover to see the full path)
 - **Run panel on the right**: **[Run] [Stop]** with the run status, screen output (pictures sent with the `Show image … on the monitor` block), program output and sending input to the program.
   The button at the right end of the editor bar hides or shows it, and it opens again when you run a program. Hide both the drawer and the run panel to give the blocks the whole width
 - **Status bar at the bottom**: connection · version · serial | WiFi (tap for WiFi settings) · temperature · memory · uptime
@@ -70,6 +72,8 @@ The PiBrain picture on the left follows along: a pressed button lights up, the w
 
 Collect examples with the camera and teach the AI, for example "this is a cat, this is food". The PiBrain camera is portrait (3:4), so the view is portrait too.
 
+**Training steps** at the top of the right panel (① Collect examples → ② Teach the AI → ③ Save and test) outline the step to do now in blue and check off finished steps.
+
 1. **What should it learn from?** — Image (the whole picture) · Hand (hand shape) · Face (expression) · Pose (body posture)
 2. Name each **class** and keep pressing **[Hold to collect]** to collect examples. You can also upload files with [Photos].
    The picker under the camera switches to a USB camera — use the same camera for training and for use for better results
@@ -87,7 +91,7 @@ will start right away during class.
 
 ## Chat
 
-Chat in text with the language model (LLM) that runs inside PiBrain. Choose a model in **[Chat model]** at the top, and the model loads then
+Chat in text with the language model (LLM) that runs inside PiBrain. Choose a model from the **model cards** on the start screen (or **[Chat model]** at the top), and the model loads then
 (the first time takes several tens of seconds). Changing the model starts the chat over.
 
 | Model | What it is |
