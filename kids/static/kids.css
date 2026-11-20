@@ -164,7 +164,6 @@ html[data-theme="dark"] body.kids { --k-motion: #5b8cff; --k-say: #a477ff; --k-s
 .kcard:disabled { opacity: .35; }
 .kcard__ic { font-size: 30px; line-height: 1; display: flex; align-items: center; justify-content: center; height: 34px; }
 .kcard__t { font-size: 15px; font-weight: 700; line-height: 1.1; max-width: 100%; padding: 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.kcard__note { font-size: 30px; font-weight: 800; }
 .k-motion { background: var(--k-motion); }
 .k-say    { background: var(--k-say); }
 .k-sound  { background: var(--k-sound); }
@@ -186,7 +185,6 @@ body.is-waiting .kcard.is-now, body.is-waiting .kids-loop.is-now { animation: ki
 .kcard.is-now { transform: scale(1.12); box-shadow: 0 0 0 5px #ffd23f, 0 6px 16px var(--v2-shadow); z-index: 1; }
 .kcard--mini { width: 52px; height: 52px; flex-basis: 52px; border-radius: 12px; }
 .kcard--mini .kcard__ic { font-size: 20px; height: 22px; }
-.kcard--mini .kcard__note { font-size: 20px; }
 .kcard--mini .kcard__dot { width: 22px; height: 22px; }
 .kcard--mini .kcard__t { font-size: 11px; }
 .kcard--mini.k-trick:after { display: none; }

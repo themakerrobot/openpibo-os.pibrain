@@ -78,8 +78,7 @@
     "i:b1":         {"kind": "if", "arg": "b1", "icon": "fa-1", "device": ["pibrain"], "ko": "버튼 1을 누르면", "en": "If button 1"},
     "i:b2":         {"kind": "if", "arg": "b2", "icon": "fa-2", "device": ["pibrain"], "ko": "버튼 2를 누르면", "en": "If button 2"},
     "i:b3":         {"kind": "if", "arg": "b3", "icon": "fa-3", "device": ["pibrain"], "ko": "버튼 3을 누르면", "en": "If button 3"},
-    "i:b4":         {"kind": "if", "arg": "b4", "icon": "fa-4", "device": ["pibrain"], "ko": "버튼 4를 누르면", "en": "If button 4"},
-    "i:dice":       {"kind": "if", "arg": "dice", "icon": "fa-dice", "ko": "주사위가 나오면(반반)", "en": "If the dice says yes (50%)"}
+    "i:b4":         {"kind": "if", "arg": "b4", "icon": "fa-4", "device": ["pibrain"], "ko": "버튼 4를 누르면", "en": "If button 4"}
   },
 
   "trick_icons": ["fa-star", "fa-heart", "fa-music", "fa-cake-candles", "fa-gift", "fa-rocket", "fa-sun", "fa-moon", "fa-tree", "fa-seedling", "fa-apple-whole", "fa-bolt", "fa-crown", "fa-ghost", "fa-car", "fa-feather"],
@@ -137,7 +136,7 @@
     {"n": 7, "concept": "reuse", "icon": "fa-puzzle-piece", "cards": ["tricks"], "ko": "내 재주 카드", "en": "My trick cards", "goal_ko": "저장한 재주가 카드 한 장이 되어 다른 줄에서 쓰인다는 것을 안다.", "goal_en": "Know that a saved trick becomes one card you can use in other rows.", "ask_ko": "재주 카드 한 장 안에는 카드가 몇 장 들어 있을까?", "ask_en": "How many cards are inside one trick card?"},
     {"n": 8, "concept": "reuse", "icon": "fa-cake-candles", "cards": [], "ko": "큰 재주 만들기", "en": "Build a big trick", "goal_ko": "작은 재주들을 모아 큰 재주를 만들고, 작은 재주를 고치면 큰 재주도 바뀐다는 것을 안다.", "goal_en": "Build a big trick from small tricks. Fixing a small trick changes the big one too.", "ask_ko": "작은 재주 하나를 고치면 큰 재주는 어떻게 될까?", "ask_en": "If you change a small trick, what happens to the big one?"},
     {"n": 9, "concept": "event", "icon": "fa-hand-pointer", "cards": ["e:touch", "e:pir", "e:b1", "e:b2", "e:b3", "e:b4"], "ko": "기다렸다 하기", "en": "Wait for it", "goal_ko": "센서 카드로 \"무엇이 일어나면 그때 움직이는\" 프로그램을 만든다(이벤트).", "goal_en": "Use sensor cards to make the robot act when something happens (events).", "ask_ko": "로봇은 무엇을 느낄 수 있을까?", "ask_en": "What can the robot sense?"},
-    {"n": 10, "concept": "condition", "icon": "fa-code-branch", "cards": ["i:touch", "i:pir", "i:b1", "i:b2", "i:b3", "i:b4", "i:dice"], "ko": "만약에", "en": "What if", "goal_ko": "\"만약 ~하면\" 카드 안의 카드는 그 일이 있을 때만 실행된다는 것을 안다(조건).", "goal_en": "Know that cards inside an \"if\" run only when it happens (conditions).", "ask_ko": "만지지 않으면 로봇은 어떻게 할까?", "ask_en": "What does the robot do if nobody touches it?"}
+    {"n": 10, "concept": "condition", "icon": "fa-code-branch", "cards": ["i:touch", "i:pir", "i:b1", "i:b2", "i:b3", "i:b4"], "ko": "만약에", "en": "What if", "goal_ko": "\"만약 ~하면\" 카드 안의 카드는 그 일이 있을 때만 실행된다는 것을 안다(조건).", "goal_en": "Know that cards inside an \"if\" run only when it happens (conditions).", "ask_ko": "만지지 않으면 로봇은 어떻게 할까?", "ask_en": "What does the robot do if nobody touches it?"}
   ],
 
   "challenges": [
@@ -166,7 +165,8 @@
     {"id": "9-2", "lesson": 9, "icon": "fa-bell", "on": "save", "ko": "센서 카드를 두 번 이상 써서, 기다렸다 움직이는 재주를 저장해 봐!", "en": "Save a trick that waits for a sensor at least twice!", "check": {"kinds": {"sense": 2}, "min_actions": 4}},
     {"id": "10-1", "lesson": 10, "device": ["pibo"], "icon": "fa-person-walking", "on": "run", "ko": "만약 사람이 있으면 \"안녕!\" 하게 해 봐!", "en": "If someone is there, say \"Hello!\"!", "check": {"if_has": ["i:pir", "s:hello"]}},
     {"id": "10-1", "lesson": 10, "device": ["pibrain"], "icon": "fa-2", "on": "run", "ko": "만약 버튼 2를 누르면 딩동이 울리게 해 봐!", "en": "If button 2 is pressed, ring the bell!", "check": {"if_has": ["i:b2", "a:ding"]}},
-    {"id": "10-2", "lesson": 10, "icon": "fa-dice", "on": "save", "ko": "주사위 카드로 할 때마다 달라지는 재주를 저장해 봐!", "en": "Save a trick that changes each time, using the dice card!", "check": {"if_has": ["i:dice", null]}}
+    {"id": "10-2", "lesson": 10, "device": ["pibo"], "icon": "fa-hand-pointer", "on": "save", "ko": "만약 머리를 만지면 하는 재주를 만들어 저장해 봐!", "en": "Save a trick that does something if you touch its head!", "check": {"if_has": ["i:touch", null]}},
+    {"id": "10-2", "lesson": 10, "device": ["pibrain"], "icon": "fa-3", "on": "save", "ko": "만약 버튼 3을 누르면 하는 재주를 만들어 저장해 봐!", "en": "Save a trick that does something if button 3 is pressed!", "check": {"if_has": ["i:b3", null]}}
   ],
 
   "pet": {

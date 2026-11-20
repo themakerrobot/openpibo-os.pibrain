@@ -462,7 +462,7 @@ def run_nodes(nodes, card_of, tricks, lang, mark):
         raise Stop
       if mark:
         run.update(path=[i], iter=0, cond=None)
-      yes = random.random() < 0.5 if card['arg'] == 'dice' else check_sense(card['arg'])
+      yes = check_sense(card['arg'])
       if mark:
         run['cond'] = yes
       if yes:
