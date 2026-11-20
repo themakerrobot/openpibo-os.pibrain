@@ -976,6 +976,8 @@ socket.on('cam_select', (r) => {
   if (r && typeof r.cam === 'number') camS.cur = r.cam;
   paintCams(true);
   if (r && !r.ok) toast(t('cam_sel_fail', r.error || ''), 'error');
+  // 보드 카메라를 못 켰던 경우(camera_error) 고른 카메라로 다시 켠다 — 이미 켜져 있으면 서버가 그대로 둔다
+  if (r && r.ok && S.camWanted) socket.emit('control_cam', true);
 });
 socket.on('connect', () => socket.emit('cam_list'));
 camSel.addEventListener('pointerdown', () => socket.emit('cam_list'));

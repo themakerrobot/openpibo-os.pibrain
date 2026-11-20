@@ -72,7 +72,7 @@ class UsbCam:
 
   def __init__(self, n, width, height, sys_root=None):
     self.n, self.width, self.height, self.sys_root = n, width, height, sys_root
-    self.dev, self.name, self.cap = None, '', None
+    self.dev, self.name, self.cap, self.first = None, '', None, None
     self._open()
 
   def _open(self):
@@ -86,9 +86,15 @@ class UsbCam:
       cap.release()
       raise RuntimeError(f"USB 카메라를 열지 못했어요: {c['dev']} / Could not open the USB camera: {c['dev']}")
     cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
-    # 줄일 것을 생각해 요청 크기보다 작지 않게 청한다. 실제 크기는 카메라가 정한다
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, max(640, self.width))
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, max(480, self.height))
+    # 640x480(VGA)을 청한다 — 거의 모든 UVC 카메라가 30fps 로 주는 크기라 기종마다 결과가 같다.
+    # 그보다 큰 그림을 달라고 했을 때만 그 크기를 청한다(실제 크기는 카메라가 가장 가까운 것으로 정한다).
+    # PiBrain 기본(480x640 세로)은 640x480 의 가운데를 잘라 늘린다
+    if self.width * self.height > 640 * 480:
+      req_w, req_h = max(640, self.width), max(480, self.height)
+    else:
+      req_w, req_h = 640, 480
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, req_w)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, req_h)
     cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)   # 늦게 읽어도 오래된 그림이 덜 나오게(드라이버가 안 받으면 무시)
     frame = None
     for _ in range(10):                   # 켜자마자 몇 장은 비어 올 수 있다
