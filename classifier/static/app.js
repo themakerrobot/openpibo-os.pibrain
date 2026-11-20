@@ -969,7 +969,7 @@ function paintCams(force) {
   });
   camSel.value = String(camS.cur);
 }
-socket.on('cam_list', (d) => { if (d && d.list) camS.list = d.list.filter((c) => c.cam <= 1);   // USB 카메라는 하나만(첫 번째)
+socket.on('cam_list', (d) => { if (d && d.list) camS.list = d.list.filter((c) => c.cam <= 2);   // USB 카메라는 cam1·cam2 두 개까지(블록과 같다)
   if (d && typeof d.cur === 'number') camS.cur = d.cur; paintCams(); });
 socket.on('cam_select', (r) => {
   camSel.disabled = false;
