@@ -59,7 +59,7 @@
       M: { stop: '멈추기 (처음 자세)', greeting: '인사', wave3: '춤', clapping1: '박수', cheer1: '만세', yes_h: '끄덕', no_h: '도리도리', bow: '꾸벅',
            welcome: '어서 와', happy1: '기뻐', excite1: '신나', sad3: '슬퍼', think1: '음…',
            forward1: '앞으로', backward1: '뒤로', left: '왼쪽으로 돌기', right: '오른쪽으로 돌기' },
-      S: { ding: '딩동', boing: '뿅', drum: '둥둥', tada: '짜잔', oops: '이런', happy: '신나는 소리', shutter: '찰칵' },
+      S: { ding: '딩동', boing: '띠용', drum: '둥둥', tada: '짜잔', oops: '이런', happy: '신나는 소리', shutter: '찰칵' },
       N: { do: '도', re: '레', mi: '미', fa: '파', sol: '솔', la: '라', si: '시', do2: '높은 도' },
       P: { smile: '웃는 얼굴', heart: '하트', star: '별', surprise: '놀란 얼굴', sad: '슬픈 얼굴', sleep: '자는 얼굴' },
       SEE: { face: '얼굴', hand: '손', person: '사람' },
