@@ -363,6 +363,37 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">openpibo_models</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fcntl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">contextmanager</span>
+
+<span class="c1"># 로봇 화면(SPI)은 한 번에 한 프로세스만 쓴다(261120). 도구·IP 화면(network_disp)·체험 앱·학생 프로그램이 따로 화면을 열어</span>
+<span class="c1"># 동시에 쓰면 D/C 핀이 섞여 그림 바이트가 명령으로 들어간다 — PiBrain LCD 가 반전(INVON)되거나 방향·색이 틀어졌다.</span>
+<span class="c1"># 프로세스·스레드를 가리지 않고 잠그도록 파일 잠금(flock)을 쓴다. 잠금 파일을 못 열면 예전처럼 잠그지 않고 그린다.</span>
+<span class="n">SCREEN_LOCK</span> <span class="o">=</span> <span class="s1">'/tmp/openpibo_screen.lock'</span>
+
+<span class="nd">@contextmanager</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_screen_lock</span><span class="p">():</span>
+  <span class="n">fd</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="n">fd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">SCREEN_LOCK</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">O_RDONLY</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">O_CREAT</span><span class="p">,</span> <span class="mo">0o666</span><span class="p">)</span>
+    <span class="n">fcntl</span><span class="o">.</span><span class="n">flock</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">LOCK_EX</span><span class="p">)</span>
+  <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">fd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+    <span class="n">fd</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="k">yield</span>
+  <span class="k">finally</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">fd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_ili9341_reset</span><span class="p">(</span><span class="n">lcd</span><span class="p">):</span>
+  <span class="c1"># LCD 리셋 핀이 연결돼 있지 않아(rst=None) 재부팅해도 LCD 는 앞 상태(반전 등)를 그대로 들고 있다.</span>
+  <span class="c1"># 라이브러리 초기화 순서에는 소프트 리셋·반전 끄기가 없어서, 소프트 리셋(0x01) 뒤 다시 초기화한다(261120)</span>
+  <span class="n">lcd</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mh">0x01</span><span class="p">)</span>
+  <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.15</span><span class="p">)</span>
+  <span class="n">lcd</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Oled">
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled">[docs]</a>
@@ -400,11 +431,12 @@
     <span class="n">cs_pin</span> <span class="o">=</span> <span class="n">digitalio</span><span class="o">.</span><span class="n">DigitalInOut</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">D8</span><span class="p">)</span>    <span class="c1"># any pin!</span>
     <span class="n">dc_pin</span> <span class="o">=</span> <span class="n">digitalio</span><span class="o">.</span><span class="n">DigitalInOut</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">D23</span><span class="p">)</span>    <span class="c1"># any pin!</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">oled</span> <span class="o">=</span> <span class="n">ssd1306</span><span class="o">.</span><span class="n">SSD1306_SPI</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">spi</span><span class="p">,</span> <span class="n">dc_pin</span><span class="p">,</span> <span class="n">rst_pin</span><span class="p">,</span> <span class="n">cs_pin</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">font</span> <span class="o">=</span> <span class="n">ImageFont</span><span class="o">.</span><span class="n">truetype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">font_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">font_size</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">"1"</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">))</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">_screen_lock</span><span class="p">():</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">oled</span> <span class="o">=</span> <span class="n">ssd1306</span><span class="o">.</span><span class="n">SSD1306_SPI</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">spi</span><span class="p">,</span> <span class="n">dc_pin</span><span class="p">,</span> <span class="n">rst_pin</span><span class="p">,</span> <span class="n">cs_pin</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Oled.show">
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled.show">[docs]</a>
@@ -415,8 +447,9 @@
 <span class="sd">    **이 메소드를 사용하지 않으면 그림을 그려도 oled 화면에 아무것도 출력되지 않습니다.**</span>
 <span class="sd">    """</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+    <span class="k">with</span> <span class="n">_screen_lock</span><span class="p">():</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="Oled.clear">
@@ -432,10 +465,11 @@
 
     <span class="k">if</span> <span class="n">image</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">"1"</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">fill</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">show</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+    <span class="k">with</span> <span class="n">_screen_lock</span><span class="p">():</span>
+      <span class="k">if</span> <span class="n">fill</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">show</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="Oled.set_font">
@@ -633,10 +667,12 @@
     <span class="n">cs_pin</span><span class="o">.</span><span class="n">switch_to_output</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">dc_pin</span> <span class="o">=</span> <span class="n">digitalio</span><span class="o">.</span><span class="n">DigitalInOut</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">D23</span><span class="p">)</span>    <span class="c1"># any pin!</span>
   
-    <span class="bp">self</span><span class="o">.</span><span class="n">oled</span> <span class="o">=</span> <span class="n">ili9341</span><span class="o">.</span><span class="n">ILI9341</span><span class="p">(</span><span class="n">spi</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">rst</span><span class="o">=</span><span class="n">rst_pin</span><span class="p">,</span> <span class="n">cs</span><span class="o">=</span><span class="n">cs_pin</span><span class="p">,</span> <span class="n">dc</span><span class="o">=</span><span class="n">dc_pin</span><span class="p">,</span> <span class="n">baudrate</span><span class="o">=</span><span class="mi">36000000</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">font</span> <span class="o">=</span> <span class="n">ImageFont</span><span class="o">.</span><span class="n">truetype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">font_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">font_size</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">"RGB"</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">_screen_lock</span><span class="p">():</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">oled</span> <span class="o">=</span> <span class="n">ili9341</span><span class="o">.</span><span class="n">ILI9341</span><span class="p">(</span><span class="n">spi</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">rst</span><span class="o">=</span><span class="n">rst_pin</span><span class="p">,</span> <span class="n">cs</span><span class="o">=</span><span class="n">cs_pin</span><span class="p">,</span> <span class="n">dc</span><span class="o">=</span><span class="n">dc_pin</span><span class="p">,</span> <span class="n">baudrate</span><span class="o">=</span><span class="mi">36000000</span><span class="p">)</span>
+      <span class="n">_ili9341_reset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
 <div class="viewcode-block" id="OledByPiBrain.show">
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.OledByPiBrain.show">[docs]</a>
@@ -647,7 +683,8 @@
 <span class="sd">    **이 메소드를 사용하지 않으면 그림을 그려도 oled 화면에 아무것도 출력되지 않습니다.**</span>
 <span class="sd">    """</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">)</span></div>
+    <span class="k">with</span> <span class="n">_screen_lock</span><span class="p">():</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="OledByPiBrain.clear">
@@ -663,10 +700,11 @@
 
     <span class="k">if</span> <span class="n">image</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">"RGB"</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">fill</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">show</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">)</span></div>
+    <span class="k">with</span> <span class="n">_screen_lock</span><span class="p">():</span>
+      <span class="k">if</span> <span class="n">fill</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">show</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oled</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="OledByPiBrain.set_font">
