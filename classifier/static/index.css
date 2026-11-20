@@ -146,8 +146,9 @@ body[data-tab="store"] .pb-resizer { display: none !important; }
 .crop-box figcaption { color: #fff; font-size: 11px; }
 .stage-bar {
   width: min(100%, calc((100vh - 150px) * 4 / 3));
-  display: flex; align-items: center; gap: 10px;
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
 }
+.stage-bar > button { flex: none; white-space: nowrap; }
 .stage-hint { color: var(--pb-text-dim); font-size: var(--pb-fs-s); }
 
 /* ── 오른쪽: 배우기 · 결과 ───────────────────────────────── */
@@ -266,8 +267,9 @@ body.pb-v2 .store-menu > .is-danger:hover { background: var(--v2-red-t) !importa
 @media (max-width: 899px) {
   .cls-tabs > button span { display: none; }       /* 아이콘만 */
 }
-/* 세로 태블릿·휴대폰: 패널을 숨기지 않고 위아래로 쌓는다. 배우기 버튼이 사라지면 안 된다 */
-@media (max-width: 819px) {
+/* 세로 태블릿·휴대폰: 패널을 숨기지 않고 위아래로 쌓는다. 배우기 버튼이 사라지면 안 된다
+   (261120: 819 → 899px — iPad 세로 820px 에서 세 칸이 남아 카메라 칸이 약 170px 이었다) */
+@media (max-width: 899px) {
   .pb-panes { flex-direction: column; overflow-y: auto; }
   .pb-panes > .pb-pane { flex: none !important; width: 100%; overflow: visible; }
   .pb-resizer { display: none !important; }
