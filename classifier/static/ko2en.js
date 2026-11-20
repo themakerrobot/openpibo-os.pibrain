@@ -121,6 +121,20 @@ const translations = {
   cam_sel_fail:     { ko: (e) => { const m = String(e).match(/^(.*[가-힣].*?) \/ ([^가-힣]+)$/); return `카메라를 바꾸지 못했어요. (${m ? m[1] : e})`; },
                         en: (e) => { const m = String(e).match(/^(.*[가-힣].*?) \/ ([^가-힣]+)$/); return `Could not switch the camera. (${m ? m[2] : e})`; } },
   cam_sel_note:     { ko: "학습할 때와 쓸 때 같은 카메라를 쓰면 더 잘 맞아요.", en: "Use the same camera for training and for use for better results." },
+  // 학습 단계 표시(261120) — 오른쪽 칸 위
+  steps_label:      { ko: "학습 순서", en: "Training steps" },
+  step_collect:     { ko: "예시 모으기", en: "Collect examples" },
+  step_collect_sub: { ko: (n, total) => `종류 ${n}개 · ${total}장 모음`, en: (n, total) => `${n} classes · ${total} examples` },
+  step_train:       { ko: "AI 가르치기", en: "Teach the AI" },
+  step_train_wait:  { ko: "예시를 모은 뒤에 해요", en: "After collecting examples" },
+  step_train_ready: { ko: "준비됐어요. 아래 버튼을 눌러요", en: "Ready. Press the button below" },
+  step_training:    { ko: "배우는 중…", en: "Learning…" },
+  step_train_done:  { ko: (p) => `정확도 ${p}%`, en: (p) => `Accuracy ${p}%` },
+  step_train_stale: { ko: "예시가 바뀌었어요. 다시 가르쳐요", en: "Examples changed. Teach again" },
+  step_save:        { ko: "저장하고 시험하기", en: "Save and test" },
+  step_save_wait:   { ko: "가르친 뒤에 해요", en: "After teaching" },
+  step_save_ready:  { ko: "아래에서 이름을 정해 저장해요", en: "Name it below and save" },
+  step_save_done:   { ko: (n) => `저장함 · ${n}`, en: (n) => `Saved · ${n}` },
 };
 
 const t = (key, ...args) => {

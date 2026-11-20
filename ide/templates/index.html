@@ -23,10 +23,10 @@
   <link rel="stylesheet" href="../static/codemirror.css" />
   <link rel="stylesheet" href="../static/jquery.jsonview.min.css" />
   <link rel="stylesheet" href="../static/pibo-ui.css?ver=261120v1" />
-  <link rel="stylesheet" href="../static/v2/ide.css?ver=261120v2" />
+  <link rel="stylesheet" href="../static/v2/ide.css?ver=261120v3" />
   <link rel="shortcut icon" href="../static/icon.png?ver=261102v2" type="image/png" />
 
-  <script src="../static/ko2en.js?ver=261120v1"></script>
+  <script src="../static/ko2en.js?ver=261120v2"></script>
   <script src="../static/blockly_compressed.js?ver=240319v1"></script>
   <script src="../static/blocks_compressed.js?ver=240319v1"></script>
   <script src="../static/python_compressed.js?ver=240319v1"></script>
@@ -172,6 +172,15 @@
               <textarea id="codemirror-code" name="source_code" aria-label="Python editor" data-aria-key="v2_code_editor"></textarea>
             </form>
           </div>
+          <!-- 빈 작업판 안내(261120): 파일을 안 열었을 때만. 바탕은 눌러도 지나가고(툴박스·작업판 그대로) 카드만 받는다 -->
+          <div class="v2-start" id="v2_start" hidden>
+            <p class="v2-start__title" data-key="v2_start_title"></p>
+            <div class="v2-start__cards">
+              <button type="button" class="v2-start__card" data-start="new"><span class="v2-start__ic"><i class="fa-solid fa-file-circle-plus"></i></span><b data-key="v2_start_new"></b><small data-key="v2_start_new_d"></small></button>
+              <button type="button" class="v2-start__card" data-start="example"><span class="v2-start__ic v2-start__ic--ex"><i class="fa-solid fa-lightbulb"></i></span><b data-key="v2_start_ex"></b><small data-key="v2_start_ex_d"></small></button>
+              <button type="button" class="v2-start__card" data-start="open"><span class="v2-start__ic v2-start__ic--open"><i class="fa-solid fa-folder-open"></i></span><b data-key="v2_start_open"></b><small data-key="v2_start_open_d"></small></button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -187,7 +196,7 @@
         <section class="v2-stage__body" id="result_en">
           <figure class="v2-live" id="v2_live">
             <img id="v2_live_img" alt="" />
-            <figcaption class="v2-live__empty"><i class="fa-solid fa-camera"></i><span data-key="v2_live_empty"></span></figcaption>
+            <figcaption class="v2-live__empty" data-title-key="v2_live_empty"><i class="fa-solid fa-camera"></i><span data-key="v2_live_hint"></span></figcaption>
             <span class="v2-live__badge"><span class="v2-live__dot"></span><span data-key="v2_live"></span></span>
             <button type="button" class="v2-live__zoom" id="v2_live_zoom" data-title-key="v2_zoom"><i class="fa-solid fa-expand"></i></button>
           </figure>
@@ -309,7 +318,7 @@
   <script src="../static/index.js?ver=261120v2"></script>
   <script src="../static/v2/errhelp.js?ver=261120v1"></script>
   <script src="../static/v2/vendor/toolbox-search.js?ver=1.2.11"></script>
-  <script src="../static/v2/ide.js?ver=261118v1"></script>
+  <script src="../static/v2/ide.js?ver=261120v3"></script>
 </body>
 
 </html>

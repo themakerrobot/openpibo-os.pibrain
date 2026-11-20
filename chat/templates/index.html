@@ -8,11 +8,11 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
   <link rel="stylesheet" href="../static/pibo-ui.css?ver=261120v1" />
-  <link rel="stylesheet" href="../static/chat.css?ver=261102v1" />
+  <link rel="stylesheet" href="../static/chat.css?ver=261120v1" />
   <link rel="shortcut icon" href="../static/icon.png?ver=261102v2" type="image/png" />
   <!-- 문구는 IDE 의 ko2en.js 를 같이 쓴다(영문판 델타 파일을 늘리지 않으려고). IDE(80)는 늘 떠 있다 -->
   <script>(function () { var p = new URLSearchParams(location.search).get('ide') || 80;   /* ?ide= 는 시험용 */
-    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261119v1"><\/script>'); })();</script>
+    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261120v2"><\/script>'); })();</script>
 </head>
 
 <body class="pb pb-shell pb-refresh pb-v2">
@@ -47,6 +47,7 @@
       <div class="chat-empty" id="empty">
         <i class="fa-solid fa-comments"></i>
         <p id="empty_txt"></p>
+        <div class="chat-cards" id="model_cards" hidden></div>
         <div class="chat-try" id="try"></div>
       </div>
     </div>
@@ -64,6 +65,6 @@
   </main>
 
   <script src="../static/pibo-ui.js?ver=261102v1"></script>
-  <script src="../static/chat.js?ver=261119v1"></script>
+  <script src="../static/chat.js?ver=261120v1"></script>
 </body>
 </html>

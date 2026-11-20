@@ -8,12 +8,12 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
   <link rel="stylesheet" href="../static/pibo-ui.css?ver=261120v1" />
-  <link rel="stylesheet" href="../static/index.css?ver=261120v2" />
+  <link rel="stylesheet" href="../static/index.css?ver=261120v3" />
   <link rel="shortcut icon" href="../static/icon.png?ver=261102v2" type="image/png" />
 
   <script src="../static/socket.io.min.js"></script>
   <script src="../static/vendor/tfjs/tf.min.js"></script>
-  <script src="../static/ko2en.js?ver=261120v3"></script>
+  <script src="../static/ko2en.js?ver=261120v4"></script>
 </head>
 
 <body class="pb pb-shell pb-refresh pb-v2" data-tab="learn">
@@ -99,6 +99,12 @@
     <!-- 오른쪽: 학습 = 배우기·결과·저장 / 시험 = 답 -->
     <aside class="pb-pane pb-pane--fixed side" id="right_pane">
       <section class="only-learn">
+        <!-- 학습 단계(261120): 모으기 → 가르치기 → 저장·시험. 지금 할 단계를 파랑으로(app.js renderSteps) -->
+        <ol class="steps" id="learn_steps" aria-label="Training steps" data-aria-key="steps_label">
+          <li data-step="collect"><span class="steps__n">1</span><div class="steps__body"><b data-key="step_collect"></b><small id="step_collect_sub"></small><div class="steps__cls" id="step_cls"></div></div></li>
+          <li data-step="train"><span class="steps__n">2</span><div class="steps__body"><b data-key="step_train"></b><small id="step_train_sub"></small></div></li>
+          <li data-step="save"><span class="steps__n">3</span><div class="steps__body"><b data-key="step_save"></b><small id="step_save_sub"></small></div></li>
+        </ol>
         <button type="button" class="pb-btn pb-btn--accent pb-btn--big" id="train_btn"><i class="fa-solid fa-graduation-cap"></i><span data-key="train"></span></button>
         <p class="muted" id="train_need" data-key="need_two"></p>
         <div id="train_prog" hidden>
@@ -159,6 +165,6 @@
   </div>
 
   <script src="../static/pibo-ui.js?ver=261102v1"></script>
-  <script type="module" src="../static/app.js?ver=261120v4"></script>
+  <script type="module" src="../static/app.js?ver=261120v5"></script>
 </body>
 </html>

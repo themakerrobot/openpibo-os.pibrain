@@ -36,6 +36,36 @@ main.chat {
 .chat-empty > p { margin: 10px 0 16px; font-weight: var(--fw-b); }
 .chat-try { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
 
+/* 고르기 전 모델 카드(261120) — 작은 select 하나뿐이던 빈 화면. 누르면 그 모델을 켠다(chat.js renderCards).
+   꽉 찬 버튼은 [보내기] 하나라 카드는 판. 없는 모델은 흐리게(고를 수 없음) */
+.chat-empty.is-pick > i { display: none; }
+.chat-empty.is-pick > p { margin: 0 0 16px; font-size: 20px; color: var(--v2-ink); letter-spacing: -.01em; }
+.chat-cards { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; max-width: 760px; }
+.chat-cards[hidden] { display: none; }
+.chat-card {
+  width: 220px; padding: 20px 16px 16px; display: flex; flex-direction: column; align-items: center; gap: 6px;
+  border: 1px solid var(--v2-line); border-radius: var(--r-card); background: var(--v2-raise); color: var(--v2-ink);
+  box-shadow: 0 1px 2px rgba(16, 24, 40, .06); font-family: inherit; text-align: center; cursor: pointer;
+  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+.chat-card:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--v2-accent); box-shadow: 0 6px 18px rgba(16, 24, 40, .10); }
+.chat-card:focus { outline: none; }
+.chat-card:focus-visible { box-shadow: 0 0 0 3px var(--v2-ring); border-color: var(--v2-accent); }
+.chat-card:disabled { cursor: not-allowed; opacity: .55; box-shadow: none; }
+.chat-card__ic {
+  width: 48px; height: 48px; margin-bottom: 6px; border-radius: 14px; display: grid; place-items: center; font-size: 21px;
+  background: var(--v2-sunken); color: var(--v2-ink-2);
+}
+.chat-card--tool .chat-card__ic { background: var(--v2-tint); color: var(--v2-tint-ink); }
+.chat-card__name { font-size: 16px; font-weight: var(--fw-b); }
+.chat-card__desc { font-size: 13px; line-height: 1.45; color: var(--v2-ink-2); word-break: keep-all; }
+#model_cards .chat-card__desc { font-weight: 400; }   /* 키트의 일반 버튼 규칙이 굵게 만든다 */
+.chat-card__tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-top: 6px; }
+.chat-card__tag { padding: 1px 8px; border-radius: var(--r-pill); background: var(--v2-sunken); color: var(--v2-ink-3); font-size: 12px; font-weight: var(--fw-b); font-variant-numeric: tabular-nums; }
+.chat-card__tag.is-tool { background: var(--v2-tint); color: var(--v2-tint-ink); }
+.chat-card__tag.is-off { background: transparent; border: 1px dashed var(--v2-line-2); }
+.chat-cards__hint { flex: 1 0 100%; margin: 6px 0 0; font-size: 12.5px; color: var(--v2-ink-3); font-weight: 400; }
+
 .msg { display: flex; flex-direction: column; max-width: 78%; animation: pb-rise .18s ease-out both; }
 .msg--me  { align-self: flex-end; align-items: flex-end; }
 .msg--bot { align-self: flex-start; align-items: flex-start; }
@@ -87,7 +117,10 @@ main.chat {
   .msg { max-width: 92%; }
   #send_bt > span { display: none; }
   .chat-voice { font-size: 13px; }
+  .chat-card { width: 100%; max-width: 340px; padding: 14px; }
+  .chat-empty.is-pick > p { font-size: 17px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .msg, .dots > i { animation: none; }
+  .chat-card { transition: none; } .chat-card:hover:not(:disabled) { transform: none; }
 }
