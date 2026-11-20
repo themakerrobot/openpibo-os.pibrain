@@ -951,7 +951,7 @@ PiBrain 만: IMAGE.md 패키지 버전 확인 문구(이미 확인함)·마이�
   템플릿에 Jinja 문법이 없어서다. 전에 쓰던 `TemplateResponse(이름, {"request": ...})` 는 starlette 1.0 부터
   받지 않아 첫 화면이 500 이 된다(컨테이너 starlette 1.7 에서 확인). 템플릿에 Jinja 를 쓰게 되면
   `TemplateResponse(request, 이름)` 새 순서로 쓸 것
-  - **도움말(8080, `system/booting.py` 의 `/`)도 261120 에 `FileResponse(docs/index.html)` 로 바꿨다** — 그때까지 옛 순서라 기기 starlette 가 1.0 이상이면 [도움말] 첫 화면이 500 이었을 것(전수 조사 S10 이 찾음, 기기 starlette 버전은 확인 필요)
+  - **도움말(8080, `system/booting.py` 의 `/`)도 261120 에 `FileResponse(docs/index.html)` 로 바꿨다** — 그때까지 옛 순서라 starlette 1.0 이상이면 [도움말] 첫 화면이 500 이다(전수 조사 S10 이 찾음). 파이보 기기(cd488e95)는 starlette 0.41.2 라 예전 코드도 돌았고, 바꾼 뒤 `curl localhost:8080/` 200 확인(261120). 패키지를 올리거나 새 이미지에서 1.0 이 되면 터질 것을 미리 막은 것. PiBrain 기기 버전은 확인 필요
 - `restore` 의 `except` 는 `app.sio.emit(..., to=sid)`. 전엔 정의 안 된 `sio` 를 불러 오류 안내가 안 나갔다
 - **`utils_dict_create` 는 값 블록이다(260924v3).** 전엔 위아래로 끼우는 모양인데 생성기가 값을 돌려줘서
   코드 생성이 실패했다(`[변수 = 빈 사전]` 을 만들 수 없었다). 예전 모양으로 저장된 파일은 불러오면
