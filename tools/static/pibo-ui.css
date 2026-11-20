@@ -1203,7 +1203,7 @@ body.pb-v2 .mlib__tools > button, body.pb-v2 .mlib__tools > label { width: var(-
   body.pb-v2 #article_motion .motion-record > div:first-child { gap: 4px; }
   body.pb-v2 #article_motion .motion-record > div:first-child > button { padding-left: 8px !important; padding-right: 8px !important; }
 }
-@media (max-width: 1299px) and (min-width: 901px) {
+@media (max-width: 1299px) {   /* 좁으면 발 그림과 겹친다(261120, 전엔 901px 이상만) */
   body.pb-v2 .mhead__keys { display: none; }
 }
 /* 저장 칸 상자 (261116 에 옆 조작 패널 .mside/.mpanel 은 없앴다 — 시간·[추가·수정] 은 윗줄, 레인지는 점에 붙는다) */

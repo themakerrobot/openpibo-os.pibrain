@@ -42,7 +42,7 @@ const translations = {
   v2_brand:         { ko: "메이커",   en: "Maker" },
   v2_panel:         { ko: "패널 접기/펴기", en: "Show or hide panel" },
   v2_tab_robot:     { ko: "PiBrain", en: "PiBrain" },
-  v2_live_empty:    { ko: "코드에서 [이미지 … IDE에 보여주기] 블록을 쓰면 여기에 화면이 나와요.", en: "Use the \"Display image variable … on IDE\" block to see the picture here." },
+  v2_live_empty:    { ko: "[… 이미지를 모니터 화면에 보여주기] 블록을 쓰면 여기에 화면이 나와요.", en: "Use the \"Show image … on the monitor\" block to see the picture here." },
   v2_settings:      { ko: "설정",     en: "Settings" },
   v2_output:        { ko: "출력",     en: "Output" },
   v2_clear:         { ko: "지우기",   en: "Clear" },
