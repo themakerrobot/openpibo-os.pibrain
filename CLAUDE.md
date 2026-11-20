@@ -1073,6 +1073,10 @@ SSID 가 비면 실패 안내를 돌려준다(전엔 정의 안 된 `ex` 로 500
 
 - **아이콘(261102) — 파이보와 같다**(Pibo CLAUDE.md '아이콘 (261102)'): 제품 마크는 PiBrain 보드 그림(`design/marks/pibrain.svg`, 키트 CSS 가 `fa-brain` 글리프를 바꿈), 탭 아이콘 `icon.png` 도 같은 그림, 앱 아이콘 도구 `fa-screwdriver-wrench`·대화 `fa-comments`·분류기 `fa-graduation-cap`. 도구 [음성]의 espeak 버튼 `fa-robot` 은 제품 마크가 아니라 그대로 둔다
 - **앱을 나가거나 다른 앱으로 옮기면 로봇 화면은 무조건 IP 화면(261116, 사용자).** IDE `run_ide.py` 의 `show_ip(keep)` — `/tools` `/classifier` `/llm` `/kids` `/hwtest` 의 켜기·끄기와 코드 [정지] 때, 끄이는 앱(유닛·대화 웹·체험 앱·검수)이 다 내려간 뒤(최대 20초 기다림) `network_disp.py` 를 띄운다. 코드 실행을 시작할 때는 하지 않는다(학생 프로그램이 그린 것을 덮지 않게). 체험 앱 안에서도 처음 화면으로 돌아오면 IP 화면
+- **로봇 화면은 한 번에 한 프로세스만 쓴다(261120, PiBrain 실기기에서 LCD 반전).** `openpibo/oled.py` 의 모든 화면 클래스가 초기화·`show`·`clear` 를 파일 잠금 `/tmp/openpibo_screen.lock`(flock — 프로세스·스레드 모두)으로 감싼다.
+  도구를 열면 IDE 의 `show_ip` 와 도구 시작의 `start_network_disp`(PiBrain 도구)가 거의 같이 `network_disp.py` 를 띄워, 두 프로세스가 같은 SPI 에 쓰면서 D/C 핀이 섞여 그림 바이트가 명령으로 들어갔다(흰 바탕 반전·카메라 그림 이상 — 웹 화면은 정상).
+  PiBrain LCD(ILI9341)는 리셋 핀이 없어(`rst=None`) **재부팅해도 LCD 상태가 남는다** — 라이브러리 초기화 순서에 소프트 리셋·반전 끄기가 없어서 `OledByPiBrain()` 이 소프트 리셋(0x01) 뒤 다시 초기화한다. 파이보 OLED(SSD1306)는 초기화 순서에 '반전 아님'이 있어 다시 열면 풀린다.
+  화면에 쓰는 코드를 새로 만들면 이 클래스를 거칠 것(`self.oled` 를 밖에서 직접 쓰지 말 것). 확인(컨테이너, 가짜 장치 4프로세스 동시): 예전 코드는 동작 15번 겹침 → 0번. **실기기 확인 필요**
 - **상단바 왼쪽 로고를 누르면 LCD 가 IP 화면으로 돌아간다(261030, 사용자).** 키트 `pibo-ui.js` 의 `screenReset` → IDE(80) `POST /screen_reset` → `system/network_disp.py`([출력 지우기] 의 화면 초기화와 같음). 로봇 놀이 키우기 얼굴도 IP 로 덮는다
 PiBrain 에서 바뀐 것: 도구 상단바를 키트 모양으로(`PiBrain · 도구`, 'EN' 단추 → 지금 언어 select `#lang_sel`), 선택 표시 노랑(#fff1c2) → 옅은 파랑, 버튼·슬라이더를 키트 모양으로,
 `:where()`·`color-mix()`·`aspect-ratio` 제거, 버튼 상태 ON/OFF → 눌림/안 눌림, 음성 [말하기]·'다 말했어요'·'멈췄어요'. `design/` 의 키트 두 파일은 파이보와 바이트까지 같게 둔다(원본은 파이보).
