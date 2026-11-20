@@ -42,7 +42,17 @@ html[data-pb-theme="dark"] .pb-topbar {
 .pb-topbar__btn:hover { background: var(--pb-frame-2); }
 .pb-topbar__btn:active { background: var(--pb-frame-3); }
 .pb-topbar__btn svg { width: 16px; height: 16px; flex: none; }
-.pb-topbar__btn.theme-toggle svg { width: 18px; height: 18px; color: var(--pb-frame-ink); }
+/* 밝기·전체화면(261120): 키트와 같은 버튼. 아이콘은 지금 상태 하나만 */
+.pb-topbar__ide svg, .pb-topbar__fs svg, .pb-topbar__theme svg { width: 18px; height: 15px; }   /* 키트 아이콘(15px, 칸 18px)과 같은 크기 */
+.pb-topbar__theme svg, .pb-topbar__fs .pb-ic-min { display: none; }
+html[data-pb-theme="light"] .pb-topbar__theme .pb-ic-light,
+html[data-pb-theme="soft"] .pb-topbar__theme .pb-ic-soft,
+html[data-pb-theme="dark"] .pb-topbar__theme .pb-ic-dark { display: inline-block; }
+.pb-topbar__fs.is-on .pb-ic-max { display: none; }
+.pb-topbar__fs.is-on .pb-ic-min { display: inline-block; }
+.pb-topbar__btn[hidden] { display: none; }
+/* Furo 자체 밝기 버튼(본문 오른쪽 위·모바일 머리줄)은 쓰지 않는다 — 상단바 버튼 하나로 */
+.theme-toggle-container { display: none !important; }
 .pb-topbar__lang { height: 32px; margin-left: 2px; padding: 0 26px 0 10px; border: 0; border-radius: 8px; cursor: pointer;
   color: var(--pb-frame-ink); font: 700 13px/1 var(--font-stack);
   -webkit-appearance: none; -moz-appearance: none; appearance: none;
@@ -53,7 +63,7 @@ html[data-pb-theme="dark"] .pb-topbar {
 .pb-topbar__lang option { color: #1a1e29; background: #fdfdff; }
 .pb-topbar :focus { outline: 2px solid var(--pb-frame-ink); outline-offset: 1px; }
 .pb-topbar__lang[hidden] { display: none; }
-/* 넓은 화면: 목록·밝기·목차 버튼은 Furo 제자리(사이드바·본문 오른쪽 위)에 있으므로 막대에서는 숨긴다 */
+/* 넓은 화면: 목록·목차 버튼은 Furo 제자리(사이드바·본문 오른쪽 위)에 있으므로 막대에서는 숨긴다 */
 .pb-topbar__m { display: none; }
 /* Furo 는 body 높이를 100% 로 묶어 두어 sticky 막대가 한 화면만 내려가면 사라진다 → body 는 내용 높이로, 바닥 채우기는 .page 가 */
 body { height: auto; min-height: 100%; }
@@ -85,9 +95,12 @@ body[data-theme="dark"] .sidebar-search:focus { border-color: #7aa7ff; box-shado
   .sidebar-brand { display: block; }   /* 서랍을 열면 막대가 덮이므로 이름을 다시 보인다 */
   .sidebar-search-container { margin-top: 4px; }
 }
-@media (max-width: 480px) {
+/* 키트와 같은 기준(999px 이하) — 버튼은 아이콘만(title 이 있다) */
+@media (max-width: 999px) {
   .pb-topbar__btn { padding: 0 8px; }
-  .pb-topbar__ide span { display: none; }          /* 아이콘만(title 이 있다) */
+  .pb-topbar__btn > span { display: none; }
+}
+@media (max-width: 480px) {
   .pb-topbar__lang { padding-right: 22px; padding-left: 8px; background-position: right 11px center, right 7px center; }
   .pb-topbar__brand { font-size: 15px; gap: 6px; }
 }

@@ -911,7 +911,6 @@
     C.lessons.forEach(function (l) { var o = el('option'); o.value = String(l.n); o.textContent = tr('kids_lesson_n', l.n, txt(l)); ls.appendChild(o); });
     ls.value = String(T.lesson);
     lessonHelp();
-    $('t_lang').value = L();
     var vs = $('t_voice');
     vs.innerHTML = '';
     ['m1', 'm2', 'm3', 'm4', 'm5', 'f1', 'f2', 'f3', 'f4', 'f5'].forEach(function (v) {
@@ -937,8 +936,6 @@
     post('/api/teacher/settings', body).then(function (r) {
       if (!r.ok) { toast(tr('kids_err'), 'error'); return; }
       S.settings = r.settings;
-      var nl = $('t_lang').value;
-      if (nl !== L()) { lang = nl; store('language', nl); applyLanguage(); }
       $('dlg_teacher').hidden = true;
       toast(tr('kids_saved'), 'ok');
       show(S.view === 'make' ? 'home' : S.view);
@@ -996,6 +993,7 @@
   /* ── 언어 ─────────────────────────────────────────────────────────── */
   function applyLanguage() {
     document.documentElement.lang = L();
+    $('language').value = L();
     each('[data-key]', function (e) { e.textContent = tr(e.getAttribute('data-key')); });
     each('[data-title-key]', function (e) { var s = tr(e.getAttribute('data-title-key')); e.title = s; e.setAttribute('aria-label', s); });
     document.title = tr('kids_title');
@@ -1005,6 +1003,12 @@
     if (S.view === 'make') { renderTask(); renderPalette(); renderRow(); }
     if (S.view !== 'make' && S.view !== 'pet') show(S.view);
   }
+
+  // 상단바 언어 select — 다른 앱과 같이 바로 바뀐다(261120, 전엔 선생님 잠금 안에만 있었다)
+  $('language').addEventListener('change', function () {
+    if (this.value === L()) return;
+    lang = this.value; store('language', lang); applyLanguage();
+  });
 
   /* ── 시작 ─────────────────────────────────────────────────────────── */
   function refreshState() { return get('/api/state').then(function (s) { applyState(s); return s; }); }
@@ -1017,7 +1021,6 @@
         $('brand_icon').className = 'fa-solid fa-brain';
         $('brand_name').textContent = 'PiBrain';
       }
-      document.querySelector('.pb-header .pb-iconbar').appendChild($('lock_bt'));   // 키트가 붙이는 밝기 버튼보다 오른쪽 구석에
       applyLanguage();
       show('home');
       if (a[1].running) { setRunning(true); poll(); }
