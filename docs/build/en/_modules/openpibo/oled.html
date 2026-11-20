@@ -364,7 +364,6 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">openpibo_models</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fcntl</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">contextmanager</span>
 
 <span class="c1"># 로봇 화면(SPI)은 한 번에 한 프로세스만 쓴다(261120). 도구·IP 화면(network_disp)·체험 앱·학생 프로그램이 따로 화면을 열어</span>
@@ -390,10 +389,10 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_ili9341_reset</span><span class="p">(</span><span class="n">lcd</span><span class="p">):</span>
   <span class="c1"># LCD 리셋 핀이 연결돼 있지 않아(rst=None) 재부팅해도 LCD 는 앞 상태(반전 등)를 그대로 들고 있다.</span>
-  <span class="c1"># 라이브러리 초기화 순서에는 소프트 리셋·반전 끄기가 없어서, 소프트 리셋(0x01) 뒤 다시 초기화한다(261120)</span>
-  <span class="n">lcd</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mh">0x01</span><span class="p">)</span>
-  <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.15</span><span class="p">)</span>
-  <span class="n">lcd</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+  <span class="c1"># 라이브러리 초기화 순서에는 반전 끄기가 없어서 여기서 보낸다(261120): 반전 끔(0x20) · 보통 표시(0x13) · 8색 모드 끔(0x38).</span>
+  <span class="c1"># 소프트 리셋(0x01)은 화면이 잠깐 하얗게 깜빡여서 쓰지 않는다(261120 실기기)</span>
+  <span class="k">for</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="p">(</span><span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x13</span><span class="p">,</span> <span class="mh">0x38</span><span class="p">):</span>
+    <span class="n">lcd</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Oled">
 <a class="viewcode-back" href="../../libraries/oled.html#openpibo.oled.Oled">[docs]</a>
