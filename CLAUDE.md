@@ -108,6 +108,8 @@ git tag -d <태그> ...           # 로컬 삭제
 | Classifier | `classify.service` | `classifier/run_classify.py` | 50010 |
 | Chat Bot | `llama-server@<모델>`(템플릿, 261029) | (외부) | 50020 |
 | H/W 검수 | 없음 — IDE 가 subprocess 로 띄운다 | `test/test.py` | 50050 |
+| 대화 웹 | 없음 — IDE `/llm` 이 띄운다(261026) | `chat/run_chat.py` | 50030 |
+| 로봇 놀이 | 없음 — IDE `/kids` 가 띄운다(261028, 시험 중) | `kids/run_kids.py` | 50060 |
 
 - 파이썬은 `/home/pi/.pyenv/bin/python3`. **기기에서 돌릴 명령은 `sudo /home/pi/.pyenv/bin/python3` 로 줄 것**(사용자, 261027 — 시스템 `python3` 에는 onnxruntime 등이 없다)
 - `booting.py` 가 `docs/build` 를 `/build` 로 서빙한다. IDE 헤더의 Guide 버튼이 8080 을 연다.
@@ -261,8 +263,8 @@ span 이 날아가면 시리얼이 영영 안 돌아온다.
 | `themaker-en`(더메이커 EN) | `themaker-en.gguf` → `themaker-en-0.8b-Q4_K_M.gguf`(PC 학습 중 — 오기 전엔 깨진 링크) | **있음** | 〃 |
 
 - `openpibo/speech.py` `Dialog`: `set_llm_model(model)`(이름이 셋 밖이면 `ValueError`, 파일이 없으면(깨진 링크 포함) `FileNotFoundError`, 이미 띄웠으면 다시 띄움).
-  `gemma3`(261029v1 블록 값)는 `general` 로 받는다. `start_llm()` 은 `systemctl stop llama-server 'llama-server@*'` → `systemctl start llama-server@<고른 것 또는 general>`. `stop_llm()` 은 둘 다 끈다. 고른 모델은 그 `Dialog` 안에서만 기억한다
-- **대화 화면(`chat/`)**: 상단 [대화 모델] select 하나(`#model_sel`, 처음엔 '고르세요') + 옆에 고른 것의 실제 파일·크기(`#model_file`, 예 `themaker-0.8b-Q4_K_M · 321MB`). 세 개를 늘어놓지 말 것(사용자).
+  `gemma3`(261029v1 블록 값)는 `general` 로 받는다. `start_llm()` 은 `systemctl stop 'llama-server@*'` → `systemctl start llama-server@<고른 것 또는 general>`. `stop_llm()` 도 `'llama-server@*'` 를 끈다(예전 `llama-server.service` 는 없다). 고른 모델은 그 `Dialog` 안에서만 기억한다
+- **대화 화면(`chat/`)**: 상단 [대화 모델] select 하나(`#model_sel`, 처음엔 '고르세요') + 옆에 고른 것의 판·크기(`#model_file`, 예 `themaker-0.8b-Q4_K_M · 321MB` — 261120 부터 `.model/VERSION` 의 `llm/<이름>.gguf = …` 줄에서 읽는다(`run_chat.model_version`). 그 줄이 없으면 파일 이름 `themaker-ko`. 기기 VERSION 줄 모양은 **확인 필요**). 세 개를 늘어놓지 말 것(사용자).
   파일이 없는 모델은 '(없음)' 으로 못 고른다(`/api/models` 의 `have`·`file`·`mb`). 고르면 `POST /api/model` → `switch_model()`(스레드)이
   대답 중이면 끝난 뒤 기록·말하기를 비우고, 다 끈 다음 `llama-server@<이름>` 을 `--no-block` 으로 켠다. 준비는 예전처럼 `warm_loop` 가 `/health` → 미리 읽기. 바꾸는 동안(`_switching`)은 옛 서버를 보지 않는다.
   고르기 전엔 상태 줄을 숨기고 빈 화면이 '위에서 대화 모델을 골라 주세요.'(`chat_pick_model`). 새로 고쳐도 서버의 `model` 로 선택이 남는다. [다시 켜기] 는 같은 모델로 `switch_model`.
@@ -314,7 +316,7 @@ span 이 날아가면 시리얼이 영영 안 돌아온다.
 **파이보와 같은 코드다. 원본은 파이보 리포**(`openpibo-os.pibo/CLAUDE.md` '대화 웹' 절에 구조·이유·시험이 있다). `chat/` 를 통째로 복사해 왔다.
 IDE [대화] 가 llama-server 기본 웹 화면 대신 대화 웹(`chat/run_chat.py`, 50030)을 연다 — 글자 대화, 대답을 흘려 보여 주고, [소리로 말하기] 면 스피커로 말한다.
 
-- **도구(함수 호출)는 뺐다(261026, 사용자 결정)** — 파이보에서 도구 한 번에 15~44초. 그래서 기기 차이가 없다(`--device pibrain` 은 받기만 한다)
+- 도구(함수 호출)는 261026 에 뺐다가 **261029 에 더메이커 모델용으로 다시 넣었다** — 불빛·보기·움직이기, PiBrain 은 `pibrain_chat.PiBrain`(NeoPixel, 움직이기는 '몸이 없어서…'). 자세한 건 파이보 CLAUDE.md '대화 모델 고르기'. `--device pibrain` 은 도구 기기와 시스템 글의 로봇 이름을 고른다
 - IDE 가 `/llm` 때 직접 띄운다. 끄기: `/llm?enable=off` · [도구][분류기][H/W 검수] 켜기 · 코드 실행 · [정지]
 - 말하기는 `SpeechOnDevice`(int8) + `Audio.play` — 파이보와 같다. LLM 과 TTS 가 같이 올라가는 메모리는 **확인 필요**
 - **볼륨**: 대화 화면의 막대(0~100, 기본 80, 브라우저에 기억)를 `Audio.play(volume=)` 로 넘긴다. `Audio.play` 는 틀 때마다 PCM 을 직접 바꾼다
@@ -614,7 +616,7 @@ Pibo 도구와 기능·마크업이 달라(REST/SSE, 5탭) 키트의 `pb-v2` 층
 - 기본 블록 테마(`index.js`)의 `colorTertiary` 오타가 `colourTertiary` 로 고쳐졌다(Pibo 에서 같이 옴)
 - 파이썬 편집기는 v2 전용 테마 `pibo-light`/`pibo-dark`
 - **움직임(260929)** — Pibo CLAUDE.md '화면 v2 → 움직임' 과 같다. PiBrain 에 들어간 것: IDE(상태 숫자 올라감·연결 점 숨쉬기·
-  [PiBrain|파일] 탭 떠오르기·파일 목록 빈 줄·대화상자 등장), 분류기(결과 막대·숫자, 카메라 HUD, 보관함 빈 카드, 탭 전환),
+  파일 서랍 칸 떠오르기(예전 [PiBrain|파일] 탭)·파일 목록 빈 줄·대화상자 등장), 분류기(결과 막대·숫자, 카메라 HUD, 보관함 빈 카드, 탭 전환),
   대기 페이지(배경·진행 링, 밝기 따름, 상단 이름 Pibo → PiBrain). 도구는 마크업이 달라 안 넣었다
 
 검증(컨테이너, 가짜 소켓): v2 동작 22/22, 기존 동작 27개 중 26(실패 1개는 테스트 탭이 뒤에 있어 늦게 뜬 것 —
@@ -649,7 +651,7 @@ Pibo 리포의 변경을 가져올 때 **항목마다 적용 여부를 먼저 �
 | IDE 블록 | `device_eye_*` `device_get_*` | **`device_pibrain_*` 별도 세트.** 아래 참고 |
 | MCU | 있음 (`send_raw`, 펌웨어 버전) | **없음.** 검수 보고서에 Firmware 행이 없다 |
 | 배터리 | 게이지 있음 | 없음 |
-| 진입 UI | IDE v2(노랑 상단바 + 왼쪽 패널) | 동일(260924~). 패널 탭 이름만 [PiBrain], 배터리 칸 없음. 랜딩 페이지는 쓰지 않는다 |
+| 진입 UI | IDE v2 A안(261118 — 노랑 상단바 + 파일 서랍 + 오른쪽 실행 화면 + 아래 상태 줄) | 동일. 배터리 칸 없음. 랜딩 페이지는 쓰지 않는다 |
 | Tools | socket.io + 모션 편집기·시뮬레이터 | REST/SSE. 버튼·LED·카메라·TTS·LCD 5개 패널. 컨셉만 같다. 화면은 v2 색으로 따로 짰다(260924) |
 | Classifier | teach-lab 방식(260924) | 같다(260924~). 언어 저장 키만 `classifier_language` |
 | 마이크 | 2-mic HAT (`arecord -D plug:dmic_sv`) | **없음.** 녹음·STT 경로 전부 무관 |
@@ -710,7 +712,7 @@ Pibo 와 같다. Teachable Machine 계열(`vision_load_tm` `vision_predict_tm`
 
 | 단계 | 어디서 | 무엇으로 |
 |---|---|---|
-| 카메라 | PiBrain → 태블릿 | socket.io `camera_image`, 320×240 JPEG |
+| 카메라 | PiBrain → 태블릿 | socket.io `camera_image`, 240×320 JPEG(세로 — 짧은 변 240) |
 | 특징 뽑기·학습 | 태블릿 브라우저 | MediaPipe wasm(`classifier/static/vendor/tasks-vision`) + TF.js 작은 MLP |
 | 저장 | PiBrain | `POST /api/models` → `/home/pi/mymodel/<이름>/` |
 | 추론 | PiBrain | `CustomClassifier` — onnxruntime(이미지, 261104) · MediaPipe(손·얼굴·포즈) + numpy |
@@ -870,6 +872,15 @@ classifier 언어 토글, 검수 보고서 구조, Tools 서비스.
 IDE 화면 출력 안내·툴팁을 블록 이름(`모니터 화면에 보여주기`)에 맞춤, 마지막 수정 뒤 안 올린 `?ver`(IDE `ide.css`·`index.js`·`errhelp.js`·`ko2en.js`, `langFileVersion`) → 261120v1.
 **도움말 다시 빌드함(261120)**: 두 리포 한·영, 경고 0, API 13쪽 한·영 개수 같음. 블록 가이드에 쉬움 블록(파이보 19·PiBrain 16), 사용법 글·IDE 캡처는 A안·오류 상자·[쉬움 | 전체] 로, 파이보 [동작] 캡처는 점 숫자 입력으로.
 **태그 전에 남은 일**: ① 태그는 사람이(`YYMMDDvN`·`-gl` 같이) ② 실기기 확인(이 문서의 '실기기 확인 필요' 들 — 특히 카메라 재시도·실행 전 서비스 대기·오류 상자 줄 잡기·대화 도구 예시·분류기 태블릿)
+
+**2차 전수조사(261120, 두 리포)** — 문서·주석이 코드보다 늦은 곳을 찾아 고쳤다. 기계 점검: 문법(파이썬·JS·셸) 0 오류, `?ver` 늦은 곳 0, 화면·서버가 쓰는 번역 키 빠진 것 0,
+예제(국내·영문 두 판) 블록 열기·코드 만들기 오류 0, 전 화면 × 한/영 pageerror·가로 넘침 0, 도움말 빌드 경고 0·영문 API 번역 빈칸 0.
+고친 것: API 설명(`Camera` — USB·처음 `read()` 때 열기·함수 목록 · `Detect` — 없는 `classify_image` 빼고 함수 목록 · 대화 모델 파일 · `transcribe` 빈 글자 · 분류 '파이보' 낱말)과 영문 `.po`,
+블록 설명 3개(`ko.js`·`en.js` — 옛 블록 이름·'파이보가'), 도움말 사용법(블록 이름·PiBrain 도구 탭 위치·얼굴 구분·espeak·로봇 놀이·USB 카메라), README 폴더표(chat·kids·docs),
+`setup.py`(안 쓰는 `openpibo_face_models` 빼고 라이선스), IMAGE.md(`'llama-server@*'`·모델 크기·실제 파일·**뜨기 전 청소에 로봇 놀이 기록 지우기**), 
+`design/README.md`(두 리포 같은 파일로), 손동작 모델 라이선스 줄(**확인 필요**),
+대화 화면 `#model_file` 이 `.model/VERSION` 에서 판 이름을 읽게(261106 실제 파일 뒤로 `themaker-ko` 만 보였다), `gen_block_guide.py` 가 그림을 **다 그린 뒤에만** 옛 그림을 지우게(전엔 IDE 주소가 틀리면 그림이 다 지워진 채 멈췄다), `ide.css` 머리 주석(A안 배치·파랑).
+PiBrain 만: IMAGE.md 패키지 버전 확인 문구(이미 확인함)·마이크 없음, CLAUDE.md 서비스 표(대화 웹·로봇 놀이)·대화 도구 다시 넣은 것·A안·분류기 세로 스트림
 
 ## 오류 쉬운 말 (261119) — 실행 출력 위 빨간 상자
 

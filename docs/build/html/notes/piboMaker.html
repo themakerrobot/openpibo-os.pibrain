@@ -415,7 +415,7 @@ API 는 왼쪽 <strong>PYTHON</strong> 을 보세요</p></li>
 </section>
 <section id="id1">
 <h2>도구<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
-<p>PiBrain 의 기능을 하나씩 코드 없이 써 봅니다. 왼쪽 메뉴에서 [버튼] [LED] [카메라] [음성] [화면] 을 고릅니다.
+<p>PiBrain 의 기능을 하나씩 코드 없이 써 봅니다. 오른쪽 위 탭에서 [버튼] [LED] [카메라] [음성] [화면] 을 고릅니다.
 왼쪽의 PiBrain 그림에서 버튼을 누르면 그 버튼이, LED 색을 바꾸면 흰 네모(LED)가, 화면에 글자를 보내면 화면이 같이 바뀝니다. [카메라] 의 [여기에 보기] 사진도 그림 속 화면에 나오고, [음성] 으로 말하는 동안에는 그림 위에 말풍선이 뜨고, [화면] 탭에서 보내기 전 글자는 ‘미리보기’ 로 보입니다(이 페이지에서 보낸 것만 그림에 나옵니다).</p>
 <ul class="simple">
 <li><p><strong>버튼</strong>: 버튼 4개가 눌렸는지 실시간으로 보여 줍니다</p></li>
@@ -428,9 +428,10 @@ API 는 왼쪽 <strong>PYTHON</strong> 을 보세요</p></li>
 <ul class="simple">
 <li><p><strong>카메라</strong>: [카메라 켜기] 를 누르면 카메라 화면이 <strong>PiBrain 화면</strong>에 나옵니다. 비전 기능(흑백·윤곽선·만화·QR 코드·얼굴 분석·
 사물 인식·손동작 인식·포즈 인식·마커 인식 등)을 누르면 PiBrain 화면에 바로 적용되고, 결과는 오른쪽 아래에 글자로 나옵니다.
+<strong>얼굴 구분</strong>은 이름을 적고 [등록]한 얼굴을 알아봅니다(등록한 얼굴은 블록 <code class="docutils literal notranslate"><span class="pre">얼굴</span> <span class="pre">사전을</span> <span class="pre">code</span> <span class="pre">facedb</span> <span class="pre">에서</span> <span class="pre">불러오기</span></code> 로 프로그램에서도 씁니다).
 [여기에 보기]를 누르면 지금 화면을 브라우저에서도 봅니다.
 USB 카메라를 꽂았으면 [여기에 보기] 옆 고르는 칸에서 <strong>보드 카메라 / USB 카메라</strong>를 바꿔 볼 수 있습니다(V4L2 를 지원하는 USB 카메라면 기종은 상관없어요)</p></li>
-<li><p><strong>음성</strong>: 목소리 10가지(남성 1~5, 여성 1~5) 중에서 골라 [말하기]로 글자를 말하게 합니다. 한국어·영어는 자동으로 알아봅니다</p></li>
+<li><p><strong>음성</strong>: 목소리 10가지(남성 1~5, 여성 1~5)와 기계음(espeak, 영어 글자만) 중에서 골라 [말하기]로 글자를 말하게 합니다. 한국어·영어는 자동으로 알아봅니다</p></li>
 </ul>
 <p><img alt="도구 화면" src="../_images/tools_lcd.png" /></p>
 <ul class="simple">
@@ -447,7 +448,8 @@ USB 카메라를 꽂았으면 [여기에 보기] 옆 고르는 칸에서 <strong
 카메라 아래 고르는 칸에서 USB 카메라로 바꿀 수 있어요 — 학습할 때와 쓸 때 같은 카메라를 쓰면 더 잘 맞습니다</p></li>
 <li><p><strong>[AI 가르치기]</strong> — 태블릿·노트북 브라우저에서 몇 초 만에 배웁니다. 맞힌 비율·헷갈린 표·지금 보이는 것의 점수가 나옵니다</p></li>
 <li><p><strong>[저장]</strong> — PiBrain 의 <code class="docutils literal notranslate"><span class="pre">/home/pi/mymodel/&lt;모델</span> <span class="pre">이름&gt;</span></code> 에 저장됩니다</p></li>
-<li><p>IDE 에서 블록 <code class="docutils literal notranslate"><span class="pre">분류</span> <span class="pre">모델</span> <span class="pre">[mymodel]</span> <span class="pre">(모델</span> <span class="pre">이름)</span> <span class="pre">을(를)</span> <span class="pre">불러오기</span></code> → <code class="docutils literal notranslate"><span class="pre">(이미지)</span> <span class="pre">이미지를</span> <span class="pre">분류</span> <span class="pre">모델로</span> <span class="pre">알아보기</span></code> 로 씁니다</p></li>
+<li><p>IDE 에서 블록 <code class="docutils literal notranslate"><span class="pre">분류</span> <span class="pre">모델</span> <span class="pre">[mymodel]</span> <span class="pre">(모델</span> <span class="pre">이름)</span> <span class="pre">을(를)</span> <span class="pre">불러오기</span></code> → <code class="docutils literal notranslate"><span class="pre">(이미지)</span> <span class="pre">이미지를</span> <span class="pre">분류</span> <span class="pre">모델로</span> <span class="pre">알아보기</span></code> 로 씁니다.
+<code class="docutils literal notranslate"><span class="pre">(이미지)</span> <span class="pre">이미지</span> <span class="pre">위에</span> <span class="pre">분류</span> <span class="pre">결과</span> <span class="pre">표시하기</span></code> 는 본 손·얼굴·몸의 점과 종류 이름을 그림에 그립니다</p></li>
 </ol>
 <p>[시험] 탭에서 저장한 모델을 다시 써 보고, [보관함] 에서 시험·이어서 배우기·이름 바꾸기·내려받기(zip)·지우기를 합니다.</p>
 <div class="admonition tip">
@@ -508,11 +510,11 @@ USB 카메라를 꽂았으면 [여기에 보기] 옆 고르는 칸에서 <strong
 <li><p>“대화만 하자” 라고 하면 도구를 쓰지 않고, “이제 움직여도 돼” 라고 하면 다시 씁니다.</p></li>
 <li><p>[소리로 말하기] 를 켜면 PiBrain이 대답을 소리로 말합니다(목소리·음량을 고를 수 있습니다).</p></li>
 </ul>
-<p>블록 [음성] 의 <code class="docutils literal notranslate"><span class="pre">대화</span> <span class="pre">모델</span> <span class="pre">고르기</span></code> · <code class="docutils literal notranslate"><span class="pre">대화</span> <span class="pre">서버</span> <span class="pre">시작하기</span></code> · <code class="docutils literal notranslate"><span class="pre">…</span> <span class="pre">대화하기</span></code> 로 프로그램에서도 씁니다.
+<p>블록 [음성] 의 <code class="docutils literal notranslate"><span class="pre">대화</span> <span class="pre">모델</span> <span class="pre">고르기</span></code> · <code class="docutils literal notranslate"><span class="pre">대화</span> <span class="pre">서버</span> <span class="pre">시작하기</span></code> · <code class="docutils literal notranslate"><span class="pre">AI에게</span> <span class="pre">…</span> <span class="pre">(이)라고</span> <span class="pre">말하기</span></code> 로 프로그램에서도 씁니다.
 블록에서는 글자로만 대화하고 도구는 실행하지 않습니다.</p>
 <div class="admonition note">
 <p class="admonition-title">참고</p>
-<p>도구·대화·분류기는 <strong>한 번에 하나만</strong> 켜집니다. 하나를 열면 나머지는 꺼지고, IDE 에서 프로그램을 실행해도 꺼집니다
+<p>도구·대화·분류기·로봇 놀이·H/W 검수는 <strong>한 번에 하나만</strong> 켜집니다. 하나를 열면 나머지는 꺼지고, IDE 에서 프로그램을 실행해도 꺼집니다
 (카메라·스피커·메모리를 나눠 쓰기 때문입니다). 꺼진 화면에는 [다시 켜기] 가 나옵니다.</p>
 </div>
 </section>

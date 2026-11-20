@@ -1,127 +1,70 @@
 # Pibo UI Kit
 
-`openpibo-os.pibo` 와 `openpibo-os.pibrain` 의 IDE · Tools · Classifier 가 같이 쓰는
-스타일 한 벌. **빌드 없음. `<link>` 한 줄.**
+`openpibo-os.pibo` 와 `openpibo-os.pibrain` 의 IDE · 도구 · 분류기 · 대화 · 로봇 놀이가 같이 쓰는
+스타일 한 벌. **빌드 없음. `<link>`·`<script>` 한 줄씩.** 이 README 는 두 리포에 같은 파일로 둔다.
 
 | 파일 | 내용 |
 |---|---|
-| `pibo-ui.css` | **원본은 이것 하나.** 토큰 + 컴포넌트 (11 KB, gzip 3.5 KB) |
-| `index.html` | 스타일 가이드. 컴포넌트를 실제로 렌더하면서 규칙도 같이 적어 둔 문서 |
-| `sync.sh` | 원본을 각 앱 `static/` 으로 복사 / 어긋남 확인 (`fonts/` 는 `static/fonts/` 로) |
-| `fonts/` | Pretendard 400~800 (원본 배포판의 KS X 1001 subset, 고치지 않음) + `LICENSE.txt`(SIL OFL 1.1) |
+| `pibo-ui.css` | **원본.** 디자인 토큰(`--v2-*`) + 컴포넌트 + 화면 v2 층 (약 115 KB, gzip 약 29 KB) |
+| `pibo-ui.js` | **원본.** 밝기 · 전체화면 · 탭 제목 · 로고 눌러 IP 화면 · 오류 알림 표시 · 숫자 올라가기(`PiboUI.*`) |
+| `marks/` | 제품 마크 `pibo.svg` · `pibrain.svg` (상단바 로고·탭 아이콘의 원본) |
+| `fonts/` | Pretendard **Regular · Bold 두 벌**(원본 배포판의 KS X 1001 subset, 고치지 않음) + `LICENSE.txt`(SIL OFL 1.1) |
+| `index.html` | 스타일 가이드(예전 키트 기준 — 화면 v2 규칙은 CLAUDE.md '디자인 시스템') |
+| `sync.sh` | 원본을 각 앱 `static/` 으로 복사 / 어긋남 확인 |
+| `preview.py` | 로봇 없이 PC 에서 웹 화면 미리보기(파이보 리포에만 있다 — 아래) |
 
 스타일 가이드는 브라우저로 `design/index.html` 을 열면 된다. Font Awesome 을
 `../ide/static/all.min.css` 에서 끌어오므로 리포 안에서 열어야 아이콘이 나온다.
 
-## 왜 만들었나
-
-세 앱이 **이미 같은 CSS 변수 9개를 각자 선언**하고 있었다. 손으로 복사해 온 탓에
-`--teal` 이 ide·classifier 는 `#13bfd5`, tools 만 `rgb(18,189,212)` 로 1씩 어긋나 있었다.
-PiBrain 까지 더하면 사본이 여섯 벌이 된다. 그래서 한 파일로 합쳤다.
-
-**배색은 안 바꿨다.** 노랑·청록·빨강 값이 전부 기존 그대로다. 바뀐 건 위계다 —
-노랑을 헤더와 주 동작 버튼 하나에만 쓴다. 지금은 헤더도 버튼도 입력창도 전부 노랑이라
-강조할 것이 남아 있지 않다.
-
 ## 쓰기
 
 ```bash
-./design/sync.sh                        # 이 리포 (ide, tools, classifier)
+./design/sync.sh                        # 이 리포 (ide, tools, classifier, chat, kids)
 ./design/sync.sh ~/openpibo-os.pibrain  # PiBrain 체크아웃에도
 ./design/sync.sh --check                # 어긋난 사본 확인. 커밋 전 검증용
 ```
 
-앱 쪽:
+- `pibo-ui.css`·`pibo-ui.js` 는 앱마다 `static/` 에 사본이 간다. **사본을 직접 고치지 말 것** — 다음 `sync.sh` 에 덮인다
+- 글꼴은 **IDE 의 `ide/static/fonts/` 에만** 간다. 도구·분류기 서버는 글꼴 주소를 IDE(80)로 넘겨서(`SharedFonts`) 세 앱이 한 벌을 같이 캐시한다(260929)
+- 앱 쪽: `<link rel="stylesheet" href="../static/pibo-ui.css?ver=YYMMDDvN">` · `<script src="../static/pibo-ui.js?ver=…">`,
+  `<body class="pb pb-shell pb-refresh pb-v2">`(IDE 는 `body.v2-app` — 셸·모달·알림만 키트를 쓴다). 로봇 놀이는 `pb-plain`(v2 층을 안 얹는다)
 
-```html
-<link rel="stylesheet" href="../static/pibo-ui.css?ver=YYMMDDvN">
-<body class="pb">
-```
+## 규칙 (자세한 건 루트 `CLAUDE.md` '디자인 시스템 · 문구 규칙')
 
-`class="pb"` 안에서만 적용된다. 기존 `index.css` 와 같이 둬도 충돌하지 않으므로
-**한 번에 다 갈아엎지 않아도 된다.** 화면 단위로 옮기면 된다.
+- **색 값은 키트 한 곳**(`--v2-*`, `html[data-theme=light|soft|dark]` 로 바꿈). IDE `--c-*`·예전 `--pb-*` 는 별칭만 둔다 — 색은 키트에서만 고친다
+- 노랑 `#fbc92d` 는 **상단바 한 곳.** 주 동작은 **파랑 `#2563eb`**(어둡게에서는 노랑), 포커스·슬라이더·선택도 파랑, 지울 것은 빨강
+- **꽉 찬 버튼은 한 구역(카드)에 하나.** 선택 표시는 옅은 파랑 하나
+- 상단바 48px(`--header-h`), 버튼·입력 32/40/48(`--ctl-*`), 모서리 6/8/12/16/999(`--r-*`), 간격 4/8/12/16/24(`--sp-*`), 굵기 400/700 둘뿐
+- 누를 수 있는 건 **44px 이상**(`--pb-tap`). 아이콘만 있는 버튼에는 `title`(태블릿은 hover 가 없다)
+- 상태를 **색으로만** 구분하지 말 것. 되돌릴 수 없는 동작은 결과를 문장으로
+- **구형 브라우저**(Chrome 88 · Safari 14 · Firefox 78)에서 돌아야 한다 — `:has()` `color-mix()` `@layer` `dvh` `aspect-ratio` 등은 쓰지 않는다(목록은 CLAUDE.md)
+- 움직임은 `transform`·`opacity` 만, `prefers-reduced-motion` 이면 전부 멈춘다(파일 끝 '움직임' 절)
 
-`static/pibo-ui.css` 는 사본이다. **직접 고치지 말 것** — 다음 `sync.sh` 에 덮인다.
+## 층 구조
 
-## PiBrain
-
-같은 파일을 그대로 복사한다. 화면 비율·OLED 차이는 **토큰만 덮어써서** 맞춘다.
-컴포넌트 CSS 는 건드리지 않는다.
-
-```css
-/* pibrain 쪽 index.css 맨 위 */
-:root { --pb-tap: 52px; --pb-fs: 16px; }
-```
-
-## 규칙 (자세한 건 `index.html`)
-
-- 버튼 위계는 **네 단계뿐** — accent / default / ghost / danger. 다섯 번째를 만들지 말 것
-- `--pb-accent`(노랑) 버튼은 **한 화면에 하나**
-- 누를 수 있는 건 **44px 이상**. `--pb-tap` 을 내리지 말 것
-- 아이콘만 있는 버튼에는 **글자 라벨**을 같이. 태블릿에는 hover 가 없어 `title` 툴팁이 안 뜬다
-- 되돌릴 수 없는 동작은 **결과를 문장으로** 말할 것
-- 상태를 **색으로만** 구분하지 말 것
-- 간격은 `gap` 으로. `&nbsp;&nbsp;` 로 주지 말 것
-
-## 다듬기 (`body.pb-refresh`)
-
-색은 그대로 두고, 앱이 원래 가진 요소(bare `button`, `input`, 표, 상태바)의 **모양만** 요즘 식으로
-덮는다. ide · tools · classifier 는 `<body class="pb pb-shell pb-refresh">` 로 켜 두었다.
-
-| 전 | 후 |
-|---|---|
-| 버튼 아래 진한 그림자(`0 4px`) · 알약 모양 | 얇은 테두리 · 옅은 그림자 · 둥근 사각형(9px) |
-| 입력칸 연노랑 바탕 알약 | 흰 바탕 · 회색 테두리 · 누르면 청록 링 |
-| 슬라이더 · 체크박스 브라우저 기본 파랑 | 청록 (`accent-color`, 슬라이더는 트랙 · 손잡이를 직접 그림) |
-| 표: 연두 칸마다 테두리 | 흰 바탕 · 줄 구분선 · 머리 줄 옅은 회색 |
-| 상태바 노랑 · 헤더 그라데이션 | 상태바 무채색 · 헤더 단색 노랑 + 얇은 아래 선 |
-
-### 헤더 높이 (260924, `pb-refresh` 와 무관하게 키트 전체)
-
-54px → **40px** (`--pb-header-h`). 헤더 버튼은 아이콘 위·라벨 아래로 쌓던 44px 을
-아이콘·라벨 가로 한 줄 32px 로 바꿨다. 언어 선택 28px, 로고 16px.
-
-- 라벨은 **999px 이하에서만** 접는다(아이콘만, `title` 툴팁). 기준은 IDE 실측 —
-  1024px 에서 라벨을 다 펴면 한국어 872px / 영어 927px 이 든다
-- 되돌릴 수 없는 버튼(`.pb-iconbtn--danger`) 묶음 앞에 얇은 구분선이 자동으로 붙는다
-- 헤더 안의 `.pb-seg`(분류기 탭)는 30px
-- 720px 이하: 로고 숨김, 버튼 줄은 가로 스크롤. 헤더 높이는 그대로
-
-- 글꼴 · 크기 · 패딩은 건드리지 않는다. 한/영 전환 때 버튼 줄바꿈이 달라지지 않게 하려는 것이다
-- 빼는 것: 키트 버튼(`.pb-btn` `.pb-iconbtn` `.pb-seg`), IDE `[블록|파이썬]` 전환, `nav` 안의 버튼(tools 왼쪽 메뉴),
-  키트 입력(`.pb-field`), 터미널(`.result` `.terminal`)
-- 도구·분류기는 이 층 위에 `pb-v2` 가 얹혀 있다(아래). 빼면 v2 모양이 같이 틀어진다
-
-## 화면 v2 (260924~, 260929 부터 유일한 화면)
-
-색·배치를 새로 잡은 시안 B. 예전 화면(v1)과 `?ui=` · 쿠키 `pibo_ui` 전환, 틀색 시안(`?frame=teal`)은 260929 에 지웠다.
-자세한 건 루트 `CLAUDE.md` 의 '화면 v2'.
-
-- 도구·분류기: `body.pb-v2` (`pibo-ui.css` 맨 아래, 템플릿 `<body>` 에 박혀 있다). 상단바 노랑(글씨 짙은 갈색) · 주 동작 파랑 #2563eb ·
-  포커스·스위치도 파랑 · 지울 것 빨강
-- 화면 밝기 `html[data-theme]` = light / soft(기본) / dark. `PiboUI.setTheme()` · 쿠키 `pibo_theme`.
-  도구·분류기 헤더에는 pibo-ui.js 가 밝기 버튼을 끼운다(누를 때마다 순환)
-- IDE: 별도 템플릿(`ide/templates/index.html` + `ide/static/v2/`, `body.v2-app`). 이 키트에서는 셸·모달·알림만 쓴다
+- `.pb` — 키트 컴포넌트(`.pb-btn` `.pb-iconbtn` `.pb-seg` `.pb-field` …)
+- `.pb-refresh` — 앱이 원래 가진 요소(bare `button`, `input`, 표, 상태바)의 모양을 덮는다(260924)
+- `.pb-v2` — 화면 v2(260924~, 260929 부터 유일한 화면). 도구·분류기·대화는 `pb-refresh` 위에 얹혀 있어 **`pb-refresh` 를 빼면 v2 모양이 같이 틀어진다**
+- 밝기 `html[data-theme]` = light / **soft(기본)** / dark, 쿠키 `pibo_theme`(포트와 상관없이 세 앱이 같이)
 
 ## 알아둘 것
 
 - **`fa-regular` 아이콘은 쓰지 말 것.** 기기의 `webfonts/` 에는 Font Awesome solid 와
   brands 글꼴만 있다. regular 는 빈칸으로 그려진다(`fa-solid` 로 바꿀 것)
-
-- `box-sizing` 은 키트 컴포넌트에만 건다. `.pb *` 로 걸면 붙이는 것만으로 기존
-  레이아웃이 틀어진다. (이 리포의 세 앱은 이미 전역 `border-box` 라 무해하지만
-  PiBrain 은 확인 전이다)
-- 루트 `font-size` 를 건드리지 않는다. `index.css:18` 의 `html { font-size: 10px }` 은
-  브라우저 글자 크기 설정을 무력화한다. 키트는 `px` 을 쓴다
-- 글꼴은 앱이 원래 쓰던 스택(`--pb-font`)이다. 키트는 앱 본문 글꼴을 바꾸지 않는다
-  (`pb-refresh` 기준. v2 층 `pb-v2` 는 Pretendard 를 쓴다 — `fonts/`)
+- `box-sizing` 은 키트 컴포넌트에만 건다. `.pb *` 로 걸면 붙이는 것만으로 기존 레이아웃이 틀어진다
+- 루트 `font-size` 를 건드리지 않는다. 키트는 `px` 을 쓴다
+- 키트의 일반 버튼 규칙(`body.pb-v2 button:not(...)…`)은 우선순위가 높다. 앱 안 버튼 모양을 바꿀 땐 id 를 앞에 붙이고 배경은 `!important` 로
 
 ## 검증
 
 ```bash
 ./design/sync.sh --check          # 사본 일치
-node -e "1"                        # (CSS 는 문법검사 도구가 따로 없다)
 ```
 
-스타일 가이드를 열어 **Tab 으로 훑어** 포커스 링이 보이는지, 브라우저를 720px 아래로
-좁혀 아이콘 라벨이 접히는지 눈으로 확인한다.
+화면은 브라우저로 1366 · 1024 · 820px × 한/영 × 밝기 셋을 눈으로 본다(가로 넘침 0).
+
+## 화면 미리보기 (로봇 없이)
+
+`python3 design/preview.py [../openpibo-os.pibrain]` — PC 에서 파이보(·PiBrain) 웹 화면을 띄운다(파이보 리포에만 있다). 목록 페이지 `http://<PC IP>:18999`.
+IDE·도구·분류기·도움말은 화면만(실시간 값 없음), 로봇 놀이·대화는 가짜 로봇·가짜 대답으로 움직인다(fastapi·uvicorn·pillow·numpy 필요).
+`localhost` 로 열면 socket.io vendor 파일이 죽어 화면이 깨지므로 늘 IP 로 연다. 자세한 건 파일 맨 위 설명.

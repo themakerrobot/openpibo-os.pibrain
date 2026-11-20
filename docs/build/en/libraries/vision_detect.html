@@ -372,12 +372,17 @@
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">openpibo.vision_detect.</span></span><span class="sig-name descname"><span class="pre">Detect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_detect.html#Detect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_detect.Detect" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Functions:
-<a class="reference internal" href="#openpibo.vision_detect.Detect.load_hand_gesture_model" title="openpibo.vision_detect.Detect.load_hand_gesture_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_hand_gesture_model()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_detect.Detect.load_object_model" title="openpibo.vision_detect.Detect.load_object_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_object_model()</span></code></a>
 <a class="reference internal" href="#openpibo.vision_detect.Detect.detect_object" title="openpibo.vision_detect.Detect.detect_object"><code class="xref py py-meth docutils literal notranslate"><span class="pre">detect_object()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_detect.Detect.detect_object_vis" title="openpibo.vision_detect.Detect.detect_object_vis"><code class="xref py py-meth docutils literal notranslate"><span class="pre">detect_object_vis()</span></code></a>
 <a class="reference internal" href="#openpibo.vision_detect.Detect.detect_qr" title="openpibo.vision_detect.Detect.detect_qr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">detect_qr()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_detect.Detect.detect_qr_vis" title="openpibo.vision_detect.Detect.detect_qr_vis"><code class="xref py py-meth docutils literal notranslate"><span class="pre">detect_qr_vis()</span></code></a>
 <a class="reference internal" href="#openpibo.vision_detect.Detect.detect_pose" title="openpibo.vision_detect.Detect.detect_pose"><code class="xref py py-meth docutils literal notranslate"><span class="pre">detect_pose()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_detect.Detect.detect_pose_vis" title="openpibo.vision_detect.Detect.detect_pose_vis"><code class="xref py py-meth docutils literal notranslate"><span class="pre">detect_pose_vis()</span></code></a>
 <a class="reference internal" href="#openpibo.vision_detect.Detect.analyze_pose" title="openpibo.vision_detect.Detect.analyze_pose"><code class="xref py py-meth docutils literal notranslate"><span class="pre">analyze_pose()</span></code></a>
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">classify_image()</span></code>
+<a class="reference internal" href="#openpibo.vision_detect.Detect.load_hand_gesture_model" title="openpibo.vision_detect.Detect.load_hand_gesture_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_hand_gesture_model()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_detect.Detect.recognize_hand_gesture" title="openpibo.vision_detect.Detect.recognize_hand_gesture"><code class="xref py py-meth docutils literal notranslate"><span class="pre">recognize_hand_gesture()</span></code></a>
+<a class="reference internal" href="#openpibo.vision_detect.Detect.recognize_hand_gesture_vis" title="openpibo.vision_detect.Detect.recognize_hand_gesture_vis"><code class="xref py py-meth docutils literal notranslate"><span class="pre">recognize_hand_gesture_vis()</span></code></a>
 <a class="reference internal" href="#openpibo.vision_detect.Detect.detect_marker" title="openpibo.vision_detect.Detect.detect_marker"><code class="xref py py-meth docutils literal notranslate"><span class="pre">detect_marker()</span></code></a>
 <a class="reference internal" href="#openpibo.vision_detect.Detect.detect_marker_vis" title="openpibo.vision_detect.Detect.detect_marker_vis"><code class="xref py py-meth docutils literal notranslate"><span class="pre">detect_marker_vis()</span></code></a></p>
 <blockquote>
@@ -385,8 +390,9 @@
 <ul class="simple">
 <li><p>Object detection (easydetect ed, 80 COCO classes by default · models trained in the lab, onnxruntime)</p></li>
 <li><p>QR/barcode detection (pyzbar)</p></li>
-<li><p>Pose detection</p></li>
-<li><p>Image classification</p></li>
+<li><p>Pose detection (MoveNet)</p></li>
+<li><p>Hand gesture recognition (MediaPipe)</p></li>
+<li><p>Marker detection (ArUco)</p></li>
 </ul>
 <p>example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">openpibo.vision_detect</span><span class="w"> </span><span class="kn">import</span> <span class="n">Detect</span>

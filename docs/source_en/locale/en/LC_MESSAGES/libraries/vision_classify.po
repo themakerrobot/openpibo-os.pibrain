@@ -34,8 +34,8 @@ msgstr "Does not use TensorFlow or TFLite. Image models run on onnxruntime; hand
 msgid "Functions: :meth:`~openpibo.vision_classify.CustomClassifier.load` :meth:`~openpibo.vision_classify.CustomClassifier.predict` :meth:`~openpibo.vision_classify.CustomClassifier.draw`"
 msgstr ""
 
-msgid "파이보의 분류기(classifier) 화면에서 학습한 모델을 사용합니다."
-msgstr "Uses a model trained in piBo's classifier screen."
+msgid "로봇의 분류기(classifier) 화면에서 학습한 모델을 사용합니다."
+msgstr "Uses a model trained in the robot's classifier screen."
 
 msgid "이미지 · 손 · 얼굴 · 포즈 네 가지로 가르칠 수 있습니다."
 msgstr "You can teach four kinds: image · hand · face · pose."

@@ -939,7 +939,7 @@
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    LED를 켭니다.</span>
 
-<span class="sd">    :param color: RGB 16진수 문자 #ffffff</span>
+<span class="sd">    :param str colors: RGB 16진수 문자 #ffffff</span>
 <span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">strip</span><span class="o">.</span><span class="n">setPixelColor</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Color</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span><span class="mi">16</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">],</span><span class="mi">16</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">7</span><span class="p">],</span><span class="mi">16</span><span class="p">)))</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">strip</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>

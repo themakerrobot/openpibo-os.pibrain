@@ -288,6 +288,7 @@ Functions:
     소리(숫자 배열)를 글자로 바꿉니다.
 
     25초보다 길면 말 단위로 잘라 받아 적고 이어 붙입니다(통째로 넣으면 글자가 뒤섞입니다).
+    말소리가 하나도 없으면(무음·잡음) 빈 글자 ``''`` 를 돌려줍니다.
 
     example::
 
@@ -297,7 +298,7 @@ Functions:
 
     :param int sample_rate: 샘플레이트 (16000 이 아니어도 됩니다)
 
-    :returns: 인식된 문자열
+    :returns: 인식된 문자열(말이 없으면 ``''``)
     """
     audio = np.asarray(audio, dtype=np.float32)
     if audio.ndim > 1:
@@ -445,7 +446,7 @@ Functions:
     # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.
   """
 
-  #: 고를 수 있는 대화 모델. 파일은 ``/home/pi/.model/llm/<이름>.gguf`` (이미지 만들 때 만든 별칭 링크)
+  #: 고를 수 있는 대화 모델. 파일은 ``/home/pi/.model/llm/<이름>.gguf`` (이미지 만들 때 넣는 실제 파일, 판은 ``.model/VERSION``)
   LLM_MODELS = ('general', 'themaker-ko', 'themaker-en')
   _LLM_ALIAS = {'gemma3': 'general'}   # 261029v1 블록이 쓰던 이름
   LLM_DIR = '/home/pi/.model/llm'
@@ -489,7 +490,7 @@ Functions:
 
       dialog.start_llm()
 
-    :param int port: llama-server 포트
+    :param int port: 준비를 확인할 llama-server 포트. 서비스는 늘 50020 으로 뜨므로 기본값 그대로 씁니다
     :param int timeout: 최대로 기다리는 시간(초)
     :returns: 준비되면 ``True``, ``timeout`` 안에 준비되지 않으면 ``False``
     """

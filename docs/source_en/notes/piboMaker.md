@@ -42,7 +42,7 @@ Everything runs **inside PiBrain** (voices, chat and the classifier included). O
 
 ## Tools
 
-Try PiBrain's features one at a time, without code. Pick [Buttons], [LED], [Camera], [Speech] or [Screen] on the left.
+Try PiBrain's features one at a time, without code. Pick [Buttons], [LED], [Camera], [Speech] or [Screen] in the tabs at the top right.
 The PiBrain picture on the left follows along: a pressed button lights up, the white square (LED) takes the LED color, and the screen shows the text you send. A [Show here] photo from [Camera] appears on the picture's screen, a speech bubble appears over the picture while [Speech] is talking, and unsent text on the [Screen] tab shows as a preview (only what this page sent appears in the picture).
 
 - **Buttons**: shows live whether each of the 4 buttons is pressed
@@ -55,9 +55,10 @@ The PiBrain picture on the left follows along: a pressed button lights up, the w
 
 - **Camera**: press [Camera on] to show the camera view on the **PiBrain screen**. Tap a vision feature (grayscale, edges, cartoon, QR code,
   face analysis, object detection, hand gestures, pose, markers…) to apply it to the PiBrain screen right away; the result appears as text at the bottom right.
+  **Face ID** recognizes faces you have named and [Registered] (programs can use them too, with the `Load the face dictionary from code facedb` block).
   [Show here] shows the current view in the browser too.
   If a USB camera is plugged in, switch between the **board camera and USB cameras** in the picker next to [Show here] (any USB camera that supports V4L2)
-- **Speech**: pick one of ten voices (Male 1–5, Female 1–5) and press [Speak] to let PiBrain say your text. Korean and English are detected automatically
+- **Speech**: pick one of ten voices (Male 1–5, Female 1–5) or the robot voice (espeak, English text only) and press [Speak] to let PiBrain say your text. Korean and English are detected automatically
 
 ![Tools: Screen](images/tools_lcd.png)
 
@@ -73,9 +74,9 @@ Collect examples with the camera and teach the AI, for example "this is a cat, t
 2. Name each **class** and keep pressing **[Hold to collect]** to collect examples. You can also upload files with [Photos].
    The picker under the camera switches to a USB camera — use the same camera for training and for use for better results
 3. **[Teach the AI]** — the tablet or laptop browser learns in a few seconds and shows the accuracy, a confusion table and live scores
-4. **[Save]** (under Save to PiBrain) — saved on PiBrain in `/home/pi/mymodel/<model name>`
+4. **[Save]** — saved on PiBrain in `/home/pi/mymodel/<model name>`
 5. In the IDE use `Load classification model (mymodel) (model name)` → `Classify image (image) with the classification model`.
-   `Draw what the classifier saw on image` draws the hand, face or body points and the class name on the picture
+   `Show the classification result on image (image)` draws the hand, face or body points and the class name on the picture
 
 The [Test] tab tries a saved model again. [Models] lets you test, keep training, rename, download (zip) or delete a model.
 
@@ -106,10 +107,10 @@ TheMaker listens and **chooses a tool by itself**. The tool it ran appears in sm
 - Say "Let's just talk" to stop using tools, and "You can move now" to use them again.
 - Turn on [Speak out loud] and PiBrain speaks the answer (you can choose the voice and volume).
 
-Programs can use it too, with the `Choose chat model`, `Start LLM server` and `Respond to …` blocks in [Speech].
+Programs can use it too, with the `Choose chat model`, `Start LLM server` and `Say … to AI` blocks in [Speech].
 Blocks chat in text only and do not run tools.
 
 ```{note}
-Tools, Chat and Classifier run **one at a time**. Opening one closes the others, and running a program in the IDE closes them too
+Tools, Chat, Classifier, Robot Play and H/W check run **one at a time**. Opening one closes the others, and running a program in the IDE closes them too
 (they share the camera, speaker and memory). A closed screen shows [Restart].
 ```

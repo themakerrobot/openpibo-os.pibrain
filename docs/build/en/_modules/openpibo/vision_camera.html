@@ -348,6 +348,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numbers</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span><span class="p">,</span><span class="n">ImageDraw</span><span class="p">,</span><span class="n">ImageFont</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">picamera2</span><span class="w"> </span><span class="kn">import</span> <span class="n">Picamera2</span>
@@ -362,9 +363,12 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">Camera</span><span class="p">:</span>
 <span class="w">  </span><span class="sd">"""</span>
 <span class="sd">Functions:</span>
+<span class="sd">:meth:`~openpibo.vision_camera.Camera.usb_cameras`</span>
 <span class="sd">:meth:`~openpibo.vision_camera.Camera.imread`</span>
 <span class="sd">:meth:`~openpibo.vision_camera.Camera.read`</span>
+<span class="sd">:meth:`~openpibo.vision_camera.Camera.release`</span>
 <span class="sd">:meth:`~openpibo.vision_camera.Camera.create_matte`</span>
+<span class="sd">:meth:`~openpibo.vision_camera.Camera.imshow`</span>
 <span class="sd">:meth:`~openpibo.vision_camera.Camera.imshow_to_ide`</span>
 <span class="sd">:meth:`~openpibo.vision_camera.Camera.resize`</span>
 <span class="sd">:meth:`~openpibo.vision_camera.Camera.rotate`</span>
@@ -381,9 +385,12 @@
 <span class="sd">:meth:`~openpibo.vision_camera.Camera.edgePreservingFilter`</span>
 <span class="sd">:meth:`~openpibo.vision_camera.Camera.flip`</span>
 
-<span class="sd">  파이보의 카메라를 제어합니다.</span>
+<span class="sd">  카메라로 사진을 찍고 이미지를 편집합니다.</span>
 
-<span class="sd">  * 사진 촬영, 읽기, 쓰기 등 카메라 기본 기능을 사용할 수 있습니다.</span>
+<span class="sd">  * ``Camera()`` (``cam=0``) 는 보드 카메라, ``Camera(1)`` · ``Camera(2)`` 는 USB 카메라입니다(V4L2 를 지원하면 기종 상관없음).</span>
+<span class="sd">    USB 카메라 번호는 꽂힌 카메라의 USB 포트 순서이고, :meth:`~openpibo.vision_camera.Camera.usb_cameras` 로 볼 수 있습니다.</span>
+<span class="sd">  * 보드 카메라는 처음 :meth:`~openpibo.vision_camera.Camera.read` 를 부를 때 엽니다. 그래서 카메라를 못 열 때의 오류는 ``read()`` 에서 납니다.</span>
+<span class="sd">  * ``read()`` 는 크기를 주지 않으면 480x640(세로) 그림을 돌려줍니다. USB 카메라도 같은 크기이고, 카메라 비율이 다르면 가운데를 잘라 맞춥니다.</span>
 <span class="sd">  * 이미지에 도형/글자를 추가할 수 있습니다.</span>
 <span class="sd">  * 이미지를 변환할 수 있습니다.</span>
 
@@ -391,7 +398,8 @@
 
 <span class="sd">    from openpibo.vision_camera import Camera</span>
 
-<span class="sd">    camera = Camera()</span>
+<span class="sd">    camera = Camera()        # 보드 카메라</span>
+<span class="sd">    # camera = Camera(1)     # USB 카메라 cam1</span>
 <span class="sd">    # 아래의 모든 예제 이전에 위 코드를 먼저 사용합니다.</span>
 <span class="sd">  """</span>
 
@@ -477,11 +485,11 @@
 
   <span class="nd">@staticmethod</span>
   <span class="k">def</span><span class="w"> </span><span class="nf">_cam_no</span><span class="p">(</span><span class="n">cam</span><span class="p">):</span>
-    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">cam</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">bool</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cam</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">cam</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">bool</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cam</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Integral</span><span class="p">):</span>   <span class="c1"># numpy 정수도 받는다</span>
       <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'"cam" must be integer type'</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">cam</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'"cam" must be 0~9'</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">cam</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">cam</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Camera.usb_cameras">
 <a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.usb_cameras">[docs]</a>
@@ -517,6 +525,11 @@
 <div class="viewcode-block" id="Camera.release">
 <a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.release">[docs]</a>
   <span class="k">def</span><span class="w"> </span><span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    카메라를 놓습니다. 다른 프로그램이 같은 카메라를 쓸 수 있게 됩니다.</span>
+<span class="sd">    놓은 뒤에 다시 ``read()`` 하면 다시 엽니다.</span>
+<span class="sd">    """</span>
+
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">usb</span><span class="p">:</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">cap</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">cap</span> <span class="o">=</span> <span class="kc">None</span>
@@ -543,10 +556,12 @@
 <a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.read">[docs]</a>
   <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    카메라를 통해 이미지를 촬영합니다.</span>
-<span class="sd">    해상도 변경 시 이미지가 깨질 수 있으므로, 기본 해상도를 권장합니다.</span>
+<span class="sd">    카메라로 사진을 찍습니다.</span>
 
-<span class="sd">    :returns: ``numpy.ndarray`` 타입 이미지 객체</span>
+<span class="sd">    보드 카메라는 처음 부를 때 엽니다(앞 프로그램이 카메라를 막 놓는 중이면 1초씩 쉬며 세 번까지 해 봅니다).</span>
+<span class="sd">    USB 카메라는 읽다가 실패하면(뽑았다 꽂음 등) 한 번 다시 찾아 엽니다.</span>
+
+<span class="sd">    :returns: ``numpy.ndarray`` 타입 이미지 객체(BGR)</span>
 <span class="sd">    """</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">usb</span><span class="p">:</span>
@@ -564,6 +579,18 @@
 <div class="viewcode-block" id="Camera.create_matte">
 <a class="viewcode-back" href="../../libraries/vision_camera.html#openpibo.vision_camera.Camera.create_matte">[docs]</a>
   <span class="k">def</span><span class="w"> </span><span class="nf">create_matte</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">)):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    한 가지 색으로 채운 빈 이미지(매트)를 만듭니다. 크기는 ``read()`` 와 같습니다. 카메라는 열지 않습니다.</span>
+
+<span class="sd">    example::</span>
+
+<span class="sd">      img = camera.create_matte((255, 255, 255))   # 흰 바탕</span>
+<span class="sd">      img = camera.create_matte('#ff0000')         # 빨간 바탕</span>
+
+<span class="sd">    :param tuple or str colors: 색 — (b, g, r) 튜플 또는 ``'#rrggbb'`` 글자</span>
+<span class="sd">    :returns: ``numpy.ndarray`` 타입 이미지 객체</span>
+<span class="sd">    """</span>
+
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
       <span class="n">colors</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">7</span><span class="p">],</span> <span class="mi">16</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">],</span> <span class="mi">16</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="mi">16</span><span class="p">))</span>
 

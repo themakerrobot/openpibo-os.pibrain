@@ -634,7 +634,7 @@ Blockly.Msg["SPEECH_LLM_THEMAKER_EN"] = "TheMaker EN";
 Blockly.Msg["SPEECH_START_LLM"] = "%1 %2 Start LLM server";
 Blockly.Msg["SPEECH_START_LLM_TOOLTIP"] = "Start LLM server.";
 Blockly.Msg["SPEECH_CALL_LLM"] = "%1 %2 Say %3 to AI, as role %4";
-Blockly.Msg["SPEECH_CALL_LLM_TOOLTIP"] = "Send text to the LLM server and get a reply. The system prompt sets how piBo should answer.";
+Blockly.Msg["SPEECH_CALL_LLM_TOOLTIP"] = "Send text to the LLM server and get a reply. The role sets how the robot should answer.";
 Blockly.Msg["SPEECH_STOP_LLM"] = "%1 %2 Stop LLM server";
 Blockly.Msg["SPEECH_STOP_LLM_TOOLTIP"] = "Stop the LLM server.";
 
@@ -748,8 +748,8 @@ Blockly.Msg["VISION_LOAD_CF"] = "%1 %2 Load classification model %3 %4";
 Blockly.Msg["VISION_LOAD_CF_TOOLTIP"] = "Load a model you taught and saved in the Classifier. Folder mymodel, then the model name. (image, hand, face, pose)";
 Blockly.Msg["VISION_PREDICT_CF"] = "%1 %2 Classify image %3 with the classification model";
 Blockly.Msg["VISION_PREDICT_CF_VIS"] = "%1 %2 Show the classification result on image %3";
-Blockly.Msg["VISION_PREDICT_CF_VIS_TOOLTIP"] = "Draws what the last [Classify with classifier model] saw on that image: points and bones for hand and pose, points for face, plus the class name and probability.";
-Blockly.Msg["VISION_PREDICT_CF_TOOLTIP"] = "Classify the image with the loaded classifier model and return the best matching name. Hand, face and pose models return empty text when no hand, face or body is in view.";
+Blockly.Msg["VISION_PREDICT_CF_VIS_TOOLTIP"] = "Draws what the last [Classify image … with the classification model] saw on that image: points and bones for hand and pose, points for face, plus the class name and probability.";
+Blockly.Msg["VISION_PREDICT_CF_TOOLTIP"] = "Classify the image with the loaded classification model and return the best matching name. Hand, face and pose models return empty text when no hand, face or body is in view.";
 
 Blockly.Msg["VISION_CARTOON"] = 'cartoon';
 Blockly.Msg["VISION_DETAIL"] = 'detail';

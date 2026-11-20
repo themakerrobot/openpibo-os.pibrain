@@ -367,8 +367,8 @@
 <span class="n">EXTRACTOR_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
   <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))),</span> <span class="s1">'classifier'</span><span class="p">,</span> <span class="s1">'static'</span><span class="p">,</span> <span class="s1">'models'</span><span class="p">)</span>
 
-<span class="c1"># 분류기 화면이 학습할 때 본 그림의 짧은 변. 파이보 카메라(640x480)를 320x240 으로 줄여</span>
-<span class="c1"># 보낸다(classifier/run_classify.py). 추론할 때도 같은 크기로 줄여야 같은 숫자가 나온다.</span>
+<span class="c1"># 분류기 화면이 학습할 때 본 그림의 짧은 변. 로봇 카메라 그림을 짧은 변 240 으로 줄여(파이보 640x480 → 320x240,</span>
+<span class="c1"># PiBrain 480x640 → 240x320) 보낸다(classifier/run_classify.py). 추론할 때도 같은 크기로 줄여야 같은 숫자가 나온다.</span>
 <span class="n">STREAM_SHORT_SIDE</span> <span class="o">=</span> <span class="mi">240</span>
 
 <span class="n">LANDMARK_SOURCES</span> <span class="o">=</span> <span class="p">(</span><span class="s1">'hand'</span><span class="p">,</span> <span class="s1">'face'</span><span class="p">,</span> <span class="s1">'pose'</span><span class="p">)</span>
@@ -383,7 +383,7 @@
 <span class="sd">:meth:`~openpibo.vision_classify.CustomClassifier.predict`</span>
 <span class="sd">:meth:`~openpibo.vision_classify.CustomClassifier.draw`</span>
 
-<span class="sd">  파이보의 분류기(classifier) 화면에서 학습한 모델을 사용합니다.</span>
+<span class="sd">  로봇의 분류기(classifier) 화면에서 학습한 모델을 사용합니다.</span>
 
 <span class="sd">  * 이미지 · 손 · 얼굴 · 포즈 네 가지로 가르칠 수 있습니다.</span>
 <span class="sd">  * 분류기 화면에서 저장하면 ``/home/pi/mymodel/&lt;모델 이름&gt;/`` 폴더가 생깁니다.</span>
@@ -662,7 +662,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_as_stream_rgb</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
 <span class="w">  </span><span class="sd">"""카메라 그림을 분류기 화면이 학습할 때 본 크기로 줄이고 RGB 로 바꾼다.</span>
 
-<span class="sd">  파이보 카메라 640x480 → 320x240 (run_classify.py 와 같은 cv2.resize).</span>
+<span class="sd">  파이보 640x480 → 320x240, PiBrain 480x640 → 240x320 (run_classify.py 와 같은 cv2.resize).</span>
 <span class="sd">  비율은 그대로 두고 짧은 변만 맞춘다. 더 작은 그림은 키우지 않는다.</span>
 <span class="sd">  """</span>
   <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>

@@ -28,14 +28,17 @@ msgstr "Takes pictures with the camera and edits images."
 msgid "Class: :obj:`~openpibo.vision_camera.Camera`"
 msgstr ""
 
-msgid "Functions: :meth:`~openpibo.vision_camera.Camera.imread` :meth:`~openpibo.vision_camera.Camera.read` :meth:`~openpibo.vision_camera.Camera.create_matte` :meth:`~openpibo.vision_camera.Camera.imshow_to_ide` :meth:`~openpibo.vision_camera.Camera.resize` :meth:`~openpibo.vision_camera.Camera.rotate` :meth:`~openpibo.vision_camera.Camera.imwrite` :meth:`~openpibo.vision_camera.Camera.draw_bitmap` :meth:`~openpibo.vision_camera.Camera.rectangle` :meth:`~openpibo.vision_camera.Camera.circle` :meth:`~openpibo.vision_camera.Camera.line` :meth:`~openpibo.vision_camera.Camera.putTextPIL` :meth:`~openpibo.vision_camera.Camera.putText` :meth:`~openpibo.vision_camera.Camera.stylization` :meth:`~openpibo.vision_camera.Camera.detailEnhance` :meth:`~openpibo.vision_camera.Camera.pencilSketch` :meth:`~openpibo.vision_camera.Camera.edgePreservingFilter` :meth:`~openpibo.vision_camera.Camera.flip`"
+msgid "Functions: :meth:`~openpibo.vision_camera.Camera.usb_cameras` :meth:`~openpibo.vision_camera.Camera.imread` :meth:`~openpibo.vision_camera.Camera.read` :meth:`~openpibo.vision_camera.Camera.release` :meth:`~openpibo.vision_camera.Camera.create_matte` :meth:`~openpibo.vision_camera.Camera.imshow` :meth:`~openpibo.vision_camera.Camera.imshow_to_ide` :meth:`~openpibo.vision_camera.Camera.resize` :meth:`~openpibo.vision_camera.Camera.rotate` :meth:`~openpibo.vision_camera.Camera.imwrite` :meth:`~openpibo.vision_camera.Camera.draw_bitmap` :meth:`~openpibo.vision_camera.Camera.rectangle` :meth:`~openpibo.vision_camera.Camera.circle` :meth:`~openpibo.vision_camera.Camera.line` :meth:`~openpibo.vision_camera.Camera.putTextPIL` :meth:`~openpibo.vision_camera.Camera.putText` :meth:`~openpibo.vision_camera.Camera.stylization` :meth:`~openpibo.vision_camera.Camera.detailEnhance` :meth:`~openpibo.vision_camera.Camera.pencilSketch` :meth:`~openpibo.vision_camera.Camera.edgePreservingFilter` :meth:`~openpibo.vision_camera.Camera.flip`"
 msgstr ""
 
-msgid "파이보의 카메라를 제어합니다."
-msgstr "Controls piBo's camera."
+msgid "``Camera()`` (``cam=0``) 는 보드 카메라, ``Camera(1)`` · ``Camera(2)`` 는 USB 카메라입니다(V4L2 를 지원하면 기종 상관없음). USB 카메라 번호는 꽂힌 카메라의 USB 포트 순서이고, :meth:`~openpibo.vision_camera.Camera.usb_cameras` 로 볼 수 있습니다."
+msgstr "``Camera()`` (``cam=0``) is the board camera; ``Camera(1)`` and ``Camera(2)`` are USB cameras (any model that supports V4L2). USB camera numbers follow the USB port order of the connected cameras; see :meth:`~openpibo.vision_camera.Camera.usb_cameras`."
 
-msgid "사진 촬영, 읽기, 쓰기 등 카메라 기본 기능을 사용할 수 있습니다."
-msgstr "Provides basic camera functions such as taking, reading and writing pictures."
+msgid "보드 카메라는 처음 :meth:`~openpibo.vision_camera.Camera.read` 를 부를 때 엽니다. 그래서 카메라를 못 열 때의 오류는 ``read()`` 에서 납니다."
+msgstr "The board camera opens on the first :meth:`~openpibo.vision_camera.Camera.read`, so an error opening the camera is raised by ``read()``."
+
+msgid "``read()`` 는 크기를 주지 않으면 480x640(세로) 그림을 돌려줍니다. USB 카메라도 같은 크기이고, 카메라 비율이 다르면 가운데를 잘라 맞춥니다."
+msgstr "Without a size, ``read()`` returns a 480x640 (portrait) image. USB cameras give the same size; if the camera's aspect ratio differs, the center is cropped to fit."
 
 msgid "이미지에 도형/글자를 추가할 수 있습니다."
 msgstr "Adds shapes/text to images."
@@ -55,6 +58,9 @@ msgstr ""
 msgid "``cam`` (``Camera(cam=…)`` 에 넣을 번호) · ``dev`` (장치 파일) · ``name`` (카메라가 알려 준 이름) 의 목록"
 msgstr "A list of ``cam`` (the number to pass to ``Camera(cam=…)``) · ``dev`` (device file) · ``name`` (the name the camera reports)"
 
+msgid "카메라를 놓습니다. 다른 프로그램이 같은 카메라를 쓸 수 있게 됩니다. 놓은 뒤에 다시 ``read()`` 하면 다시 엽니다."
+msgstr "Releases the camera so another program can use it. Calling ``read()`` again afterwards reopens it."
+
 msgid "이미지 파일을 읽습니다."
 msgstr "Reads an image file."
 
@@ -67,8 +73,20 @@ msgstr "Image file to use"
 msgid "``numpy.ndarray`` 타입 이미지 객체"
 msgstr "Image object of type ``numpy.ndarray``"
 
-msgid "카메라를 통해 이미지를 촬영합니다. 해상도 변경 시 이미지가 깨질 수 있으므로, 기본 해상도를 권장합니다."
-msgstr "Captures an image with the camera. Changing the resolution may corrupt the image, so the default resolution is recommended."
+msgid "카메라로 사진을 찍습니다."
+msgstr "Takes a picture with the camera."
+
+msgid "보드 카메라는 처음 부를 때 엽니다(앞 프로그램이 카메라를 막 놓는 중이면 1초씩 쉬며 세 번까지 해 봅니다). USB 카메라는 읽다가 실패하면(뽑았다 꽂음 등) 한 번 다시 찾아 엽니다."
+msgstr "The board camera opens on the first call (if the previous program is still releasing the camera, it retries up to three times, one second apart). If a USB camera fails while reading (unplugged and plugged back in, etc.), it is found and opened again once."
+
+msgid "``numpy.ndarray`` 타입 이미지 객체(BGR)"
+msgstr "Image object of type ``numpy.ndarray`` (BGR)"
+
+msgid "한 가지 색으로 채운 빈 이미지(매트)를 만듭니다. 크기는 ``read()`` 와 같습니다. 카메라는 열지 않습니다."
+msgstr "Makes a blank image (matte) filled with one color, the same size as ``read()``. It does not open the camera."
+
+msgid "색 — (b, g, r) 튜플 또는 ``'#rrggbb'`` 글자"
+msgstr "Color — a (b, g, r) tuple or a ``'#rrggbb'`` string"
 
 msgid "이미지 파일을 Web IDE에 출력합니다."
 msgstr "Shows an image file in the Web IDE."
@@ -225,4 +243,16 @@ msgstr "0: vertical flip, 1: horizontal flip, -1: vertical and horizontal flip"
 
 #~ msgid "축소 또는 확대할 비율"
 #~ msgstr "Scale factor for shrinking or enlarging"
+
+#~ msgid "Functions: :meth:`~openpibo.vision_camera.Camera.imread` :meth:`~openpibo.vision_camera.Camera.read` :meth:`~openpibo.vision_camera.Camera.create_matte` :meth:`~openpibo.vision_camera.Camera.imshow_to_ide` :meth:`~openpibo.vision_camera.Camera.resize` :meth:`~openpibo.vision_camera.Camera.rotate` :meth:`~openpibo.vision_camera.Camera.imwrite` :meth:`~openpibo.vision_camera.Camera.draw_bitmap` :meth:`~openpibo.vision_camera.Camera.rectangle` :meth:`~openpibo.vision_camera.Camera.circle` :meth:`~openpibo.vision_camera.Camera.line` :meth:`~openpibo.vision_camera.Camera.putTextPIL` :meth:`~openpibo.vision_camera.Camera.putText` :meth:`~openpibo.vision_camera.Camera.stylization` :meth:`~openpibo.vision_camera.Camera.detailEnhance` :meth:`~openpibo.vision_camera.Camera.pencilSketch` :meth:`~openpibo.vision_camera.Camera.edgePreservingFilter` :meth:`~openpibo.vision_camera.Camera.flip`"
+#~ msgstr ""
+
+#~ msgid "파이보의 카메라를 제어합니다."
+#~ msgstr "Controls piBo's camera."
+
+#~ msgid "사진 촬영, 읽기, 쓰기 등 카메라 기본 기능을 사용할 수 있습니다."
+#~ msgstr "Provides basic camera functions such as taking, reading and writing pictures."
+
+#~ msgid "카메라를 통해 이미지를 촬영합니다. 해상도 변경 시 이미지가 깨질 수 있으므로, 기본 해상도를 권장합니다."
+#~ msgstr "Captures an image with the camera. Changing the resolution may corrupt the image, so the default resolution is recommended."
 

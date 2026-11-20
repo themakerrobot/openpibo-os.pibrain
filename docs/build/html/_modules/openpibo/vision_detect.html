@@ -357,11 +357,10 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">openpibo_models</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
-<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">'TF_CPP_MIN_LOG_LEVEL'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'3'</span>  <span class="c1"># TensorFlow C++ 로그 제거</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">'TF_CPP_MIN_LOG_LEVEL'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'3'</span>  <span class="c1"># MediaPipe(손동작) 안의 TFLite C++ 로그 줄이기 — TensorFlow 는 쓰지 않는다</span>
 <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">'LIBCAMERA_LOG_LEVELS'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'3'</span>
 
-<span class="c1"># ✅ 추가: TensorFlow 내부 디버그 메시지 완전 차단</span>
-<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"tensorflow"</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"tensorflow"</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>   <span class="c1"># 같은 이름의 파이썬 로거가 있으면 조용히(없으면 하는 일 없음)</span>
 
 <span class="c1"># 기본 사물 인식 모델 (easydetect ed-s 320, COCO 80종 — 이름·conf 가 파일 안에 있다). 261026, easydetect-lab 지시서.</span>
 <span class="c1"># 다른 기본 모델을 쓰려면 이 한 줄만 바꾼다. lab 에서 받은 모델(job&lt;번호&gt;.onnx)은 load_object_model(파일) 로 고른다</span>
@@ -409,12 +408,17 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">Detect</span><span class="p">:</span>
 <span class="w">  </span><span class="sd">"""</span>
 <span class="sd">Functions:</span>
-<span class="sd">:meth:`~openpibo.vision_detect.Detect.load_hand_gesture_model`</span>
+<span class="sd">:meth:`~openpibo.vision_detect.Detect.load_object_model`</span>
 <span class="sd">:meth:`~openpibo.vision_detect.Detect.detect_object`</span>
+<span class="sd">:meth:`~openpibo.vision_detect.Detect.detect_object_vis`</span>
 <span class="sd">:meth:`~openpibo.vision_detect.Detect.detect_qr`</span>
+<span class="sd">:meth:`~openpibo.vision_detect.Detect.detect_qr_vis`</span>
 <span class="sd">:meth:`~openpibo.vision_detect.Detect.detect_pose`</span>
+<span class="sd">:meth:`~openpibo.vision_detect.Detect.detect_pose_vis`</span>
 <span class="sd">:meth:`~openpibo.vision_detect.Detect.analyze_pose`</span>
-<span class="sd">:meth:`~openpibo.vision_detect.Detect.classify_image`</span>
+<span class="sd">:meth:`~openpibo.vision_detect.Detect.load_hand_gesture_model`</span>
+<span class="sd">:meth:`~openpibo.vision_detect.Detect.recognize_hand_gesture`</span>
+<span class="sd">:meth:`~openpibo.vision_detect.Detect.recognize_hand_gesture_vis`</span>
 <span class="sd">:meth:`~openpibo.vision_detect.Detect.detect_marker`</span>
 <span class="sd">:meth:`~openpibo.vision_detect.Detect.detect_marker_vis`</span>
 
@@ -422,8 +426,9 @@
 
 <span class="sd">  * 사물 인식 (easydetect ed, 기본 COCO 80개 class · lab 에서 학습한 모델, onnxruntime)</span>
 <span class="sd">  * QR/바코드 인식 (pyzbar)</span>
-<span class="sd">  * Pose 인식</span>
-<span class="sd">  * 이미지 분류</span>
+<span class="sd">  * Pose 인식 (MoveNet)</span>
+<span class="sd">  * 손동작 인식 (MediaPipe)</span>
+<span class="sd">  * 마커 인식 (ArUco)</span>
 
 <span class="sd">  example::</span>
 
@@ -434,24 +439,6 @@
 <span class="sd">  """</span>
 
   <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_model</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="c1">#self.object_class = ['background', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',</span>
-    <span class="c1">#                     'bus', 'train', 'truck', 'boat', 'traffic light', 'fire hydrant',</span>
-    <span class="c1">#                     'None', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog',</span>
-    <span class="c1">#                     'horse', 'sheep', 'cow', 'elephant', 'bear', 'zebra', 'giraffe', 'None',</span>
-    <span class="c1">#                     'backpack', 'umbrella', 'None', 'None', 'handbag', 'tie', 'suitcase', 'frisbee',</span>
-    <span class="c1">#                     'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove',</span>
-    <span class="c1">#                     'skateboard', 'surfboard', 'tennis racket', 'bottle', 'None', 'wine glass', 'cup',</span>
-    <span class="c1">#                     'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple', 'sandwich', 'orange',</span>
-    <span class="c1">#                     'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch',</span>
-    <span class="c1">#                     'potted plant', 'bed', 'None', 'dining table', 'None', 'None', 'toilet', 'None', 'tv',</span>
-    <span class="c1">#                     'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave', 'oven',</span>
-    <span class="c1">#                     'toaster', 'sink', 'refrigerator', 'None', 'book', 'clock', 'vase', 'scissors',</span>
-    <span class="c1">#                     'teddy bear', 'hair drier'] </span>
-
-    <span class="c1">#self.mobilenet = cv2.dnn.readNet(</span>
-    <span class="c1">#                    openpibo_detect_models.filepath("frozen_inference_graph.pb"),</span>
-    <span class="c1">#                    openpibo_detect_models.filepath("ssd_mobilenet_v2_coco_2018_03_29.pbtxt")</span>
-    <span class="c1">#                )</span>
     <span class="c1"># 사물 인식 모델은 처음 detect_object 를 부를 때 올린다 (QR·마커만 쓰면 메모리를 안 쓴다)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">object_detector</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">object_model_path</span> <span class="o">=</span> <span class="n">object_model</span> <span class="ow">or</span> <span class="n">OBJECT_MODEL</span>

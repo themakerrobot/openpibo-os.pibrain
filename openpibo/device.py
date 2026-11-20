@@ -553,7 +553,7 @@ Functions:
     """
     LED를 켭니다.
 
-    :param color: RGB 16진수 문자 #ffffff
+    :param str colors: RGB 16진수 문자 #ffffff
     """
     self.strip.setPixelColor(0, Color(int(colors[1:3],16), int(colors[3:5],16), int(colors[5:7],16)))
     self.strip.show()

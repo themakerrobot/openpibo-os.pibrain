@@ -6,7 +6,6 @@ with open('README.rst') as readme_file:
 
 requirements = [
         # 'opencv-contrib-python>=4.5.4.60',
-        # 'dlib>=19.24.0',
         # 'pyzbar>=0.1.8',
         # 'beautifulsoup4>=4.6.0',
         # 'tweepy>=3.10.0',
@@ -16,7 +15,6 @@ requirements = [
         # 'pyserial>=3.5',
         # 'requests>=2.28.1',
         'openpibo_models>=0.4.9',
-        'openpibo_face_models>=0.4.3',
 ]
 
 test_requirements = [
@@ -33,13 +31,12 @@ setup(
     packages            = find_packages(),
     install_requires    = requirements,
     keywords            = 'openpibo',
-    long_description_content_type = 'text/markdown',
+    long_description_content_type = 'text/x-rst',
+    license             = 'Apache-2.0',
     classifiers         = [
         'Natural Language :: English',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.11',
+        'License :: OSI Approved :: Apache Software License',
     ],
     test_suite          = 'tests',
     tests_require       = test_requirements
