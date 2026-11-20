@@ -7,6 +7,7 @@ Class:
 import cv2,requests
 import os
 import time
+import threading
 import numpy as np
 from PIL import Image,ImageDraw,ImageFont
 from picamera2 import Picamera2
@@ -58,7 +59,7 @@ Functions:
 
     :param int cam: 쓸 카메라. ``0`` 은 보드 카메라(기본), ``1`` 부터는 USB 카메라(V4L2 를 지원하면 기종 상관없음,
       꽂은 USB 포트 순서 — :meth:`~openpibo.vision_camera.Camera.usb_cameras` 로 볼 수 있습니다).
-      USB 카메라는 크기를 주지 않으면 640x480 이고, 카메라 비율이 다르면 가운데를 잘라 맞춥니다
+      USB 카메라도 크기를 주지 않으면 보드 카메라와 같은 480x640(세로)이고, 카메라 비율이 다르면 가운데를 잘라 맞춥니다
     :param int width: ``read()`` 가 돌려줄 그림의 가로(px). 없으면 480
     :param int height: ``read()`` 가 돌려줄 그림의 세로(px). 없으면 640
 
@@ -66,7 +67,7 @@ Functions:
     """
 
     self.usb = self._cam_no(cam)   # 0 = 보드 카메라, 1~ = USB 카메라(261120)
-    self.width, self.height = (640, 480) if self.usb else (480, 640)
+    self.width, self.height = 480, 640   # USB 카메라도 보드 카메라와 같은 세로 크기(가운데를 잘라 맞춤, 261120) — LCD·분류기가 세로를 전제로 한다
     if width is not None or height is not None:
       w = self._size(width, 'width') if width is not None else None
       h = self._size(height, 'height') if height is not None else None
@@ -77,41 +78,51 @@ Functions:
       self.width, self.height = w, h
     cv2.setUseOptimized(True)
     cv2.setNumThreads(cv2.getNumberOfCPUs())
+    self._open_lock = threading.Lock()
     if self.usb:
       from .modules.usbcam import UsbCam
       self.cap = UsbCam(self.usb - 1, self.width, self.height)
       return
-    # 앞 프로그램·도구 서비스가 카메라를 막 놓는 중이면 'Failed to start camera' 가 날 수 있다.
-    # 1초씩 쉬며 세 번까지 해 본다(261119). 카메라가 아예 안 잡히면(IndexError) 바로 오류
-    cap = None
-    for attempt in range(3):
-      try:
-        cap = Picamera2(self._board_num())
-        config = cap.create_still_configuration(
-                  main={
-                    'size': (1280, 960),
-                    'format': 'RGB888'
-                  },
-                  #transform=Transform(hflip=False, vflip=False),
-                  buffer_count=2
-                )
+    # 보드 카메라는 여기서 열지 않는다 — 처음 read() 때 _open_board()(261120)
+    self.cap = None
 
-        cap.configure(config)
-        cap.set_controls({'AwbEnable': True, 'AwbMode': 0})
-        cap.start()
-        break
-      except (RuntimeError, IndexError) as ex:
-        if cap is not None:
-          try:
-            cap.close()
-          except Exception as close_err:   # 열다 만 카메라라 닫기도 실패할 수 있다 — 다시 여는 데는 지장 없다
-            logging.debug('camera close after failed start: %s', close_err)
-          cap = None
-        if attempt == 2 or isinstance(ex, IndexError):
-          raise
-        time.sleep(1.0)
-    self.cap = cap
 
+  def _open_board(self):
+    # 보드 카메라는 처음 read() 할 때 연다(261120). 그리기·보여주기 블록도 camera = Camera() 를 넣어서,
+    # USB 카메라만 쓰는 프로그램까지 보드 카메라를 열지 않게. 두 스레드가 처음 read 를 같이 불러도 한 번만 연다
+    with self._open_lock:
+      if self.cap is not None:
+        return
+      # 앞 프로그램·도구 서비스가 카메라를 막 놓는 중이면 'Failed to start camera' 가 날 수 있다.
+      # 1초씩 쉬며 세 번까지 해 본다(261119). 카메라가 아예 안 잡히면(IndexError) 바로 오류
+      cap = None
+      for attempt in range(3):
+        try:
+          cap = Picamera2(self._board_num())
+          config = cap.create_still_configuration(
+                    main={
+                      'size': (1280, 960),
+                      'format': 'RGB888'
+                    },
+                    #transform=Transform(hflip=False, vflip=False),
+                    buffer_count=2
+                  )
+
+          cap.configure(config)
+          cap.set_controls({'AwbEnable': True, 'AwbMode': 0})
+          cap.start()
+          break
+        except (RuntimeError, IndexError) as ex:
+          if cap is not None:
+            try:
+              cap.close()
+            except Exception as close_err:   # 열다 만 카메라라 닫기도 실패할 수 있다 — 다시 여는 데는 지장 없다
+              logging.debug('camera close after failed start: %s', close_err)
+            cap = None
+          if attempt == 2 or isinstance(ex, IndexError):
+            raise
+          time.sleep(1.0)
+      self.cap = cap
 
   @staticmethod
   def _board_num():
@@ -186,7 +197,12 @@ Functions:
     """
 
     if self.usb:
+      if self.cap is None:   # release() 뒤에 다시 읽으면 다시 연다
+        from .modules.usbcam import UsbCam
+        self.cap = UsbCam(self.usb - 1, self.width, self.height)
       return self.cap.read()
+    if self.cap is None:
+      self._open_board()
     return cv2.rotate(cv2.resize(self.cap.capture_array(), (self.height, self.width)),cv2.ROTATE_90_COUNTERCLOCKWISE)
     # return cv2.rotate(self.cap.capture_array(),cv2.ROTATE_90_COUNTERCLOCKWISE)
     #return self.cap.capture_array()

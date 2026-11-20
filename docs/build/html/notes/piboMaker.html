@@ -428,7 +428,8 @@ API 는 왼쪽 <strong>PYTHON</strong> 을 보세요</p></li>
 <ul class="simple">
 <li><p><strong>카메라</strong>: [카메라 켜기] 를 누르면 카메라 화면이 <strong>PiBrain 화면</strong>에 나옵니다. 비전 기능(흑백·윤곽선·만화·QR 코드·얼굴 분석·
 사물 인식·손동작 인식·포즈 인식·마커 인식 등)을 누르면 PiBrain 화면에 바로 적용되고, 결과는 오른쪽 아래에 글자로 나옵니다.
-[여기에 보기]를 누르면 지금 화면을 브라우저에서도 봅니다</p></li>
+[여기에 보기]를 누르면 지금 화면을 브라우저에서도 봅니다.
+USB 카메라를 꽂았으면 [여기에 보기] 옆 고르는 칸에서 <strong>보드 카메라 / USB 카메라</strong>를 바꿔 볼 수 있습니다(V4L2 를 지원하는 USB 카메라면 기종은 상관없어요)</p></li>
 <li><p><strong>음성</strong>: 목소리 10가지(남성 1~5, 여성 1~5) 중에서 골라 [말하기]로 글자를 말하게 합니다. 한국어·영어는 자동으로 알아봅니다</p></li>
 </ul>
 <p><img alt="도구 화면" src="../_images/tools_lcd.png" /></p>
@@ -442,7 +443,8 @@ API 는 왼쪽 <strong>PYTHON</strong> 을 보세요</p></li>
 <p>카메라로 예시를 모아 AI 에게 ‘이건 고양이, 이건 음식’ 처럼 가르칩니다. PiBrain 카메라는 세로(3:4)라 화면도 세로로 나옵니다.</p>
 <ol class="arabic simple">
 <li><p><strong>무엇으로 가르칠까요?</strong> — 이미지(사진 전체) · 손(손 모양) · 얼굴(표정) · 포즈(몸 자세) 중에서 고릅니다</p></li>
-<li><p><strong>종류</strong> 마다 이름을 적고 <strong>[꾹 눌러 모으기]</strong> 를 누르고 있는 동안 예시가 모입니다. [사진] 으로 파일을 올려도 됩니다</p></li>
+<li><p><strong>종류</strong> 마다 이름을 적고 <strong>[꾹 눌러 모으기]</strong> 를 누르고 있는 동안 예시가 모입니다. [사진] 으로 파일을 올려도 됩니다.
+카메라 아래 고르는 칸에서 USB 카메라로 바꿀 수 있어요 — 학습할 때와 쓸 때 같은 카메라를 쓰면 더 잘 맞습니다</p></li>
 <li><p><strong>[AI 가르치기]</strong> — 태블릿·노트북 브라우저에서 몇 초 만에 배웁니다. 맞힌 비율·헷갈린 표·지금 보이는 것의 점수가 나옵니다</p></li>
 <li><p><strong>[저장]</strong> — PiBrain 의 <code class="docutils literal notranslate"><span class="pre">/home/pi/mymodel/&lt;모델</span> <span class="pre">이름&gt;</span></code> 에 저장됩니다</p></li>
 <li><p>IDE 에서 블록 <code class="docutils literal notranslate"><span class="pre">분류</span> <span class="pre">모델</span> <span class="pre">[mymodel]</span> <span class="pre">(모델</span> <span class="pre">이름)</span> <span class="pre">을(를)</span> <span class="pre">불러오기</span></code> → <code class="docutils literal notranslate"><span class="pre">(이미지)</span> <span class="pre">이미지를</span> <span class="pre">분류</span> <span class="pre">모델로</span> <span class="pre">알아보기</span></code> 로 씁니다</p></li>

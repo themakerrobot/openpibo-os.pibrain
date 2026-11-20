@@ -61,6 +61,7 @@ FRAME_FAST = 0.15
 JPEG_QUALITY = 80
 
 camera = None
+cam_no = 0                    # 0 = 보드 카메라, 1~ = USB 카메라(261120, 카메라 고르기). 꺼져 있을 때 고르면 다음에 켤 때 쓴다
 vision_en = False
 vision_task = None
 frame_interval = FRAME_SLOW
@@ -205,9 +206,17 @@ async def toggle_camera_logic(turn_on: bool, sid=None):
         # 카메라가 켜진 뒤에만 켜짐으로 친다. 전엔 먼저 켜짐으로 두어서 Camera() 가 실패하면
         # 루프도 카메라도 없이 '켜짐' 으로 남아 다시 켜도 아무 일이 없었다(261027)
         if camera is None:
+          cam = None
           try:
-            camera = await asyncio.to_thread(Camera)
+            cam = await asyncio.to_thread(Camera, cam_no)
+            await asyncio.to_thread(cam.read)   # 보드 카메라는 처음 read 때 연다(261120) — 여기서 열어 실패를 잡는다
+            camera = cam
           except Exception as e:
+            if cam is not None:
+              try:
+                await asyncio.to_thread(cam.release)
+              except Exception:
+                pass
             print(f'[camera] open failed: {e}')
             await sio.emit('camera_error', {'error': 'cam_fail', 'detail': str(e)}, to=sid)
             return {"status": "error", "error": "cam_fail", "detail": str(e)}
@@ -243,6 +252,58 @@ async def control_cam_http(d: str):
 @sio.on('control_cam')
 async def control_cam_socket(sid, d: bool):
   await toggle_camera_logic(bool(d), sid)
+
+
+# 카메라 고르기(261120) — 보드 카메라 + 꽂혀 있는 USB 카메라. 목록은 고르는 칸을 열 때마다 새로 읽는다
+@sio.on('cam_list')
+async def cam_list(sid, d=None):
+  try:
+    usb = await asyncio.to_thread(Camera.usb_cameras)
+  except Exception as e:
+    print(f'[cam_list] {e}')
+    usb = []
+  lst = [{'cam': 0, 'name': ''}] + [{'cam': c['cam'], 'name': c['name']} for c in usb]
+  await sio.emit('cam_list', {'list': lst, 'cur': cam_no}, to=sid)
+
+
+@sio.on('cam_select')
+async def cam_select(sid, d=None):
+  """켜져 있으면 새 카메라를 먼저 열어 한 장 읽어 보고, 되면 바꾼다(안 되면 그대로). 꺼져 있으면 고르기만"""
+  global camera, cam_no
+  try:
+    n = int((d or {}).get('cam', 0))
+  except (TypeError, ValueError, AttributeError):
+    n = -1
+  if not 0 <= n <= 9:
+    await sio.emit('cam_select', {'ok': False, 'cam': cam_no, 'error': '"cam" must be 0~9'}, to=sid)
+    return
+  async with camera_lock:
+    if n != cam_no and camera is not None:
+      new = None
+      try:
+        new = await asyncio.to_thread(Camera, n)
+        await asyncio.to_thread(new.read)
+      except Exception as e:
+        print(f'[cam_select] {n}: {e}')
+        if new is not None:
+          try:
+            await asyncio.to_thread(new.release)
+          except Exception:
+            pass
+        await sio.emit('cam_select', {'ok': False, 'cam': cam_no, 'error': str(e)}, to=sid)
+        return
+      def swap():
+        global camera
+        with camera_io:   # 읽는 중이면 끝난 뒤에 바꾼다
+          old, camera = camera, new
+        return old
+      old = await asyncio.to_thread(swap)
+      try:
+        await asyncio.to_thread(old.release)
+      except Exception as e:
+        print(f'[cam_select] release: {e}')
+    cam_no = n
+  await sio.emit('cam_select', {'ok': True, 'cam': n})   # 화면이 여럿이어도 모두 같은 카메라를 보인다
 
 
 @sio.on('connect')

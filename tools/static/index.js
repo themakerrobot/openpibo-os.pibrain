@@ -40,6 +40,7 @@ function applyLang() {
     setCamLabel('cam_off_btn');
   }
   syncThemeLabel();
+  if (typeof paintCams === 'function') paintCams(true);   // 카메라 고르기(보드 카메라 이름이 언어를 따른다)
 
   /* Result / status placeholders — only reset if still showing placeholder */
   const vr = document.getElementById('vision-result');
@@ -86,7 +87,7 @@ function switchTab(name, btn) {
   document.getElementById('tab-' + name).classList.add('active');
   btn.classList.add('active');
   if (name === 'buttons' && !btnSrc) startButtonStream();
-  if (name === 'camera') resetVision();
+  if (name === 'camera') { resetVision(); loadCams(); }
   if (name === 'lcd') updateLcdPreview();
   devDraw();
 }
@@ -236,14 +237,76 @@ function toggleCamera() {
     document.getElementById('cam-ph').textContent    = t('cam_off_msg');
     devSetScreen('ip');                 // 카메라를 끄면 서버가 network_disp(IP 화면)를 다시 띄운다
   } else {
-    fetch('/camera?d=on');
     camOn = true;
     setCamLabel('cam_off_btn');
     document.getElementById('btn-capture').disabled  = false;
     document.getElementById('cam-ph').textContent    = t('cam_streaming');
     devSetScreen('camera');
+    // 못 켜면(고른 USB 카메라가 빠짐 등) 버튼을 되돌리고 안내한다(261120)
+    fetch('/camera?d=on').then((r) => r.json()).then((j) => {
+      if (j && j.ok === false && camOn) {
+        camOn = false;
+        clearInterval(resultInterval);
+        setCamLabel('cam_on_btn');
+        document.getElementById('btn-capture').disabled = true;
+        document.getElementById('cam-ph').textContent   = t('cam_off_msg');
+        devSetScreen('ip');
+        if (window.PiboUI) PiboUI.toast(t('cam_on_fail', j.error || ''), 'error');
+      }
+    }).catch(() => {});
   }
 }
+
+/* [카메라] 고르기(261120): 보드 카메라 + 꽂혀 있는 USB 카메라(이름은 카메라가 알려 준 값).
+   목록은 [카메라] 탭을 열 때·고르는 칸을 누를 때 새로 묻는다(실행 중에 꽂은 카메라도 잡히게).
+   카메라가 켜져 있으면 서버가 새 카메라를 먼저 열어 보고 되면 바꾼다 — 안 되면 원래 카메라 그대로 + 안내 */
+var camList = [{ cam: 0, name: '' }], camCur = 0, camShown = '';   // var — applyLang 이 이 줄보다 먼저 불릴 수 있다
+function camLabel(c) { return c.cam === 0 ? t('cam_board') : t('cam_usb', c.cam, c.name); }
+function paintCams(force) {
+  const sel = document.getElementById('cam-sel');
+  if (!sel || !camList) return;
+  const list = camList.slice();
+  if (!list.some((c) => c.cam === camCur)) list.push({ cam: camCur, missing: true });
+  const key = JSON.stringify([list, camCur, lang]);
+  if (!force && key === camShown) return;   // 바뀐 게 없으면 그대로 둔다(열려 있는 목록이 닫히지 않게)
+  camShown = key;
+  sel.innerHTML = '';
+  list.forEach((c) => {
+    const o = document.createElement('option');
+    o.value = String(c.cam);
+    o.textContent = c.missing ? t('cam_missing', c.cam) : camLabel(c);
+    sel.appendChild(o);
+  });
+  sel.value = String(camCur);
+}
+async function loadCams() {
+  try {
+    const j = await (await fetch('/cam_list', { cache: 'no-store' })).json();
+    camList = j.list || camList; camCur = typeof j.cur === 'number' ? j.cur : camCur;
+    paintCams();
+  } catch (e) { /* 서버가 없으면 그대로 */ }
+}
+async function selectCam(n) {
+  const sel = document.getElementById('cam-sel');
+  sel.disabled = true;
+  try {
+    const j = await (await fetch(`/cam_select?n=${n}`, { cache: 'no-store' })).json();
+    if (typeof j.cam === 'number') camCur = j.cam;
+    if (!j.ok && window.PiboUI) PiboUI.toast(t('cam_sel_fail', j.error || ''), 'error');
+  } catch (e) {
+    if (window.PiboUI) PiboUI.toast(t('cam_sel_fail', String(e)), 'error');
+  }
+  sel.disabled = false;
+  paintCams(true);
+}
+(function initCamSel() {
+  const sel = document.getElementById('cam-sel');
+  if (!sel) return;
+  sel.addEventListener('pointerdown', loadCams);
+  sel.addEventListener('focus', loadCams);
+  sel.addEventListener('change', () => selectCam(parseInt(sel.value, 10) || 0));
+  paintCams(true);
+})();
 
 // [여기에 보기]: JPEG 한 장을 받아 그림 속 화면에 보인다(261102 — 예전 카메라 칸 대신). 앞 그림 주소는 풀어 준다
 let captureUrl = '';

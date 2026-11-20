@@ -14,7 +14,7 @@
   <link rel="shortcut icon" href="/static/icon.png?ver=261102v2" type="image/png"/>
   <link rel="stylesheet" href="/static/all.min.css"/>
   <link rel="stylesheet" href="/static/pibo-ui.css?ver=261120v1"/>
-  <link rel="stylesheet" href="/static/index.css?ver=261113v3"/>
+  <link rel="stylesheet" href="/static/index.css?ver=261120v1"/>
   <title data-key="title">도구</title>
   <script>/* 화면 밝기를 첫 페인트 전에 (쿠키 pibo_theme, 기본 soft) */
     (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
@@ -140,6 +140,7 @@
     <div class="btn-row">
       <button class="btn btn-primary" id="btn-cam" onclick="toggleCamera()"><i class="fa-solid fa-camera"></i><span data-key="cam_on_btn">카메라 켜기</span></button>
       <button class="btn" id="btn-capture" onclick="captureToWeb()" disabled><i class="fa-solid fa-image"></i><span data-key="capture_btn">여기에 보기</span></button>
+      <select class="cam-sel" id="cam-sel" data-title-key="cam_pick"><option value="0" data-key="cam_board">보드 카메라</option></select>
     </div>
     <div class="result-box" id="cam-ph" data-key="cam_off_msg">카메라를 켜면 PiBrain 화면에 나와요.</div>
   </div>
@@ -275,9 +276,9 @@
     </div>
   </div>
 </div>
-<script src="/static/ko2en.js?ver=261113v3"></script>
+<script src="/static/ko2en.js?ver=261120v1"></script>
 <script src="/static/pibo-ui.js?ver=261102v1"></script>
-<script src="/static/index.js?ver=261113v4"></script>
+<script src="/static/index.js?ver=261120v1"></script>
 <script>/* 언어 select 를 지금 언어에 맞춘다(바꾸는 건 toggleLang → applyLang) */
   (function () { var sel = document.getElementById('lang_sel'); if (!sel) return;
     var sync = function () { sel.value = lang; }; sync();

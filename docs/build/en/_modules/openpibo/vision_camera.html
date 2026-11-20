@@ -347,6 +347,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span><span class="o">,</span><span class="nn">requests</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span><span class="p">,</span><span class="n">ImageDraw</span><span class="p">,</span><span class="n">ImageFont</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">picamera2</span><span class="w"> </span><span class="kn">import</span> <span class="n">Picamera2</span>
@@ -400,7 +401,7 @@
 
 <span class="sd">    :param int cam: 쓸 카메라. ``0`` 은 보드 카메라(기본), ``1`` 부터는 USB 카메라(V4L2 를 지원하면 기종 상관없음,</span>
 <span class="sd">      꽂은 USB 포트 순서 — :meth:`~openpibo.vision_camera.Camera.usb_cameras` 로 볼 수 있습니다).</span>
-<span class="sd">      USB 카메라는 크기를 주지 않으면 640x480 이고, 카메라 비율이 다르면 가운데를 잘라 맞춥니다</span>
+<span class="sd">      USB 카메라도 크기를 주지 않으면 보드 카메라와 같은 480x640(세로)이고, 카메라 비율이 다르면 가운데를 잘라 맞춥니다</span>
 <span class="sd">    :param int width: ``read()`` 가 돌려줄 그림의 가로(px). 없으면 480</span>
 <span class="sd">    :param int height: ``read()`` 가 돌려줄 그림의 세로(px). 없으면 640</span>
 
@@ -408,7 +409,7 @@
 <span class="sd">    """</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">usb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cam_no</span><span class="p">(</span><span class="n">cam</span><span class="p">)</span>   <span class="c1"># 0 = 보드 카메라, 1~ = USB 카메라(261120)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="p">(</span><span class="mi">640</span><span class="p">,</span> <span class="mi">480</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">usb</span> <span class="k">else</span> <span class="p">(</span><span class="mi">480</span><span class="p">,</span> <span class="mi">640</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="mi">480</span><span class="p">,</span> <span class="mi">640</span>   <span class="c1"># USB 카메라도 보드 카메라와 같은 세로 크기(가운데를 잘라 맞춤, 261120) — LCD·분류기가 세로를 전제로 한다</span>
     <span class="k">if</span> <span class="n">width</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">height</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
       <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="s1">'width'</span><span class="p">)</span> <span class="k">if</span> <span class="n">width</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
       <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="s1">'height'</span><span class="p">)</span> <span class="k">if</span> <span class="n">height</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
@@ -419,41 +420,60 @@
       <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span>
     <span class="n">cv2</span><span class="o">.</span><span class="n">setUseOptimized</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">cv2</span><span class="o">.</span><span class="n">setNumThreads</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">getNumberOfCPUs</span><span class="p">())</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_open_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">usb</span><span class="p">:</span>
       <span class="kn">from</span><span class="w"> </span><span class="nn">.modules.usbcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">UsbCam</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">cap</span> <span class="o">=</span> <span class="n">UsbCam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">usb</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
       <span class="k">return</span>
-    <span class="c1"># 앞 프로그램·도구 서비스가 카메라를 막 놓는 중이면 'Failed to start camera' 가 날 수 있다.</span>
-    <span class="c1"># 1초씩 쉬며 세 번까지 해 본다(261119). 카메라가 아예 안 잡히면(IndexError) 바로 오류</span>
-    <span class="n">cap</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
-      <span class="k">try</span><span class="p">:</span>
-        <span class="n">cap</span> <span class="o">=</span> <span class="n">Picamera2</span><span class="p">()</span>
-        <span class="n">config</span> <span class="o">=</span> <span class="n">cap</span><span class="o">.</span><span class="n">create_still_configuration</span><span class="p">(</span>
-                  <span class="n">main</span><span class="o">=</span><span class="p">{</span>
-                    <span class="s1">'size'</span><span class="p">:</span> <span class="p">(</span><span class="mi">1280</span><span class="p">,</span> <span class="mi">960</span><span class="p">),</span>
-                    <span class="s1">'format'</span><span class="p">:</span> <span class="s1">'RGB888'</span>
-                  <span class="p">},</span>
-                  <span class="c1">#transform=Transform(hflip=False, vflip=False),</span>
-                  <span class="n">buffer_count</span><span class="o">=</span><span class="mi">2</span>
-                <span class="p">)</span>
+    <span class="c1"># 보드 카메라는 여기서 열지 않는다 — 처음 read() 때 _open_board()(261120)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cap</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="n">cap</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-        <span class="n">cap</span><span class="o">.</span><span class="n">set_controls</span><span class="p">({</span><span class="s1">'AwbEnable'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">'AwbMode'</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span>
-        <span class="n">cap</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-        <span class="k">break</span>
-      <span class="k">except</span> <span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">)</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">cap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-          <span class="k">try</span><span class="p">:</span>
-            <span class="n">cap</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-          <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">close_err</span><span class="p">:</span>   <span class="c1"># 열다 만 카메라라 닫기도 실패할 수 있다 — 다시 여는 데는 지장 없다</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">'camera close after failed start: </span><span class="si">%s</span><span class="s1">'</span><span class="p">,</span> <span class="n">close_err</span><span class="p">)</span>
-          <span class="n">cap</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">attempt</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
-          <span class="k">raise</span>
-        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">cap</span> <span class="o">=</span> <span class="n">cap</span>
 
+  <span class="k">def</span><span class="w"> </span><span class="nf">_open_board</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># 보드 카메라는 처음 read() 할 때 연다(261120). 그리기·보여주기 블록도 camera = Camera() 를 넣어서,</span>
+    <span class="c1"># USB 카메라만 쓰는 프로그램까지 보드 카메라를 열지 않게. 두 스레드가 처음 read 를 같이 불러도 한 번만 연다</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_lock</span><span class="p">:</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+      <span class="c1"># 앞 프로그램·도구 서비스가 카메라를 막 놓는 중이면 'Failed to start camera' 가 날 수 있다.</span>
+      <span class="c1"># 1초씩 쉬며 세 번까지 해 본다(261119). 카메라가 아예 안 잡히면(IndexError) 바로 오류</span>
+      <span class="n">cap</span> <span class="o">=</span> <span class="kc">None</span>
+      <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+          <span class="n">cap</span> <span class="o">=</span> <span class="n">Picamera2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_board_num</span><span class="p">())</span>
+          <span class="n">config</span> <span class="o">=</span> <span class="n">cap</span><span class="o">.</span><span class="n">create_still_configuration</span><span class="p">(</span>
+                    <span class="n">main</span><span class="o">=</span><span class="p">{</span>
+                      <span class="s1">'size'</span><span class="p">:</span> <span class="p">(</span><span class="mi">1280</span><span class="p">,</span> <span class="mi">960</span><span class="p">),</span>
+                      <span class="s1">'format'</span><span class="p">:</span> <span class="s1">'RGB888'</span>
+                    <span class="p">},</span>
+                    <span class="c1">#transform=Transform(hflip=False, vflip=False),</span>
+                    <span class="n">buffer_count</span><span class="o">=</span><span class="mi">2</span>
+                  <span class="p">)</span>
+
+          <span class="n">cap</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+          <span class="n">cap</span><span class="o">.</span><span class="n">set_controls</span><span class="p">({</span><span class="s1">'AwbEnable'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">'AwbMode'</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span>
+          <span class="n">cap</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+          <span class="k">break</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">)</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+          <span class="k">if</span> <span class="n">cap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+              <span class="n">cap</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">close_err</span><span class="p">:</span>   <span class="c1"># 열다 만 카메라라 닫기도 실패할 수 있다 — 다시 여는 데는 지장 없다</span>
+              <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">'camera close after failed start: </span><span class="si">%s</span><span class="s1">'</span><span class="p">,</span> <span class="n">close_err</span><span class="p">)</span>
+            <span class="n">cap</span> <span class="o">=</span> <span class="kc">None</span>
+          <span class="k">if</span> <span class="n">attempt</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
+            <span class="k">raise</span>
+          <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">cap</span> <span class="o">=</span> <span class="n">cap</span>
+
+  <span class="nd">@staticmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">_board_num</span><span class="p">():</span>
+    <span class="c1"># libcamera 는 USB(UVC) 카메라도 카메라로 센다(261120 PiBrain: 0 ov5647, 1 USB 2.0 PC Cam).</span>
+    <span class="c1"># 순서에 기대지 않고 USB 가 아닌 첫 카메라(보드 카메라)를 연다</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">Picamera2</span><span class="o">.</span><span class="n">global_camera_info</span><span class="p">():</span>
+      <span class="k">if</span> <span class="s1">'usb'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'Id'</span><span class="p">,</span> <span class="s1">''</span><span class="p">))</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'Num'</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">'보드 카메라를 찾지 못했어요 / The board camera was not found'</span><span class="p">)</span>
 
   <span class="nd">@staticmethod</span>
   <span class="k">def</span><span class="w"> </span><span class="nf">_cam_no</span><span class="p">(</span><span class="n">cam</span><span class="p">):</span>
@@ -530,7 +550,12 @@
 <span class="sd">    """</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">usb</span><span class="p">:</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>   <span class="c1"># release() 뒤에 다시 읽으면 다시 연다</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.modules.usbcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">UsbCam</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cap</span> <span class="o">=</span> <span class="n">UsbCam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">usb</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cap</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_open_board</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cap</span><span class="o">.</span><span class="n">capture_array</span><span class="p">(),</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)),</span><span class="n">cv2</span><span class="o">.</span><span class="n">ROTATE_90_COUNTERCLOCKWISE</span><span class="p">)</span></div>
 
     <span class="c1"># return cv2.rotate(self.cap.capture_array(),cv2.ROTATE_90_COUNTERCLOCKWISE)</span>

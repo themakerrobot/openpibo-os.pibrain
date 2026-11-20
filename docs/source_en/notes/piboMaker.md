@@ -55,7 +55,8 @@ The PiBrain picture on the left follows along: a pressed button lights up, the w
 
 - **Camera**: press [Camera on] to show the camera view on the **PiBrain screen**. Tap a vision feature (grayscale, edges, cartoon, QR code,
   face analysis, object detection, hand gestures, pose, markers…) to apply it to the PiBrain screen right away; the result appears as text at the bottom right.
-  [Show here] shows the current view in the browser too
+  [Show here] shows the current view in the browser too.
+  If a USB camera is plugged in, switch between the **board camera and USB cameras** in the picker next to [Show here] (any USB camera that supports V4L2)
 - **Speech**: pick one of ten voices (Male 1–5, Female 1–5) and press [Speak] to let PiBrain say your text. Korean and English are detected automatically
 
 ![Tools: Screen](images/tools_lcd.png)
@@ -69,7 +70,8 @@ The PiBrain picture on the left follows along: a pressed button lights up, the w
 Collect examples with the camera and teach the AI, for example "this is a cat, this is food". The PiBrain camera is portrait (3:4), so the view is portrait too.
 
 1. **What should it learn from?** — Image (the whole picture) · Hand (hand shape) · Face (expression) · Pose (body posture)
-2. Name each **class** and keep pressing **[Hold to collect]** to collect examples. You can also upload files with [Photos]
+2. Name each **class** and keep pressing **[Hold to collect]** to collect examples. You can also upload files with [Photos].
+   The picker under the camera switches to a USB camera — use the same camera for training and for use for better results
 3. **[Teach the AI]** — the tablet or laptop browser learns in a few seconds and shows the accuracy, a confusion table and live scores
 4. **[Save]** (under Save to PiBrain) — saved on PiBrain in `/home/pi/mymodel/<model name>`
 5. In the IDE use `Load classification model (mymodel) (model name)` → `Classify image (image) with the classification model`.

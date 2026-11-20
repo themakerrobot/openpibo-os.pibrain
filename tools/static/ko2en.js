@@ -176,6 +176,16 @@ const T = {
   face_err_net:       { ko: "로봇에 연결하지 못했어요.", en: "Could not reach the robot." },
   cancel_btn:         { ko: "취소", en: "Cancel" },
   ok_btn:             { ko: "확인", en: "OK" },
+  // [카메라] 고르기(261120) — 보드 카메라 + 꽂혀 있는 USB 카메라
+  cam_pick:           { ko: "카메라 고르기", en: "Choose camera" },
+  cam_board:          { ko: "보드 카메라", en: "Board camera" },
+  cam_usb:            { ko: (n, name) => `cam${n} · ${name || "USB 카메라"}`, en: (n, name) => `cam${n} · ${name || "USB camera"}` },   // 블록 [USB 카메라 (cam1) 로 사진 찍기] 와 같은 이름
+  cam_missing:        { ko: (n) => `cam${n} · (빠짐)`, en: (n) => `cam${n} · (unplugged)` },
+  cam_switching:      { ko: "카메라를 바꾸는 중…", en: "Switching the camera…" },
+  cam_sel_fail:       { ko: (e) => { const m = String(e).match(/^(.*[가-힣].*?) \/ ([^가-힣]+)$/); return `카메라를 바꾸지 못했어요. (${m ? m[1] : e})`; },
+                        en: (e) => { const m = String(e).match(/^(.*[가-힣].*?) \/ ([^가-힣]+)$/); return `Could not switch the camera. (${m ? m[2] : e})`; } },
+  cam_on_fail:        { ko: (e) => { const m = String(e).match(/^(.*[가-힣].*?) \/ ([^가-힣]+)$/); return `카메라를 켜지 못했어요. (${m ? m[1] : e})`; },
+                        en: (e) => { const m = String(e).match(/^(.*[가-힣].*?) \/ ([^가-힣]+)$/); return `Could not turn on the camera. (${m ? m[2] : e})`; } },
 };
 
 /**

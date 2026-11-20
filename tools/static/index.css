@@ -328,3 +328,8 @@ button, input, textarea, select { font: inherit; color: inherit; }
 #v_faceid .v-faceid__item.v-faceid__danger, #v_faceid .v-faceid__item.v-faceid__danger > i { color: var(--c-red) !important; }
 #v_faceid .v-faceid__item:disabled, #v_faceid .v-faceid__item.is-disabled { opacity: .45; pointer-events: none; }
 .v-faceid__list[hidden], .v-faceid__note[hidden] { display: none !important; }
+
+/* [카메라] 고르기(261120) — [카메라 켜기]·[여기에 보기] 옆 */
+.cam-sel { max-width: 220px; height: 40px; padding: 0 10px; border: 1px solid var(--v2-line-2, #c4cad6); border-radius: 8px;
+  background: var(--v2-raise, #fff); color: var(--v2-ink, #1a1e29); font: inherit; font-size: 14px; text-overflow: ellipsis; }
+.cam-sel:disabled { opacity: .6; }
