@@ -136,7 +136,7 @@ Functions:
     """
     손동작을 인식합니다.
 
-    :param numpy.ndarray img: 이미지 객체
+    :param numpy.ndarray image: 이미지 객체
     
     :returns: 모델에 따른 손동작 인식 결과
     """
@@ -214,10 +214,10 @@ Functions:
 
   def detect_object(self, img):
     """
-    사물 인식 결과를 표시합니다.
+    이미지에서 사물을 찾습니다(모델은 ``load_object_model`` 로 바꿀 수 있습니다).
 
     :param numpy.ndarray img: 이미지 객체
-    :param array items: 사물 인식 결과
+    :returns: ``[{"name": 이름, "score": 점수(%), "box": (x1, y1, x2, y2)}, ...]``
     """
     if not isinstance(img, np.ndarray):
       raise ValueError('"img" must be a valid OpenCV image (np.ndarray).')

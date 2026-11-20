@@ -424,7 +424,7 @@
 <dd><p>Recognizes hand gestures.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p>
+<dd class="field-odd"><p><strong>image</strong> (<em>numpy.ndarray</em>) – Image object</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Hand gesture recognition result depending on the model</p>
@@ -466,13 +466,13 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="openpibo.vision_detect.Detect.detect_object">
 <span class="sig-name descname"><span class="pre">detect_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_detect.html#Detect.detect_object"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openpibo.vision_detect.Detect.detect_object" title="Link to this definition">¶</a></dt>
-<dd><p>Displays the object detection result.</p>
+<dd><p>Finds objects in an image (change the model with <code class="docutils literal notranslate"><span class="pre">load_object_model</span></code>).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p></li>
-<li><p><strong>items</strong> (<em>array</em>) – Object detection result</p></li>
-</ul>
+<dd class="field-odd"><p><strong>img</strong> (<em>numpy.ndarray</em>) – Image object</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">[{&quot;name&quot;:</span> <span class="pre">name,</span> <span class="pre">&quot;score&quot;:</span> <span class="pre">score(%),</span> <span class="pre">&quot;box&quot;:</span> <span class="pre">(x1,</span> <span class="pre">y1,</span> <span class="pre">x2,</span> <span class="pre">y2)},</span> <span class="pre">...]</span></code></p>
 </dd>
 </dl>
 </dd></dl>

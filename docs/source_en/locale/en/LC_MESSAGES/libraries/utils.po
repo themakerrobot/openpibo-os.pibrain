@@ -28,12 +28,21 @@ msgstr "Calculates the angle of the three points p1-p2-p3. (centered at p2)"
 msgid "Parameters"
 msgstr ""
 
-msgid "p1, p2, p3: 각 점을 (x, y)"
-msgstr "p1, p2, p3: each point as (x, y)"
+msgid "첫 점 (x, y)"
+msgstr "First point (x, y)"
+
+msgid "가운데 점 (x, y) — 각의 꼭짓점"
+msgstr "Middle point (x, y) — the vertex of the angle"
+
+msgid "끝 점 (x, y)"
+msgstr "Last point (x, y)"
 
 msgid "Returns"
 msgstr ""
 
 msgid "p1-p2-p3 각의 크기 (도 단위)"
 msgstr "Size of the angle p1-p2-p3 (in degrees)"
+
+#~ msgid "p1, p2, p3: 각 점을 (x, y)"
+#~ msgstr "p1, p2, p3: each point as (x, y)"
 

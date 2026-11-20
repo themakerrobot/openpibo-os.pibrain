@@ -10,7 +10,7 @@ as PiBrain, type **PiBrain's IP address** (shown on the PiBrain screen at startu
 | **Chat** | Chat in text with the language model (LLM) running inside PiBrain | [Chat] at the top of the IDE |
 | **Classifier** | Collect examples with the camera and teach your own AI | [Classifier] at the top of the IDE |
 | **Robot Play** | Elementary students teach the robot friend tricks with cards (no coding) | [Robot Play] at the top of the IDE |
-| **Guide** | This document | [Guide] at the top of the IDE |
+| **Help** | This document | [Help] at the top of the IDE |
 
 ```{note}
 Everything runs **inside PiBrain** (voices, chat and the classifier included). Only the blocks in the
@@ -21,7 +21,7 @@ Everything runs **inside PiBrain** (voices, chat and the classifier included). O
 
 ![IDE with blocks](images/ide_block.png)
 
-- **Top bar**: the folder button on the far left opens the **file drawer**. [Blocks | Python] in the middle switches the editor. On the right are Tools, Chat, Classifier, Robot Play, Guide, Full screen and [⋯] More
+- **Top bar**: the folder button on the far left opens the **file drawer**. [Blocks | Python] in the middle switches the editor. On the right are Tools, Chat, Classifier, Robot Play, Help, Full screen and [⋯] More
   (brightness · font size · Python editor theme · language · factory reset · power off · source code and license)
 - **File drawer**: the file list, [Add] (new file / new folder / upload) and a preview for pictures and sounds. It is open at first and closes when you open a file or tap the editor.
   Tapping the file name in the editor bar opens it again
