@@ -50,7 +50,7 @@
     "a:fa":         {"kind": "sound", "arg": "fa", "icon": "fa-music", "ko": "파", "en": "Fa"},
     "a:sol":        {"kind": "sound", "arg": "sol", "icon": "fa-music", "ko": "솔", "en": "Sol"},
     "a:ding":       {"kind": "sound", "arg": "ding", "icon": "fa-bell", "ko": "딩동", "en": "Ding"},
-    "a:boing":      {"kind": "sound", "arg": "boing", "icon": "fa-volume-high", "ko": "뿅", "en": "Boing"},
+    "a:boing":      {"kind": "sound", "arg": "boing", "icon": "fa-face-surprise", "ko": "띠용", "en": "Boing"},
     "a:drum":       {"kind": "sound", "arg": "drum", "icon": "fa-drum", "ko": "둥둥", "en": "Drum"},
     "w:1":          {"kind": "wait", "arg": 1, "icon": "fa-hourglass-half", "ko": "1초", "en": "1 s"},
     "w:2":          {"kind": "wait", "arg": 2, "icon": "fa-hourglass-half", "ko": "2초", "en": "2 s"},
