@@ -282,7 +282,8 @@ function paintCams(force) {
 async function loadCams() {
   try {
     const j = await (await fetch('/cam_list', { cache: 'no-store' })).json();
-    camList = j.list || camList; camCur = typeof j.cur === 'number' ? j.cur : camCur;
+    camList = (j.list || camList).filter((c) => c.cam <= 1);   // USB 카메라는 하나만(첫 번째)
+    camCur = typeof j.cur === 'number' ? j.cur : camCur;
     paintCams();
   } catch (e) { /* 서버가 없으면 그대로 */ }
 }
