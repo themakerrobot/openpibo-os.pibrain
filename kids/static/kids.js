@@ -129,7 +129,7 @@
     if (b.tagName === 'BUTTON') b.type = 'button';
     var ic = c.kind === 'colour'
       ? '<span class="kcard__dot" style="background:' + c.hex + '"></span>'
-      : (c.kind === 'sound' && /^a:(do|re|mi|fa|sol)$/.test(cid) ? '<span class="kcard__note">' + txt(c) + '</span>' : icon(c.icon));
+      : icon(c.icon);   // 음 카드도 아이콘 + 이름(261120 — 전엔 큰 글자와 이름이 같은 글자로 두 번 나왔다)
     b.innerHTML = '<span class="kcard__ic">' + ic + '</span><span class="kcard__t"></span>';
     b.lastChild.textContent = node && node.v ? node.v : txt(c);
     if (node && node.v) b.title = node.v;

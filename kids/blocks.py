@@ -40,9 +40,6 @@ def _blk(b):
 
 def sense_bool(what, device):
   """센서 → 참/거짓 블록. 파이보 touch·pir(MCU), PiBrain b1~b4(GPIO)"""
-  if what == 'dice':
-    a = {'type': 'math_random_int', 'id': _id(), 'inputs': {'FROM': _num(1), 'TO': _num(2)}}
-    return {'type': 'logic_compare', 'id': _id(), 'fields': {'OP': 'EQ'}, 'inputs': {'A': _blk(a), 'B': _num(1)}}
   if device == 'pibrain':
     a = {'type': 'device_pibrain_button', 'id': _id(), 'fields': {'num': what[1:]}}
     want = 'on'
