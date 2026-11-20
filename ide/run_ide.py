@@ -630,6 +630,13 @@ async def handle_restore(sid):
         os.system("rm -rf /home/pi/mymodel/*")
         os.system("rm -rf /home/pi/myaudio/*")
         os.system("rm -rf /home/pi/examples/*")
+        # 폴더가 없으면 cp 가 조용히 실패한다(os.system) — 없으면 만들고 pi 소유로(이미지와 같게)
+        if not os.path.isdir('/home/pi/examples'):
+            os.makedirs('/home/pi/examples', exist_ok=True)
+            try:
+                shutil.chown('/home/pi/examples', user='pi', group='pi')
+            except Exception:
+                pass   # 소유자를 못 바꿔도 초기화는 이어간다
         os.system("cp -rf /home/pi/openpibo-os/examples/* /home/pi/examples/")
         os.system("sudo /home/pi/openpibo-os/system/conwifi.sh wpa-psk 'pibo' '!pibo0314'")
         os.system(f'{ENV_PATH}/python3 /home/pi/openpibo-os/system/clear_disp.py')
