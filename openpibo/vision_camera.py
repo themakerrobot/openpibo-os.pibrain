@@ -8,6 +8,7 @@ import cv2,requests
 import os
 import time
 import threading
+import numbers
 import numpy as np
 from PIL import Image,ImageDraw,ImageFont
 from picamera2 import Picamera2
@@ -135,11 +136,11 @@ Functions:
 
   @staticmethod
   def _cam_no(cam):
-    if type(cam) is bool or not isinstance(cam, int):
+    if type(cam) is bool or not isinstance(cam, numbers.Integral):   # numpy 정수도 받는다
       raise ValueError('"cam" must be integer type')
     if not 0 <= cam <= 9:
       raise ValueError('"cam" must be 0~9')
-    return cam
+    return int(cam)
 
   @staticmethod
   def usb_cameras():
