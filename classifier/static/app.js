@@ -948,6 +948,44 @@ document.addEventListener('visibilitychange', () => socket.emit('camera_visible'
 socket.on('camera_image', showFrame);
 // 카메라를 못 켰을 때(도구가 아직 놓지 않음 등). 다시 켜면 서버가 다시 시도한다
 socket.on('camera_error', (d) => toast(t('cam_fail'), 'warn'));
+
+/* 카메라 고르기(261120): 보드 카메라 + 꽂혀 있는 USB 카메라(이름은 카메라가 알려 준 값).
+   목록은 고르는 칸을 누를 때 새로 묻는다(실행 중에 꽂은 카메라도 잡히게). 켜져 있으면 서버가 새 카메라를 먼저
+   열어 보고 되면 바꾼다 — 안 되면 원래 카메라 그대로 + 안내. 학습과 쓸 때 카메라가 다르면 답이 어긋날 수 있어 한 번 알린다 */
+const camSel = $('cam_sel');
+const camS = { list: [{ cam: 0, name: '' }], cur: 0, shown: '', noted: false };
+function paintCams(force) {
+  const list = camS.list.slice();
+  if (!list.some((c) => c.cam === camS.cur)) list.push({ cam: camS.cur, missing: true });
+  const key = JSON.stringify([list, camS.cur, lang]);
+  if (!force && key === camS.shown) return;   // 바뀐 게 없으면 그대로 둔다(열려 있는 목록이 닫히지 않게)
+  camS.shown = key;
+  camSel.innerHTML = '';
+  list.forEach((c) => {
+    const o = document.createElement('option');
+    o.value = String(c.cam);
+    o.textContent = c.missing ? t('cam_missing', c.cam) : (c.cam === 0 ? t('cam_board') : t('cam_usb', c.cam, c.name));
+    camSel.appendChild(o);
+  });
+  camSel.value = String(camS.cur);
+}
+socket.on('cam_list', (d) => { if (d && d.list) camS.list = d.list; if (d && typeof d.cur === 'number') camS.cur = d.cur; paintCams(); });
+socket.on('cam_select', (r) => {
+  camSel.disabled = false;
+  if (r && typeof r.cam === 'number') camS.cur = r.cam;
+  paintCams(true);
+  if (r && !r.ok) toast(t('cam_sel_fail', r.error || ''), 'error');
+});
+socket.on('connect', () => socket.emit('cam_list'));
+camSel.addEventListener('pointerdown', () => socket.emit('cam_list'));
+camSel.addEventListener('focus', () => socket.emit('cam_list'));
+camSel.addEventListener('change', () => {
+  camSel.disabled = true;
+  socket.emit('cam_select', { cam: parseInt(camSel.value, 10) || 0 });
+  if (!camS.noted) { camS.noted = true; toast(t('cam_sel_note'), 'info'); }
+});
+language.addEventListener('change', () => paintCams(true));
+paintCams(true);
 PiboUI.watchSocket(socket, {
   banner: () => ({
     text: PiboUI.text('svc_stopped'),

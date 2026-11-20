@@ -39,6 +39,8 @@ latest_seq    = 0      # 새 그림이 올 때마다 1 씩 — /camera_stream �
 latest_result = ''
 latest_img    = None
 camera_lock   = asyncio.Lock()
+cam_no        = 0      # 0 = 보드 카메라, 1~ = USB 카메라(261120, [카메라] 고르기). 꺼져 있을 때 고르면 다음에 켤 때 쓴다
+cam_rw_lock   = threading.Lock()   # 카메라를 바꾸는 동안 비전 루프가 옛 카메라를 읽지 않게
 marker_length = 5.0
 
 ENV_PATH = '/home/pi/.pyenv/bin'
@@ -180,12 +182,16 @@ def process_frame(img, vtype):
         print(f'[process_frame:{vtype}] {e}')
     return img, res
 
+def camera_read():
+    with cam_rw_lock:
+        return camera.read() if camera is not None else None
+
 # ── 비전 루프 ─────────────────────────────────────────────────
 async def vision_loop():
     global latest_proc, latest_seq, latest_result, latest_img, vision_en
     while vision_en:
         try:
-            img = await asyncio.to_thread(camera.read)
+            img = await asyncio.to_thread(camera_read)
             if img is None:
                 await asyncio.sleep(0.3)
                 continue
@@ -213,7 +219,13 @@ async def toggle_camera(on: bool):
             await asyncio.to_thread(stop_network_disp)
             if camera is None:
                 from openpibo.vision_camera import Camera
-                camera = await asyncio.to_thread(Camera)
+                cam = await asyncio.to_thread(Camera, cam_no)
+                try:
+                    await asyncio.to_thread(cam.read)   # 보드 카메라는 처음 read 때 연다(261120) — 여기서 열어 본다
+                except Exception:
+                    await asyncio.to_thread(cam.release)
+                    raise
+                camera = cam
             vision_en = True
             vision_task = asyncio.create_task(vision_loop())
         elif not on and vision_en:
@@ -399,8 +411,60 @@ async def health():
 # ── 카메라 ───────────────────────────────────────────────────
 @app.get('/camera')
 async def camera_ctrl(d: str):
-    await toggle_camera(d == 'on')
+    try:
+        await toggle_camera(d == 'on')
+    except Exception as e:   # 카메라를 못 켰다(고른 USB 카메라가 빠짐 등) — 화면이 버튼을 되돌리고 안내한다(261120)
+        print(f'[camera] {e}')
+        await asyncio.to_thread(start_network_disp)
+        return JSONResponse({"ok": False, "error": str(e)})
     return JSONResponse({"ok": True})
+
+# [카메라] 고르기(261120) — 보드 카메라 + 꽂혀 있는 USB 카메라. 목록은 고르는 칸을 열 때마다 새로 읽는다
+@app.get('/cam_list')
+async def cam_list():
+    from openpibo.vision_camera import Camera
+    try:
+        usb = await asyncio.to_thread(Camera.usb_cameras)
+    except Exception as e:
+        print(f'[cam_list] {e}')
+        usb = []
+    return JSONResponse({"list": [{"cam": 0, "name": ""}] + [{"cam": c['cam'], "name": c['name']} for c in usb], "cur": cam_no})
+
+@app.get('/cam_select')
+async def cam_select(n: int = 0):
+    """카메라가 켜져 있으면 새 카메라를 먼저 열어 한 장 읽어 보고, 되면 바꾼다(안 되면 그대로). 꺼져 있으면 고르기만"""
+    global camera, cam_no
+    if not 0 <= n <= 9:
+        return JSONResponse({"ok": False, "cam": cam_no, "error": '"n" must be 0~9'})
+    async with camera_lock:
+        if n == cam_no:
+            return JSONResponse({"ok": True, "cam": n})
+        if camera is None:
+            cam_no = n
+            return JSONResponse({"ok": True, "cam": n})
+        from openpibo.vision_camera import Camera
+        new = None
+        try:
+            new = await asyncio.to_thread(Camera, n)
+            await asyncio.to_thread(new.read)
+        except Exception as e:
+            print(f'[cam_select] {n}: {e}')
+            if new is not None:
+                try: await asyncio.to_thread(new.release)
+                except Exception: pass
+            return JSONResponse({"ok": False, "cam": cam_no, "error": str(e)})
+        def swap():
+            global camera
+            with cam_rw_lock:
+                old, camera = camera, new
+            return old
+        old = await asyncio.to_thread(swap)
+        cam_no = n
+        try:
+            await asyncio.to_thread(old.release)
+        except Exception as e:
+            print(f'[cam_select] release: {e}')
+        return JSONResponse({"ok": True, "cam": n})
 
 @app.get('/camera_stream')
 async def camera_stream(request: Request):

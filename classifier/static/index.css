@@ -277,3 +277,8 @@ body.pb-v2 .store-menu > .is-danger:hover { background: var(--v2-red-t) !importa
   .stage, .stage-bar { width: 100%; }
   #logo_bt { display: none; }
 }
+
+/* 카메라 고르기(261120) — 카메라 끄기 옆 */
+.cam-sel { flex: 0 1 auto; min-width: 0; max-width: 220px; height: 32px; padding: 0 8px; border: 1px solid var(--v2-line-2, #c4cad6); border-radius: 8px;
+  background: var(--v2-raise, #fff); color: var(--v2-ink, #1a1e29); font: inherit; font-size: 13px; text-overflow: ellipsis; }
+.cam-sel:disabled { opacity: .6; }
