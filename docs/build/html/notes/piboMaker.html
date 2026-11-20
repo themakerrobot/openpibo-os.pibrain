@@ -6,7 +6,7 @@
 <link rel="index" title="색인" href="../genindex.html"><link rel="search" title="검색" href="../search.html"><link rel="next" title="소프트웨어" href="software.html"><link rel="prev" title="PiBrain 도움말" href="../index.html">
         <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/notes/piboMaker.html">
 
-    <link rel="shortcut icon" href="../_static/icon.png"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+    <link rel="shortcut icon" href="../_static/icon.png"><!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
         <title>PiBrain 메이커 - 도움말 · PiBrain</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
@@ -373,7 +373,11 @@
 <td><p>카메라로 예시를 모아 나만의 AI 를 가르칩니다</p></td>
 <td><p>IDE 위 [분류기]</p></td>
 </tr>
-<tr class="row-even"><td><p><strong>도움말</strong></p></td>
+<tr class="row-even"><td><p><strong>로봇 놀이</strong></p></td>
+<td><p>초등학생이 카드로 로봇 친구에게 재주를 가르칩니다(코딩 없이)</p></td>
+<td><p>IDE 위 [로봇 놀이]</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>도움말</strong></p></td>
 <td><p>지금 보고 있는 이 문서입니다</p></td>
 <td><p>IDE 위 [도움말]</p></td>
 </tr>
@@ -389,20 +393,22 @@
 <h2>IDE<a class="headerlink" href="#ide" title="Link to this heading">¶</a></h2>
 <p><img alt="IDE 블록 화면" src="../_images/ide_block.png" /></p>
 <ul class="simple">
-<li><p><strong>위 줄</strong>: [블록 | 파이썬] 으로 편집기를 바꿉니다. 오른쪽은 도구·대화·분류기·도움말·전체화면과 [⋯] 더보기
+<li><p><strong>위 줄</strong>: 왼쪽 끝 폴더 단추로 <strong>파일 서랍</strong>을 엽니다. 가운데 [블록 | 파이썬] 으로 편집기를 바꾸고, 오른쪽은 도구·대화·분류기·로봇 놀이·도움말·전체화면과 [⋯] 더보기
 (화면 밝기 · 글자 크기 · 파이썬 편집기 테마 · 언어 · 공장 초기화 · 전원 끄기 · 소스 코드와 라이선스)</p></li>
-<li><p><strong>왼쪽 패널</strong>: 아래의 <strong>[실행] [정지]</strong> 는 늘 보입니다.</p>
-<ul>
-<li><p>[PiBrain] — 화면 출력(<code class="docutils literal notranslate"><span class="pre">(이미지)</span> <span class="pre">이미지를</span> <span class="pre">모니터</span> <span class="pre">화면에</span> <span class="pre">보여주기</span></code> 블록으로 보낸 그림), 상태(WiFi 설정·온도·메모리·켜진 시간·버전), 실행 출력, 프로그램에 입력 보내기</p></li>
-<li><p>[파일] — 파일 목록, 새 파일·새 폴더·올리기, 사진·소리 미리보기</p></li>
-</ul>
-</li>
+<li><p><strong>파일 서랍</strong>: 파일 목록, [추가](새 파일·새 폴더·올리기), 사진·소리 미리보기. 처음 열면 펼쳐져 있고, 파일을 열거나 편집기를 누르면 접힙니다.
+편집기 줄의 파일 이름을 눌러도 열립니다</p></li>
+<li><p><strong>오른쪽 실행 화면</strong>: <strong>[실행] [정지]</strong> 와 실행 상태, 화면 출력(<code class="docutils literal notranslate"><span class="pre">(이미지)</span> <span class="pre">이미지를</span> <span class="pre">모니터</span> <span class="pre">화면에</span> <span class="pre">보여주기</span></code> 블록으로 보낸 그림), 실행 출력, 프로그램에 입력 보내기.
+편집기 줄 오른쪽 끝 단추로 접고 펼 수 있고, 실행하면 다시 펼쳐집니다. 서랍과 실행 화면을 둘 다 접으면 블록을 넓게 씁니다</p></li>
+<li><p><strong>아래 상태 줄</strong>: 연결 상태 · 버전 · 시리얼 | WiFi(누르면 WiFi 설정) · 온도 · 메모리 · 켜진 시간</p></li>
 <li><p><strong>블록</strong>: 왼쪽 분류에서 블록을 끌어다 놓습니다. 맨 위 <strong>블록 찾기</strong> 에 ‘소리’·’얼굴’ 처럼 적으면 해당 블록이 나옵니다.
+편집기 줄의 <strong>[쉬움 | 전체]</strong> 에서 [쉬움]을 고르면 처음 배우는 학생용 블록(계속 반복·동작·불빛·소리·센서·AI 눈·점수 등)만 보입니다.
 [파이썬 코드] 를 누르면 블록이 만든 파이썬 코드를 볼 수 있습니다. 블록 목록은 왼쪽 <strong>BLOCK</strong> 을 보세요.</p></li>
+<li><p><strong>오류가 나면</strong>: 출력 위 빨간 상자에 어디서(블록 모드는 빨간 테두리로 표시한 블록, 파이썬은 몇 번째 줄) 무슨 오류인지 쉬운 말로 나옵니다.
+[블록 보기]·[줄 보기] 로 그 자리로 가고, 블록을 고치면 빨간 테두리는 없어집니다</p></li>
 </ul>
 <p><img alt="IDE 파이썬 화면" src="../_images/ide_python.png" /></p>
 <ul class="simple">
-<li><p><strong>파이썬</strong>: <code class="docutils literal notranslate"><span class="pre">openpibo</span></code> 패키지로 PiBrain 의 기능을 씁니다. <code class="docutils literal notranslate"><span class="pre">print</span></code> 는 왼쪽 [출력] 에, <code class="docutils literal notranslate"><span class="pre">input</span></code> 은 [입력] 칸으로 받습니다.
+<li><p><strong>파이썬</strong>: <code class="docutils literal notranslate"><span class="pre">openpibo</span></code> 패키지로 PiBrain의 기능을 씁니다. <code class="docutils literal notranslate"><span class="pre">print</span></code> 는 오른쪽 [출력] 에, <code class="docutils literal notranslate"><span class="pre">input</span></code> 은 그 아래 입력 칸으로 받습니다.
 API 는 왼쪽 <strong>PYTHON</strong> 을 보세요</p></li>
 <li><p>실행한 프로그램은 PiBrain 안에서 돕니다. 멈추려면 [정지] 를 누릅니다</p></li>
 </ul>

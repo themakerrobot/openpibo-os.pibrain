@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
         <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/_modules/openpibo/audio.html">
 
-    <link rel="shortcut icon" href="../../_static/icon.png"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+    <link rel="shortcut icon" href="../../_static/icon.png"><!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
         <title>openpibo.audio - Help · PiBrain</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
@@ -380,13 +380,13 @@
       <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">" must be (mp3|wav)'</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">volume</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span> <span class="ow">or</span> <span class="p">(</span><span class="n">volume</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">volume</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">):</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">volume</span><span class="si">}</span><span class="s1">" is Number(0~100)'</span><span class="p">)</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">volume</span><span class="si">}</span><span class="s1">" must be 0~100'</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">background</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">background</span><span class="si">}</span><span class="s1">" is not bool'</span><span class="p">)</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">background</span><span class="si">}</span><span class="s1">" must be True or False'</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">volume2</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">volume2</span> <span class="o">&lt;</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">volume2</span> <span class="o">&gt;</span> <span class="mf">3.0</span><span class="p">):</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">volume2</span><span class="si">}</span><span class="s1">" is Number(0.0~3.0)'</span><span class="p">)</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">volume2</span><span class="si">}</span><span class="s1">" must be 0.0~3.0'</span><span class="p">)</span>
 
     <span class="n">volume</span> <span class="o">=</span> <span class="mi">40</span> <span class="o">+</span> <span class="n">volume</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">//</span> <span class="mi">100</span>   <span class="c1"># 0~100 을 실제 40~100% 로 편다(40% 아래는 소리가 너무 작음). 전엔 /2+40 이라 최대 90% 였다(261026)</span>
     <span class="c1"># 셸을 거치지 않는다 — 파일 이름에 따옴표·; 가 있어도 명령이 되지 않게</span>

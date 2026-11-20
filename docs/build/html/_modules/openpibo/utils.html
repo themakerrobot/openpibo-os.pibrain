@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="색인" href="../../genindex.html"><link rel="search" title="검색" href="../../search.html">
         <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/_modules/openpibo/utils.html">
 
-    <link rel="shortcut icon" href="../../_static/icon.png"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+    <link rel="shortcut icon" href="../../_static/icon.png"><!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
         <title>openpibo.utils - 도움말 · PiBrain</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
@@ -361,7 +361,7 @@
   <span class="n">mag2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">v2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
   <span class="k">if</span> <span class="n">mag1</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">mag2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"p2와 동일한 점이 포함되어 각도를 계산할 수 없습니다."</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"꼭짓점(p2)과 같은 점이 있어 각도를 계산할 수 없어요 / Cannot compute the angle: a point equals p2"</span><span class="p">)</span>
 
   <span class="c1"># 내적과 크기를 이용한 각도 계산 (코사인 값의 범위 보정)</span>
   <span class="n">cos_theta</span> <span class="o">=</span> <span class="n">dot</span> <span class="o">/</span> <span class="p">(</span><span class="n">mag1</span> <span class="o">*</span> <span class="n">mag2</span><span class="p">)</span>

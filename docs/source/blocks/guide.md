@@ -36,6 +36,8 @@ PiBrain 메이커는 Blockly 기반의 블록 코딩을 지원합니다. 기본 
 | 인식 | 33 |
 | 기타 | 12 |
 
+**쉬움 블록** — 편집기 줄의 [쉬움 | 전체] 에서 [쉬움] 을 고르면 나오는 처음 배우는 학생용 블록 16개(아래 '쉬움 블록')
+
 ## PiBrain 전용 블록
 
 ### 시작
@@ -204,7 +206,7 @@ USB 연결 해제합니다.
 
 <img src="img/vision_imshow_to_ide.png" alt="([변수 ▾]) 이미지를 모니터 화면에 보여주기" width="427" class="blk">
 
-이미지 변수를 IDE에서 보여줍니다.
+이미지 변수를 모니터 화면(IDE 실행 화면)에 보여줍니다.
 
 <img src="img/vision_imshow_to_oled.png" alt="([변수 ▾]) 이미지를 로봇 화면에 보여주기" width="409" class="blk">
 
@@ -429,3 +431,85 @@ USB 연결 해제합니다.
 <img src="img/utils_calculate_angle.png" alt="([변수 ▾]) ⬉ ([변수 ▾]) ⬈ ([변수 ▾]) 각도 구하기" width="490" class="blk">
 
 세 점 사이의 각도 구하기 *값을 돌려주는 블록*
+
+## 쉬움 블록
+
+편집기 줄의 **[쉬움 | 전체]** 에서 [쉬움] 을 고르면 분류가 줄고 아래 블록이 나옵니다. 카메라·변수·이미지를 블록 안에 숨겨 고르기만 하면 됩니다. [쉬움] 툴박스에는 [만약]·[반복]·불빛·말하기 같은 기본 블록도 같이 있고, 쉬움과 전체 블록은 한 프로그램에 섞어 써도 됩니다.
+
+### 쉬움 · 시작 · 반복
+
+<img src="img/ez_forever.png" alt="계속 반복 ?" width="168" class="blk">
+
+안의 블록을 멈출 때까지 계속 되풀이해요.
+
+### 쉬움 · 말 · 소리
+
+<img src="img/ez_sound.png" alt="효과음 딩동 내기" width="240" class="blk">
+
+소리가 끝나면 다음 블록으로 가요.
+
+<img src="img/ez_note.png" alt="음 도 내기" width="185" class="blk">
+
+소리가 끝나면 다음 블록으로 가요.
+
+<img src="img/ez_music.png" alt="음악 (없어요) 틀기" width="255" class="blk">
+
+음악을 틀어 두고 바로 다음 블록으로 가요.
+
+<img src="img/ez_music_stop.png" alt="음악 멈추기" width="157" class="blk">
+
+틀어 둔 음악을 멈춰요.
+
+### 쉬움 · 화면
+
+<img src="img/ez_picture.png" alt="로봇 화면 에 웃는 얼굴 그리기" width="392" class="blk">
+
+고른 그림을 화면에 그려요.
+
+<img src="img/ez_text.png" alt="로봇 화면에 (“ 안녕 ”) 쓰기" width="326" class="blk">
+
+글자나 숫자를 로봇 화면에 써요.
+
+<img src="img/ez_clear.png" alt="로봇 화면 지우기" width="199" class="blk">
+
+로봇 화면을 깨끗이 지워요.
+
+### 쉬움 · 센서
+
+<img src="img/ez_button.png" alt="버튼 1 을(를) 눌렀나?" width="269" class="blk">
+
+그 순간을 봐요. 계속 반복 안에서 쓰면 기다리는 것처럼 돼요. *값을 돌려주는 블록*
+
+### 쉬움 · 카메라
+
+<img src="img/ez_photo.png" alt="사진 찍어 그대로 모니터 화면 에 보이기" width="466" class="blk">
+
+계속 반복 안에 넣으면 동영상처럼 보여요.
+
+### 쉬움 · AI 눈
+
+<img src="img/ez_seen.png" alt="카메라에 얼굴 이(가) 보이나?" width="333" class="blk">
+
+카메라로 한 장 찍어서 봐요. *값을 돌려주는 블록*
+
+<img src="img/ez_gesture.png" alt="손 모양이 엄지 척 인가?" width="287" class="blk">
+
+카메라로 한 장 찍어서 봐요. *값을 돌려주는 블록*
+
+<img src="img/ez_emotion.png" alt="표정이 웃는 얼굴 인가?" width="281" class="blk">
+
+카메라로 한 장 찍어서 봐요. *값을 돌려주는 블록*
+
+### 쉬움 · 점수
+
+<img src="img/ez_score_add.png" alt="점수 1 올리기" width="173" class="blk">
+
+점수는 실행 출력에 나와요.
+
+<img src="img/ez_score_reset.png" alt="점수 0으로" width="116" class="blk">
+
+점수를 0으로 되돌려요.
+
+<img src="img/ez_score.png" alt="점수" width="69" class="blk">
+
+점수는 실행 출력에 나와요. *값을 돌려주는 블록*

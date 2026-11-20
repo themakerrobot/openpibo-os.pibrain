@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="audio · Play and record sound" href="../libraries/audio.html"><link rel="prev" title="Hardware" href="../notes/hardware.html">
         <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/blocks/guide.html">
 
-    <link rel="shortcut icon" href="../_static/icon.png"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+    <link rel="shortcut icon" href="../_static/icon.png"><!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
         <title>Block coding - Help · PiBrain</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
@@ -429,6 +429,7 @@ the <strong>openpibo</strong> Python package. The [Python code] button shows the
 </tbody>
 </table>
 </div>
+<p><strong>Easy blocks</strong> — 16 beginner blocks shown when you choose [Easy] in [Easy | All] on the editor bar (see ‘Easy blocks’ below)</p>
 </section>
 <section id="pibrain-blocks">
 <h2>PiBrain blocks<a class="headerlink" href="#pibrain-blocks" title="Link to this heading">¶</a></h2>
@@ -570,7 +571,7 @@ the <strong>openpibo</strong> Python package. The [Python code] button shows the
 <p>Save as an image file.</p>
 <a class="blk reference internal image-reference" href="../_images/vision_imshow_to_ide.png"><img alt="Show image ([item ▾]) on the monitor" class="blk" src="../_images/vision_imshow_to_ide.png" width="416" />
 </a>
-<p>Display an image variable in IDE.</p>
+<p>Show an image variable on the monitor (IDE run panel).</p>
 <a class="blk reference internal image-reference" href="../_images/vision_imshow_to_oled.png"><img alt="Show image ([item ▾]) on the robot screen" class="blk" src="../_images/vision_imshow_to_oled.png" width="464" />
 </a>
 <p>Show an image variable on the screen.</p>
@@ -744,6 +745,79 @@ the <strong>openpibo</strong> Python package. The [Python code] button shows the
 <p>Get angle <em>returns a value</em></p>
 </section>
 </section>
+<section id="easy-blocks">
+<h2>Easy blocks<a class="headerlink" href="#easy-blocks" title="Link to this heading">¶</a></h2>
+<p>Choose [Easy] in <strong>[Easy | All]</strong> on the editor bar to get fewer categories and the blocks below. They hide the camera, variables and images inside the block so you only pick. The Easy toolbox also has basic blocks such as [if], [repeat], lights and speak, and you can mix Easy and All blocks in one program.</p>
+<section id="easy-start-repeat">
+<h3>Easy · Start · Repeat<a class="headerlink" href="#easy-start-repeat" title="Link to this heading">¶</a></h3>
+<a class="blk reference internal image-reference" href="../_images/ez_forever.png"><img alt="forever ?" class="blk" src="../_images/ez_forever.png" width="168" />
+</a>
+<p>Repeats the blocks inside until you stop.</p>
+</section>
+<section id="easy-speak-sound">
+<h3>Easy · Speak · Sound<a class="headerlink" href="#easy-speak-sound" title="Link to this heading">¶</a></h3>
+<a class="blk reference internal image-reference" href="../_images/ez_sound.png"><img alt="play sound Ding" class="blk" src="../_images/ez_sound.png" width="250" />
+</a>
+<p>Goes on to the next block when the sound is done.</p>
+<a class="blk reference internal image-reference" href="../_images/ez_note.png"><img alt="play note Do" class="blk" src="../_images/ez_note.png" width="217" />
+</a>
+<p>Goes on to the next block when the sound is done.</p>
+<a class="blk reference internal image-reference" href="../_images/ez_music.png"><img alt="play music (none)" class="blk" src="../_images/ez_music.png" width="266" />
+</a>
+<p>Starts the music and goes on to the next block.</p>
+<a class="blk reference internal image-reference" href="../_images/ez_music_stop.png"><img alt="stop music" class="blk" src="../_images/ez_music_stop.png" width="163" />
+</a>
+<p>Stops the music that is playing.</p>
+</section>
+<section id="easy-screen">
+<h3>Easy · Screen<a class="headerlink" href="#easy-screen" title="Link to this heading">¶</a></h3>
+<a class="blk reference internal image-reference" href="../_images/ez_picture.png"><img alt="draw smile on robot screen" class="blk" src="../_images/ez_picture.png" width="397" />
+</a>
+<p>Draws the picture you chose on the screen.</p>
+<a class="blk reference internal image-reference" href="../_images/ez_text.png"><img alt="write (“ Hello ”) on robot screen" class="blk" src="../_images/ez_text.png" width="401" />
+</a>
+<p>Writes text or a number on the robot screen.</p>
+<a class="blk reference internal image-reference" href="../_images/ez_clear.png"><img alt="clear robot screen" class="blk" src="../_images/ez_clear.png" width="232" />
+</a>
+<p>Clears the robot screen.</p>
+</section>
+<section id="easy-sensors">
+<h3>Easy · Sensors<a class="headerlink" href="#easy-sensors" title="Link to this heading">¶</a></h3>
+<a class="blk reference internal image-reference" href="../_images/ez_button.png"><img alt="button 1 pressed?" class="blk" src="../_images/ez_button.png" width="259" />
+</a>
+<p>Checks right now. Use it inside forever to wait for it. <em>returns a value</em></p>
+</section>
+<section id="easy-camera">
+<h3>Easy · Camera<a class="headerlink" href="#easy-camera" title="Link to this heading">¶</a></h3>
+<a class="blk reference internal image-reference" href="../_images/ez_photo.png"><img alt="take a photo as is and show on monitor screen" class="blk" src="../_images/ez_photo.png" width="581" />
+</a>
+<p>Put it in forever to see it like a video.</p>
+</section>
+<section id="easy-ai-eyes">
+<h3>Easy · AI Eyes<a class="headerlink" href="#easy-ai-eyes" title="Link to this heading">¶</a></h3>
+<a class="blk reference internal image-reference" href="../_images/ez_seen.png"><img alt="camera sees a face ?" class="blk" src="../_images/ez_seen.png" width="290" />
+</a>
+<p>Takes one camera picture and looks. <em>returns a value</em></p>
+<a class="blk reference internal image-reference" href="../_images/ez_gesture.png"><img alt="hand is thumbs up ?" class="blk" src="../_images/ez_gesture.png" width="280" />
+</a>
+<p>Takes one camera picture and looks. <em>returns a value</em></p>
+<a class="blk reference internal image-reference" href="../_images/ez_emotion.png"><img alt="face is smiling ?" class="blk" src="../_images/ez_emotion.png" width="239" />
+</a>
+<p>Takes one camera picture and looks. <em>returns a value</em></p>
+</section>
+<section id="easy-score">
+<h3>Easy · Score<a class="headerlink" href="#easy-score" title="Link to this heading">¶</a></h3>
+<a class="blk reference internal image-reference" href="../_images/ez_score_add.png"><img alt="add 1 to score" class="blk" src="../_images/ez_score_add.png" width="195" />
+</a>
+<p>The score shows in the run output.</p>
+<a class="blk reference internal image-reference" href="../_images/ez_score_reset.png"><img alt="set score to 0" class="blk" src="../_images/ez_score_reset.png" width="154" />
+</a>
+<p>Sets the score back to 0.</p>
+<a class="blk reference internal image-reference" href="../_images/ez_score.png"><img alt="score" class="blk" src="../_images/ez_score.png" width="85" />
+</a>
+<p>The score shows in the run output. <em>returns a value</em></p>
+</section>
+</section>
 </section>
 
         </article>
@@ -806,6 +880,16 @@ the <strong>openpibo</strong> Python package. The [Python code] button shows the
 <li><a class="reference internal" href="#vision">Vision</a></li>
 <li><a class="reference internal" href="#recognition">Recognition</a></li>
 <li><a class="reference internal" href="#utilities">Utilities</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#easy-blocks">Easy blocks</a><ul>
+<li><a class="reference internal" href="#easy-start-repeat">Easy · Start · Repeat</a></li>
+<li><a class="reference internal" href="#easy-speak-sound">Easy · Speak · Sound</a></li>
+<li><a class="reference internal" href="#easy-screen">Easy · Screen</a></li>
+<li><a class="reference internal" href="#easy-sensors">Easy · Sensors</a></li>
+<li><a class="reference internal" href="#easy-camera">Easy · Camera</a></li>
+<li><a class="reference internal" href="#easy-ai-eyes">Easy · AI Eyes</a></li>
+<li><a class="reference internal" href="#easy-score">Easy · Score</a></li>
 </ul>
 </li>
 </ul>

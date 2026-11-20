@@ -77,6 +77,28 @@ JS = r"""async (LANG) => {
 }"""
 
 
+# 쉬움 블록(ez_*, 편집기 줄 [쉬움 | 전체] — v2/levels.js). 쉬움 툴박스의 분류 순서대로 ez_ 블록만(261120)
+JS_EZ = r"""async (LANG) => {
+  if (!window.PiboLevel || !PiboLevel.toolbox) return [];
+  const tb = PiboLevel.toolbox();
+  const ws = new Blockly.Workspace();
+  const clean = s => String(s || '').replace(/\s+/g, ' ').trim();
+  const out = [];
+  for (const cat of tb.contents) {
+    if (cat.kind !== 'category') continue;
+    const rows = [];
+    for (const it of cat.contents) {
+      if (it.kind !== 'block' || !/^ez_/.test(it.type)) continue;
+      ws.clear();
+      let b; try { b = Blockly.serialization.blocks.append(JSON.parse(JSON.stringify(it)), ws); } catch (e) { continue; }
+      let tip = b.tooltip; if (typeof tip === 'function') tip = tip();
+      rows.push({ type: it.type, text: clean(b.toString()), tip: clean(tip), value: !!b.outputConnection, item: it });
+    }
+    if (rows.length) out.push({ name: cat.name, rows });
+  }
+  return out;
+}"""
+
 # 그림 그리기: IDE 와 같은 테마·렌더러·글꼴(Pretendard)로, 배경 없이 블록 하나씩
 JS_STAGE = r"""async () => {
   await document.fonts.ready; await new Promise(r => setTimeout(r, 800));   // ide.js 가 블록 글꼴을 Pretendard 로 바꾼 뒤
@@ -115,8 +137,10 @@ async def main():
         await pg.goto(URL)
         await pg.wait_for_function("typeof toolbox_dict !== 'undefined' && typeof Blockly !== 'undefined'", timeout=20000)
         cats = await pg.evaluate(JS, LANG)
+        ez = await pg.evaluate(JS_EZ, LANG)
         await pg.evaluate(JS_STAGE)
-        for c in cats:
+        for e in ez: e['basic'] = False
+        for c in cats + ez:
             if c['basic']:                    # 기본 블록은 가이드에 안 넣으므로 그리지 않는다
                 continue
             for r in c['rows']:
@@ -171,6 +195,10 @@ async def main():
         L += [f'**{title}**' + (f' — {note}' if note else ''), '', head, '|---|---|']
         L += [f"| {c['name']} | {count(c)} |" for c in cs]
         L += ['']
+    if ez:
+        n_ez = sum(len(e['rows']) for e in ez)
+        L += [(f'**쉬움 블록** — 편집기 줄의 [쉬움 | 전체] 에서 [쉬움] 을 고르면 나오는 처음 배우는 학생용 블록 {n_ez}개(아래 \'쉬움 블록\')' if ko
+               else f'**Easy blocks** — {n_ez} beginner blocks shown when you choose [Easy] in [Easy | All] on the editor bar (see \'Easy blocks\' below)'), '']
     L += [f'## {PRODUCT} 전용 블록' if ko else f'## {PRODUCT} blocks', '']
     # 블록마다 그림(원래 크기) + 그 아래 설명 한 줄. 표에 넣으면 칸이 좁아 긴 블록 글자가 작아졌다
     for c in custom:
@@ -183,7 +211,19 @@ async def main():
                   (r['tip'] or '') + ((' *값을 돌려주는 블록*' if ko else ' *returns a value*') if r['value'] else ''), '']
             if r['type'] in EXTRA:
                 L += [EXTRA[r['type']][0 if ko else 1], '']
+    if ez:
+        L += ['## 쉬움 블록' if ko else '## Easy blocks', '',
+              ('편집기 줄의 **[쉬움 | 전체]** 에서 [쉬움] 을 고르면 분류가 줄고 아래 블록이 나옵니다. 카메라·변수·이미지를 블록 안에 숨겨 고르기만 하면 됩니다. '
+               '[쉬움] 툴박스에는 [만약]·[반복]·불빛·말하기 같은 기본 블록도 같이 있고, 쉬움과 전체 블록은 한 프로그램에 섞어 써도 됩니다.' if ko else
+               'Choose [Easy] in **[Easy | All]** on the editor bar to get fewer categories and the blocks below. They hide the camera, variables and images inside the block so you only pick. '
+               'The Easy toolbox also has basic blocks such as [if], [repeat], lights and speak, and you can mix Easy and All blocks in one program.'), '']
+        for e in ez:
+            L += [f"### {'쉬움' if ko else 'Easy'} · {e['name']}", '']   # 전체 블록 분류와 같은 제목이면 autosectionlabel 이 겹친다
+            for r in e['rows']:
+                alt = r['text'].replace('"', "'")
+                L += [f'<img src="img/{r["type"]}.png" alt="{alt}" width="{r["w"]}" class="blk">', '',
+                      (r['tip'] or '') + ((' *값을 돌려주는 블록*' if ko else ' *returns a value*') if r['value'] else ''), '']
     open(OUT, 'w', encoding='utf-8').write('\n'.join(L).rstrip() + '\n')
-    print(OUT, sum(len(c['rows']) for c in custom), 'blocks in', len(custom), 'categories')
+    print(OUT, sum(len(c['rows']) for c in custom), 'blocks in', len(custom), 'categories +', sum(len(e['rows']) for e in ez), 'easy blocks')
 
 asyncio.run(main())

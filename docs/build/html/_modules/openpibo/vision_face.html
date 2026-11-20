@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="색인" href="../../genindex.html"><link rel="search" title="검색" href="../../search.html">
         <link rel="canonical" href="https://themakerrobot.github.io/openpibo-python.pibrain/_modules/openpibo/_modules/openpibo/vision_face.html">
 
-    <link rel="shortcut icon" href="../../_static/icon.png"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+    <link rel="shortcut icon" href="../../_static/icon.png"><!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
         <title>openpibo.vision_face - 도움말 · PiBrain</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
@@ -514,7 +514,7 @@
 
     <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="p">(</span><span class="n">DETECT_XML</span><span class="p">,</span> <span class="n">AGE_GENDER_XML</span><span class="p">,</span> <span class="n">EMOTION_XML</span><span class="p">,</span> <span class="n">REID_XML</span><span class="p">,</span> <span class="n">LANDMARK_TASK</span><span class="p">):</span>
       <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'얼굴 모델 파일이 없어요 / face model file not found: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'얼굴 모델 파일이 없어요 / Face model file not found: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 
     <span class="c1"># OpenVINO 모델</span>
     <span class="n">ie</span> <span class="o">=</span> <span class="n">Core</span><span class="p">()</span>
@@ -791,7 +791,7 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_session</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
       <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">MASK_ONNX</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'마스크 모델 파일이 없어요 / mask model file not found: </span><span class="si">{</span><span class="n">MASK_ONNX</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'마스크 모델 파일이 없어요 / Mask model file not found: </span><span class="si">{</span><span class="n">MASK_ONNX</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
       <span class="kn">from</span><span class="w"> </span><span class="nn">.modules.teachlab</span><span class="w"> </span><span class="kn">import</span> <span class="n">onnx_session</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">mask_session</span> <span class="o">=</span> <span class="n">onnx_session</span><span class="p">(</span><span class="n">MASK_ONNX</span><span class="p">)</span>
       <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_session</span><span class="o">.</span><span class="n">get_modelmeta</span><span class="p">()</span><span class="o">.</span><span class="n">custom_metadata_map</span> <span class="ow">or</span> <span class="p">{}</span>
@@ -977,7 +977,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
       <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">" does not exist'</span><span class="p">)</span>
 
-    <span class="n">old</span> <span class="o">=</span> <span class="s1">'얼굴 정보 파일이 예전 방식이에요. 얼굴을 다시 등록해 주세요 / old face file: please register faces again'</span>
+    <span class="n">old</span> <span class="o">=</span> <span class="s1">'얼굴 정보 파일이 예전 방식이에요. 얼굴을 다시 등록해 주세요 / Old face file: please register faces again'</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
       <span class="n">raw</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>

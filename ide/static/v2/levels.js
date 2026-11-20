@@ -47,6 +47,13 @@
       EZ_TIP_SENSE: '그 순간을 봐요. 계속 반복 안에서 쓰면 기다리는 것처럼 돼요.',
       EZ_TIP_CAMERA: '카메라로 한 장 찍어서 봐요.',
       EZ_TIP_SCORE: '점수는 실행 출력에 나와요.',
+      EZ_TIP_MOTION: '동작이 끝나면 다음 블록으로 가요.',
+      EZ_TIP_SOUND: '소리가 끝나면 다음 블록으로 가요.',
+      EZ_TIP_MUSIC_STOP: '틀어 둔 음악을 멈춰요.',
+      EZ_TIP_PICTURE: '고른 그림을 화면에 그려요.',
+      EZ_TIP_TEXT: '글자나 숫자를 로봇 화면에 써요.',
+      EZ_TIP_CLEAR: '로봇 화면을 깨끗이 지워요.',
+      EZ_TIP_SCORE_RESET: '점수를 0으로 되돌려요.',
       CAT_START: '시작 · 반복', CAT_IF: '만약', CAT_MOTION: '동작', CAT_LIGHT: '불빛', CAT_SOUND: '말 · 소리',
       CAT_SCREEN: '화면', CAT_SENSOR: '센서', CAT_AI: 'AI 눈', CAT_SCORE: '점수',
       M: { stop: '멈추기 (처음 자세)', greeting: '인사', wave3: '춤', clapping1: '박수', cheer1: '만세', yes_h: '끄덕', no_h: '도리도리', bow: '꾸벅',
@@ -92,6 +99,13 @@
       EZ_TIP_SENSE: 'Checks right now. Use it inside forever to wait for it.',
       EZ_TIP_CAMERA: 'Takes one camera picture and looks.',
       EZ_TIP_SCORE: 'The score shows in the run output.',
+      EZ_TIP_MOTION: 'Goes on to the next block when the motion is done.',
+      EZ_TIP_SOUND: 'Goes on to the next block when the sound is done.',
+      EZ_TIP_MUSIC_STOP: 'Stops the music that is playing.',
+      EZ_TIP_PICTURE: 'Draws the picture you chose on the screen.',
+      EZ_TIP_TEXT: 'Writes text or a number on the robot screen.',
+      EZ_TIP_CLEAR: 'Clears the robot screen.',
+      EZ_TIP_SCORE_RESET: 'Sets the score back to 0.',
       CAT_START: 'Start · Repeat', CAT_IF: 'If', CAT_MOTION: 'Motion', CAT_LIGHT: 'Light', CAT_SOUND: 'Speak · Sound',
       CAT_SCREEN: 'Screen', CAT_SENSOR: 'Sensors', CAT_AI: 'AI Eyes', CAT_SCORE: 'Score',
       M: { stop: 'Stop (home pose)', greeting: 'Hello', wave3: 'Dance', clapping1: 'Clap', cheer1: 'Hooray', yes_h: 'Nod', no_h: 'Shake', bow: 'Bow',
@@ -169,26 +183,26 @@
   Blockly.defineBlocksWithJsonArray([
     def({ type: 'ez_forever', message0: '%{BKY_EZ_FOREVER}', args0: [dummy, { type: 'input_statement', name: 'DO' }],
           colour: COL.start, tooltip: '%{BKY_EZ_TIP_FOREVER}', inputsInline: false }),
-    def({ type: 'ez_motion', message0: '%{BKY_EZ_MOTION}', colour: COL.motion,
+    def({ type: 'ez_motion', message0: '%{BKY_EZ_MOTION}', colour: COL.motion, tooltip: '%{BKY_EZ_TIP_MOTION}',
           args0: [icon('person-walking-solid'), { type: 'field_dropdown', name: 'M', options: opts('M', MOTIONS) }] }),
-    def({ type: 'ez_sound', message0: '%{BKY_EZ_SOUND}', colour: COL.sound,
+    def({ type: 'ez_sound', message0: '%{BKY_EZ_SOUND}', colour: COL.sound, tooltip: '%{BKY_EZ_TIP_SOUND}',
           args0: [icon('circle-play-solid'), { type: 'field_dropdown', name: 'S', options: opts('S', SOUNDS) }] }),
-    def({ type: 'ez_note', message0: '%{BKY_EZ_NOTE}', colour: COL.sound,
+    def({ type: 'ez_note', message0: '%{BKY_EZ_NOTE}', colour: COL.sound, tooltip: '%{BKY_EZ_TIP_SOUND}',
           args0: [icon('file-audio-solid'), { type: 'field_dropdown', name: 'N', options: opts('N', NOTES) }] }),
-    def({ type: 'ez_picture', message0: '%{BKY_EZ_PICTURE}', colour: COL.screen,
+    def({ type: 'ez_picture', message0: '%{BKY_EZ_PICTURE}', colour: COL.screen, tooltip: '%{BKY_EZ_TIP_PICTURE}',
           args0: [icon('display-solid'), { type: 'field_dropdown', name: 'TO', options: opts('TO', ['robot', 'ide']) },
                   { type: 'field_dropdown', name: 'P', options: opts('P', PICS) }] }),
     def({ type: 'ez_music', message0: '%{BKY_EZ_MUSIC}', colour: COL.sound, tooltip: '%{BKY_EZ_TIP_MUSIC}', extensions: ['ez_dyn'],
           args0: [icon('file-audio-solid'), { type: 'field_dropdown', name: 'F', options: musicOpts }] }),
-    def({ type: 'ez_music_stop', message0: '%{BKY_EZ_MUSIC_STOP}', colour: COL.sound, args0: [icon('stop-solid')] }),
+    def({ type: 'ez_music_stop', message0: '%{BKY_EZ_MUSIC_STOP}', colour: COL.sound, tooltip: '%{BKY_EZ_TIP_MUSIC_STOP}', args0: [icon('stop-solid')] }),
     def({ type: 'ez_mymotion', message0: '%{BKY_EZ_MYMOTION}', colour: COL.motion, tooltip: '%{BKY_EZ_TIP_MINE}', extensions: ['ez_dyn'],
           args0: [icon('person-walking-solid'), { type: 'field_dropdown', name: 'F', options: mymotionOpts }] }),
     def({ type: 'ez_photo', message0: '%{BKY_EZ_PHOTO}', colour: COL.ai, tooltip: '%{BKY_EZ_TIP_PHOTO}',
           args0: [icon('camera-solid'), { type: 'field_dropdown', name: 'V', options: opts('V', ['plain', 'face', 'object']) },
                   { type: 'field_dropdown', name: 'TO', options: opts('TO', ['ide', 'robot']) }] }),
-    def({ type: 'ez_text', message0: '%{BKY_EZ_TEXT}', colour: COL.screen,
+    def({ type: 'ez_text', message0: '%{BKY_EZ_TEXT}', colour: COL.screen, tooltip: '%{BKY_EZ_TIP_TEXT}',
           args0: [icon('display-solid'), { type: 'input_value', name: 'TEXT', check: ['String', 'Number'] }] }),
-    def({ type: 'ez_clear', message0: '%{BKY_EZ_CLEAR}', colour: COL.screen, args0: [icon('display-solid')] }),
+    def({ type: 'ez_clear', message0: '%{BKY_EZ_CLEAR}', colour: COL.screen, tooltip: '%{BKY_EZ_TIP_CLEAR}', args0: [icon('display-solid')] }),
     { type: 'ez_touch', message0: '%{BKY_EZ_TOUCH}', output: 'Boolean', colour: COL.sensor, tooltip: '%{BKY_EZ_TIP_SENSE}' },
     { type: 'ez_pir', message0: '%{BKY_EZ_PIR}', output: 'Boolean', colour: COL.sensor, tooltip: '%{BKY_EZ_TIP_SENSE}' },
     { type: 'ez_button', message0: '%{BKY_EZ_BUTTON}', output: 'Boolean', colour: COL.sensor, tooltip: '%{BKY_EZ_TIP_SENSE}',
@@ -201,8 +215,8 @@
       args0: [{ type: 'field_dropdown', name: 'E', options: opts('E', EMOTIONS) }] },
     def({ type: 'ez_score_add', message0: '%{BKY_EZ_SCORE_ADD}', colour: COL.score, tooltip: '%{BKY_EZ_TIP_SCORE}',
           args0: [{ type: 'input_value', name: 'N', check: 'Number' }] }),
-    def({ type: 'ez_score_reset', message0: '%{BKY_EZ_SCORE_RESET}', colour: COL.score }),
-    { type: 'ez_score', message0: '%{BKY_EZ_SCORE}', output: 'Number', colour: COL.score }
+    def({ type: 'ez_score_reset', message0: '%{BKY_EZ_SCORE_RESET}', colour: COL.score, tooltip: '%{BKY_EZ_TIP_SCORE_RESET}' }),
+    { type: 'ez_score', message0: '%{BKY_EZ_SCORE}', output: 'Number', colour: COL.score, tooltip: '%{BKY_EZ_TIP_SCORE}' }
   ]);
 
   /* ── 파이썬 — 기존 블록과 같은 definitions_ 열쇠·객체 이름(그래서 섞어 써도 한 번만 만든다) ── */
@@ -407,5 +421,7 @@
     paint();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', addBar); else addBar();
-  window.PiboLevel = { get: function () { return LEVEL; }, set: setLevel };
+  // toolbox(): 지금 언어의 쉬움 툴박스(도움말 블록 가이드 생성기 docs/tools/gen_block_guide.py 가 쓴다, 261120)
+  window.PiboLevel = { get: function () { return LEVEL; }, set: setLevel,
+    toolbox: function () { setMsg(); return easyToolbox(toolbox_dict[L()]); } };
 })();
