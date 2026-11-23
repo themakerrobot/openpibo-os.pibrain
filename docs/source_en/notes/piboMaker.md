@@ -24,7 +24,9 @@ Everything runs **inside PiBrain** (voices, chat and the classifier included). O
 - **Top bar**: the folder button on the far left opens the **file drawer**. [Blocks | Python] in the middle switches the editor. On the right are Tools, Chat, Classifier, Robot Play, Help, Full screen and [⋯] More
   (brightness · font size · Python editor theme · language · factory reset · power off · source code and license)
 - **File drawer**: the file list, [Add] (new file / new folder / upload) and a preview for pictures and sounds. It is open at first and closes when you open a file or tap the editor.
-  Tapping the file name in the editor bar opens it again
+  Tapping the file name in the editor bar opens it again. The icons on each file download, rename, **copy or move** and delete it.
+  To copy or move, choose a folder (code · myimage · myaudio · mymodel · usb) and tap [Copy] or [Move]. It works between a USB drive and the robot too.
+  If the name is already taken, the copy gets a new name like `name_1`
 - **Start screen**: before you open a file, the workspace shows **[New file] · [Open an example] · [Open my file]**. [Open an example] switches to blocks and opens the examples folder.
   Once a file is open, the editor bar shows the folder and name, like `code › hand.json` (hover to see the full path)
 - **Run panel on the right**: **[Run] [Stop]** with the run status, screen output (pictures sent with the `Show image … on the monitor` block), program output and sending input to the program.

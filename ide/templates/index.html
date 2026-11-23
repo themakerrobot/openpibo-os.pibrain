@@ -23,10 +23,10 @@
   <link rel="stylesheet" href="../static/codemirror.css" />
   <link rel="stylesheet" href="../static/jquery.jsonview.min.css" />
   <link rel="stylesheet" href="../static/pibo-ui.css?ver=261120v1" />
-  <link rel="stylesheet" href="../static/v2/ide.css?ver=261120v3" />
+  <link rel="stylesheet" href="../static/v2/ide.css?ver=261123v1" />
   <link rel="shortcut icon" href="../static/icon.png?ver=261102v2" type="image/png" />
 
-  <script src="../static/ko2en.js?ver=261120v3"></script>
+  <script src="../static/ko2en.js?ver=261123v1"></script>
   <script src="../static/blockly_compressed.js?ver=240319v1"></script>
   <script src="../static/blocks_compressed.js?ver=240319v1"></script>
   <script src="../static/python_compressed.js?ver=240319v1"></script>
@@ -302,6 +302,18 @@
     </div>
   </div>
 
+  <div class="confirm-popup" id="copyPopup" style="display:none;">
+    <div class="confirm-popup-content">
+      <p id="copyMessageElement"></p>
+      <div class="v2-copy-dests" id="copyDests" role="radiogroup"></div>
+      <div class="popup-buttons">
+        <button id="copyCancelBtn"><span data-key="cancel"></span></button>
+        <button id="copyMoveBtn" class="v2-copy-move"><span data-key="fm_move"></span></button>
+        <button id="copyOkBtn"><span data-key="fm_copy"></span></button>
+      </div>
+    </div>
+  </div>
+
   <div class="pb-modal" id="pyModal" hidden role="dialog" aria-modal="true" aria-labelledby="pyModalTitle">
     <div class="pb-modal__box">
       <div class="pb-modal__head"><i class="fa-solid fa-code"></i><span id="pyModalTitle" data-key="pycode_title"></span>
@@ -315,7 +327,7 @@
   </div>
 
   <script src="../static/pibo-ui.js?ver=261120v1"></script>
-  <script src="../static/index.js?ver=261120v2"></script>
+  <script src="../static/index.js?ver=261123v1"></script>
   <script src="../static/v2/errhelp.js?ver=261120v1"></script>
   <script src="../static/v2/vendor/toolbox-search.js?ver=1.2.11"></script>
   <script src="../static/v2/ide.js?ver=261120v3"></script>

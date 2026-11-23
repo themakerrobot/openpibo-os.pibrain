@@ -823,3 +823,22 @@ body[data-offline] .v2-status__conn .v2-off { display: inline; color: var(--c-re
 .v2-live:not([data-has]) .v2-live__empty > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 /* 파일 경로 `code ›` (261120): 고정폭 글꼴이면 › 가 떠 보여 본문 글꼴로 */
 .v2-file__dir { font-family: var(--font); font-size: 13px; margin-right: -2px; }
+
+/* ── 파일 서랍 [복사]·[옮기기](261123) — 받을 폴더 칸 + 버튼(복사 꽉 찬 파랑, 옮기기 옅은 파랑) ── */
+.v2-copy-dests { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; margin-top: var(--sp-3); }
+.v2-copy-dest { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; min-height: var(--ctl-md); padding: 6px 10px; text-align: left;
+  border: 1px solid var(--c-line); border-radius: var(--r-ctl); background: var(--c-raise); color: var(--c-ink); cursor: pointer;
+  font: 400 var(--fs-md)/1.2 var(--font-ui); }
+.v2-copy-dest > i { width: 16px; text-align: center; color: var(--fm-folder); }
+.v2-copy-dest > i.fa-usb { color: var(--fm-usb); }
+.v2-copy-dest > span { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.v2-copy-dest > small { flex: 0 0 100%; padding-left: 24px; font-size: var(--fs-xs); font-weight: 400; color: var(--c-ink-3); }
+.v2-copy-dest:hover { background: var(--c-hover); }
+.v2-copy-dest:focus { outline: 2px solid var(--c-accent); outline-offset: 1px; }
+.v2-copy-dest[aria-checked="true"] { background: var(--v2-tint); border-color: var(--c-accent); color: var(--v2-tint-ink); font-weight: 700; }
+.pb #copyOkBtn, body.pb-v2 #copyOkBtn { background: var(--v2-dark) !important; color: var(--v2-on-dark); border-color: transparent; box-shadow: var(--v2-btn-sh); }
+.pb #copyOkBtn:hover, body.pb-v2 #copyOkBtn:hover { background: var(--v2-dark-hov) !important; }
+.pb #copyMoveBtn, body.pb-v2 #copyMoveBtn { background: var(--v2-tint); color: var(--v2-tint-ink); border-color: transparent; box-shadow: none; }
+.pb #copyMoveBtn:hover:not(:disabled), body.pb-v2 #copyMoveBtn:hover:not(:disabled) { background: var(--v2-tint-hov); }
+.pb #copyMoveBtn:disabled, body.pb-v2 #copyMoveBtn:disabled { opacity: .45; cursor: default; }
+#fm_table td i.fa-copy { font-size: 12px; }

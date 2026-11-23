@@ -566,6 +566,7 @@ edge-lab 의 블록 수준을 본떠 IDE 에 **2단계**(사용자: 3단계 대�
 ### 파일 목록 아이콘 (261102) — Pibo 와 같다
 
 `index.js` 의 `fmIcon()` · `v2/ide.css` 의 `--fm-*` 는 파이보와 같은 코드다(설명은 파이보 CLAUDE.md '파일 목록 아이콘'). 아이콘에 `data-kind='folder|file'` 을 꼭 넣을 것 — 클릭 처리가 그걸 본다
+서랍 [복사·옮기기](261123)도 파이보와 같은 코드다(`copy_popup` · `run_ide.py` 의 `copy_move` — 설명은 파이보 CLAUDE.md·IMAGE.md). **실기기 확인 필요**
 
 ### 전체화면 (260930) — Pibo 와 같다
 
