@@ -247,6 +247,7 @@ sudo ln -sfn /media/usb /home/pi/usb         # IDE [파일] 에 usb 폴더로 �
 - 메모리는 MBR · 파티션 1개 · FAT32 또는 exFAT(4GB 넘는 파일은 exFAT)
 - 되돌리기: `sudo cp /etc/fstab.bak /etc/fstab && sudo systemctl daemon-reload`
 - IDE [파일] 의 `usb` 폴더 = `/home/pi/usb` 링크. USB 가 없으면 폴더는 보여도 비어 있다. 보호 목록 밖이라 학생이 USB 안 파일을 지울 수 있다
+- **USB 파일 쓰는 법(261123 — 복사·옮기기 기능은 넣지 않기로, 사용자)**: ① 서랍에서 `usb` 폴더의 `.py`/`.json` 을 바로 열어 실행(저장도 USB, 실행 위치도 그 폴더) ② 블록은 폴더 칸을 '폴더 선택'(빈 값)으로 두고 이름 칸에 `/home/pi/usb/파일이름`(생성기가 `폴더 + 이름` 을 이어 붙인다, 확장자를 따로 고르는 블록은 확장자 빼고) ③ 파이썬은 경로 그대로 ④ code 로 옮기려면 내려받기 → 올리기. 서랍 [이름 바꾸기]는 `os.rename` 이라 USB↔SD 카드처럼 장치를 넘으면 실패한다. 블록 폴더 선택지에 `usb` 도 없다
 - **확인 필요:** 뽑았다 다시 꽂을 때 다시 붙는지, PiBrain 에 넣은 뒤 결과
 
 ### USB 로 업데이트·설정 — `update.zip` (261102, `system/init`)
