@@ -206,14 +206,95 @@ def ez_lists():
   return {'music': [EZ_MUSIC_DIR + n for n in _ez_audio(EZ_MUSIC_DIR)], 'mine': mine, 'mymotion': mym}
 
 
-@app.get('/', response_class=HTMLResponse)
-async def read_root(request: Request):
-  # 화면은 하나(시안 B). 예전 화면(v1)과 ?ui= · 쿠키 pibo_ui 전환은 260929 에 지웠다
-  page = "index.html"
+def page_response(page):
   # 템플릿은 Jinja 문법을 안 쓴다. 파일을 그대로 보내면 starlette 버전과 무관하다.
   # 전에 쓰던 TemplateResponse(이름, {"request": ...}) 는 starlette 1.0 에서 받지 않아 첫 화면이 500 이 됐다
   # no-cache: FileResponse 는 Last-Modified 를 붙여 브라우저가 페이지를 그냥 캐시할 수 있다. 그러면 올린 ?ver 가 안 보인다
   return FileResponse(os.path.join(TEMPLATE_DIR, page), media_type="text/html", headers={"Cache-Control": "no-cache"})
+
+@app.get('/', response_class=HTMLResponse)
+async def read_root(request: Request):
+  # 첫 화면(대문, 261123) — 코딩·도구·AI 가르치기·대화·로봇 놀이·도움말을 큰 아이콘으로 고른다.
+  # 앱 서버는 그대로 따로 돈다(대문은 고르는 화면일 뿐). IDE 는 /ide
+  return page_response("home.html")
+
+@app.get('/ide', response_class=HTMLResponse)
+async def read_ide(request: Request):
+  # IDE 화면은 하나(시안 B). 예전 화면(v1)과 ?ui= · 쿠키 pibo_ui 전환은 260929 에 지웠다
+  return page_response("index.html")
+
+HOME_CODE_DIR = '/home/pi/code'
+HOME_MODEL_DIR = '/home/pi/mymodel'
+
+def _unit_active(name):
+  try:
+    return subprocess.run(['systemctl', 'is-active', '--quiet', name], timeout=3).returncode == 0
+  except Exception:
+    return False
+
+def home_recent(limit=4):
+  # 이어서 하기: code 폴더(두 겹까지)의 .py·.json 중 최근에 고친 것. USB 는 자동 마운트를 깨우지 않게 보지 않는다
+  found = []
+  base_depth = HOME_CODE_DIR.rstrip('/').count('/')
+  for root, dirs, files in os.walk(HOME_CODE_DIR):
+    dirs[:] = [d for d in dirs if not d.startswith('.')] if root.count('/') - base_depth < 1 else []
+    for n in files:
+      if n.startswith('.') or not n.lower().endswith(('.py', '.json')):
+        continue
+      p = os.path.join(root, n)
+      try:
+        found.append((os.path.getmtime(p), p))
+      except OSError:
+        pass
+  found.sort(reverse=True)
+  return [{'path': p, 'mtime': int(t)} for t, p in found[:limit]]
+
+def home_models(limit=3):
+  # 내가 가르친 AI: 분류기가 저장한 /home/pi/mymodel/<이름>/project.json
+  out = []
+  try:
+    names = os.listdir(HOME_MODEL_DIR)
+  except OSError:
+    return out
+  import json
+  for n in names:
+    pj = os.path.join(HOME_MODEL_DIR, n, 'project.json')
+    if n.startswith('.') or not os.path.isfile(pj):
+      continue
+    try:
+      with open(pj, encoding='utf-8') as f:
+        p = json.load(f)
+      out.append({'name': n, 'source': p.get('source', 'image'), 'classes': len(p.get('classes') or []),
+                  'mtime': int(os.path.getmtime(pj))})
+    except Exception:
+      pass
+  out.sort(key=lambda m: m['mtime'], reverse=True)
+  return out[:limit]
+
+def home_info_sync():
+  info = {'running': None, 'recent': home_recent(), 'models': home_models()}
+  try:
+    s = get_system_info()
+    # WiFi 비밀번호(s[9]) 등은 보내지 않는다 — 대문에 필요한 것만
+    info.update({'version': s[1], 'temp': s[3].replace("'C", '°C'),
+                 'mem': int((int(s[4]) - int(s[5])) / int(s[4]) * 100) if s[4] else None,
+                 'wifi_ip': s[6], 'wired_ip': s[7], 'ssid': s[8]})
+  except Exception as e:
+    print('[home]', e)
+  info['battery'] = None   # PiBrain 은 배터리 칸이 없다
+  if chat_proc is not None and chat_proc.poll() is None:
+    info['running'] = 'llm'
+  elif kids_proc is not None and kids_proc.poll() is None:
+    info['running'] = 'kids'
+  elif _unit_active('tools.service'):
+    info['running'] = 'tools'
+  elif _unit_active('classify.service'):
+    info['running'] = 'classifier'
+  return info
+
+@app.get('/home_info')
+async def home_info():
+  return JSONResponse(await run_blocking(home_info_sync), headers={'Cache-Control': 'no-store'})
 
 def zip_folder(src, zip_path):
   # shutil.make_archive 는 파이썬 버전에 따라 root_dir 로 os.chdir 를 한다 — 스레드에서 돌리면

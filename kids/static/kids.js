@@ -923,7 +923,7 @@
     $('t_volume_v').textContent = T.volume;
     $('t_pin').value = '';
     $('t_pin').placeholder = tr('kids_t_pin_ph');
-    $('t_ide').href = 'http://' + location.hostname + '/';
+    $('t_ide').href = 'http://' + location.hostname + '/ide';   // 대문(/)이 생겨 IDE 는 /ide (261123)
     $('dlg_teacher').hidden = false;
   }
   $('t_lesson').addEventListener('change', lessonHelp);

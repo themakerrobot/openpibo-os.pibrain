@@ -37,7 +37,8 @@
     fs_tap:        { ko: '화면을 한 번 누르면 전체화면으로 돌아가요.', en: 'Tap the screen once to return to full screen.' },
     scr_tip:       { ko: '로봇 화면을 처음(IP)으로', en: 'Reset the robot screen (IP)' },
     scr_done:      { ko: '로봇 화면을 처음으로 돌렸어요.', en: 'The robot screen is reset.' },
-    scr_fail:      { ko: '로봇 화면을 돌리지 못했어요.', en: 'Could not reset the robot screen.' }
+    scr_fail:      { ko: '로봇 화면을 돌리지 못했어요.', en: 'Could not reset the robot screen.' },
+    home:          { ko: '처음 화면', en: 'Home' }
   };
   function curLang() {
     try { if (typeof lang !== 'undefined' && lang) return lang; } catch (e) { /* 앱에 lang 없음 */ }
@@ -363,8 +364,8 @@
     try { w.focus(); } catch (e) { /* 무시 */ }
     return w;
   }
-  /* 도구 탭에서: 스크립트로 연 탭이면 닫는다(원래 IDE 탭이 남아 있다).
-     직접 주소를 쳐서 연 탭은 닫을 수 없으니 IDE 주소로 이동한다.
+  /* 도구 탭에서: 스크립트로 연 탭(IDE 상단바 버튼)이면 닫는다(원래 IDE 탭이 남아 있다).
+     대문에서 같은 탭으로 들어왔거나 주소를 쳐서 연 탭은 닫을 수 없으니 대문(/)으로 간다(261123).
      둘 다 beforeunload 가 서비스를 끈다. */
   function backToIDE() {
     try { window.close(); } catch (e) { /* 무시 */ }
@@ -374,6 +375,30 @@
   }
   function restartSelf(svc) {
     location.href = launchUrl(svc);
+  }
+  /* 대문(/, 261123)에서: 같은 탭으로 들어간다. 탭이 하나라 [처음 화면]으로 돌아오면 대문이다 */
+  function enterService(svc) {
+    fsLeaving = Date.now();   // 페이지를 옮기며 풀리는 전체화면은 '사용자가 끈 것' 이 아니다
+    location.href = launchUrl(svc);
+  }
+  /* 앱 상단바의 [IDE](#ide_bt): IDE 가 새 탭으로 연 경우만 'IDE'(누르면 탭을 닫아 IDE 로),
+     대문에서 들어왔거나 주소로 연 탭은 [처음 화면](집 아이콘) — 누르면 대문으로 간다 */
+  function initHomeButton() {
+    var b = document.getElementById('ide_bt');
+    if (!b) return;
+    var opened = false;
+    try { opened = !!window.opener; } catch (e) { opened = false; }
+    if (opened) return;
+    function label() {
+      var i = b.querySelector('i'), l = b.querySelector('.pb-iconbtn__label') || b.querySelector('span');   // PiBrain 도구는 이름 칸이 그냥 span
+      if (i) i.className = 'fa-solid fa-house';
+      if (l) { l.textContent = tr('home'); l.removeAttribute('data-key'); }
+      b.title = tr('home');
+      b.removeAttribute('data-title-key');
+    }
+    label();
+    var sel = document.getElementById('language');
+    if (sel) sel.addEventListener('change', function () { setTimeout(label, 0); });
   }
 
   /* ── 버튼 바쁨 표시 ────────────────────────────────────────────────────
@@ -535,13 +560,13 @@
 
   window.PiboUI = {
     toast: toast, banner: banner, hideBanner: hideBanner, watchSocket: watchSocket,
-    openService: openService, backToIDE: backToIDE, restartSelf: restartSelf,
+    openService: openService, backToIDE: backToIDE, restartSelf: restartSelf, enterService: enterService,
     busy: busy, text: tr, lang: curLang,
     getTheme: getTheme, setTheme: setTheme, ui: UI, countTo: countTo,
     fullscreen: fsToggle, screenReset: screenReset
   };
 
-  function initAll() { initShell(); addThemeButton(); syncThemeButtons(); initFullscreen(); watchTitle(); markAlerts(); initBrand(); }
+  function initAll() { initShell(); addThemeButton(); syncThemeButtons(); initFullscreen(); watchTitle(); markAlerts(); initBrand(); initHomeButton(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAll);
   else initAll();
 })();

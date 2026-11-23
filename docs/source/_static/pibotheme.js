@@ -74,7 +74,7 @@
   function setup() {
     var a = document.querySelector('.pb-topbar__ide');   // 도움말은 8080, IDE 는 같은 기기의 80
     if (a && location.hostname) {
-      a.href = 'http://' + location.hostname + '/';
+      a.href = 'http://' + location.hostname + '/ide';   // 대문(/)이 생겨 IDE 는 /ide (261123)
       a.addEventListener('click', function () { fsLeaving = Date.now(); });
     }
     var lang = document.querySelector('.pb-topbar__lang');

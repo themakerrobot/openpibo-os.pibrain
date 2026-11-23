@@ -246,7 +246,7 @@ document.getElementById("poweroff_bt").addEventListener("click", async function 
   }
 });
 document.getElementById("logo_bt").addEventListener("click", function () {
-  location.href = `http://${location.hostname}`;
+  location.href = `http://${location.hostname}/ide`;   // 대문(/)이 생겨 IDE 는 /ide (261123)
 });
 
 const system_port = 8080;
