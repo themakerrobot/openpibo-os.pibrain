@@ -7,11 +7,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
-  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261123v6" />
-  <link rel="stylesheet" href="../static/v2/home.css?ver=261123v7" />
+  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261123v7" />
+  <link rel="stylesheet" href="../static/v2/home.css?ver=261123v8" />
   <link rel="shortcut icon" href="../static/icon.png?ver=261102v1" type="image/png" />
   <!-- 첫 화면(대문, 261123). 앱 서버는 그대로 따로 돌고, 여기선 골라서 같은 탭으로 들어간다. 코드는 v2/home.js(두 리포 같은 파일) -->
-  <script src="../static/ko2en.js?ver=261123v5"></script>
+  <script src="../static/ko2en.js?ver=261123v6"></script>
 </head>
 <!-- pb-plain: 키트의 pb-v2 층을 얹지 않는다. 학습지 컨셉(261123, 사용자 — ai-lab 과 같게) -->
 <body class="pb pb-shell pb-plain home">
@@ -38,7 +38,7 @@
             <h1><span class="hl" data-key="home_hello"></span></h1>
             <p id="home_sub"></p>
           </div>
-          <div class="sheet__date" id="home_date" aria-label="date"></div>
+          <div class="sheet__date" id="home_date"></div>
         </header>
         <section class="act act--make">
           <h2 class="act__h"><span class="act__no">1</span><b data-key="home_sec_make"></b><small data-key="home_sec_make_d"></small></h2>
@@ -73,8 +73,8 @@
   <div class="home-modal" id="home_modal" hidden role="dialog" aria-modal="true"><div class="home-modal__box" id="home_modal_box"></div></div>
 
   <script src="../static/socket.io.min.js?ver=240319v3"></script>
-  <script src="../static/pibo-ui.js?ver=261123v6"></script>
+  <script src="../static/pibo-ui.js?ver=261123v7"></script>
   <script src="../static/v2/pibo-art.js?ver=261123v2"></script>
-  <script src="../static/v2/home.js?ver=261123v7"></script>
+  <script src="../static/v2/home.js?ver=261123v8"></script>
 </body>
 </html>

@@ -272,11 +272,13 @@ def home_models(limit=3):
   return out[:limit]
 
 def home_info_sync():
-  info = {'running': None, 'recent': home_recent(), 'models': home_models()}
+  # now: 기기 시계 — 최근 파일의 '몇 분 전' 을 기기 기준으로 센다(태블릿 시계와 달라도 맞게, 261123)
+  info = {'running': None, 'recent': home_recent(), 'models': home_models(), 'now': int(time.time())}
   try:
     s = get_system_info()
     # WiFi 비밀번호(s[9]) 등은 보내지 않는다 — 대문에 필요한 것만
-    info.update({'version': s[1], 'temp': s[3].replace("'C", '°C'),
+    # uptime: 켜진 시간(초) — 오프라인 기기라 날짜·시계는 못 믿어서 대문엔 날짜 대신 이것(261123, 사용자)
+    info.update({'version': s[1], 'uptime': int(float(s[2] or 0)), 'temp': s[3].replace("'C", '°C'),
                  'mem': int((int(s[4]) - int(s[5])) / int(s[4]) * 100) if s[4] else None,
                  'wifi_ip': s[6], 'wired_ip': s[7], 'ssid': s[8]})
   except Exception as e:
