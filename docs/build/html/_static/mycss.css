@@ -103,6 +103,7 @@ body[data-theme="dark"] .sidebar-search:focus { border-color: #7aa7ff; box-shado
 @media (max-width: 999px) {
   .pb-topbar__btn { padding: 0 8px; }
   .pb-topbar__btn > span { display: none; }
+  .pb-topbar__btn > .pb-topbar__appic { display: inline-flex; }   /* 캐릭터 아이콘 칸은 글자가 아니다 */
 }
 @media (max-width: 480px) {
   .pb-topbar__lang { padding-right: 22px; padding-left: 8px; background-position: right 11px center, right 7px center; }
