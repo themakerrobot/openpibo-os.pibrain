@@ -842,3 +842,43 @@ body[data-offline] .v2-status__conn .v2-off { display: inline; color: var(--c-re
 .pb #copyMoveBtn:hover:not(:disabled), body.pb-v2 #copyMoveBtn:hover:not(:disabled) { background: var(--v2-tint-hov); }
 .pb #copyMoveBtn:disabled, body.pb-v2 #copyMoveBtn:disabled { opacity: .45; cursor: default; }
 #fm_table td i.fa-copy { font-size: 12px; }
+
+/* ==========================================================================
+   귀염 층 (261123, 사용자 — 저연령층, 대문 포함 모든 화면). 키트 pibo-ui.css '귀염 층' 과 같은 규칙:
+   파스텔 바탕 · 더 둥근 모서리 · 젤리 버튼(아래 두툼한 그림자, 누르면 꾹) · 선 대신 부드러운 그림자.
+   블록 작업판은 블록이 잘 보이게 흰 바탕 그대로 둔다
+   ========================================================================== */
+/* 서랍 · 실행 화면 · 아래 상태 줄 바탕 = 파스텔 */
+.v2-drawer, .v2-stage.pb-pane, .v2-status { background: linear-gradient(160deg, #fff3cf 0%, #fde6ef 55%, #e3edff 100%); border-color: transparent; }
+html[data-theme="light"] .v2-drawer, html[data-theme="light"] .v2-stage.pb-pane, html[data-theme="light"] .v2-status { background: linear-gradient(160deg, #fff8e3 0%, #fff0f5 55%, #edf3ff 100%); }
+html[data-theme="dark"] .v2-drawer, html[data-theme="dark"] .v2-stage.pb-pane, html[data-theme="dark"] .v2-status { background: linear-gradient(160deg, #2b261a 0%, #281f2b 55%, #1a2038 100%); }
+.v2-status { background: linear-gradient(90deg, #fff3cf 0%, #fde6ef 50%, #e3edff 100%); }
+/* 그 안의 칸(파일 목록 · 미리보기 · 출력 · 화면 출력) — 흰 판 + 둥글게 + 부드러운 그림자 */
+.v2-files, .v2-preview, .v2-term { background: rgba(255, 255, 255, .88); border-radius: 20px; border: 0; box-shadow: 0 3px 0 rgba(30, 40, 80, .05), 0 8px 18px rgba(30, 40, 80, .06); }
+html[data-theme="dark"] .v2-files, html[data-theme="dark"] .v2-preview, html[data-theme="dark"] .v2-term { background: rgba(36, 40, 54, .9); box-shadow: 0 3px 0 rgba(0, 0, 0, .25); }
+.v2-live { border-radius: 20px; }
+/* 버튼 — 젤리 */
+.v2-btn { border-radius: 12px; box-shadow: 0 3px 0 rgba(30, 40, 80, .12); transition: transform .12s ease, box-shadow .12s ease, background-color .12s; }
+.v2-btn:active:not(:disabled):not(.disabled) { transform: translateY(2px); box-shadow: 0 1px 0 rgba(30, 40, 80, .12); }
+.v2-btn--run, .v2-btn--stop { border-radius: 18px; }
+.v2-btn--run { background: linear-gradient(180deg, #5c93ff, #2563eb); box-shadow: 0 4px 0 #1b4cc0; }
+.v2-btn--run:hover:not(:disabled):not(.disabled) { background: linear-gradient(180deg, #4f88fb, #1d4fd8); }
+html[data-theme="dark"] .v2-btn--run { background: linear-gradient(180deg, #ffd96a, #f7b924); box-shadow: 0 4px 0 #b88400; }
+html[data-theme="dark"] .v2-btn--run:hover:not(:disabled):not(.disabled) { background: linear-gradient(180deg, #ffd04a, #eeaa10); }
+body[data-running] #stop:not(.disabled) { background: linear-gradient(180deg, #f2706f, #d6393f); box-shadow: 0 4px 0 #a92a30; }
+body[data-running] #execute { box-shadow: 0 1px 0 rgba(30, 40, 80, .12); transform: translateY(3px); }
+.v2-btn--tint { box-shadow: 0 3px 0 rgba(37, 99, 235, .16); }
+/* 툴박스 분류 — 동그란 색 칸, 고른 줄은 알약 */
+.v2-app .blocklyTreeRow { border-radius: 12px; }
+.v2-app .blocklyTreeRow .customIcon { border-radius: 9px; box-shadow: 0 2px 0 rgba(0, 0, 0, .15); }
+.v2-app .blocklyTreeSelected { border-radius: 12px; box-shadow: 0 2px 0 rgba(30, 40, 80, .08) !important; }
+/* 빈 작업판 카드 · 오류 상자 · 상단바 메뉴 */
+.v2-start__card { border-radius: 22px; box-shadow: 0 4px 0 rgba(30, 40, 80, .06), 0 10px 22px rgba(30, 40, 80, .07); }
+.v2-start__card:active { transform: translateY(2px); }
+.v2-pop { border-radius: 20px; }
+.v2-errbox { border-radius: 18px; }
+/* 상단바 제품 마크를 흰 동그라미 안에(다른 앱과 같게) */
+.v2-brand > i.fa-robot, .v2-brand > i.fa-brain { width: 30px; height: 30px; border-radius: 50%; background: #fff;
+  display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 0 rgba(61, 47, 18, .18); }
+html[data-theme="dark"] .v2-brand > i.fa-robot, html[data-theme="dark"] .v2-brand > i.fa-brain { background: #fbc92d; color: #1f1a0c; box-shadow: none; }
+@media (prefers-reduced-motion: reduce) { .v2-btn, .v2-start__card { transition: none !important; } }

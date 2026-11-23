@@ -282,7 +282,9 @@ def home_info_sync():
   except Exception as e:
     print('[home]', e)
   info['battery'] = None   # PiBrain 은 배터리 칸이 없다
-  if chat_proc is not None and chat_proc.poll() is None:
+  if hwtest_proc is not None and hwtest_proc.poll() is None:
+    info['running'] = 'hwtest'
+  elif chat_proc is not None and chat_proc.poll() is None:
     info['running'] = 'llm'
   elif kids_proc is not None and kids_proc.poll() is None:
     info['running'] = 'kids'

@@ -1657,3 +1657,89 @@ body.pb-v2 .pb-toast { animation: pb-rise .26s cubic-bezier(.34, 1.4, .64, 1) ba
   body.pb-v2 .wifi-popup-content, body.pb-v2 .pb-modal__box, body.pb-v2 .pb-toast { animation: none !important; }
   body.pb-v2 .bar-fill { transition: none; }
 }
+
+/* ==========================================================================
+   귀염 층 (261123, 사용자 — 저연령층이 많아 '귀염귀염'하게, 대문 포함 모든 화면)
+   바탕은 파스텔, 모서리는 더 둥글게, 버튼은 말랑한 젤리(아래 두툼한 그림자, 누르면 꾹),
+   카드는 선 대신 부드러운 그림자. 색 값(파랑·노랑·빨강)과 상단바(48px 노랑)는 그대로 — 규칙은 AUDIT.md
+   구형 브라우저 기준을 지킨다(transform·opacity·gradient·box-shadow 만)
+   ========================================================================== */
+:root { --r-chip: 10px; --r-ctl: 12px; --r-card: 20px; --r-dlg: 26px;
+        --pb-soft-sh: 0 3px 0 rgba(30, 40, 80, .05), 0 8px 22px rgba(30, 40, 80, .07);
+        --pb-jelly-sh: 0 3px 0 rgba(30, 40, 80, .12); }
+/* 바탕 — 앱 바닥(--v2-canvas)을 비워 몸통의 파스텔이 보이게 */
+/* html 을 앞에 붙여 앱 CSS 의 body 바탕(대화 chat.css 등)보다 우선 */
+html body.pb-v2, html body.pb-plain, html body.tl { background: linear-gradient(150deg, #fff3cf 0%, #fde6ef 48%, #e3edff 100%) fixed; --v2-canvas: transparent; }
+html[data-theme="light"] body.pb-v2, html[data-theme="light"] body.pb-plain, html[data-theme="light"] body.tl { background: linear-gradient(150deg, #fff8e3 0%, #fff0f5 48%, #edf3ff 100%) fixed; }
+html[data-theme="dark"] body.pb-v2, html[data-theme="dark"] body.pb-plain, html[data-theme="dark"] body.tl { background: linear-gradient(150deg, #2b261a 0%, #281f2b 48%, #1a2038 100%) fixed; }
+
+/* 버튼 — 젤리 */
+.pb-btn { border-radius: var(--r-ctl); box-shadow: var(--pb-jelly-sh); transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease; }
+.pb-btn:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 rgba(30, 40, 80, .12); filter: none; }
+.pb-btn--accent { background: linear-gradient(180deg, #5c93ff, #2563eb); box-shadow: 0 3px 0 #1b4cc0; }
+.pb-btn--accent:hover:not(:disabled) { background: linear-gradient(180deg, #4f88fb, #1d4fd8); }
+html[data-theme="dark"] .pb-btn--accent { background: linear-gradient(180deg, #ffd96a, #f7b924); box-shadow: 0 3px 0 #b88400; }
+html[data-theme="dark"] .pb-btn--accent:hover:not(:disabled) { background: linear-gradient(180deg, #ffd04a, #eeaa10); }
+.pb-btn--tint { box-shadow: 0 3px 0 rgba(37, 99, 235, .16); }
+.pb-btn--danger { background: linear-gradient(180deg, #f2706f, #d6393f); box-shadow: 0 3px 0 #a92a30; }
+.pb-btn--ghost { box-shadow: none; }
+.pb-btn:disabled { box-shadow: none; transform: none; }
+body.pb-v2 #alertOkBtn, body.pb-v2 #confirmOkBtn, body.pb-v2 #promptOkBtn, .pb #alertOkBtn, .pb #confirmOkBtn, .pb #promptOkBtn {
+  background: linear-gradient(180deg, #5c93ff, #2563eb) !important; box-shadow: 0 3px 0 #1b4cc0 !important; }
+html[data-theme="dark"] body #alertOkBtn, html[data-theme="dark"] body #confirmOkBtn, html[data-theme="dark"] body #promptOkBtn {
+  background: linear-gradient(180deg, #ffd96a, #f7b924) !important; box-shadow: 0 3px 0 #b88400 !important; }
+.pb .popup-buttons button { border-radius: 14px; box-shadow: var(--pb-jelly-sh); }
+.pb .popup-buttons button:active { transform: translateY(2px); box-shadow: none; }
+
+/* 입력칸 · 세그먼트 */
+.pb-field { border-radius: var(--r-ctl); }
+.pb-seg { border-radius: 14px; }
+.pb-seg > button { border-radius: 11px; }
+
+/* 판 · 카드 · 대화상자 — 선 대신 부드러운 그림자 */
+.pb-panel { border-radius: var(--r-card); border-color: transparent; box-shadow: var(--pb-soft-sh); }
+.pb .alert-popup-content, .pb .prompt-popup-content, .pb .confirm-popup-content, .pb .wifi-popup-content, .pb-modal__box {
+  border-radius: var(--r-dlg) !important; border: 0 !important; box-shadow: 0 8px 0 rgba(30, 40, 80, .08), 0 20px 48px rgba(20, 24, 40, .25) !important; }
+
+/* 상단바 — 노랑 그대로, 아래 선 대신 살짝 둥근 그림자 · 제품 마크는 흰 동그라미 안에 */
+.pb-header__brand > i.fa-robot, .pb-header__brand > i.fa-brain { width: 30px; height: 30px; border-radius: 50%; background: #fff;
+  display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 0 rgba(61, 47, 18, .18); }
+.pb-header__brand > i.fa-robot::before, .pb-header__brand > i.fa-brain::before { width: 20px; height: 20px; }
+html[data-theme="dark"] .pb-header__brand > i.fa-robot, html[data-theme="dark"] .pb-header__brand > i.fa-brain { background: #fbc92d; color: #1f1a0c; box-shadow: none; }
+.pb-iconbtn { border-radius: 12px; }
+
+/* 빈 화면 안내 아이콘을 동그란 파스텔 칸에 */
+.pb-empty > i:first-child { width: 64px; height: 64px; border-radius: 22px; background: #fff1d1; color: #d29a00 !important;
+  display: inline-flex; align-items: center; justify-content: center; font-size: 30px !important; box-shadow: 0 4px 0 rgba(210, 154, 0, .2); }
+html[data-theme="dark"] .pb-empty > i:first-child { background: #3a3220; color: #f5c451 !important; }
+
+@media (prefers-reduced-motion: reduce) { .pb-btn, .pb .popup-buttons button { transition: none !important; } }
+/* 앱 판(도구 카드·분류기 세 칸 등) — 반투명 흰 판 + 부드러운 그림자, 더 둥글게 */
+body.pb-v2 .pb-panes { padding: 12px; }
+body.pb-v2 .pb-pane, body.pb-v2 article > section {
+  background: rgba(255, 255, 255, .8); border-color: transparent; border-radius: 24px; box-shadow: var(--pb-soft-sh); }
+html[data-theme="light"] body.pb-v2 .pb-pane, html[data-theme="light"] body.pb-v2 article > section { background: rgba(255, 255, 255, .92); }
+html[data-theme="dark"] body.pb-v2 .pb-pane, html[data-theme="dark"] body.pb-v2 article > section { background: rgba(36, 40, 54, .88); box-shadow: 0 3px 0 rgba(0, 0, 0, .25); }
+body.pb-v2 .cls-card, body.pb-v2 .motion-table-wrap, body.pb-v2 .mlib { border-radius: 20px; border-color: rgba(30, 40, 80, .06); box-shadow: 0 2px 0 rgba(30, 40, 80, .05); }
+body.pb-v2 .pb-stage, body.pb-v2 .v-stage { border-radius: 22px; }
+/* PiBrain 도구(body.tl) — 같은 규칙 */
+body.tl .tl-device, body.tl .tl-main, body.tl .tl-tabs { background: transparent; border-color: transparent; }
+body.tl .card { background: rgba(255, 255, 255, .8); border-color: transparent; border-radius: 24px; box-shadow: var(--pb-soft-sh); }
+html[data-theme="dark"] body.tl .card { background: rgba(36, 40, 54, .88); box-shadow: 0 3px 0 rgba(0, 0, 0, .25); }
+/* 대화 · 로봇 놀이 */
+.chat-card { border-color: transparent; border-radius: 24px; box-shadow: var(--pb-soft-sh); }
+.msg__body { border-radius: 20px; }
+.msg--bot .msg__body { border-color: transparent; box-shadow: 0 2px 0 rgba(30, 40, 80, .06), 0 4px 12px rgba(30, 40, 80, .05); }
+.kids-btn { box-shadow: 0 3px 0 rgba(30, 40, 80, .12); }
+.kids-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(30, 40, 80, .12); }
+/* 도구 왼쪽 메뉴 — 회색 레일 대신 비우고, 아이콘을 동그란 파스텔 칸에(고른 것은 파랑 젤리) */
+html body.pb-v2 main > nav { background: transparent; border-right: 0; width: 80px; }
+body.pb-v2 nav button { width: 66px; border-radius: 18px; }
+body.pb-v2 nav button > i { width: 40px; height: 40px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(255, 255, 255, .85); box-shadow: 0 3px 0 rgba(30, 40, 80, .08); }
+html[data-theme="dark"] body.pb-v2 nav button > i { background: rgba(255, 255, 255, .08); box-shadow: none; }
+body.pb-v2 nav button:hover { background: transparent; }
+body.pb-v2 nav button:hover > i { transform: translateY(-2px); }
+body.pb-v2 nav button.menu-selected { background: transparent; }
+body.pb-v2 nav button.menu-selected > i { background: linear-gradient(180deg, #5c93ff, #2563eb); color: #fff; box-shadow: 0 3px 0 #1b4cc0; }
+html[data-theme="dark"] body.pb-v2 nav button.menu-selected > i { background: linear-gradient(180deg, #ffd96a, #f7b924); color: #1f1a0c; box-shadow: 0 3px 0 #b88400; }

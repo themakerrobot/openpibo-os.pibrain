@@ -837,6 +837,21 @@ classifier 언어 토글, 검수 보고서 구조, Tools 서비스.
 - **화면(파이보 OLED·PiBrain LCD)은 IP 정보가 기본이다(261028, 사용자).** 체험 앱은 켤 때·키우기를 나갈 때·끝날 때(Ctrl+C·SIGTERM) `system/network_disp.py` 로 IP 화면을 다시 그린다(`robot.show_network`). PiBrain LCD 는 키우기에서 얼굴을 처음 그릴 때 연다(`OledByPiBrain()` 이 LCD 를 검게 초기화해서, 켜자마자 열면 IP 화면이 꺼진 것처럼 지워졌다)
 - 확인은 컨테이너(가짜 로봇)뿐: 서버 51/51, 재주 → IDE Blockly 함수·파이썬 생성까지. **실기기 확인 필요** — 동작 이름(`greeting` 등)·머리 터치 값·PiBrain 버튼 순서·LCD 방향
 
+## 첫 화면(대문) · 귀염 층 (261123, 사용자 — 저연령층이 많아 '귀염귀염'하게, 모든 화면)
+
+**대문 `/`** — 접속하면 앱을 큰 젤리 아이콘으로 고르고 **같은 탭으로** 들어간다(edge-lab 런처처럼). **앱 서버는 그대로 따로 돈다**(합치지 않는다 — 사용자). IDE 는 **`/ide`**.
+- 파일: `ide/templates/home.html`(두 리포 차이는 `data-product`·마크 클래스뿐) · `ide/static/v2/home.js` · `home.css`(**두 리포 같은 파일**). 서버는 `run_ide.py` 의 `/`·`/ide`·`GET /home_info`(상태·최근 파일 4·내가 가르친 AI 3·켜진 앱 — WiFi 비밀번호는 안 보낸다)
+- 앱 9개, 묶음 셋: **만들기**(코딩 → `/ide` · 도구 · AI 가르치기 · 대화) · **놀이 · 배우기**(카드 코딩 → 로봇 놀이 첫 화면 · 키우기 → 로봇 놀이 키우기, `launch.html?svc=kids&go=pet`) · **선생님 · 관리**(설정 · H/W 검수 `svc=hwtest` · 도움말 :8080)
+  - 설정은 대문 안의 창: 화면 밝기 · WiFi 설정(`/ide?panel=wifi` 가 WiFi 창을 연다) · 로봇 화면 처음으로 · 공장 초기화 · 전원 끄기(두 번 누르기, IDE 와 같은 socket `restore`·`poweroff`)
+  - H/W 검수는 다른 앱을 다 끄므로 한 번 묻는다(`confirm_hwtest`). 켜진 앱은 '켜져 있음' + 하늘색 링·별 하나(없으면 마지막에 쓴 앱, `localStorage pibo_home_last`)
+  - 캐릭터: 실제 로봇처럼 **흰 얼굴**(사용자) + 남색 얼굴판 · 하늘색 눈 깜빡임 · 안테나 흔들기 — 제품 마크를 바탕으로 SVG 로 직접 그림. **PiBrain 보드 색은 확인 필요**(흰색으로 그림)
+  - [이어서 하기] 파일 → `/ide?open=<경로>`(`ide.js` 11 — init 을 놓치면 2.5초 보조 타이머)
+- **앱의 [IDE](#ide_bt)**: IDE 가 새 탭으로 연 탭(`window.opener`)이면 그대로 [IDE](탭을 닫음), 아니면 키트가 **[처음 화면]**(집 아이콘)으로 바꾼다 → 대문. IDE 상단바에도 [처음 화면](저장 안 했으면 묻기). 로봇 놀이 안의 [처음]은 헷갈리지 않게 [놀이 처음](도형 아이콘)
+- 대기 페이지 `launch.html`: `svc=hwtest`(50050) · `go=make|pet`(로봇 놀이 화면 바로 가기, 이름·아이콘도 그 화면 것). `LAUNCH_VER` 261123v1. 로봇 놀이는 `?go=` 를 읽고 주소에서 지운다
+- 미리보기 `design/preview.py` 와 검사 `design/audit/browser_check.js` 가 대문(`/`)·IDE(`/ide`)를 안다. `AUDIT.md` B2 예외에 대문·[처음 화면] 을 넣었다
+
+**귀염 층**: 파이보와 같은 키트·IDE CSS — 설명은 파이보 CLAUDE.md '첫 화면(대문) · 귀염 층'.
+
 ## 빈 화면 안내 · 읽기 다듬기 (261120, 사용자 — UX 점검 A~F 전부)
 
 처음 화면에서 무엇을 눌러야 할지 몰라 막히는 곳(IDE·대화·분류기)에 갈 길을 보여 준다. 파이보·PiBrain 같은 코드(ide.js·ide.css·chat.js·chat.css 는 같은 파일, 분류기·ko2en 은 같은 부분을 같이).

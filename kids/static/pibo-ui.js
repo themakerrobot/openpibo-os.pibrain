@@ -352,10 +352,10 @@
   var TAB = { tools: 'pibo_tools', classifier: 'pibo_classifier', llm: 'pibo_llm', kids: 'pibo_kids' };
   // launch.html 은 ?ver 없이 열려 브라우저가 옛 판을 쓸 수 있다(포트가 바뀌면 옛 포트를 기다린다).
   // 대기 페이지를 고치면 이 번호를 올릴 것
-  var LAUNCH_VER = '261102v1';
-  function launchUrl(svc) {
+  var LAUNCH_VER = '261123v1';
+  function launchUrl(svc, go) {
     return 'http://' + location.hostname + '/static/launch.html?svc=' +
-           encodeURIComponent(svc) + '&lang=' + curLang() + '&v=' + LAUNCH_VER;
+           encodeURIComponent(svc) + (go ? '&go=' + encodeURIComponent(go) : '') + '&lang=' + curLang() + '&v=' + LAUNCH_VER;
   }
   function openService(svc) {
     fsLeaving = Date.now();   // 새 탭으로 가며 풀리는 전체화면은 '사용자가 끈 것' 이 아니다
@@ -377,9 +377,9 @@
     location.href = launchUrl(svc);
   }
   /* 대문(/, 261123)에서: 같은 탭으로 들어간다. 탭이 하나라 [처음 화면]으로 돌아오면 대문이다 */
-  function enterService(svc) {
+  function enterService(svc, go) {
     fsLeaving = Date.now();   // 페이지를 옮기며 풀리는 전체화면은 '사용자가 끈 것' 이 아니다
-    location.href = launchUrl(svc);
+    location.href = launchUrl(svc, go);
   }
   /* 앱 상단바의 [IDE](#ide_bt): IDE 가 새 탭으로 연 경우만 'IDE'(누르면 탭을 닫아 IDE 로),
      대문에서 들어왔거나 주소로 연 탭은 [처음 화면](집 아이콘) — 누르면 대문으로 간다 */

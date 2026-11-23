@@ -1023,6 +1023,12 @@
       }
       applyLanguage();
       show('home');
+      // 대문(261123)에서 바로 가기: ?go=make(카드 만들기) · pet(키우기) · challenges(도전)
+      var go = null;
+      try { go = new URLSearchParams(location.search).get('go'); history.replaceState(null, '', location.pathname); } catch (e) { go = null; }
+      if (go === 'pet') show('pet');
+      else if (go === 'make') openMake(null, null);
+      else if (go === 'challenges') show('challenges');
       if (a[1].running) { setRunning(true); poll(); }
     }).catch(function () {
       document.body.appendChild(el('p', 'kids-dead', icon('fa-plug-circle-xmark') + ' ' + tr('kids_err_conn')));

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PiBrain</title>
 <link rel="stylesheet" href="all.min.css">
-<link rel="stylesheet" href="pibo-ui.css?ver=261120v1">
+<link rel="stylesheet" href="pibo-ui.css?ver=261123v1">
 <link rel="shortcut icon" href="icon.png?ver=261102v2" type="image/png">
 <script>/* 화면 밝기를 첫 페인트 전에 (pibo-ui.js 의 getTheme 과 같은 규칙. 고른 적 없으면 soft) */
 (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
@@ -127,8 +127,13 @@
                   name: { ko: '대화', en: 'Chat' },                icon: 'fa-comments' },
     // 체험 앱 '로봇 놀이'(kids/run_kids.py, 50060, 261028 시험 중)
     kids:       { port: 50060, on: '/kids?enable=on',       check: 'port',   limit: 60,
-                  name: { ko: '로봇 놀이', en: 'Robot Play' },     icon: 'fa-shapes' }
+                  name: { ko: '로봇 놀이', en: 'Robot Play' },     icon: 'fa-shapes' },
+    // H/W 검수(test/test.py, 50050) — 대문 [H/W 검수](261123). 서버가 켤 때 3초 기다린다
+    hwtest:     { port: 50050, on: '/hwtest?enable=on',     check: 'port',   limit: 60,
+                  name: { ko: 'H/W 검수', en: 'H/W check' },       icon: 'fa-stethoscope' }
   };
+  // 대문에서 로봇 놀이의 한 화면으로 바로 갈 때(261123): ?go=make(카드 코딩) · pet(키우기)
+  var GO = { make: { ko: '카드 코딩', en: 'Card coding', icon: 'fa-cubes' }, pet: { ko: '키우기', en: 'Pet', icon: 'fa-heart' } };
   var key = Q.get('svc'), S = SVC[key];
   var $ = function (id) { return document.getElementById(id); };
   $('close').onclick = function () {
@@ -139,11 +144,14 @@
   function setTitle(s) { $('title').textContent = s; document.title = PRODUCT ? s + ' · ' + PRODUCT : s; }   // 탭 제목은 '… · PiBrain' (다른 화면과 같은 꼴)
   if (!S) { document.body.dataset.state = 'fail'; setTitle(t('bad')); $('icon').className = 'fa-solid fa-circle-exclamation'; return; }
 
-  var name = S.name[L];
+  var go = Q.get('go'), G = key === 'kids' && GO[go] ? GO[go] : null;
+  var name = G ? G[L] : S.name[L];
+  if (G) S.icon = G.icon;
   setTitle(t('title', name));
   $('app_name').textContent = name; $('app_name').hidden = false;
   $('icon').className = 'fa-solid ' + S.icon;
   var target = 'http://' + HOST + ':' + S.port + '/';
+  var targetGo = G ? target + '?go=' + go : target;   // 준비 확인은 target, 이동은 targetGo
 
   function step(n, state) {
     var li = $('s' + n); li.setAttribute('data-s', state);
@@ -188,7 +196,7 @@
     step(2, 'done'); step(3, 'now');
     $('bar').style.width = '100%';
     if (note) $('msg').textContent = note;
-    setTimeout(function () { location.replace(target); }, note ? 1600 : 250);
+    setTimeout(function () { location.replace(targetGo); }, note ? 1600 : 250);
   }
   function fail() {
     stopTimers();
