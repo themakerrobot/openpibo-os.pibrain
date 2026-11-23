@@ -37,11 +37,8 @@ html[data-theme="dark"] .sheet__holes i { box-shadow: inset 0 2px 3px rgba(0, 0,
 .sheet__head { display: flex; align-items: center; gap: 18px; padding-bottom: 18px; margin-bottom: 6px; border-bottom: 2px solid var(--v2-frame-line); position: relative; }
 .sheet__head::after { content: ""; position: absolute; left: 0; right: 0; bottom: -6px; border-bottom: 1px solid var(--v2-frame-line); opacity: .55; }
 .home-pal { flex: none; width: 84px; height: 84px; border-radius: 50%; background: var(--pen-t); display: flex; align-items: center; justify-content: center; }
-.home-pal svg { width: 70px; height: 70px; display: block; overflow: visible; }
-.home-pal .eye { transform-box: fill-box; transform-origin: center; animation: home-blink 4.6s infinite; }
-.home-pal .ant { transform-box: fill-box; transform-origin: 50% 100%; animation: home-wave 2.4s ease-in-out infinite; }
-@keyframes home-blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
-@keyframes home-wave { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(8deg); } }
+.home-pal { overflow: hidden; }
+.home-pal svg { width: 70px; height: 70px; display: block; overflow: hidden; }
 .sheet__title { flex: 1 1 auto; min-width: 0; }
 .sheet__eyebrow { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .08em; color: var(--pen); text-transform: uppercase;
   padding: 3px 9px; border: 1px solid var(--pen); border-radius: 999px; margin-bottom: 8px; }
@@ -97,10 +94,18 @@ html[data-theme="dark"] .act__no { color: #17140f; }
   padding-top: 10px; border-top: 1px dashed var(--v2-line); width: 100%; }
 .home-app__go i { font-size: 12px; transition: transform .16s ease; }
 .home-app:hover .home-app__go i { transform: translateX(4px); }
+/* 캐릭터 그림 칸 — 큰 카드는 위에 넓게, 가로 카드는 왼쪽 네모(옅은 칸 + 판화 그림자는 아이콘 딱지와 같게) */
+.home-app__art { display: block; flex: none; width: 100%; height: 132px; border-radius: 12px; background: var(--pen-t); overflow: hidden;
+  box-shadow: 4px 4px 0 var(--pen-t2); }
+.home-app__art svg { display: block; height: 100%; width: auto; margin: 0 auto; transition: transform .2s ease; }
+.home-app:hover .home-app__art svg { transform: translateY(-3px) scale(1.03); }
+html[data-theme="dark"] .home-app__art { background: var(--pen-t); }
 /* 가로 카드(활동 2 · 3) */
 .act__grid--list .home-app { flex-direction: row; align-items: center; gap: 16px; padding: 14px 16px; }
 .act__grid--list .home-app__ic { width: 48px; height: 48px; border-radius: 14px; font-size: 21px; box-shadow: 3px 3px 0 var(--pen-t2); }
 .act__grid--list .home-app__tx b { font-size: 16.5px; }
+.act__grid--list .home-app__art { width: 84px; height: 84px; border-radius: 14px; box-shadow: 3px 3px 0 var(--pen-t2); }
+.act__grid--list .home-app { padding: 10px 16px 10px 10px; }
 .act__grid--list .home-app__go { margin: 0; padding: 0; border: 0; width: auto; flex: none; }
 .act__grid--list .home-app__go span { display: none; }
 .act__grid--list .home-app__go i { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--v2-line); display: inline-flex; align-items: center; justify-content: center; }
@@ -215,10 +220,12 @@ html[data-theme="dark"] .home-li:hover { background: rgba(255, 255, 255, .06); }
   .sheet__eyebrow { display: none; }
   .home-app { padding: 14px 14px 12px; }
   .home-app__ic { width: 46px; height: 46px; font-size: 20px; border-radius: 13px; }
+  .home-app__art { height: 110px; }
+  .act__grid--list .home-app__art { width: 68px; height: 68px; }
   .home-app__tx b { font-size: 16px; }
   .home-side { grid-template-columns: minmax(0, 1fr); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .home-pal .eye, .home-pal .ant, .home-app, .home-app__ic, .home-app__go i, .home[data-going] .home-app, .home[data-going] .home-side, .home[data-going] .sheet__head {
+  .home-app__art svg, .home-app, .home-app__ic, .home-app__go i, .home[data-going] .home-app, .home[data-going] .home-side, .home[data-going] .sheet__head {
     animation: none !important; transition: none !important; }
 }

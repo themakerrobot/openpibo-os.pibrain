@@ -850,7 +850,7 @@ classifier 언어 토글, 검수 보고서 구조, Tools 서비스.
 - 대기 페이지 `launch.html`: `svc=hwtest`(50050) · `go=make|pet`(로봇 놀이 화면 바로 가기, 이름·아이콘도 그 화면 것). `LAUNCH_VER` 261123v1. 로봇 놀이는 `?go=` 를 읽고 주소에서 지운다
 - 미리보기 `design/preview.py` 와 검사 `design/audit/browser_check.js` 가 대문(`/`)·IDE(`/ide`)를 안다. `AUDIT.md` B2 예외에 대문·[처음 화면] 을 넣었다
 
-**학습지 층**: 파이보와 같은 키트·IDE CSS(색은 키트 토큰) — 설명은 파이보 CLAUDE.md '첫 화면(대문) · 학습지 층'.
+**학습지 층**: 파이보와 같은 키트·IDE CSS(색은 키트 토큰) — 설명은 파이보 CLAUDE.md '첫 화면(대문) · 학습지 층'. 대문 카드 그림은 파이보와 같은 파이보 캐릭터 장면(`ide/static/v2/pibo-art.js`, 같은 파일), 머리 캐릭터만 PiBrain 보드.
 
 ## 빈 화면 안내 · 읽기 다듬기 (261120, 사용자 — UX 점검 A~F 전부)
 

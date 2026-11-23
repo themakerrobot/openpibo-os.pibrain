@@ -8,7 +8,7 @@
    상태·최근 파일·모델·켜진 앱은 IDE 의 GET /home_info(10초마다, 화면이 보일 때만).
    문구는 IDE ko2en.js 의 home_* 키, 버튼 이름은 nav_* 를 같이 쓴다.
    '학습지' 컨셉(261123, 사용자 — ai-lab 과 같게, 디자이너가 한 것처럼): 활동지 한 장(철 구멍·여백선) · 활동 1~3 · 활동 카드.
-   카드 아이콘은 IDE 상단바와 같은 Font Awesome 글리프(같은 앱은 어디서나 같은 그림), 판화처럼 어긋난 색 그림자. 모양은 home.css
+   카드 그림은 파이보 캐릭터가 그 일을 하는 장면(pibo-art.js, 261123 사용자 — 대문만. 앱 안·상단바는 Font Awesome 기호 그대로). 모양은 home.css
    ========================================================================== */
 (function () {
   'use strict';
@@ -87,7 +87,11 @@
         if (a.id === ring) b.setAttribute('data-ring', runApp ? 'run' : 'last');
         var tag = runApp === a.id ? '<span class="home-run">' + esc(t('home_running')) + '</span>'
           : (a.id === ring ? '<span class="home-tag">' + esc(t('home_last')) + '</span>' : '');
-        b.innerHTML = '<span class="home-app__ic"><i class="fa-solid ' + a.icon + '"></i></span>' +
+        // 그림: 파이보 캐릭터 장면(pibo-art.js). 못 불러오면 IDE 상단바와 같은 Font Awesome 기호
+        var pic = (window.PiboArt && PiboArt.scenes.indexOf(a.id) >= 0)
+          ? '<span class="home-app__art">' + PiboArt.svg(a.id) + '</span>'
+          : '<span class="home-app__ic"><i class="fa-solid ' + a.icon + '"></i></span>';
+        b.innerHTML = pic +
           '<span class="home-app__tx"><b>' + esc(t(a.name)) + '</b><span class="home-app__d">' + esc(t(a.desc)) + '</span></span>' +
           '<span class="home-app__go"><span>' + esc(t('home_start')) + '</span><i class="fa-solid fa-arrow-right"></i></span>' + tag;
         b.addEventListener('click', function () { go(a, b); });
@@ -261,7 +265,7 @@
       '<g class="ln"><circle cx="80" cy="66" r="4.5"/><circle cx="91" cy="58" r="4.5"/><circle cx="102" cy="66" r="4.5"/><circle cx="91" cy="74" r="4.5"/></g></svg>'
   };
   var pal = $('home_pal');
-  if (pal) pal.innerHTML = PAL[PIBRAIN ? 'pibrain' : 'pibo'];
+  if (pal) pal.innerHTML = (window.PiboArt && PiboArt.face) ? PiboArt.face(PRODUCT) : PAL[PIBRAIN ? 'pibrain' : 'pibo'];
 
   render();
 })();
