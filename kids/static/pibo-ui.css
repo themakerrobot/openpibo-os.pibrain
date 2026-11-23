@@ -1731,3 +1731,10 @@ body.pb-v2 nav button.menu-selected { background: var(--v2-accent-t); color: var
 /* 대화 말풍선 · 로봇 놀이 */
 .chat-card { border-radius: 12px; }
 .msg__body { border-radius: 14px; }
+
+/* 앱 아이콘(pibo-icons.js) — 파이보 얼굴 + 색 배지. Font Awesome 아이콘 자리에 같은 크기로(261123) */
+.pb-appic-box { display: inline-flex; flex: none; width: 22px; height: 22px; align-items: center; justify-content: center; }
+.pb-appic-box .pb-appic { width: 22px; height: 22px; display: block; overflow: visible; }
+.pb-iconbtn:hover .pb-appic { transform: translateY(-1px) rotate(-4deg); transition: transform .15s ease; }
+@media (prefers-reduced-motion: reduce) { .pb-iconbtn:hover .pb-appic { transform: none; } }
+

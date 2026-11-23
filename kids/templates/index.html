@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
-  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261123v4" />
+  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261123v5" />
   <link rel="stylesheet" href="../static/kids.css?ver=261120v1" />
   <link rel="shortcut icon" href="../static/icon.png?ver=261102v2" type="image/png" />
   <!-- 문구는 IDE 의 ko2en.js 를 같이 쓴다(kids_* 키, 영문판 델타를 늘리지 않으려고). IDE(80)는 늘 떠 있다 -->
@@ -24,7 +24,7 @@
     <span class="pb-header__brand"><i class="fa-solid fa-robot" id="brand_icon"></i><b id="brand_name">piBo</b><span class="pb-header__app" data-key="kids_title"></span></span>
     <div class="pb-iconbar">
       <button type="button" class="pb-iconbtn kids-whobt" id="who_bt" data-title-key="kids_switch" hidden><i class="fa-solid fa-user" id="who_icon"></i><span class="pb-iconbtn__label" id="who_no"></span></button>
-      <button type="button" class="pb-iconbtn" id="home_bt" hidden><i class="fa-solid fa-shapes"></i><span class="pb-iconbtn__label" data-key="kids_home"></span></button>
+      <button type="button" class="pb-iconbtn" id="home_bt" data-appic="cards" hidden><i class="fa-solid fa-shapes"></i><span class="pb-iconbtn__label" data-key="kids_home"></span></button>
       <!-- 선생님 잠금: 3초 길게 누르기 → 숫자 4개. 앱 동작이라 IDE 왼쪽(상단바 규칙 — AUDIT.md B2) -->
       <button type="button" class="pb-iconbtn kids-lockbt" id="lock_bt" data-title-key="kids_teacher_hold"><i class="fa-solid fa-lock"></i><svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="16"/></svg></button>
       <button type="button" class="pb-iconbtn" id="ide_bt" title="IDE"><i class="fa-solid fa-code"></i><span class="pb-iconbtn__label">IDE</span></button>
@@ -289,8 +289,10 @@
     </div>
   </div>
 
-  <script src="../static/pibo-ui.js?ver=261123v3"></script>
-  <script src="../static/pet.js?ver=261028v3"></script>
-  <script src="../static/kids.js?ver=261123v2"></script>
+  <script src="../static/pibo-icons.js?ver=261123v1"></script>
+
+  <script src="../static/pibo-ui.js?ver=261123v4"></script>
+  <script src="../static/pet.js?ver=261123v1"></script>
+  <script src="../static/kids.js?ver=261123v3"></script>
 </body>
 </html>

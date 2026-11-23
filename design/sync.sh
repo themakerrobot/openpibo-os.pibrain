@@ -10,7 +10,7 @@
 # 글꼴 주소를 IDE 로 넘겨서(SharedFonts) 세 앱이 한 벌을 같이 캐시한다(260929). 전엔 앱마다 사본이었다
 set -e
 cd "$(dirname "$0")/.."
-SRCS=(design/pibo-ui.css design/pibo-ui.js)
+SRCS=(design/pibo-ui.css design/pibo-ui.js design/pibo-icons.js)
 FONTS=(design/fonts/*)
 for f in "${SRCS[@]}" "${FONTS[@]}"; do [ -f "$f" ] || { echo "!! $f 가 없다"; exit 1; }; done
 

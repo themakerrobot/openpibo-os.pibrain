@@ -352,7 +352,7 @@
   var TAB = { tools: 'pibo_tools', classifier: 'pibo_classifier', llm: 'pibo_llm', kids: 'pibo_kids' };
   // launch.html 은 ?ver 없이 열려 브라우저가 옛 판을 쓸 수 있다(포트가 바뀌면 옛 포트를 기다린다).
   // 대기 페이지를 고치면 이 번호를 올릴 것
-  var LAUNCH_VER = '261123v2';
+  var LAUNCH_VER = '261123v3';
   function launchUrl(svc, go) {
     return 'http://' + location.hostname + '/static/launch.html?svc=' +
            encodeURIComponent(svc) + (go ? '&go=' + encodeURIComponent(go) : '') + '&lang=' + curLang() + '&v=' + LAUNCH_VER;
@@ -390,8 +390,9 @@
     try { opened = !!window.opener; } catch (e) { opened = false; }
     if (opened) return;
     function label() {
-      var i = b.querySelector('i'), l = b.querySelector('.pb-iconbtn__label') || b.querySelector('span');   // PiBrain 도구는 이름 칸이 그냥 span
-      if (i) i.className = 'fa-solid fa-house';
+      var i = b.querySelector('i'), l = b.querySelector('.pb-iconbtn__label') || b.querySelector('span:not(.pb-appic-box)');   // PiBrain 도구는 이름 칸이 그냥 span
+      if (window.PiboIcons) setAppIcon(b, 'home');
+      else if (i) i.className = 'fa-solid fa-house';
       if (l) { l.textContent = tr('home'); l.removeAttribute('data-key'); }
       b.title = tr('home');
       b.removeAttribute('data-title-key');
@@ -399,6 +400,33 @@
     label();
     var sel = document.getElementById('language');
     if (sel) sel.addEventListener('change', function () { setTimeout(label, 0); });
+  }
+
+  /* ── 앱 아이콘 — 파이보(PiBrain) 얼굴 + 색 배지(261123, 사용자 '앱 안 아이콘도 캐릭터로') ──────────
+     그림은 pibo-icons.js(PiboIcons.app). 앱으로 가는 버튼의 첫 Font Awesome 아이콘만 바꾼다(IDE 상단바 · 각 앱의 [IDE]/[처음 화면]).
+     pibo-icons.js 를 못 읽으면 예전 기호 그대로 */
+  var APP_BTNS = { tools_bt: 'tools', llm_bt: 'llm', classifier_bt: 'classifier', kids_bt: 'cards', guide_bt: 'guide', home_bt: 'home', ide_bt: 'code' };
+  function setAppIcon(btn, app) {
+    if (!window.PiboIcons || !btn) return;
+    var box = btn.querySelector('.pb-appic-box');
+    if (!box) {
+      var i = btn.querySelector('i');
+      box = document.createElement('span');
+      box.className = 'pb-appic-box';
+      if (i) i.parentNode.replaceChild(box, i); else btn.insertBefore(box, btn.firstChild);
+    }
+    var prod = document.documentElement.getAttribute('data-product') || '';
+    if (box.getAttribute('data-app') !== app || box.getAttribute('data-prod') !== prod) {
+      box.innerHTML = PiboIcons.app(app); box.setAttribute('data-app', app); box.setAttribute('data-prod', prod);
+    }
+  }
+  // 버튼에 data-appic 이 있으면 그것(로봇 놀이 [놀이 처음] 은 cards). 제품이 나중에 정해지는 앱(로봇 놀이)은 정한 뒤 다시 부른다
+  function initAppIcons() {
+    if (!window.PiboIcons) return;
+    Object.keys(APP_BTNS).forEach(function (id) {
+      var b = document.getElementById(id);
+      if (b) setAppIcon(b, b.getAttribute('data-appic') || (id === 'ide_bt' && b.title === tr('home') ? 'home' : APP_BTNS[id]));
+    });
   }
 
   /* ── 버튼 바쁨 표시 ────────────────────────────────────────────────────
@@ -563,10 +591,10 @@
     openService: openService, backToIDE: backToIDE, restartSelf: restartSelf, enterService: enterService,
     busy: busy, text: tr, lang: curLang,
     getTheme: getTheme, setTheme: setTheme, ui: UI, countTo: countTo,
-    fullscreen: fsToggle, screenReset: screenReset
+    fullscreen: fsToggle, screenReset: screenReset, appIcons: initAppIcons
   };
 
-  function initAll() { initShell(); addThemeButton(); syncThemeButtons(); initFullscreen(); watchTitle(); markAlerts(); initBrand(); initHomeButton(); }
+  function initAll() { initShell(); addThemeButton(); syncThemeButtons(); initFullscreen(); watchTitle(); markAlerts(); initBrand(); initAppIcons(); initHomeButton(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAll);
   else initAll();
 })();

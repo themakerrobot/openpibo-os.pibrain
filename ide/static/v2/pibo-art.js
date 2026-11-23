@@ -1,4 +1,4 @@
-/* 파이보 캐릭터 장면 — 대문 카드 그림 8개(코딩 · 도구 · AI 가르치기 · 대화 · 카드 코딩 · 키우기 · 설정 · 도움말) + 머리 캐릭터(face).
+/* 파이보 캐릭터 장면 — 대문 카드 그림 8개(코딩 · 도구 · AI 가르치기 · 대화 · 카드 코딩 · 키우기 · 설정 · 도움말) + 머리 캐릭터(face). PiBrain 은 머리가 보드(검은 화면 속 하늘색 얼굴 · 카메라 · 버튼 넷)인 같은 몸.
    파이보·PiBrain 같은 파일(ide/static/v2/pibo-art.js). 그림 파일 없이 SVG 로 직접 그렸다(라이선스 걱정 없음). 실물(도구 [동작] 사진 pibo_body)을 따른다:
    네모난 둥근 머리 · 하늘색 테 + 검은 눈 · 검은 반달 입(가운데 카메라) · 파란 고리 안테나(작은 고리 둘) ·
    목 · 네모난 몸통(작은 화면 · 단추) · 큰 어깨 판 + 아래팔 · 네모 다리 · 둥근 장화 발 */
@@ -6,7 +6,7 @@
   'use strict';
   var C = { line: '#aab4c3', w1: '#ffffff', w2: '#e3e9f0', dark: '#1d2127', cyan: '#1fb5d6', blue: '#2a9bd4',
             metal: '#8e99a8', metal2: '#c8d0da', spark: '#ffbf2e' };
-  var n = 0;
+  var n = 0, PB = false;   // PB: 지금 그리는 것이 PiBrain(머리가 보드)
   function f(v) { return Math.round(v * 100) / 100; }
   function rot(p, a) { var r = a * Math.PI / 180; return [p[0] * Math.cos(r) - p[1] * Math.sin(r), p[0] * Math.sin(r) + p[1] * Math.cos(r)]; }
   function W(id) { return 'fill="url(#' + id + 'g)" stroke="' + C.line + '" stroke-width="1.1"'; }
@@ -45,6 +45,7 @@
     s += rr(54, 59.5, 12, 5, 2, W(id));
     // 머리(살짝 기울일 수 있음)
     var h = '<g transform="rotate(' + (o.tilt || 0) + ' 60 60)">';
+    if (PB) return { svg: s + boardHead(id, o, h) + '</g>', L: L.hand, R: R.hand };
     // 안테나(학사모를 쓰면 모자 위로 고리만)
     if (!o.cap) h += '<path d="M60 23 V14.6" stroke="' + C.blue + '" stroke-width="2.2" stroke-linecap="round"/>' +
          '<circle cx="60" cy="9.4" r="5.2" fill="none" stroke="' + C.blue + '" stroke-width="2.2"/>' +
@@ -66,16 +67,38 @@
     h += o.mouth === 'o'
       ? '<ellipse cx="60" cy="51.2" rx="3.6" ry="3.4" fill="' + C.dark + '"/>'
       : '<path d="M53.4 48 H66.6 A6.6 6 0 0 1 53.4 48 Z" fill="' + C.dark + '"/><circle cx="60" cy="50.6" r="1.5" fill="#3b4352"/><circle cx="59.5" cy="50.1" r=".45" fill="#9fb2c8"/>';
-    if (o.cap) h += '<path d="M47 21.6 V15.5 H73 V21.6 Q60 24.6 47 21.6 Z" fill="#2c3648"/>' +
-      '<path d="M60 7.6 L86 14.4 L60 21.2 L34 14.4 Z" fill="#37435a" stroke="#222b3a" stroke-width=".9" stroke-linejoin="round"/>' +
-      '<path d="M44 12 L60 8.4" stroke="#56647e" stroke-width="1.2" stroke-linecap="round"/>' +
-      '<circle cx="60" cy="14.4" r="1.5" fill="#f2b632"/><path d="M60 14.4 L79 18 V26" stroke="#f2b632" stroke-width="1.3" fill="none" stroke-linecap="round"/>' +
-      '<path d="M77.4 25.6 h3.2 l.6 4.6 h-4.4 z" fill="#f2b632"/>';
+    if (o.cap) h += capSvg();
     h += '</g>';
     s += h;
     return { svg: s, L: L.hand, R: R.hand };
   }
 
+  /* PiBrain 머리 — 보드(검은 화면 속 하늘색 얼굴 · 카메라 · 버튼 넷 · 아래 연결부). 파이보 머리 자리에 같은 크기로 */
+  function boardHead(id, o, h) {
+    var lx = (o.look || 0) * .6, ly = (o.lookY || 0) * .6;
+    h += rr(23, 17, 74, 47, 9, W(id)) + '<path d="M29 22.4 Q32 19.8 39 19.6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>';
+    h += rr(29, 23, 46, 35, 4.5, 'fill="' + C.dark + '"');
+    if (o.eyes === 'happy') [43, 61].forEach(function (cx) {
+      h += '<path d="M' + (cx - 4) + ' 39.5 Q' + cx + ' 33.5 ' + (cx + 4) + ' 39.5" stroke="' + C.cyan + '" stroke-width="2.4" fill="none" stroke-linecap="round"/>';
+    });
+    else [43, 61].forEach(function (cx) {
+      h += '<circle cx="' + f(cx + lx) + '" cy="' + f(37.5 + ly) + '" r="5.2" fill="' + C.cyan + '"/><circle cx="' + f(cx + lx + 1.6) + '" cy="' + f(35.7 + ly) + '" r="1.6" fill="#fff"/>';
+    });
+    h += o.mouth === 'o' ? '<ellipse cx="52" cy="49.5" rx="3" ry="3.2" fill="' + C.cyan + '"/>'
+      : '<path d="M46.6 46.8 H57.4 A5.4 4.8 0 0 1 46.6 46.8 Z" fill="' + C.cyan + '"/>';
+    h += '<circle cx="86" cy="25.6" r="2.6" fill="' + C.dark + '"/><circle cx="85.3" cy="24.9" r=".8" fill="#9fb2c8"/>';
+    [[86, 36.5], [80.5, 42], [91.5, 42], [86, 47.5]].forEach(function (b) { h += '<circle cx="' + b[0] + '" cy="' + b[1] + '" r="2.7" fill="#e8ecf1" stroke="' + C.line + '" stroke-width=".9"/>'; });
+    h += rr(51, 63, 18, 4, 1.6, W(id));
+    if (o.cap) h += '<g transform="translate(0 -5)">' + capSvg() + '</g>';
+    return h + '</g>';
+  }
+  function capSvg() {
+    return '<path d="M47 21.6 V15.5 H73 V21.6 Q60 24.6 47 21.6 Z" fill="#2c3648"/>' +
+      '<path d="M60 7.6 L86 14.4 L60 21.2 L34 14.4 Z" fill="#37435a" stroke="#222b3a" stroke-width=".9" stroke-linejoin="round"/>' +
+      '<path d="M44 12 L60 8.4" stroke="#56647e" stroke-width="1.2" stroke-linecap="round"/>' +
+      '<circle cx="60" cy="14.4" r="1.5" fill="#f2b632"/><path d="M60 14.4 L79 18 V26" stroke="#f2b632" stroke-width="1.3" fill="none" stroke-linecap="round"/>' +
+      '<path d="M77.4 25.6 h3.2 l.6 4.6 h-4.4 z" fill="#f2b632"/>';
+  }
   function defs(id) {
     return '<defs><linearGradient id="' + id + 'g" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="' + C.w1 + '"/><stop offset=".55" stop-color="#f4f7fa"/><stop offset="1" stop-color="' + C.w2 + '"/></linearGradient>' +
       '<linearGradient id="' + id + 'm" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a7b1bf"/><stop offset=".5" stop-color="#d5dbe3"/><stop offset="1" stop-color="#8e99a8"/></linearGradient></defs>';
@@ -268,24 +291,19 @@
   };
   /* 대문 머리 캐릭터 — 파이보는 얼굴(머리 + 안테나), PiBrain 은 보드(화면 속 얼굴 · 카메라 · 버튼 넷) */
   function face(product) {
-    var id = 'pa' + (++n), s;
-    if (/brain/i.test(product || '')) {
-      s = '<rect x="10" y="22" width="100" height="70" rx="12" ' + W(id) + '/>' +
-        '<rect x="18" y="30" width="54" height="54" rx="6" fill="#1d2127"/>' +
-        '<circle cx="35" cy="54" r="7" fill="' + C.cyan + '"/><circle cx="35" cy="54" r="4.6" fill="#1d2127"/><circle cx="33.4" cy="52.4" r="1.4" fill="#fff"/>' +
-        '<circle cx="55" cy="54" r="7" fill="' + C.cyan + '"/><circle cx="55" cy="54" r="4.6" fill="#1d2127"/><circle cx="53.4" cy="52.4" r="1.4" fill="#fff"/>' +
-        '<path d="M39 67 H51 A6 5 0 0 1 39 67 Z" fill="' + C.cyan + '"/>' +
-        '<circle cx="91" cy="37" r="4" fill="#1d2127"/><circle cx="90" cy="36" r="1.2" fill="#9fb2c8"/>' +
-        [[84, 64], [98, 64], [91, 57], [91, 71]].map(function (b) { return '<circle cx="' + b[0] + '" cy="' + b[1] + '" r="4.6" fill="#e8ecf1" stroke="' + C.line + '" stroke-width="1"/>'; }).join('') +
-        '<rect x="48" y="92" width="24" height="10" rx="3" ' + W(id) + '/>';
-      return '<svg viewBox="0 6 120 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' + defs(id) + s + '</svg>';
-    }
-    s = pibo(id, {}).svg;
-    return '<svg viewBox="29 1 62 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' + defs(id) + s + '</svg>';
-  }
-  function svg(scene) {
     var id = 'pa' + (++n);
-    return '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">' + defs(id) + (SCENES[scene] || SCENES.code)(id) + '</svg>';
+    PB = /brain/i.test(product || '');
+    var s = pibo(id, {}).svg, vb = PB ? '20 12 80 57' : '29 1 62 61';
+    PB = false;
+    return '<svg viewBox="' + vb + '" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' + defs(id) + s + '</svg>';
+  }
+  function svg(scene, product) {   // product 'PiBrain' 이면 머리가 보드인 PiBrain 캐릭터(없으면 <html data-product>)
+    var id = 'pa' + (++n);
+    var p = product || (root.document && document.documentElement.getAttribute('data-product')) || '';
+    PB = /brain/i.test(p);
+    var out = '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">' + defs(id) + (SCENES[scene] || SCENES.code)(id) + '</svg>';
+    PB = false;
+    return out;
   }
   root.PiboArt = { svg: svg, face: face, scenes: Object.keys(SCENES) };
 })(window);

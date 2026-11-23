@@ -616,7 +616,7 @@
     prof = prof || (S.pet && S.pet.profile) || {};
     return { color: prof.color || C.pet.colors[0], hat: prof.hat || 'antenna', glasses: !!prof.glasses };
   }
-  function faceSvg(pose, look) { return PetArt.svg(pose, look || petLook()); }
+  function faceSvg(pose, look) { var o = look || petLook(); o.device = C && C.device; return PetArt.svg(pose, o); }   // PiBrain 은 보드 머리
 
   /* ── 키우기 ─────────────────────────────────────────────────────── */
   var STATS = ['hunger', 'mood', 'sleepy'];
@@ -1020,6 +1020,7 @@
         document.documentElement.setAttribute('data-product', 'PiBrain');
         $('brand_icon').className = 'fa-solid fa-brain';
         $('brand_name').textContent = 'PiBrain';
+        if (window.PiboUI && PiboUI.appIcons) PiboUI.appIcons();   // 앱 아이콘(얼굴)도 PiBrain 보드로
       }
       applyLanguage();
       show('home');

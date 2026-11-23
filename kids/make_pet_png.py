@@ -31,7 +31,7 @@ def main():
       for hat in HATS:
         for g in (False, True):
           pg.evaluate('([s,o]) => { document.getElementById("a").innerHTML = PetArt.svg(s, o) }',
-                      [st, {'color': KEY, 'hat': hat, 'glasses': g}])
+                      [st, {'color': KEY, 'hat': hat, 'glasses': g, 'device': 'pibrain'}])   # LCD 는 PiBrain 에만 있다 — 보드 머리
           name = f'{st}_{hat}{"_g" if g else ""}.png'
           out = os.path.join(OUT, name)
           pg.locator('#a').screenshot(path=out, omit_background=True)

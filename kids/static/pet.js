@@ -1,14 +1,17 @@
-/* 키우기 친구 그림 — 써큘러스 캐릭터(동그란 흰 머리 · 까만 점 눈 · 분홍 볼 · 작은 몸과 가슴 화면).
+/* 키우기 친구 그림 — 파이보 실물 얼굴(261123, 사용자 — 대문 그림 pibo-art.js 와 같은 생김새):
+   네모난 둥근 흰 머리 · 하늘색 테 + 검은 눈 · 검은 반달 입(가운데 카메라) · 고리 안테나(작은 고리 둘) · 네모난 몸통 · 장화 발.
+   PiBrain(opt.device 'pibrain')은 머리가 PiBrain 보드(검은 화면 속 하늘색 얼굴 · 카메라 · 버튼 넷)다. 예전엔 써큘러스 캐릭터(동그란 머리 · 점 눈 · 분홍 볼)였다.
    그림 파일 없이 SVG 로 그린다. 상태·반응마다 포즈가 하나씩 있고, 꾸미기는
    머리 소품(hat: 'antenna' 링 안테나 | 'cap' 모자) · 안경(glasses) · 색(color — 안테나·모자·팻말에 칠함).
 
-     PetArt.svg('normal', { color: '#2b7de9', hat: 'antenna', glasses: false })  -> '<svg …>'
+     PetArt.svg('normal', { color: '#2b7de9', hat: 'antenna', glasses: false, device: 'pibo' })  -> '<svg …>'
 
    상태: normal happy hungry sleepy sleep sad   반응·수업: eat ball wash cheer oops
    PiBrain LCD 용 PNG 는 make_pet_png.py 가 이 파일로 그린다(같은 모양). 모양을 바꾸면 PNG 도 다시 만들 것 */
 (function (root) {
   'use strict';
-  var INK = '#16181d', MOUTH = '#3b1a1f', TONGUE = '#ff7a8c', CHEEK = '#ffb3c1', EDGE = '#cfd5df', SPARK = '#ffc23d';
+  var INK = '#1d2127', MOUTH = '#1d2127', LENS = '#3b4352', EDGE = '#b9c2cf', CYAN = '#1fb5d6', SCREEN = '#1d2127', SPARK = '#ffc23d';
+  var PB = false;                       // 지금 그리는 것이 PiBrain(보드 머리)인지 — svg() 가 정한다
   var seq = 0;
 
   var POSES = {
@@ -38,6 +41,7 @@
     opt = opt || {};
     var P = POSES[pose] || POSES.normal;
     var color = opt.color || '#2b7de9', hat = opt.hat === 'cap' ? 'cap' : 'antenna';
+    PB = /brain/i.test(opt.device || '');
     var id = 'pa' + (++seq), SHELL = 'url(#' + id + ')', ST = ' stroke="' + EDGE + '" stroke-width="1.5"';
     var s = '<svg viewBox="0 0 240 240" class="kids-face kids-face--' + pose + '" aria-hidden="true">';
     s += '<defs><radialGradient id="' + id + '" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#ffffff"/>' +
@@ -45,36 +49,45 @@
     s += ell(120, 233, 54, 5, 'rgba(0,0,0,.13)', ' class="kids-face__shadow"');
     s += '<g class="kids-face__body">';
 
-    // 다리 · 발
+    // 다리 · 장화 발(실물처럼 네모 다리 + 앞이 둥근 장화)
     [-1, 1].forEach(function (k) {
-      s += '<rect x="' + (120 + k * 18 - 14) + '" y="192" width="28" height="32" rx="14" fill="' + SHELL + '"' + ST + '/>';
-      s += ell(120 + k * 21, 225, 19, 10, SHELL, ST);
+      var cx = 120 + k * 21;
+      s += '<rect x="' + (cx - 12) + '" y="196" width="24" height="24" rx="6" fill="' + SHELL + '"' + ST + '/>';
+      s += path('M' + (cx - 20) + ' 232 V223 Q' + (cx - 20) + ' 213 ' + (cx - 10) + ' 213 H' + (cx + 10) + ' Q' + (cx + 20) + ' 213 ' + (cx + 20) + ' 223 V232 Z', SHELL, ST);
     });
-    // 몸 · 가슴 화면
-    s += '<rect x="80" y="146" width="80" height="68" rx="32" fill="' + SHELL + '"' + ST + '/>';
-    s += '<rect x="110" y="170" width="20" height="11" rx="3" fill="#23262d"/>';
+    // 몸통 · 가슴 화면 · 단추
+    s += '<rect x="78" y="148" width="84" height="64" rx="18" fill="' + SHELL + '"' + ST + '/>';
+    s += '<rect x="108" y="160" width="24" height="10" rx="2.4" fill="' + SCREEN + '"/>' + circ(120, 196, 5, '#e8ecf1', ' stroke="' + EDGE + '" stroke-width="1.5"');
     var A = arms(P.arms, SHELL, ST, color);
     s += A.back;
 
-    // 머리
-    s += ell(120, 96, 76, 66, SHELL, ST);
-    s += hat === 'cap' ? cap(color) : antenna(color);
-    // 볼
-    s += ell(70, 120, 13, 9, CHEEK, ' opacity=".9"') + ell(170, 120, 13, 9, CHEEK, ' opacity=".9"');
-    s += eyes(P.eyes, P.brows);
-    if (opt.glasses) s += glasses();
-    s += mouth(P.mouth);
+    // 머리 — 파이보: 네모난 둥근 머리 / PiBrain: 보드(검은 화면 · 카메라 · 버튼 넷)
+    if (PB) {
+      s += '<rect x="36" y="40" width="168" height="120" rx="20" fill="' + SHELL + '"' + ST + '/>';
+      s += '<rect x="46" y="54" width="118" height="94" rx="12" fill="' + SCREEN + '"/>';
+      s += circ(186, 66, 6, SCREEN) + circ(184, 64, 2, '#9fb2c8');
+      [[186, 96], [173, 109], [199, 109], [186, 122]].forEach(function (q) { s += circ(q[0], q[1], 5.6, '#e8ecf1', ' stroke="' + EDGE + '" stroke-width="1.5"'); });
+      s += '<rect x="100" y="158" width="40" height="8" rx="3" fill="' + SHELL + '"' + ST + '/>';
+      s += hat === 'cap' ? '<g transform="translate(0 16.2) scale(1 .76)">' + cap(color) + '</g>' : '<g transform="translate(0 -12)">' + antenna(color) + '</g>';
+      s += '<g transform="translate(-14 0)">' + eyes(P.eyes, P.brows) + (opt.glasses ? glasses() : '') + mouth(P.mouth) + '</g>';
+    } else {
+      s += '<rect x="50" y="52" width="140" height="106" rx="30" fill="' + SHELL + '"' + ST + '/>';
+      s += line('M68 70 Q80 60 100 60', '#fff', 5);
+      s += hat === 'cap' ? '<g transform="translate(0 32) scale(1 .58)">' + cap(color) + '</g>' : antenna(color);
+      s += eyes(P.eyes, P.brows);
+      if (opt.glasses) s += glasses();
+      s += mouth(P.mouth);
+    }
     s += A.front;                                                      // 머리 앞으로 오는 팔(손 흔들기·긁기·먹기)
     s += '</g>';
     P.fx.forEach(function (k) { s += fx(k); });
     return s + '</svg>';
   }
 
-  function antenna(c) {
-    return '<rect x="115" y="20" width="10" height="13" rx="3" fill="' + c + '"/>' +
-      circ(120, 13, 9, 'none', ' stroke="' + c + '" stroke-width="6"') +
-      circ(110.5, 15, 3.6, c) + circ(129.5, 10, 3.6, c) +
-      circ(117, 8, 2.2, 'rgba(255,255,255,.55)');
+  function antenna(c) {                         // 실물처럼 가는 대 + 고리 + 작은 고리 둘(친구 색)
+    return '<rect x="116.5" y="34" width="7" height="20" rx="3" fill="' + c + '"/>' +
+      circ(120, 24, 11, 'none', ' stroke="' + c + '" stroke-width="5.5"') +
+      circ(128.5, 15.5, 4, '#fff', ' stroke="' + c + '" stroke-width="3"') + circ(111.5, 32.5, 4, '#fff', ' stroke="' + c + '" stroke-width="3"');
   }
   function cap(c) {
     return path('M46 92 Q44 28 120 26 Q196 28 194 92 Q120 78 46 92 Z', c) +
@@ -117,45 +130,46 @@
     return { back: s, front: front };
   }
 
-  function eyes(kind, brows) {
-    var s = '';
+  function eyes(kind, brows) {                  // 파이보: 하늘색 테 + 검은 눈 / PiBrain: 검은 화면 위 하늘색 눈
+    var s = '', LIGHT = '#f3f6f9', E = PB ? CYAN : INK;
     [-1, 1].forEach(function (k) {
       var x = 120 + k * 28, y = 100, e = kind;
       if (kind === 'wink' && k === 1) e = 'happy';
       else if (kind === 'wink') e = 'open';
       if (e === 'open') {
-        s += '<g class="kids-face__eye">' + circ(x, y, 10.5, INK) + circ(x + 3.2, y - 4, 3.6, '#fff') + circ(x - 3.4, y + 3.6, 1.5, '#fff') + '</g>';
+        s += '<g class="kids-face__eye">' + (PB ? circ(x, y, 13, CYAN) + circ(x + 3.6, y - 4.2, 3.6, '#fff')
+          : circ(x, y, 16, CYAN) + circ(x, y, 12, INK) + circ(x - 4, y - 4.4, 3.8, '#fff') + circ(x + 3.8, y + 4, 1.7, '#fff')) + '</g>';
       } else if (e === 'happy') {
-        s += line('M' + (x - 9) + ' ' + (y + 3) + ' Q' + x + ' ' + (y - 9) + ' ' + (x + 9) + ' ' + (y + 3), INK, 4.5);
+        s += (PB ? '' : circ(x, y, 14, LIGHT, ' stroke="' + CYAN + '" stroke-width="4"')) + line('M' + (x - 8) + ' ' + (y + 3) + ' Q' + x + ' ' + (y - 9) + ' ' + (x + 8) + ' ' + (y + 3), E, 4.5);
       } else if (e === 'closed') {
-        s += line('M' + (x - 9) + ' ' + (y - 1) + ' Q' + x + ' ' + (y + 8) + ' ' + (x + 9) + ' ' + (y - 1), INK, 4.5);
-      } else if (e === 'half') {
-        s += path('M' + (x - 9) + ' ' + (y + 2) + ' A9 7 0 0 0 ' + (x + 9) + ' ' + (y + 2) + ' Z', INK);   // 반쯤 감긴 눈
+        s += (PB ? '' : circ(x, y, 14, LIGHT, ' stroke="' + CYAN + '" stroke-width="4"')) + line('M' + (x - 8) + ' ' + (y - 1) + ' Q' + x + ' ' + (y + 8) + ' ' + (x + 8) + ' ' + (y - 1), E, 4.5);
+      } else if (e === 'half') {                   // 반쯤 감긴 눈
+        s += PB ? path('M' + (x - 13) + ' ' + y + ' A13 13 0 0 0 ' + (x + 13) + ' ' + y + ' Z', CYAN)
+          : circ(x, y, 16, CYAN) + path('M' + (x - 12) + ' ' + y + ' A12 12 0 0 0 ' + (x + 12) + ' ' + y + ' Z', INK) + line('M' + (x - 13) + ' ' + y + ' H' + (x + 13), LIGHT, 3);
       }
-      if (brows) s += line('M' + (x - k * 12) + ' ' + (y - 21) + ' L' + (x + k * 6) + ' ' + (y - 16), INK, 3.5);
+      if (brows) s += line('M' + (x - k * 12) + ' ' + (y - 24) + ' L' + (x + k * 6) + ' ' + (y - 19), E, 3.5);
     });
     return s;
   }
 
   function glasses() {
-    var s = '', g = ' stroke="' + INK + '" stroke-width="3.6"';
+    var C2 = PB ? '#dfe4ec' : INK, s = '', g = ' stroke="' + C2 + '" stroke-width="3.6"';
     s += circ(92, 100, 18, 'rgba(255,255,255,.12)', g) + circ(148, 100, 18, 'rgba(255,255,255,.12)', g);
-    s += line('M110 98 Q120 92 130 98', INK, 3.4);
-    s += line('M74 97 L50 92', INK, 3.2) + line('M166 97 L190 92', INK, 3.2);
+    s += line('M110 98 Q120 92 130 98', C2, 3.4);
+    if (!PB) s += line('M74 97 L50 92', C2, 3.2) + line('M166 97 L190 92', C2, 3.2);
     return s;
   }
 
-  function mouth(kind) {
-    if (kind === 'smile') return path('M106 118 Q120 120 134 118 Q133 138 120 138 Q107 138 106 118 Z', MOUTH) +
-      path('M111 131 Q120 124 129 131 Q126 138 120 138 Q114 138 111 131 Z', TONGUE);
-    if (kind === 'big') return path('M102 116 Q120 119 138 116 Q137 143 120 143 Q103 143 102 116 Z', MOUTH) +
-      path('M109 134 Q120 125 131 134 Q127 143 120 143 Q113 143 109 134 Z', TONGUE);
-    if (kind === 'o') return ell(120, 127, 7.5, 9, MOUTH) + ell(120, 132, 4.5, 3, TONGUE);
-    if (kind === 'yawn') return ell(120, 128, 9, 11, MOUTH) + ell(120, 134, 5.5, 3.5, TONGUE);
-    if (kind === 'small') return ell(120, 126, 5.5, 3.2, MOUTH);
-    if (kind === 'frown') return line('M108 132 Q120 121 132 132', MOUTH, 4);
-    if (kind === 'wavy') return line('M106 128 q3.5 -4 7 0 t7 0 t7 0 t7 0', MOUTH, 3.6);
-    if (kind === 'chew') return ell(116, 126, 9, 5.5, MOUTH) + ell(116, 128, 5, 2.4, TONGUE);
+  function mouth(kind) {                        // 실물 반달 입(가운데 카메라). PiBrain 은 화면 위 하늘색
+    var M = PB ? CYAN : MOUTH, lens = PB ? '' : circ(120, 125, 3.2, LENS) + circ(119, 124, 1, '#9fb2c8');
+    if (kind === 'smile') return path('M104 117 H136 A16 15 0 0 1 104 117 Z', M) + lens;
+    if (kind === 'big') return path('M100 115 H140 A20 19 0 0 1 100 115 Z', M) + lens;
+    if (kind === 'o') return ell(120, 127, 7.5, 9, M);
+    if (kind === 'yawn') return ell(120, 128, 9, 11, M);
+    if (kind === 'small') return ell(120, 126, 5.5, 3.2, M);
+    if (kind === 'frown') return line('M108 132 Q120 121 132 132', M, 4);
+    if (kind === 'wavy') return line('M106 128 q3.5 -4 7 0 t7 0 t7 0 t7 0', M, 3.6);
+    if (kind === 'chew') return ell(116, 126, 9, 5.5, M);
     return '';
   }
 
