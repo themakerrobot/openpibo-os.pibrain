@@ -8,13 +8,13 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
   <link rel="stylesheet" href="../static/pibo-ui.css?ver=261123v9" />
-  <link rel="stylesheet" href="../static/play.css?ver=261123v1" />
+  <link rel="stylesheet" href="../static/play.css?ver=261123v3" />
   <link rel="shortcut icon" href="../static/icon.png?ver=261102v2" type="image/png" />
   <!-- 문구는 IDE 의 ko2en.js 를 같이 쓴다(kids_* 키, 영문판 델타를 늘리지 않으려고). IDE(80)는 늘 떠 있다 -->
   <script>(function () { var p = new URLSearchParams(location.search).get('ide') || 80;   /* ?ide= 는 시험용 */
-    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261123v8"><\/script>');
+    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261123v9"><\/script>');
     /* 처음 화면 그림 — 대문과 같은 파이보 캐릭터 장면(IDE 의 pibo-art.js, 261123). 못 받으면 Font Awesome 기호 */
-    document.write('<script src="http://' + location.hostname + ':' + p + '/static/v2/pibo-art.js?ver=261123v4"><\/script>'); })();</script>
+    document.write('<script src="http://' + location.hostname + ':' + p + '/static/v2/pibo-art.js?ver=261123v5"><\/script>'); })();</script>
 </head>
 
 <!-- pb-plain: 키트의 pb-v2 층을 얹지 않는다(그 층의 앱 버튼 규칙이 카드 색을 덮는다) -->
@@ -33,7 +33,7 @@
   </header>
 
   <main class="kids-main">
-    <!-- 처음 — 키우기 + (파이보 조종하기 / PiBrain 블록 쌓기). play.js 가 그린다 -->
+    <!-- 처음 — 키우기 + (파이보 조종하기 / PiBrain 픽셀 그림). play.js 가 그린다 -->
     <section class="kids-view" id="v_home" hidden>
       <div class="kids-home" id="home_grid"></div>
     </section>
@@ -79,43 +79,45 @@
       </div>
       <p class="kids-note kids-drive__hint" data-key="kids_drive_hint"></p>
     </section>
-    <!-- 블록 쌓기 (PiBrain 만) — 게임은 LCD 에, 여기엔 점수·통계와 태블릿 단추 -->
-    <section class="kids-view" id="v_game" hidden>
+    <!-- 픽셀 그림 (PiBrain 만) — 태블릿에서 그리면 LCD 에 그대로. 물리 버튼은 쓰지 않는다 -->
+    <section class="kids-view" id="v_art" hidden>
       <div class="kids-bar">
         <button type="button" class="kids-back" data-go="home" data-title-key="kids_back"><i class="fa-solid fa-arrow-left"></i></button>
-        <h1 class="kids-h1 kids-h1--bar" data-key="play_game"></h1>
-        <span class="kids-game__state" id="gm_state"></span>
+        <h1 class="kids-h1 kids-h1--bar" data-key="play_art"></h1>
+        <div class="kids-seg" id="ar_size"></div>
       </div>
-      <p class="kids-game__where"><i class="fa-solid fa-display"></i><span data-key="play_game_where"></span></p>
-      <div class="kids-game">
-        <div class="kids-game__box kids-game__now">
-          <h2 class="kids-drive__h"><i class="fa-solid fa-star"></i><span data-key="play_game_now"></span></h2>
-          <div class="kids-gnums">
-            <div class="kids-gnum kids-gnum--big"><span data-key="play_game_score"></span><b id="gm_score">0</b></div>
-            <div class="kids-gnum"><span data-key="play_game_lines"></span><b id="gm_lines">0</b></div>
-            <div class="kids-gnum"><span data-key="play_game_level"></span><b id="gm_level">1</b></div>
-            <div class="kids-gnum"><span data-key="play_game_time"></span><b id="gm_time">0:00</b></div>
+      <p class="kids-art__where"><i class="fa-solid fa-display"></i><span data-key="play_art_where"></span></p>
+      <div class="kids-art">
+        <div class="kids-art__board">
+          <div class="kids-art__tools">
+            <div class="kids-seg" id="ar_tools"></div>
+            <span class="kids-bar__fill"></span>
+            <button type="button" class="kids-chip" id="ar_undo"><i class="fa-solid fa-rotate-left"></i><span data-key="play_art_undo"></span></button>
+            <button type="button" class="kids-chip" id="ar_clear"><i class="fa-solid fa-trash-can"></i><span data-key="play_art_clear"></span></button>
           </div>
-          <div class="kids-gkeys" id="gm_keys"></div>
-          <div class="kids-gactions">
-            <button type="button" class="kids-btn kids-btn--main" id="gm_start"><i class="fa-solid fa-play"></i><span data-key="play_game_start"></span></button>
-            <button type="button" class="kids-btn" id="gm_pause"><i class="fa-solid fa-pause"></i><span data-key="play_game_pause"></span></button>
-          </div>
+          <div class="kids-art__canvaswrap" id="ar_wrap"><canvas id="ar_canvas"></canvas></div>
+          <div class="kids-art__palette" id="ar_palette"></div>
         </div>
-        <div class="kids-game__box">
-          <h2 class="kids-drive__h"><i class="fa-solid fa-chart-column"></i><span data-key="play_game_stats"></span></h2>
-          <div class="kids-gnums kids-gnums--stats">
-            <div class="kids-gnum"><span data-key="play_game_best"></span><b id="gs_best">0</b></div>
-            <div class="kids-gnum"><span data-key="play_game_games"></span><b id="gs_games">0</b></div>
-            <div class="kids-gnum"><span data-key="play_game_avg"></span><b id="gs_avg">0</b></div>
-            <div class="kids-gnum"><span data-key="play_game_tlines"></span><b id="gs_lines">0</b></div>
+        <div class="kids-art__side">
+          <div class="kids-art__box">
+            <h2 class="kids-drive__h"><i class="fa-solid fa-film"></i><span data-key="play_art_frames"></span></h2>
+            <div class="kids-art__frames" id="ar_frames"></div>
+            <p class="kids-note" data-key="play_art_frames_tip"></p>
+            <span class="pb-label" data-key="play_art_speed"></span>
+            <div class="kids-seg" id="ar_fps"></div>
+            <div class="kids-art__acts">
+              <button type="button" class="kids-btn kids-btn--tint" id="ar_play"><i class="fa-solid fa-play"></i><span data-key="play_art_play"></span></button>
+              <button type="button" class="kids-btn" id="ar_replay" data-title-key="play_art_replay_tip"><i class="fa-solid fa-clock-rotate-left"></i><span data-key="play_art_replay"></span></button>
+            </div>
           </div>
-          <span class="pb-label" data-key="play_game_recent"></span>
-          <div class="kids-gbars" id="gs_recent"></div>
-          <span class="pb-label" data-key="play_game_clears"></span>
-          <div class="kids-gclears" id="gs_clears"></div>
-          <span class="pb-label" data-key="play_game_pieces"></span>
-          <div class="kids-gpieces" id="gs_pieces"></div>
+          <div class="kids-art__box">
+            <div class="kids-art__acts">
+              <button type="button" class="kids-btn kids-btn--main" id="ar_save"><i class="fa-solid fa-floppy-disk"></i><span data-key="play_art_save"></span></button>
+              <button type="button" class="kids-btn" id="ar_new"><i class="fa-solid fa-file"></i><span data-key="play_art_new"></span></button>
+            </div>
+            <h2 class="kids-drive__h kids-art__galh"><i class="fa-solid fa-images"></i><span data-key="play_art_gallery"></span><small id="ar_count"></small></h2>
+            <div class="kids-art__gallery" id="ar_gallery"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -162,8 +164,8 @@
   </div>
 
 
-  <script src="../static/pibo-ui.js?ver=261123v9"></script>
+  <script src="../static/pibo-ui.js?ver=261123v10"></script>
   <script src="../static/pet.js?ver=261123v1"></script>
-  <script src="../static/play.js?ver=261123v1"></script>
+  <script src="../static/play.js?ver=261123v3"></script>
 </body>
 </html>

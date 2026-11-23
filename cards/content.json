@@ -1,5 +1,5 @@
 {
-  "_": "카드 코딩 내용 — 카드·개념 사다리·차시·도전 과제·말(ko/en). {light}·{name}·{name_ya} 는 제품마다 바뀐다(run_cards.py 의 ROBOTS). 키우기·조종하기·블록 쌓기는 play/content.json. 설계는 KIDS.md",
+  "_": "카드 코딩 내용 — 카드·개념 사다리·차시·도전 과제·말(ko/en). {light}·{name}·{name_ya} 는 제품마다 바뀐다(run_cards.py 의 ROBOTS). 키우기·조종하기·픽셀 그림은 play/content.json. 설계는 KIDS.md",
 
   "cards": {
     "m:greeting":   {"kind": "motion", "arg": "greeting", "icon": "fa-hand", "device": ["pibo"], "ko": "인사", "en": "Hello"},
