@@ -26,6 +26,7 @@ function hidePopups() {
   if (alertPopup) alertPopup.style.display = 'none';
   if (confirmPopup) confirmPopup.style.display = 'none';
   if (promptPopup) promptPopup.style.display = 'none';
+  const cp = document.getElementById('copyPopup'); if (cp) cp.style.display = 'none';
 }
 
 // --- alert_popup Function (변경 없음) ---
@@ -651,6 +652,52 @@ function fmIcon(item) {
   return "<i class='fa-solid fa-file fm-ic' data-kind='file'></i>";
 }
 
+// ── 파일 서랍 [복사]·[옮기기](261123) — 받을 폴더를 고르는 창. 돌려주는 값: {move, dst} 또는 null ──
+const COPY_DESTS = [
+  ["/home/pi/code", "fa-folder"], ["/home/pi/myimage", "fa-folder"], ["/home/pi/myaudio", "fa-folder"],
+  ["/home/pi/mymodel", "fa-folder"], ["/home/pi/usb", "fa-usb"],
+];
+let copyLastDst = "";
+function copy_popup(name, here) {
+  return new Promise((resolve) => {
+    hidePopups();
+    const pop = document.getElementById("copyPopup");
+    const box = document.getElementById("copyDests");
+    const okBtn = document.getElementById("copyOkBtn");
+    const mvBtn = document.getElementById("copyMoveBtn");
+    const noBtn = document.getElementById("copyCancelBtn");
+    document.getElementById("copyMessageElement").textContent = t("fm_copy_msg", name);
+    let sel = copyLastDst && copyLastDst !== here ? copyLastDst : (COPY_DESTS.find(([p]) => p !== here) || COPY_DESTS[0])[0];
+    box.innerHTML = "";
+    const pick = (p) => {
+      sel = p;
+      box.querySelectorAll("button").forEach((b) => b.setAttribute("aria-checked", b.dataset.dst === p ? "true" : "false"));
+      mvBtn.disabled = (p === here);   // 지금 폴더로는 옮길 수 없다(복사는 이름_1 로 하나 더)
+    };
+    COPY_DESTS.forEach(([p, ic]) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "v2-copy-dest"; b.dataset.dst = p; b.setAttribute("role", "radio");
+      b.innerHTML = `<i class="${ic === "fa-usb" ? "fa-brands" : "fa-solid"} ${ic}"></i>`;
+      const s = document.createElement("span"); s.textContent = p.split("/").pop(); b.appendChild(s);
+      if (p === here) { const h = document.createElement("small"); h.textContent = t("fm_here"); b.appendChild(h); }
+      b.addEventListener("click", () => pick(p));
+      box.appendChild(b);
+    });
+    pick(sel);
+    pop.style.display = "flex";
+    okBtn.focus();
+    const done = (v) => {
+      okBtn.onclick = mvBtn.onclick = noBtn.onclick = null;
+      pop.style.display = "none";
+      if (v) copyLastDst = v.dst;
+      resolve(v);
+    };
+    okBtn.onclick = () => done({ move: false, dst: sel });
+    mvBtn.onclick = () => done({ move: true, dst: sel });
+    noBtn.onclick = () => done(null);
+  });
+}
+
 socket.on("update_file_manager", (d) => {
   CURRENT_DIR = "path" in d ? d["path"].split("/") : CURRENT_DIR;
   $('#path').text(CURRENT_DIR.join("/"));
@@ -773,6 +820,34 @@ socket.on("update_file_manager", (d) => {
                 scrollToContent();
               }
               socket.emit('rename', { oldpath: CURRENT_DIR.join("/") + "/" + name, newpath: CURRENT_DIR.join("/") + "/" + newname });
+            })
+          ,
+          $("<td style='width:15px;text-align:center'>").append([""].includes(data[i].type) || data[i].protect == true ? "" : $("<i class='fa-solid fa-copy'>").attr("title", t("fm_copy_tip")))
+            .click(async function () {
+              if ($(this).html() == "") return;
+
+              let idx = $(this).closest('tr').index();
+              let name = $(`#fm_table tr:eq(${idx}) td:eq(1)`).text();
+              const src = CURRENT_DIR.join("/") + "/" + name;
+              const r = await copy_popup(name, CURRENT_DIR.join("/"));
+              if (r == null) return;
+              if (r.move) {   // 열려 있던 파일을 옮기면 이름 바꾸기처럼 편집기를 비운다
+                if (isPathOrInside($("#codepath").text(), src)) {
+                  $("#codepath").text("");
+                }
+                if (isPathOrInside(CODE_PATH, src)) {
+                  CODE_PATH = "";
+                  saveCode = "";
+                  codeEditor.setValue(saveCode);
+                }
+                if (isPathOrInside(BLOCK_PATH, src)) {
+                  BLOCK_PATH = "";
+                  saveBlock = "{}";
+                  Blockly.serialization.workspaces.load(JSON.parse(saveBlock), workspace);
+                  scrollToContent();
+                }
+              }
+              socket.emit(r.move ? 'move' : 'copy', { src: src, dst: r.dst });
             })
           ,
           $("<td style='width:15px;text-align:center'>").append([""].includes(data[i].type) || data[i].protect == true ? "" : "<i class='fa-solid fa-trash-can'></i>")

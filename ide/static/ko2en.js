@@ -431,7 +431,24 @@ const translations = {
   chat_desc_themaker_en: { ko: "영어로 이야기하고 로봇 기능도 써요.", en: "Talks in English and can use the robot." },
   chat_tag_tools:   { ko: "불빛 · 보기 · 움직이기", en: "Lights · Look · Move" },
   chat_tag_tools_pb:{ ko: "불빛 · 보기", en: "Lights · Look" },
-  v2_live_hint:     { ko: "그림을 보여주는 블록을 쓰면 여기에 나와요", en: "Pictures from your program appear here" }
+  v2_live_hint:     { ko: "그림을 보여주는 블록을 쓰면 여기에 나와요", en: "Pictures from your program appear here" },
+  // 파일 서랍 [복사]·[옮기기](261123)
+  fm_copy:          { ko: "복사", en: "Copy" },
+  fm_move:          { ko: "옮기기", en: "Move" },
+  fm_copy_tip:      { ko: "다른 폴더로 복사·옮기기", en: "Copy or move to another folder" },
+  fm_copy_msg:      { ko: (n) => `'${n}' — 받을 폴더를 고르세요.`, en: (n) => `'${n}' — choose a folder.` },
+  fm_here:          { ko: "지금 폴더", en: "This folder" },
+  copy_done:        { ko: (p) => `복사했어요.\n${p}`, en: (p) => `Copied.\n${p}` },
+  move_done:        { ko: (p) => `옮겼어요.\n${p}`, en: (p) => `Moved.\n${p}` },
+  err_copy_dest:    { ko: "받을 폴더가 올바르지 않아요.", en: "The destination folder is not valid." },
+  err_copy_parse:   { ko: "복사하지 못했어요.", en: "Could not copy." },
+  err_copy_protected:   { ko: "보호된 파일이라 복사·옮기기를 할 수 없어요.", en: "This file is protected and can't be copied or moved." },
+  err_copy_dest_folder: { ko: "받을 폴더(code·usb 등) 자체는 복사·옮기기를 할 수 없어요.", en: "A destination folder (code, usb, ...) itself can't be copied or moved." },
+  err_copy_into_self:   { ko: "폴더를 자기 안으로 복사·옮기기를 할 수 없어요.", en: "A folder can't be copied or moved into itself." },
+  err_copy_no_usb:  { ko: "USB 가 꽂혀 있지 않아요. 꽂고 다시 해 주세요.", en: "No USB drive is inserted. Insert one and try again." },
+  err_copy_space:   { ko: "남은 공간이 없어 복사하지 못했어요.", en: "Could not copy. There is no free space left." },
+  err_move_same:    { ko: "이미 그 폴더에 있어요.", en: "It is already in that folder." },
+  err_move_remove:  { ko: "복사는 했지만 원래 파일을 지우지 못했어요.", en: "Copied, but could not delete the original." }
 };
 
 // 키 → 현재 언어 문자열. 모르는 키(일반 문자열)는 그대로 반환.

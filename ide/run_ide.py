@@ -625,6 +625,135 @@ async def handle_rename(sid, d):
     except Exception as err:
       await app.sio.emit('update', {'dialog': 'err_load', 'detail': str(err)}, to=sid)
 
+
+# ── 파일 서랍 [복사]·[옮기기](261123, 사용자) ─────────────────────────────
+# 받을 곳은 아래 다섯 폴더뿐(USB ↔ SD 카드처럼 장치를 넘어도 된다 — [이름 바꾸기]의 os.rename 은 못 넘는다).
+# USB(exFAT)는 권한·소유자를 못 바꾸므로 내용과 시각만 옮긴다(shutil.copy2·copytree 는 거기서 오류를 낸다).
+COPY_DESTS = ['/home/pi/code', '/home/pi/myimage', '/home/pi/myaudio', '/home/pi/mymodel', '/home/pi/usb']
+
+def _copy_any(src, dst):
+  # 폴더는 안까지, 링크는 가리키는 파일만(폴더 링크는 건너뜀 — 돌고 도는 링크 방지)
+  if os.path.isdir(src) and not os.path.islink(src):
+    os.mkdir(dst)
+    for e in os.scandir(src):
+      _copy_any(e.path, os.path.join(dst, e.name))
+  elif os.path.islink(src) and not os.path.isfile(src):
+    return
+  else:
+    shutil.copyfile(src, dst)
+  try:
+    st = os.stat(src)
+    os.utime(dst, (st.st_atime, st.st_mtime))
+  except OSError:
+    pass
+
+def _chown_pi(p):
+  # IDE 는 root 로 돈다. SD 카드에 만든 것은 pi 소유로(USB 는 마운트 옵션이 정해서 실패 — 무시)
+  try:
+    for root, dirs, files in os.walk(p):
+      for n in dirs + files:
+        os.lchown(os.path.join(root, n), 1000, 1000)
+    os.lchown(p, 1000, 1000)
+  except OSError:
+    pass
+
+def _free_name(d, name):
+  # 같은 이름이 있으면 이름_1.확장자, 이름_2.확장자 … (빈칸·괄호 없이 — 파이썬 경로로 쓰기 쉽게)
+  if not os.path.lexists(os.path.join(d, name)):
+    return name
+  dot = name.rfind('.')
+  stem, ext = (name[:dot], name[dot:]) if dot > 0 else (name, '')
+  i = 1
+  while os.path.lexists(os.path.join(d, f'{stem}_{i}{ext}')):
+    i += 1
+  return f'{stem}_{i}{ext}'
+
+def copy_move(src, dst_dir, move):
+  """돌려주는 값: (오류 키 또는 None, 새 이름)"""
+  if dst_dir not in COPY_DESTS:
+    return 'err_copy_dest', None
+  src = src.rstrip('/')
+  if not os.path.lexists(src):
+    return 'err_copy_parse', None
+  if is_protect(src) or is_protect(dst_dir):
+    return 'err_copy_protected', None
+  real_src = os.path.realpath(src)
+  real_dst = os.path.realpath(dst_dir)
+  if real_src in [os.path.realpath(p) for p in COPY_DESTS] or real_src == '/home/pi':
+    return 'err_copy_dest_folder', None   # 받을 곳 폴더 자체(code·usb …)는 옮기지 않는다
+  if real_dst == real_src or real_dst.startswith(real_src + '/'):
+    return 'err_copy_into_self', None
+  if dst_dir == '/home/pi/usb':
+    # USB 가 안 꽂혀 있으면 /media/usb 는 SD 카드의 빈 폴더다 — 거기 쓰지 않게 장치 번호로 가른다
+    try:
+      os.listdir(dst_dir)   # 자동 마운트를 깨운다
+      if os.stat(real_dst).st_dev == os.stat('/home/pi').st_dev:
+        return 'err_copy_no_usb', None
+    except OSError:
+      return 'err_copy_no_usb', None
+  elif not os.path.isdir(dst_dir):
+    try:
+      os.makedirs(dst_dir)
+      _chown_pi(dst_dir)
+    except OSError:
+      return 'err_copy_parse', None
+  if move and os.path.dirname(real_src) == real_dst:
+    return 'err_move_same', None
+  name = _free_name(dst_dir, os.path.basename(src))
+  dst = os.path.join(dst_dir, name)
+  try:
+    if move and os.lstat(src).st_dev == os.stat(real_dst).st_dev:
+      os.rename(src, dst)   # 같은 장치는 바로 옮긴다(링크도 그대로)
+      return None, name
+    _copy_any(real_src if os.path.islink(src) else src, dst)
+  except Exception as err:
+    print(f'[copy] {src} -> {dst}: {err}')
+    try:   # 반쯤 만든 것은 지운다. 원본은 그대로
+      if os.path.isdir(dst) and not os.path.islink(dst):
+        shutil.rmtree(dst)
+      elif os.path.lexists(dst):
+        os.remove(dst)
+    except OSError:
+      pass
+    return ('err_copy_space' if getattr(err, 'errno', None) == 28 else 'err_copy_parse'), None
+  _chown_pi(dst)
+  if move:
+    try:
+      if os.path.isdir(src) and not os.path.islink(src):
+        shutil.rmtree(src)
+      else:
+        os.remove(src)
+    except Exception as err:
+      print(f'[move] {src}: {err}')
+      return 'err_move_remove', name   # 복사는 됐고 원본만 못 지움
+  return None, name
+
+@app.sio.on('copy')
+async def handle_copy(sid, d):
+  await copy_or_move(sid, d, False)
+
+@app.sio.on('move')
+async def handle_move(sid, d):
+  await copy_or_move(sid, d, True)
+
+async def copy_or_move(sid, d, move):
+  global codeText, codePath
+  try:
+    src, dst_dir = str(d['src']), str(d['dst'])
+  except Exception:
+    await app.sio.emit('update', {'dialog': 'err_copy_parse'}, to=sid)
+    return
+  err, name = await run_blocking(copy_move, src, dst_dir, move)
+  directory_data = read_directory(PATH)
+  await app.sio.emit('update_file_manager', {'data': directory_data})
+  if move and name and (codePath == src or codePath.startswith(src.rstrip('/') + '/')):
+    codePath = ""
+    codeText = ""
+  if err:
+    await app.sio.emit('update', {'dialog': err}, to=sid)
+  else:
+    await app.sio.emit('update', {'dialog': 'move_done' if move else 'copy_done', 'detail': f"{dst_dir}/{name}"}, to=sid)
+
 def reset_user_dir(p):
   """공장 초기화: 폴더 안을 비우고, 없으면 pi 소유로 만든다. 실패해도 초기화는 이어간다."""
   try:
