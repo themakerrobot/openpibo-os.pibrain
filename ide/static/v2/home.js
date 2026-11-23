@@ -101,20 +101,19 @@
     });
   }
 
-  function dateText() {
-    var d = new Date(), ko = curLang() !== 'en';
-    var W = ko ? ['일', '월', '화', '수', '목', '금', '토'] : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    var M = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return ko ? '<b>' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일</b><span>' + W[d.getDay()] + '요일</span>'
-      : '<b>' + M[d.getMonth()] + ' ' + d.getDate() + '</b><span>' + W[d.getDay()] + '</span>';
+  // 켜진 시간 도장 — 기기는 오프라인이라 날짜·시계를 못 믿는다(261123, 사용자). 날짜 대신 uptime(IDE 아래 상태 줄과 같은 글)
+  function uptimeText(up) {
+    up = Math.max(0, Math.floor(Number(up) || 0));
+    return '<b>' + esc(up ? t('v2_uptime', Math.floor(up / 3600), Math.floor(up % 3600 / 60)) : '—') + '</b><span>' + esc(t('home_uptime')) + '</span>';
   }
 
-  function day(ts) {
-    var d = new Date(ts * 1000), now = new Date();
-    var d0 = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-    if (d.getTime() >= d0) return t('home_today');
-    if (d.getTime() >= d0 - 86400000) return t('home_yesterday');
-    return (d.getMonth() + 1) + '/' + d.getDate();
+  // 얼마 전 — 기기 시계끼리 뺀다(info.now - mtime). 태블릿 시계와 달라도, 기기 날짜가 틀려도 순서·간격은 맞다
+  function ago(ts) {
+    var now = (info && info.now) || Math.floor(Date.now() / 1000), d = Math.max(0, now - ts);
+    if (d < 60) return t('home_ago_now');
+    if (d < 3600) return t('home_ago_min', Math.floor(d / 60));
+    if (d < 86400) return t('home_ago_hour', Math.floor(d / 3600));
+    return t('home_ago_day', Math.floor(d / 86400));
   }
 
   function renderSide() {
@@ -125,7 +124,7 @@
     sub.innerHTML = esc(PRODUCT) + ' · ' + esc(ip) + ' · <span class="home-dot"></span>' + esc(t(offline ? 'v2_disconnected' : 'v2_connected'));
 
     $('st_ver').textContent = s.version || '';
-    $('home_date').innerHTML = dateText();
+    $('home_date').innerHTML = uptimeText(s.uptime);
     var rows = [];
     if (!PIBRAIN && s.battery != null && s.battery !== '') rows.push(['fa-battery-three-quarters', t('home_battery'), s.battery, parseInt(s.battery, 10)]);
     if (s.temp) rows.push(['fa-temperature-half', t('home_temp'), s.temp]);
@@ -148,7 +147,7 @@
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'home-li'; b.title = f.path;
       b.innerHTML = '<i class="' + (py ? 'fa-brands fa-python' : 'fa-solid fa-puzzle-piece') + '"></i><span>' +
-        (dir ? '<small>' + esc(dir.replace(/\//g, ' › ')) + ' › </small>' : '') + esc(name) + '</span><em>' + esc(day(f.mtime)) + '</em>';
+        (dir ? '<small>' + esc(dir.replace(/\//g, ' › ')) + ' › </small>' : '') + esc(name) + '</span><em>' + esc(ago(f.mtime)) + '</em>';
       b.addEventListener('click', function () {
         store.set(LAST, 'code');
         location.href = location.origin + '/ide?open=' + encodeURIComponent(f.path);

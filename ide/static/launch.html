@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PiBrain</title>
 <link rel="stylesheet" href="all.min.css">
-<link rel="stylesheet" href="pibo-ui.css?ver=261123v6">
+<link rel="stylesheet" href="pibo-ui.css?ver=261123v7">
 <link rel="shortcut icon" href="icon.png?ver=261102v2" type="image/png">
 <script>/* 화면 밝기를 첫 페인트 전에 (pibo-ui.js 의 getTheme 과 같은 규칙. 고른 적 없으면 soft) */
 (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
@@ -147,6 +147,7 @@
   setTitle(t('title', name));
   $('app_name').textContent = name; $('app_name').hidden = false;
   $('icon').className = 'fa-solid ' + S.icon;
+  $('icon').style.color = 'var(--app-' + (G && go === 'pet' ? 'pet' : key) + ', inherit)';   // 앱 색(키트 --app-*, 261123) — 상단바·대문과 같은 색
   var target = 'http://' + HOST + ':' + S.port + '/';
   var targetGo = G ? target + '?go=' + go : target;   // 준비 확인은 target, 이동은 targetGo
 
