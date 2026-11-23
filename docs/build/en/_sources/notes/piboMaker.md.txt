@@ -15,7 +15,7 @@ The app that is running now gets a red 'Running' stamp and the one you used last
 | **Chat** | Chat in text with the language model (LLM) running inside PiBrain | Home screen, or [Chat] at the top of the IDE |
 | **Classifier** | Collect examples with the camera and teach your own AI | Home screen, or [Classifier] at the top of the IDE |
 | **Card coding** | Elementary students teach the robot friend tricks with cards (no coding) — Challenges · Make · My tricks | Home screen [Card coding] |
-| **Robot Play** | **Pet** (look after your robot friend) and **Block Stack**, a block puzzle on the LCD (play with buttons 1–4; the tablet shows the score and records) | Home screen, or [Robot Play] at the top of the IDE |
+| **Robot Play** | **Pet** (look after your robot friend) and **Pixel art** (color squares on the tablet and they appear on the LCD; animations, drawing replay and a sketchbook) | Home screen, or [Robot Play] at the top of the IDE |
 | **Help** | This document | Home screen, or [Help] at the top of the IDE |
 
 ```{note}

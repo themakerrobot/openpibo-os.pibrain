@@ -1,6 +1,6 @@
-/* 로봇 놀이 (play/run_play.py, 50070) — [키우기] + 파이보 [조종하기] / PiBrain [블록 쌓기]. 설계는 KIDS.md
+/* 로봇 놀이 (play/run_play.py, 50070) — [키우기] + 파이보 [조종하기] / PiBrain [픽셀 그림]. 설계는 KIDS.md
    261123(사용자): 예전 체험 앱에서 카드 코딩(cards/)을 따로 빼고, 로봇 놀이를 따로 폴더·서버로 두었다.
-   문구는 IDE 의 ko2en.js(전역 translations · t · lang)를 같이 쓴다. 키는 kids_*(키우기·조종하기) · play_*(블록 쌓기).
+   문구는 IDE 의 ko2en.js(전역 translations · t · lang)를 같이 쓴다. 키는 kids_*(키우기·조종하기) · play_*(픽셀 그림).
    구형 브라우저 기준(CLAUDE.md '디자인 시스템')이라 ES5 + fetch */
 (function () {
   'use strict';
@@ -24,30 +24,30 @@
   function each(sel, fn) { Array.prototype.forEach.call(document.querySelectorAll(sel), fn); }
 
   /* ── 화면 바꾸기 ─────────────────────────────────────────────────── */
-  var VIEWS = ['home', 'pet', 'drive', 'game'];
-  function feature() { return C && C.game ? 'game' : (C && C.drive && C.drive.move.length ? 'drive' : null); }   // 키우기 옆 칸
+  var VIEWS = ['home', 'pet', 'drive', 'art'];
+  function feature() { return C && C.art ? 'art' : (C && C.drive && C.drive.move.length ? 'drive' : null); }   // 키우기 옆 칸
   function show(view) {
     if (VIEWS.indexOf(view) < 0 || (view !== 'home' && view !== 'pet' && view !== feature())) view = 'home';
     if (S.view === 'pet' && view !== 'pet') leavePet();
     if (S.view === 'drive' && view !== 'drive') leaveDrive();
-    if (S.view === 'game' && view !== 'game') leaveGame();
+    if (S.view === 'art' && view !== 'art') leaveArt();
     S.view = view;
     VIEWS.forEach(function (v) { $('v_' + v).hidden = v !== view; });
     $('home_bt').hidden = view === 'home';
     if (view === 'home') renderHome();
     if (view === 'pet') enterPet();
     if (view === 'drive') enterDrive();
-    if (view === 'game') enterGame();
+    if (view === 'art') enterArt();
     window.scrollTo(0, 0);
   }
   each('[data-go]', function (b) { b.addEventListener('click', function () { show(b.getAttribute('data-go')); }); });
   $('home_bt').addEventListener('click', function () { show('home'); });
 
-  /* ── 처음 — 키우기 + (파이보 조종하기 / PiBrain 블록 쌓기). 대문과 같은 활동지 카드 ── */
+  /* ── 처음 — 키우기 + (파이보 조종하기 / PiBrain 픽셀 그림). 대문과 같은 활동지 카드 ── */
   function homeItems() {
     var a = [{ id: 'pet', art: 'pet', icon: 'fa-heart', name: 'kids_pet', sub: tr('kids_pet_sub') }];
     if (feature() === 'drive') a.push({ id: 'drive', art: 'drive', icon: 'fa-gamepad', name: 'kids_drive', sub: tr('kids_drive_sub') });
-    if (feature() === 'game') a.push({ id: 'game', art: 'blocks', icon: 'fa-cubes-stacked', name: 'play_game', sub: tr('play_game_sub') });
+    if (feature() === 'art') a.push({ id: 'art', art: 'art', icon: 'fa-palette', name: 'play_art', sub: tr('play_art_sub') });
     return a;
   }
   function renderHome() {
@@ -357,105 +357,269 @@
     markDrive(null);
   }
 
-  /* ── 블록 쌓기 (PiBrain 만, 261123) ─────────────────────────────────
-     게임은 LCD 에(서버 game.py 가 그린다). 여기는 지금 판 · 기록 · 태블릿 단추(PiBrain 버튼 1~4 와 같은 일) */
-  var GM = { timer: null, last: null };
-  var GKEY = { left: ['fa-arrow-left', 'play_key_left'], rotate: ['fa-rotate-right', 'play_key_rotate'],
-               right: ['fa-arrow-right', 'play_key_right'], drop: ['fa-arrow-down', 'play_key_drop'] };
-  var PCOLOR = { duo: '#f2b632', trio: '#3b8ff0', corner: '#3aa266', square: '#ff8a3d', stick: '#1fb5d6', tee: '#9b6bd6', hook: '#e8467c', step: '#5b6cff' };   // game.py COLOR 와 같게
-  var PCELLS = { duo: [[0, 0], [1, 0]], trio: [[0, 0], [1, 0], [2, 0]], corner: [[0, 0], [0, 1], [1, 1]], square: [[0, 0], [1, 0], [0, 1], [1, 1]],
-                 stick: [[0, 0], [1, 0], [2, 0], [3, 0]], tee: [[0, 0], [1, 0], [2, 0], [1, 1]], hook: [[0, 0], [0, 1], [0, 2], [1, 2]], step: [[1, 0], [2, 0], [0, 1], [1, 1]] };   // game.py PIECES 와 같게
-  function pieceSvg(k) {
-    return '<svg viewBox="0 0 26 18" aria-hidden="true">' + (PCELLS[k] || []).map(function (c) {
-      return '<rect x="' + (c[0] * 6 + 1) + '" y="' + (c[1] * 6 + 1) + '" width="5" height="5" rx="1" fill="' + PCOLOR[k] + '"/>';
-    }).join('') + '</svg>';
+  /* ── 픽셀 그림 (PiBrain 만, 261123) ──────────────────────────────────
+     태블릿에서 칸을 칠하면 0.08초 안에 LCD 에 그대로(서버 pixel.py 가 그린다). 2~4장이면 [재생] 으로 움직이는 그림,
+     [다시 보기] 는 지금 장을 칠한 순서대로 LCD 에 다시 그린다. [저장] 하면 그림첩에 남고 로봇이 칭찬한다.
+     물리 버튼은 쓰지 않는다(사용자 — 계속 누르는 놀이는 고장 위험) */
+  var AR = { w: 12, h: 16, frames: [], steps: [], cur: 0, tool: 'pen', color: 1, fps: 4, undo: [], id: null,
+             dirty: false, playing: false, down: false, cell: 20, sendT: null, items: [] };
+  var AR_TOOLS = [['pen', 'fa-pencil', 'play_art_pen'], ['eraser', 'fa-eraser', 'play_art_eraser'], ['fill', 'fa-fill-drip', 'play_art_fill']];
+  var AR_FPS = [[2, 'play_art_slow'], [4, 'play_art_normal'], [8, 'play_art_fast']];
+  function arBlank() { var a = [], n = AR.w * AR.h; for (var i = 0; i < n; i++) a.push(0); return a; }
+  function arReset(w, h) {
+    AR.w = w; AR.h = h; AR.frames = [arBlank()]; AR.steps = [[]]; AR.cur = 0; AR.undo = []; AR.id = null; AR.dirty = false;
+    arStop(); arLayout(); arDraw(); arFrames(); arSend(true);
   }
-  function mmss(s) { s = Math.max(0, s | 0); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
-  function renderGameKeys() {
-    var box = $('gm_keys');
-    if (box.childNodes.length) return;
-    var hw = {};
-    Object.keys(C.game_keys || {}).forEach(function (b) { hw[C.game_keys[b]] = b.slice(1); });
-    ['left', 'rotate', 'right', 'drop'].forEach(function (op) {
-      var b = btn('kids-gkey', icon(GKEY[op][0]) + '<b></b><small></small>');
-      b.setAttribute('data-op', op);
-      b.querySelector('b').textContent = tr(GKEY[op][1]);
-      b.querySelector('small').textContent = hw[op] ? tr('play_key_hw', hw[op]) : '';
-      b.addEventListener('click', function () { gameKey(op); });
+  function arCells() { return AR.frames[AR.cur]; }
+  function arConfirm(key) { return !AR.dirty || window.confirm(tr(key)); }
+
+  // 고르는 칸(크기 · 도구 · 빠르기) — 같은 모양의 알약 묶음
+  function seg(box, items, cur, pick) {
+    box.innerHTML = '';
+    items.forEach(function (it) {
+      var b = btn('kids-seg__b' + (it.v === cur ? ' is-on' : ''), (it.icon ? icon(it.icon) : '') + '<span></span>');
+      b.lastChild.textContent = it.label;
+      b.addEventListener('click', function () { pick(it.v); });
       box.appendChild(b);
     });
   }
-  function applyGame(g) {
-    if (!g || g.error) return;
-    GM.last = g;
-    $('gm_score').textContent = g.score;
-    $('gm_lines').textContent = g.lines;
-    $('gm_level').textContent = g.level;
-    $('gm_time').textContent = mmss(g.seconds);
-    var st = $('gm_state');
-    st.setAttribute('data-s', g.state);
-    st.textContent = tr('play_state_' + g.state);
-    $('gm_start').querySelector('span').textContent = tr(g.state === 'play' || g.state === 'pause' ? 'play_game_restart' : 'play_game_start');
-    $('gm_pause').disabled = !(g.state === 'play' || g.state === 'pause');
-    $('gm_pause').querySelector('span').textContent = tr(g.state === 'pause' ? 'play_game_resume' : 'play_game_pause');
-    var s = g.stats || {};
-    $('gs_best').textContent = s.best || 0;
-    $('gs_games').textContent = s.games || 0;
-    $('gs_avg').textContent = s.games ? Math.round(s.total_score / s.games) : 0;
-    $('gs_lines').textContent = s.total_lines || 0;
-    var rec = s.recent || [], max = Math.max.apply(null, [1].concat(rec.map(function (r) { return r.score; })));
-    var bars = $('gs_recent');
-    bars.innerHTML = rec.length ? '' : '<span class="kids-gempty"></span>';
-    if (!rec.length) bars.firstChild.textContent = tr('play_game_norecord');
-    rec.forEach(function (r) {
-      var b = el('div', 'kids-gbar' + (r.score === s.best && s.best ? ' is-best' : ''), '<b></b><i></i>');
-      b.querySelector('b').textContent = r.score;
-      b.querySelector('i').style.height = Math.max(4, Math.round(r.score / max * 90)) + 'px';
-      b.title = tr('play_game_bar', r.n, r.score, r.lines, mmss(r.seconds));
-      bars.appendChild(b);
+  function arControls() {
+    seg($('ar_size'), C.art_sizes.map(function (s) { return { v: s[0] + 'x' + s[1], label: s[0] + '×' + s[1] }; }), AR.w + 'x' + AR.h, function (v) {
+      var p = v.split('x').map(Number);
+      if (p[0] === AR.w) return;
+      if (!arConfirm('play_art_size_q')) return;
+      arReset(p[0], p[1]); arControls();
     });
-    var cl = $('gs_clears');
-    cl.innerHTML = '';
-    (s.clears || [0, 0, 0, 0]).forEach(function (n, i) {
-      var c = el('div', 'kids-gclear', '<span></span><b></b>');
-      c.querySelector('span').textContent = tr('play_game_clear_n', i + 1);
-      c.querySelector('b').textContent = n;
-      cl.appendChild(c);
+    seg($('ar_tools'), AR_TOOLS.map(function (x) { return { v: x[0], icon: x[1], label: tr(x[2]) }; }), AR.tool, function (v) { AR.tool = v; arControls(); });
+    seg($('ar_fps'), AR_FPS.map(function (x) { return { v: x[0], label: tr(x[1]) }; }), AR.fps, function (v) {
+      AR.fps = v; arControls();
+      if (AR.playing) arPlay(true);
     });
-    var pc = $('gs_pieces');
-    pc.innerHTML = '';
-    Object.keys(PCELLS).forEach(function (k) {
-      var p = el('span', 'kids-gpiece', pieceSvg(k) + '<span></span>');
-      p.lastChild.textContent = (s.count && s.count[k]) || 0;
-      pc.appendChild(p);
+    var pal = $('ar_palette');
+    pal.innerHTML = '';
+    C.art_palette.forEach(function (c, i) {
+      var b = btn('kids-art__sw' + (i === AR.color && AR.tool !== 'eraser' ? ' is-on' : ''), '');
+      b.style.background = c;
+      b.title = c;
+      b.addEventListener('click', function () { AR.color = i; if (AR.tool === 'eraser') AR.tool = 'pen'; arControls(); });
+      pal.appendChild(b);
     });
+    $('ar_play').querySelector('i').className = 'fa-solid ' + (AR.playing ? 'fa-stop' : 'fa-play');
+    $('ar_play').querySelector('span').textContent = tr(AR.playing ? 'play_art_stop' : 'play_art_play');
+    $('ar_play').disabled = AR.frames.length < 2 && !AR.playing;
+    $('ar_count').textContent = AR.items.length + ' / ' + C.art_max;
   }
-  function gameKey(op) {
-    post('/api/game/key', { op: op, lang: L() }).then(applyGame).catch(function () { toast(tr('kids_err_conn'), 'error'); });
+
+  // 캔버스 — 화면 높이에 맞춰 한 칸 크기를 정한다. 칸 사이 옅은 줄, 앞 장은 옅게 비친다(조금씩 바꿔 그리기 쉽게)
+  function arLayout() {
+    var wrap = $('ar_wrap'), cv = $('ar_canvas');
+    // 캔버스 + 아래 색 줄이 한 화면에 들어오게(색을 고르러 스크롤하지 않게). 좁은 화면(세로)은 폭에 맞춘다
+    var top = wrap.getBoundingClientRect().top + (window.pageYOffset || 0);
+    var maxH = Math.max(240, Math.min(window.innerHeight - top - 96, 640)), maxW = Math.max(180, wrap.clientWidth - 4);
+    AR.cell = Math.max(6, Math.floor(Math.min(maxH / AR.h, maxW / AR.w)));
+    var r = window.devicePixelRatio || 1;
+    cv.style.width = AR.cell * AR.w + 'px'; cv.style.height = AR.cell * AR.h + 'px';
+    cv.width = AR.cell * AR.w * r; cv.height = AR.cell * AR.h * r;
+    cv.getContext('2d').setTransform(r, 0, 0, r, 0, 0);
   }
-  function gamePoll() {
-    get('/api/game').then(applyGame).catch(function () {}).then(function () {
-      if (S.view === 'game') GM.timer = setTimeout(gamePoll, 500);
+  function arDraw() {
+    var cv = $('ar_canvas'), g = cv.getContext('2d'), s = AR.cell, cells = arCells(), prev = AR.cur > 0 ? AR.frames[AR.cur - 1] : null;
+    for (var y = 0; y < AR.h; y++) for (var x = 0; x < AR.w; x++) {
+      var i = y * AR.w + x;
+      g.globalAlpha = 1;
+      g.fillStyle = C.art_palette[cells[i]];
+      g.fillRect(x * s, y * s, s, s);
+      if (prev && cells[i] === 0 && prev[i] !== 0) { g.globalAlpha = 0.22; g.fillStyle = C.art_palette[prev[i]]; g.fillRect(x * s, y * s, s, s); }
+    }
+    g.globalAlpha = 1;
+    g.strokeStyle = 'rgba(80,70,50,.14)'; g.lineWidth = 1;
+    g.beginPath();
+    for (var gx = 0; gx <= AR.w; gx++) { g.moveTo(gx * s + .5, 0); g.lineTo(gx * s + .5, AR.h * s); }
+    for (var gy = 0; gy <= AR.h; gy++) { g.moveTo(0, gy * s + .5); g.lineTo(AR.w * s, gy * s + .5); }
+    g.stroke();
+  }
+  function arThumb(cells, w, h, px) {
+    var c = document.createElement('canvas'); c.width = w * px; c.height = h * px;
+    var g = c.getContext('2d');
+    for (var i = 0; i < cells.length; i++) { g.fillStyle = C.art_palette[cells[i]]; g.fillRect((i % w) * px, Math.floor(i / w) * px, px, px); }
+    return c.toDataURL();
+  }
+  function arFrames() {
+    var box = $('ar_frames');
+    box.innerHTML = '';
+    AR.frames.forEach(function (f, k) {
+      var b = btn('kids-art__frame' + (k === AR.cur ? ' is-on' : ''), '<img alt=""><b>' + (k + 1) + '</b>');
+      b.querySelector('img').src = arThumb(f, AR.w, AR.h, AR.w > 12 ? 2 : 4);
+      b.addEventListener('click', function () { AR.cur = k; arStop(); arDraw(); arFrames(); arSend(true); });
+      if (AR.frames.length > 1) {
+        var x = el('span', 'kids-art__x', icon('fa-xmark'));
+        x.title = tr('play_art_frame_del');
+        x.addEventListener('click', function (e) {
+          e.stopPropagation();
+          AR.frames.splice(k, 1); AR.steps.splice(k, 1); AR.undo = [];
+          AR.cur = Math.min(AR.cur, AR.frames.length - 1); AR.dirty = true;
+          arStop(); arDraw(); arFrames(); arSend(true);
+        });
+        b.appendChild(x);
+      }
+      box.appendChild(b);
     });
+    if (AR.frames.length < C.art_max_frames) {
+      var add = btn('kids-art__frame kids-art__frame--add', icon('fa-plus') + '<span></span>');
+      add.lastChild.textContent = tr('play_art_frame_add');
+      add.addEventListener('click', function () {   // 지금 장을 베껴 다음 장으로 — 조금만 바꿔 움직이게
+        AR.frames.splice(AR.cur + 1, 0, arCells().slice()); AR.steps.splice(AR.cur + 1, 0, []);
+        AR.cur++; AR.dirty = true; AR.undo = [];
+        arStop(); arDraw(); arFrames(); arSend(true);
+      });
+      box.appendChild(add);
+    }
+    arControls();
   }
-  function enterGame() {
-    renderGameKeys();
-    post('/api/game/mode', { on: true, lang: L() }).then(applyGame).catch(function () { toast(tr('kids_err_conn'), 'error'); });
-    clearTimeout(GM.timer);
-    GM.timer = setTimeout(gamePoll, 500);
+  // LCD 로 — 칠하는 동안은 0.08초에 한 번까지(마지막 모습만)
+  function arSend(now) {
+    clearTimeout(AR.sendT);
+    var go = function () { post('/api/art/show', { w: AR.w, h: AR.h, cells: arCells() }).catch(function () {}); };
+    if (now) go(); else AR.sendT = setTimeout(go, 80);
   }
-  function leaveGame() {
-    clearTimeout(GM.timer);
-    post('/api/game/mode', { on: false, lang: L() }).catch(function () {});
+  function arSet(i, c) {
+    var cells = arCells();
+    if (cells[i] === c) return false;
+    cells[i] = c;
+    var st = AR.steps[AR.cur];
+    if (st.length < C.art_max_steps) st.push([i, c]);
+    return true;
   }
-  $('gm_start').addEventListener('click', function () { gameKey('start'); });
-  $('gm_pause').addEventListener('click', function () { gameKey('pause'); });
-  // 노트북이면 키보드로도(← → 옮기기 · ↑ 돌리기 · ↓·스페이스 떨어뜨리기)
-  document.addEventListener('keydown', function (e) {
-    if (S.view !== 'game' || e.target.tagName === 'INPUT') return;
-    var op = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'rotate', ArrowDown: 'drop', ' ': 'drop' }[e.key];
-    if (op) { e.preventDefault(); gameKey(op); }
+  function arFill(i, c) {      // 같은 색으로 이어진 칸을 한 번에(위·아래·왼·오른)
+    var cells = arCells(), from = cells[i], seen = {}, q = [i];
+    if (from === c) return false;
+    while (q.length) {
+      var k = q.shift();
+      if (seen[k] || cells[k] !== from) continue;
+      seen[k] = 1; arSet(k, c);
+      var x = k % AR.w, y = Math.floor(k / AR.w);
+      if (x > 0) q.push(k - 1); if (x < AR.w - 1) q.push(k + 1);
+      if (y > 0) q.push(k - AR.w); if (y < AR.h - 1) q.push(k + AR.w);
+    }
+    return true;
+  }
+  function arAt(e) {
+    var r = $('ar_canvas').getBoundingClientRect();
+    var x = Math.floor((e.clientX - r.left) / AR.cell), y = Math.floor((e.clientY - r.top) / AR.cell);
+    return (x < 0 || y < 0 || x >= AR.w || y >= AR.h) ? -1 : y * AR.w + x;
+  }
+  function arPaint(e) {
+    var i = arAt(e);
+    if (i < 0) return;
+    var c = AR.tool === 'eraser' ? 0 : AR.color;
+    var changed = AR.tool === 'fill' ? arFill(i, c) : arSet(i, c);
+    if (!changed) return;
+    AR.dirty = true;
+    if (AR.playing) arStop();
+    arDraw(); arSend(false);
+  }
+  (function () {
+    var cv = $('ar_canvas');
+    cv.addEventListener('pointerdown', function (e) {
+      e.preventDefault();
+      AR.undo.push({ cur: AR.cur, cells: arCells().slice(), n: AR.steps[AR.cur].length });
+      if (AR.undo.length > 40) AR.undo.shift();
+      AR.down = AR.tool !== 'fill';
+      try { cv.setPointerCapture(e.pointerId); } catch (x) { /* 무시 */ }
+      arPaint(e);
+    });
+    cv.addEventListener('pointermove', function (e) { if (AR.down) arPaint(e); });
+    ['pointerup', 'pointercancel'].forEach(function (ev) {
+      cv.addEventListener(ev, function () { if (AR.down) { AR.down = false; arFrames(); } });
+    });
+    cv.addEventListener('pointerup', function () { if (AR.tool === 'fill') arFrames(); });
+  })();
+  $('ar_undo').addEventListener('click', function () {
+    var u = AR.undo.pop();
+    if (!u || !AR.frames[u.cur]) return;
+    AR.cur = u.cur; AR.frames[u.cur] = u.cells; AR.steps[u.cur].length = u.n;
+    arStop(); arDraw(); arFrames(); arSend(true);
   });
+  $('ar_clear').addEventListener('click', function () {
+    if (!window.confirm(tr('play_art_clear_q'))) return;
+    AR.undo.push({ cur: AR.cur, cells: arCells().slice(), n: AR.steps[AR.cur].length });
+    AR.frames[AR.cur] = arBlank(); AR.steps[AR.cur] = []; AR.dirty = true;
+    arStop(); arDraw(); arFrames(); arSend(true);
+  });
+  function arStop() {
+    if (!AR.playing) return;
+    AR.playing = false;
+    post('/api/art/stop').catch(function () {});
+    if (C) arControls();
+  }
+  function arPlay(force) {
+    if (AR.playing && !force) { arStop(); arSend(true); return; }
+    if (AR.frames.length < 2) return;
+    AR.playing = true;
+    post('/api/art/play', { w: AR.w, h: AR.h, frames: AR.frames, fps: AR.fps }).catch(function () { toast(tr('kids_err_conn'), 'error'); });
+    arControls();
+  }
+  $('ar_play').addEventListener('click', function () { arPlay(false); });
+  $('ar_replay').addEventListener('click', function () {
+    AR.playing = false; arControls();
+    post('/api/art/replay', { w: AR.w, h: AR.h, steps: AR.steps[AR.cur] }).catch(function () { toast(tr('kids_err_conn'), 'error'); });
+  });
+  $('ar_save').addEventListener('click', function () {
+    post('/api/art/save', { id: AR.id, w: AR.w, h: AR.h, fps: AR.fps, frames: AR.frames, steps: AR.steps, lang: L() }).then(function (r) {
+      if (r._status === 409) { toast(tr('play_art_full'), 'error'); return; }
+      if (!r.ok) { toast(tr('kids_err'), 'error'); return; }
+      AR.id = r.id; AR.dirty = false; AR.items = r.items;
+      toast(tr('play_art_saved'), 'success');
+      arGallery();
+    }).catch(function () { toast(tr('kids_err_conn'), 'error'); });
+  });
+  $('ar_new').addEventListener('click', function () {
+    if (!arConfirm('play_art_new_q')) return;
+    arReset(AR.w, AR.h);
+  });
+  function arGallery() {
+    var box = $('ar_gallery');
+    box.innerHTML = '';
+    if (!AR.items.length) { box.appendChild(el('p', 'kids-note kids-art__empty', '')).textContent = tr('play_art_empty'); }
+    AR.items.forEach(function (it) {
+      var b = btn('kids-art__pic' + (it.id === AR.id ? ' is-on' : ''), '<img alt="">');
+      b.querySelector('img').src = arThumb(it.frames[0], it.w, it.h, it.w > 12 ? 2 : 4);
+      if (it.frames.length > 1) b.appendChild(el('b', 'kids-art__n', icon('fa-film') + ' ' + it.frames.length));
+      b.title = tr('play_art_open');
+      b.addEventListener('click', function () {
+        if (!arConfirm('play_art_load_q')) return;
+        get('/api/art/get?id=' + encodeURIComponent(it.id)).then(function (d) {
+          if (!d.frames) return;
+          AR.w = d.w; AR.h = d.h; AR.frames = d.frames; AR.cur = 0; AR.undo = []; AR.id = d.id; AR.fps = d.fps || 4; AR.dirty = false;
+          AR.steps = d.frames.map(function (f, k) { return (d.steps && d.steps[k]) || []; });
+          arStop(); arLayout(); arDraw(); arFrames(); arGallery(); arSend(true);
+        });
+      });
+      var x = el('span', 'kids-art__x', icon('fa-xmark'));
+      x.title = tr('play_art_delete');
+      x.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (!window.confirm(tr('play_art_del_q'))) return;
+        post('/api/art/delete', { id: it.id }).then(function (r) {
+          if (r.items) { AR.items = r.items; if (AR.id === it.id) AR.id = null; arGallery(); }
+        });
+      });
+      b.appendChild(x);
+      box.appendChild(b);
+    });
+    arControls();
+  }
+  function enterArt() {
+    if (!AR.frames.length) { AR.w = C.art_sizes[0][0]; AR.h = C.art_sizes[0][1]; AR.frames = [arBlank()]; AR.steps = [[]]; }
+    post('/api/art/mode', { on: true, lang: L() }).then(function () { arSend(true); }).catch(function () { toast(tr('kids_err_conn'), 'error'); });
+    arLayout(); arDraw(); arFrames();
+    get('/api/art').then(function (r) { AR.items = r.items || []; arGallery(); }).catch(function () {});
+  }
+  function leaveArt() {
+    AR.playing = false;
+    post('/api/art/mode', { on: false, lang: L() }).catch(function () {});
+  }
+  window.addEventListener('resize', function () { if (S.view === 'art') { arLayout(); arDraw(); } });
 
   /* ── 언어 ─────────────────────────────────────────────────────────── */
   function applyLanguage() {
@@ -468,10 +632,10 @@
     document.title = name + ' · ' + (document.documentElement.getAttribute('data-product') || 'piBo');
     $('home_label').textContent = tr('kids_home');
     if (!C) return;
-    $('pet_acts').innerHTML = ''; $('pet_stats').innerHTML = ''; $('gm_keys').innerHTML = '';
+    $('pet_acts').innerHTML = ''; $('pet_stats').innerHTML = '';
     if (S.view === 'pet') { renderPetStatic(); if (S.pet) applyPet(S.pet, true); }
     if (S.view === 'drive') renderDrive();
-    if (S.view === 'game') { renderGameKeys(); applyGame(GM.last); post('/api/game/mode', { on: true, lang: L() }).catch(function () {}); }
+    if (S.view === 'art') { arFrames(); arGallery(); }
     if (S.view === 'home') renderHome();
   }
   $('language').addEventListener('change', function () {
@@ -490,9 +654,12 @@
       }
       applyLanguage();
       show('home');
-      // 대문·대기 페이지에서 바로 가기: ?go=pet · drive · game
+      // 대문·대기 페이지에서 바로 가기: ?go=pet · drive · art
       var go = null;
-      try { go = new URLSearchParams(location.search).get('go'); history.replaceState(null, '', location.pathname); } catch (e) { go = null; }
+      try {   // ?go= 만 지운다(?ide= 같은 시험용 값은 남긴다 — 새로 고쳐도 문구를 받게)
+        var q = new URLSearchParams(location.search); go = q.get('go');
+        if (go) { q.delete('go'); history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '')); }
+      } catch (e) { go = null; }
       if (go === 'pet' || go === feature()) show(go);
     }).catch(function () {
       document.body.appendChild(el('p', 'kids-dead', icon('fa-plug-circle-xmark') + ' ' + tr('kids_err_conn')));
@@ -501,13 +668,11 @@
   /* IDE 와 연결 — [IDE] 는 이 탭을 닫거나 IDE(대문)로 간다. 탭이 닫히면 IDE 가 로봇 놀이를 끈다(keepalive 가 있어야 언로드 중에도 간다).
      손으로 띄운 경우(IDE 없이 시험)엔 /play 가 없어 실패해도 상관없다 */
   $('ide_bt').addEventListener('click', function () { PiboUI.backToIDE(); });
-  window.addEventListener('beforeunload', function () {
-    try { fetch('http://' + location.hostname + '/play?enable=off', { method: 'GET', keepalive: true }).catch(function () {}); } catch (e) { /* 무시 */ }
-  });
-  window.addEventListener('beforeunload', function () {
-    var url = S.view === 'pet' ? '/api/pet/mode' : S.view === 'game' ? '/api/game/mode' : null;
+  window.addEventListener('beforeunload', function (e) {
+    try { fetch('http://' + location.hostname + '/play?enable=off', { method: 'GET', keepalive: true }).catch(function () {}); } catch (x) { /* 무시 */ }
+    var url = S.view === 'pet' ? '/api/pet/mode' : S.view === 'art' ? '/api/art/mode' : null;
     if (url) {
-      try { fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{"on":false}', keepalive: true }); } catch (e) { /* 무시 */ }
+      try { fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{"on":false}', keepalive: true }); } catch (x) { /* 무시 */ }
     }
   });
   start();

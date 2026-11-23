@@ -1,5 +1,5 @@
 {
-  "_": "로봇 놀이 내용 — 키우기(pet)·조종하기(drive, 파이보)·블록 쌓기(game, PiBrain)·키우기 말(guides, ko/en). {name}·{name_ya} 는 제품마다 바뀐다(run_play.py 의 ROBOTS). 설계는 KIDS.md",
+  "_": "로봇 놀이 내용 — 키우기(pet)·조종하기(drive, 파이보)·키우기·픽셀 그림 말(guides, ko/en) — 픽셀 그림(PiBrain) 색·크기는 pixel.py. {name}·{name_ya} 는 제품마다 바뀐다(run_play.py 의 ROBOTS). 설계는 KIDS.md",
 
   "guides": {
     "eat":        {"ko": "냠냠, 맛있어!", "en": "Yum yum, tasty!"},
@@ -15,7 +15,8 @@
     "pet":        {"ko": "헤헤, 좋아!", "en": "Hehe, I like that!"},
     "hungry":     {"ko": "배고파. 밥 줘.", "en": "I'm hungry. Feed me, please."},
     "sleepy":     {"ko": "하암, 졸려.", "en": "Yawn, I'm sleepy."},
-    "sad":        {"ko": "심심해. 같이 놀자.", "en": "I'm bored. Let's play."}
+    "sad":        {"ko": "심심해. 같이 놀자.", "en": "I'm bored. Let's play."},
+    "art_done":   {"ko": "우와, 멋진 그림이야!", "en": "Wow, what a great picture!"}
   },
 
   "pet": {

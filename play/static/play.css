@@ -156,49 +156,51 @@ body.kids .kids-main { background-image: radial-gradient(var(--pb-grid, transpar
   .kids-drive__box--pad { max-width: 420px; }
 }
 
-/* ── 블록 쌓기 (PiBrain 만, 261123) — 게임은 LCD 에. 여기는 지금 판 · 기록 · 태블릿 단추 ── */
-.kids-big--game { --app: var(--app-play); --app-t: var(--app-play-t); }
-.kids-game__state { padding: 6px 12px; border-radius: 999px; background: var(--v2-sunken); color: var(--v2-ink-2); font-size: 14px; font-weight: 700; }
-.kids-game__state[data-s="play"] { background: var(--app-play-t); color: var(--app-play); }
-.kids-game__state[data-s="over"] { background: var(--v2-red-t); color: var(--v2-red-ink); }
-.kids-game__where { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; padding: 10px 14px; border-radius: 10px;
+/* ── 픽셀 그림 (PiBrain 만, 261123) — 왼쪽 캔버스(칠하면 LCD 에 그대로), 오른쪽 장·재생·그림첩 ── */
+.kids-big--art { --app: var(--app-play); --app-t: var(--app-play-t); }
+.kids-seg { display: inline-flex; flex-wrap: wrap; gap: 4px; padding: 4px; border-radius: 999px; background: var(--v2-sunken); }
+.kids-seg__b { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border: 0; border-radius: 999px;
+  background: transparent; color: var(--v2-ink-2); font-size: 15px; font-weight: 700; }
+.kids-seg__b.is-on { background: var(--v2-raise); color: var(--v2-ink); box-shadow: 0 1px 3px var(--v2-shadow), 0 0 0 2px var(--app-play); }
+.kids-seg__b.is-on i { color: var(--app-play); }
+.kids-btn--tint { background: var(--app-play-t); color: var(--app-play); }
+.kids-btn:disabled { opacity: .45; cursor: default; transform: none; }
+.kids-art__where { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; padding: 10px 14px; border-radius: 10px;
   border-left: 4px solid var(--app-play); background: var(--app-play-t); color: var(--v2-ink); font-size: 15px; font-weight: 700; word-break: keep-all; }
-.kids-game__where i { color: var(--app-play); }
-.kids-game { display: grid; grid-template-columns: minmax(300px, 420px) minmax(0, 1fr); gap: 18px; align-items: start; }
-.kids-game__box { padding: 16px; border: 1.5px solid var(--v2-line); border-radius: 14px; background: var(--v2-surface); display: flex; flex-direction: column; gap: 10px; }
-.kids-game__box .pb-label { margin-top: 6px; }
-.kids-gnums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-.kids-gnums--stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.kids-gnum { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: 12px; background: var(--v2-raise); border: 1px solid var(--v2-line); }
-.kids-gnum span { font-size: 13px; color: var(--v2-ink-3); font-weight: 700; }
-.kids-gnum b { font-size: 26px; font-variant-numeric: tabular-nums; line-height: 1.1; }
-.kids-gnum--big { grid-column: 1 / -1; }
-.kids-gnum--big b { font-size: 44px; color: var(--app-play); }
-.kids-gkeys { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
-.kids-gkey { display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 86px; padding: 8px 4px; border: 1.5px solid var(--v2-line);
-  border-radius: 14px; background: var(--v2-raise); color: var(--v2-ink); box-shadow: 0 3px 0 var(--v2-line); }
-.kids-gkey i { font-size: 28px; color: var(--app-play); }
-.kids-gkey b { font-size: 14px; }
-.kids-gkey small { font-size: 11px; color: var(--v2-ink-3); font-weight: 700; }
-.kids-gkey:active { transform: translateY(3px); box-shadow: none; }
-.kids-gactions { display: flex; gap: 10px; }
-.kids-gactions .kids-btn { flex: 1; }
-.kids-gbars { display: flex; align-items: flex-end; gap: 6px; height: 120px; padding: 8px 4px 0; border-bottom: 1.5px solid var(--v2-line); }
-.kids-gbar { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; height: 100%; min-width: 0; }
-.kids-gbar i { display: block; width: 100%; max-width: 34px; min-height: 4px; border-radius: 6px 6px 0 0; background: var(--app-play); opacity: .55; }
-.kids-gbar.is-best i { opacity: 1; }
-.kids-gbar b { font-size: 12px; font-variant-numeric: tabular-nums; }
-.kids-gempty { margin: auto; font-size: 14px; color: var(--v2-ink-3); }
-.kids-gclears { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
-.kids-gclear { padding: 8px; border-radius: 10px; background: var(--v2-raise); border: 1px solid var(--v2-line); text-align: center; }
-.kids-gclear span { display: block; font-size: 12px; color: var(--v2-ink-3); font-weight: 700; }
-.kids-gclear b { font-size: 20px; }
-.kids-gpieces { display: flex; flex-wrap: wrap; gap: 8px; }
-.kids-gpiece { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; background: var(--v2-raise); border: 1px solid var(--v2-line); font-weight: 700; font-size: 14px; }
-.kids-gpiece svg { width: 26px; height: 18px; }
+.kids-art__where i { color: var(--app-play); }
+.kids-art { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 360px); gap: 18px; align-items: start; }
+.kids-art__board, .kids-art__box { padding: 14px; border: 1.5px solid var(--v2-line); border-radius: 14px; background: var(--v2-surface);
+  display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.kids-art__side { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.kids-art__tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.kids-art__canvaswrap { display: flex; justify-content: center; min-width: 0; }
+.kids-art__canvaswrap canvas { display: block; touch-action: none; cursor: crosshair; border: 2px solid var(--v2-ink-2); border-radius: 4px; background: #fff; }
+.kids-art__palette { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 6px; }
+.kids-art__sw { height: 40px; min-width: 0; padding: 0; border-radius: 10px; border: 1.5px solid rgba(0,0,0,.18); box-shadow: 0 1px 2px var(--v2-shadow); }
+.kids-art__sw.is-on { box-shadow: 0 0 0 3px var(--v2-surface), 0 0 0 6px var(--app-play); transform: translateY(-2px); }
+.kids-art__frames { display: flex; flex-wrap: wrap; gap: 8px; }
+.kids-art__frame { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  width: 64px; min-height: 92px; padding: 6px 4px; border: 1.5px solid var(--v2-line); border-radius: 12px; background: var(--v2-raise); color: var(--v2-ink-2); font-size: 13px; font-weight: 700; }
+.kids-art__frame img { display: block; width: 48px; height: 64px; image-rendering: pixelated; border: 1px solid var(--v2-line); }
+.kids-art__frame.is-on { border-color: var(--app-play); box-shadow: 0 0 0 2px var(--app-play); color: var(--app-play); }
+.kids-art__frame--add { border-style: dashed; color: var(--app-play); }
+.kids-art__frame--add i { font-size: 20px; }
+.kids-art__frame--add span { font-size: 12px; text-align: center; word-break: keep-all; }
+.kids-art__x { position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  background: var(--v2-raise); color: var(--v2-red-ink); border: 1.5px solid var(--v2-line); font-size: 12px; }
+.kids-art__acts { display: flex; gap: 10px; }
+.kids-art__acts .kids-btn { flex: 1; min-width: 0; padding: 0 12px; font-size: 16px; }
+.kids-art__galh { margin: 4px 0 0; }
+.kids-art__galh small { margin-left: auto; font-family: inherit; font-size: 13px; color: var(--v2-ink-3); }
+.kids-art__gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 10px; max-height: 320px; overflow-y: auto; padding: 8px 8px 2px 2px; }
+.kids-art__pic { position: relative; padding: 4px; border: 1.5px solid var(--v2-line); border-radius: 10px; background: var(--v2-raise); }
+.kids-art__pic img { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+.kids-art__pic.is-on { border-color: var(--app-play); box-shadow: 0 0 0 2px var(--app-play); }
+.kids-art__n { position: absolute; left: 4px; bottom: 4px; padding: 1px 6px; border-radius: 999px; background: rgba(0,0,0,.6); color: #fff; font-size: 11px; }
+.kids-art__empty { grid-column: 1 / -1; }
 @media (max-width: 900px) {
-  .kids-game { grid-template-columns: minmax(0, 1fr); }
-  .kids-gnums--stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kids-art { grid-template-columns: minmax(0, 1fr); }
+  .kids-art__palette { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 }
 
 /* ── 키우기 ─────────────────────────────────────────────────────────── */

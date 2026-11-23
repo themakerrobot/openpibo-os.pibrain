@@ -2,10 +2,11 @@
 
   [키우기]   다마고치 — 배고픔·기분·졸림, 성격·이름·색. 앱이 떠 있을 때만 시간이 간다(파이보 · PiBrain)
   [조종하기] 파이보만 — 방향 버튼 + 다리·발을 쓰지 않는 동작 버튼. 누르면 바로 한다
-  [블록 쌓기] PiBrain 만 — 떨어지는 블록 퍼즐(game.py). 게임은 LCD 에, 태블릿엔 점수·통계. PiBrain 버튼 1~4 로 한다
+  [픽셀 그림] PiBrain 만 — 태블릿에서 12x16·24x32 칸을 칠하면 LCD 에 그대로(pixel.py). 2~4장이면 움직이는 그림,
+               그린 순서 다시 보기, 내 그림첩, 저장하면 로봇이 칭찬. 물리 버튼은 쓰지 않는다(고장 위험 — 사용자)
 
 예전 체험 앱(kids/run_kids.py)에서 카드 코딩(cards/, 50060)을 따로 뺐다. 로봇·화면 그림·효과음은 두 앱이 같이 쓰는
-kids/(robot.py · screen.py · sounds/), 저장 폴더(/home/pi/.kids)도 같이 쓴다 — 키우기는 p/1/pet.json, 블록 쌓기 기록은 p/1/blocks.json
+kids/(robot.py · screen.py · sounds/), 저장 폴더(/home/pi/.kids)도 같이 쓴다 — 키우기는 p/1/pet.json, 픽셀 그림첩은 p/1/art/<번호>.json
 (카드 코딩 선생님 잠금의 [처음부터 하기]가 p/1 을 통째로 지운다). 목소리·소리 크기는 카드 코딩이 저장한 settings.json 을 읽기만 한다.
 두 앱은 같은 모터·화면·스피커를 쓰므로 한 번에 하나만 뜬다(IDE 가 하나를 켤 때 다른 것을 끈다).
 
@@ -37,7 +38,7 @@ sys.path.insert(1, SHARED_DIR)
 
 from pet import Pet, PERSONALITY  # noqa: E402
 from robot import make_robot      # noqa: E402
-from game import BlockGame        # noqa: E402
+import pixel                      # noqa: E402
 
 with open(os.path.join(BASE_DIR, 'content.json'), encoding='utf-8') as f:
   CONTENT = json.load(f)
@@ -55,11 +56,10 @@ PET_REACT = {'eat': 'munch', 'full': 'oops', 'play': 'boing', 'tired': 'oops', '
 #: 반응 → 잠깐 보여 줄 포즈(pet.js). 태블릿 play.js 의 REACT_POSE 와 같게. 거절(배불러 등)은 지금 얼굴 그대로
 REACT_POSE = {'eat': 'eat', 'play': 'ball', 'wash': 'wash', 'pet': 'happy', 'wake': 'happy', 'sleep': 'sleep'}
 PIBRAIN_BUTTON = {'b1': 'feed', 'b2': 'play', 'b3': 'sleep', 'b4': 'wash'}   # 버튼 번호 ↔ 실제 위치는 확인 필요
-GAME_KEYS = {'b1': 'left', 'b2': 'rotate', 'b3': 'right', 'b4': 'drop'}       # 블록 쌓기 — 실제 위치는 확인 필요
 NEED_GAP = 60             # 키우기 혼잣말('배고파') 은 1분에 한 번까지
 HISTORY_EVERY = 20        # 관찰 그래프 점 하나 = 20초
 HISTORY_MAX = 60          # 20분
-RECENT_MAX = 10           # 블록 쌓기 최근 판 기록
+ART_MAX = 30              # 픽셀 그림첩에 둘 그림 수
 
 DEVICE = 'pibo'
 DATA_DIR = '/home/pi/.kids'
@@ -284,104 +284,82 @@ def drive_worker(item, seq):
       drive.update(running=False, id=None)
 
 
-# ── 블록 쌓기 (PiBrain 만) ────────────────────────────────────────────────
-game = BlockGame()
-game_state = {'mode': False, 'lang': 'ko', 'dirty': True, 'recorded': True, 'last_draw': 0.0}
-game_lock = threading.Lock()
+# ── 픽셀 그림 (PiBrain 만) ────────────────────────────────────────────────
+# LCD 에 그릴 일은 일꾼 하나가 한다 — 가장 최근 요청만 하고(칠할 때마다 오는 장면은 마지막 것만), 새 요청이 오면 재생·다시 보기를 끊는다.
+# LCD 는 openpibo/oled.py 의 화면 잠금이 지키므로 robot.lock(말·동작)은 잡지 않는다 — 칭찬 말을 하는 동안에도 그림은 나온다
+art = {'mode': False, 'job': None, 'seq': 0, 'playing': None}   # playing: 'play' · 'replay' · None
+art_cv = threading.Condition()
 
 
-def game_enabled():
-  return DEVICE == 'pibrain'
+def art_enabled():
+  return bool(robot and robot.has_screen)
 
 
-def game_stats():
-  """기록 — 판 수 · 최고 · 합계 · 최근 판들 · 줄 지우기 · 블록 수. p/1/blocks.json"""
-  d = read_json(os.path.join('p', ONLY, 'blocks.json'), {})
-  d.setdefault('games', 0)
-  d.setdefault('best', 0)
-  d.setdefault('total_score', 0)
-  d.setdefault('total_lines', 0)
-  d.setdefault('seconds', 0)
-  d.setdefault('recent', [])
-  d.setdefault('clears', [0, 0, 0, 0])
-  d.setdefault('count', {})
-  return d
+def art_post(job):
+  """('show', w, h, cells) · ('play', w, h, frames, fps) · ('replay', w, h, steps) · ('stop',) 를 일꾼에게"""
+  with art_cv:
+    art['seq'] += 1
+    art['job'] = job
+    art_cv.notify()
 
 
-def game_record():
-  """한 판이 끝나면 기록에 더한다(한 번만)"""
-  d = game_stats()
-  v = game.view()
-  d['games'] += 1
-  d['best'] = max(d['best'], v['score'])
-  d['total_score'] += v['score']
-  d['total_lines'] += v['lines']
-  d['seconds'] += v['seconds']
-  d['recent'] = (d['recent'] + [{'n': d['games'], 'score': v['score'], 'lines': v['lines'], 'level': v['level'], 'seconds': v['seconds']}])[-RECENT_MAX:]
-  d['clears'] = [a + b for a, b in zip(d['clears'], v['clears'])]
-  for k, n in v['count'].items():
-    d['count'][k] = d['count'].get(k, 0) + n
-  write_json(os.path.join('p', ONLY, 'blocks.json'), d)
-
-
-def game_do(op):
-  """조작 하나 — 시작 전·끝난 뒤엔 아무 버튼이나 새 판"""
-  with game_lock:
-    if op == 'start' or (op in ('left', 'right', 'rotate', 'drop') and game.state in ('ready', 'over')):
-      changed = game.start()
-      game_state['recorded'] = False
-    elif op == 'pause':
-      changed = game.pause()
-    elif op in ('left', 'right', 'rotate', 'drop'):
-      changed = getattr(game, op)()
-    else:
-      return False
-    if changed:
-      game_state['dirty'] = True
-    return changed
-
-
-def game_draw(force=False):
-  """LCD 에 그린다 — 바뀌었을 때만, 0.05초에 한 번까지. 말하는 중(lock)이면 다음에"""
-  now = time.time()
-  if not (game_state['dirty'] or force) or (now - game_state['last_draw'] < 0.05 and not force):
-    return
-  if not robot.lock.acquire(blocking=force):
-    return
-  try:
-    with game_lock:
-      img = game.render(game_state['lang'], best=game_stats()['best'] if game.state != 'play' else game_best['v'])
-      game_state['dirty'] = False
-    robot.lcd(img)
-    game_state['last_draw'] = now
-  except Exception as exc:  # noqa: BLE001
-    print(f'[play] 블록 쌓기 화면 오류: {exc}', flush=True)
-  finally:
-    robot.lock.release()
-
-
-game_best = {'v': 0}      # 판 하는 동안 그릴 최고 점수(파일을 매번 읽지 않게)
-
-
-def game_loop():
+def art_worker():
   while True:
-    time.sleep(0.03)
-    if not game_state['mode']:
+    with art_cv:
+      while art['job'] is None:
+        art_cv.wait()
+      job, seq = art['job'], art['seq']
+      art['job'] = None
+    kind = job[0]
+    try:
+      if kind == 'show':
+        art['playing'] = None
+        robot.lcd(pixel.render(job[1], job[2], job[3]))
+      elif kind == 'play':                       # 움직이는 그림 — 다른 요청이 올 때까지 되풀이
+        w, h, frames, fps = job[1:]
+        imgs = [pixel.render(w, h, f) for f in frames]
+        art['playing'] = 'play'
+        k = 0
+        while art['seq'] == seq and art['mode']:
+          t0 = time.time()
+          robot.lcd(imgs[k % len(imgs)])
+          k += 1
+          time.sleep(max(0.0, 1.0 / fps - (time.time() - t0)))
+      elif kind == 'replay':                     # 그린 순서 다시 보기 — 약 4초, 끝나면 다 그린 그림
+        w, h, steps = job[1:]
+        art['playing'] = 'replay'
+        scenes = pixel.replay_chunks(w, h, steps, 40)
+        for sc in scenes:
+          if art['seq'] != seq or not art['mode']:
+            break
+          t0 = time.time()
+          robot.lcd(pixel.render(w, h, sc))
+          time.sleep(max(0.0, 4.0 / len(scenes) - (time.time() - t0)))
+      if art['seq'] == seq:
+        art['playing'] = None
+    except Exception as exc:  # noqa: BLE001 — LCD 를 못 그려도 앱은 계속
+      art['playing'] = None
+      print(f'[play] 픽셀 그림 화면 오류: {exc}', flush=True)
+
+
+def art_dir():
+  return path('p', ONLY, 'art')
+
+
+def art_list():
+  """그림첩 — 새것이 앞. 그린 순서 기록(steps)은 목록에 싣지 않는다(열 때 /api/art/get)"""
+  out = []
+  try:
+    names = os.listdir(art_dir())
+  except OSError:
+    return out
+  for n in names:
+    if not re.fullmatch(r'\d+\.json', n):
       continue
-    for inp in robot.poll_inputs():
-      op = GAME_KEYS.get(inp)
-      if op:
-        game_do(op)
-    with game_lock:
-      if game.tick():
-        game_state['dirty'] = True
-      over = game.state == 'over' and not game_state['recorded']
-      if over:
-        game_state['recorded'] = True
-    if over:
-      game_record()
-      game_best['v'] = game_stats()['best']
-    game_draw()
+    d = read_json(os.path.join('p', ONLY, 'art', n), {})
+    if d.get('frames'):
+      out.append({k: d.get(k) for k in ('id', 'w', 'h', 'fps', 'frames', 't')})
+  return sorted(out, key=lambda x: -int(x['id']))
 
 
 # ── 웹 ─────────────────────────────────────────────────────────────────────
@@ -426,14 +404,15 @@ async def index():
 
 @app.get('/api/content')
 async def api_content():
-  """화면에 보낼 내용 — 제품마다 칸이 다르다: 파이보 [키우기][조종하기] · PiBrain [키우기][블록 쌓기]"""
+  """화면에 보낼 내용 — 제품마다 칸이 다르다: 파이보 [키우기][조종하기] · PiBrain [키우기][픽셀 그림]"""
   return {
     'device': DEVICE, 'robot': ROBOTS[DEVICE], 'pet': CONTENT['pet'],
     'guides': {k: {lang: fmt(v[lang], lang) for lang in ('ko', 'en')} for k, v in CONTENT['guides'].items()},
     # 성격마다 '몇 초에 1' — 꾸미기·관찰 일기에서 보여 준다(학습: 성격 = 바뀌는 빠르기)
     'kind_rates': {k: {s: round(Pet(kind=k).rate(s)) for s in ('hunger', 'sleepy', 'mood')} for k in PERSONALITY},
-    'drive': drive_items(), 'game': game_enabled(),
-    'game_keys': GAME_KEYS if game_enabled() else {},
+    'drive': drive_items(), 'art': art_enabled(),
+    'art_sizes': pixel.SIZES, 'art_palette': pixel.PALETTE, 'art_max_frames': pixel.MAX_FRAMES, 'art_fps': pixel.FPS,
+    'art_max': ART_MAX, 'art_max_steps': pixel.MAX_STEPS,
   }
 
 
@@ -475,70 +454,132 @@ async def api_drive_state():
   return {k: drive[k] for k in ('running', 'id', 'error')}
 
 
-# 블록 쌓기
-@app.post('/api/game/mode')
-async def api_game_mode(body: dict = Body(...)):
-  """블록 쌓기 화면에 들어올 때 on — LCD·버튼을 게임이 쓴다. 나갈 때 off — 하던 판은 멈추고 LCD 는 IP 화면"""
-  if not game_enabled():
-    return bad('no game')
+# 픽셀 그림
+def art_body(body, need_frames=True):
+  try:
+    w, h = int(body.get('w', 0) or 0), int(body.get('h', 0) or 0)
+  except (TypeError, ValueError):
+    raise ValueError('bad size') from None
+  frames, steps = pixel.check(w, h, body.get('frames') if need_frames else [[0] * (w * h)] if (w, h) in pixel.SIZES else None,
+                              body.get('steps'))
+  return w, h, frames, steps
+
+
+@app.post('/api/art/mode')
+async def api_art_mode(body: dict = Body(...)):
+  """픽셀 그림 화면에 들어올 때 on(LCD 를 그림이 쓴다) · 나갈 때 off(재생을 멈추고 LCD 는 IP 화면)"""
+  if not art_enabled():
+    return bad('no screen')
   on = bool(body.get('on'))
-  game_state['lang'] = lang_of(body)
   if on:
     pet_state['mode'] = False
-    robot.poll_inputs()                  # 들어오기 전에 눌린 것은 치지 않는다
-    game_best['v'] = game_stats()['best']
-    game_state['mode'] = True
-    await asyncio.to_thread(game_draw, True)
+    art['mode'] = True
   else:
-    was = game_state['mode']
-    game_state['mode'] = False
-    with game_lock:
-      if game.state == 'play':
-        game.pause()
+    was = art['mode']
+    art['mode'] = False
+    art_post(('stop',))
     if was:
       await asyncio.to_thread(robot.show_network)
-  return game_view()
+  return {'ok': True}
 
 
-@app.post('/api/game/key')
-async def api_game_key(body: dict = Body(...)):
-  """태블릿 단추(PiBrain 버튼과 같은 일) — left · right · rotate · drop · start · pause"""
-  if not game_enabled():
-    return bad('no game')
-  op = body.get('op')
-  if op not in ('left', 'right', 'rotate', 'drop', 'start', 'pause'):
-    return bad('bad op')
-  game_state['lang'] = lang_of(body)
-  game_do(op)
-  return game_view()
+@app.post('/api/art/show')
+async def api_art_show(body: dict = Body(...)):
+  """지금 장 한 장을 LCD 에 — 태블릿이 칠할 때마다(0.08초에 한 번까지) 보낸다"""
+  if not art_enabled():
+    return bad('no screen')
+  try:
+    w, h, frames, _ = art_body({'w': body.get('w'), 'h': body.get('h'), 'frames': [body.get('cells')]})
+  except ValueError as exc:
+    return bad(str(exc))
+  art['mode'] = True
+  art_post(('show', w, h, frames[0]))
+  return {'ok': True}
 
 
-def game_view():
-  with game_lock:
-    v = game.view()
-  v['mode'] = game_state['mode']
-  v['stats'] = game_stats()
-  return v
+@app.post('/api/art/play')
+async def api_art_play(body: dict = Body(...)):
+  """움직이는 그림 — 장들을 차례로 되풀이(다른 요청·나가기까지). fps 2 · 4 · 8"""
+  if not art_enabled():
+    return bad('no screen')
+  try:
+    w, h, frames, _ = art_body(body)
+  except ValueError as exc:
+    return bad(str(exc))
+  fps = body.get('fps') or 4
+  if fps not in pixel.FPS:
+    return bad('bad fps')
+  art['mode'] = True
+  art_post(('play', w, h, frames, fps))
+  return {'ok': True}
 
 
-@app.get('/api/game')
-async def api_game():
-  if not game_enabled():
-    return bad('no game')
-  return game_view()
+@app.post('/api/art/replay')
+async def api_art_replay(body: dict = Body(...)):
+  """그린 순서 다시 보기 — 지금 장을 빈 화면부터 칠한 순서대로(약 4초)"""
+  if not art_enabled():
+    return bad('no screen')
+  try:
+    w, h, _, steps = art_body({'w': body.get('w'), 'h': body.get('h'), 'steps': [body.get('steps') or []]}, need_frames=False)
+  except ValueError as exc:
+    return bad(str(exc))
+  art['mode'] = True
+  art_post(('replay', w, h, steps[0] if steps else []))
+  return {'ok': True}
 
 
-@app.get('/api/game/lcd.png')
-async def api_game_lcd():
-  """지금 LCD 에 그릴 그림(시험·미리보기용 — 태블릿 화면은 쓰지 않는다)"""
-  if not game_enabled():
-    return bad('no game')
-  import io
-  with game_lock:
-    img = game.render(game_state['lang'], best=game_best['v'])
-  buf = io.BytesIO()
-  img.save(buf, 'PNG')
-  return Response(buf.getvalue(), media_type='image/png', headers={'Cache-Control': 'no-store'})
+@app.post('/api/art/stop')
+async def api_art_stop():
+  art_post(('stop',))
+  return {'ok': True}
+
+
+@app.get('/api/art')
+async def api_art_state():
+  return {'playing': art['playing'], 'items': art_list()}
+
+
+@app.get('/api/art/get')
+async def api_art_get(id: str):
+  if not re.fullmatch(r'\d+', id or ''):
+    return bad('bad id')
+  d = read_json(os.path.join('p', ONLY, 'art', f'{id}.json'), {})
+  return d if d.get('frames') else bad('no art', 404)
+
+
+@app.post('/api/art/save')
+async def api_art_save(body: dict = Body(...)):
+  """그림첩에 저장(id 가 있으면 그 그림을 고쳐 저장). 저장하면 로봇이 칭찬한다"""
+  if not art_enabled():
+    return bad('no screen')
+  try:
+    w, h, frames, steps = art_body(body)
+  except ValueError as exc:
+    return bad(str(exc))
+  fps = body.get('fps') if body.get('fps') in pixel.FPS else 4
+  items = art_list()
+  aid = str(body.get('id') or '')
+  if not re.fullmatch(r'\d+', aid) or not any(x['id'] == aid for x in items):
+    if len(items) >= ART_MAX:
+      return bad('full', 409)
+    aid = str(max([int(x['id']) for x in items] + [0]) + 1)
+  write_json(os.path.join('p', ONLY, 'art', f'{aid}.json'),
+             {'id': aid, 'w': w, 'h': h, 'fps': fps, 'frames': frames, 'steps': steps, 't': int(time.time())})
+  lang = lang_of(body)
+  speak_async(('tada', 'art_done'), lang)
+  return {'ok': True, 'id': aid, 'items': art_list()}
+
+
+@app.post('/api/art/delete')
+async def api_art_delete(body: dict = Body(...)):
+  aid = str(body.get('id') or '')
+  if not re.fullmatch(r'\d+', aid):
+    return bad('bad id')
+  try:
+    os.remove(os.path.join(art_dir(), f'{aid}.json'))
+  except OSError:
+    return bad('no art', 404)
+  return {'ok': True, 'items': art_list()}
 
 
 # 키우기
@@ -630,8 +671,8 @@ def main():
   app.state.robot = robot
   threading.Thread(target=react_worker, daemon=True).start()
   threading.Thread(target=pet_loop, daemon=True).start()
-  if game_enabled():
-    threading.Thread(target=game_loop, daemon=True).start()
+  if art_enabled():
+    threading.Thread(target=art_worker, daemon=True).start()
   threading.Thread(target=robot.show_network, daemon=True).start()   # 들어올 때 화면 초기화
   if args.fake:
     @app.post('/api/fake/input')
@@ -642,6 +683,17 @@ def main():
     @app.get('/api/fake/log')
     async def fake_log():
       return {'log': robot.log}
+
+    @app.get('/api/fake/lcd.png')
+    async def fake_lcd():
+      """가짜 로봇이 마지막으로 LCD 에 그린 그림(시험용)"""
+      import io
+      img = getattr(robot, 'last_lcd', None)
+      if img is None:
+        return bad('no image', 404)
+      buf = io.BytesIO()
+      img.save(buf, 'PNG')
+      return Response(buf.getvalue(), media_type='image/png', headers={'Cache-Control': 'no-store'})
 
   import uvicorn
   try:

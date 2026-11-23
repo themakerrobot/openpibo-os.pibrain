@@ -1,5 +1,5 @@
 /* 카드 코딩 (cards/run_cards.py, 50060) — [도전][만들기][내 재주]. 설계는 KIDS.md
-   261123(사용자): 예전 체험 앱에서 로봇 놀이(키우기 · 조종하기/블록 쌓기)를 play/ 로 따로 뺐다
+   261123(사용자): 예전 체험 앱에서 로봇 놀이(키우기 · 조종하기/픽셀 그림)를 play/ 로 따로 뺐다
    문구는 IDE 의 ko2en.js(전역 translations · t · lang)를 같이 쓴다. 키는 kids_*.
    카드·차시·도전·말은 서버 /api/content 가 준다(제품에 맞춰 걸러서). 구형 브라우저 기준(CLAUDE.md '디자인 시스템')이라 ES5 + fetch */
 (function () {
@@ -813,7 +813,10 @@
       show('home');
       // 대문·대기 페이지에서 바로 가기: ?go=make · challenges
       var go = null;
-      try { go = new URLSearchParams(location.search).get('go'); history.replaceState(null, '', location.pathname); } catch (e) { go = null; }
+      try {   // ?go= 만 지운다(?ide= 같은 시험용 값은 남긴다 — 새로 고쳐도 문구를 받게)
+        var q = new URLSearchParams(location.search); go = q.get('go');
+        if (go) { q.delete('go'); history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '')); }
+      } catch (e) { go = null; }
       if (go === 'make') openMake(null, null);
       else if (go === 'challenges') show('challenges');
       if (a[1].running) { setRunning(true); poll(); }

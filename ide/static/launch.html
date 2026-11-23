@@ -133,11 +133,11 @@
     hwtest:     { port: 50050, on: '/hwtest?enable=on',     check: 'port',   limit: 60,
                   name: { ko: 'H/W 검수', en: 'H/W check' },       icon: 'fa-stethoscope' }
   };
-  // 체험 앱 안의 한 화면으로 바로 갈 때(?go=): 카드 코딩 make · 로봇 놀이 pet · drive(파이보) · game(PiBrain)
+  // 체험 앱 안의 한 화면으로 바로 갈 때(?go=): 카드 코딩 make · 로봇 놀이 pet · drive(파이보) · art(PiBrain)
   var GO = { cards: { make: { ko: '카드 코딩', en: 'Card coding', icon: 'fa-shapes', color: 'kids' } },
              play:  { pet:  { ko: '키우기',    en: 'Pet',         icon: 'fa-heart',   color: 'pet' },
                       drive: { ko: '조종하기', en: 'Remote control', icon: 'fa-gamepad', color: 'play' },
-                      game: { ko: '블록 쌓기', en: 'Block Stack', icon: 'fa-cubes-stacked', color: 'play' } } };
+                      art: { ko: '픽셀 그림', en: 'Pixel art', icon: 'fa-palette', color: 'play' } } };
   var key = Q.get('svc'), S = SVC[key];
   var $ = function (id) { return document.getElementById(id); };
   $('close').onclick = function () {

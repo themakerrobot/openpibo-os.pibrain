@@ -7,7 +7,7 @@
 무엇이 어떻게 뜨나
   - IDE · 도구 · 분류기 · 도움말: 파일만 그대로 보낸다(파이썬 표준 라이브러리만 씀). 로봇 서버가 없어서
     소켓 연결·상태·카메라 같은 실시간 값은 비어 있다 — 화면 배치·색·문구 확인용
-  - 카드 코딩(cards/run_cards.py)·로봇 놀이(play/run_play.py): --fake 로 가짜 로봇과 함께 실제로 돈다(카드 실행·키우기·꾸미기·조종하기·블록 쌓기까지)
+  - 카드 코딩(cards/run_cards.py)·로봇 놀이(play/run_play.py): --fake 로 가짜 로봇과 함께 실제로 돈다(카드 실행·키우기·꾸미기·조종하기·픽셀 그림까지)
   - 대화(chat): chat/run_chat.py 를 가짜 대화 모델(정해진 대답을 흘려 보냄)에 붙여 띄운다
   두 개는 fastapi·uvicorn·pillow·numpy 가 있어야 한다(pip install fastapi uvicorn pillow numpy). 없으면 건너뛴다
   - 주소는 localhost 가 아니라 PC 의 IP 로 연다. localhost·127.0.0.1 은 브라우저가 '보안 컨텍스트' 로 봐서

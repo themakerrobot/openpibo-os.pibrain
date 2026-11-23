@@ -1,5 +1,5 @@
 /* 파이보 캐릭터 장면 — 대문 카드 그림(코딩 · 도구 · AI 가르치기 · 대화 · 카드 코딩 · 로봇 놀이 · 키우기 · 설정 · 도움말)
-   + 체험 앱 처음 화면 그림(도전 · 내 재주 · 조종하기 · 블록 쌓기, 261123) + 머리 캐릭터(face). PiBrain 은 머리가 보드(검은 화면 속 하늘색 얼굴 · 카메라 · 버튼 넷)인 같은 몸.
+   + 체험 앱 처음 화면 그림(도전 · 내 재주 · 조종하기 · 픽셀 그림, 261123) + 머리 캐릭터(face). PiBrain 은 머리가 보드(검은 화면 속 하늘색 얼굴 · 카메라 · 버튼 넷)인 같은 몸.
    파이보·PiBrain 같은 파일(ide/static/v2/pibo-art.js). 그림 파일 없이 SVG 로 직접 그렸다(라이선스 걱정 없음). 실물(도구 [동작] 사진 pibo_body)을 따른다:
    네모난 둥근 머리 · 하늘색 테 + 검은 눈 · 검은 반달 입(가운데 카메라) · 파란 고리 안테나(작은 고리 둘) ·
    목 · 네모난 몸통(작은 화면 · 단추) · 큰 어깨 판 + 아래팔 · 네모 다리 · 둥근 장화 발 */
@@ -301,27 +301,32 @@
       s += '<g fill="none" stroke="#127f86" stroke-width="1.7" stroke-linecap="round"><path d="M30 60 a8 8 0 0 1 8 -8"/><path d="M30 54 a14 14 0 0 1 14 -14" opacity=".65"/><path d="M30 48 a20 20 0 0 1 20 -20" opacity=".35"/></g>';
       return s;
     },
-    // 블록 쌓기(로봇 놀이 PiBrain, 261123) — 블록 하나를 들어 쌓인 탑에 올리려는 참, 위에서 하나가 더 떨어진다
-    blocks: function (id) {
-      var tx = -2, ty = 8, sc = .82;
-      var p = pibo(id, { R: -118, L: 14, look: 1.6, lookY: -.8, tilt: 3, eyes: 'happy', Rfront: true });
+    // 픽셀 그림(로봇 놀이 PiBrain, 261123) — 이젤 위 칸 그림(하트)에 연필로 한 칸을 칠하는 참
+    art: function (id) {
+      var tx = -10, ty = 8, sc = .82;
+      var p = pibo(id, { R: -96, L: 14, look: 1.8, lookY: -.4, tilt: 3, eyes: 'happy', Rfront: true });
       var hand = place(p.R, tx, ty, sc);
-      var s = shadow(60);
-      function cube(x, y, c, d) {
-        return rr(x, y, 13, 13, 3, 'fill="' + c + '" stroke="' + d + '" stroke-width=".9"') +
-               '<path d="M' + (x + 3) + ' ' + (y + 3.4) + ' h7" stroke="#fff" stroke-width="1.4" opacity=".55" stroke-linecap="round"/>';
+      var s = shadow(56);
+      // 이젤(다리 셋) + 칸 그림판
+      s += '<path d="M80 92 L74 113 M104 92 L110 113 M92 92 V112" stroke="#8f5a2b" stroke-width="2.6" stroke-linecap="round"/>' +
+           rr(70, 26, 44, 64, 3, 'fill="#fff" stroke="#8f5a2b" stroke-width="2"');
+      var heart = ['0110110', '1111111', '1111111', '0111110', '0011100', '0001000'];
+      for (var y = 0; y < heart.length; y++) for (var x = 0; x < 7; x++) {
+        var on = heart[y][x] === '1', last = (x === 5 && y === 1);
+        s += '<rect x="' + f(73 + x * 5.4) + '" y="' + f(34 + y * 5.4) + '" width="5" height="5" fill="' + (last ? '#fff' : on ? '#e8463c' : '#f1ede4') + '"' + (last ? ' stroke="#e8463c" stroke-width=".8" stroke-dasharray="1.2 1"' : '') + '/>';
       }
-      // 쌓인 블록(오른쪽 아래) — 한 줄이 꽉 차 반짝
-      var bx = 78, by = 99;
-      [['#3b8ff0', '#2466b8'], ['#3aa266', '#2b7a4c'], ['#f2b632', '#c99a1c']].forEach(function (c, i) { s += cube(bx + i * 13.5, by, c[0], c[1]); });
-      s += cube(bx, by - 13.5, '#9b6bd6', '#6f4aa6') + cube(bx + 13.5, by - 13.5, '#ff8a3d', '#c96506');
-      s += spark(bx + 33, by - 22);
-      // 떨어지는 블록 + 움직임 줄
-      s += '<path d="M101 14 v6 M107 12 v6" stroke="' + C.spark + '" stroke-width="1.5" stroke-linecap="round"/>' + cube(97, 22, '#e8467c', '#b8335f');
+      // 아래 줄 색 칸(팔레트)
+      ['#f5c84a', '#3aa266', '#2f72d6', '#8b4ff0', '#ff6b9a'].forEach(function (c, k) { s += '<rect x="' + f(74 + k * 7.6) + '" y="' + f(74) + '" width="6" height="6" rx="1.2" fill="' + c + '"/>'; });
+      s += spark(108, 16);
       s += '<g transform="translate(' + tx + ' ' + ty + ') scale(' + sc + ')">' + p.svg + '</g>';
-      // 손에 든 블록
-      s += cube(hand[0] - 4, hand[1] - 16, '#1fb5d6', '#168ba6') +
-           '<circle cx="' + f(hand[0]) + '" cy="' + f(hand[1]) + '" r="4.2" fill="url(#' + id + 'g)" stroke="' + C.line + '" stroke-width="1"/>';
+      // 손에 든 연필 — 끝이 비어 있던 칸을 가리킨다
+      var hx = hand[0], hy = hand[1], ex = 73 + 5 * 5.4 + 2.5, ey = 34 + 5.4 + 2.5;
+      var a = Math.atan2(ey - hy, ex - hx) * 180 / Math.PI, len = Math.sqrt((ex - hx) * (ex - hx) + (ey - hy) * (ey - hy));
+      s += '<g transform="translate(' + f(hx) + ' ' + f(hy) + ') rotate(' + f(a) + ')">' +
+           rr(-2, -2.6, len - 6, 5.2, 1.2, 'fill="#f5c84a" stroke="#c99a1c" stroke-width=".8"') +
+           '<path d="M' + f(len - 8) + ' -2.6 L' + f(len) + ' 0 L' + f(len - 8) + ' 2.6 Z" fill="#f3d9b1" stroke="#c99a1c" stroke-width=".8"/>' +
+           '<path d="M' + f(len - 2.6) + ' -.9 L' + f(len) + ' 0 L' + f(len - 2.6) + ' .9 Z" fill="#e8463c"/></g>' +
+           '<circle cx="' + f(hx) + '" cy="' + f(hy) + '" r="4.4" fill="url(#' + id + 'g)" stroke="' + C.line + '" stroke-width="1"/>';
       return s;
     },
     // 도전(카드 코딩, 261123) — 깃발을 높이 들고, 별이 반짝

@@ -127,7 +127,7 @@ class BaseRobot:
     return []
 
   def lcd(self, img):
-    """그림(PIL RGB, 240x320) 한 장을 PiBrain LCD 에 — 로봇 놀이 [블록 쌓기]. 화면이 없는 제품은 아무것도 안 한다"""
+    """그림(PIL RGB, 240x320) 한 장을 PiBrain LCD 에 — 로봇 놀이 [픽셀 그림]. 화면이 없는 제품은 아무것도 안 한다"""
 
   def show_network(self):
     """화면을 IP 정보로 되돌린다 — 앱을 켤 때·키우기를 나갈 때·앱을 끌 때.
@@ -227,7 +227,7 @@ class FakeRobot(BaseRobot):
     return out
 
   def lcd(self, img):
-    self.last_lcd = img          # 시험이 /api/game/lcd.png 대신 볼 수 있게(로그엔 안 남긴다 — 매 0.05초)
+    self.last_lcd = img          # 시험이 /api/fake/lcd.png 로 볼 수 있게(로그엔 안 남긴다 — 자주 그린다)
 
   def show_network(self):
     self.log.append(('network',))
