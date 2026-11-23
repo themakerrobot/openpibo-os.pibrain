@@ -7,7 +7,7 @@
 무엇이 어떻게 뜨나
   - IDE · 도구 · 분류기 · 도움말: 파일만 그대로 보낸다(파이썬 표준 라이브러리만 씀). 로봇 서버가 없어서
     소켓 연결·상태·카메라 같은 실시간 값은 비어 있다 — 화면 배치·색·문구 확인용
-  - 카드 코딩 · 로봇 놀이(kids): kids/run_kids.py --fake 로 가짜 로봇과 함께 실제로 돈다(카드 실행·키우기·꾸미기·조종하기까지)
+  - 카드 코딩(cards/run_cards.py)·로봇 놀이(play/run_play.py): --fake 로 가짜 로봇과 함께 실제로 돈다(카드 실행·키우기·꾸미기·조종하기·블록 쌓기까지)
   - 대화(chat): chat/run_chat.py 를 가짜 대화 모델(정해진 대답을 흘려 보냄)에 붙여 띄운다
   두 개는 fastapi·uvicorn·pillow·numpy 가 있어야 한다(pip install fastapi uvicorn pillow numpy). 없으면 건너뛴다
   - 주소는 localhost 가 아니라 PC 의 IP 로 연다. localhost·127.0.0.1 은 브라우저가 '보안 컨텍스트' 로 봐서
@@ -174,12 +174,18 @@ def main():
       static_server(os.path.join(root, 'docs'), None, base + 88, ide)
       links.append(('도움말', f'http://{host}:{base + 88}/build/html/index.html'))
     env = dict(os.environ, PIBO_IDE_PORT=str(ide))
-    if live and os.path.isfile(os.path.join(root, 'kids', 'run_kids.py')):
-      procs.append(subprocess.Popen([sys.executable, 'run_kids.py', '--fake', '--device', dev, '--port', str(base + 60),
-                                     '--data-dir', os.path.join(tmp, dev, 'kids'), '--code-dir', os.path.join(tmp, dev, 'code')],
-                                    cwd=os.path.join(root, 'kids'), env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL))
-      links.append(('카드 코딩', f'http://{host}:{base + 60}/cards?ide={ide}'))   # 체험 앱 서버 하나의 두 화면(261123)
-      links.append(('로봇 놀이', f'http://{host}:{base + 60}/play?ide={ide}'))
+    # 체험 앱 둘(261123 — 폴더·서버를 나눴다). 저장 폴더는 기기처럼 같이 쓴다(설정·키우기)
+    kdata = os.path.join(tmp, dev, 'kids')
+    if live and os.path.isfile(os.path.join(root, 'cards', 'run_cards.py')):
+      procs.append(subprocess.Popen([sys.executable, 'run_cards.py', '--fake', '--device', dev, '--port', str(base + 60),
+                                     '--data-dir', kdata, '--code-dir', os.path.join(tmp, dev, 'code')],
+                                    cwd=os.path.join(root, 'cards'), env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL))
+      links.append(('카드 코딩', f'http://{host}:{base + 60}/?ide={ide}'))
+    if live and os.path.isfile(os.path.join(root, 'play', 'run_play.py')):
+      procs.append(subprocess.Popen([sys.executable, 'run_play.py', '--fake', '--device', dev, '--port', str(base + 70),
+                                     '--data-dir', kdata],
+                                    cwd=os.path.join(root, 'play'), env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL))
+      links.append(('로봇 놀이', f'http://{host}:{base + 70}/?ide={ide}'))
     if live and os.path.isfile(os.path.join(root, 'chat', 'run_chat.py')):
       fake_llm(base + 21, ANSWER[dev])
       mdir = os.path.join(tmp, dev, 'llm')                 # 대화 모델 고르기용 가짜 파일(더메이커 영어는 아직 없는 것처럼)

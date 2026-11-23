@@ -1,4 +1,5 @@
-"""체험 앱이 로봇을 움직이는 곳. 제품마다 하나: PiboRobot · PiBrainRobot · FakeRobot(기기 없이 시험)
+"""체험 앱(카드 코딩 cards/ · 로봇 놀이 play/ — 261123 에 나눔)이 로봇을 움직이는 곳. 두 앱이 같이 쓴다.
+제품마다 하나: PiboRobot · PiBrainRobot · FakeRobot(기기 없이 시험)
 
 모든 동작은 끝날 때까지 기다린다(카드 하나가 끝나야 다음 카드). 하드웨어는 lock 하나로 한 번에 하나만 쓴다.
 무거운 것(목소리 모델 약 330MB)은 처음 말할 때 올린다.
@@ -125,6 +126,9 @@ class BaseRobot:
     """눌린 입력 목록. 파이보 'touch', PiBrain 'b1'~'b4'"""
     return []
 
+  def lcd(self, img):
+    """그림(PIL RGB, 240x320) 한 장을 PiBrain LCD 에 — 로봇 놀이 [블록 쌓기]. 화면이 없는 제품은 아무것도 안 한다"""
+
   def show_network(self):
     """화면을 IP 정보로 되돌린다 — 앱을 켤 때·키우기를 나갈 때·앱을 끌 때.
     말하는 중이면(react_worker 가 lock 을 쥠) 끝날 때까지 최대 10초 기다린다. 얼굴을 그리다 덮어쓰지 않게"""
@@ -133,7 +137,7 @@ class BaseRobot:
       subprocess.run([sys.executable, NETWORK_DISP], timeout=20,
                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except Exception as exc:  # noqa: BLE001 — 화면을 못 그려도 앱은 계속
-      print(f'[kids] IP 화면 오류: {exc}', flush=True)
+      print(f'[robot] IP 화면 오류: {exc}', flush=True)
     finally:
       if got:
         self.lock.release()
@@ -222,6 +226,9 @@ class FakeRobot(BaseRobot):
     out, self.inputs = [x for x in self.inputs if x in ('touch', 'b1', 'b2', 'b3', 'b4')], []
     return out
 
+  def lcd(self, img):
+    self.last_lcd = img          # 시험이 /api/game/lcd.png 대신 볼 수 있게(로그엔 안 남긴다 — 매 0.05초)
+
   def show_network(self):
     self.log.append(('network',))
 
@@ -306,7 +313,7 @@ class PiboRobot(BaseRobot):
       try:
         self.m.set_motion(name)
       except Exception as exc:  # noqa: BLE001 — 동작 이름이 없어도 키우기는 계속
-        print(f'[kids] 동작 {name} 오류: {exc}', flush=True)
+        print(f'[robot] 동작 {name} 오류: {exc}', flush=True)
 
   def poll_inputs(self):
     try:
@@ -379,6 +386,11 @@ class PiBrainRobot(BaseRobot):
     import screen
     lcd = self._lcd_open()
     lcd.image = screen.draw(kind, self.W, self.H, True, text)
+    lcd.show()
+
+  def lcd(self, img):
+    lcd = self._lcd_open()
+    lcd.image = img.resize((self.W, self.H)) if img.size != (self.W, self.H) else img
     lcd.show()
 
   def photo(self):

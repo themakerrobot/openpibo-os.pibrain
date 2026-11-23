@@ -1,23 +1,21 @@
-"""체험 앱 서버(50060) — 앱 둘이 한 서버에서 돈다(261123, 사용자). 설계는 KIDS.md
+"""카드 코딩(50060) — 초등학생이 코딩 없이 카드로 로봇 친구에게 재주를 가르친다. 설계는 KIDS.md
 
-  /cards  카드 코딩 — 초등학생이 코딩 없이 카드로 로봇 친구에게 재주를 가르친다
-    [도전]   선생님이 고른 차시의 도전 과제(순서·고치기·반복·재사용)
-    [만들기] 카드를 줄 세워 ▶ → 로봇이 차례대로. 줄을 '재주'로 저장하면 그 재주가 카드 한 장이 된다(재사용)
-    [내 재주] 저장한 재주 모음 — 실행·고치기·지우기
-  /play   로봇 놀이
-    [키우기]   다마고치 — 배고픔·기분·졸림, 성격·이름·색. 앱이 떠 있을 때만 시간이 간다
-    [조종하기] (파이보만) 방향 버튼 + 다리·발을 쓰지 않는 동작 버튼 — 누르면 바로 한다
+  [도전]   선생님이 고른 차시의 도전 과제(순서·고치기·반복·재사용)
+  [만들기] 카드를 줄 세워 ▶ → 로봇이 차례대로. 줄을 '재주'로 저장하면 그 재주가 카드 한 장이 된다(재사용)
+  [내 재주] 저장한 재주 모음 — 실행·고치기·지우기
 
-서버를 둘로 나누지 않은 이유: 둘 다 같은 모터·화면·스피커를 쓰는데 그 장치는 한 프로세스만 쥘 수 있고,
-IDE 도 체험 앱을 한 번에 하나만 띄운다. 화면(주소·이름·처음 화면)만 따로다.
+261123(사용자): 예전 체험 앱(kids/run_kids.py)을 둘로 나눴다 — 이 카드 코딩(cards/, 50060)과 로봇 놀이(play/, 50070,
+키우기 · 조종하기/블록 쌓기). 로봇·화면 그림·효과음은 두 앱이 같이 쓰는 kids/(robot.py · screen.py · sounds/).
+두 앱은 같은 모터·화면·스피커를 쓰므로 한 번에 하나만 뜬다(IDE 가 하나를 켤 때 다른 것을 끈다).
+저장 폴더(/home/pi/.kids)도 같이 쓴다 — 설정(목소리·소리 크기·숫자)은 여기서 바꾸고, 로봇 놀이는 읽기만 한다.
 
-저장은 로봇 하나에 한 벌이다(261116, 사용자 — 예전 번호 고르기는 뺐다. 반이 바뀌면 선생님 잠금의 [처음부터 하기]).
+저장은 로봇 하나에 한 벌이다(261116, 사용자 — 예전 번호 고르기는 뺐다. 반이 바뀌면 선생님 잠금의 [처음부터 하기] — 키우기까지 지운다).
 안쪽은 예전 구조(프로필 '1' 하나) 그대로 둔다.
 
-보통은 IDE 가 띄운다(대문 [카드 코딩]·[로봇 놀이], IDE [로봇 놀이] → /kids?enable=on). 손으로 띄울 때:
+보통은 IDE 가 띄운다(대문 [카드 코딩] → /cards?enable=on). 손으로 띄울 때:
   sudo systemctl stop tools.service classify.service 'llama-server@*'
-  sudo /home/pi/.pyenv/bin/python3 kids/run_kids.py --device pibo      # PiBrain 은 --device pibrain
-기기 없이:  python3 kids/run_kids.py --fake [--data-dir /tmp/kids] [--code-dir /tmp/code]
+  sudo /home/pi/.pyenv/bin/python3 cards/run_cards.py --device pibo      # PiBrain 은 --device pibrain
+기기 없이:  python3 cards/run_cards.py --fake [--data-dir /tmp/kids] [--code-dir /tmp/code]
 
 화면 ↔ 서버는 HTTP 만 쓴다(소켓 없음). 실행 중 상태는 화면이 0.25초마다 /api/run 으로 묻는다(1:1 이라 가볍다).
 """
@@ -33,17 +31,18 @@ import argparse
 import tempfile
 import threading
 
-from fastapi import FastAPI, Body, Request
+from fastapi import FastAPI, Body
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SHARED_DIR = os.path.join(os.path.dirname(BASE_DIR), 'kids')   # 두 체험 앱이 같이 쓰는 로봇·화면 그림·효과음
 sys.path.insert(0, BASE_DIR)
+sys.path.insert(1, SHARED_DIR)
 
 import blocks                     # noqa: E402
-from pet import Pet, PERSONALITY  # noqa: E402
 from robot import make_robot, SOUND_DIR  # noqa: E402
 
 with open(os.path.join(BASE_DIR, 'content.json'), encoding='utf-8') as f:
@@ -71,14 +70,6 @@ FREE_MAX = 20             # 내가 쓴 말·글자 카드의 글자 수
 SENSE_MAX = 30            # '~할 때까지' 카드가 기다리는 최대 초 — 아무도 안 만져도 줄이 영영 멈추지 않게
 IF_WAIT = 3               # '만약 ~하면' 이 살펴보는 초 — 그동안 일어나면 안의 카드를 한다
 MYMOTION_PATH = '/home/pi/mymotion.json'   # 도구 [동작] 에서 저장한 내 동작
-PET_REACT = {'eat': 'munch', 'full': 'oops', 'play': 'boing', 'tired': 'oops', 'starving': 'oops',
-             'sleep': 'lullaby', 'notsleepy': 'oops', 'wash': 'bubble', 'pet': 'happy', 'woken': 'oops', 'wake': 'happy'}
-#: 반응 → 잠깐 보여 줄 포즈(pet.js). 태블릿 kids.js 의 REACT_POSE 와 같게. 거절(배불러 등)은 지금 얼굴 그대로
-REACT_POSE = {'eat': 'eat', 'play': 'ball', 'wash': 'wash', 'pet': 'happy', 'wake': 'happy', 'sleep': 'sleep'}
-PIBRAIN_BUTTON = {'b1': 'feed', 'b2': 'play', 'b3': 'sleep', 'b4': 'wash'}   # 버튼 번호 ↔ 실제 위치는 확인 필요
-NEED_GAP = 60             # 키우기 혼잣말('배고파') 은 1분에 한 번까지
-HISTORY_EVERY = 20        # 관찰 그래프 점 하나 = 20초
-HISTORY_MAX = 60          # 20분
 
 DEVICE = 'pibo'
 DATA_DIR = '/home/pi/.kids'
@@ -170,48 +161,11 @@ def content_for_device():
     'cards': {k: v for k, v in CARDS.items() if base_ok(k)},
     'phrases': {k: {lang: fmt(v[lang], lang) for lang in ('ko', 'en')} for k, v in CONTENT['phrases'].items()},
     'guides': {k: {lang: fmt(v[lang], lang) for lang in ('ko', 'en')} for k, v in CONTENT['guides'].items()},
-    'concepts': CONTENT['concepts'], 'lessons': lessons, 'challenges': chs, 'pet': CONTENT['pet'],
+    'concepts': CONTENT['concepts'], 'lessons': lessons, 'challenges': chs,
     'trick_icons': CONTENT['trick_icons'], 'profile_icons': CONTENT['profile_icons'],
-    # 성격마다 '몇 초에 1' — 꾸미기·관찰 일기에서 보여 준다(학습: 성격 = 바뀌는 빠르기)
-    'kind_rates': {k: {s: round(Pet(kind=k).rate(s)) for s in ('hunger', 'sleepy', 'mood')} for k in PERSONALITY},
     'max_cards': MAX_CARDS, 'max_tricks': MAX_TRICKS, 'lesson_max': LESSON_MAX,
     'mymotions': mymotions(), 'free_max': FREE_MAX, 'sense_max': SENSE_MAX, 'if_wait': IF_WAIT,
-    'drive': drive_items(),
   }
-
-
-# ── 조종하기 (로봇 놀이, 파이보만) ─────────────────────────────────────────
-def drive_items():
-  """방향 버튼(move)·동작 버튼(motion). 모터가 없는 제품(PiBrain)은 빈 목록 — 화면이 [조종하기] 를 숨긴다"""
-  d = CONTENT.get('drive', {})
-  if DEVICE != 'pibo':
-    return {'move': [], 'motion': []}
-  return {'move': d.get('move', []), 'motion': d.get('motion', [])}
-
-
-def drive_find(did):
-  items = drive_items()
-  return next((x for x in items['move'] + items['motion'] if x['id'] == did), None)
-
-
-def drive_worker(item, seq):
-  """버튼 하나 — 앞 동작은 api_drive 가 끊었다(robot.stop). lock 을 받으면 그 동작이 끝난 것"""
-  try:
-    with robot.lock:
-      if seq != drive['seq']:
-        return
-      robot.stop_flag.clear()
-      if item:
-        robot.motion(item['id'])
-      # 팔을 든 채 끝나는 동작이 많아 끝나면 처음 자세로. 자세만 잡는 것(hold)·끊긴 것은 그대로
-      if seq == drive['seq'] and not robot.stop_flag.is_set() and not (item or {}).get('hold'):
-        robot.motion('stop')
-  except Exception as exc:  # noqa: BLE001 — 동작 이름이 없는 기기 등. 화면엔 짧은 알림
-    drive['error'] = str(exc)
-    print(f'[kids] 조종 오류: {exc!r}', flush=True)
-  finally:
-    if seq == drive['seq']:
-      drive.update(running=False, id=None)
 
 
 # ── 카드 · 재주 ───────────────────────────────────────────────────────────
@@ -449,7 +403,6 @@ def tricks_list():
 run = {'running': False, 'path': None, 'iter': 0, 'error': '', 'result': None, 'seq': 0,
        'photo': None, 'waiting': None, 'cond': None, 'warn': None}
 run_lock = threading.Lock()
-drive = {'running': False, 'id': None, 'seq': 0, 'error': ''}   # 조종하기 — 버튼 하나가 도는 중
 
 
 class Stop(Exception):
@@ -472,7 +425,7 @@ def do_card(card, lang, v=None):
     except Exception as exc:  # noqa: BLE001
       import traceback
       traceback.print_exc()
-      print(f'[kids] 사진 오류: {exc!r}', flush=True)
+      print(f'[cards] 사진 오류: {exc!r}', flush=True)
       run['warn'] = 'photo'
       robot.reset_camera()
       name = None
@@ -585,7 +538,7 @@ def run_program(program, cid, lang, seq, tricks):
     run['error'] = str(exc)
     import traceback
     traceback.print_exc()
-    print(f'[kids] 실행 오류: {exc!r}', flush=True)
+    print(f'[cards] 실행 오류: {exc!r}', flush=True)
   finally:
     try:
       robot.rest()
@@ -621,14 +574,13 @@ def speak_async(item, lang):
 
 
 def react_worker():
+  """효과음·말(도전 결과 '잘했어'·환영 인사·도전 읽어 주기). 키우기 얼굴은 로봇 놀이(play/)가 한다"""
   while True:
     with _react_cv:
       while _react['next'] is None:
         _react_cv.wait()
       (item, lang), _react['next'] = _react['next'], None
     sound, guide = item[0], item[1]
-    face = item[2] if len(item) > 2 else None
-    pose = item[3] if len(item) > 3 else None
     text = None
     if guide:
       g = CONTENT['guides'].get(guide)
@@ -636,144 +588,26 @@ def react_worker():
     try:
       with robot.lock:
         robot.stop_flag.clear()
-        t0 = time.time()
-        if face:
-          robot.face(face, dict(pet_profile), screen_stats(lang), pose=pose, bubble=text)
         if sound:
           robot.sound(sound)
         if text:
           robot.say(text)
-        if face and (pose or text):            # 말풍선·반응 포즈는 2.5초 이상 보이고 지금 얼굴로 돌아간다
-          robot.wait(max(0.0, 2.5 - (time.time() - t0)))
-          robot.face(pet.face(), dict(pet_profile), screen_stats(lang))
-          pet_state['screen'] = screen_key()
     except Exception as exc:  # noqa: BLE001
-      print(f'[kids] 반응 오류: {exc}', flush=True)
-
-
-def screen_stats(lang):
-  """화면에 그릴 점수 [(이름, 값, 열쇠)] — 배고픔·기분·졸림"""
-  return [(CONTENT['pet']['stats'][k][lang], getattr(pet, k), k) for k in ('hunger', 'mood', 'sleepy')]
-
-
-def screen_key():
-  return (pet.face(), pet.hunger, pet.mood, pet.sleepy, json.dumps(pet_profile, sort_keys=True), pet_state['lang'])
-
-
-# ── 키우기 (지금 아이의 친구만 시간이 간다) ────────────────────────────────
-pet = Pet()
-pet_profile = {'name': '', 'color': CONTENT['pet']['colors'][0], 'hat': 'antenna', 'glasses': False}
-HATS = ('antenna', 'cap')
-pet_state = {'mode': False, 'lang': 'ko', 'last_need': 0.0, 'face': None, 'screen': None}
-histories = {}            # {프로필 id: [[t, 배고픔, 기분, 졸림], ...]} — 메모리에만
-pet_lock = threading.Lock()
-
-
-def history():
-  return histories.setdefault(cur['id'], [])
-
-
-def pet_save():
-  if not cur['id']:
-    return
-  d = pet.to_dict()
-  d.update(pet_profile)
-  write_json(os.path.join('p', cur['id'], 'pet.json'), d)
-
-
-def pet_view():
-  now = [int(time.time()), pet.hunger, pet.mood, pet.sleepy]      # 그래프 끝점은 늘 지금 값
-  return {'stats': pet.to_dict(), 'face': pet.face(), 'profile': pet_profile, 'mode': pet_state['mode'],
-          'history': history() + [now], 'rates': {k: round(pet.rate(k)) for k in ('hunger', 'sleepy', 'mood')}}
-
-
-def pet_act(what, source='screen'):
-  with pet_lock:
-    before = pet.to_dict()
-    r = pet.act(what)
-    after = pet.to_dict()
-    pet_save()
-  pet_state['face'] = pet.face()
-  speak_async((PET_REACT.get(r), r, pet.face(), REACT_POSE.get(r)), pet_state['lang'])
-  return {'reaction': r, 'before': before, 'after': after, 'source': source}
-
-
-last_input = {'act': None, 'reaction': None, 't': 0.0}
-
-
-def pet_loop():
-  last, last_hist = time.time(), 0.0
-  while True:
-    time.sleep(0.2)
-    now = time.time()
-    if not cur['id']:
-      last = now
-      continue
-    if now - last >= 1.0:
-      with pet_lock:
-        ev = pet.tick(now - last)
-        if ev:
-          pet_save()
-      last = now
-      if now - last_hist >= HISTORY_EVERY:
-        h = history()
-        h.append([int(now), pet.hunger, pet.mood, pet.sleepy])
-        del h[:-HISTORY_MAX]
-        last_hist = now
-      if pet_state['mode'] and not run['running']:
-        f = pet.face()
-        if ev == 'wake':
-          speak_async(('happy', 'wake', f), pet_state['lang'])
-        elif f != pet_state['face']:
-          speak_async((None, None, f), pet_state['lang'])
-        need = pet.need()
-        if need and now - pet_state['last_need'] >= NEED_GAP:
-          pet_state['last_need'] = now
-          speak_async((None, need, f), pet_state['lang'])
-        pet_state['face'] = f
-      # 화면이 있는 제품(PiBrain LCD)은 [키우기] 화면일 때만 점수가 바뀌면 다시 그린다(261116 — 전엔 조건이 빠져
-      # 앱에 들어가기만 해도 LCD 가 키우기 얼굴로 바뀌었다). 말하는 중(lock)이면 다음 점검에
-      if robot.has_screen and pet_state['mode'] and not run['running'] and screen_key() != pet_state['screen'] and _react['next'] is None and robot.lock.acquire(blocking=False):
-        try:
-          robot.face(pet.face(), dict(pet_profile), screen_stats(pet_state['lang']))
-          pet_state['screen'] = screen_key()
-        except Exception as exc:  # noqa: BLE001
-          print(f'[kids] 화면 오류: {exc}', flush=True)
-        finally:
-          robot.lock.release()
-    if pet_state['mode'] and not run['running']:
-      for inp in robot.poll_inputs():
-        what = 'pet' if inp == 'touch' else PIBRAIN_BUTTON.get(inp)
-        if what:
-          res = pet_act(what, source=inp)
-          last_input.update(act=what, reaction=res['reaction'], t=now)
+      print(f'[cards] 반응 오류: {exc}', flush=True)
 
 
 # ── 프로필 ────────────────────────────────────────────────────────────────
 def load_profile(pid):
-  """아이 하나를 지금 아이로. 앞 아이의 키우기는 저장하고 멈춘다"""
-  global pet
-  with prof_lock, pet_lock:
-    if cur['id']:
-      d = pet.to_dict()
-      d.update(pet_profile)
-      write_json(os.path.join('p', cur['id'], 'pet.json'), d)
+  """아이 하나를 지금 아이로(재주·별·기록). 키우기(pet.json)는 로봇 놀이(play/)가 읽고 쓴다"""
+  with prof_lock:
     cur['id'] = pid
     if pid is None:
       cur['tricks'] = {'next': 1, 'items': {}}
       cur['progress'] = new_progress()
-      pet = Pet()
-      pet_profile.update(name='', color=CONTENT['pet']['colors'][0], hat='antenna', glasses=False)
-      pet_state['mode'] = False
       return
     t = read_json(os.path.join('p', pid, 'tricks.json'), {})
     cur['tricks'] = {'next': int(t.get('next', 1)), 'items': t.get('items') if isinstance(t.get('items'), dict) else {}}
     cur['progress'] = dict(new_progress(), **read_json(os.path.join('p', pid, 'progress.json'), {}))
-    pet = Pet.load(path('p', pid, 'pet.json'))
-    d = read_json(os.path.join('p', pid, 'pet.json'), {})
-    pet_profile.update(name=d.get('name', ''), color=d.get('color', CONTENT['pet']['colors'][0]),
-                       hat=d.get('hat') if d.get('hat') in HATS else 'antenna', glasses=bool(d.get('glasses')))
-    pet_state['face'] = None
 
 
 def state():
@@ -784,7 +618,7 @@ def state():
   return {'device': DEVICE, 'settings': s, 'profile': prof,
           'profiles': {k: v.get('icon') for k, v in profiles.items()},
           'progress': cur['progress'], 'tricks': tricks_list(),
-          'running': run['running'], 'driving': drive['running'], 'tts': robot.tts_state}
+          'running': run['running'], 'tts': robot.tts_state}
 
 
 # ── 웹 ─────────────────────────────────────────────────────────────────────
@@ -819,16 +653,7 @@ def bad(reason, code=400, **kw):
 
 
 @app.get('/')
-async def index(request: Request):
-  """예전 주소(261123 전 대기 페이지·즐겨찾기) — 카드 코딩으로. ?go=pet 이면 로봇 놀이"""
-  q = request.url.query
-  dest = '/play' if 'go=pet' in q or 'go=drive' in q else '/cards'
-  return RedirectResponse(dest + ('?' + q if q else ''))
-
-
-@app.get('/cards')
-@app.get('/play')
-async def app_page():
+async def index():
   return FileResponse(os.path.join(BASE_DIR, 'templates', 'index.html'), headers={'Cache-Control': 'no-cache'})   # 업데이트 뒤 옛 화면이 남지 않게(261029)
 
 
@@ -887,9 +712,8 @@ async def api_run(body: dict = Body(...)):
   if not run_lock.acquire(blocking=False):
     return bad('busy', 409)
   try:
-    if run['running'] or drive['running']:
+    if run['running']:
       return bad('busy', 409)
-    pet_state['mode'] = False
     robot.stop_flag.clear()
     run['seq'] += 1
     run.update(running=True, path=None, iter=0, error='', result=None, photo=None, waiting=None, cond=None, warn=None)
@@ -930,7 +754,7 @@ async def api_voice_prep(body: dict = Body(...)):
     try:
       robot.voice_file(text)
     except Exception as exc:  # noqa: BLE001
-      print(f'[kids] 목소리 준비 오류: {exc}', flush=True)
+      print(f'[cards] 목소리 준비 오류: {exc}', flush=True)
   threading.Thread(target=go, daemon=True).start()
   return {'ok': True, 'cached': False}
 
@@ -938,7 +762,7 @@ async def api_voice_prep(body: dict = Body(...)):
 @app.post('/api/screen/home')
 async def api_screen_home():
   """화면(OLED·LCD)을 IP 화면으로 — 만들기에서 나갈 때(그림·글자·사진 카드를 썼으면 남아 있으므로)"""
-  if run['running'] or pet_state['mode']:
+  if run['running']:
     return {'ok': False}
   await asyncio.to_thread(robot.show_network)
   return {'ok': True}
@@ -950,33 +774,6 @@ async def api_stop():
   with _react_cv:
     _react['next'] = None
   return {'ok': True}
-
-
-@app.post('/api/drive')
-async def api_drive(body: dict = Body(...)):
-  """[조종하기] 버튼 — 누르면 바로 한다. 도는 중이면 그것을 끊고 새것을(아이가 기다리지 않게).
-  id 'home' = 멈추고 처음 자세"""
-  did = str(body.get('id', ''))
-  item = None if did == 'home' else drive_find(did)
-  if did != 'home' and item is None:
-    return bad('bad drive')
-  if not drive_items()['move'] and not drive_items()['motion']:
-    return bad('no motors')
-  if run['running']:
-    return bad('busy', 409)
-  pet_state['mode'] = False
-  with run_lock:
-    drive['seq'] += 1
-    if drive['running']:
-      robot.stop()                      # 앞 동작을 끊는다 — 그 스레드가 lock 을 놓으면 새것이 돈다
-    drive.update(running=True, id=did, error='')
-    threading.Thread(target=drive_worker, args=(item, drive['seq']), daemon=True).start()
-  return {'ok': True}
-
-
-@app.get('/api/drive')
-async def api_drive_state():
-  return {k: drive[k] for k in ('running', 'id', 'error')}
 
 
 @app.post('/api/tricks/save')
@@ -1203,7 +1000,6 @@ async def api_reset(body: dict = Body(...)):
     load_profile(None)
   for pid in targets:
     profiles.pop(pid, None)
-    histories.pop(pid, None)
     shutil.rmtree(path('p', pid), ignore_errors=True)
   shutil.rmtree(path('photos'), ignore_errors=True)   # 261116 전 판이 남긴 사진 폴더
   last_photo.update(name=None, jpg=b'')
@@ -1225,70 +1021,6 @@ def ensure_only():
 async def api_lock(body: dict = Body(...)):
   teacher_tokens.discard((body or {}).get('token'))
   return {'ok': True}
-
-
-# 키우기
-@app.get('/api/pet')
-async def api_pet():
-  if need_profile():
-    return need_profile()
-  v = pet_view()
-  v['last_input'] = last_input
-  return v
-
-
-@app.post('/api/pet/mode')
-async def api_pet_mode(body: dict = Body(...)):
-  on = bool(body.get('on'))
-  pet_state['lang'] = lang_of(body)
-  if on and (run['running'] or not cur['id']):
-    return bad('busy', 409)
-  was, pet_state['mode'] = pet_state['mode'], on
-  if on:
-    pet_state['face'] = pet.face()
-    speak_async((None, None, pet.face()), pet_state['lang'])
-  elif was:
-    pet_state['screen'] = None
-    with _react_cv:
-      _react['next'] = None                         # 아직 안 그린 얼굴이 IP 화면을 덮지 않게
-    await asyncio.to_thread(robot.show_network)     # 얼굴을 띄웠던 화면을 IP 로
-  return {'ok': True}
-
-
-@app.post('/api/pet/act')
-async def api_pet_act(body: dict = Body(...)):
-  if need_profile():
-    return need_profile()
-  what = body.get('act')
-  if what not in ('feed', 'play', 'sleep', 'wash', 'pet'):
-    return bad('bad act')
-  if run['running']:
-    return bad('busy', 409)
-  pet_state['lang'] = lang_of(body)
-  r = pet_act(what)
-  r.update(pet_view())
-  return r
-
-
-@app.post('/api/pet/profile')
-async def api_pet_profile(body: dict = Body(...)):
-  """꾸미기 — 이름·색·머리 소품·안경·성격. 아이가 직접 고른다(잠금 없음)"""
-  if need_profile():
-    return need_profile()
-  name = str(body.get('name', pet_profile['name']))[:8].strip()
-  color = body.get('color', pet_profile['color'])
-  kind = body.get('kind', pet.kind)
-  hat = body.get('hat', pet_profile['hat'])
-  glasses = body.get('glasses', pet_profile['glasses'])
-  if color not in CONTENT['pet']['colors'] or kind not in PERSONALITY or hat not in HATS or not isinstance(glasses, bool):
-    return bad('bad profile')
-  with pet_lock:
-    pet_profile.update(name=name, color=color, hat=hat, glasses=glasses)
-    pet.kind = kind
-    pet_save()
-  if pet_state['mode']:
-    speak_async((None, None, pet.face()), pet_state['lang'])
-  return pet_view()
 
 
 def main():
@@ -1315,7 +1047,6 @@ def main():
   ensure_only()
   app.state.robot = robot
   threading.Thread(target=react_worker, daemon=True).start()
-  threading.Thread(target=pet_loop, daemon=True).start()
   threading.Thread(target=robot.show_network, daemon=True).start()   # 들어올 때 화면 초기화
   if args.fake:
     @app.post('/api/fake/input')

@@ -1,4 +1,4 @@
-"""체험 앱이 로봇 목소리로 하는 말을 미리 wav 로 만들어 둔다 → /home/pi/.kids/voice/
+"""체험 앱(카드 코딩 cards/ · 로봇 놀이 play/)이 로봇 목소리로 하는 말을 미리 wav 로 만들어 둔다 → /home/pi/.kids/voice/
 
 처음 말할 때 만들면 6~15초가 걸려 아이가 기다리지 못한다. 이미지를 만들 때(또는 목소리를 바꾼 뒤) 기기에서 한 번 돌릴 것:
   sudo /home/pi/.pyenv/bin/python3 kids/make_voice.py --device pibo            # 선생님 설정의 목소리
@@ -12,9 +12,14 @@ import time
 import argparse
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, BASE_DIR)
-import run_kids                    # noqa: E402
+ROOT = os.path.dirname(BASE_DIR)
+sys.path.insert(0, os.path.join(ROOT, 'cards'))
+sys.path.insert(1, BASE_DIR)
+import run_cards as run_kids       # noqa: E402 — 카드 코딩 서버(말·차시·설정 읽기를 그대로 쓴다)
 from robot import BaseRobot        # noqa: E402
+
+with open(os.path.join(ROOT, 'play', 'content.json'), encoding='utf-8') as f:
+  PLAY = json.load(f)              # 로봇 놀이(키우기) 말
 
 
 def texts(lang):
@@ -25,6 +30,8 @@ def texts(lang):
     out.append(run_kids.fmt(g[lang], lang))
   for c in run_kids.for_device(run_kids.CONTENT['challenges']):
     out.append(run_kids.fmt(c[lang], lang))
+  for g in PLAY['guides'].values():
+    out.append(run_kids.fmt(g[lang], lang))
   return list(dict.fromkeys(out))
 
 

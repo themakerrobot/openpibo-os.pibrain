@@ -27,7 +27,7 @@ PY=<파이썬> bash design/audit/run.sh ../openpibo-os.pibrain --quick    # 폭 
 | S2 | 실행비트 | HEAD 의 100755 목록 = `static_check.py` 의 `EXEC`, 작업본도 +x. 늘거나 줄면 사람이 판단해 `EXEC` 를 고친다 |
 | S3 | `?ver` | 템플릿이 싣는 파일이 `?ver` 를 올린 뒤에 바뀌지 않음(커밋 전 변경 포함) · 대화·로봇 놀이가 싣는 IDE `ko2en.js` 번호 = IDE 템플릿 번호 · customblock 3종 같은 번호 · `ko.js`/`en.js` 를 고치면 `langFileVersion` 도 |
 | S4 | 번역 키 | `ko2en.js` 3종 모든 키에 ko·en 둘 다 · JS `t('키')`·`data-key`·`data-title-key`·`data-aria-key`·`data-placeholder-key` 와 서버가 보내는 키(`dialog`·`msg`·`reason`)가 사전에 있음 |
-| S5 | 두 리포 같은 파일 | `design/audit/shared_files.txt` 의 파일 + `AUDIT.md` 가 글자까지 같음, `kids/templates/index.html` 은 탭 아이콘 `?ver` 만 다름 |
+| S5 | 두 리포 같은 파일 | `design/audit/shared_files.txt` 의 파일 + `AUDIT.md` 가 글자까지 같음, `cards/templates/index.html` · `play/templates/index.html` 은 탭 아이콘 `?ver` 만 다름 |
 | S6 | 키트 사본 | `design/sync.sh --check` 가 두 리포 모두 ok(`pibo-ui.css/js`·글꼴) |
 | S7 | 유출 | 세션 링크·`Claude-Session`·개인 메일·키·토큰 0, 261102 뒤 커밋 메시지에 세션 링크 0, 업체·제품 이름 0(목록이 있을 때) |
 | S8 | 영문판 | `origin/main`↔`origin/global` 차이 = 16개(CLAUDE.md 표), 모드 차이 0, global `ko2en.js` 3종 1행 `const blang = 'en';`, main 은 아님, global 이 main 을 다 받음 |
@@ -38,7 +38,7 @@ PY=<파이썬> bash design/audit/run.sh ../openpibo-os.pibrain --quick    # 폭 
 
 ## B — 화면 검사 (`browser_check.js`, 자동, 미리보기)
 
-대상: 두 제품 × IDE · 도구 · 분류기 · 대화 · 카드 코딩(`/cards`) · 로봇 놀이(`/play`) · 도움말(한·영) · 대기 페이지.
+대상: 두 제품 × IDE · 도구 · 분류기 · 대화 · 카드 코딩(`cards/`, 50060) · 로봇 놀이(`play/`, 50070) · 도움말(한·영) · 대기 페이지.
 
 | ID | 무엇 | 기준 |
 |---|---|---|
@@ -66,7 +66,7 @@ PY=<파이썬> bash design/audit/run.sh ../openpibo-os.pibrain --quick    # 폭 
 | IDE | 왼쪽 `piBo 메이커`(점 없음) · 가운데 [블록 \| 파이썬] · 앱 버튼 5개 · 밝기·언어는 [더보기] 안 · 1439px 이하 전체화면, 1299px 이하 앱 버튼이 아이콘만 | 버튼이 많아 한 줄에 못 들어간다(CLAUDE.md 'A안 배치') |
 | 대기 페이지 | 버튼 없음 | 잠깐 보이고 넘어가는 화면 |
 | 도움말 | 63em 이하에서 목록·목차 버튼이 상단바 양끝에 붙는다 | Furo 서랍을 여는 버튼 |
-| 대문(`/`, 261123) | 왼쪽은 제품 이름만 · [IDE] 버튼 없음(자기가 처음 화면) · 본문은 활동지 한 장(철 구멍 · 여백선 · 활동 카드 8개 · 빨간 도장·노란 꼬리표) · **카드 그림은 캐릭터 장면**(파이보 / PiBrain 은 보드 머리) · 줄 2 는 파이보 [카드 코딩][로봇 놀이], PiBrain [카드 코딩][키우기](몸이 없어 조종하기가 없다) | 앱을 고르는 첫 화면. 학습지 컨셉(사용자, ai-lab 과 같게) |
+| 대문(`/`, 261123) | 왼쪽은 제품 이름만 · [IDE] 버튼 없음(자기가 처음 화면) · 본문은 활동지 한 장(철 구멍 · 여백선 · 활동 카드 8개 · 빨간 도장·노란 꼬리표) · **카드 그림은 캐릭터 장면**(파이보 / PiBrain 은 보드 머리) · 줄 2 는 [카드 코딩][로봇 놀이](로봇 놀이 안은 키우기 + 파이보 조종하기 / PiBrain 블록 쌓기) | 앱을 고르는 첫 화면. 학습지 컨셉(사용자, ai-lab 과 같게) |
 | 앱의 [IDE] | IDE 가 새 탭으로 연 탭이 아니면 [처음 화면](집 아이콘) — 누르면 대문 | 대문에서 같은 탭으로 들어왔으면 돌아갈 곳이 대문이다 |
 
 ## M — 사람이 보는 것 (도구 없음, 하나씩 확인하고 보고)
@@ -87,7 +87,7 @@ PY=<파이썬> bash design/audit/run.sh ../openpibo-os.pibrain --quick    # 폭 
 | ID | 무엇 |
 |---|---|
 | D1 | CLAUDE.md 의 '실기기 확인 필요' 를 grep 해 이번 변경과 관계있는 것을 목록으로 보고 |
-| D2 | 서비스가 뜨는지(`systemctl is-active ide.service booting.service`), 도구·분류기·대화·카드 코딩·로봇 놀이 켜고 끄기(파이보 [조종하기] 단추마다 동작 — 다리 안 씀), [도움말](8080) 첫 화면 |
+| D2 | 서비스가 뜨는지(`systemctl is-active ide.service booting.service`), 도구·분류기·대화·카드 코딩·로봇 놀이 켜고 끄기(파이보 [조종하기] 단추마다 동작 — 다리 안 씀 · PiBrain [블록 쌓기] LCD·버튼 1~4), [도움말](8080) 첫 화면 |
 | D3 | 카메라·소리·서보·센서가 쓰이는 변경이면 그 기능을 실제로 |
 
 ## 보고 모양

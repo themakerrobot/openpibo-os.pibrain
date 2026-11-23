@@ -19,7 +19,7 @@
 ## 쓰기
 
 ```bash
-./design/sync.sh                        # 이 리포 (ide, tools, classifier, chat, kids)
+./design/sync.sh                        # 이 리포 (ide, tools, classifier, chat, cards, play)
 ./design/sync.sh ~/openpibo-os.pibrain  # PiBrain 체크아웃에도
 ./design/sync.sh --check                # 어긋난 사본 확인. 커밋 전 검증용
 ```
