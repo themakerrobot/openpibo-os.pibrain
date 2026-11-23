@@ -31,10 +31,14 @@ html[data-pb-theme="dark"] .pb-topbar {
 .pb-topbar a, .pb-topbar a:visited, .pb-topbar a:hover { color: var(--pb-frame-ink); text-decoration: none; }
 .pb-topbar__brand { display: flex; align-items: center; gap: 8px; min-width: 0; overflow: hidden;
   font-size: 16px; font-weight: 700; letter-spacing: -.2px; white-space: nowrap; }
-.pb-topbar__brand b { font-weight: 700; }
+.pb-topbar__brand b { font-weight: 700; font-family: "Gowun Batang", "Nanum Myeongjo", "AppleMyungjo", serif; font-size: 18px; letter-spacing: 0; }
 .pb-topbar__icon { width: 20px; height: 20px; flex: none; }
-.pb-topbar__app { font-weight: 400; overflow: hidden; text-overflow: ellipsis; }
-.pb-topbar__app::before { content: "·"; margin: 0 6px 0 -2px; opacity: .55; font-weight: 700; }
+/* 앱 이름 — 다른 앱과 같은 테 두른 이름표(학습지 층, 261123) */
+.pb-topbar__app { font-size: 12.5px; font-weight: 700; line-height: 1; letter-spacing: 0; padding: 5px 10px; margin-left: 2px; border: 1px solid #1f5f7a;
+  border-radius: 999px; color: #12455c; background: #fff; overflow: hidden; text-overflow: ellipsis; }
+html[data-pb-theme="dark"] .pb-topbar__app { border-color: #7fb6cf; color: #b8dbea; background: #24211c; }
+.pb-topbar__appic { display: inline-flex; width: 22px; height: 22px; flex: none; }
+.pb-topbar__appic svg { width: 22px !important; height: 22px !important; overflow: visible; }
 .pb-topbar__right { display: flex; align-items: center; gap: 2px; flex: none; }
 .pb-topbar__btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box;
   height: 32px; min-width: 32px; padding: 0 10px; border: 0; border-radius: 8px; background: transparent;

@@ -71,10 +71,21 @@
     fsEnter();
   }, true);
 
+  // 제목 글꼴(명조 Gowun Batang)은 IDE(80)의 것을 같이 쓴다 — 8080 에 따로 싣지 않는다(다른 앱의 SharedFonts 와 같은 생각, 261123)
+  try {
+    if (location.hostname) {
+      var gl = document.createElement('link'); gl.rel = 'stylesheet';
+      gl.href = 'http://' + location.hostname + '/static/fonts/gowun/gowun.css';
+      document.head.appendChild(gl);
+    }
+  } catch (e) { /* 무시 — 기기 기본 명조로 */ }
+
   function setup() {
-    var a = document.querySelector('.pb-topbar__ide');   // 도움말은 8080, IDE 는 같은 기기의 80
+    var a = document.querySelector('.pb-topbar__ide');   // 도움말은 8080, 대문·IDE 는 같은 기기의 80
     if (a && location.hostname) {
-      a.href = 'http://' + location.hostname + '/ide';   // 대문(/)이 생겨 IDE 는 /ide (261123)
+      a.href = 'http://' + location.hostname + '/';   // [처음 화면] — 대문(261123). 다른 앱의 [처음 화면] 과 같다
+      var ic = a.querySelector('.pb-topbar__appic');
+      if (ic && window.PiboIcons) ic.innerHTML = PiboIcons.app('home', a.getAttribute('data-product'));
       a.addEventListener('click', function () { fsLeaving = Date.now(); });
     }
     var lang = document.querySelector('.pb-topbar__lang');

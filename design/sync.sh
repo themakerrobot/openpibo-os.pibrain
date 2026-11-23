@@ -52,6 +52,11 @@ for root in "${ROOTS[@]}"; do
   done
 done
 
+# 도움말(8080)도 캐릭터 앱 아이콘을 쓴다 — [처음 화면](261123)
+for root in "${ROOTS[@]}"; do
+  [ -d "$root/docs/source/_static" ] && one design/pibo-icons.js "$root/docs/source/_static/pibo-icons.js"
+done
+
 if [ "$CHECK" = 1 ] && [ "$bad" = 1 ]; then
   echo; echo "sync 가 필요하다:  ./design/sync.sh"; exit 1
 fi
