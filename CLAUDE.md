@@ -850,7 +850,7 @@ classifier 언어 토글, 검수 보고서 구조, Tools 서비스.
 - 대기 페이지 `launch.html`: `svc=hwtest`(50050) · `go=make|pet`(로봇 놀이 화면 바로 가기, 이름·아이콘도 그 화면 것). `LAUNCH_VER` 261123v1. 로봇 놀이는 `?go=` 를 읽고 주소에서 지운다
 - 미리보기 `design/preview.py` 와 검사 `design/audit/browser_check.js` 가 대문(`/`)·IDE(`/ide`)를 안다. `AUDIT.md` B2 예외에 대문·[처음 화면] 을 넣었다
 
-**학습지 층**: 파이보와 같은 키트·IDE CSS(색은 키트 토큰) — 설명은 파이보 CLAUDE.md '첫 화면(대문) · 학습지 층'. 대문 카드 그림·앱 아이콘·키우기 친구는 **PiBrain 캐릭터**(몸은 파이보와 같고 머리가 PiBrain 보드 — 검은 화면 속 하늘색 얼굴 · 카메라 · 버튼 넷, 261123 사용자). 파일은 파이보와 같다(`ide/static/v2/pibo-art.js` · `design/pibo-icons.js` · `kids/static/pet.js` — 제품을 보고 고른다).
+**학습지 층**: 파이보와 같은 키트·IDE CSS(색은 키트 토큰) — 설명은 파이보 CLAUDE.md '첫 화면(대문) · 학습지 층'. 대문 카드 그림·키우기 친구는 **PiBrain 캐릭터**(몸은 파이보와 같고 머리가 PiBrain 보드 — 검은 화면 속 하늘색 얼굴 · 카메라 · 버튼 넷, 261123 사용자). 파일은 파이보와 같다(`ide/static/v2/pibo-art.js` · `kids/static/pet.js` — 제품을 보고 고른다). 상단바 아이콘은 작은 Font Awesome 기호(캐릭터 아이콘은 넣었다 뺐다).
 
 ## 빈 화면 안내 · 읽기 다듬기 (261120, 사용자 — UX 점검 A~F 전부)
 

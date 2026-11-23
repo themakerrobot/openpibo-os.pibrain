@@ -97,7 +97,10 @@ html[data-theme="dark"] .act__no { color: #17140f; }
 /* 캐릭터 그림 칸 — 큰 카드는 위에 넓게, 가로 카드는 왼쪽 네모(옅은 칸 + 판화 그림자는 아이콘 딱지와 같게) */
 .home-app__art { display: block; flex: none; width: 100%; height: 132px; border-radius: 12px; background: var(--pen-t); overflow: hidden;
   box-shadow: 4px 4px 0 var(--pen-t2); }
+.home-app__art { position: relative; }
 .home-app__art svg { display: block; height: 100%; width: auto; margin: 0 auto; transition: transform .2s ease; }
+/* 이름 앞 작은 아이콘 — 상단바 버튼(아이콘 + 이름)과 같은 기호, 펜 색 */
+.home-app__nic { font-size: .82em; color: var(--pen); margin-right: 7px; }
 .home-app:hover .home-app__art svg { transform: translateY(-3px) scale(1.03); }
 html[data-theme="dark"] .home-app__art { background: var(--pen-t); }
 /* 가로 카드(활동 2 · 3) */

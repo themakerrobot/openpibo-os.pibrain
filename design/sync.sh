@@ -10,7 +10,7 @@
 # 글꼴 주소를 IDE 로 넘겨서(SharedFonts) 세 앱이 한 벌을 같이 캐시한다(260929). 전엔 앱마다 사본이었다
 set -e
 cd "$(dirname "$0")/.."
-SRCS=(design/pibo-ui.css design/pibo-ui.js design/pibo-icons.js)
+SRCS=(design/pibo-ui.css design/pibo-ui.js)
 FONTS=(design/fonts/*)
 for f in "${SRCS[@]}" "${FONTS[@]}"; do [ -f "$f" ] || { echo "!! $f 가 없다"; exit 1; }; done
 
@@ -50,11 +50,6 @@ for root in "${ROOTS[@]}"; do
     for SRC in "${SRCS[@]}"; do one "$SRC" "$d/$(basename "$SRC")"; done
     [ "$app" = ide ] && for SRC in "${FONTS[@]}"; do one "$SRC" "$d/fonts/$(basename "$SRC")"; done
   done
-done
-
-# 도움말(8080)도 캐릭터 앱 아이콘을 쓴다 — [처음 화면](261123)
-for root in "${ROOTS[@]}"; do
-  [ -d "$root/docs/source/_static" ] && one design/pibo-icons.js "$root/docs/source/_static/pibo-icons.js"
 done
 
 if [ "$CHECK" = 1 ] && [ "$bad" = 1 ]; then

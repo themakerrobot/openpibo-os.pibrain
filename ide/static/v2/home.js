@@ -25,7 +25,7 @@
 
   // 앱 — 묶음 세 개. svc 가 있으면 대기 페이지로(서비스를 켜고 기다린다), go 는 로봇 놀이 안의 화면
   var APPS = [
-    { id: 'code',  sec: 'make', name: 'home_code', desc: 'home_code_d', icon: 'fa-puzzle-piece' },
+    { id: 'code',  sec: 'make', name: 'home_code', desc: 'home_code_d', icon: 'fa-code' },
     { id: 'tools', sec: 'make', name: 'nav_tools', desc: PIBRAIN ? 'home_tools_d_pb' : 'home_tools_d', svc: 'tools', icon: 'fa-screwdriver-wrench' },
     { id: 'classifier', sec: 'make', name: 'home_cls',  desc: 'home_cls_d', svc: 'classifier', icon: 'fa-graduation-cap' },
     { id: 'llm',   sec: 'make', name: 'nav_llm',   desc: 'home_llm_d', svc: 'llm', icon: 'fa-comments' },
@@ -88,11 +88,12 @@
         var tag = runApp === a.id ? '<span class="home-run">' + esc(t('home_running')) + '</span>'
           : (a.id === ring ? '<span class="home-tag">' + esc(t('home_last')) + '</span>' : '');
         // 그림: 파이보 캐릭터 장면(pibo-art.js). 못 불러오면 IDE 상단바와 같은 Font Awesome 기호
+        // 이름 앞 작은 아이콘 = 상단바·대기 페이지의 같은 아이콘(261123, 사용자 — 작은 아이콘과 대문 그림이 이어져 보이게)
         var pic = (window.PiboArt && PiboArt.scenes.indexOf(a.id) >= 0)
           ? '<span class="home-app__art">' + PiboArt.svg(a.id) + '</span>'
           : '<span class="home-app__ic"><i class="fa-solid ' + a.icon + '"></i></span>';
         b.innerHTML = pic +
-          '<span class="home-app__tx"><b>' + esc(t(a.name)) + '</b><span class="home-app__d">' + esc(t(a.desc)) + '</span></span>' +
+          '<span class="home-app__tx"><b>' + (pic.indexOf('home-app__art') > 0 ? '<i class="home-app__nic fa-solid ' + a.icon + '" aria-hidden="true"></i>' : '') + esc(t(a.name)) + '</b><span class="home-app__d">' + esc(t(a.desc)) + '</span></span>' +
           '<span class="home-app__go"><span>' + esc(t('home_start')) + '</span><i class="fa-solid fa-arrow-right"></i></span>' + tag;
         b.addEventListener('click', function () { go(a, b); });
         box.appendChild(b);

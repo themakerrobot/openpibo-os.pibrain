@@ -84,8 +84,6 @@
     var a = document.querySelector('.pb-topbar__ide');   // 도움말은 8080, 대문·IDE 는 같은 기기의 80
     if (a && location.hostname) {
       a.href = 'http://' + location.hostname + '/';   // [처음 화면] — 대문(261123). 다른 앱의 [처음 화면] 과 같다
-      var ic = a.querySelector('.pb-topbar__appic');
-      if (ic && window.PiboIcons) ic.innerHTML = PiboIcons.app('home', a.getAttribute('data-product'));
       a.addEventListener('click', function () { fsLeaving = Date.now(); });
     }
     var lang = document.querySelector('.pb-topbar__lang');
