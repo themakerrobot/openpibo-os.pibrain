@@ -186,6 +186,10 @@ html[data-theme="dark"] .home-w--recent h2 > i { background: #3a3220; color: #f5
 .home-set__row--red .home-set__ic { color: var(--v2-red, #d6393f); }
 .home-set__row--red[data-armed] { background: var(--v2-red-t, #fbe4e5); }
 .home-set__row--red[data-armed] small { color: var(--v2-red-ink, #9f1f25); }
-@media (max-width: 1100px) { .home-two { grid-template-columns: minmax(0, 1fr); gap: 0; } .home-two > div:first-child .home-apps { margin-bottom: 28px; } }
+@media (max-width: 1100px) { .home-two { grid-template-columns: minmax(0, 1fr); gap: 0; } .home-two > .home-band:first-child .home-apps { margin-bottom: 28px; } }
 @media (max-width: 600px) { .home-apps--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (prefers-reduced-motion: reduce) { .home-modal__box { animation: none !important; } }
+/* 시안 비교용 요소(학습지 home-sheet.css 에서만 보임) · 줄 구조(261123) */
+.home-nm, .home-sec > small { display: none; }
+.home-two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.home-band--make .home-apps { margin-bottom: 28px; }

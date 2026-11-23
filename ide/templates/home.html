@@ -8,7 +8,8 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
   <link rel="stylesheet" href="../static/pibo-ui.css?ver=261123v1" />
-  <link rel="stylesheet" href="../static/v2/home.css?ver=261123v2" />
+  <link rel="stylesheet" href="../static/v2/home.css?ver=261123v3" />
+  <link rel="stylesheet" href="../static/v2/home-sheet.css?ver=261123v1" />
   <link rel="shortcut icon" href="../static/icon.png?ver=261102v1" type="image/png" />
   <!-- 첫 화면(대문, 261123). 앱 서버는 그대로 따로 돌고, 여기선 골라서 같은 탭으로 들어간다. 코드는 v2/home.js(두 리포 같은 파일) -->
   <script src="../static/ko2en.js?ver=261123v3"></script>
@@ -33,14 +34,21 @@
         <div class="home-hi">
           <span class="home-pal" id="home_pal" aria-hidden="true"></span>
           <div class="home-bubble"><h1 data-key="home_hello"></h1><p id="home_sub"></p></div>
+          <div class="home-nm" aria-hidden="true"><span data-key="home_nm_name"></span><i></i><span data-key="home_nm_date"></span><i></i></div>
         </div>
-        <div class="home-sec"><span><i class="fa-solid fa-wand-magic-sparkles"></i><b data-key="home_sec_make"></b></span></div>
-        <div class="home-apps" id="apps_make"></div>
+        <section class="home-band home-band--make" data-no="1">
+          <div class="home-sec"><span><i class="fa-solid fa-wand-magic-sparkles"></i><b data-key="home_sec_make"></b></span><small data-key="home_sec_make_d"></small></div>
+          <div class="home-apps" id="apps_make"></div>
+        </section>
         <div class="home-two">
-          <div><div class="home-sec home-sec--play"><span><i class="fa-solid fa-heart"></i><b data-key="home_sec_play"></b></span></div>
-            <div class="home-apps home-apps--2" id="apps_play"></div></div>
-          <div><div class="home-sec home-sec--admin"><span><i class="fa-solid fa-user-graduate"></i><b data-key="home_sec_admin"></b></span></div>
-            <div class="home-apps home-apps--3" id="apps_admin"></div></div>
+          <section class="home-band home-band--play" data-no="2">
+            <div class="home-sec home-sec--play"><span><i class="fa-solid fa-heart"></i><b data-key="home_sec_play"></b></span><small data-key="home_sec_play_d"></small></div>
+            <div class="home-apps home-apps--2" id="apps_play"></div>
+          </section>
+          <section class="home-band home-band--admin" data-no="3">
+            <div class="home-sec home-sec--admin"><span><i class="fa-solid fa-user-graduate"></i><b data-key="home_sec_admin"></b></span><small data-key="home_sec_admin_d"></small></div>
+            <div class="home-apps home-apps--2" id="apps_admin"></div>
+          </section>
         </div>
       </div>
       <aside class="home-side">
@@ -61,6 +69,6 @@
 
   <script src="../static/socket.io.min.js?ver=240319v3"></script>
   <script src="../static/pibo-ui.js?ver=261123v2"></script>
-  <script src="../static/v2/home.js?ver=261123v2"></script>
+  <script src="../static/v2/home.js?ver=261123v3"></script>
 </body>
 </html>

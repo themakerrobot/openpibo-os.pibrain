@@ -477,6 +477,12 @@ const translations = {
   home_set_danger:  { ko: "조심해서 쓰기", en: "Use with care" },
   home_set_sure:    { ko: "한 번 더 누르면 실행돼요", en: "Tap again to confirm" },
   home_set_sent:    { ko: "로봇에 보냈어요.", en: "Sent to the robot." },
+  home_hw_go:       { ko: "검수 시작", en: "Start the check" },
+  home_sec_make_d:  { ko: "코드와 AI 로 로봇을 움직여요", en: "Move the robot with code and AI" },
+  home_sec_play_d:  { ko: "카드와 친구로 놀며 배워요", en: "Learn by playing with cards and a friend" },
+  home_sec_admin_d: { ko: "선생님이 쓰는 곳이에요", en: "For teachers" },
+  home_nm_name:     { ko: "이름", en: "Name" },
+  home_nm_date:     { ko: "날짜", en: "Date" },
   // 파일 서랍 [복사]·[옮기기](261123)
   fm_copy:          { ko: "복사", en: "Copy" },
   fm_move:          { ko: "옮기기", en: "Move" },
