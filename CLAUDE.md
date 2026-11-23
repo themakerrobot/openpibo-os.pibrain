@@ -269,12 +269,12 @@ span 이 날아가면 시리얼이 영영 안 돌아온다.
 | 이름(표시) | 파일(`/home/pi/.model/llm/`, 261106 부터 링크 아닌 실제 파일) ← 원래 판 | 도구 | 시스템 글 |
 |---|---|---|---|
 | `general`(일반) | `general.gguf` → `gemma-3-1b-it-Q4_K_M.gguf`(806,058,272 B) | **없음** | 블록이 준 것 / 대화 화면은 `SYSTEM` |
-| `themaker-ko`(더메이커 KO) | `themaker-ko.gguf` → `themaker-0.8b-Q4_K_M.gguf`(337,040,032 B) | **있음**(불빛·보기·움직이기) | 대화 화면: `tools.SYSTEM` + 도구 목록 / 블록: 준 것 |
-| `themaker-en`(더메이커 EN) | `themaker-en.gguf` → `themaker-en-0.8b-Q4_K_M.gguf`(PC 학습 중 — 오기 전엔 깨진 링크) | **있음** | 〃 |
+| `themaker-ko`(더메이커 KO) | `themaker-ko.gguf` → `themaker-ko-v2-0.8b-Q4_K_M.gguf`(336,842,976 B, 261123 — 그 전 판 `themaker-0.8b-Q4_K_M`) | **있음**(불빛·보기·움직이기) | 대화 화면: `tools.SYSTEM` + 도구 목록 / 블록: 준 것 |
+| `themaker-en`(더메이커 EN) | `themaker-en.gguf` → `themaker-en-v2-0.8b-Q4_K_M.gguf`(345,524,928 B, 261123) | **있음** | 〃 |
 
 - `openpibo/speech.py` `Dialog`: `set_llm_model(model)`(이름이 셋 밖이면 `ValueError`, 파일이 없으면(깨진 링크 포함) `FileNotFoundError`, 이미 띄웠으면 다시 띄움).
   `gemma3`(261029v1 블록 값)는 `general` 로 받는다. `start_llm()` 은 `systemctl stop 'llama-server@*'` → `systemctl start llama-server@<고른 것 또는 general>`. `stop_llm()` 도 `'llama-server@*'` 를 끈다(예전 `llama-server.service` 는 없다). 고른 모델은 그 `Dialog` 안에서만 기억한다
-- **대화 화면(`chat/`)**: 상단 [대화 모델] select 하나(`#model_sel`, 처음엔 '고르세요') + 옆에 고른 것의 판·크기(`#model_file`, 예 `themaker-0.8b-Q4_K_M · 321MB` — 261120 부터 `.model/VERSION` 의 `llm/<이름>.gguf = …` 줄에서 읽는다(`run_chat.model_version`). 그 줄이 없으면 파일 이름 `themaker-ko`. 기기 VERSION 줄 모양은 **확인 필요**). 세 개를 늘어놓지 말 것(사용자).
+- **대화 화면(`chat/`)**: 상단 [대화 모델] select 하나(`#model_sel`, 처음엔 '고르세요') + 옆에 고른 것의 판·크기(`#model_file`, 예 `themaker-ko-v2-0.8b-Q4_K_M · 321MB` — 261120 부터 `.model/VERSION` 의 `llm/<이름>.gguf = …` 줄에서 읽는다(`run_chat.model_version`). 그 줄이 없으면 파일 이름 `themaker-ko`. 기기 VERSION 줄 모양은 **확인 필요**). 세 개를 늘어놓지 말 것(사용자).
   파일이 없는 모델은 '(없음)' 으로 못 고른다(`/api/models` 의 `have`·`file`·`mb`). 고르면 `POST /api/model` → `switch_model()`(스레드)이
   대답 중이면 끝난 뒤 기록·말하기를 비우고, 다 끈 다음 `llama-server@<이름>` 을 `--no-block` 으로 켠다. 준비는 예전처럼 `warm_loop` 가 `/health` → 미리 읽기. 바꾸는 동안(`_switching`)은 옛 서버를 보지 않는다.
   고르기 전엔 상태 줄을 숨기고 빈 화면에 모델 카드(261120 — '빈 화면 안내' B, 목록을 못 받으면 예전 한 줄 '위에서 대화 모델을 골라 주세요.' `chat_pick_model`). 새로 고쳐도 서버의 `model` 로 선택이 남는다. [다시 켜기] 는 같은 모델로 `switch_model`.
