@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PiBrain</title>
 <link rel="stylesheet" href="all.min.css">
-<link rel="stylesheet" href="pibo-ui.css?ver=261123v8">
+<link rel="stylesheet" href="pibo-ui.css?ver=261123v9">
 <link rel="shortcut icon" href="icon.png?ver=261102v2" type="image/png">
 <script>/* 화면 밝기를 첫 페인트 전에 (pibo-ui.js 의 getTheme 과 같은 규칙. 고른 적 없으면 soft) */
 (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
@@ -122,19 +122,22 @@
     // 대화: 대화 웹(chat/run_chat.py, 50030)이 열리면 바로 간다. 모델 준비(1~2분)는 대화 화면이 보여 준다(261026)
     llm:        { port: 50030, on: '/llm?enable=on',        check: 'port',   limit: 60,
                   name: { ko: '대화', en: 'Chat' },                icon: 'fa-comments' },
-    // 체험 앱 서버(kids/run_kids.py, 50060) — 카드 코딩(/cards)·로봇 놀이(/play) 둘이 한 서버(261123). ?go 가 없으면 로봇 놀이
-    kids:       { port: 50060, on: '/kids?enable=on',       check: 'port',   limit: 60,
+    // 체험 앱 둘(261123 — 폴더·서버를 나눴다): 카드 코딩(cards/run_cards.py, 50060) · 로봇 놀이(play/run_play.py, 50070)
+    cards:      { port: 50060, on: '/cards?enable=on',      check: 'port',   limit: 60,
+                  name: { ko: '카드 코딩', en: 'Card coding' },    icon: 'fa-shapes' },
+    play:       { port: 50070, on: '/play?enable=on',       check: 'port',   limit: 60,
+                  name: { ko: '로봇 놀이', en: 'Robot Play' },     icon: 'fa-gamepad' },
+    kids:       { port: 50070, on: '/play?enable=on',       check: 'port',   limit: 60,   // 261123 전 이름 — 로봇 놀이
                   name: { ko: '로봇 놀이', en: 'Robot Play' },     icon: 'fa-gamepad' },
     // H/W 검수(test/test.py, 50050) — 대문 [H/W 검수](261123). 서버가 켤 때 3초 기다린다
     hwtest:     { port: 50050, on: '/hwtest?enable=on',     check: 'port',   limit: 60,
                   name: { ko: 'H/W 검수', en: 'H/W check' },       icon: 'fa-stethoscope' }
   };
-  // 체험 앱 서버의 어느 화면으로 갈지(261123): cards(카드 코딩) · play(로봇 놀이) · pet(키우기) · drive(조종하기). make 는 예전 이름(카드 코딩 만들기)
-  var GO = { cards: { ko: '카드 코딩', en: 'Card coding', icon: 'fa-shapes',  path: 'cards', color: 'kids' },
-             make:  { ko: '카드 코딩', en: 'Card coding', icon: 'fa-shapes',  path: 'cards?go=make', color: 'kids' },
-             play:  { ko: '로봇 놀이', en: 'Robot Play',  icon: 'fa-gamepad', path: 'play', color: 'play' },
-             pet:   { ko: '키우기',    en: 'Pet',         icon: 'fa-heart',   path: 'play?go=pet', color: 'pet' },
-             drive: { ko: '조종하기',  en: 'Remote',      icon: 'fa-gamepad', path: 'play?go=drive', color: 'play' } };
+  // 체험 앱 안의 한 화면으로 바로 갈 때(?go=): 카드 코딩 make · 로봇 놀이 pet · drive(파이보) · game(PiBrain)
+  var GO = { cards: { make: { ko: '카드 코딩', en: 'Card coding', icon: 'fa-shapes', color: 'kids' } },
+             play:  { pet:  { ko: '키우기',    en: 'Pet',         icon: 'fa-heart',   color: 'pet' },
+                      drive: { ko: '조종하기', en: 'Remote control', icon: 'fa-gamepad', color: 'play' },
+                      game: { ko: '블록 쌓기', en: 'Block Stack', icon: 'fa-cubes-stacked', color: 'play' } } };
   var key = Q.get('svc'), S = SVC[key];
   var $ = function (id) { return document.getElementById(id); };
   $('close').onclick = function () {
@@ -145,15 +148,16 @@
   function setTitle(s) { $('title').textContent = s; document.title = PRODUCT ? s + ' · ' + PRODUCT : s; }   // 탭 제목은 '… · PiBrain' (다른 화면과 같은 꼴)
   if (!S) { document.body.dataset.state = 'fail'; setTitle(t('bad')); $('icon').className = 'fa-solid fa-circle-exclamation'; return; }
 
-  var go = Q.get('go'), G = key === 'kids' ? (GO[go] || GO.play) : null;
+  if (key === 'kids') key = 'play';
+  var go = Q.get('go'), G = (GO[key] || {})[go] || null;
   var name = G ? G[L] : S.name[L];
   if (G) S.icon = G.icon;
   setTitle(t('title', name));
   $('app_name').textContent = name; $('app_name').hidden = false;
   $('icon').className = 'fa-solid ' + S.icon;
-  $('icon').style.color = 'var(--app-' + (G ? G.color : key) + ', inherit)';   // 앱 색(키트 --app-*, 261123) — 상단바·대문과 같은 색
+  $('icon').style.color = 'var(--app-' + (G ? G.color : key === 'cards' ? 'kids' : key) + ', inherit)';   // 앱 색(키트 --app-*, 261123) — 상단바·대문과 같은 색
   var target = 'http://' + HOST + ':' + S.port + '/';
-  var targetGo = G ? target + G.path : target;   // 준비 확인은 target, 이동은 targetGo
+  var targetGo = G ? target + '?go=' + go : target;   // 준비 확인은 target, 이동은 targetGo
 
   function step(n, state) {
     var li = $('s' + n); li.setAttribute('data-s', state);

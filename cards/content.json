@@ -1,5 +1,5 @@
 {
-  "_": "체험 앱 내용 — 카드·개념 사다리·차시·도전 과제·말(ko/en)·키우기. {light}·{name}·{name_ya} 는 제품마다 바뀐다(run_kids.py 의 ROBOTS). 설계는 KIDS.md",
+  "_": "카드 코딩 내용 — 카드·개념 사다리·차시·도전 과제·말(ko/en). {light}·{name}·{name_ya} 는 제품마다 바뀐다(run_cards.py 의 ROBOTS). 키우기·조종하기·블록 쌓기는 play/content.json. 설계는 KIDS.md",
 
   "cards": {
     "m:greeting":   {"kind": "motion", "arg": "greeting", "icon": "fa-hand", "device": ["pibo"], "ko": "인사", "en": "Hello"},
@@ -96,21 +96,7 @@
     "welcome":    {"ko": "안녕! 오늘도 같이 놀자!", "en": "Hi! Let's play together today!"},
     "great":      {"ko": "우와, 잘했어!", "en": "Wow, great job!"},
     "again":      {"ko": "조금 달라. 다시 해 볼까?", "en": "Not quite. Shall we try again?"},
-    "learned":    {"ko": "새 재주를 배웠어! 고마워!", "en": "I learned a new trick! Thank you!"},
-    "eat":        {"ko": "냠냠, 맛있어!", "en": "Yum yum, tasty!"},
-    "full":       {"ko": "배불러. 이제 그만 먹을래.", "en": "I'm full. No more, please."},
-    "play":       {"ko": "와, 재밌다!", "en": "Wow, this is fun!"},
-    "tired":      {"ko": "너무 졸려서 못 놀겠어.", "en": "I'm too sleepy to play."},
-    "starving":   {"ko": "배가 고파서 못 놀겠어.", "en": "I'm too hungry to play."},
-    "sleep":      {"ko": "잘 자. 쿨쿨.", "en": "Good night. Zzz."},
-    "notsleepy":  {"ko": "아직 안 졸려!", "en": "I'm not sleepy yet!"},
-    "wake":       {"ko": "하암, 잘 잤다!", "en": "Yawn, I slept well!"},
-    "woken":      {"ko": "으음, 자다가 깼어.", "en": "Hmm, you woke me up."},
-    "wash":       {"ko": "뽀득뽀득, 개운해!", "en": "Squeaky clean!"},
-    "pet":        {"ko": "헤헤, 좋아!", "en": "Hehe, I like that!"},
-    "hungry":     {"ko": "배고파. 밥 줘.", "en": "I'm hungry. Feed me, please."},
-    "sleepy":     {"ko": "하암, 졸려.", "en": "Yawn, I'm sleepy."},
-    "sad":        {"ko": "심심해. 같이 놀자.", "en": "I'm bored. Let's play."}
+    "learned":    {"ko": "새 재주를 배웠어! 고마워!", "en": "I learned a new trick! Thank you!"}
   },
 
   "concepts": [
@@ -166,45 +152,5 @@
     {"id": "10-1", "lesson": 10, "device": ["pibrain"], "icon": "fa-2", "on": "run", "ko": "만약 버튼 2를 누르면 딩동이 울리게 해 봐!", "en": "If button 2 is pressed, ring the bell!", "check": {"if_has": ["i:b2", "a:ding"]}},
     {"id": "10-2", "lesson": 10, "device": ["pibo"], "icon": "fa-hand-pointer", "on": "save", "ko": "만약 머리를 만지면 하는 재주를 만들어 저장해 봐!", "en": "Save a trick that does something if you touch its head!", "check": {"if_has": ["i:touch", null]}},
     {"id": "10-2", "lesson": 10, "device": ["pibrain"], "icon": "fa-3", "on": "save", "ko": "만약 버튼 3을 누르면 하는 재주를 만들어 저장해 봐!", "en": "Save a trick that does something if button 3 is pressed!", "check": {"if_has": ["i:b3", null]}}
-  ],
-
-  "pet": {
-    "kinds":     {"calm": {"icon": "fa-face-smile", "ko": "얌전이", "en": "Calm", "about_ko": "모든 게 천천히 바뀌어요.", "about_en": "Everything changes slowly."}, "foodie": {"icon": "fa-cookie-bite", "ko": "먹보", "en": "Foodie", "about_ko": "금방 배고파지고, 밥을 많이 먹어요.", "about_en": "Gets hungry fast and eats a lot."}, "sleepyhead": {"icon": "fa-bed", "ko": "잠꾸러기", "en": "Sleepyhead", "about_ko": "금방 졸리고, 잠도 빨리 자요.", "about_en": "Gets sleepy fast and falls asleep quickly."}, "playful": {"icon": "fa-futbol", "ko": "장난꾸러기", "en": "Playful", "about_ko": "금방 심심해하고, 놀면 아주 기뻐해요.", "about_en": "Gets bored fast and loves to play."}},
-    "colors":    ["#2b7de9", "#ffb703", "#ff6b9a", "#4cc9f0", "#80d36b", "#b388ff", "#ff8a3d"],
-    "names_ko":  ["몽이", "콩이", "별이", "보리", "하루", "토리"],
-    "names_en":  ["Momo", "Bean", "Star", "Coco", "Sunny", "Toto"],
-    "acts":      {"feed": {"icon": "fa-utensils", "ko": "밥", "en": "Feed"}, "play": {"icon": "fa-futbol", "ko": "놀기", "en": "Play"}, "sleep": {"icon": "fa-bed", "ko": "재우기", "en": "Sleep"}, "wash": {"icon": "fa-bath", "ko": "씻기", "en": "Wash"}},
-    "stats":     {"hunger": {"icon": "fa-utensils", "ko": "배고픔", "en": "Hunger"}, "mood": {"icon": "fa-heart", "ko": "기분", "en": "Mood"}, "sleepy": {"icon": "fa-moon", "ko": "졸림", "en": "Sleepy"}}
-  },
-
-  "drive": {
-    "_": "로봇 놀이 [조종하기](파이보만, 261123) — 누르면 바로 한다. move = 방향 버튼(걷기·돌기), motion = 다리·발을 쓰지 않는 동작(openpibo-models 0.4.9 motion_db 에서 M0·M1·M6·M7 이 안 움직이는 것만). hold = 자세를 잡고 그대로 둔다(나머지는 끝나면 처음 자세)",
-    "move": [
-      {"id": "forward1",  "icon": "fa-arrow-up",     "ko": "앞으로",        "en": "Forward"},
-      {"id": "backward1", "icon": "fa-arrow-down",   "ko": "뒤로",          "en": "Back"},
-      {"id": "left",      "icon": "fa-rotate-left",  "ko": "왼쪽으로 돌기", "en": "Turn left"},
-      {"id": "right",     "icon": "fa-rotate-right", "ko": "오른쪽으로 돌기", "en": "Turn right"}
-    ],
-    "motion": [
-      {"id": "greeting",    "icon": "fa-hand",                 "ko": "인사",       "en": "Hello"},
-      {"id": "bow",         "icon": "fa-person-praying",       "ko": "꾸벅",       "en": "Bow"},
-      {"id": "handshaking", "icon": "fa-handshake",            "ko": "악수",       "en": "Handshake"},
-      {"id": "clapping1",   "icon": "fa-hands-clapping",       "ko": "박수",       "en": "Clap"},
-      {"id": "cheer1",      "icon": "fa-person-rays",          "ko": "만세",       "en": "Hooray"},
-      {"id": "yes_h",       "icon": "fa-face-smile",           "ko": "끄덕",       "en": "Nod"},
-      {"id": "no_h",        "icon": "fa-face-meh",             "ko": "도리도리",   "en": "Shake"},
-      {"id": "happy2",      "icon": "fa-face-laugh-beam",      "ko": "기뻐",       "en": "Happy"},
-      {"id": "excite1",     "icon": "fa-bolt",                 "ko": "신나",       "en": "Excited"},
-      {"id": "sad3",        "icon": "fa-face-sad-tear",        "ko": "슬퍼",       "en": "Sad"},
-      {"id": "think1",      "icon": "fa-face-grin-beam-sweat", "ko": "음…",        "en": "Think"},
-      {"id": "hey1",        "icon": "fa-bullhorn",             "ko": "이봐",       "en": "Hey"},
-      {"id": "boring1",     "icon": "fa-face-rolling-eyes",    "ko": "심심해",     "en": "Bored"},
-      {"id": "head_h",      "icon": "fa-arrows-left-right",    "ko": "고개 돌리기", "en": "Head turn"},
-      {"id": "hifive",      "icon": "fa-hand-sparkles",        "ko": "하이파이브", "en": "High five",     "hold": true},
-      {"id": "look_l",      "icon": "fa-arrow-left",           "ko": "왼쪽 보기",  "en": "Look left",     "hold": true},
-      {"id": "look_r",      "icon": "fa-arrow-right",          "ko": "오른쪽 보기", "en": "Look right",   "hold": true},
-      {"id": "handup_l",    "icon": "fa-hand-point-up",        "ko": "왼손 들기",  "en": "Left hand up",  "hold": true},
-      {"id": "handup_r",    "icon": "fa-hand-point-up",        "ko": "오른손 들기", "en": "Right hand up", "hold": true}
-    ]
-  }
+  ]
 }

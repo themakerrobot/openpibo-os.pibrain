@@ -1,4 +1,4 @@
-/* 체험 앱 — 키트(pibo-ui.css) 색·글꼴 그대로, 글자·칸만 크게. 누르는 칸 최소 64px.
+/* 카드 코딩(cards/) — 키트(pibo-ui.css) 색·글꼴 그대로, 글자·칸만 크게. 누르는 칸 최소 64px. 로봇 놀이 play.css 와 앞부분(버튼·처음·대화상자)이 같다 — 같이 고칠 것
    구형 브라우저 기준(CLAUDE.md '디자인 시스템'): :has · aspect-ratio · inset · dvh · color-mix 안 씀
    body 에 pb-plain: 키트의 pb-v2 층을 얹지 않는다 — 그 층의 '앱 버튼' 규칙(우선순위 (0,5,3), 배경 !important)이 카드·큰 버튼 색을 덮는다.
    상단바·대화상자·알림 같은 키트 부품(.pb-*)과 색 토큰(--v2-*)은 그 층 없이도 같다 */
@@ -119,37 +119,6 @@ body.kids .kids-main { background-image: radial-gradient(var(--pb-grid, transpar
 @media (max-width: 900px) {
   .kids-home, .kids-home[data-n="2"] { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); align-content: start; }
   .kids-big__art { height: 150px; }
-}
-
-/* ── 조종하기 (로봇 놀이, 파이보만, 261123) — 왼쪽 방향 단추, 오른쪽 동작 단추. 누르면 바로 한다 ── */
-.kids-drive__safe { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; padding: 10px 14px; border-radius: 10px;
-  border-left: 4px solid var(--v2-yellow-2); background: var(--v2-yellow-t); color: var(--v2-yellow-ink); font-size: 15px; font-weight: 700; word-break: keep-all; }
-.kids-drive { display: grid; grid-template-columns: minmax(280px, 360px) minmax(0, 1fr); gap: 18px; align-items: start; }
-.kids-drive__box { padding: 16px; border: 1.5px solid var(--v2-line); border-radius: 14px; background: var(--v2-surface); }
-.kids-drive__h { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; font-family: var(--serif, inherit); font-size: 20px; font-weight: 700; }
-.kids-drive__h i { color: var(--app-play); font-size: 18px; }
-.kids-dpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.kids-dpad__gap { display: block; }
-.kids-dbtn {
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 92px; padding: 8px 6px;
-  border: 1.5px solid var(--v2-line); border-radius: 14px; background: var(--v2-raise); color: var(--v2-ink);
-  box-shadow: 0 3px 0 var(--v2-line); transition: transform .08s ease, box-shadow .08s ease, background .12s ease;
-}
-.kids-dbtn i { font-size: 30px; color: var(--app-play); }
-.kids-dbtn b { font-size: 15px; font-weight: 700; line-height: 1.25; word-break: keep-all; text-align: center; }
-.kids-dbtn:active { transform: translateY(3px); box-shadow: 0 0 0 var(--v2-line); }
-.kids-dbtn.is-on { background: var(--app-play-t); border-color: var(--app-play); box-shadow: 0 0 0 2px var(--app-play); }
-.kids-dbtn.is-on i { animation: kids-breathe 1.2s ease-in-out infinite; }
-.kids-dbtn--move i { font-size: 40px; }
-.kids-dbtn--home { background: var(--v2-red-t); border-color: var(--v2-red-t); }
-.kids-dbtn--home i, .kids-dbtn--home b { color: var(--v2-red-ink); }
-.kids-dmoves { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; }
-.kids-dmoves .kids-dbtn { min-height: 84px; }
-.kids-drive__hint { margin-top: 12px; font-size: 14px; }
-.kids-dbtn[data-drive="handup_l"] i { transform: scaleX(-1); }   /* 왼손 — 손 기호를 뒤집는다 */
-@media (max-width: 900px) {
-  .kids-drive { grid-template-columns: minmax(0, 1fr); }
-  .kids-drive__box--pad { max-width: 420px; }
 }
 
 /* ── 도전 ───────────────────────────────────────────────────────────── */
@@ -295,66 +264,6 @@ body.is-running .kids-row .kcard, body.is-running .kids-loop__head, body.is-runn
 .kids-ttile__meta { font-size: 13px; color: var(--v2-ink-3); }
 .kids-trickbox .kids-compare__row { min-height: 56px; }
 
-/* ── 키우기 ─────────────────────────────────────────────────────────── */
-.kids-petname { font-size: 26px; }
-.kids-petkind { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px;
-  background: var(--v2-tint); color: var(--v2-tint-ink); font-size: 15px; font-weight: 700; }
-.kids-petkind:empty { display: none; }
-.kids-petwrap { flex: 1; display: flex; gap: 24px; align-items: center; justify-content: center; }
-.kids-petstage { position: relative; flex: 0 1 380px; display: flex; flex-direction: column; align-items: center; }
-.kids-pet { width: 320px; height: 320px; max-width: 80vw; max-height: 80vw; border: 0; background: transparent; padding: 0; }
-.kids-pet svg { width: 100%; height: 100%; overflow: visible; }
-.kids-pet.is-bounce .kids-face__body { animation: kids-bounce .5s ease-out; }
-.kids-face__body { transform-origin: 120px 220px; animation: kids-idle 3s ease-in-out infinite; }
-.kids-face--sleep .kids-face__body { animation-duration: 5s; }
-.kids-face__shadow { fill: rgba(0,0,0,.12); }
-.kids-face__z { animation: kids-float 2.4s ease-in-out infinite; }
-.kids-face__eye { animation: kids-blink 4s infinite; transform-box: fill-box; transform-origin: center; }
-.kids-bubble {
-  position: absolute; left: 50%; top: -6px; transform: translate(-50%, -100%); max-width: 340px; padding: 12px 18px;
-  border-radius: 20px; background: var(--v2-raise); color: var(--v2-ink); font-size: 20px; font-weight: 700; text-align: center;
-  box-shadow: 0 4px 14px var(--v2-shadow); word-break: keep-all; white-space: normal; z-index: 2;
-}
-.kids-bubble:after { content: ''; position: absolute; left: 50%; bottom: -10px; margin-left: -10px;
-  border: 10px solid transparent; border-bottom: 0; border-top-color: var(--v2-raise); }
-.kids-bubble.is-show { animation: kids-pop .3s ease-out; }
-.kids-input { margin: 8px 0 0; padding: 8px 14px; border-radius: 999px; background: var(--v2-yellow-t); color: var(--v2-yellow-ink);
-  font-size: 16px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; }
-.kids-petside { flex: 0 1 460px; display: flex; flex-direction: column; gap: 18px; }
-.kids-stats { display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 24px; background: var(--v2-raise); box-shadow: 0 1px 3px var(--v2-shadow); }
-.kids-stat { position: relative; display: flex; align-items: center; gap: 10px; font-size: 18px; }
-.kids-stat__ic { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; flex: 0 0 40px; }
-.kids-stat--hunger .kids-stat__ic { background: #ff8a3d; }
-.kids-stat--mood .kids-stat__ic   { background: #e8467c; }
-.kids-stat--sleepy .kids-stat__ic { background: #5b6cff; }
-.kids-stat__name { width: 64px; }
-.kids-stat__bar { flex: 1; display: flex; gap: 3px; }
-.kids-stat__bar i { flex: 1; height: 22px; border-radius: 5px; background: var(--v2-sunken); transition: background .3s; }
-.kids-stat--hunger .kids-stat__bar i.on { background: #ff8a3d; }
-.kids-stat--mood .kids-stat__bar i.on   { background: #e8467c; }
-.kids-stat--sleepy .kids-stat__bar i.on { background: #5b6cff; }
-.kids-stat__eq { color: var(--v2-ink-3); font-weight: 700; }
-.kids-stat__v { width: 30px; text-align: right; font-size: 26px; font-variant-numeric: tabular-nums; }
-.kids-stat.is-warn .kids-stat__v { color: var(--v2-red-ink); }
-.kids-stat__d { position: absolute; right: -6px; top: -14px; font-size: 18px; font-weight: 800; opacity: 0; pointer-events: none; }
-.kids-stat__d.up { color: var(--v2-green-ink); }
-.kids-stat__d.down { color: var(--v2-red-ink); }
-.kids-stat__d.is-show { animation: kids-delta 1.6s ease-out; }
-.kids-acts { display: flex; flex-wrap: wrap; gap: 12px; }
-.kids-act {
-  position: relative; flex: 1 1 calc(50% - 6px); min-height: 88px; border: 0; border-radius: 22px;
-  display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 30px; color: #fff;
-  box-shadow: inset 0 -5px 0 rgba(0,0,0,.18), 0 2px 6px var(--v2-shadow);
-}
-.kids-act b { font-size: 22px; }
-.kids-act--feed  { background: #ff8a3d; }
-.kids-act--play  { background: #e8467c; }
-.kids-act--sleep { background: #5b6cff; }
-.kids-act--wash  { background: #20a4c7; }
-.kids-act__hw { position: absolute; right: 10px; top: 8px; width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,.3);
-  font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
-body.pet-sleeping .kids-petstage { filter: brightness(.85); }
-
 /* ── 대화상자 ───────────────────────────────────────────────────────── */
 .kids-modal { position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 90; display: flex; align-items: center; justify-content: center;
   padding: 16px; background: var(--v2-scrim); }
@@ -459,10 +368,8 @@ body.pet-sleeping .kids-petstage { filter: brightness(.85); }
 @media (max-width: 600px) {
   body.kids { --k-card: 72px; }
   .kids-view { padding: 12px; }
-  .kids-big { flex-basis: 100%; min-height: 150px; flex-direction: row; justify-content: flex-start; gap: 16px; }
-  .kids-big__art { width: 80px; height: 80px; font-size: 38px; border-radius: 22px; }
-  .kids-big--pet .kids-big__art svg { width: 84px; height: 84px; }
-  .kids-big b { font-size: 24px; }
+  .kids-big__art { height: 130px; }
+  .kids-big__tx b { font-size: 22px; }
   .kids-task__txt { font-size: 17px; }
   .kids-ctile { width: 100%; }
   .kids-who { width: 72px; height: 72px; }
@@ -475,7 +382,7 @@ body.pet-sleeping .kids-petstage { filter: brightness(.85); }
 @media (max-height: 700px) and (min-width: 901px) {
   .kids-rowwrap { min-height: 110px; }
   .kids-go { width: 88px; height: 88px; }
-  .kids-big { min-height: 190px; }
+  .kids-big__art { height: 150px; }
 }
 
 /* ── 움직임 ─────────────────────────────────────────────────────────── */

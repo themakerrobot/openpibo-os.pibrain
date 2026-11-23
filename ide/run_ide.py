@@ -288,8 +288,8 @@ def home_info_sync():
     info['running'] = 'hwtest'
   elif chat_proc is not None and chat_proc.poll() is None:
     info['running'] = 'llm'
-  elif kids_proc is not None and kids_proc.poll() is None:
-    info['running'] = 'kids'
+  elif kids_running():
+    info['running'] = kids_running()   # cards · play
   elif _unit_active('tools.service'):
     info['running'] = 'tools'
   elif _unit_active('classify.service'):
@@ -509,40 +509,63 @@ def stop_chat():
   # 핸들을 잃은 경우(IDE 재시작)까지 정리한다. 전체 경로로 띄우므로 cmdline 에 CHAT_PY 가 그대로 들어간다
   subprocess.Popen(['pkill', '-f', CHAT_PY])
 
-# [로봇 놀이] 체험 앱(kids/run_kids.py, 50060, 261028 시험 중). 대화 웹·H/W 검수처럼 IDE 가 직접 띄운다(유닛 파일은 리포 밖).
-# 모터·소리·LCD 를 쓰므로 도구·분류기·대화·검수·코드 실행과 같이 돌지 않게 서로 끈다. 버튼을 없애려면 index.html 의 #kids_bt 만 지우면 된다
-KIDS_DIR = '/home/pi/openpibo-os/kids'
-KIDS_PY = f'{KIDS_DIR}/run_kids.py'
+# 체험 앱 둘(261123, 사용자 — 폴더·서버를 나눴다): 카드 코딩(cards/run_cards.py, 50060) · 로봇 놀이(play/run_play.py, 50070).
+# 대화 웹·H/W 검수처럼 IDE 가 직접 띄운다(유닛 파일은 리포 밖). 둘 다 모터·소리·화면을 쓰므로 한 번에 하나만 —
+# 하나를 켤 때 다른 하나와 도구·분류기·대화·검수를 끄고, 그것들을 켤 때·코드 실행 때 둘 다 꺼진다
+KIDS_ROOT = '/home/pi/openpibo-os'
+KIDS_APPS = {'cards': f'{KIDS_ROOT}/cards/run_cards.py', 'play': f'{KIDS_ROOT}/play/run_play.py'}
 KIDS_DEVICE = 'pibrain'
-kids_proc = None
+kids_procs = {}
 
-def stop_kids():
-  """체험 앱을 내린다. 여러 번 불러도 안전하다. SIGTERM 이면 앱이 소리를 끊고 화면을 IP 로 되돌린다"""
-  global kids_proc
-  if kids_proc is not None and kids_proc.poll() is None:
-    kids_proc.terminate()
-    try:
-      kids_proc.wait(timeout=10)
-    except subprocess.TimeoutExpired:
-      kids_proc.kill()
-  kids_proc = None
-  subprocess.Popen(['pkill', '-f', KIDS_PY])   # 핸들을 잃은 경우(IDE 재시작·손으로 띄움)까지
+def kids_running():
+  # 지금 떠 있는 체험 앱 이름(cards · play) 또는 None
+  return next((k for k, p in kids_procs.items() if p is not None and p.poll() is None), None)
 
-@app.get('/kids')
-async def kids(enable: str):
-  global kids_proc
+def stop_kids(only=None):
+  # 체험 앱을 내린다(only 가 없으면 둘 다). 여러 번 불러도 안전하다. SIGTERM 이면 앱이 소리를 끊고 화면을 IP 로 되돌린다
+  for name in ([only] if only else list(KIDS_APPS)):
+    proc = kids_procs.get(name)
+    if proc is not None and proc.poll() is None:
+      proc.terminate()
+      try:
+        proc.wait(timeout=10)
+      except subprocess.TimeoutExpired:
+        proc.kill()
+    kids_procs[name] = None
+    subprocess.Popen(['pkill', '-f', KIDS_APPS[name]])   # 핸들을 잃은 경우(IDE 재시작·손으로 띄움)까지
+  subprocess.Popen(['pkill', '-f', f'{KIDS_ROOT}/kids/run_kids.py'])   # 261123 전 체험 앱(업데이트 직후 남아 있을 때)
+
+async def kids_app(name, enable):
   if enable == "on":
     subprocess.Popen(['systemctl', 'stop', 'tools.service'])
     subprocess.Popen(['systemctl', 'stop', 'classify.service'])
     subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
     stop_hwtest()
     stop_chat()
-    if kids_proc is None or kids_proc.poll() is not None:
-      kids_proc = subprocess.Popen([f'{ENV_PATH}/python3', KIDS_PY, '--device', KIDS_DEVICE], cwd=KIDS_DIR)
+    for other in KIDS_APPS:
+      if other != name:
+        await asyncio.to_thread(stop_kids, other)
+    proc = kids_procs.get(name)
+    if proc is None or proc.poll() is not None:
+      py = KIDS_APPS[name]
+      kids_procs[name] = subprocess.Popen([f'{ENV_PATH}/python3', py, '--device', KIDS_DEVICE], cwd=os.path.dirname(py))
   elif enable == "off":
-    await asyncio.to_thread(stop_kids)
-  show_ip(keep=KIDS_PY if enable == "on" else None)   # 나가거나 다른 앱으로 옮기면 로봇 화면은 늘 IP 화면(261116)
+    await asyncio.to_thread(stop_kids, name)
+  show_ip(keep=KIDS_APPS[name] if enable == "on" else None)   # 나가거나 다른 앱으로 옮기면 로봇 화면은 늘 IP 화면(261116)
   return HTMLResponse(content="", status_code=200)
+
+@app.get('/cards')
+async def cards_app(enable: str):
+  return await kids_app('cards', enable)
+
+@app.get('/play')
+async def play_app(enable: str):
+  return await kids_app('play', enable)
+
+@app.get('/kids')
+async def kids_old(enable: str):
+  # 261123 전 주소(옛 대기 페이지가 브라우저에 남아 있을 때) — 로봇 놀이
+  return await kids_app('play', enable)
 
 @app.get('/llm')
 async def llm(enable: str):
@@ -578,7 +601,7 @@ def show_ip(keep=None):
   끄이는 앱(도구·분류기·대화 웹·체험 앱·검수)이 다 내려간 뒤에 그린다 — 내려가는 앱이 마지막에 화면을 덮어쓰지 않게.
   keep = 지금 켜는 앱(그 앱은 기다리지 않는다)"""
   units = [u for u in ('tools.service', 'classify.service') if u != keep]
-  procs = [x for x in (CHAT_PY, KIDS_PY, HWTEST_PY) if x != keep]
+  procs = [x for x in (CHAT_PY, *KIDS_APPS.values(), HWTEST_PY) if x != keep]
   def go():
     end = time.time() + 20
     while time.time() < end:

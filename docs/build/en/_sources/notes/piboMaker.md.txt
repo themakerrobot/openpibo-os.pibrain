@@ -4,7 +4,7 @@ PiBrain Maker is the PiBrain development environment you open in a web browser. 
 as PiBrain, type **PiBrain's IP address** (shown on the PiBrain screen at startup) into the address bar. There is nothing to install.
 
 The address opens the **home screen** (a worksheet page). Tap a big picture button to enter an app, and use [Home] (house button) in an app's top bar to come back.
-Row 1 **Make** (Coding · Tools · Teach AI · Chat), row 2 **Play & learn** (Card coding · Pet), row 3 **Teacher tools** (Settings · Help).
+Row 1 **Make** (Coding · Tools · Teach AI · Chat), row 2 **Play & learn** (Card coding · Robot Play), row 3 **Teacher tools** (Settings · Help).
 The app that is running now gets a red 'Running' stamp and the one you used last gets a yellow tag; on the right are the robot status and [Continue] (recent files, AI you taught).
 [Settings] has screen brightness, WiFi settings, reset robot screen, H/W check, factory reset and power off.
 
@@ -15,7 +15,7 @@ The app that is running now gets a red 'Running' stamp and the one you used last
 | **Chat** | Chat in text with the language model (LLM) running inside PiBrain | Home screen, or [Chat] at the top of the IDE |
 | **Classifier** | Collect examples with the camera and teach your own AI | Home screen, or [Classifier] at the top of the IDE |
 | **Card coding** | Elementary students teach the robot friend tricks with cards (no coding) — Challenges · Make · My tricks | Home screen [Card coding] |
-| **Robot Play** | Pet: look after your robot friend | Home screen [Pet], or [Robot Play] at the top of the IDE |
+| **Robot Play** | **Pet** (look after your robot friend) and **Block Stack**, a block puzzle on the LCD (play with buttons 1–4; the tablet shows the score and records) | Home screen, or [Robot Play] at the top of the IDE |
 | **Help** | This document | Home screen, or [Help] at the top of the IDE |
 
 ```{note}

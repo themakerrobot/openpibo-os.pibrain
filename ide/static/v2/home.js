@@ -2,8 +2,8 @@
    첫 화면(대문, 261123) — / . 파이보·PiBrain 같은 파일(제품은 <html data-product>).
    앱 서버는 그대로 따로 돈다. 여기선 고르기만 한다:
      코딩 → /ide (같은 탭) · 도구·AI 가르치기·대화·카드 코딩·로봇 놀이·H/W 검수 → 대기 페이지(launch.html)를 같은 탭으로
-     (카드 코딩·로봇 놀이는 체험 앱 서버(50060) 하나의 두 화면 /cards · /play — launch.html ?go=cards|play.
-      PiBrain 은 몸이 없어 조종하기가 없으므로 로봇 놀이 대신 [키우기](?go=pet), 261123)
+     (카드 코딩 cards/ 50060 · 로봇 놀이 play/ 50070 — 261123 에 폴더·서버를 나눴다. 로봇 놀이 안은 키우기 +
+      파이보 조종하기 / PiBrain 블록 쌓기)
      설정 → 이 화면 안의 창(밝기·WiFi·로봇 화면·공장 초기화·전원 끄기) · 도움말 → :8080
      [이어서 하기] 파일 → /ide?open=<경로> · 모델 → AI 가르치기
    상태·최근 파일·모델·켜진 앱은 IDE 의 GET /home_info(10초마다, 화면이 보일 때만).
@@ -30,9 +30,8 @@
     { id: 'tools', sec: 'make', name: 'nav_tools', desc: PIBRAIN ? 'home_tools_d_pb' : 'home_tools_d', svc: 'tools', icon: 'fa-screwdriver-wrench' },
     { id: 'classifier', sec: 'make', name: 'home_cls',  desc: 'home_cls_d', svc: 'classifier', icon: 'fa-graduation-cap' },
     { id: 'llm',   sec: 'make', name: 'nav_llm',   desc: 'home_llm_d', svc: 'llm', icon: 'fa-comments' },
-    { id: 'cards', sec: 'play', name: 'home_cards', desc: 'home_cards_d', svc: 'kids', go: 'cards', icon: 'fa-shapes' },
-    PIBRAIN ? { id: 'pet',  sec: 'play', name: 'home_pet',  desc: 'home_pet_d',  svc: 'kids', go: 'pet',  icon: 'fa-heart' }
-            : { id: 'play', sec: 'play', name: 'home_play', desc: 'home_play_d', svc: 'kids', go: 'play', icon: 'fa-gamepad' },
+    { id: 'cards', sec: 'play', name: 'home_cards', desc: 'home_cards_d', svc: 'cards', icon: 'fa-shapes' },
+    { id: 'play',  sec: 'play', name: 'home_play',  desc: PIBRAIN ? 'home_play_d_pb' : 'home_play_d', svc: 'play', icon: 'fa-gamepad' },
     { id: 'settings', sec: 'admin', name: 'v2_settings', desc: 'home_settings_d', icon: 'fa-gear' },
     { id: 'guide', sec: 'admin', name: 'nav_guide', desc: 'home_guide_d', icon: 'fa-circle-question' }
   ];
@@ -75,11 +74,6 @@
     var running = info && info.running;
     var runApp = null;
     APPS.forEach(function (a) { if (running && (a.svc || a.id) === running && !a.go && !runApp) runApp = a.id; });
-    // 체험 앱 서버(kids)는 두 화면(카드 코딩 · 로봇 놀이)이 같이 쓴다 — 어느 쪽인지 서버가 모르니 마지막에 고른 쪽에 단다
-    if (running === 'kids') {
-      var kidsApps = APPS.filter(function (a) { return a.svc === 'kids'; }).map(function (a) { return a.id; });
-      runApp = kidsApps.indexOf(store.get(LAST)) >= 0 ? store.get(LAST) : kidsApps[0];
-    }
     // data-ring = 켜진 앱(빨간 도장 '켜져 있음'), 켜진 게 없으면 마지막에 쓴 앱(노란 꼬리표 '지난번')
     var ring = runApp || store.get(LAST) || '';
     ['make', 'play', 'admin'].forEach(function (sec) {

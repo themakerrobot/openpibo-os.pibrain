@@ -198,9 +198,9 @@ document.getElementById("llm_bt").addEventListener("click", function () {
 document.getElementById("classifier_bt").addEventListener("click", function () {
   PiboUI.openService("classifier");
 });
-// [로봇 놀이] 체험 앱(261028 시험 중). 버튼을 빼려면 index.html 의 #kids_bt 를 지우면 된다
+// [로봇 놀이] 체험 앱(play/, 50070 — 261123 에 카드 코딩과 나눔). 버튼을 빼려면 index.html 의 #kids_bt 를 지우면 된다
 if (document.getElementById("kids_bt")) document.getElementById("kids_bt").addEventListener("click", function () {
-  PiboUI.openService("kids");
+  PiboUI.openService("play");
 });
 
 // H/W 검수. 출하 검수용이라 헤더 아이콘으로 내놓지 않고 푸터 시리얼번호를 누르게 했다.
