@@ -616,7 +616,7 @@
     prof = prof || (S.pet && S.pet.profile) || {};
     return { color: prof.color || C.pet.colors[0], hat: prof.hat || 'antenna', glasses: !!prof.glasses };
   }
-  function faceSvg(pose, look) { return PetArt.svg(pose, look || petLook()); }
+  function faceSvg(pose, look) { var o = look || petLook(); o.device = C && C.device; return PetArt.svg(pose, o); }   // PiBrain 은 보드 머리
 
   /* ── 키우기 ─────────────────────────────────────────────────────── */
   var STATS = ['hunger', 'mood', 'sleepy'];
@@ -923,7 +923,7 @@
     $('t_volume_v').textContent = T.volume;
     $('t_pin').value = '';
     $('t_pin').placeholder = tr('kids_t_pin_ph');
-    $('t_ide').href = 'http://' + location.hostname + '/';
+    $('t_ide').href = 'http://' + location.hostname + '/ide';   // 대문(/)이 생겨 IDE 는 /ide (261123)
     $('dlg_teacher').hidden = false;
   }
   $('t_lesson').addEventListener('change', lessonHelp);
@@ -1020,9 +1020,16 @@
         document.documentElement.setAttribute('data-product', 'PiBrain');
         $('brand_icon').className = 'fa-solid fa-brain';
         $('brand_name').textContent = 'PiBrain';
+        if (window.PiboUI && PiboUI.appIcons) PiboUI.appIcons();   // 앱 아이콘(얼굴)도 PiBrain 보드로
       }
       applyLanguage();
       show('home');
+      // 대문(261123)에서 바로 가기: ?go=make(카드 만들기) · pet(키우기) · challenges(도전)
+      var go = null;
+      try { go = new URLSearchParams(location.search).get('go'); history.replaceState(null, '', location.pathname); } catch (e) { go = null; }
+      if (go === 'pet') show('pet');
+      else if (go === 'make') openMake(null, null);
+      else if (go === 'challenges') show('challenges');
       if (a[1].running) { setRunning(true); poll(); }
     }).catch(function () {
       document.body.appendChild(el('p', 'kids-dead', icon('fa-plug-circle-xmark') + ' ' + tr('kids_err_conn')));

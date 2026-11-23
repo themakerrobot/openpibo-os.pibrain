@@ -37,7 +37,8 @@
     fs_tap:        { ko: '화면을 한 번 누르면 전체화면으로 돌아가요.', en: 'Tap the screen once to return to full screen.' },
     scr_tip:       { ko: '로봇 화면을 처음(IP)으로', en: 'Reset the robot screen (IP)' },
     scr_done:      { ko: '로봇 화면을 처음으로 돌렸어요.', en: 'The robot screen is reset.' },
-    scr_fail:      { ko: '로봇 화면을 돌리지 못했어요.', en: 'Could not reset the robot screen.' }
+    scr_fail:      { ko: '로봇 화면을 돌리지 못했어요.', en: 'Could not reset the robot screen.' },
+    home:          { ko: '처음 화면', en: 'Home' }
   };
   function curLang() {
     try { if (typeof lang !== 'undefined' && lang) return lang; } catch (e) { /* 앱에 lang 없음 */ }
@@ -351,10 +352,10 @@
   var TAB = { tools: 'pibo_tools', classifier: 'pibo_classifier', llm: 'pibo_llm', kids: 'pibo_kids' };
   // launch.html 은 ?ver 없이 열려 브라우저가 옛 판을 쓸 수 있다(포트가 바뀌면 옛 포트를 기다린다).
   // 대기 페이지를 고치면 이 번호를 올릴 것
-  var LAUNCH_VER = '261102v1';
-  function launchUrl(svc) {
+  var LAUNCH_VER = '261123v3';
+  function launchUrl(svc, go) {
     return 'http://' + location.hostname + '/static/launch.html?svc=' +
-           encodeURIComponent(svc) + '&lang=' + curLang() + '&v=' + LAUNCH_VER;
+           encodeURIComponent(svc) + (go ? '&go=' + encodeURIComponent(go) : '') + '&lang=' + curLang() + '&v=' + LAUNCH_VER;
   }
   function openService(svc) {
     fsLeaving = Date.now();   // 새 탭으로 가며 풀리는 전체화면은 '사용자가 끈 것' 이 아니다
@@ -363,8 +364,8 @@
     try { w.focus(); } catch (e) { /* 무시 */ }
     return w;
   }
-  /* 도구 탭에서: 스크립트로 연 탭이면 닫는다(원래 IDE 탭이 남아 있다).
-     직접 주소를 쳐서 연 탭은 닫을 수 없으니 IDE 주소로 이동한다.
+  /* 도구 탭에서: 스크립트로 연 탭(IDE 상단바 버튼)이면 닫는다(원래 IDE 탭이 남아 있다).
+     대문에서 같은 탭으로 들어왔거나 주소를 쳐서 연 탭은 닫을 수 없으니 대문(/)으로 간다(261123).
      둘 다 beforeunload 가 서비스를 끈다. */
   function backToIDE() {
     try { window.close(); } catch (e) { /* 무시 */ }
@@ -374,6 +375,58 @@
   }
   function restartSelf(svc) {
     location.href = launchUrl(svc);
+  }
+  /* 대문(/, 261123)에서: 같은 탭으로 들어간다. 탭이 하나라 [처음 화면]으로 돌아오면 대문이다 */
+  function enterService(svc, go) {
+    fsLeaving = Date.now();   // 페이지를 옮기며 풀리는 전체화면은 '사용자가 끈 것' 이 아니다
+    location.href = launchUrl(svc, go);
+  }
+  /* 앱 상단바의 [IDE](#ide_bt): IDE 가 새 탭으로 연 경우만 'IDE'(누르면 탭을 닫아 IDE 로),
+     대문에서 들어왔거나 주소로 연 탭은 [처음 화면](집 아이콘) — 누르면 대문으로 간다 */
+  function initHomeButton() {
+    var b = document.getElementById('ide_bt');
+    if (!b) return;
+    var opened = false;
+    try { opened = !!window.opener; } catch (e) { opened = false; }
+    if (opened) return;
+    function label() {
+      var i = b.querySelector('i'), l = b.querySelector('.pb-iconbtn__label') || b.querySelector('span:not(.pb-appic-box)');   // PiBrain 도구는 이름 칸이 그냥 span
+      if (window.PiboIcons) setAppIcon(b, 'home');
+      else if (i) i.className = 'fa-solid fa-house';
+      if (l) { l.textContent = tr('home'); l.removeAttribute('data-key'); }
+      b.title = tr('home');
+      b.removeAttribute('data-title-key');
+    }
+    label();
+    var sel = document.getElementById('language');
+    if (sel) sel.addEventListener('change', function () { setTimeout(label, 0); });
+  }
+
+  /* ── 앱 아이콘 — 파이보(PiBrain) 얼굴 + 색 배지(261123, 사용자 '앱 안 아이콘도 캐릭터로') ──────────
+     그림은 pibo-icons.js(PiboIcons.app). 앱으로 가는 버튼의 첫 Font Awesome 아이콘만 바꾼다(IDE 상단바 · 각 앱의 [IDE]/[처음 화면]).
+     pibo-icons.js 를 못 읽으면 예전 기호 그대로 */
+  var APP_BTNS = { tools_bt: 'tools', llm_bt: 'llm', classifier_bt: 'classifier', kids_bt: 'cards', guide_bt: 'guide', home_bt: 'home', ide_bt: 'code' };
+  function setAppIcon(btn, app) {
+    if (!window.PiboIcons || !btn) return;
+    var box = btn.querySelector('.pb-appic-box');
+    if (!box) {
+      var i = btn.querySelector('i');
+      box = document.createElement('span');
+      box.className = 'pb-appic-box';
+      if (i) i.parentNode.replaceChild(box, i); else btn.insertBefore(box, btn.firstChild);
+    }
+    var prod = document.documentElement.getAttribute('data-product') || '';
+    if (box.getAttribute('data-app') !== app || box.getAttribute('data-prod') !== prod) {
+      box.innerHTML = PiboIcons.app(app); box.setAttribute('data-app', app); box.setAttribute('data-prod', prod);
+    }
+  }
+  // 버튼에 data-appic 이 있으면 그것(로봇 놀이 [놀이 처음] 은 cards). 제품이 나중에 정해지는 앱(로봇 놀이)은 정한 뒤 다시 부른다
+  function initAppIcons() {
+    if (!window.PiboIcons) return;
+    Object.keys(APP_BTNS).forEach(function (id) {
+      var b = document.getElementById(id);
+      if (b) setAppIcon(b, b.getAttribute('data-appic') || (id === 'ide_bt' && b.title === tr('home') ? 'home' : APP_BTNS[id]));
+    });
   }
 
   /* ── 버튼 바쁨 표시 ────────────────────────────────────────────────────
@@ -535,13 +588,13 @@
 
   window.PiboUI = {
     toast: toast, banner: banner, hideBanner: hideBanner, watchSocket: watchSocket,
-    openService: openService, backToIDE: backToIDE, restartSelf: restartSelf,
+    openService: openService, backToIDE: backToIDE, restartSelf: restartSelf, enterService: enterService,
     busy: busy, text: tr, lang: curLang,
     getTheme: getTheme, setTheme: setTheme, ui: UI, countTo: countTo,
-    fullscreen: fsToggle, screenReset: screenReset
+    fullscreen: fsToggle, screenReset: screenReset, appIcons: initAppIcons
   };
 
-  function initAll() { initShell(); addThemeButton(); syncThemeButtons(); initFullscreen(); watchTitle(); markAlerts(); initBrand(); }
+  function initAll() { initShell(); addThemeButton(); syncThemeButtons(); initFullscreen(); watchTitle(); markAlerts(); initBrand(); initAppIcons(); initHomeButton(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAll);
   else initAll();
 })();

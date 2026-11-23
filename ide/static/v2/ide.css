@@ -842,3 +842,20 @@ body[data-offline] .v2-status__conn .v2-off { display: inline; color: var(--c-re
 .pb #copyMoveBtn:hover:not(:disabled), body.pb-v2 #copyMoveBtn:hover:not(:disabled) { background: var(--v2-tint-hov); }
 .pb #copyMoveBtn:disabled, body.pb-v2 #copyMoveBtn:disabled { opacity: .45; cursor: default; }
 #fm_table td i.fa-copy { font-size: 12px; }
+
+/* ==========================================================================
+   학습지 층 (261123, 사용자 — ai-lab 과 같은 '학습지' 컨셉). 색은 키트 토큰(--v2-*)을 따르고, 여기선 모양만:
+   서랍·실행 화면·상태 줄은 종이색, 그 안의 칸은 흰 종이에 옅은 테두리, 제목은 명조. 블록 작업판은 흰 바탕 그대로
+   ========================================================================== */
+.v2-drawer, .v2-stage.pb-pane { background: var(--c-side); }
+.v2-status { border-top: 1px solid var(--v2-frame-line); }
+.v2-files, .v2-preview, .v2-term { border: 1px solid var(--c-line); border-radius: 12px; box-shadow: 0 1px 3px rgba(74, 63, 46, .06); }
+.v2-drawer__head, .v2-start__title, .v2-brand b { font-family: var(--serif); }
+.v2-start__card { border-radius: 14px; border-width: 1.5px; }
+/* 대문 활동 카드와 같은 말투 — 아이콘 딱지에 판화처럼 어긋난 그림자, 누르면 종이가 들린다 */
+.v2-start__ic { border-radius: 14px; box-shadow: 3px 3px 0 var(--v2-accent-t2); }
+.v2-start__ic--ex { box-shadow: 3px 3px 0 rgba(214, 170, 60, .35); }
+.v2-start__ic--open { box-shadow: 3px 3px 0 var(--v2-line); }
+.v2-start__card:hover { box-shadow: 4px 5px 0 var(--v2-accent-t2); }
+.v2-btn--run, .v2-btn--stop { border-radius: 10px; }
+.v2-app .blocklyTreeRow .customIcon { border-radius: 6px; }

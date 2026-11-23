@@ -3,14 +3,19 @@
 PiBrain Maker is the PiBrain development environment you open in a web browser. When your tablet or laptop is on the same WiFi
 as PiBrain, type **PiBrain's IP address** (shown on the PiBrain screen at startup) into the address bar. There is nothing to install.
 
+The address opens the **home screen** (a worksheet page). Tap a big picture button to enter an app, and use [Home] (house button) in an app's top bar to come back.
+Row 1 **Make** (Coding · Tools · Teach AI · Chat), row 2 **Play & learn** (Card coding · Pet), row 3 **Teacher tools** (Settings · Help).
+The app that is running now gets a red 'Running' stamp and the one you used last gets a yellow tag; on the right are the robot status and [Continue] (recent files, AI you taught).
+[Settings] has screen brightness, WiFi settings, reset robot screen, H/W check, factory reset and power off.
+
 | Screen | What it does | Where to open it |
 |---|---|---|
-| **IDE** | Build and run programs with blocks or Python | `http://<PiBrain IP>` |
-| **Tools** | Try the buttons, LED, camera, voice and screen right away, without code | [Tools] at the top of the IDE |
-| **Chat** | Chat in text with the language model (LLM) running inside PiBrain | [Chat] at the top of the IDE |
-| **Classifier** | Collect examples with the camera and teach your own AI | [Classifier] at the top of the IDE |
-| **Robot Play** | Elementary students teach the robot friend tricks with cards (no coding) | [Robot Play] at the top of the IDE |
-| **Help** | This document | [Help] at the top of the IDE |
+| **IDE** | Build and run programs with blocks or Python | `http://<PiBrain IP>` → home screen [Coding] |
+| **Tools** | Try the buttons, LED, camera, voice and screen right away, without code | Home screen, or [Tools] at the top of the IDE |
+| **Chat** | Chat in text with the language model (LLM) running inside PiBrain | Home screen, or [Chat] at the top of the IDE |
+| **Classifier** | Collect examples with the camera and teach your own AI | Home screen, or [Classifier] at the top of the IDE |
+| **Robot Play** | Elementary students teach the robot friend tricks with cards (no coding) | Home screen, or [Robot Play] at the top of the IDE |
+| **Help** | This document | Home screen, or [Help] at the top of the IDE |
 
 ```{note}
 Everything runs **inside PiBrain** (voices, chat and the classifier included). Only the blocks in the

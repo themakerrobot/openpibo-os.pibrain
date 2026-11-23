@@ -413,5 +413,51 @@
     }).catch(function (e) { console.warn('block font', e); });
   }
 
+  /* 11) 대문에서 들어오기 (261123) ─────────────────────────────────────────── */
+  /* 대문(/)의 [이어서 하기]는 /ide?open=<경로> 로 온다. 서버가 보낸 init(지난번 파일)을 받은 뒤
+     확장자로 모드를 맞추고(파일 서랍에서 여는 것과 같은 load) 주소에서 ?open 을 지운다 */
+  (function openFromHome() {
+    var p = null;
+    try { p = new URLSearchParams(location.search).get('open'); } catch (e) { p = null; }
+    if (!p || typeof socket === 'undefined') return;
+    if (!/^\/home\/pi\/[^\0]+\.(py|json)$/i.test(p)) return;
+    try { history.replaceState(null, '', location.pathname); } catch (e) { /* 무시 */ }
+    // init 이 이 코드보다 먼저 와 버리면 놓친다 → 2.5초 뒤에도 한 번 연다. 그 뒤에 init 이 늦게 오면
+    // (지난번 파일로 덮으므로) 한 번 더 연다
+    var opened = 0;
+    function openIt() {
+      opened++;
+      var want = /\.py$/i.test(p) ? 'python' : 'block';
+      var btn = document.querySelector('div[name=codetype] button[name=' + want + ']');
+      if (btn && !btn.classList.contains('checked')) btn.click();
+      socket.emit('load', p);
+    }
+    var fallback = setTimeout(openIt, 2500);
+    socket.on('init', function () {
+      if (opened > 1) return;
+      if (!opened) clearTimeout(fallback);
+      setTimeout(openIt, 300);
+    });
+  })();
+
+  /* 11-1) 대문 [설정] → WiFi 설정(261123): /ide?panel=wifi 면 WiFi 창을 연다 */
+  (function openPanel() {
+    var q = null;
+    try { q = new URLSearchParams(location.search).get('panel'); } catch (e) { q = null; }
+    if (q !== 'wifi') return;
+    try { history.replaceState(null, '', location.pathname); } catch (e) { /* 무시 */ }
+    setTimeout(function () { var b = document.getElementById('showNetwork'); if (b) b.click(); }, 800);
+  })();
+
+  /* 12) [처음 화면] (261123) ────────────────────────────────────────────────── */
+  /* 같은 탭으로 대문에 간다. 저장 안 한 게 있으면 묻는다(떠나면 실행 중인 프로그램도 멈춘다 — index.js beforeunload) */
+  var homeBt = document.getElementById('home_bt');
+  if (homeBt) homeBt.addEventListener('click', function () {
+    var go = function () { location.href = location.origin + '/'; };
+    var dirty = !!$('#codecheck').html();
+    if (!dirty) { go(); return; }
+    Promise.resolve(confirm_popup(t('home_unsaved'), { okLabel: t('home_go') })).then(function (ok) { if (ok) go(); });
+  });
+
   fire();
 })();

@@ -746,7 +746,7 @@ def state():
 
 
 # ── 웹 ─────────────────────────────────────────────────────────────────────
-SHARED_FONT = re.compile(r'^/(static/fonts/Pretendard-[\w.-]+\.woff2|webfonts/fa-[\w.-]+\.(?:woff2|ttf))$')
+SHARED_FONT = re.compile(r'^/(static/fonts/Pretendard-[\w.-]+\.woff2|static/fonts/gowun/[\w.-]+\.(?:woff2|css)|webfonts/fa-[\w.-]+\.(?:woff2|ttf))$')   # 학습지 제목 글꼴 Gowun Batang 도 IDE 것을 같이 쓴다(261123)
 
 
 class SharedFonts:

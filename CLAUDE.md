@@ -832,10 +832,25 @@ classifier 언어 토글, 검수 보고서 구조, Tools 서비스.
 - 로봇 말은 처음 한 번 6~15초라 **`kids/make_voice.py --device <제품>` 으로 미리** 만든다. 문구는 IDE `ko2en.js` 끝의 `kids_*` 키(두 리포 같은 블록)
 - 선생님 잠금: 상단바 자물쇠 3초 → 숫자 4개(기본 1234) → 오늘 차시(목표·발문 — **처음엔 '자유'(모든 차시·모든 카드)**, 261120 사용자)·번호 수·도달 기록. **한/영은 다른 앱처럼 상단바 언어 select**(261120, 사용자 — 전엔 잠금 안에만 있었다), 자물쇠는 앱 동작이라 IDE 왼쪽
 - **키트 변경**: body `pb-plain` 이면 `pibo-ui.js` 가 `pb-v2` 층을 얹지 않는다(그 층의 앱 버튼 규칙이 카드 색을 덮었다). `design/sync.sh` 가 `kids/static` 에도 복사
-- **키우기 친구는 써큘러스 캐릭터(261028, 사용자 — 원본 그림이 없어 SVG 로 그림)**: `kids/static/pet.js`(`PetArt.svg(포즈, {color, hat, glasses})`). 상태 6(normal·happy·hungry·sleepy·sleep·sad) + 돌보기 반응(밥 eat · 놀기 ball · 씻기 wash, 2.5초) + 도전 결과(cheer·oops). 꾸미기: 색(안테나·모자·팻말·밥그릇) · 머리 소품(안테나/모자) · 안경. 돌보기는 **PiBrain 버튼 4개에 맞춰 4가지**(밥·놀기·재우기·씻기 — 늘리지 말 것, 사용자). PiBrain LCD 는 `kids/make_pet_png.py` 가 미리 만든 PNG(`static/pet/lcd/`, 36장 — 상태 6 + 반응 3 × 소품·안경 4벌)를 `face.py` 가 친구 색으로 바꿔 띄운다. LCD 에는 **점수 세 줄**(배고픔·기분·졸림, 바뀌면 다시 그림)과 **말풍선**(버튼·화면으로 돌보면 반응 포즈 + 로봇이 하는 말, 2.5초 이상)도 그린다. 글꼴은 리포의 Pretendard(woff2 — 기기 PIL 이 못 읽으면 KDL.ttf, **확인 필요**) — **pet.js 를 고치면 PNG 를 다시 만들 것**
+- **키우기 친구는 파이보 실물 얼굴(261123, 사용자 — 261028~261122 는 써큘러스 캐릭터였다), PiBrain 에서는 머리가 PiBrain 보드**(검은 화면 속 하늘색 얼굴 · 카메라 · 버튼 넷): `kids/static/pet.js`(`PetArt.svg(포즈, {color, hat, glasses, device})` — `kids.js` 가 `C.device` 를 넘긴다). 대문 그림(`pibo-art.js`)과 같은 생김새. 상태 6(normal·happy·hungry·sleepy·sleep·sad) + 돌보기 반응(밥 eat · 놀기 ball · 씻기 wash, 2.5초) + 도전 결과(cheer·oops). 꾸미기: 색(안테나·모자·팻말·밥그릇) · 머리 소품(안테나/모자) · 안경. 돌보기는 **PiBrain 버튼 4개에 맞춰 4가지**(밥·놀기·재우기·씻기 — 늘리지 말 것, 사용자). PiBrain LCD 는 `kids/make_pet_png.py` 가 미리 만든 PNG(`static/pet/lcd/`, 36장 — 상태 6 + 반응 3 × 소품·안경 4벌, **보드 머리로**)를 `face.py` 가 친구 색으로 바꿔 띄운다. LCD 에는 **점수 세 줄**(배고픔·기분·졸림, 바뀌면 다시 그림)과 **말풍선**(버튼·화면으로 돌보면 반응 포즈 + 로봇이 하는 말, 2.5초 이상)도 그린다. 글꼴은 리포의 Pretendard(woff2 — 기기 PIL 이 못 읽으면 KDL.ttf, **확인 필요**) — **pet.js 를 고치면 PNG 를 다시 만들 것**
 - 세로 스크롤: 키트 `.pb-shell` 이 body 스크롤을 막으므로 `.kids-main` 이 스크롤 칸이다(261028 — 전엔 작은 화면에서 아래가 잘렸다)
 - **화면(파이보 OLED·PiBrain LCD)은 IP 정보가 기본이다(261028, 사용자).** 체험 앱은 켤 때·키우기를 나갈 때·끝날 때(Ctrl+C·SIGTERM) `system/network_disp.py` 로 IP 화면을 다시 그린다(`robot.show_network`). PiBrain LCD 는 키우기에서 얼굴을 처음 그릴 때 연다(`OledByPiBrain()` 이 LCD 를 검게 초기화해서, 켜자마자 열면 IP 화면이 꺼진 것처럼 지워졌다)
 - 확인은 컨테이너(가짜 로봇)뿐: 서버 51/51, 재주 → IDE Blockly 함수·파이썬 생성까지. **실기기 확인 필요** — 동작 이름(`greeting` 등)·머리 터치 값·PiBrain 버튼 순서·LCD 방향
+
+## 첫 화면(대문) · 학습지 층 (261123, 사용자 — 저연령층용, ai-lab 과 같은 '학습지' 컨셉으로 모든 화면 · 상단바도)
+
+**대문 `/`** — 접속하면 앱을 큰 젤리 아이콘으로 고르고 **같은 탭으로** 들어간다(edge-lab 런처처럼). **앱 서버는 그대로 따로 돈다**(합치지 않는다 — 사용자). IDE 는 **`/ide`**.
+- 파일: `ide/templates/home.html`(두 리포 차이는 `data-product`·마크 클래스뿐) · `ide/static/v2/home.js` · `home.css`(**두 리포 같은 파일**). 서버는 `run_ide.py` 의 `/`·`/ide`·`GET /home_info`(상태·최근 파일 4·내가 가르친 AI 3·켜진 앱 — WiFi 비밀번호는 안 보낸다)
+- 앱 8개(H/W 검수는 설정 안), 줄 셋: **만들기**(코딩 → `/ide` · 도구 · AI 가르치기 · 대화) · **놀이 · 배우기**(카드 코딩 → 로봇 놀이 첫 화면 · 키우기 → 로봇 놀이 키우기, `launch.html?svc=kids&go=pet`) · **선생님 · 관리**(설정 · H/W 검수 `svc=hwtest` · 도움말 :8080)
+  - 설정은 대문 안의 창: 화면 밝기 · WiFi 설정(`/ide?panel=wifi` 가 WiFi 창을 연다) · 로봇 화면 처음으로 · 공장 초기화 · 전원 끄기(두 번 누르기, IDE 와 같은 socket `restore`·`poweroff`)
+  - H/W 검수는 다른 앱을 다 끄므로 한 번 묻는다(`confirm_hwtest`). 켜진 앱은 '켜져 있음' + 하늘색 링·별 하나(없으면 마지막에 쓴 앱, `localStorage pibo_home_last`)
+  - 캐릭터: 실제 로봇처럼 **흰 얼굴**(사용자) + 남색 얼굴판 · 하늘색 눈 깜빡임 · 안테나 흔들기 — 제품 마크를 바탕으로 SVG 로 직접 그림. **PiBrain 보드 색은 확인 필요**(흰색으로 그림)
+  - [이어서 하기] 파일 → `/ide?open=<경로>`(`ide.js` 11 — init 을 놓치면 2.5초 보조 타이머)
+- **앱의 [IDE](#ide_bt)**: IDE 가 새 탭으로 연 탭(`window.opener`)이면 그대로 [IDE](탭을 닫음), 아니면 키트가 **[처음 화면]**(집 아이콘)으로 바꾼다 → 대문. IDE 상단바에도 [처음 화면](저장 안 했으면 묻기). 로봇 놀이 안의 [처음]은 헷갈리지 않게 [놀이 처음](도형 아이콘)
+- 대기 페이지 `launch.html`: `svc=hwtest`(50050) · `go=make|pet`(로봇 놀이 화면 바로 가기, 이름·아이콘도 그 화면 것). `LAUNCH_VER` 261123v1. 로봇 놀이는 `?go=` 를 읽고 주소에서 지운다
+- 미리보기 `design/preview.py` 와 검사 `design/audit/browser_check.js` 가 대문(`/`)·IDE(`/ide`)를 안다. `AUDIT.md` B2 예외에 대문·[처음 화면] 을 넣었다
+
+**학습지 층**: 파이보와 같은 키트·IDE CSS(색은 키트 토큰) — 설명은 파이보 CLAUDE.md '첫 화면(대문) · 학습지 층'. 대문 카드 그림·앱 아이콘·키우기 친구는 **PiBrain 캐릭터**(몸은 파이보와 같고 머리가 PiBrain 보드 — 검은 화면 속 하늘색 얼굴 · 카메라 · 버튼 넷, 261123 사용자). 파일은 파이보와 같다(`ide/static/v2/pibo-art.js` · `design/pibo-icons.js` · `kids/static/pet.js` — 제품을 보고 고른다).
 
 ## 빈 화면 안내 · 읽기 다듬기 (261120, 사용자 — UX 점검 A~F 전부)
 

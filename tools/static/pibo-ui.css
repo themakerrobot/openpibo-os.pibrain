@@ -9,6 +9,9 @@
    원본은 design/pibo-ui.css 하나뿐이다. 각 앱의 static/ 으로는
    design/sync.sh 가 복사한다. static/ 쪽을 직접 고치지 말 것.
    ========================================================================== */
+/* 학습지 제목 글꼴 Gowun Batang(SIL OFL 1.1) — 파일은 IDE 의 static/fonts/gowun 한 벌. 도구·분류기·대화·로봇 놀이 서버는
+   SharedFonts 가 IDE 로 넘긴다. @import 는 다른 규칙보다 먼저 와야 한다 */
+@import url("fonts/gowun/gowun.css");
 
 /* ── 글꼴: Pretendard (SIL OFL 1.1, fonts/LICENSE.txt) ─────────────────────
    v2 글꼴 스택 맨 앞이 "Pretendard" 인데 파일을 안 싣고 있어서, 학교 윈도 노트북에서는
@@ -1657,3 +1660,81 @@ body.pb-v2 .pb-toast { animation: pb-rise .26s cubic-bezier(.34, 1.4, .64, 1) ba
   body.pb-v2 .wifi-popup-content, body.pb-v2 .pb-modal__box, body.pb-v2 .pb-toast { animation: none !important; }
   body.pb-v2 .bar-fill { transition: none; }
 }
+
+/* ==========================================================================
+   학습지 층 (261123, 사용자 — ai-lab 과 같은 '학습지' 컨셉, 대문 포함 모든 화면 · 상단바도)
+   미색 종이 바탕 · 갈색 괘선 · 남색 펜(주 색) · 빨간 펜(정지·지우기·경고) · 제목은 명조(--serif) · 흰 판에 옅은 테두리.
+   그라디언트 덧칠 · 아이콘 상자 · 젤리 그림자 같은 장식은 쓰지 않는다. 색은 여기 토큰만 바꾸면 모든 앱(IDE 의 --c-* 별칭 포함)이 따른다
+   ========================================================================== */
+:root, html[data-theme="soft"] {
+  --serif: "Gowun Batang", "Nanum Myeongjo", "AppleMyungjo", serif;
+  --v2-frame: #fbf7ef; --v2-frame-2: rgba(74, 63, 46, .08); --v2-frame-3: rgba(74, 63, 46, .14); --v2-frame-line: #4a3f2e;
+  --v2-frame-ink: #2a2620; --v2-frame-dim: #4a423a;
+  --v2-seg-on: #ffffff; --v2-seg-on-ink: #12455c; --v2-seg-on-sh: 0 0 0 1px #cfc6b4; --v2-seg-sh: 0 0 0 1px #dcd5c6;
+  --v2-rail: #f6f1e6;
+  --v2-dark: #1f5f7a; --v2-dark-hov: #12455c; --v2-on-dark: #ffffff; --v2-btn-sh: none; --v2-btn2-sh: none;
+  --v2-canvas: #fbf7ef; --v2-top: #ffffff; --v2-surface: #ffffff; --v2-raise: #ffffff; --v2-sunken: #f6f1e6;
+  --v2-hover: #f3ede1; --v2-press: #e9e0cf; --v2-line: #dcd5c6; --v2-line-2: #9a8f7d;
+  --v2-ink: #2a2620; --v2-ink-2: #4a423a; --v2-ink-3: #6b6255;
+  --v2-accent: #1f5f7a; --v2-accent-t: #e6eef6; --v2-accent-t2: #d3e2ee; --v2-accent-ink: #12455c; --v2-on-accent: #ffffff;
+  --v2-ring: rgba(31, 95, 122, .25); --v2-ring-soft: rgba(31, 95, 122, .2); --v2-focus: rgba(31, 95, 122, .5);
+  --v2-red: #b4451c; --v2-red-t: #f8e7df; --v2-red-t2: #f1d6ca; --v2-red-ink: #8a3214; --v2-on-red: #ffffff;
+  --v2-green: #2e7d4f; --v2-green-t: #eef5ef; --v2-green-ink: #2e7d4f;
+  --v2-yellow-t: #fbf0d0; --v2-meter: #cfc6b4; --v2-shadow: rgba(74, 63, 46, .16);
+  --r-chip: 6px; --r-ctl: 8px; --r-card: 12px; --r-dlg: 14px;
+  --pb-sheet-sh: 0 1px 3px rgba(74, 63, 46, .08); --pb-grid: rgba(120, 108, 88, .13);
+}
+html[data-theme="light"] {
+  --v2-frame: #ffffff; --v2-canvas: #fdfcf9; --v2-rail: #faf8f3; --v2-sunken: #faf8f3; --v2-hover: #f6f2ea;
+}
+html[data-theme="dark"] {
+  --v2-frame: #24211c; --v2-frame-2: rgba(255, 255, 255, .07); --v2-frame-3: rgba(255, 255, 255, .12); --v2-frame-line: #b9ab92;
+  --v2-frame-ink: #efe8db; --v2-frame-dim: #d9cfbf; --v2-rail: #1f1c18;
+  --v2-seg-on: #efe8db; --v2-seg-on-ink: #24211c; --v2-seg-on-sh: none; --v2-seg-sh: 0 0 0 1px #3d372d;
+  --v2-dark: #7fb6cf; --v2-dark-hov: #96c4d9; --v2-on-dark: #10171a;
+  --v2-canvas: #1c1a16; --v2-top: #24211c; --v2-surface: #24211c; --v2-raise: #2b2822; --v2-sunken: #211e19;
+  --v2-hover: #322e27; --v2-press: #3b362e; --v2-line: #3d372d; --v2-line-2: #6b6255;
+  --v2-ink: #efe8db; --v2-ink-2: #d9cfbf; --v2-ink-3: #b3a892;
+  --v2-accent: #7fb6cf; --v2-accent-t: #1f3038; --v2-accent-t2: #27404b; --v2-accent-ink: #b8dbea; --v2-on-accent: #10171a;
+  --v2-ring: rgba(127, 182, 207, .35); --v2-ring-soft: rgba(127, 182, 207, .28); --v2-focus: rgba(127, 182, 207, .6);
+  --v2-red: #e48a63; --v2-red-t: #3a241b; --v2-red-t2: #46291e; --v2-red-ink: #f3b89e; --v2-on-red: #1a100b;
+  --v2-green: #7cc49a; --v2-green-t: #1f3127; --v2-green-ink: #9ad6b2;
+  --v2-yellow-t: #3a3220; --v2-meter: #5a5246; --v2-shadow: rgba(0, 0, 0, .45);
+  --pb-sheet-sh: 0 1px 3px rgba(0, 0, 0, .35); --pb-grid: rgba(255, 255, 255, .06);
+}
+/* 상단바 — 종이색, 아래 갈색 괘선 한 줄, 제품 이름은 명조 */
+.pb-header__brand b, .v2-brand b { font-family: var(--serif); letter-spacing: 0; font-size: 18px; }
+/* 앱 이름 — 대문의 '오늘의 활동지' 와 같은 테 두른 이름표(명조 제품 이름 옆) */
+.pb-header__app, .v2-app .v2-brand > span { font-family: var(--font-ui); font-size: 12.5px; font-weight: 700; line-height: 1; letter-spacing: 0;
+  padding: 5px 10px; margin-left: 2px; border: 1px solid var(--v2-accent); border-radius: 999px; color: var(--v2-accent-ink); background: var(--v2-surface); }
+.pb-header__app::before { content: none; }
+.pb-header__app:empty { display: none; }
+/* 판 · 카드 — 흰 종이에 옅은 테두리 */
+/* 판 바탕 — 대문과 같은 모눈 점 */
+body.pb-v2 .pb-panes { background-color: var(--v2-canvas); background-image: radial-gradient(var(--pb-grid) 1.2px, transparent 1.3px); background-size: 22px 22px; }
+body.pb-v2 .pb-pane, body.pb-v2 article > section, .pb-panel {
+  background: var(--v2-surface); border: 1px solid var(--v2-line); border-radius: 12px; box-shadow: var(--pb-sheet-sh); }
+body.tl .card { border-radius: 12px; box-shadow: var(--pb-sheet-sh); }
+.pb-title, body.pb-v2 article > section > h2, body.tl .card-title { font-family: var(--serif); }
+/* 버튼 — 테두리 단추, 주 동작만 남색 펜으로 칠한다 */
+.pb-btn { border-radius: 8px; }
+.pb-btn--accent { background: var(--v2-dark); }
+.pb .popup-buttons button { border-radius: 8px; }
+/* 대화상자 — 종이 */
+.pb .alert-popup-content, .pb .prompt-popup-content, .pb .confirm-popup-content, .pb .wifi-popup-content, .pb-modal__box {
+  border: 1px solid var(--v2-line) !important; box-shadow: 0 10px 30px var(--v2-shadow) !important; }
+/* 도구 왼쪽 메뉴 — 종이 위 글자, 고른 것은 남색 펜 밑줄 */
+body.pb-v2 main > nav { background: var(--v2-rail); border-right: 1px solid var(--v2-line); }
+body.pb-v2 nav button.menu-selected { background: var(--v2-accent-t); color: var(--v2-accent-ink); }
+/* 빈 화면 아이콘 — 상자 없이 남색 펜 */
+.pb-empty > i:first-child { color: var(--v2-accent) !important; }
+/* 대화 말풍선 · 로봇 놀이 */
+.chat-card { border-radius: 12px; }
+.msg__body { border-radius: 14px; }
+
+/* 앱 아이콘(pibo-icons.js) — 파이보 얼굴 + 색 배지. Font Awesome 아이콘 자리에 같은 크기로(261123) */
+.pb-appic-box { display: inline-flex; flex: none; width: 22px; height: 22px; align-items: center; justify-content: center; }
+.pb-appic-box .pb-appic { width: 22px; height: 22px; display: block; overflow: visible; }
+.pb-iconbtn:hover .pb-appic { transform: translateY(-1px) rotate(-4deg); transition: transform .15s ease; }
+@media (prefers-reduced-motion: reduce) { .pb-iconbtn:hover .pb-appic { transform: none; } }
+

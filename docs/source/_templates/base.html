@@ -3,9 +3,10 @@
        html_js_files 는 Furo 가 본문 끝에 싣기 때문에 너무 늦다(먼저 밝게 그렸다가 어둡게 바뀐다)
     2) 다른 앱(IDE·도구·분류기)과 같은 48px 상단바(261028): 왼쪽 [제품 아이콘] 제품 · 도움말, 오른쪽 IDE · 전체화면 · 밝기 · 언어(261120 — 다른 앱과 같은 순서·같은 글자, 999px 이하는 아이콘만).
        제품 이름은 html_title('도움말 · piBo' / 'Help · PiBrain')에서 뗀다 — conf.py 를 두 리포가 같게 두려고.
-       밝기는 Furo 버튼 대신 키트와 같은 밝게 → 부드럽게 → 어둡게 버튼(pibotheme.js). IDE·전체화면·밝기 아이콘은 다른 앱과 같은 Font Awesome Free 6.2.0 글리프(ide/webfonts/fa-solid-900.ttf 에서 뽑은 SVG — 8080 은 IDE 아이콘 글꼴을 못 받는다). 좁은 화면(63em 이하)에서는 Furo 의 모바일 머리줄을 숨기고 그 버튼(목록·목차)을 이 상단바로 옮긴다(mycss.css '상단바') -#}
+       밝기는 Furo 버튼 대신 키트와 같은 밝게 → 부드럽게 → 어둡게 버튼(pibotheme.js). [처음 화면](대문 80 /)은 다른 앱과 같은 캐릭터 앱 아이콘(_static/pibo-icons.js — design/sync.sh 가 복사, 261123), 전체화면·밝기 아이콘은 다른 앱과 같은 Font Awesome Free 6.2.0 글리프(ide/webfonts/fa-solid-900.ttf 에서 뽑은 SVG — 8080 은 IDE 아이콘 글꼴을 못 받는다). 좁은 화면(63em 이하)에서는 Furo 의 모바일 머리줄을 숨기고 그 버튼(목록·목차)을 이 상단바로 옮긴다(mycss.css '상단바') -#}
 {% extends "!base.html" %}
 {%- block extrahead -%}
+<script src="{{ pathto('_static/pibo-icons.js', 1) }}"></script>
 <script src="{{ pathto('_static/pibotheme.js', 1) }}"></script>
 {{ super() }}
 {%- endblock -%}
@@ -26,8 +27,8 @@
     <b>{{ pb_product }}</b><span class="pb-topbar__app">{{ pb_app }}</span>
   </a>
   <div class="pb-topbar__right">
-    <a class="pb-topbar__btn pb-topbar__ide" href="/" title="{{ pb_product }} IDE">
-      <svg viewBox="0 0 640 512" fill="currentColor" aria-hidden="true"><path d="M415 41 287 489Q283 502 272 508Q260 514 247 511Q234 507 228 496Q222 484 225 471L353 23Q357 10 368 4Q380 -2 393 1Q406 5 412 16Q418 28 415 41ZM519 121 631 233Q640 243 640 256Q640 269 631 279L519 391Q509 400 496 400Q483 400 473 391Q464 381 464 368Q464 355 473 345L563 256L473 167Q464 157 464 144Q464 131 473 121Q483 112 496 112Q509 112 519 121ZM167 167 77 256 167 345Q176 355 176 368Q176 381 167 391Q157 400 144 400Q131 400 121 391L9 279Q0 269 0 256Q0 243 9 233L121 121Q131 112 144 112Q157 112 167 121Q176 131 176 144Q176 157 167 167Z"/></svg><span>IDE</span>
+    <a class="pb-topbar__btn pb-topbar__ide" href="/" data-product="{{ pb_product }}" title="{{ 'Home' if language == 'en' else '처음 화면' }}">
+      <span class="pb-topbar__appic"></span><span>{{ 'Home' if language == 'en' else '처음 화면' }}</span>
     </a>
     <button type="button" class="pb-topbar__btn pb-topbar__fs" title="{{ 'Full screen' if language == 'en' else '전체화면' }}" hidden>
       <svg class="pb-ic-max" viewBox="0 0 448 512" fill="currentColor" aria-hidden="true"><path d="M447 319V454Q445 476 424 477H289Q268 476 259 458Q252 439 266 423L296 393L224 324L153 395L183 425Q197 441 190 460Q181 479 160 479H24Q3 477 1 456V321Q2 300 21 291Q26 288 32 288Q45 288 55 297L85 327L156 256L85 185L55 215Q39 229 20 222Q1 213 0 191V56Q2 35 23 33H158Q179 34 188 53Q192 58 191 63Q191 63 191 63Q191 76 182 86L153 117L224 188L295 117L265 87Q251 71 258 52Q267 33 288 32H423Q445 34 446 55V190Q445 211 426 220Q408 227 392 213L362 183L290 254L362 326L392 296Q407 282 426 289Q447 300 447 319Z"/></svg>

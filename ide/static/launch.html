@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PiBrain</title>
 <link rel="stylesheet" href="all.min.css">
-<link rel="stylesheet" href="pibo-ui.css?ver=261120v1">
+<link rel="stylesheet" href="pibo-ui.css?ver=261123v5">
 <link rel="shortcut icon" href="icon.png?ver=261102v2" type="image/png">
+<script src="pibo-icons.js?ver=261123v1"></script>
 <script>/* 화면 밝기를 첫 페인트 전에 (pibo-ui.js 의 getTheme 과 같은 규칙. 고른 적 없으면 soft) */
 (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
   document.documentElement.setAttribute('data-theme', m ? m[1] : 'soft'); } catch (e) {} })();</script>
@@ -18,14 +19,11 @@
   html, body { height: 100%; margin: 0; }
   body { font-family: var(--pb-font); color: var(--v2-ink); position: relative; isolation: isolate; }
   /* 배경: 노랑·파랑·초록 빛 번짐이 천천히 흐른다(그림 파일 없이 그라데이션만, transform 으로만 움직인다) */
-  body::before {
-    content: ""; position: fixed; top: -20%; right: -20%; bottom: -20%; left: -20%; z-index: -1; pointer-events: none;
-    background: radial-gradient(38% 42% at 28% 30%, rgba(251, 201, 45, .30), transparent 70%),
-                radial-gradient(34% 38% at 74% 66%, rgba(37, 99, 235, .16), transparent 70%),
-                radial-gradient(30% 30% at 62% 18%, rgba(31, 157, 98, .10), transparent 70%);
-    animation: lp-drift 18s ease-in-out infinite alternate;
-  }
-  html[data-theme="dark"] body::before { opacity: .5; }
+  /* 학습지(261123): 종이 바탕에 옅은 괘선 — 빛 번짐 장식은 뺐다 */
+  body::before { content: ""; position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: -1; pointer-events: none;
+    background: var(--v2-canvas) repeating-linear-gradient(180deg, transparent 0 31px, rgba(154, 143, 125, .14) 31px 32px); }
+  html[data-theme="dark"] body::before { background: var(--v2-canvas); }
+  #title { font-family: var(--serif); }
   @keyframes lp-drift { from { transform: translate(-3%, -2%) rotate(0deg); } to { transform: translate(3%, 3%) rotate(6deg); } }
   .wrap { min-height: calc(100vh - 48px); display: flex; align-items: center; justify-content: center; padding: 16px; }
   /* 카드: 대화상자와 같은 모양(모서리 16 · 떠 있는 면 · 테두리). 옅은 바닥 위에서도 가장자리가 보이게 */
@@ -37,6 +35,7 @@
   .ring { position: relative; display: inline-grid; place-items: center; flex: none;
           width: 44px; height: 44px; border-radius: 50%; background: var(--v2-sunken); }
   .ring > i { font-size: 19px; }
+  .ring > .appic { display: block; width: 26px; height: 26px; } .ring > .appic svg { width: 26px; height: 26px; display: block; overflow: visible; }
   .ring::before {
     content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; border-radius: 50%;
     background: conic-gradient(from 0deg, transparent 0 55%, var(--v2-accent) 100%);
@@ -127,8 +126,13 @@
                   name: { ko: '대화', en: 'Chat' },                icon: 'fa-comments' },
     // 체험 앱 '로봇 놀이'(kids/run_kids.py, 50060, 261028 시험 중)
     kids:       { port: 50060, on: '/kids?enable=on',       check: 'port',   limit: 60,
-                  name: { ko: '로봇 놀이', en: 'Robot Play' },     icon: 'fa-shapes' }
+                  name: { ko: '로봇 놀이', en: 'Robot Play' },     icon: 'fa-shapes' },
+    // H/W 검수(test/test.py, 50050) — 대문 [H/W 검수](261123). 서버가 켤 때 3초 기다린다
+    hwtest:     { port: 50050, on: '/hwtest?enable=on',     check: 'port',   limit: 60,
+                  name: { ko: 'H/W 검수', en: 'H/W check' },       icon: 'fa-stethoscope' }
   };
+  // 대문에서 로봇 놀이의 한 화면으로 바로 갈 때(261123): ?go=make(카드 코딩) · pet(키우기)
+  var GO = { make: { ko: '카드 코딩', en: 'Card coding', icon: 'fa-cubes' }, pet: { ko: '키우기', en: 'Pet', icon: 'fa-heart' } };
   var key = Q.get('svc'), S = SVC[key];
   var $ = function (id) { return document.getElementById(id); };
   $('close').onclick = function () {
@@ -139,11 +143,20 @@
   function setTitle(s) { $('title').textContent = s; document.title = PRODUCT ? s + ' · ' + PRODUCT : s; }   // 탭 제목은 '… · PiBrain' (다른 화면과 같은 꼴)
   if (!S) { document.body.dataset.state = 'fail'; setTitle(t('bad')); $('icon').className = 'fa-solid fa-circle-exclamation'; return; }
 
-  var name = S.name[L];
+  var go = Q.get('go'), G = key === 'kids' && GO[go] ? GO[go] : null;
+  var name = G ? G[L] : S.name[L];
+  if (G) S.icon = G.icon;
   setTitle(t('title', name));
   $('app_name').textContent = name; $('app_name').hidden = false;
   $('icon').className = 'fa-solid ' + S.icon;
+  // 앱 아이콘 — 파이보(PiBrain) 얼굴 + 색 배지(pibo-icons.js, 261123). 못 읽으면 위의 기호 그대로
+  if (window.PiboIcons) {
+    var APP = { tools: 'tools', classifier: 'classifier', llm: 'llm', kids: G ? (go === 'pet' ? 'pet' : 'cards') : 'cards', hwtest: 'hwtest' };
+    var ic = document.createElement('span'); ic.className = 'appic'; ic.innerHTML = PiboIcons.app(APP[key] || 'code', PRODUCT);
+    $('icon').parentNode.replaceChild(ic, $('icon'));
+  }
   var target = 'http://' + HOST + ':' + S.port + '/';
+  var targetGo = G ? target + '?go=' + go : target;   // 준비 확인은 target, 이동은 targetGo
 
   function step(n, state) {
     var li = $('s' + n); li.setAttribute('data-s', state);
@@ -188,7 +201,7 @@
     step(2, 'done'); step(3, 'now');
     $('bar').style.width = '100%';
     if (note) $('msg').textContent = note;
-    setTimeout(function () { location.replace(target); }, note ? 1600 : 250);
+    setTimeout(function () { location.replace(targetGo); }, note ? 1600 : 250);
   }
   function fail() {
     stopTimers();

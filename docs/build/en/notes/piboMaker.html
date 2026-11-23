@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=ff6fa555" />
+    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=7516edc3" />
     
     
 
@@ -96,7 +96,8 @@
       }
     }
   }
-</style><script src="../_static/pibotheme.js"></script>
+</style><script src="../_static/pibo-icons.js"></script>
+<script src="../_static/pibotheme.js"></script>
 </head>
   <body>
     <header class="pb-topbar" role="banner">
@@ -108,8 +109,8 @@
     <b>PiBrain</b><span class="pb-topbar__app">Help</span>
   </a>
   <div class="pb-topbar__right">
-    <a class="pb-topbar__btn pb-topbar__ide" href="/" title="PiBrain IDE">
-      <svg viewBox="0 0 640 512" fill="currentColor" aria-hidden="true"><path d="M415 41 287 489Q283 502 272 508Q260 514 247 511Q234 507 228 496Q222 484 225 471L353 23Q357 10 368 4Q380 -2 393 1Q406 5 412 16Q418 28 415 41ZM519 121 631 233Q640 243 640 256Q640 269 631 279L519 391Q509 400 496 400Q483 400 473 391Q464 381 464 368Q464 355 473 345L563 256L473 167Q464 157 464 144Q464 131 473 121Q483 112 496 112Q509 112 519 121ZM167 167 77 256 167 345Q176 355 176 368Q176 381 167 391Q157 400 144 400Q131 400 121 391L9 279Q0 269 0 256Q0 243 9 233L121 121Q131 112 144 112Q157 112 167 121Q176 131 176 144Q176 157 167 167Z"/></svg><span>IDE</span>
+    <a class="pb-topbar__btn pb-topbar__ide" href="/" data-product="PiBrain" title="Home">
+      <span class="pb-topbar__appic"></span><span>Home</span>
     </a>
     <button type="button" class="pb-topbar__btn pb-topbar__fs" title="Full screen" hidden>
       <svg class="pb-ic-max" viewBox="0 0 448 512" fill="currentColor" aria-hidden="true"><path d="M447 319V454Q445 476 424 477H289Q268 476 259 458Q252 439 266 423L296 393L224 324L153 395L183 425Q197 441 190 460Q181 479 160 479H24Q3 477 1 456V321Q2 300 21 291Q26 288 32 288Q45 288 55 297L85 327L156 256L85 185L55 215Q39 229 20 222Q1 213 0 191V56Q2 35 23 33H158Q179 34 188 53Q192 58 191 63Q191 63 191 63Q191 76 182 86L153 117L224 188L295 117L265 87Q251 71 258 52Q267 33 288 32H423Q445 34 446 55V190Q445 211 426 220Q408 227 392 213L362 183L290 254L362 326L392 296Q407 282 426 289Q447 300 447 319Z"/></svg>
@@ -353,6 +354,10 @@
 <h1>PiBrain Maker<a class="headerlink" href="#pibrain-maker" title="Link to this heading">¶</a></h1>
 <p>PiBrain Maker is the PiBrain development environment you open in a web browser. When your tablet or laptop is on the same WiFi
 as PiBrain, type <strong>PiBrain’s IP address</strong> (shown on the PiBrain screen at startup) into the address bar. There is nothing to install.</p>
+<p>The address opens the <strong>home screen</strong> (a worksheet page). Tap a big picture button to enter an app, and use [Home] (house button) in an app’s top bar to come back.
+Row 1 <strong>Make</strong> (Coding · Tools · Teach AI · Chat), row 2 <strong>Play &amp; learn</strong> (Card coding · Pet), row 3 <strong>Teacher tools</strong> (Settings · Help).
+The app that is running now gets a red ‘Running’ stamp and the one you used last gets a yellow tag; on the right are the robot status and [Continue] (recent files, AI you taught).
+[Settings] has screen brightness, WiFi settings, reset robot screen, H/W check, factory reset and power off.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -364,27 +369,27 @@ as PiBrain, type <strong>PiBrain’s IP address</strong> (shown on the PiBrain s
 <tbody>
 <tr class="row-even"><td><p><strong>IDE</strong></p></td>
 <td><p>Build and run programs with blocks or Python</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">http://&lt;PiBrain</span> <span class="pre">IP&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">http://&lt;PiBrain</span> <span class="pre">IP&gt;</span></code> → home screen [Coding]</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Tools</strong></p></td>
 <td><p>Try the buttons, LED, camera, voice and screen right away, without code</p></td>
-<td><p>[Tools] at the top of the IDE</p></td>
+<td><p>Home screen, or [Tools] at the top of the IDE</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Chat</strong></p></td>
 <td><p>Chat in text with the language model (LLM) running inside PiBrain</p></td>
-<td><p>[Chat] at the top of the IDE</p></td>
+<td><p>Home screen, or [Chat] at the top of the IDE</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Classifier</strong></p></td>
 <td><p>Collect examples with the camera and teach your own AI</p></td>
-<td><p>[Classifier] at the top of the IDE</p></td>
+<td><p>Home screen, or [Classifier] at the top of the IDE</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Robot Play</strong></p></td>
 <td><p>Elementary students teach the robot friend tricks with cards (no coding)</p></td>
-<td><p>[Robot Play] at the top of the IDE</p></td>
+<td><p>Home screen, or [Robot Play] at the top of the IDE</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Help</strong></p></td>
 <td><p>This document</p></td>
-<td><p>[Help] at the top of the IDE</p></td>
+<td><p>Home screen, or [Help] at the top of the IDE</p></td>
 </tr>
 </tbody>
 </table>

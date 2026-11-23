@@ -1,0 +1,231 @@
+/* ==========================================================================
+   첫 화면(대문, 261123) — / . 앱을 골라 같은 탭으로 들어간다. 파이보·PiBrain 같은 파일.
+   '학습지' 컨셉(사용자 — ai-lab 과 같게, 디자이너가 한 것처럼):
+   · 책상 위 모눈 바탕에 활동지 한 장 — 왼쪽 철 구멍 셋 · 빨간 여백선 두 줄 · 머리(캐릭터 · 눈썹 글 · 형광펜 제목 · 날짜 도장)
+   · 활동 1 만들기(큰 카드 넷) · 활동 2 놀이 · 배우기 / 활동 3 선생님 · 관리(가로 카드 둘씩) — 활동마다 펜 색 하나(남색 · 초록 · 갈색)
+   · 카드 = 흰 종이 + 아이콘 딱지(옅은 칸 + 판화처럼 어긋난 색 그림자) + 이름 + 설명 + '시작하기 →'. 누르면 종이가 들리고 그림자가 커진다
+   · 켜진 앱은 빨간 고무 도장 '켜져 있음', 아니면 마지막에 쓴 앱에 노란 꼬리표 '지난번'
+   · 오른쪽: 로봇 상태(괘선 표 · 막대) · 이어서 하기(노란 메모지 + 마스킹 테이프)
+   색은 키트 토큰(--v2-*, 학습지 층). 구형 브라우저 기준(:has·color-mix·backdrop-filter·aspect-ratio 안 씀)
+   ========================================================================== */
+.home { font-family: var(--font-ui); color: var(--v2-ink);
+  --pen: var(--v2-accent); --pen-t: var(--v2-accent-t); --pen-t2: var(--v2-accent-t2); --pen-ink: var(--v2-accent-ink);
+  --hl: rgba(246, 205, 84, .55); --memo: #fdf3c8; --memo-line: rgba(160, 128, 40, .22); --tape: rgba(214, 197, 150, .62);
+  --margin-red: rgba(196, 84, 60, .45); --hole: var(--v2-canvas); --grid: rgba(120, 108, 88, .13);
+  --line-d: var(--v2-frame-line); --pen-blue: var(--v2-accent); --pen-red: var(--v2-red); }
+html[data-theme="dark"] .home { --hl: rgba(214, 170, 60, .38); --memo: #3a3424; --memo-line: rgba(230, 200, 120, .14); --tape: rgba(150, 135, 100, .45);
+  --margin-red: rgba(228, 138, 99, .4); --grid: rgba(255, 255, 255, .06); }
+.home button { font-family: inherit; }
+.pb-shell > main.home-main { display: block; overflow-x: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  background-color: var(--v2-canvas); background-image: radial-gradient(var(--grid) 1.2px, transparent 1.3px); background-size: 22px 22px; }
+.home-wrap { max-width: 1340px; margin: 0 auto; padding: 24px 40px 44px; display: grid; grid-template-columns: minmax(0, 1fr) 304px; gap: 28px; align-items: start; }
+
+/* ── 활동지 한 장 ───────────────────────────────────────────────── */
+.sheet { position: relative; background: var(--v2-surface); border: 1px solid var(--v2-line); border-radius: 6px 14px 14px 6px;
+  padding: 22px 30px 26px 74px; box-shadow: 0 1px 2px rgba(74, 63, 46, .08), 0 8px 24px -12px rgba(74, 63, 46, .22); }
+html[data-theme="dark"] .sheet { box-shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 26px -12px rgba(0, 0, 0, .6); }
+/* 빨간 여백선 두 줄 */
+.sheet::before { content: ""; position: absolute; top: 0; bottom: 0; left: 52px; width: 4px;
+  border-left: 1.5px solid var(--margin-red); border-right: 1px solid var(--margin-red); pointer-events: none; }
+/* 철 구멍 셋 */
+.sheet__holes { position: absolute; left: 16px; top: 0; bottom: 0; display: flex; flex-direction: column; justify-content: space-around; padding: 40px 0; pointer-events: none; }
+.sheet__holes i { display: block; width: 18px; height: 18px; border-radius: 50%; background: var(--hole);
+  box-shadow: inset 0 2px 3px rgba(74, 63, 46, .28), 0 0 0 1px var(--v2-line); }
+html[data-theme="dark"] .sheet__holes i { box-shadow: inset 0 2px 3px rgba(0, 0, 0, .6), 0 0 0 1px var(--v2-line); }
+
+/* 머리 — 캐릭터 · 눈썹 글 · 형광펜 제목 · 연결 · 날짜 도장 */
+.sheet__head { display: flex; align-items: center; gap: 18px; padding-bottom: 18px; margin-bottom: 6px; border-bottom: 2px solid var(--v2-frame-line); position: relative; }
+.sheet__head::after { content: ""; position: absolute; left: 0; right: 0; bottom: -6px; border-bottom: 1px solid var(--v2-frame-line); opacity: .55; }
+.home-pal { flex: none; width: 84px; height: 84px; border-radius: 50%; background: var(--pen-t); display: flex; align-items: center; justify-content: center; }
+.home-pal { overflow: hidden; }
+.home-pal svg { width: 70px; height: 70px; display: block; overflow: hidden; }
+.sheet__title { flex: 1 1 auto; min-width: 0; }
+.sheet__eyebrow { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .08em; color: var(--pen); text-transform: uppercase;
+  padding: 3px 9px; border: 1px solid var(--pen); border-radius: 999px; margin-bottom: 8px; }
+.sheet__title h1 { margin: 0; font-family: var(--serif); font-size: 30px; font-weight: 700; color: var(--v2-ink); line-height: 1.25; letter-spacing: -.01em; }
+.hl { background-image: linear-gradient(transparent 58%, var(--hl) 58%, var(--hl) 92%, transparent 92%); padding: 0 4px; margin: 0 -4px;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.sheet__title p { margin: 8px 0 0; font-size: 13.5px; color: var(--v2-ink-3); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.home-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--v2-green); display: inline-block; box-shadow: 0 0 0 3px var(--v2-green-t); }
+.sheet__title p[data-off] .home-dot { background: var(--v2-red); box-shadow: 0 0 0 3px var(--v2-red-t); }
+/* 날짜 도장 — 네모 칸 두 줄(오늘 날짜를 저절로) */
+.sheet__date { flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 96px; padding: 8px 12px;
+  border: 1.5px solid var(--v2-frame-line); border-radius: 10px; transform: rotate(2deg); background: var(--v2-surface); }
+.sheet__date b { font-family: var(--serif); font-size: 18px; font-weight: 700; color: var(--v2-ink); white-space: nowrap; }
+.sheet__date span { font-size: 12px; color: var(--v2-ink-3); margin-top: 1px; }
+
+/* ── 활동 ───────────────────────────────────────────────────────── */
+.act { padding-top: 22px; }
+.act--play { --pen: var(--v2-green); --pen-t: var(--v2-green-t); --pen-t2: #d4e8da; --pen-ink: var(--v2-green-ink); }
+.act--admin { --pen: #7a6a4f; --pen-t: #f3eee4; --pen-t2: #e4dac8; --pen-ink: #5a4c35; }
+html[data-theme="dark"] .act--play { --pen-t2: #2a4434; }
+html[data-theme="dark"] .act--admin { --pen: #c9b896; --pen-t: #2b2720; --pen-t2: #3b352a; --pen-ink: #e0d2b4; }
+.act__h { display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
+.act__no { flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--pen); color: var(--v2-on-accent);
+  display: inline-flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 17px; font-weight: 700; line-height: 1; }
+html[data-theme="dark"] .act__no { color: #17140f; }
+.act__h b { font-family: var(--serif); font-size: 20px; font-weight: 700; color: var(--v2-ink); white-space: nowrap; }
+.act__h small { font-size: 13.5px; color: var(--v2-ink-3); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* 점선 지시선 — 활동 이름 뒤로 줄 끝까지 */
+.act__h::after { content: ""; flex: 1 1 24px; min-width: 24px; border-bottom: 2px dotted var(--v2-line-2); opacity: .55; transform: translateY(2px); }
+.act__grid { display: grid; gap: 14px; }
+.act__grid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.act__grid--list { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+.act-two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 26px; }
+
+/* ── 활동 카드 ──────────────────────────────────────────────────── */
+.home-app { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 18px 18px 14px; text-align: left;
+  border: 1.5px solid var(--v2-line); border-radius: 14px; background: var(--v2-surface); color: var(--v2-ink); font: inherit; cursor: pointer;
+  box-shadow: 0 1px 0 var(--v2-line); transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+  -webkit-tap-highlight-color: transparent; animation: home-in .34s ease both; }
+@keyframes home-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.home-app:hover { transform: translateY(-3px); border-color: var(--pen); box-shadow: 4px 5px 0 var(--pen-t2); }
+.home-app:active { transform: translateY(0); box-shadow: 1px 1px 0 var(--pen-t2); }
+.home-app:focus { outline: 3px solid var(--v2-focus); outline-offset: 2px; }
+/* 아이콘 딱지 — 옅은 칸 + 판화처럼 어긋난 색 그림자 */
+.home-app__ic { flex: none; width: 56px; height: 56px; border-radius: 16px; background: var(--pen-t); color: var(--pen);
+  display: inline-flex; align-items: center; justify-content: center; font-size: 25px; box-shadow: 4px 4px 0 var(--pen-t2);
+  transition: transform .16s ease; }
+.home-app:hover .home-app__ic { transform: rotate(-6deg); }
+.home-app__tx { display: flex; flex-direction: column; gap: 4px; min-width: 0; width: 100%; }
+.home-app__tx b { font-size: 18px; font-weight: 700; line-height: 1.3; letter-spacing: -.01em; }
+.home-app__d { font-size: 13px; color: var(--v2-ink-3); line-height: 1.45; }
+.home-app__go { margin-top: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--pen-ink);
+  padding-top: 10px; border-top: 1px dashed var(--v2-line); width: 100%; }
+.home-app__go i { font-size: 12px; transition: transform .16s ease; }
+.home-app:hover .home-app__go i { transform: translateX(4px); }
+/* 캐릭터 그림 칸 — 큰 카드는 위에 넓게, 가로 카드는 왼쪽 네모(옅은 칸 + 판화 그림자는 아이콘 딱지와 같게) */
+.home-app__art { display: block; flex: none; width: 100%; height: 132px; border-radius: 12px; background: var(--pen-t); overflow: hidden;
+  box-shadow: 4px 4px 0 var(--pen-t2); }
+.home-app__art svg { display: block; height: 100%; width: auto; margin: 0 auto; transition: transform .2s ease; }
+.home-app:hover .home-app__art svg { transform: translateY(-3px) scale(1.03); }
+html[data-theme="dark"] .home-app__art { background: var(--pen-t); }
+/* 가로 카드(활동 2 · 3) */
+.act__grid--list .home-app { flex-direction: row; align-items: center; gap: 16px; padding: 14px 16px; }
+.act__grid--list .home-app__ic { width: 48px; height: 48px; border-radius: 14px; font-size: 21px; box-shadow: 3px 3px 0 var(--pen-t2); }
+.act__grid--list .home-app__tx b { font-size: 16.5px; }
+.act__grid--list .home-app__art { width: 84px; height: 84px; border-radius: 14px; box-shadow: 3px 3px 0 var(--pen-t2); }
+.act__grid--list .home-app { padding: 10px 16px 10px 10px; }
+.act__grid--list .home-app__go { margin: 0; padding: 0; border: 0; width: auto; flex: none; }
+.act__grid--list .home-app__go span { display: none; }
+.act__grid--list .home-app__go i { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--v2-line); display: inline-flex; align-items: center; justify-content: center; }
+.act__grid--list .home-app:hover .home-app__go i { border-color: var(--pen); background: var(--pen-t); transform: none; }
+/* 켜진 앱 — 빨간 고무 도장 / 마지막에 쓴 앱 — 노란 꼬리표 */
+.home-app[data-ring="run"] { border-color: var(--v2-red); }
+.home-run { position: absolute; top: 12px; right: 12px; padding: 3px 9px; border: 2px solid var(--v2-red); border-radius: 6px; color: var(--v2-red);
+  font-family: var(--serif); font-size: 13px; font-weight: 700; transform: rotate(-7deg); letter-spacing: .02em;
+  box-shadow: inset 0 0 0 2px var(--v2-surface), inset 0 0 0 3px var(--v2-red); background: var(--v2-surface); opacity: .92; }
+.home-tag { position: absolute; top: -1px; right: 18px; padding: 6px 8px 7px; background: var(--hl); color: var(--v2-ink); font-size: 11.5px; font-weight: 700;
+  border-radius: 0 0 6px 6px; line-height: 1; }
+.act__grid--list .home-run { top: 50%; right: 60px; transform: translateY(-50%) rotate(-7deg); }
+.home[data-going] .home-app, .home[data-going] .home-side, .home[data-going] .sheet__head { transition: opacity .18s ease; opacity: .4; }
+.home[data-going] .home-app[data-go] { opacity: 1; transform: translateY(-3px) scale(1.02); border-color: var(--pen); box-shadow: 6px 7px 0 var(--pen-t2); }
+
+/* 캐릭터 — 펜 선 */
+.pen .ln { fill: var(--v2-surface); stroke: var(--v2-ink-2); stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
+.pen .ac { fill: none; stroke: var(--v2-accent); stroke-width: 3.2; stroke-linecap: round; }
+.pen .dot { fill: var(--v2-ink-2); }
+.pen .red { stroke: var(--v2-red); stroke-width: 3; stroke-linecap: round; fill: none; opacity: .8; }
+
+/* ── 오른쪽 ────────────────────────────────────────────────────── */
+.home-side { display: flex; flex-direction: column; gap: 26px; }
+/* 로봇 상태 — 괘선 표 + 막대 */
+.card-st { background: var(--v2-surface); border: 1px solid var(--v2-line); border-radius: 14px; padding: 16px 18px 10px; box-shadow: var(--pb-sheet-sh); }
+.card-st h2, .memo h2 { margin: 0 0 6px; padding-bottom: 10px; border-bottom: 2px solid var(--v2-frame-line); font-family: var(--serif); font-size: 17px; font-weight: 700;
+  color: var(--v2-ink); display: flex; align-items: center; gap: 9px; }
+.card-st h2 > i { color: var(--v2-red); font-size: 15px; }
+.card-st h2 em { margin-left: auto; font-style: normal; font-weight: 400; font-size: 11.5px; color: var(--v2-ink-3); font-family: var(--font-ui); white-space: nowrap; }
+.home-row { display: flex; align-items: center; gap: 10px; font-size: 13.5px; padding: 9px 2px; color: var(--v2-ink-2); border-bottom: 1px solid var(--v2-line); }
+.home-row:last-child { border-bottom: 0; }
+.home-row > i { width: 18px; text-align: center; color: var(--v2-ink-3); font-size: 13px; flex: none; }
+.home-row > span { flex: none; }
+.home-row b { margin-left: auto; color: var(--v2-ink); font-weight: 700; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.home-row > .home-bar { flex: 1 1 auto; height: 6px; border-radius: 3px; background: var(--v2-sunken); margin-left: 8px; overflow: hidden; box-shadow: inset 0 0 0 1px var(--v2-line); }
+.home-bar i { display: block; height: 100%; border-radius: 3px; background: var(--v2-accent); }
+.home-bar + b { margin-left: 8px; min-width: 42px; }
+/* 이어서 하기 — 노란 메모지 + 마스킹 테이프 */
+.memo { position: relative; background: var(--memo); border-radius: 3px; padding: 22px 18px 14px; transform: rotate(-.8deg);
+  box-shadow: 0 1px 2px rgba(74, 63, 46, .12), 0 12px 18px -14px rgba(74, 63, 46, .45);
+  background-image: repeating-linear-gradient(180deg, transparent 0 35px, var(--memo-line) 35px 36px); background-position: 0 56px; }
+.memo__tape { position: absolute; top: -11px; left: 50%; width: 96px; height: 24px; margin-left: -48px; background: var(--tape); transform: rotate(2.5deg);
+  border-left: 1px dashed rgba(255, 255, 255, .5); border-right: 1px dashed rgba(255, 255, 255, .5); }
+.memo h2 { border-bottom-color: transparent; padding-bottom: 6px; }
+.memo h2 > i { color: var(--v2-ink-2); font-size: 15px; }
+.home-li { display: flex; align-items: center; gap: 10px; width: 100%; height: 36px; padding: 0 4px; border: 0; background: none;
+  font: inherit; font-size: 13.5px; color: var(--v2-ink); cursor: pointer; text-align: left; border-radius: 6px; }
+.home-li:hover { background: rgba(255, 255, 255, .5); }
+html[data-theme="dark"] .home-li:hover { background: rgba(255, 255, 255, .06); }
+.home-li:focus { outline: 2px solid var(--v2-focus); outline-offset: -2px; }
+.home-li > i { width: 18px; text-align: center; flex: none; color: var(--v2-accent); }
+.home-li > span { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; }
+.home-li > span small { color: var(--v2-ink-3); font-weight: 400; }
+.home-li > em { flex: none; font-style: normal; font-size: 12px; color: var(--v2-ink-3); }
+.home-empty { font-size: 13.5px; color: var(--v2-ink-3); padding: 8px 4px 10px; line-height: 36px; }
+
+/* 창(설정 · 확인) — 종이. 키트 대화상자와 같은 막 */
+.home-modal { position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 1000; background: var(--v2-scrim, rgba(20, 24, 40, .45));
+  display: flex; align-items: center; justify-content: center; padding: 16px; }
+.home-modal[hidden] { display: none; }
+.home-modal__box { width: 100%; max-width: 440px; max-height: calc(100% - 16px); overflow-y: auto; background: var(--v2-surface); color: var(--v2-ink);
+  border: 1px solid var(--v2-line); border-radius: 14px; padding: 16px 20px 20px; box-shadow: 0 10px 30px var(--v2-shadow); }
+.home-modal__head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 2px solid var(--line-d); }
+.home-modal__head b { flex: 1; font-family: var(--serif); font-size: 19px; }
+.home-modal__ic { font-size: 18px; color: var(--pen-blue); }
+.home-modal__ic.home-c-red { color: var(--pen-red); }
+.home-x { width: 34px; height: 34px; border: 1px solid var(--v2-line); border-radius: 8px; background: var(--v2-surface); color: var(--v2-ink-2); cursor: pointer; font-size: 15px; }
+.home-x:hover { background: var(--v2-hover); }
+.home-modal__msg { margin: 4px 0 18px; font-size: 15px; line-height: 1.6; white-space: pre-line; }
+.home-modal__btns { display: flex; justify-content: flex-end; gap: 8px; }
+.home-btn { height: 42px; min-width: 96px; padding: 0 18px; border: 1px solid var(--v2-line-2); border-radius: 8px; background: var(--v2-surface); color: var(--v2-ink); font-size: 15px; font-weight: 700; cursor: pointer; }
+.home-btn:hover { background: var(--v2-hover); }
+.home-btn--main { background: var(--v2-dark); border-color: var(--v2-dark); color: var(--v2-on-dark); }
+.home-btn--main:hover { background: var(--v2-dark-hov); }
+.home-btn--red { background: var(--pen-red); border-color: var(--pen-red); color: var(--v2-on-red); }
+.home-set { margin: 0 0 10px; }
+.home-set__lbl { font-size: 13px; font-weight: 700; color: var(--v2-ink-3); margin: 6px 2px 8px; }
+.home-set__lbl--red { color: var(--pen-red); margin-top: 16px; }
+.home-seg { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--v2-line-2); border-radius: 8px; overflow: hidden; }
+.home-seg button { height: 40px; border: 0; border-left: 1px solid var(--v2-line); background: var(--v2-surface); color: var(--v2-ink-2); font-size: 14px; font-weight: 700; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+.home-seg button:first-child { border-left: 0; }
+.home-seg button[aria-checked="true"] { background: var(--v2-accent-t); color: var(--v2-accent-ink); }
+.home-set__row { display: flex; align-items: center; gap: 12px; width: 100%; padding: 11px 12px; margin-top: 8px; border: 1px solid var(--v2-line); border-radius: 8px;
+  cursor: pointer; text-align: left; background: var(--v2-surface); color: var(--v2-ink); }
+.home-set__row:hover { background: var(--v2-hover); }
+.home-set__row > span { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.home-set__row b { font-size: 15px; } .home-set__row small { font-size: 12.5px; color: var(--v2-ink-3); white-space: pre-line; line-height: 1.5; }
+.home-set__row small:empty { display: none; }
+.home-set__ic { width: 28px; text-align: center; color: var(--pen-blue); font-size: 17px; }
+.home-set__row--red .home-set__ic { color: var(--pen-red); }
+.home-set__row--red[data-armed] { background: var(--v2-red-t); border-color: var(--pen-red); }
+.home-set__row--red[data-armed] small { color: var(--v2-red-ink); }
+
+/* 좁은 화면: 1180 이하 오른쪽을 아래로, 900 이하 큰 카드 2칸 · 활동 2·3 위아래, 600 이하 철 구멍 숨김 */
+@media (max-width: 1180px) {
+  .home-wrap { grid-template-columns: minmax(0, 1fr); padding: 20px 24px 36px; gap: 26px; }
+  .home-side { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+}
+@media (max-width: 1000px) { .act__grid--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .act__h small { display: none; } }
+@media (max-width: 900px) { .act-two { grid-template-columns: minmax(0, 1fr); gap: 0; } }
+@media (max-width: 820px) { .sheet__title h1 { font-size: 24px; } .home-pal { width: 68px; height: 68px; } .home-pal svg { width: 56px; height: 56px; } }
+@media (max-width: 600px) {
+  .home-wrap { padding: 12px 12px 28px; }
+  .sheet { padding: 16px 16px 20px; border-radius: 12px; }
+  .sheet::before, .sheet__holes { display: none; }
+  .sheet__head { flex-wrap: wrap; gap: 12px; }
+  .sheet__date { position: absolute; top: 0; right: 0; min-width: 0; padding: 4px 8px; }
+  .sheet__date b { font-size: 14px; }
+  .home-pal { width: 56px; height: 56px; } .home-pal svg { width: 46px; height: 46px; }
+  .sheet__title h1 { font-size: 21px; }
+  .sheet__eyebrow { display: none; }
+  .home-app { padding: 14px 14px 12px; }
+  .home-app__ic { width: 46px; height: 46px; font-size: 20px; border-radius: 13px; }
+  .home-app__art { height: 110px; }
+  .act__grid--list .home-app__art { width: 68px; height: 68px; }
+  .home-app__tx b { font-size: 16px; }
+  .home-side { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-app__art svg, .home-app, .home-app__ic, .home-app__go i, .home[data-going] .home-app, .home[data-going] .home-side, .home[data-going] .sheet__head {
+    animation: none !important; transition: none !important; }
+}
