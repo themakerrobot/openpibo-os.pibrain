@@ -37,8 +37,6 @@ html[data-pb-theme="dark"] .pb-topbar {
 .pb-topbar__app { font-size: 12.5px; font-weight: 700; line-height: 1; letter-spacing: 0; padding: 5px 10px; margin-left: 2px; border: 1px solid #1f5f7a;
   border-radius: 999px; color: #12455c; background: #fff; overflow: hidden; text-overflow: ellipsis; }
 html[data-pb-theme="dark"] .pb-topbar__app { border-color: #7fb6cf; color: #b8dbea; background: #24211c; }
-.pb-topbar__appic { display: inline-flex; width: 22px; height: 22px; flex: none; }
-.pb-topbar__appic svg { width: 22px !important; height: 22px !important; overflow: visible; }
 .pb-topbar__right { display: flex; align-items: center; gap: 2px; flex: none; }
 .pb-topbar__btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box;
   height: 32px; min-width: 32px; padding: 0 10px; border: 0; border-radius: 8px; background: transparent;
@@ -103,7 +101,6 @@ body[data-theme="dark"] .sidebar-search:focus { border-color: #7aa7ff; box-shado
 @media (max-width: 999px) {
   .pb-topbar__btn { padding: 0 8px; }
   .pb-topbar__btn > span { display: none; }
-  .pb-topbar__btn > .pb-topbar__appic { display: inline-flex; }   /* 캐릭터 아이콘 칸은 글자가 아니다 */
 }
 @media (max-width: 480px) {
   .pb-topbar__lang { padding-right: 22px; padding-left: 8px; background-position: right 11px center, right 7px center; }

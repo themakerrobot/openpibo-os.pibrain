@@ -5,9 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PiBrain</title>
 <link rel="stylesheet" href="all.min.css">
-<link rel="stylesheet" href="pibo-ui.css?ver=261123v5">
+<link rel="stylesheet" href="pibo-ui.css?ver=261123v6">
 <link rel="shortcut icon" href="icon.png?ver=261102v2" type="image/png">
-<script src="pibo-icons.js?ver=261123v1"></script>
 <script>/* 화면 밝기를 첫 페인트 전에 (pibo-ui.js 의 getTheme 과 같은 규칙. 고른 적 없으면 soft) */
 (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
   document.documentElement.setAttribute('data-theme', m ? m[1] : 'soft'); } catch (e) {} })();</script>
@@ -35,7 +34,6 @@
   .ring { position: relative; display: inline-grid; place-items: center; flex: none;
           width: 44px; height: 44px; border-radius: 50%; background: var(--v2-sunken); }
   .ring > i { font-size: 19px; }
-  .ring > .appic { display: block; width: 26px; height: 26px; } .ring > .appic svg { width: 26px; height: 26px; display: block; overflow: visible; }
   .ring::before {
     content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; border-radius: 50%;
     background: conic-gradient(from 0deg, transparent 0 55%, var(--v2-accent) 100%);
@@ -132,7 +130,7 @@
                   name: { ko: 'H/W 검수', en: 'H/W check' },       icon: 'fa-stethoscope' }
   };
   // 대문에서 로봇 놀이의 한 화면으로 바로 갈 때(261123): ?go=make(카드 코딩) · pet(키우기)
-  var GO = { make: { ko: '카드 코딩', en: 'Card coding', icon: 'fa-cubes' }, pet: { ko: '키우기', en: 'Pet', icon: 'fa-heart' } };
+  var GO = { make: { ko: '카드 코딩', en: 'Card coding', icon: 'fa-shapes' }, pet: { ko: '키우기', en: 'Pet', icon: 'fa-heart' } };
   var key = Q.get('svc'), S = SVC[key];
   var $ = function (id) { return document.getElementById(id); };
   $('close').onclick = function () {
@@ -149,12 +147,6 @@
   setTitle(t('title', name));
   $('app_name').textContent = name; $('app_name').hidden = false;
   $('icon').className = 'fa-solid ' + S.icon;
-  // 앱 아이콘 — 파이보(PiBrain) 얼굴 + 색 배지(pibo-icons.js, 261123). 못 읽으면 위의 기호 그대로
-  if (window.PiboIcons) {
-    var APP = { tools: 'tools', classifier: 'classifier', llm: 'llm', kids: G ? (go === 'pet' ? 'pet' : 'cards') : 'cards', hwtest: 'hwtest' };
-    var ic = document.createElement('span'); ic.className = 'appic'; ic.innerHTML = PiboIcons.app(APP[key] || 'code', PRODUCT);
-    $('icon').parentNode.replaceChild(ic, $('icon'));
-  }
   var target = 'http://' + HOST + ':' + S.port + '/';
   var targetGo = G ? target + '?go=' + go : target;   // 준비 확인은 target, 이동은 targetGo
 

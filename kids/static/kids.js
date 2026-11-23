@@ -1020,7 +1020,6 @@
         document.documentElement.setAttribute('data-product', 'PiBrain');
         $('brand_icon').className = 'fa-solid fa-brain';
         $('brand_name').textContent = 'PiBrain';
-        if (window.PiboUI && PiboUI.appIcons) PiboUI.appIcons();   // 앱 아이콘(얼굴)도 PiBrain 보드로
       }
       applyLanguage();
       show('home');
