@@ -1703,7 +1703,6 @@ html[data-theme="dark"] {
   --pb-sheet-sh: 0 1px 3px rgba(0, 0, 0, .35); --pb-grid: rgba(255, 255, 255, .06);
 }
 /* 상단바 — 종이색, 아래 갈색 괘선 한 줄, 제품 이름은 명조 */
-.pb-header { border-bottom: 3px double var(--v2-frame-line); }
 .pb-header__brand b, .v2-brand b { font-family: var(--serif); letter-spacing: 0; font-size: 18px; }
 /* 앱 이름 — 대문의 '오늘의 활동지' 와 같은 테 두른 이름표(명조 제품 이름 옆) */
 .pb-header__app, .v2-app .v2-brand > span { font-family: var(--font-ui); font-size: 12.5px; font-weight: 700; line-height: 1; letter-spacing: 0;
