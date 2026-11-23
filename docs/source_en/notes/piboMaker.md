@@ -5,7 +5,7 @@ as PiBrain, type **PiBrain's IP address** (shown on the PiBrain screen at startu
 
 The address opens the **home screen** (a worksheet page). Tap a big picture button to enter an app, and use [Home] (house button) in an app's top bar to come back.
 Row 1 **Make** (Coding · Tools · Teach AI · Chat), row 2 **Play & learn** (Card coding · Pet), row 3 **Teacher tools** (Settings · Help).
-The app that is running now gets a red circle; on the right are the robot status and [Continue] (recent files, AI you taught).
+The app that is running now gets a red 'Running' stamp and the one you used last gets a yellow tag; on the right are the robot status and [Continue] (recent files, AI you taught).
 [Settings] has screen brightness, WiFi settings, reset robot screen, H/W check, factory reset and power off.
 
 | Screen | What it does | Where to open it |

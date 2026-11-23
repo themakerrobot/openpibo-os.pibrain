@@ -7,7 +7,8 @@
      [이어서 하기] 파일 → /ide?open=<경로> · 모델 → AI 가르치기
    상태·최근 파일·모델·켜진 앱은 IDE 의 GET /home_info(10초마다, 화면이 보일 때만).
    문구는 IDE ko2en.js 의 home_* 키, 버튼 이름은 nav_* 를 같이 쓴다.
-   '학습지' 컨셉(261123, 사용자 — ai-lab 과 같게): 펜 선 캐릭터·그림. 모양은 home.css
+   '학습지' 컨셉(261123, 사용자 — ai-lab 과 같게, 디자이너가 한 것처럼): 활동지 한 장(철 구멍·여백선) · 활동 1~3 · 활동 카드.
+   카드 아이콘은 IDE 상단바와 같은 Font Awesome 글리프(같은 앱은 어디서나 같은 그림), 판화처럼 어긋난 색 그림자. 모양은 home.css
    ========================================================================== */
 (function () {
   'use strict';
@@ -24,14 +25,14 @@
 
   // 앱 — 묶음 세 개. svc 가 있으면 대기 페이지로(서비스를 켜고 기다린다), go 는 로봇 놀이 안의 화면
   var APPS = [
-    { id: 'code',  sec: 'make', name: 'home_code', desc: 'home_code_d' },
-    { id: 'tools', sec: 'make', name: 'nav_tools', desc: PIBRAIN ? 'home_tools_d_pb' : 'home_tools_d', svc: 'tools' },
-    { id: 'classifier', sec: 'make', name: 'home_cls',  desc: 'home_cls_d', svc: 'classifier' },
-    { id: 'llm',   sec: 'make', name: 'nav_llm',   desc: 'home_llm_d', svc: 'llm' },
-    { id: 'cards', sec: 'play', name: 'home_cards', desc: 'home_cards_d', svc: 'kids', run: 'kids' },
-    { id: 'pet',   sec: 'play', name: 'home_pet',  desc: 'home_pet_d', svc: 'kids', go: 'pet' },
-    { id: 'settings', sec: 'admin', name: 'v2_settings', desc: 'home_settings_d' },
-    { id: 'guide', sec: 'admin', name: 'nav_guide', desc: 'home_guide_d' }
+    { id: 'code',  sec: 'make', name: 'home_code', desc: 'home_code_d', icon: 'fa-puzzle-piece' },
+    { id: 'tools', sec: 'make', name: 'nav_tools', desc: PIBRAIN ? 'home_tools_d_pb' : 'home_tools_d', svc: 'tools', icon: 'fa-screwdriver-wrench' },
+    { id: 'classifier', sec: 'make', name: 'home_cls',  desc: 'home_cls_d', svc: 'classifier', icon: 'fa-graduation-cap' },
+    { id: 'llm',   sec: 'make', name: 'nav_llm',   desc: 'home_llm_d', svc: 'llm', icon: 'fa-comments' },
+    { id: 'cards', sec: 'play', name: 'home_cards', desc: 'home_cards_d', svc: 'kids', run: 'kids', icon: 'fa-shapes' },
+    { id: 'pet',   sec: 'play', name: 'home_pet',  desc: 'home_pet_d', svc: 'kids', go: 'pet', icon: 'fa-heart' },
+    { id: 'settings', sec: 'admin', name: 'v2_settings', desc: 'home_settings_d', icon: 'fa-gear' },
+    { id: 'guide', sec: 'admin', name: 'nav_guide', desc: 'home_guide_d', icon: 'fa-circle-question' }
   ];
   // H/W 검수는 자주 쓰지 않아 설정 안에 둔다(261123, 사용자 — 앱 8개로 짝수)
   var HWTEST = { id: 'hwtest', svc: 'hwtest' };
@@ -72,7 +73,8 @@
     var running = info && info.running;
     var runApp = null;
     APPS.forEach(function (a) { if (running && (a.run || a.svc || a.id) === running && !a.go && !runApp) runApp = a.id; });
-    var ring = runApp || store.get(LAST) || 'code';
+    // data-ring = 켜진 앱(빨간 도장 '켜져 있음'), 켜진 게 없으면 마지막에 쓴 앱(노란 꼬리표 '지난번')
+    var ring = runApp || store.get(LAST) || '';
     ['make', 'play', 'admin'].forEach(function (sec) {
       var box = $('apps_' + sec);
       box.innerHTML = '';
@@ -80,17 +82,26 @@
         var b = document.createElement('button');
         b.type = 'button';
         b.className = 'home-app';
-        b.style.animationDelay = (i * 40) + 'ms';
+        b.style.animationDelay = (i * 45) + 'ms';
         b.setAttribute('data-app', a.id);
-        if (a.id === ring) b.setAttribute('data-ring', '');
-        var sub = (runApp === a.id)
-          ? '<span class="home-app__d"><span class="home-run">' + esc(t('home_running')) + '</span></span>'
-          : '<span class="home-app__d">' + esc(t(a.desc)) + '</span>';
-        b.innerHTML = '<span class="home-app__ill">' + ill(a.id) + '</span><b>' + esc(t(a.name)) + '</b>' + sub;
+        if (a.id === ring) b.setAttribute('data-ring', runApp ? 'run' : 'last');
+        var tag = runApp === a.id ? '<span class="home-run">' + esc(t('home_running')) + '</span>'
+          : (a.id === ring ? '<span class="home-tag">' + esc(t('home_last')) + '</span>' : '');
+        b.innerHTML = '<span class="home-app__ic"><i class="fa-solid ' + a.icon + '"></i></span>' +
+          '<span class="home-app__tx"><b>' + esc(t(a.name)) + '</b><span class="home-app__d">' + esc(t(a.desc)) + '</span></span>' +
+          '<span class="home-app__go"><span>' + esc(t('home_start')) + '</span><i class="fa-solid fa-arrow-right"></i></span>' + tag;
         b.addEventListener('click', function () { go(a, b); });
         box.appendChild(b);
       });
     });
+  }
+
+  function dateText() {
+    var d = new Date(), ko = curLang() !== 'en';
+    var W = ko ? ['일', '월', '화', '수', '목', '금', '토'] : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    var M = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return ko ? '<b>' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일</b><span>' + W[d.getDay()] + '요일</span>'
+      : '<b>' + M[d.getMonth()] + ' ' + d.getDate() + '</b><span>' + W[d.getDay()] + '</span>';
   }
 
   function day(ts) {
@@ -109,13 +120,15 @@
     sub.innerHTML = esc(PRODUCT) + ' · ' + esc(ip) + ' · <span class="home-dot"></span>' + esc(t(offline ? 'v2_disconnected' : 'v2_connected'));
 
     $('st_ver').textContent = s.version || '';
+    $('home_date').innerHTML = dateText();
     var rows = [];
-    if (!PIBRAIN && s.battery != null && s.battery !== '') rows.push([t('home_battery'), s.battery]);
-    if (s.temp) rows.push([t('home_temp'), s.temp]);
-    if (s.mem != null) rows.push([t('home_mem'), s.mem + '%']);
-    rows.push(['WiFi', s.ssid || '—']);
+    if (!PIBRAIN && s.battery != null && s.battery !== '') rows.push(['fa-battery-three-quarters', t('home_battery'), s.battery, parseInt(s.battery, 10)]);
+    if (s.temp) rows.push(['fa-temperature-half', t('home_temp'), s.temp]);
+    if (s.mem != null) rows.push(['fa-memory', t('home_mem'), s.mem + '%', s.mem]);
+    rows.push(['fa-wifi', 'WiFi', s.ssid || '—']);
     $('st_rows').innerHTML = rows.map(function (r) {
-      return '<div class="home-row">' + esc(r[0]) + '<b>' + esc(r[1]) + '</b></div>';
+      var bar = (r[3] != null && !isNaN(r[3])) ? '<span class="home-bar"><i style="width:' + Math.max(0, Math.min(100, r[3])) + '%"></i></span>' : '';
+      return '<div class="home-row"><i class="fa-solid ' + r[0] + '"></i><span>' + esc(r[1]) + '</span>' + bar + '<b>' + esc(r[2]) + '</b></div>';
     }).join('');
 
     var list = $('recent');
@@ -249,19 +262,6 @@
   };
   var pal = $('home_pal');
   if (pal) pal.innerHTML = PAL[PIBRAIN ? 'pibrain' : 'pibo'];
-
-  /* 앱 그림 — 펜 선(viewBox 0 0 76 54). .ln 연필 선 · .ac 줄 색 선 · .dot 줄 색 점 · .fl 옅은 면 */
-  var ILL = {
-    code: '<path class="ln fl" d="M12 10 H26 V7 H34 V10 H62 V24 H34 V27 H26 V24 H12 Z"/><path class="ln" d="M20 28 H34 V25 H42 V28 H66 V42 H42 V45 H34 V42 H20 Z"/><path class="ac" d="M26 17 H50 M30 35 H56"/>',
-    tools: '<rect class="ln" x="8" y="10" width="34" height="34" rx="6"/><circle class="ac" cx="25" cy="27" r="9"/><path class="ac" d="M25 27 L31 21"/><path class="ln" d="M50 16 H70 M50 27 H70 M50 38 H70"/><circle class="dot" cx="60" cy="16" r="3.2"/><circle class="dot" cx="56" cy="27" r="3.2"/><circle class="dot" cx="65" cy="38" r="3.2"/>',
-    classifier: '<rect class="ln" x="6" y="14" width="40" height="30" rx="4"/><circle class="ln" cx="26" cy="29" r="8"/><path class="ln" d="M16 14 L19 9 H33 L36 14"/><circle class="dot" cx="26" cy="29" r="3"/><g class="ac"><rect x="54" y="7" width="16" height="10" rx="2"/><rect x="54" y="22" width="16" height="10" rx="2"/><rect x="54" y="37" width="16" height="10" rx="2"/></g>',
-    llm: '<path class="ln" d="M6 8 H40 Q44 8 44 12 V26 Q44 30 40 30 H20 L12 37 V30 H10 Q6 30 6 26 Z"/><path class="ln thin" d="M13 16 H36 M13 22 H28"/><path class="ac" d="M36 24 H66 Q70 24 70 28 V40 Q70 44 66 44 H62 V50 L54 44 H36 Q32 44 32 40 V28 Q32 24 36 24 Z"/><circle class="dot" cx="44" cy="34" r="2"/><circle class="dot" cx="51" cy="34" r="2"/><circle class="dot" cx="58" cy="34" r="2"/>',
-    cards: '<rect class="ln fl" x="10" y="12" width="20" height="30" rx="3" transform="rotate(-10 20 27)"/><rect class="ln" x="28" y="10" width="20" height="30" rx="3"/><rect class="ac" x="46" y="12" width="20" height="30" rx="3" transform="rotate(10 56 27)"/><path class="ac" d="M34 19 L41 25 L34 31"/>',
-    pet: '<path class="ac fl" d="M38 47 C20 35 10 27 10 18 C10 11 16 7 22 7 C30 7 34 13 38 17 C42 13 46 7 54 7 C60 7 66 11 66 18 C66 27 56 35 38 47 Z"/><circle class="dot ink" cx="30" cy="21" r="2.6"/><circle class="dot ink" cx="46" cy="21" r="2.6"/><path class="ln" d="M32 29 Q38 34 44 29"/>',
-    settings: '<circle class="ln" cx="38" cy="27" r="13"/><circle class="ac" cx="38" cy="27" r="5"/><path class="ln" d="M38 6 V12 M38 42 V48 M17 27 H23 M53 27 H59 M23 12 L27 16 M49 38 L53 42 M53 12 L49 16 M27 38 L23 42"/>',
-    guide: '<path class="ln" d="M38 12 Q26 6 8 8 V44 Q26 42 38 48 Q50 42 68 44 V8 Q50 6 38 12 Z M38 12 V48"/><path class="ac thin" d="M14 18 H32 M14 25 H30 M44 18 H62 M44 25 H60"/>'
-  };
-  function ill(id) { return '<svg class="ill" viewBox="0 0 76 54" aria-hidden="true">' + (ILL[id] || '') + '</svg>'; }
 
   render();
 })();

@@ -11,22 +11,22 @@ body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; 
 
 /* ── 상단바 (_templates/base.html, 261028) ─────────────────────
    다른 앱(design/pibo-ui.css 의 .pb-header)과 같은 48px 막대: 색은 키트 --v2-frame* 값 그대로
-   (부드럽게 #fbc92d · 밝게 #ffcb2f · 어둡게 #1b1e26, 글씨 #3d2f12 / #eceef2, 아래 1px 선).
+   (학습지 261123 — 부드럽게 종이 #fbf7ef · 밝게 #ffffff · 어둡게 #24211c, 글씨 #2a2620 / #efe8db, 아래 1px 갈색 괘선).
    넓은 화면은 Furo 사이드바·목차를 막대 아래에 붙이고, 63em 이하는 Furo 모바일 머리줄 대신 이 막대를 쓴다.
    구형 브라우저 기준(CLAUDE.md '디자인 시스템')이라 :has·중첩·color-mix·inset 줄임은 쓰지 않는다 */
 .pb-topbar {
-  --pb-frame: #fbc92d; --pb-frame-2: rgba(61, 47, 18, .10); --pb-frame-3: rgba(61, 47, 18, .16);
-  --pb-frame-line: rgba(61, 47, 18, .14); --pb-frame-ink: #3d2f12;
+  --pb-frame: #fbf7ef; --pb-frame-2: rgba(74, 63, 46, .08); --pb-frame-3: rgba(74, 63, 46, .14);
+  --pb-frame-line: #4a3f2e; --pb-frame-ink: #2a2620;
   position: -webkit-sticky; position: sticky; top: 0; z-index: 35;   /* Furo 사이드바(30) 위, 목차 서랍(50) 아래 */
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
   box-sizing: border-box; height: 48px; padding: 0 8px 0 16px; width: 100%; min-width: 0;
   background: var(--pb-frame); color: var(--pb-frame-ink); border-bottom: 1px solid var(--pb-frame-line);
   font-family: var(--font-stack); font-size: 13px; line-height: 1;
 }
-html[data-pb-theme="light"] .pb-topbar { --pb-frame: #ffcb2f; }
+html[data-pb-theme="light"] .pb-topbar { --pb-frame: #ffffff; }
 html[data-pb-theme="dark"] .pb-topbar {
-  --pb-frame: #1b1e26; --pb-frame-2: rgba(255, 255, 255, .07); --pb-frame-3: rgba(255, 255, 255, .12);
-  --pb-frame-line: #0d0f14; --pb-frame-ink: #eceef2;
+  --pb-frame: #24211c; --pb-frame-2: rgba(255, 255, 255, .07); --pb-frame-3: rgba(255, 255, 255, .12);
+  --pb-frame-line: #b9ab92; --pb-frame-ink: #efe8db;
 }
 .pb-topbar a, .pb-topbar a:visited, .pb-topbar a:hover { color: var(--pb-frame-ink); text-decoration: none; }
 .pb-topbar__brand { display: flex; align-items: center; gap: 8px; min-width: 0; overflow: hidden;

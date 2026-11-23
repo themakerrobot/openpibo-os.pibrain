@@ -481,8 +481,10 @@ const translations = {
   home_sec_make_d:  { ko: "코드와 AI 로 로봇을 움직여요", en: "Move the robot with code and AI" },
   home_sec_play_d:  { ko: "카드와 친구로 놀며 배워요", en: "Learn by playing with cards and a friend" },
   home_sec_admin_d: { ko: "선생님이 쓰는 곳이에요", en: "For teachers" },
-  home_nm_name:     { ko: "이름", en: "Name" },
-  home_nm_date:     { ko: "날짜", en: "Date" },
+  home_eyebrow:     { ko: "오늘의 활동지", en: "Today's activity sheet" },
+  home_start:       { ko: "시작하기", en: "Start" },
+  home_last:        { ko: "지난번", en: "Last time" },
+  home_status:      { ko: "로봇 상태", en: "Robot status" },
   // 파일 서랍 [복사]·[옮기기](261123)
   fm_copy:          { ko: "복사", en: "Copy" },
   fm_move:          { ko: "옮기기", en: "Move" },
