@@ -1,14 +1,20 @@
-"""체험 앱 '로봇 놀이'(50060) — 초등학생이 코딩 없이 카드로 로봇 친구에게 재주를 가르친다. 설계는 KIDS.md
+"""체험 앱 서버(50060) — 앱 둘이 한 서버에서 돈다(261123, 사용자). 설계는 KIDS.md
 
-  [도전]   선생님이 고른 차시의 도전 과제(순서·고치기·반복·재사용)
-  [만들기] 카드를 줄 세워 ▶ → 로봇이 차례대로. 줄을 '재주'로 저장하면 그 재주가 카드 한 장이 된다(재사용)
-  [내 재주] 저장한 재주 모음 — 실행·고치기·지우기
-  [키우기] 다마고치 — 배고픔·기분·졸림, 성격·이름·색. 앱이 떠 있을 때만 시간이 간다
+  /cards  카드 코딩 — 초등학생이 코딩 없이 카드로 로봇 친구에게 재주를 가르친다
+    [도전]   선생님이 고른 차시의 도전 과제(순서·고치기·반복·재사용)
+    [만들기] 카드를 줄 세워 ▶ → 로봇이 차례대로. 줄을 '재주'로 저장하면 그 재주가 카드 한 장이 된다(재사용)
+    [내 재주] 저장한 재주 모음 — 실행·고치기·지우기
+  /play   로봇 놀이
+    [키우기]   다마고치 — 배고픔·기분·졸림, 성격·이름·색. 앱이 떠 있을 때만 시간이 간다
+    [조종하기] (파이보만) 방향 버튼 + 다리·발을 쓰지 않는 동작 버튼 — 누르면 바로 한다
+
+서버를 둘로 나누지 않은 이유: 둘 다 같은 모터·화면·스피커를 쓰는데 그 장치는 한 프로세스만 쥘 수 있고,
+IDE 도 체험 앱을 한 번에 하나만 띄운다. 화면(주소·이름·처음 화면)만 따로다.
 
 저장은 로봇 하나에 한 벌이다(261116, 사용자 — 예전 번호 고르기는 뺐다. 반이 바뀌면 선생님 잠금의 [처음부터 하기]).
 안쪽은 예전 구조(프로필 '1' 하나) 그대로 둔다.
 
-아직 IDE 에 버튼이 없다(시험 중). 기기에서 손으로 띄운다:
+보통은 IDE 가 띄운다(대문 [카드 코딩]·[로봇 놀이], IDE [로봇 놀이] → /kids?enable=on). 손으로 띄울 때:
   sudo systemctl stop tools.service classify.service 'llama-server@*'
   sudo /home/pi/.pyenv/bin/python3 kids/run_kids.py --device pibo      # PiBrain 은 --device pibrain
 기기 없이:  python3 kids/run_kids.py --fake [--data-dir /tmp/kids] [--code-dir /tmp/code]
@@ -27,7 +33,7 @@ import argparse
 import tempfile
 import threading
 
-from fastapi import FastAPI, Body
+from fastapi import FastAPI, Body, Request
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -170,7 +176,42 @@ def content_for_device():
     'kind_rates': {k: {s: round(Pet(kind=k).rate(s)) for s in ('hunger', 'sleepy', 'mood')} for k in PERSONALITY},
     'max_cards': MAX_CARDS, 'max_tricks': MAX_TRICKS, 'lesson_max': LESSON_MAX,
     'mymotions': mymotions(), 'free_max': FREE_MAX, 'sense_max': SENSE_MAX, 'if_wait': IF_WAIT,
+    'drive': drive_items(),
   }
+
+
+# ── 조종하기 (로봇 놀이, 파이보만) ─────────────────────────────────────────
+def drive_items():
+  """방향 버튼(move)·동작 버튼(motion). 모터가 없는 제품(PiBrain)은 빈 목록 — 화면이 [조종하기] 를 숨긴다"""
+  d = CONTENT.get('drive', {})
+  if DEVICE != 'pibo':
+    return {'move': [], 'motion': []}
+  return {'move': d.get('move', []), 'motion': d.get('motion', [])}
+
+
+def drive_find(did):
+  items = drive_items()
+  return next((x for x in items['move'] + items['motion'] if x['id'] == did), None)
+
+
+def drive_worker(item, seq):
+  """버튼 하나 — 앞 동작은 api_drive 가 끊었다(robot.stop). lock 을 받으면 그 동작이 끝난 것"""
+  try:
+    with robot.lock:
+      if seq != drive['seq']:
+        return
+      robot.stop_flag.clear()
+      if item:
+        robot.motion(item['id'])
+      # 팔을 든 채 끝나는 동작이 많아 끝나면 처음 자세로. 자세만 잡는 것(hold)·끊긴 것은 그대로
+      if seq == drive['seq'] and not robot.stop_flag.is_set() and not (item or {}).get('hold'):
+        robot.motion('stop')
+  except Exception as exc:  # noqa: BLE001 — 동작 이름이 없는 기기 등. 화면엔 짧은 알림
+    drive['error'] = str(exc)
+    print(f'[kids] 조종 오류: {exc!r}', flush=True)
+  finally:
+    if seq == drive['seq']:
+      drive.update(running=False, id=None)
 
 
 # ── 카드 · 재주 ───────────────────────────────────────────────────────────
@@ -408,6 +449,7 @@ def tricks_list():
 run = {'running': False, 'path': None, 'iter': 0, 'error': '', 'result': None, 'seq': 0,
        'photo': None, 'waiting': None, 'cond': None, 'warn': None}
 run_lock = threading.Lock()
+drive = {'running': False, 'id': None, 'seq': 0, 'error': ''}   # 조종하기 — 버튼 하나가 도는 중
 
 
 class Stop(Exception):
@@ -742,7 +784,7 @@ def state():
   return {'device': DEVICE, 'settings': s, 'profile': prof,
           'profiles': {k: v.get('icon') for k, v in profiles.items()},
           'progress': cur['progress'], 'tricks': tricks_list(),
-          'running': run['running'], 'tts': robot.tts_state}
+          'running': run['running'], 'driving': drive['running'], 'tts': robot.tts_state}
 
 
 # ── 웹 ─────────────────────────────────────────────────────────────────────
@@ -777,7 +819,16 @@ def bad(reason, code=400, **kw):
 
 
 @app.get('/')
-async def index():
+async def index(request: Request):
+  """예전 주소(261123 전 대기 페이지·즐겨찾기) — 카드 코딩으로. ?go=pet 이면 로봇 놀이"""
+  q = request.url.query
+  dest = '/play' if 'go=pet' in q or 'go=drive' in q else '/cards'
+  return RedirectResponse(dest + ('?' + q if q else ''))
+
+
+@app.get('/cards')
+@app.get('/play')
+async def app_page():
   return FileResponse(os.path.join(BASE_DIR, 'templates', 'index.html'), headers={'Cache-Control': 'no-cache'})   # 업데이트 뒤 옛 화면이 남지 않게(261029)
 
 
@@ -836,7 +887,7 @@ async def api_run(body: dict = Body(...)):
   if not run_lock.acquire(blocking=False):
     return bad('busy', 409)
   try:
-    if run['running']:
+    if run['running'] or drive['running']:
       return bad('busy', 409)
     pet_state['mode'] = False
     robot.stop_flag.clear()
@@ -899,6 +950,33 @@ async def api_stop():
   with _react_cv:
     _react['next'] = None
   return {'ok': True}
+
+
+@app.post('/api/drive')
+async def api_drive(body: dict = Body(...)):
+  """[조종하기] 버튼 — 누르면 바로 한다. 도는 중이면 그것을 끊고 새것을(아이가 기다리지 않게).
+  id 'home' = 멈추고 처음 자세"""
+  did = str(body.get('id', ''))
+  item = None if did == 'home' else drive_find(did)
+  if did != 'home' and item is None:
+    return bad('bad drive')
+  if not drive_items()['move'] and not drive_items()['motion']:
+    return bad('no motors')
+  if run['running']:
+    return bad('busy', 409)
+  pet_state['mode'] = False
+  with run_lock:
+    drive['seq'] += 1
+    if drive['running']:
+      robot.stop()                      # 앞 동작을 끊는다 — 그 스레드가 lock 을 놓으면 새것이 돈다
+    drive.update(running=True, id=did, error='')
+    threading.Thread(target=drive_worker, args=(item, drive['seq']), daemon=True).start()
+  return {'ok': True}
+
+
+@app.get('/api/drive')
+async def api_drive_state():
+  return {k: drive[k] for k in ('running', 'id', 'error')}
 
 
 @app.post('/api/tricks/save')

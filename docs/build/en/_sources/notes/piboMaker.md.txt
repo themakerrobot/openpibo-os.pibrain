@@ -14,7 +14,8 @@ The app that is running now gets a red 'Running' stamp and the one you used last
 | **Tools** | Try the buttons, LED, camera, voice and screen right away, without code | Home screen, or [Tools] at the top of the IDE |
 | **Chat** | Chat in text with the language model (LLM) running inside PiBrain | Home screen, or [Chat] at the top of the IDE |
 | **Classifier** | Collect examples with the camera and teach your own AI | Home screen, or [Classifier] at the top of the IDE |
-| **Robot Play** | Elementary students teach the robot friend tricks with cards (no coding) | Home screen, or [Robot Play] at the top of the IDE |
+| **Card coding** | Elementary students teach the robot friend tricks with cards (no coding) — Challenges · Make · My tricks | Home screen [Card coding] |
+| **Robot Play** | Pet: look after your robot friend | Home screen [Pet], or [Robot Play] at the top of the IDE |
 | **Help** | This document | Home screen, or [Help] at the top of the IDE |
 
 ```{note}
@@ -122,6 +123,6 @@ Programs can use it too, with the `Choose chat model`, `Start LLM server` and `S
 Blocks chat in text only and do not run tools.
 
 ```{note}
-Tools, Chat, Classifier, Robot Play and H/W check run **one at a time**. Opening one closes the others, and running a program in the IDE closes them too
+Tools, Chat, Classifier, Card coding/Robot Play and H/W check run **one at a time**. Opening one closes the others, and running a program in the IDE closes them too
 (they share the camera, speaker and memory). A closed screen shows [Restart].
 ```

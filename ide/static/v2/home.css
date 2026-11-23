@@ -100,6 +100,7 @@ html[data-theme="dark"] .act__no { color: #17140f; }
 .home-app[data-app="classifier"] { --app: var(--app-classifier); --app-t: var(--app-classifier-t); }
 .home-app[data-app="llm"] { --app: var(--app-llm); --app-t: var(--app-llm-t); }
 .home-app[data-app="cards"] { --app: var(--app-kids); --app-t: var(--app-kids-t); }
+.home-app[data-app="play"] { --app: var(--app-play); --app-t: var(--app-play-t); }
 .home-app[data-app="pet"] { --app: var(--app-pet); --app-t: var(--app-pet-t); }
 .home-app[data-app="settings"] { --app: var(--app-settings); --app-t: var(--app-settings-t); }
 .home-app[data-app="guide"] { --app: var(--app-guide); --app-t: var(--app-guide-t); }

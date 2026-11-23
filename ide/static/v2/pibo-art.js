@@ -1,4 +1,5 @@
-/* 파이보 캐릭터 장면 — 대문 카드 그림 8개(코딩 · 도구 · AI 가르치기 · 대화 · 카드 코딩 · 키우기 · 설정 · 도움말) + 머리 캐릭터(face). PiBrain 은 머리가 보드(검은 화면 속 하늘색 얼굴 · 카메라 · 버튼 넷)인 같은 몸.
+/* 파이보 캐릭터 장면 — 대문 카드 그림(코딩 · 도구 · AI 가르치기 · 대화 · 카드 코딩 · 로봇 놀이 · 키우기 · 설정 · 도움말)
+   + 체험 앱 처음 화면 그림(도전 · 내 재주 · 조종하기, 261123) + 머리 캐릭터(face). PiBrain 은 머리가 보드(검은 화면 속 하늘색 얼굴 · 카메라 · 버튼 넷)인 같은 몸.
    파이보·PiBrain 같은 파일(ide/static/v2/pibo-art.js). 그림 파일 없이 SVG 로 직접 그렸다(라이선스 걱정 없음). 실물(도구 [동작] 사진 pibo_body)을 따른다:
    네모난 둥근 머리 · 하늘색 테 + 검은 눈 · 검은 반달 입(가운데 카메라) · 파란 고리 안테나(작은 고리 둘) ·
    목 · 네모난 몸통(작은 화면 · 단추) · 큰 어깨 판 + 아래팔 · 네모 다리 · 둥근 장화 발 */
@@ -257,6 +258,81 @@
       s += heart(59.5, 86, 1.25, '#ff6f8e', '#e04e70');
       [[p.L, -1], [p.R, 1]].forEach(function (a) { var h = place(a[0], tx, ty, sc); s += '<circle cx="' + f(h[0]) + '" cy="' + f(h[1] - 2) + '" r="4.4" fill="url(#' + id + 'g)" stroke="' + C.line + '" stroke-width="1"/>'; });
       s += heart(96, 26, .5, '#ff8fa8', '#e86a88') + heart(106, 42, .36, '#ffb3c4', '#ef8aa3') + heart(18, 36, .42, '#ff8fa8', '#e86a88');
+      return s;
+    },
+    // 로봇 놀이(대문, 261123) — 게임패드를 두 손으로 쥐고 신나서, 하트 하나(키우기)가 둥실
+    play: function (id) {
+      var tx = 10, ty = 6, sc = .86;
+      var p = pibo(id, { L: -22, R: 22, Lfront: true, Rfront: true, eyes: 'happy', lookY: 1.4, tilt: -3 });
+      var s = shadow(60);
+      s += heart(98, 24, .5, '#ff8fa8', '#e86a88') + heart(20, 40, .38, '#ffb3c4', '#ef8aa3');
+      s += '<g transform="translate(' + tx + ' ' + ty + ') scale(' + sc + ')">' + p.svg + '</g>';
+      var hl = place(p.L, tx, ty, sc), hr = place(p.R, tx, ty, sc);
+      var cx = (hl[0] + hr[0]) / 2, cy = (hl[1] + hr[1]) / 2 - 3;
+      // 게임패드 — 양쪽 손잡이 · 십자 · 단추 넷
+      s += '<g transform="translate(' + f(cx) + ' ' + f(cy) + ')">' +
+        '<path d="M-21 -6 Q-21 -10 -16 -10 H16 Q21 -10 21 -6 L24 8 Q25 14 19 14 Q15 14 12 9 H-12 Q-15 14 -19 14 Q-25 14 -24 8 Z" fill="#127f86" stroke="#0b5c61" stroke-width="1.1" stroke-linejoin="round"/>' +
+        '<path d="M-17 -7.6 H13" stroke="#fff" stroke-width="1.3" opacity=".45" stroke-linecap="round"/>' +
+        '<path d="M-13.5 -1.8 h3 v-3 h3 v3 h3 v3 h-3 v3 h-3 v-3 h-3 z" fill="#fff"/>' +
+        '<circle cx="10.4" cy="-3.6" r="1.8" fill="#f5c04a"/><circle cx="14.4" cy="0" r="1.8" fill="#f07a6a"/><circle cx="10.4" cy="3.6" r="1.8" fill="#5cc68a"/><circle cx="6.4" cy="0" r="1.8" fill="#8fd0ff"/>' +
+        '</g>';
+      [hl, hr].forEach(function (h) { s += '<circle cx="' + f(h[0]) + '" cy="' + f(h[1]) + '" r="4.4" fill="url(#' + id + 'g)" stroke="' + C.line + '" stroke-width="1"/>'; });
+      s += spark(cx + 30, cy - 34);
+      return s;
+    },
+    // 조종하기(로봇 놀이, 261123) — 방향 단추(위가 눌림)에서 신호가 가고, 파이보가 걸어 나온다
+    drive: function (id) {
+      var tx = 30, ty = 9, sc = .8;
+      var p = pibo(id, { L: 24, R: -24, look: -1.6, tilt: -4 });
+      var s = shadow(66);
+      s += '<g transform="translate(' + tx + ' ' + ty + ') scale(' + sc + ')">' + p.svg + '</g>';
+      // 걷는 줄(발 옆)
+      s += '<path d="M60 104 h-7 M62 109 h-10" stroke="' + C.spark + '" stroke-width="1.6" stroke-linecap="round"/>';
+      // 방향 단추 넷(위가 눌림)
+      var cx = 24, cy = 84, k = 12.4, d = 13.4;
+      [[0, -1, 'M0 -3.4 L3.4 1.6 H-3.4 Z'], [0, 1, 'M0 3.4 L3.4 -1.6 H-3.4 Z'], [-1, 0, 'M-3.4 0 L1.6 -3.4 V3.4 Z'], [1, 0, 'M3.4 0 L-1.6 -3.4 V3.4 Z']].forEach(function (b, i) {
+        var x = cx + b[0] * d, y = cy + b[1] * d, on = i === 0;
+        s += rr(x - k / 2 + .8, y - k / 2 + 1.4, k, k, 3.2, 'fill="#000" opacity=".08"') +
+             rr(x - k / 2, y - k / 2 + (on ? 1 : 0), k, k, 3.2, 'fill="' + (on ? '#127f86' : '#fff') + '" stroke="' + (on ? '#0b5c61' : C.line) + '" stroke-width="1"') +
+             '<path transform="translate(' + f(x) + ' ' + f(y + (on ? 1 : 0)) + ')" d="' + b[2] + '" fill="' + (on ? '#fff' : '#127f86') + '"/>';
+      });
+      s += '<circle cx="' + cx + '" cy="' + cy + '" r="3" fill="#e8ecf1" stroke="' + C.line + '" stroke-width=".9"/>';
+      // 신호(단추 → 파이보)
+      s += '<g fill="none" stroke="#127f86" stroke-width="1.7" stroke-linecap="round"><path d="M30 60 a8 8 0 0 1 8 -8"/><path d="M30 54 a14 14 0 0 1 14 -14" opacity=".65"/><path d="M30 48 a20 20 0 0 1 20 -20" opacity=".35"/></g>';
+      return s;
+    },
+    // 도전(카드 코딩, 261123) — 깃발을 높이 들고, 별이 반짝
+    challenge: function (id) {
+      var tx = 2, ty = 7, sc = .86;
+      var p = pibo(id, { R: -146, L: 14, look: 1.4, lookY: -1.4, tilt: -3, eyes: 'happy' });
+      var hand = place(p.R, tx, ty, sc);
+      var s = shadow(56);
+      s += '<g transform="translate(18 28) scale(1.1)">' + glyph('star', '#f2b632') + '</g><g transform="translate(10 56) scale(.7)">' + glyph('star', '#f5c84a') + '</g>';
+      s += '<g transform="translate(' + tx + ' ' + ty + ') scale(' + sc + ')">' + p.svg + '</g>';
+      var x = hand[0] + .4, top = hand[1] - 36;
+      s += rr(x - 1.3, top, 2.6, 52, 1.3, 'fill="#9c6a3a" stroke="#6f4622" stroke-width=".6"') +
+           '<path d="M' + f(x + 1.3) + ' ' + f(top + 2) + ' h22 l-5.4 7.4 l5.4 7.4 h-22 z" fill="#f08a24" stroke="#c96506" stroke-width="1" stroke-linejoin="round"/>' +
+           '<g transform="translate(' + f(x + 10.4) + ' ' + f(top + 9.4) + ') scale(.6)">' + glyph('star', '#fff') + '</g>' +
+           '<circle cx="' + f(x) + '" cy="' + f(top - 1) + '" r="2.6" fill="#f2b632" stroke="#c99a1c" stroke-width=".8"/>' +
+           '<circle cx="' + f(hand[0]) + '" cy="' + f(hand[1]) + '" r="4.4" fill="url(#' + id + 'g)" stroke="' + C.line + '" stroke-width="1"/>';
+      return s;
+    },
+    // 내 재주(카드 코딩, 261123) — 마술봉을 휘두르자 별이 반짝, 만든 재주 카드가 떠오른다
+    tricks: function (id) {
+      var tx = 4, ty = 7, sc = .86;
+      var p = pibo(id, { R: -138, L: 12, look: 1.6, lookY: -1.2, tilt: -4, mouth: 'o' });
+      var hand = place(p.R, tx, ty, sc);
+      var s = shadow(58);
+      s += card(8, 18, 24, 30, -10, glyph('loop', '#3b8ff0'), '#e8f1fe') + card(14, 52, 20, 25, 8, glyph('fwd', '#3aa266'), '#eaf6ef');
+      s += '<g transform="translate(' + tx + ' ' + ty + ') scale(' + sc + ')">' + p.svg + '</g>';
+      // 마술봉(검정 + 흰 끝) — 손에서 오른쪽 위로
+      s += '<g transform="translate(' + f(hand[0]) + ' ' + f(hand[1]) + ') rotate(32)">' +
+           rr(-1.7, -28, 3.4, 30, 1.7, 'fill="' + C.dark + '"') + rr(-1.7, -28, 3.4, 6, 1.7, 'fill="#fff" stroke="' + C.dark + '" stroke-width=".7"') +
+           '<g transform="translate(0 -33) scale(1.05)">' + glyph('star', '#f2b632') + '</g>' +
+           '</g>' +
+           '<circle cx="' + f(hand[0]) + '" cy="' + f(hand[1]) + '" r="4.4" fill="url(#' + id + 'g)" stroke="' + C.line + '" stroke-width="1"/>';
+      var tip = [hand[0] + Math.sin(32 * Math.PI / 180) * 33, hand[1] - Math.cos(32 * Math.PI / 180) * 33];
+      s += spark(tip[0] + 6, tip[1] - 4) + '<g transform="translate(' + f(tip[0] - 9) + ' ' + f(tip[1] + 2) + ') scale(.45)">' + glyph('star', '#ffbf2e') + '</g>';
       return s;
     },
     // 설정 — 큰 톱니를 손으로 돌린다(작은 톱니가 맞물려 돈다)

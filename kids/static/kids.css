@@ -90,21 +90,67 @@ html[data-theme="dark"] body.kids { --k-motion: #5b8cff; --k-say: #a477ff; --k-s
 .kids-pick.is-on { background: var(--k-trick); color: #fff; }
 .kids-iconpick h2 b { font-size: 22px; }
 
-/* ── 처음 ───────────────────────────────────────────────────────────── */
-.kids-home { flex: 1; display: flex; flex-wrap: wrap; gap: 20px; align-content: center; justify-content: center; padding: 4px; }
+/* ── 처음 — 대문과 같은 활동지 카드(261123): 위에 파이보 캐릭터 그림 칸(앱 색 옅은 바탕) · 명조 이름 · 한 줄 · 시작하기 ── */
+body.kids .kids-main { background-image: radial-gradient(var(--pb-grid, transparent) 1.2px, transparent 1.3px); background-size: 22px 22px; }   /* 대문·도구와 같은 모눈 점 */
+.kids-home { flex: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 300px)); gap: 22px; align-content: center; justify-content: center; padding: 8px; }
+.kids-home[data-n="2"] { grid-template-columns: repeat(2, minmax(0, 340px)); }
 .kids-big {
-  flex: 1 1 calc(50% - 10px); max-width: 480px; min-height: 230px; border: 0; border-radius: 28px;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 16px;
-  background: var(--v2-raise); color: var(--v2-ink); box-shadow: 0 4px 16px var(--v2-shadow);
+  position: relative; display: flex; flex-direction: column; align-items: stretch; gap: 14px; padding: 16px 16px 14px; text-align: left;
+  border: 1.5px solid var(--v2-line); border-radius: 14px; background: var(--v2-surface); color: var(--v2-ink);
+  box-shadow: 0 1px 0 var(--v2-line); transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+  animation: kids-in .34s ease both;
+  --app: var(--app-kids); --app-t: var(--app-kids-t);
 }
-.kids-big b { font-size: 30px; }
-.kids-big > span:not(.kids-big__art) { font-size: 16px; color: var(--v2-ink-3); word-break: keep-all; text-align: center; }
-.kids-big__art { width: 110px; height: 110px; display: flex; align-items: center; justify-content: center; border-radius: 30px; color: #fff; font-size: 54px; }
-.kids-big--ch .kids-big__art { background: var(--k-repeat); }
-.kids-big--make .kids-big__art { background: var(--k-motion); }
-.kids-big--tricks .kids-big__art { background: var(--k-trick); }
-.kids-big--pet .kids-big__art { background: transparent; }
-.kids-big--pet .kids-big__art svg { width: 120px; height: 120px; }
+@keyframes kids-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.kids-big:hover { transform: translateY(-3px); border-color: var(--app); box-shadow: 4px 5px 0 var(--app-t); }
+.kids-big--pet { --app: var(--app-pet); --app-t: var(--app-pet-t); }
+.kids-big--drive { --app: var(--app-play); --app-t: var(--app-play-t); }
+.kids-big__art { display: block; height: 190px; border-radius: 12px; background: var(--app-t); overflow: hidden; box-shadow: 4px 4px 0 var(--v2-line); }
+.kids-big__art svg { display: block; height: 100%; width: auto; margin: 0 auto; transition: transform .2s ease; }
+.kids-big:hover .kids-big__art svg { transform: translateY(-3px) scale(1.03); }
+.kids-big__fa { display: flex; height: 100%; align-items: center; justify-content: center; font-size: 64px; color: var(--app); }
+.kids-big__tx { display: flex; flex-direction: column; gap: 4px; }
+.kids-big__tx b { font-family: var(--serif, inherit); font-size: 26px; font-weight: 700; line-height: 1.25; }
+.kids-big__nic { font-size: .78em; color: var(--app); margin-right: 8px; }
+.kids-big__sub { font-size: 16px; color: var(--v2-ink-3); word-break: keep-all; line-height: 1.4; }
+.kids-big__go { display: flex; align-items: center; gap: 6px; padding-top: 10px; border-top: 1px dashed var(--v2-line); font-size: 15px; font-weight: 700; color: var(--app); }
+.kids-big__go i { font-size: 13px; transition: transform .16s ease; }
+.kids-big:hover .kids-big__go i { transform: translateX(4px); }
+@media (max-width: 900px) {
+  .kids-home, .kids-home[data-n="2"] { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); align-content: start; }
+  .kids-big__art { height: 150px; }
+}
+
+/* ── 조종하기 (로봇 놀이, 파이보만, 261123) — 왼쪽 방향 단추, 오른쪽 동작 단추. 누르면 바로 한다 ── */
+.kids-drive__safe { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; padding: 10px 14px; border-radius: 10px;
+  border-left: 4px solid var(--v2-yellow-2); background: var(--v2-yellow-t); color: var(--v2-yellow-ink); font-size: 15px; font-weight: 700; word-break: keep-all; }
+.kids-drive { display: grid; grid-template-columns: minmax(280px, 360px) minmax(0, 1fr); gap: 18px; align-items: start; }
+.kids-drive__box { padding: 16px; border: 1.5px solid var(--v2-line); border-radius: 14px; background: var(--v2-surface); }
+.kids-drive__h { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; font-family: var(--serif, inherit); font-size: 20px; font-weight: 700; }
+.kids-drive__h i { color: var(--app-play); font-size: 18px; }
+.kids-dpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.kids-dpad__gap { display: block; }
+.kids-dbtn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 92px; padding: 8px 6px;
+  border: 1.5px solid var(--v2-line); border-radius: 14px; background: var(--v2-raise); color: var(--v2-ink);
+  box-shadow: 0 3px 0 var(--v2-line); transition: transform .08s ease, box-shadow .08s ease, background .12s ease;
+}
+.kids-dbtn i { font-size: 30px; color: var(--app-play); }
+.kids-dbtn b { font-size: 15px; font-weight: 700; line-height: 1.25; word-break: keep-all; text-align: center; }
+.kids-dbtn:active { transform: translateY(3px); box-shadow: 0 0 0 var(--v2-line); }
+.kids-dbtn.is-on { background: var(--app-play-t); border-color: var(--app-play); box-shadow: 0 0 0 2px var(--app-play); }
+.kids-dbtn.is-on i { animation: kids-breathe 1.2s ease-in-out infinite; }
+.kids-dbtn--move i { font-size: 40px; }
+.kids-dbtn--home { background: var(--v2-red-t); border-color: var(--v2-red-t); }
+.kids-dbtn--home i, .kids-dbtn--home b { color: var(--v2-red-ink); }
+.kids-dmoves { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; }
+.kids-dmoves .kids-dbtn { min-height: 84px; }
+.kids-drive__hint { margin-top: 12px; font-size: 14px; }
+.kids-dbtn[data-drive="handup_l"] i { transform: scaleX(-1); }   /* 왼손 — 손 기호를 뒤집는다 */
+@media (max-width: 900px) {
+  .kids-drive { grid-template-columns: minmax(0, 1fr); }
+  .kids-drive__box--pad { max-width: 420px; }
+}
 
 /* ── 도전 ───────────────────────────────────────────────────────────── */
 .kids-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }

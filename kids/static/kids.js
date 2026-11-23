@@ -1,4 +1,6 @@
-/* 체험 앱 '로봇 놀이' (run_kids.py, 50060) — 번호 고르기 → [도전][만들기][내 재주][키우기]. 설계는 KIDS.md
+/* 체험 앱 (run_kids.py, 50060) — 한 서버의 두 앱(261123, 사용자): 설계는 KIDS.md
+     /cards  카드 코딩 — [도전][만들기][내 재주]
+     /play   로봇 놀이 — [키우기][조종하기](조종하기는 파이보만 — PiBrain 은 키우기로 바로)
    문구는 IDE 의 ko2en.js(전역 translations · t · lang)를 같이 쓴다. 키는 kids_*.
    카드·차시·도전·말은 서버 /api/content 가 준다(제품에 맞춰 걸러서). 구형 브라우저 기준(CLAUDE.md '디자인 시스템')이라 ES5 + fetch */
 (function () {
@@ -7,6 +9,8 @@
   var tr = function (k, a, b, c) { return (typeof t === 'function') ? t(k, a, b, c) : k; };
   var L = function () { return (typeof lang === 'string' && lang === 'en') ? 'en' : 'ko'; };
   var C = null;                         // /api/content
+  var APP = /^\/play/.test(location.pathname) ? 'play' : 'cards';
+  var APP_VIEWS = { cards: ['home', 'challenges', 'make', 'tricks'], play: ['home', 'pet', 'drive'] };
   var S = {
     view: 'who', settings: { lesson: 0, roster: 4 }, profile: null, profiles: {}, progress: { stars: {} }, tricks: [],
     ch: null,                           // 지금 도전(없으면 자유 만들기)
@@ -40,30 +44,32 @@
   }
 
   /* ── 화면 바꾸기 ─────────────────────────────────────────────────── */
-  var VIEWS = ['who', 'home', 'challenges', 'make', 'tricks', 'pet'];
+  var VIEWS = ['who', 'home', 'challenges', 'make', 'tricks', 'pet', 'drive'];
+  function soloPet() { return APP === 'play' && !(C && C.drive && C.drive.move.length); }   // PiBrain 로봇 놀이 = 키우기 하나
   function show(view) {
+    if (APP_VIEWS[APP].indexOf(view) < 0) view = 'home';
+    if (view === 'home' && soloPet()) view = 'pet';
     if (S.view === 'pet' && view !== 'pet') leavePet();
+    if (S.view === 'drive' && view !== 'drive') leaveDrive();
     // 만들기·내 재주에서 처음으로 돌아오면 로봇 화면은 IP 로(261116 — 그림·글자·사진 카드가 남아 있지 않게). 키우기는 leavePet 이 한다
     if (view === 'home' && (S.view === 'make' || S.view === 'tricks' || S.view === 'challenges')) post('/api/screen/home').catch(function () {});
     S.view = view;
     VIEWS.forEach(function (v) { $('v_' + v).hidden = v !== view; });
     $('who_bt').hidden = true;                    // 저장 한 벌(261116) — 번호 고르기는 없다
-    $('home_bt').hidden = view === 'who';
+    $('home_bt').hidden = view === 'who' || soloPet();
+    each('#v_pet .kids-back', function (b) { b.hidden = soloPet(); });
     if (view === 'who') renderWho();
     if (view === 'home') renderHome();
     if (view === 'challenges') renderChallenges();
     if (view === 'tricks') renderTricks();
     if (view === 'pet') enterPet();
+    if (view === 'drive') enterDrive();
     window.scrollTo(0, 0);
   }
   each('[data-go]', function (b) {
     b.addEventListener('click', function () { if (!S.running) show(b.getAttribute('data-go')); });
   });
   $('home_bt').addEventListener('click', function () { if (!S.running) show('home'); });
-  $('go_challenges').addEventListener('click', function () { show('challenges'); });
-  $('go_make').addEventListener('click', function () { openMake(null, null); });
-  $('go_tricks').addEventListener('click', function () { show('tricks'); });
-  $('go_pet').addEventListener('click', function () { show('pet'); });
   $('who_bt').addEventListener('click', function () {
     if (S.running) return;
     post('/api/profile', { id: null }).then(function (s) { applyState(s); show('who'); });
@@ -104,13 +110,38 @@
   }
 
   /* ── 처음 ───────────────────────────────────────────────────────── */
-  function renderHome() {
-    $('who_icon').className = 'fa-solid ' + (S.profile && S.profile.icon || 'fa-user');
-    $('who_no').textContent = S.profile ? S.profile.id : '';
+  // 처음 화면 카드 — 대문과 같은 활동지 카드(그림 칸 · 이름 · 한 줄 · 시작하기). 그림은 대문의 파이보 캐릭터 장면(pibo-art.js)
+  function homeItems() {
+    if (APP === 'play') {
+      var a = [{ id: 'pet', art: 'pet', icon: 'fa-heart', name: 'kids_pet', sub: tr('kids_pet_sub'), open: function () { show('pet'); } }];
+      if (C.drive && C.drive.move.length) a.push({ id: 'drive', art: 'drive', icon: 'fa-gamepad', name: 'kids_drive', sub: tr('kids_drive_sub'), open: function () { show('drive'); } });
+      return a;
+    }
     var l = lessonOf(lessonNow());
-    $('home_lesson').textContent = S.settings.lesson ? tr('kids_lesson_n', l.n, txt(l)) : tr('kids_lesson_free');
-    $('home_tricks').textContent = tr('kids_n_tricks', S.tricks.length);
-    get('/api/pet').then(function (p) { if (p.stats) { S.pet = p; $('home_pet').innerHTML = faceSvg(p.face, petLook(p.profile)); } }).catch(function () {});
+    return [
+      { id: 'challenges', art: 'challenge', icon: 'fa-flag', name: 'kids_challenges',
+        sub: S.settings.lesson ? tr('kids_lesson_n', l.n, txt(l)) : tr('kids_lesson_free'), open: function () { show('challenges'); } },
+      { id: 'make', art: 'cards', icon: 'fa-cubes', name: 'kids_make', sub: tr('kids_make_sub'), open: function () { openMake(null, null); } },
+      { id: 'tricks', art: 'tricks', icon: 'fa-wand-magic-sparkles', name: 'kids_tricks', sub: tr('kids_n_tricks', S.tricks.length), open: function () { show('tricks'); } }
+    ];
+  }
+  function renderHome() {
+    var grid = $('home_grid');
+    grid.innerHTML = '';
+    grid.setAttribute('data-n', homeItems().length);
+    homeItems().forEach(function (it, i) {
+      var art = (window.PiboArt && PiboArt.scenes.indexOf(it.art) >= 0) ? PiboArt.svg(it.art) : '<i class="fa-solid ' + it.icon + ' kids-big__fa"></i>';
+      var b = btn('kids-big kids-big--' + it.id,
+        '<span class="kids-big__art">' + art + '</span>' +
+        '<span class="kids-big__tx"><b><i class="fa-solid ' + it.icon + ' kids-big__nic" aria-hidden="true"></i><span></span></b><span class="kids-big__sub"></span></span>' +
+        '<span class="kids-big__go"><span></span><i class="fa-solid fa-arrow-right"></i></span>');
+      b.style.animationDelay = (i * 50) + 'ms';
+      b.querySelector('b > span').textContent = tr(it.name);
+      b.querySelector('.kids-big__sub').textContent = it.sub;
+      b.querySelector('.kids-big__go > span').textContent = tr('home_start');
+      b.addEventListener('click', it.open);
+      grid.appendChild(b);
+    });
   }
 
   /* ── 카드 ───────────────────────────────────────────────────────── */
@@ -990,18 +1021,78 @@
     });
   }
 
+  /* ── 조종하기 (로봇 놀이, 파이보만, 261123) ─────────────────────────────
+     누르면 바로 한다. 하던 동작이 있으면 서버가 끊고 새것을 한다. 가운데 [멈춤] = 멈추고 처음 자세 */
+  var DRV = { timer: null };
+  function driveButton(it, cls) {
+    var b = btn(cls, icon(it.icon) + '<b></b>');
+    b.setAttribute('data-drive', it.id);
+    b.querySelector('b').textContent = txt(it);
+    b.addEventListener('click', function () { drive(it.id); });
+    return b;
+  }
+  function renderDrive() {
+    var pad = $('dpad'), mv = $('dmotions');
+    pad.innerHTML = ''; mv.innerHTML = '';
+    var m = {}; C.drive.move.forEach(function (x) { m[x.id] = x; });
+    // 3x3 칸: 위 · 왼 · 멈춤 · 오른 · 아래
+    [null, 'forward1', null, 'left', 'home', 'right', null, 'backward1', null].forEach(function (id) {
+      if (!id || (id !== 'home' && !m[id])) { pad.appendChild(el('span', 'kids-dpad__gap')); return; }
+      if (id === 'home') {
+        var h = btn('kids-dbtn kids-dbtn--home', icon('fa-stop') + '<b></b>');
+        h.setAttribute('data-drive', 'home');
+        h.querySelector('b').textContent = tr('kids_drive_home');
+        h.title = tr('kids_drive_home_tip');
+        h.addEventListener('click', function () { drive('home'); });
+        pad.appendChild(h);
+        return;
+      }
+      pad.appendChild(driveButton(m[id], 'kids-dbtn kids-dbtn--move'));
+    });
+    C.drive.motion.forEach(function (x) { mv.appendChild(driveButton(x, 'kids-dbtn kids-dbtn--motion')); });
+  }
+  function markDrive(id) {
+    each('[data-drive]', function (b) { b.classList.toggle('is-on', !!id && b.getAttribute('data-drive') === id); });
+  }
+  function drive(id) {
+    markDrive(id === 'home' ? null : id);
+    post('/api/drive', { id: id }).then(function (r) {
+      if (r._status === 409) { markDrive(null); toast(tr('kids_busy'), 'error'); return; }
+      if (!r.ok) { markDrive(null); toast(tr('kids_drive_err'), 'error'); return; }
+      clearTimeout(DRV.timer);
+      DRV.timer = setTimeout(drivePoll, 300);
+    }).catch(function () { markDrive(null); toast(tr('kids_err_conn'), 'error'); });
+  }
+  function drivePoll() {
+    get('/api/drive').then(function (r) {
+      if (r.running) { markDrive(r.id === 'home' ? null : r.id); DRV.timer = setTimeout(drivePoll, 300); return; }
+      markDrive(null);
+      if (r.error) toast(tr('kids_drive_err'), 'error');
+    }).catch(function () { DRV.timer = setTimeout(drivePoll, 1000); });
+  }
+  function enterDrive() { renderDrive(); }
+  function leaveDrive() {
+    clearTimeout(DRV.timer);
+    if (document.querySelector('[data-drive].is-on')) post('/api/drive', { id: 'home' }).catch(function () {});
+    markDrive(null);
+  }
+
   /* ── 언어 ─────────────────────────────────────────────────────────── */
   function applyLanguage() {
     document.documentElement.lang = L();
     $('language').value = L();
     each('[data-key]', function (e) { e.textContent = tr(e.getAttribute('data-key')); });
     each('[data-title-key]', function (e) { var s = tr(e.getAttribute('data-title-key')); e.title = s; e.setAttribute('aria-label', s); });
-    document.title = tr('kids_title');
+    var name = tr(APP === 'cards' ? 'kids_title_cards' : 'kids_title');
+    $('app_title').textContent = name;
+    document.title = name + ' · ' + (document.documentElement.getAttribute('data-product') || 'piBo');
+    $('home_label').textContent = tr(APP === 'cards' ? 'kids_home_cards' : 'kids_home');
     if (!C) return;
     $('pet_acts').innerHTML = ''; $('pet_stats').innerHTML = '';
     if (S.view === 'pet') { renderPetStatic(); if (S.pet) applyPet(S.pet, true); }
     if (S.view === 'make') { renderTask(); renderPalette(); renderRow(); }
-    if (S.view !== 'make' && S.view !== 'pet') show(S.view);
+    if (S.view === 'drive') renderDrive();
+    if (S.view !== 'make' && S.view !== 'pet' && S.view !== 'drive') show(S.view);
   }
 
   // 상단바 언어 select — 다른 앱과 같이 바로 바뀐다(261120, 전엔 선생님 잠금 안에만 있었다)
@@ -1011,6 +1102,11 @@
   });
 
   /* ── 시작 ─────────────────────────────────────────────────────────── */
+  // 앱 표시 — 상단바 [처음] 아이콘·색(키트 '앱 색': 카드 코딩 주황 · 로봇 놀이 청록), 선생님 잠금은 카드 코딩에만(차시·도달 기록)
+  document.body.setAttribute('data-app', APP);
+  $('home_icon').className = 'fa-solid ' + (APP === 'cards' ? 'fa-shapes' : 'fa-gamepad');
+  $('lock_bt').hidden = APP !== 'cards';
+
   function refreshState() { return get('/api/state').then(function (s) { applyState(s); return s; }); }
   function start() {
     Promise.all([get('/api/content'), get('/api/state')]).then(function (a) {
@@ -1023,12 +1119,12 @@
       }
       applyLanguage();
       show('home');
-      // 대문(261123)에서 바로 가기: ?go=make(카드 만들기) · pet(키우기) · challenges(도전)
+      // 대문(261123)에서 바로 가기: 카드 코딩 ?go=make · challenges / 로봇 놀이 ?go=pet · drive
       var go = null;
       try { go = new URLSearchParams(location.search).get('go'); history.replaceState(null, '', location.pathname); } catch (e) { go = null; }
-      if (go === 'pet') show('pet');
-      else if (go === 'make') openMake(null, null);
-      else if (go === 'challenges') show('challenges');
+      if (APP === 'play' && (go === 'pet' || go === 'drive')) show(go);
+      else if (APP === 'cards' && go === 'make') openMake(null, null);
+      else if (APP === 'cards' && go === 'challenges') show('challenges');
       if (a[1].running) { setRunning(true); poll(); }
     }).catch(function () {
       document.body.appendChild(el('p', 'kids-dead', icon('fa-plug-circle-xmark') + ' ' + tr('kids_err_conn')));

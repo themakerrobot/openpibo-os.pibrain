@@ -270,6 +270,17 @@ const translations = {
   // 261028 — 체험 앱 '로봇 놀이'(kids/, 50060). 아이 화면은 짧게, 로봇 말·도전 문장은 kids/content.json
   kids_title:       { ko: "로봇 놀이", en: "Robot Play" },
   kids_home:        { ko: "놀이 처음", en: "Play home" },   // 대문(261123)의 [처음 화면]과 헷갈리지 않게
+  kids_title_cards: { ko: "카드 코딩", en: "Card coding" },   // 261123 — 체험 앱 서버의 /cards. /play 는 kids_title
+  kids_home_cards:  { ko: "카드 처음", en: "Cards home" },
+  kids_drive:       { ko: "조종하기", en: "Remote control" },
+  kids_drive_sub:   { ko: "버튼으로 로봇을 움직여요", en: "Move the robot with buttons" },
+  kids_drive_move:  { ko: "움직이기", en: "Move" },
+  kids_drive_motion:{ ko: "동작", en: "Motions" },
+  kids_drive_home:  { ko: "멈춤", en: "Stop" },
+  kids_drive_home_tip: { ko: "멈추고 처음 자세로", en: "Stop and go to the home pose" },
+  kids_drive_hint:  { ko: "누르면 바로 해요. 다른 버튼을 누르면 하던 것을 멈추고 바꿔요.", en: "Tap and the robot does it. Tap another button to switch." },
+  kids_drive_safe:  { ko: "걸을 때는 넓고 평평한 바닥에서 해요. 책상 끝은 위험해요.", en: "Walk on a wide, flat floor. Table edges are dangerous." },
+  kids_drive_err:   { ko: "동작을 하지 못했어요.", en: "Could not do that motion." },
   kids_fullscreen:  { ko: "전체화면", en: "Full screen" },
   kids_back:        { ko: "뒤로", en: "Back" },
   kids_switch:      { ko: "번호 바꾸기", en: "Change number" },
@@ -469,6 +480,8 @@ const translations = {
   home_cards:       { ko: "카드 코딩", en: "Card coding" },
   home_cards_d:     { ko: "카드로 순서 · 반복 익히기", en: "Learn steps and loops with cards" },
   home_pet:         { ko: "키우기", en: "Pet" },
+  home_play:        { ko: "로봇 놀이", en: "Robot Play" },   // 261123 — 카드 코딩을 따로 빼고 키우기 + 조종하기
+  home_play_d:      { ko: "키우기 · 조종하기", en: "Pet · Remote control" },
   home_pet_d:       { ko: "로봇 친구 돌보기", en: "Look after your robot friend" },
   home_settings_d:  { ko: "밝기 · WiFi · 전원", en: "Brightness · WiFi · Power" },
   home_hw:          { ko: "H/W 검수", en: "H/W check" },

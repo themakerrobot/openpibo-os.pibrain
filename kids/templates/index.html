@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="ko" data-product="piBo">
 <head>
-  <title data-key="kids_title">로봇 놀이</title>
+  <title>piBo</title>
   <meta charset="UTF-8" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
-  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261123v7" />
-  <link rel="stylesheet" href="../static/kids.css?ver=261120v1" />
+  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261123v8" />
+  <link rel="stylesheet" href="../static/kids.css?ver=261123v1" />
   <link rel="shortcut icon" href="../static/icon.png?ver=261102v2" type="image/png" />
   <!-- 문구는 IDE 의 ko2en.js 를 같이 쓴다(kids_* 키, 영문판 델타를 늘리지 않으려고). IDE(80)는 늘 떠 있다 -->
   <script>(function () { var p = new URLSearchParams(location.search).get('ide') || 80;   /* ?ide= 는 시험용 */
-    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261123v6"><\/script>'); })();</script>
+    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261123v7"><\/script>');
+    /* 처음 화면 그림 — 대문과 같은 파이보 캐릭터 장면(IDE 의 pibo-art.js, 261123). 못 받으면 Font Awesome 기호 */
+    document.write('<script src="http://' + location.hostname + ':' + p + '/static/v2/pibo-art.js?ver=261123v3"><\/script>'); })();</script>
 </head>
 
 <!-- pb-plain: 키트의 pb-v2 층을 얹지 않는다(그 층의 앱 버튼 규칙이 카드 색을 덮는다) -->
@@ -21,10 +23,10 @@
   (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
     document.documentElement.setAttribute('data-theme', m ? m[1] : 'soft'); } catch (e) {} })();</script>
   <header class="pb-header">
-    <span class="pb-header__brand"><i class="fa-solid fa-robot" id="brand_icon"></i><b id="brand_name">piBo</b><span class="pb-header__app" data-key="kids_title"></span></span>
+    <span class="pb-header__brand"><i class="fa-solid fa-robot" id="brand_icon"></i><b id="brand_name">piBo</b><span class="pb-header__app" id="app_title"></span></span>
     <div class="pb-iconbar">
       <button type="button" class="pb-iconbtn kids-whobt" id="who_bt" data-title-key="kids_switch" hidden><i class="fa-solid fa-user" id="who_icon"></i><span class="pb-iconbtn__label" id="who_no"></span></button>
-      <button type="button" class="pb-iconbtn" id="home_bt" hidden><i class="fa-solid fa-shapes"></i><span class="pb-iconbtn__label" data-key="kids_home"></span></button>
+      <button type="button" class="pb-iconbtn" id="home_bt" hidden><i class="fa-solid fa-shapes" id="home_icon"></i><span class="pb-iconbtn__label" id="home_label"></span></button>
       <!-- 선생님 잠금: 3초 길게 누르기 → 숫자 4개. 앱 동작이라 IDE 왼쪽(상단바 규칙 — AUDIT.md B2) -->
       <button type="button" class="pb-iconbtn kids-lockbt" id="lock_bt" data-title-key="kids_teacher_hold"><i class="fa-solid fa-lock"></i><svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="16"/></svg></button>
       <button type="button" class="pb-iconbtn" id="ide_bt" title="IDE"><i class="fa-solid fa-code"></i><span class="pb-iconbtn__label">IDE</span></button>
@@ -40,26 +42,9 @@
       <div class="kids-whogrid" id="who_grid"></div>
     </section>
 
-    <!-- 처음 -->
+    <!-- 처음 — 앱마다 카드가 다르다(카드 코딩: 도전 · 만들기 · 내 재주 / 로봇 놀이: 키우기 · 조종하기). kids.js 가 그린다 -->
     <section class="kids-view" id="v_home" hidden>
-      <div class="kids-home">
-        <button type="button" class="kids-big kids-big--ch" id="go_challenges">
-          <span class="kids-big__art"><i class="fa-solid fa-flag"></i></span>
-          <b data-key="kids_challenges"></b><span id="home_lesson"></span>
-        </button>
-        <button type="button" class="kids-big kids-big--make" id="go_make">
-          <span class="kids-big__art"><i class="fa-solid fa-cubes"></i></span>
-          <b data-key="kids_make"></b><span data-key="kids_make_sub"></span>
-        </button>
-        <button type="button" class="kids-big kids-big--tricks" id="go_tricks">
-          <span class="kids-big__art"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
-          <b data-key="kids_tricks"></b><span id="home_tricks"></span>
-        </button>
-        <button type="button" class="kids-big kids-big--pet" id="go_pet">
-          <span class="kids-big__art" id="home_pet"></span>
-          <b data-key="kids_pet"></b><span data-key="kids_pet_sub"></span>
-        </button>
-      </div>
+      <div class="kids-home" id="home_grid"></div>
     </section>
 
     <!-- 도전 (선생님이 고른 차시 + 지난 차시) -->
@@ -134,6 +119,25 @@
           <div class="kids-acts" id="pet_acts"></div>
         </div>
       </div>
+    </section>
+    <!-- 조종하기 (로봇 놀이, 파이보만) — 누르면 바로 한다 -->
+    <section class="kids-view" id="v_drive" hidden>
+      <div class="kids-bar">
+        <button type="button" class="kids-back" data-go="home" data-title-key="kids_back"><i class="fa-solid fa-arrow-left"></i></button>
+        <h1 class="kids-h1 kids-h1--bar" data-key="kids_drive"></h1>
+      </div>
+      <p class="kids-drive__safe"><i class="fa-solid fa-triangle-exclamation"></i><span data-key="kids_drive_safe"></span></p>
+      <div class="kids-drive">
+        <div class="kids-drive__box kids-drive__box--pad">
+          <h2 class="kids-drive__h"><i class="fa-solid fa-arrows-up-down-left-right"></i><span data-key="kids_drive_move"></span></h2>
+          <div class="kids-dpad" id="dpad"></div>
+        </div>
+        <div class="kids-drive__box">
+          <h2 class="kids-drive__h"><i class="fa-solid fa-child-reaching"></i><span data-key="kids_drive_motion"></span></h2>
+          <div class="kids-dmoves" id="dmotions"></div>
+        </div>
+      </div>
+      <p class="kids-note kids-drive__hint" data-key="kids_drive_hint"></p>
     </section>
   </main>
 
@@ -290,8 +294,8 @@
   </div>
 
 
-  <script src="../static/pibo-ui.js?ver=261123v7"></script>
+  <script src="../static/pibo-ui.js?ver=261123v8"></script>
   <script src="../static/pet.js?ver=261123v1"></script>
-  <script src="../static/kids.js?ver=261123v4"></script>
+  <script src="../static/kids.js?ver=261123v5"></script>
 </body>
 </html>
