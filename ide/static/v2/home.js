@@ -7,7 +7,7 @@
      [이어서 하기] 파일 → /ide?open=<경로> · 모델 → AI 가르치기
    상태·최근 파일·모델·켜진 앱은 IDE 의 GET /home_info(10초마다, 화면이 보일 때만).
    문구는 IDE ko2en.js 의 home_* 키, 버튼 이름은 nav_* 를 같이 쓴다.
-   '귀염귀염' 컨셉(261123, 사용자 — 저연령층): 캐릭터·젤리 아이콘·파스텔. 모양은 home.css
+   '학습지' 컨셉(261123, 사용자 — ai-lab 과 같게): 펜 선 캐릭터·그림. 모양은 home.css
    ========================================================================== */
 (function () {
   'use strict';
@@ -24,20 +24,18 @@
 
   // 앱 — 묶음 세 개. svc 가 있으면 대기 페이지로(서비스를 켜고 기다린다), go 는 로봇 놀이 안의 화면
   var APPS = [
-    { id: 'code',  sec: 'make', icon: 'fa-puzzle-piece',       cls: 'home-c-code',  name: 'home_code', desc: 'home_code_d' },
-    { id: 'tools', sec: 'make', icon: 'fa-screwdriver-wrench', cls: 'home-c-tools', name: 'nav_tools', desc: PIBRAIN ? 'home_tools_d_pb' : 'home_tools_d', svc: 'tools' },
-    { id: 'classifier', sec: 'make', icon: 'fa-graduation-cap', cls: 'home-c-cls', name: 'home_cls',  desc: 'home_cls_d', svc: 'classifier' },
-    { id: 'llm',   sec: 'make', icon: 'fa-comments',           cls: 'home-c-llm',   name: 'nav_llm',   desc: 'home_llm_d', svc: 'llm' },
-    { id: 'cards', sec: 'play', icon: 'fa-cubes',              cls: 'home-c-kids',  name: 'home_cards', desc: 'home_cards_d', svc: 'kids', run: 'kids' },
-    { id: 'pet',   sec: 'play', icon: 'fa-heart',              cls: 'home-c-pet',   name: 'home_pet',  desc: 'home_pet_d', svc: 'kids', go: 'pet' },
-    { id: 'settings', sec: 'admin', icon: 'fa-gear',           cls: 'home-c-set',   name: 'v2_settings', desc: 'home_settings_d' },
-    { id: 'guide', sec: 'admin', icon: 'fa-book-open',         cls: 'home-c-guide', name: 'nav_guide', desc: 'home_guide_d' }
+    { id: 'code',  sec: 'make', name: 'home_code', desc: 'home_code_d' },
+    { id: 'tools', sec: 'make', name: 'nav_tools', desc: PIBRAIN ? 'home_tools_d_pb' : 'home_tools_d', svc: 'tools' },
+    { id: 'classifier', sec: 'make', name: 'home_cls',  desc: 'home_cls_d', svc: 'classifier' },
+    { id: 'llm',   sec: 'make', name: 'nav_llm',   desc: 'home_llm_d', svc: 'llm' },
+    { id: 'cards', sec: 'play', name: 'home_cards', desc: 'home_cards_d', svc: 'kids', run: 'kids' },
+    { id: 'pet',   sec: 'play', name: 'home_pet',  desc: 'home_pet_d', svc: 'kids', go: 'pet' },
+    { id: 'settings', sec: 'admin', name: 'v2_settings', desc: 'home_settings_d' },
+    { id: 'guide', sec: 'admin', name: 'nav_guide', desc: 'home_guide_d' }
   ];
   // H/W 검수는 자주 쓰지 않아 설정 안에 둔다(261123, 사용자 — 앱 8개로 짝수)
   var HWTEST = { id: 'hwtest', svc: 'hwtest' };
-  // 시안 비교(261123): ?look=sheet 면 '학습지' 모양(home-sheet.css). 고르면 하나만 남긴다
-  var SHEET = /(?:^|[?&])look=sheet(?:&|$)/.test(location.search);
-  if (SHEET) document.body.classList.add('home--sheet');
+
   var info = null, offline = false;
 
   function curLang() { try { return lang; } catch (e) { return 'ko'; } }
@@ -88,9 +86,7 @@
         var sub = (runApp === a.id)
           ? '<span class="home-app__d"><span class="home-run">' + esc(t('home_running')) + '</span></span>'
           : '<span class="home-app__d">' + esc(t(a.desc)) + '</span>';
-        var art = SHEET ? '<span class="home-app__ill">' + ill(a.id) + '</span>'
-                        : '<span class="home-app__ic ' + a.cls + '"><i class="fa-solid ' + a.icon + '"></i></span>';
-        b.innerHTML = art + '<b>' + esc(t(a.name)) + '</b>' + sub;
+        b.innerHTML = '<span class="home-app__ill">' + ill(a.id) + '</span><b>' + esc(t(a.name)) + '</b>' + sub;
         b.addEventListener('click', function () { go(a, b); });
         box.appendChild(b);
       });
@@ -233,34 +229,9 @@
     render();
   });
 
-  /* 캐릭터 — 실제 로봇 얼굴(261123, 사용자): 파이보는 도구 [동작] 사진(pibo_body)처럼 흰 머리 · 하늘색 테 눈 · 회색 입 · 고리 안테나,
-     PiBrain 은 도구 화면 그림처럼 파란 보드 · 검은 화면 · 흰 버튼 넷. 눈 깜빡임·안테나 흔들기는 home.css. SVG 로 직접 그렸다.
-     학습지 시안은 같은 모양을 펜 선으로 */
+  /* 캐릭터 — 실제 로봇 얼굴을 펜 선으로(261123, 사용자): 파이보는 도구 [동작] 사진(pibo_body)처럼 둥근 머리 · 테 두른 눈 · 반달 입 · 고리 안테나,
+     PiBrain 은 도구 화면 그림처럼 보드 · 화면 · 카메라 · 버튼 넷. 눈 깜빡임·안테나 흔들기는 home.css. SVG 로 직접 그렸다 */
   var PAL = {
-    pibo: '<svg viewBox="0 0 120 120">' +
-      '<circle class="glow" cx="60" cy="64" r="54" fill="#ffd84d" opacity=".5"/>' +
-      '<ellipse cx="60" cy="112" rx="30" ry="5" fill="#000" opacity=".08"/>' +
-      '<g class="ant"><rect x="58.3" y="15" width="3.4" height="15" rx="1.7" fill="#dfe4ee"/><circle cx="60" cy="11" r="6.2" fill="none" stroke="#5ccfe6" stroke-width="3.6"/></g>' +
-      '<rect x="14" y="28" width="92" height="70" rx="34" fill="#fff" stroke="#e1e5ef" stroke-width="2.5"/>' +
-      [42, 78].map(function (x) {
-        return '<g class="eye"><circle cx="' + x + '" cy="58" r="11" fill="#8a9099" stroke="#5ccfe6" stroke-width="4.5"/><circle cx="' + (x + 3.5) + '" cy="54.5" r="2.6" fill="#fff"/></g>';
-      }).join('') +
-      '<path d="M50 75 H70 Q70 88 60 88 Q50 88 50 75 Z" fill="#8a9099"/>' +
-      '<ellipse cx="27" cy="76" rx="6.5" ry="4" fill="#ff9dbd" opacity=".8"/><ellipse cx="93" cy="76" rx="6.5" ry="4" fill="#ff9dbd" opacity=".8"/></svg>',
-    pibrain: '<svg viewBox="0 0 120 120">' +
-      '<circle class="glow" cx="60" cy="64" r="54" fill="#ffd84d" opacity=".5"/>' +
-      '<ellipse cx="60" cy="112" rx="30" ry="5" fill="#000" opacity=".08"/>' +
-      '<rect x="48" y="92" width="24" height="14" rx="3" fill="#3d9fe0"/>' +
-      '<rect x="9" y="28" width="102" height="66" rx="14" fill="#3d9fe0" stroke="#2f86c4" stroke-width="2.5"/>' +
-      '<rect x="17" y="36" width="50" height="50" rx="6" fill="#111827"/>' +
-      [32, 52].map(function (x) {
-        return '<g class="eye"><ellipse cx="' + x + '" cy="57" rx="6" ry="7" fill="#7fe3ff"/><circle cx="' + (x + 2) + '" cy="54.5" r="1.8" fill="#fff"/></g>';
-      }).join('') +
-      '<path d="M37 70 Q42 75 47 70" stroke="#7fe3ff" stroke-width="2.6" fill="none" stroke-linecap="round"/>' +
-      '<circle cx="86" cy="43" r="4" fill="#1f2937"/>' +
-      '<g fill="#fff" stroke="#9cc8ea" stroke-width="1.5"><circle cx="80" cy="66" r="4.6"/><circle cx="91" cy="58" r="4.6"/><circle cx="102" cy="66" r="4.6"/><circle cx="91" cy="74" r="4.6"/></g></svg>'
-  };
-  var PAL_SHEET = {
     pibo: '<svg viewBox="0 0 120 120" class="pen">' +
       '<g class="ant"><path class="ln" d="M60 30 V17"/><circle class="ac" cx="60" cy="11" r="6"/></g>' +
       '<rect class="ln" x="14" y="28" width="92" height="70" rx="34"/>' +
@@ -277,9 +248,9 @@
       '<g class="ln"><circle cx="80" cy="66" r="4.5"/><circle cx="91" cy="58" r="4.5"/><circle cx="102" cy="66" r="4.5"/><circle cx="91" cy="74" r="4.5"/></g></svg>'
   };
   var pal = $('home_pal');
-  if (pal) pal.innerHTML = (SHEET ? PAL_SHEET : PAL)[PIBRAIN ? 'pibrain' : 'pibo'];
+  if (pal) pal.innerHTML = PAL[PIBRAIN ? 'pibrain' : 'pibo'];
 
-  /* 학습지 시안의 펜 선 그림(viewBox 0 0 76 54) — .ln 연필 선 · .ac 줄 색 선 · .dot 줄 색 점 · .fl 옅은 면 */
+  /* 앱 그림 — 펜 선(viewBox 0 0 76 54). .ln 연필 선 · .ac 줄 색 선 · .dot 줄 색 점 · .fl 옅은 면 */
   var ILL = {
     code: '<path class="ln fl" d="M12 10 H26 V7 H34 V10 H62 V24 H34 V27 H26 V24 H12 Z"/><path class="ln" d="M20 28 H34 V25 H42 V28 H66 V42 H42 V45 H34 V42 H20 Z"/><path class="ac" d="M26 17 H50 M30 35 H56"/>',
     tools: '<rect class="ln" x="8" y="10" width="34" height="34" rx="6"/><circle class="ac" cx="25" cy="27" r="9"/><path class="ac" d="M25 27 L31 21"/><path class="ln" d="M50 16 H70 M50 27 H70 M50 38 H70"/><circle class="dot" cx="60" cy="16" r="3.2"/><circle class="dot" cx="56" cy="27" r="3.2"/><circle class="dot" cx="65" cy="38" r="3.2"/>',

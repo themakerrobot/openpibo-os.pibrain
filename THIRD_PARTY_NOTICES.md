@@ -18,6 +18,7 @@ in each file are kept as they are.
 | Socket.IO client 4.x | `ide/static/`, `classifier/static/` `socket.io.min.js` | MIT |
 | Font Awesome Free 6.2.0 | `*/static/all.min.css`, `ide/webfonts/`, `docs/source/_templates/base.html`(도움말 상단바 아이콘 6개를 SVG 로 옮김) | Icons CC BY 4.0, Fonts SIL OFL 1.1, Code MIT |
 | Pretendard 1.3.9 | `design/fonts/`, `ide/static/fonts/`, `docs/source/_static/fonts/` (`LICENSE.txt`) | SIL OFL 1.1 |
+| Gowun Batang (The Gowun Batang Project Authors) | `ide/static/fonts/gowun/` — 학습지 제목 글꼴(261123), ai-lab 과 같은 서브셋 | SIL OFL 1.1 — 원문 파일은 리포에 아직 없음(**확인 필요**: OFL 원문 `OFL.txt` 를 같은 폴더에 둘 것) |
 | TensorFlow.js 4.22.0 | `classifier/static/vendor/tfjs/tf.min.js` | Apache-2.0 |
 | MediaPipe Tasks Vision (wasm) | `classifier/static/vendor/tasks-vision/` | Apache-2.0 |
 | MediaPipe models (hand/face/pose landmarker, MobileNetV3 embedder) | `classifier/static/models/` | Apache-2.0 |

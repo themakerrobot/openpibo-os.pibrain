@@ -357,7 +357,7 @@ async def lifespan(app: FastAPI):
 # 브라우저 캐시는 호스트가 같으면 포트가 달라도 같이 쓰므로, 한 번 받으면 IDE·도구·분류기가 다시 받지 않는다.
 # 전엔 앱마다 사본이라 처음 열 때 앱마다 최대 1.3MB(Pretendard) + 아이콘 글꼴을 따로 받았다.
 # IDE 는 CORS 를 모두 허용한다(글꼴은 CORS 로 받는다). PIBO_IDE_PORT 는 시험용(기본 80)
-SHARED_FONT = re.compile(r'^/(static/fonts/Pretendard-[\w.-]+\.woff2|webfonts/fa-[\w.-]+\.(?:woff2|ttf))$')
+SHARED_FONT = re.compile(r'^/(static/fonts/Pretendard-[\w.-]+\.woff2|static/fonts/gowun/[\w.-]+\.(?:woff2|css)|webfonts/fa-[\w.-]+\.(?:woff2|ttf))$')   # 학습지 제목 글꼴 Gowun Batang 도 IDE 것을 같이 쓴다(261123)
 
 class SharedFonts:
     def __init__(self, app):

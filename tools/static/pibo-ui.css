@@ -9,6 +9,9 @@
    원본은 design/pibo-ui.css 하나뿐이다. 각 앱의 static/ 으로는
    design/sync.sh 가 복사한다. static/ 쪽을 직접 고치지 말 것.
    ========================================================================== */
+/* 학습지 제목 글꼴 Gowun Batang(SIL OFL 1.1) — 파일은 IDE 의 static/fonts/gowun 한 벌. 도구·분류기·대화·로봇 놀이 서버는
+   SharedFonts 가 IDE 로 넘긴다. @import 는 다른 규칙보다 먼저 와야 한다 */
+@import url("fonts/gowun/gowun.css");
 
 /* ── 글꼴: Pretendard (SIL OFL 1.1, fonts/LICENSE.txt) ─────────────────────
    v2 글꼴 스택 맨 앞이 "Pretendard" 인데 파일을 안 싣고 있어서, 학교 윈도 노트북에서는
@@ -1659,87 +1662,67 @@ body.pb-v2 .pb-toast { animation: pb-rise .26s cubic-bezier(.34, 1.4, .64, 1) ba
 }
 
 /* ==========================================================================
-   귀염 층 (261123, 사용자 — 저연령층이 많아 '귀염귀염'하게, 대문 포함 모든 화면)
-   바탕은 파스텔, 모서리는 더 둥글게, 버튼은 말랑한 젤리(아래 두툼한 그림자, 누르면 꾹),
-   카드는 선 대신 부드러운 그림자. 색 값(파랑·노랑·빨강)과 상단바(48px 노랑)는 그대로 — 규칙은 AUDIT.md
-   구형 브라우저 기준을 지킨다(transform·opacity·gradient·box-shadow 만)
+   학습지 층 (261123, 사용자 — ai-lab 과 같은 '학습지' 컨셉, 대문 포함 모든 화면 · 상단바도)
+   미색 종이 바탕 · 갈색 괘선 · 남색 펜(주 색) · 빨간 펜(정지·지우기·경고) · 제목은 명조(--serif) · 흰 판에 옅은 테두리.
+   그라디언트 덧칠 · 아이콘 상자 · 젤리 그림자 같은 장식은 쓰지 않는다. 색은 여기 토큰만 바꾸면 모든 앱(IDE 의 --c-* 별칭 포함)이 따른다
    ========================================================================== */
-:root { --r-chip: 10px; --r-ctl: 12px; --r-card: 20px; --r-dlg: 26px;
-        --pb-soft-sh: 0 3px 0 rgba(30, 40, 80, .05), 0 8px 22px rgba(30, 40, 80, .07);
-        --pb-jelly-sh: 0 3px 0 rgba(30, 40, 80, .12); }
-/* 바탕 — 앱 바닥(--v2-canvas)을 비워 몸통의 파스텔이 보이게 */
-/* html 을 앞에 붙여 앱 CSS 의 body 바탕(대화 chat.css 등)보다 우선 */
-html body.pb-v2, html body.pb-plain, html body.tl { background: linear-gradient(150deg, #fff3cf 0%, #fde6ef 48%, #e3edff 100%) fixed; --v2-canvas: transparent; }
-html[data-theme="light"] body.pb-v2, html[data-theme="light"] body.pb-plain, html[data-theme="light"] body.tl { background: linear-gradient(150deg, #fff8e3 0%, #fff0f5 48%, #edf3ff 100%) fixed; }
-html[data-theme="dark"] body.pb-v2, html[data-theme="dark"] body.pb-plain, html[data-theme="dark"] body.tl { background: linear-gradient(150deg, #2b261a 0%, #281f2b 48%, #1a2038 100%) fixed; }
-
-/* 버튼 — 젤리 */
-.pb-btn { border-radius: var(--r-ctl); box-shadow: var(--pb-jelly-sh); transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease; }
-.pb-btn:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 rgba(30, 40, 80, .12); filter: none; }
-.pb-btn--accent { background: linear-gradient(180deg, #5c93ff, #2563eb); box-shadow: 0 3px 0 #1b4cc0; }
-.pb-btn--accent:hover:not(:disabled) { background: linear-gradient(180deg, #4f88fb, #1d4fd8); }
-html[data-theme="dark"] .pb-btn--accent { background: linear-gradient(180deg, #ffd96a, #f7b924); box-shadow: 0 3px 0 #b88400; }
-html[data-theme="dark"] .pb-btn--accent:hover:not(:disabled) { background: linear-gradient(180deg, #ffd04a, #eeaa10); }
-.pb-btn--tint { box-shadow: 0 3px 0 rgba(37, 99, 235, .16); }
-.pb-btn--danger { background: linear-gradient(180deg, #f2706f, #d6393f); box-shadow: 0 3px 0 #a92a30; }
-.pb-btn--ghost { box-shadow: none; }
-.pb-btn:disabled { box-shadow: none; transform: none; }
-body.pb-v2 #alertOkBtn, body.pb-v2 #confirmOkBtn, body.pb-v2 #promptOkBtn, .pb #alertOkBtn, .pb #confirmOkBtn, .pb #promptOkBtn {
-  background: linear-gradient(180deg, #5c93ff, #2563eb) !important; box-shadow: 0 3px 0 #1b4cc0 !important; }
-html[data-theme="dark"] body #alertOkBtn, html[data-theme="dark"] body #confirmOkBtn, html[data-theme="dark"] body #promptOkBtn {
-  background: linear-gradient(180deg, #ffd96a, #f7b924) !important; box-shadow: 0 3px 0 #b88400 !important; }
-.pb .popup-buttons button { border-radius: 14px; box-shadow: var(--pb-jelly-sh); }
-.pb .popup-buttons button:active { transform: translateY(2px); box-shadow: none; }
-
-/* 입력칸 · 세그먼트 */
-.pb-field { border-radius: var(--r-ctl); }
-.pb-seg { border-radius: 14px; }
-.pb-seg > button { border-radius: 11px; }
-
-/* 판 · 카드 · 대화상자 — 선 대신 부드러운 그림자 */
-.pb-panel { border-radius: var(--r-card); border-color: transparent; box-shadow: var(--pb-soft-sh); }
+:root, html[data-theme="soft"] {
+  --serif: "Gowun Batang", "Nanum Myeongjo", "AppleMyungjo", serif;
+  --v2-frame: #fbf7ef; --v2-frame-2: rgba(74, 63, 46, .08); --v2-frame-3: rgba(74, 63, 46, .14); --v2-frame-line: #4a3f2e;
+  --v2-frame-ink: #2a2620; --v2-frame-dim: #4a423a;
+  --v2-seg-on: #ffffff; --v2-seg-on-ink: #12455c; --v2-seg-on-sh: 0 0 0 1px #cfc6b4; --v2-seg-sh: 0 0 0 1px #dcd5c6;
+  --v2-rail: #f6f1e6;
+  --v2-dark: #1f5f7a; --v2-dark-hov: #12455c; --v2-on-dark: #ffffff; --v2-btn-sh: none; --v2-btn2-sh: none;
+  --v2-canvas: #fbf7ef; --v2-top: #ffffff; --v2-surface: #ffffff; --v2-raise: #ffffff; --v2-sunken: #f6f1e6;
+  --v2-hover: #f3ede1; --v2-press: #e9e0cf; --v2-line: #dcd5c6; --v2-line-2: #9a8f7d;
+  --v2-ink: #2a2620; --v2-ink-2: #4a423a; --v2-ink-3: #6b6255;
+  --v2-accent: #1f5f7a; --v2-accent-t: #e6eef6; --v2-accent-t2: #d3e2ee; --v2-accent-ink: #12455c; --v2-on-accent: #ffffff;
+  --v2-ring: rgba(31, 95, 122, .25); --v2-ring-soft: rgba(31, 95, 122, .2); --v2-focus: rgba(31, 95, 122, .5);
+  --v2-red: #b4451c; --v2-red-t: #f8e7df; --v2-red-t2: #f1d6ca; --v2-red-ink: #8a3214; --v2-on-red: #ffffff;
+  --v2-green: #2e7d4f; --v2-green-t: #eef5ef; --v2-green-ink: #2e7d4f;
+  --v2-yellow-t: #fbf0d0; --v2-meter: #cfc6b4; --v2-shadow: rgba(74, 63, 46, .16);
+  --r-chip: 6px; --r-ctl: 8px; --r-card: 12px; --r-dlg: 14px;
+  --pb-sheet-sh: 0 1px 3px rgba(74, 63, 46, .08);
+}
+html[data-theme="light"] {
+  --v2-frame: #ffffff; --v2-canvas: #fdfcf9; --v2-rail: #faf8f3; --v2-sunken: #faf8f3; --v2-hover: #f6f2ea;
+}
+html[data-theme="dark"] {
+  --v2-frame: #24211c; --v2-frame-2: rgba(255, 255, 255, .07); --v2-frame-3: rgba(255, 255, 255, .12); --v2-frame-line: #b9ab92;
+  --v2-frame-ink: #efe8db; --v2-frame-dim: #d9cfbf; --v2-rail: #1f1c18;
+  --v2-seg-on: #efe8db; --v2-seg-on-ink: #24211c; --v2-seg-on-sh: none; --v2-seg-sh: 0 0 0 1px #3d372d;
+  --v2-dark: #7fb6cf; --v2-dark-hov: #96c4d9; --v2-on-dark: #10171a;
+  --v2-canvas: #1c1a16; --v2-top: #24211c; --v2-surface: #24211c; --v2-raise: #2b2822; --v2-sunken: #211e19;
+  --v2-hover: #322e27; --v2-press: #3b362e; --v2-line: #3d372d; --v2-line-2: #6b6255;
+  --v2-ink: #efe8db; --v2-ink-2: #d9cfbf; --v2-ink-3: #b3a892;
+  --v2-accent: #7fb6cf; --v2-accent-t: #1f3038; --v2-accent-t2: #27404b; --v2-accent-ink: #b8dbea; --v2-on-accent: #10171a;
+  --v2-ring: rgba(127, 182, 207, .35); --v2-ring-soft: rgba(127, 182, 207, .28); --v2-focus: rgba(127, 182, 207, .6);
+  --v2-red: #e48a63; --v2-red-t: #3a241b; --v2-red-t2: #46291e; --v2-red-ink: #f3b89e; --v2-on-red: #1a100b;
+  --v2-green: #7cc49a; --v2-green-t: #1f3127; --v2-green-ink: #9ad6b2;
+  --v2-yellow-t: #3a3220; --v2-meter: #5a5246; --v2-shadow: rgba(0, 0, 0, .45);
+  --pb-sheet-sh: 0 1px 3px rgba(0, 0, 0, .35);
+}
+/* 상단바 — 종이색, 아래 갈색 괘선 한 줄, 제품 이름은 명조 */
+.pb-header__brand b, .pb-header__app, .v2-brand b, .v2-brand span { font-family: var(--serif); letter-spacing: 0; }
+.pb-header__brand b, .v2-brand b { font-size: 18px; }
+/* 판 · 카드 — 흰 종이에 옅은 테두리 */
+body.pb-v2 .pb-panes { background: var(--v2-canvas); }
+body.pb-v2 .pb-pane, body.pb-v2 article > section, .pb-panel {
+  background: var(--v2-surface); border: 1px solid var(--v2-line); border-radius: 12px; box-shadow: var(--pb-sheet-sh); }
+body.tl .card { border-radius: 12px; box-shadow: var(--pb-sheet-sh); }
+.pb-title, body.pb-v2 article > section > h2, body.tl .card-title { font-family: var(--serif); }
+/* 버튼 — 테두리 단추, 주 동작만 남색 펜으로 칠한다 */
+.pb-btn { border-radius: 8px; }
+.pb-btn--accent { background: var(--v2-dark); }
+.pb .popup-buttons button { border-radius: 8px; }
+/* 대화상자 — 종이 */
 .pb .alert-popup-content, .pb .prompt-popup-content, .pb .confirm-popup-content, .pb .wifi-popup-content, .pb-modal__box {
-  border-radius: var(--r-dlg) !important; border: 0 !important; box-shadow: 0 8px 0 rgba(30, 40, 80, .08), 0 20px 48px rgba(20, 24, 40, .25) !important; }
-
-/* 상단바 — 노랑 그대로, 아래 선 대신 살짝 둥근 그림자 · 제품 마크는 흰 동그라미 안에 */
-.pb-header__brand > i.fa-robot, .pb-header__brand > i.fa-brain { width: 30px; height: 30px; border-radius: 50%; background: #fff;
-  display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 0 rgba(61, 47, 18, .18); }
-.pb-header__brand > i.fa-robot::before, .pb-header__brand > i.fa-brain::before { width: 20px; height: 20px; }
-html[data-theme="dark"] .pb-header__brand > i.fa-robot, html[data-theme="dark"] .pb-header__brand > i.fa-brain { background: #fbc92d; color: #1f1a0c; box-shadow: none; }
-.pb-iconbtn { border-radius: 12px; }
-
-/* 빈 화면 안내 아이콘을 동그란 파스텔 칸에 */
-.pb-empty > i:first-child { width: 64px; height: 64px; border-radius: 22px; background: #fff1d1; color: #d29a00 !important;
-  display: inline-flex; align-items: center; justify-content: center; font-size: 30px !important; box-shadow: 0 4px 0 rgba(210, 154, 0, .2); }
-html[data-theme="dark"] .pb-empty > i:first-child { background: #3a3220; color: #f5c451 !important; }
-
-@media (prefers-reduced-motion: reduce) { .pb-btn, .pb .popup-buttons button { transition: none !important; } }
-/* 앱 판(도구 카드·분류기 세 칸 등) — 반투명 흰 판 + 부드러운 그림자, 더 둥글게 */
-body.pb-v2 .pb-panes { padding: 12px; }
-body.pb-v2 .pb-pane, body.pb-v2 article > section {
-  background: rgba(255, 255, 255, .8); border-color: transparent; border-radius: 24px; box-shadow: var(--pb-soft-sh); }
-html[data-theme="light"] body.pb-v2 .pb-pane, html[data-theme="light"] body.pb-v2 article > section { background: rgba(255, 255, 255, .92); }
-html[data-theme="dark"] body.pb-v2 .pb-pane, html[data-theme="dark"] body.pb-v2 article > section { background: rgba(36, 40, 54, .88); box-shadow: 0 3px 0 rgba(0, 0, 0, .25); }
-body.pb-v2 .cls-card, body.pb-v2 .motion-table-wrap, body.pb-v2 .mlib { border-radius: 20px; border-color: rgba(30, 40, 80, .06); box-shadow: 0 2px 0 rgba(30, 40, 80, .05); }
-body.pb-v2 .pb-stage, body.pb-v2 .v-stage { border-radius: 22px; }
-/* PiBrain 도구(body.tl) — 같은 규칙 */
-body.tl .tl-device, body.tl .tl-main, body.tl .tl-tabs { background: transparent; border-color: transparent; }
-body.tl .card { background: rgba(255, 255, 255, .8); border-color: transparent; border-radius: 24px; box-shadow: var(--pb-soft-sh); }
-html[data-theme="dark"] body.tl .card { background: rgba(36, 40, 54, .88); box-shadow: 0 3px 0 rgba(0, 0, 0, .25); }
-/* 대화 · 로봇 놀이 */
-.chat-card { border-color: transparent; border-radius: 24px; box-shadow: var(--pb-soft-sh); }
-.msg__body { border-radius: 20px; }
-.msg--bot .msg__body { border-color: transparent; box-shadow: 0 2px 0 rgba(30, 40, 80, .06), 0 4px 12px rgba(30, 40, 80, .05); }
-.kids-btn { box-shadow: 0 3px 0 rgba(30, 40, 80, .12); }
-.kids-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(30, 40, 80, .12); }
-/* 도구 왼쪽 메뉴 — 회색 레일 대신 비우고, 아이콘을 동그란 파스텔 칸에(고른 것은 파랑 젤리) */
-html body.pb-v2 main > nav { background: transparent; border-right: 0; width: 80px; }
-body.pb-v2 nav button { width: 66px; border-radius: 18px; }
-body.pb-v2 nav button > i { width: 40px; height: 40px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center;
-  background: rgba(255, 255, 255, .85); box-shadow: 0 3px 0 rgba(30, 40, 80, .08); }
-html[data-theme="dark"] body.pb-v2 nav button > i { background: rgba(255, 255, 255, .08); box-shadow: none; }
-body.pb-v2 nav button:hover { background: transparent; }
-body.pb-v2 nav button:hover > i { transform: translateY(-2px); }
-body.pb-v2 nav button.menu-selected { background: transparent; }
-body.pb-v2 nav button.menu-selected > i { background: linear-gradient(180deg, #5c93ff, #2563eb); color: #fff; box-shadow: 0 3px 0 #1b4cc0; }
-html[data-theme="dark"] body.pb-v2 nav button.menu-selected > i { background: linear-gradient(180deg, #ffd96a, #f7b924); color: #1f1a0c; box-shadow: 0 3px 0 #b88400; }
+  border: 1px solid var(--v2-line) !important; box-shadow: 0 10px 30px var(--v2-shadow) !important; }
+/* 도구 왼쪽 메뉴 — 종이 위 글자, 고른 것은 남색 펜 밑줄 */
+body.pb-v2 main > nav { background: var(--v2-rail); border-right: 1px solid var(--v2-line); }
+body.pb-v2 nav button.menu-selected { background: var(--v2-accent-t); color: var(--v2-accent-ink); }
+/* 빈 화면 아이콘 — 상자 없이 남색 펜 */
+.pb-empty > i:first-child { color: var(--v2-accent) !important; }
+/* 대화 말풍선 · 로봇 놀이 */
+.chat-card { border-radius: 12px; }
+.msg__body { border-radius: 14px; }
