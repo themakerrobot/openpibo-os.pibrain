@@ -66,12 +66,6 @@ html[data-theme="dark"] body.kids { --k-motion: #5b8cff; --k-say: #a477ff; --k-s
 .kids-empty { margin: 40px auto; display: flex; flex-direction: column; align-items: center; gap: 12px; font-size: 20px; color: var(--v2-ink-3); text-align: center; word-break: keep-all; }
 .kids-empty i { font-size: 48px; color: var(--k-trick); }
 
-/* 자물쇠 — 3초 누르면 둘레가 찬다 */
-.kids-lockbt { position: relative; opacity: .55; }
-.kids-lockbt svg { position: absolute; left: 50%; top: 50%; width: 36px; height: 36px; margin: -18px 0 0 -18px; transform: rotate(-90deg); pointer-events: none; }
-.kids-lockbt circle { fill: none; stroke: var(--v2-frame-ink); stroke-width: 3; stroke-dasharray: 100.6; stroke-dashoffset: 100.6; }
-.kids-lockbt.is-hold { opacity: 1; }
-.kids-lockbt.is-hold circle { transition: stroke-dashoffset 3s linear; stroke-dashoffset: 0; }
 .kids-whobt i { font-size: 18px; }
 .kids-whobt .pb-iconbtn__label { font-size: 16px; }
 
@@ -321,17 +315,6 @@ body.is-running .kids-row .kcard, body.is-running .kids-loop__head, body.is-runn
 .kids-graph__legend i { display: inline-block; width: 18px; height: 6px; border-radius: 3px; margin-right: 6px; vertical-align: middle; }
 .kids-graph__rates { margin: 12px 0 0; font-size: 15px; color: var(--v2-ink-2); text-align: center; word-break: keep-all; }
 
-.kids-pin { max-width: 380px; text-align: center; }
-.kids-pin__dots { display: flex; justify-content: center; gap: 16px; margin: 4px 0 18px; }
-.kids-pin__dots i { width: 18px; height: 18px; border-radius: 50%; background: var(--v2-sunken); box-shadow: inset 0 0 0 2px var(--v2-line-2); }
-.kids-pin__dots i.on { background: var(--v2-ink); box-shadow: none; }
-.kids-pin__dots.is-wrong { animation: kids-shake .4s; }
-.kids-pin__pad { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-.kids-key { width: 88px; height: 64px; border-radius: 16px; border: 0; background: var(--v2-raise); color: var(--v2-ink); font-size: 26px; font-weight: 700;
-  box-shadow: 0 1px 3px var(--v2-shadow); }
-.kids-key.is-blank { visibility: hidden; }
-.kids-pin .kids-modal__btns { justify-content: center; }
-
 .kids-teacher { max-width: 680px; }
 .kids-form { display: grid; grid-template-columns: 110px 1fr; gap: 12px 14px; align-items: center; }
 .kids-form .pb-field { height: 44px; font-size: 16px; }
@@ -343,6 +326,9 @@ body.is-running .kids-row .kcard, body.is-running .kids-loop__head, body.is-runn
 .kids-vol input { flex: 1; }
 .kids-teacher__more { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--v2-line); }
 .kids-teacher__more .kids-btn { min-height: 48px; font-size: 16px; }
+/* [처음부터 하기] 두 번 누르기 — 첫 번째에 빨갛게 무엇이 지워지는지 보인다(대문 공장 초기화와 같다, 261124) */
+#t_reset_all[data-armed] { background: var(--v2-red); border-color: var(--v2-red); color: var(--v2-on-red, #fff); }
+.kids-teacher__warn { margin-top: 10px; color: var(--v2-red-ink); font-size: 14px; line-height: 1.5; word-break: keep-all; }
 
 .kids-reportbox { max-width: 760px; }
 .kids-report__wrap { overflow-x: auto; }
@@ -354,7 +340,6 @@ body.is-running .kids-row .kcard, body.is-running .kids-loop__head, body.is-runn
 .kids-report td.is-own { color: var(--v2-green-ink); font-weight: 800; font-size: 18px; }
 .kids-report td.is-tried { color: var(--v2-accent-ink); font-size: 18px; }
 .kids-report td.is-none { color: var(--v2-line-2); }
-.kids-mini-del { width: 40px; height: 40px; border: 0; border-radius: 10px; background: var(--v2-red-t); color: var(--v2-red-ink); }
 
 /* ── 좁은 화면 (태블릿 세로·폰) ──────────────────────────────────────── */
 @media (max-width: 900px) {
@@ -395,7 +380,6 @@ body.is-running .kids-row .kcard, body.is-running .kids-loop__head, body.is-runn
 @keyframes kids-float { 50% { transform: translateY(-8px); opacity: .6; } }
 @keyframes kids-blink { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(.1); } }
 @keyframes kids-delta { 0% { opacity: 0; transform: translateY(8px); } 15% { opacity: 1; transform: translateY(0); } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(-14px); } }
-@keyframes kids-shake { 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
 @media (prefers-reduced-motion: reduce) {
   .kids *, .kids *:before, .kids *:after { animation: none !important; transition: none !important; }
 }

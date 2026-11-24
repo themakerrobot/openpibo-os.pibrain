@@ -255,7 +255,7 @@
         '<label id="wf_id_row" hidden><span>' + esc(t('wifi_identity')) + '</span><input id="wf_id"></label>' +
         '<label id="wf_psk_row"><span>' + esc(t('password')) + '</span><input id="wf_psk" type="password"></label>' +
         '<p class="home-wifi__msg" id="wf_msg" role="status"></p>' +
-        '<div class="home-modal__btns"><button type="button" class="home-btn" id="wf_back">' + esc(t('v2_settings')) + '</button>' +
+        '<div class="home-modal__btns"><button type="button" class="home-btn" id="wf_back"><i class="fa-solid fa-arrow-left"></i> ' + esc(t('kids_back')) + '</button>' +
         '<button type="submit" class="home-btn home-btn--main" id="wf_go"><i class="fa-solid fa-check"></i> ' + esc(t('wifi_connect')) + '</button></div>' +
       '</form>';
     wireClose(); modal.hidden = false;

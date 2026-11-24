@@ -9,7 +9,7 @@
 두 앱은 같은 모터·화면·스피커를 쓰므로 한 번에 하나만 뜬다(IDE 가 하나를 켤 때 다른 것을 끈다).
 저장 폴더(/home/pi/.kids)도 같이 쓴다 — 설정(목소리·소리 크기·숫자)은 여기서 바꾸고, 로봇 놀이는 읽기만 한다.
 
-저장은 로봇 하나에 한 벌이다(261116, 사용자 — 예전 번호 고르기는 뺐다. 반이 바뀌면 선생님 잠금의 [처음부터 하기] — 키우기까지 지운다).
+저장은 로봇 하나에 한 벌이다(261116, 사용자 — 예전 번호 고르기는 뺐다. 반이 바뀌면 [설정]의 [처음부터 하기] — 키우기까지 지운다).
 안쪽은 예전 구조(프로필 '1' 하나) 그대로 둔다.
 
 보통은 IDE 가 띄운다(대문 [카드 코딩] → /cards?enable=on). 손으로 띄울 때:
@@ -25,7 +25,6 @@ import sys
 import json
 import time
 import shutil
-import random
 import asyncio
 import argparse
 import tempfile
@@ -101,10 +100,9 @@ def write_json(rel, data):
   os.replace(tmp, full)
 
 
-DEFAULT_SETTINGS = {'lesson': 0, 'roster': 4, 'volume': 60, 'voice': 'f1', 'pin': '1234'}
+DEFAULT_SETTINGS = {'lesson': 0, 'roster': 4, 'volume': 60, 'voice': 'f1'}
 settings = dict(DEFAULT_SETTINGS)
 profiles = {}             # {'7': {'icon': 'fa-cat', 'made': 시각}}
-teacher_tokens = set()
 
 
 def new_progress():
@@ -611,7 +609,7 @@ def load_profile(pid):
 
 
 def state():
-  s = {k: v for k, v in settings.items() if k != 'pin'}
+  s = dict(settings)
   prof = None
   if cur['id']:
     prof = {'id': cur['id'], 'icon': profiles.get(cur['id'], {}).get('icon')}
@@ -924,25 +922,9 @@ async def api_export(body: dict = Body(...)):
   return {'ok': True, 'name': name + '.json', 'path': out}
 
 
-# 선생님
-@app.post('/api/teacher/unlock')
-async def api_unlock(body: dict = Body(...)):
-  if str(body.get('pin', '')) != settings['pin']:
-    await asyncio.sleep(0.5)        # 숫자 맞히기를 느리게
-    return bad('pin', 403)
-  tok = '%032x' % random.getrandbits(128)
-  teacher_tokens.add(tok)
-  return {'token': tok, 'settings': settings}
-
-
-def teacher_ok(body):
-  return (body or {}).get('token') in teacher_tokens
-
-
-@app.post('/api/teacher/settings')
+# 설정·기록·처음부터 하기 — 잠금 없이 누구나(261124, 사용자 — 전엔 숫자 4개를 맞혀 받은 토큰이 있어야 했다)
+@app.post('/api/settings')
 async def api_settings(body: dict = Body(...)):
-  if not teacher_ok(body):
-    return bad('locked', 403)
   s = body.get('settings') or {}
   try:
     if 'lesson' in s:
@@ -955,20 +937,13 @@ async def api_settings(body: dict = Body(...)):
     return bad('bad number')
   if s.get('voice') in VOICES:
     settings['voice'] = robot.voice = s['voice']
-  pin = str(s.get('pin', '') or '')
-  if pin:
-    if not re.fullmatch(r'\d{4}', pin):
-      return bad('pin format')
-    settings['pin'] = pin
   write_json('settings.json', settings)
   return {'ok': True, 'settings': settings}
 
 
-@app.post('/api/teacher/report')
+@app.post('/api/report')
 async def api_report(body: dict = Body(...)):
   """도달 기록 — 아이마다 개념별 '써 봤다(tried)/스스로 했다(own)', 별 합계, 재주 수. 점수·순위는 내지 않는다"""
-  if not teacher_ok(body):
-    return bad('locked', 403)
   rows = []
   for pid in sorted(profiles, key=int):
     p = cur['progress'] if pid == cur['id'] else dict(new_progress(), **read_json(os.path.join('p', pid, 'progress.json'), {}))
@@ -979,11 +954,9 @@ async def api_report(body: dict = Body(...)):
   return {'rows': rows}
 
 
-@app.post('/api/teacher/reset')
+@app.post('/api/reset')
 async def api_reset(body: dict = Body(...)):
   """아이 하나(what=profile, id) 또는 모두(what=all) 지우기 — 재주·별·키우기까지"""
-  if not teacher_ok(body):
-    return bad('locked', 403)
   if run['running']:
     return bad('busy', 409)
   what = body.get('what')
@@ -1015,12 +988,6 @@ def ensure_only():
     write_json('profiles.json', profiles)
   if cur['id'] != ONLY:
     load_profile(ONLY)
-
-
-@app.post('/api/teacher/lock')
-async def api_lock(body: dict = Body(...)):
-  teacher_tokens.discard((body or {}).get('token'))
-  return {'ok': True}
 
 
 def main():

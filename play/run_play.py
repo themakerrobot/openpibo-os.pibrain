@@ -7,7 +7,7 @@
 
 예전 체험 앱(kids/run_kids.py)에서 카드 코딩(cards/, 50060)을 따로 뺐다. 로봇·화면 그림·효과음은 두 앱이 같이 쓰는
 kids/(robot.py · screen.py · sounds/), 저장 폴더(/home/pi/.kids)도 같이 쓴다 — 키우기는 p/1/pet.json, 픽셀 그림첩은 p/1/art/<번호>.json
-(카드 코딩 선생님 잠금의 [처음부터 하기]가 p/1 을 통째로 지운다). 목소리·소리 크기는 카드 코딩이 저장한 settings.json 을 읽기만 한다.
+(카드 코딩 [설정]의 [처음부터 하기]가 p/1 을 통째로 지운다). 목소리·소리 크기는 카드 코딩이 저장한 settings.json 을 읽기만 한다.
 두 앱은 같은 모터·화면·스피커를 쓰므로 한 번에 하나만 뜬다(IDE 가 하나를 켤 때 다른 것을 끈다).
 
 보통은 대문 [로봇 놀이] → 대기 페이지 → IDE 서버(80)의 /play?enable=on 이 띄운다. 손으로 띄울 때:
@@ -659,7 +659,7 @@ def main():
   args = p.parse_args()
   DEVICE, DATA_DIR = args.device, args.data_dir
 
-  s = read_json('settings.json', {})        # 카드 코딩 선생님 잠금이 저장한 목소리·소리 크기
+  s = read_json('settings.json', {})        # 카드 코딩 [설정]이 저장한 목소리·소리 크기
   kw = {'volume': int(s.get('volume', 60)), 'voice': s.get('voice', 'f1')}
   if args.fake:
     kw['speed'] = args.fake_speed

@@ -127,7 +127,16 @@
       // 블록 모드면 툴박스 오른쪽 작업판 가운데에(툴박스를 가리지 않게)
       var bd = $id('blocklyDiv'), tb = document.querySelector('#blocklyDiv .blocklyToolboxDiv');
       var blockOn = bd && bd.offsetParent !== null;
-      start.style.left = (blockOn && tb ? tb.offsetWidth : 0) + 'px';
+      var left = blockOn && tb ? tb.offsetWidth : 0;
+      // 파일 서랍이 열려 있으면 서랍 오른쪽부터(서랍이 [새 파일] 카드를 가렸다, 261124)
+      var side = $id('v2_side'), host = start.offsetParent;
+      if (side && host && document.body.getAttribute('data-side') !== 'closed' && side.offsetParent !== null) {
+        // 미끄러지는 중이어도 다 열린 자리로 잰다(transform 은 빼고)
+        var tx = 0; try { tx = new DOMMatrix(getComputedStyle(side).transform).m41 || 0; } catch (e) { /* */ }
+        var hr = host.getBoundingClientRect(), r = side.getBoundingClientRect().right - tx - hr.left;
+        if (r > left && hr.width - r >= 520) left = r;   // 좁은 화면은 서랍이 거의 다 덮으므로 그대로
+      }
+      start.style.left = Math.max(0, Math.round(left)) + 'px';
     };
     var syncStart = function () {
       start.hidden = !!(cp.textContent || '').trim();
@@ -135,6 +144,7 @@
     };
     new MutationObserver(syncStart).observe(cp, { childList: true, characterData: true, subtree: true });
     window.addEventListener('resize', placeStart);
+    new MutationObserver(function () { if (!start.hidden) setTimeout(placeStart, 30); }).observe(document.body, { attributes: true, attributeFilter: ['data-side'] });
     Array.prototype.forEach.call(document.querySelectorAll('div[name=codetype] button'), function (b) {
       b.addEventListener('click', function () { setTimeout(placeStart, 60); });
     });
