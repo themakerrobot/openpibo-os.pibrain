@@ -179,6 +179,7 @@ git -C /home/pi/.openpibo-os.new describe --tags
 # 3) 교체 — 링크는 건드리지 않는다. 실체만 바꾼다
 sudo mv /home/pi/.openpibo-os.pibrain /home/pi/.openpibo-os.old
 sudo mv /home/pi/.openpibo-os.new     /home/pi/.openpibo-os.pibrain
+echo piBrain_<태그> > /home/pi/.OS_VERSION   # 버전 글자는 piBrain_ + 태그(261124 기기 LCD 로 확인 — 파이보는 piBo_). 대문·LCD 버전 표시와 소스 링크가 읽는다
 
 # 4) 정상 확인 후에 백업 삭제
 sudo rm -rf /home/pi/.openpibo-os.old
