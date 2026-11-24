@@ -4,7 +4,7 @@ PiBrain Maker is the PiBrain development environment you open in a web browser. 
 as PiBrain, type **PiBrain's IP address** (shown on the PiBrain screen at startup) into the address bar. There is nothing to install.
 
 The address opens the **home screen** (a worksheet page). Tap a big picture button to enter an app, and use [Home] (house button) in an app's top bar to come back.
-Row 1 **Make** (Coding · Tools · Teach AI · Chat), row 2 **Play & learn** (Card coding · Robot Play), row 3 **Teacher tools** (Settings · Help).
+Row 1 **Make** (Coding · Tools · Teach AI · Chat), row 2 **Play & learn** (Card coding · Robot Play), row 3 **Settings and help** (Settings · Help).
 The app that is running now gets a red 'Running' stamp and the one you used last gets a yellow tag; on the right are the robot status and [Continue] (recent files, AI you taught).
 [Settings] has screen brightness, WiFi settings (pick and join a WiFi right there), reset robot screen, H/W check, factory reset, power off and the source code and license.
 The robot status (battery, temperature, memory, WiFi, serial, uptime) is on the home screen too. Every app has the same top bar — the app name on the left, and (app actions) · [Home] · [Full screen] · [Brightness] · language on the right.

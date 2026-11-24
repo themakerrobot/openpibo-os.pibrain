@@ -153,7 +153,7 @@ const T = {
   face_empty:         { ko: "아직 등록한 얼굴이 없어요.", en: "No faces registered yet." },
   face_count:         { ko: (n) => `${n}장`, en: (n) => (n === 1 ? "1 photo" : `${n} photos`) },
   face_delete:        { ko: (n) => `${n} 지우기`, en: (n) => `Delete ${n}` },
-  face_note:          { ko: "카메라를 켜고 얼굴을 한 명씩 보인 뒤 [등록]을 누르세요. 한 사람을 각도를 바꿔 3~5장 등록하면 더 잘 알아봐요. 숫자(오차도)는 낮을수록 닮았고, [기준]보다 낮으면 같은 사람으로 봐요(처음 0.4). 기준을 낮추면 엄격해져서 같은 사람도 '?'가 되기 쉽고, 올리면 느슨해져서 다른 사람을 잘못 알아보기 쉬워요. 얼굴 정보는 로봇의 code/facedb 에 저장돼서 [코딩]의 블록 [얼굴 사전 불러오기](code · facedb)로 바로 쓸 수 있어요.",
+  face_note:          { ko: "카메라를 켜고 얼굴을 한 명씩 보인 뒤 [등록]을 누르세요. 한 사람을 각도를 바꿔 3~5장 등록하면 더 잘 알아봐요. 숫자(오차도)는 낮을수록 닮았고, [기준]보다 낮으면 같은 사람으로 봐요(처음 0.4). 기준을 낮추면 엄격해져서 같은 사람도 '?'가 되기 쉽고, 올리면 느슨해져서 다른 사람을 잘못 알아보기 쉬워요. 얼굴 정보는 로봇의 code/facedb에 저장돼서 [코딩]의 블록 [얼굴 사전 불러오기](code · facedb)로 바로 쓸 수 있어요.",
                         en: "Turn on the camera, show one face, and press [Register]. Register 3–5 photos of each person from different angles for better results. The number (distance) is lower when faces look alike; below the [Threshold] (0.4 at first) counts as the same person. A lower threshold is stricter, so even the same person may show as '?'; a higher one is looser, so other people may be mistaken. Faces are saved to code/facedb on the robot, so the [Load face training data from file] block in Coding (code · facedb) can use them right away." },
   face_trained:       { ko: (n, name) => `${name} 얼굴을 등록했어요. (${n}장)`, en: (n, name) => `Registered ${name}. (${n === 1 ? "1 photo" : n + " photos"})` },
   face_imported:      { ko: "얼굴 정보를 가져왔어요.", en: "Face data imported." },

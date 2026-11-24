@@ -12,7 +12,7 @@
     view: 'who', settings: { lesson: 0, roster: 4 }, profile: null, profiles: {}, progress: { stars: {} }, tricks: [],
     ch: null,                           // 지금 도전(없으면 자유 만들기)
     editing: null,                      // 고치는 중인 재주 id
-    program: [], cursor: -1, tab: null, running: false, token: null,
+    program: [], cursor: -1, tab: null, running: false,
     lastInputT: 0
   };
   var KIND_ORDER = ['motion', 'mymotion', 'colour', 'say', 'sound', 'screen', 'wait', 'sense', 'repeat', 'if', 'trick'];
@@ -628,21 +628,8 @@
     });
   });
 
-  /* ── 선생님 잠금 — 오른쪽 위 자물쇠를 3초 누르기 → 숫자 4개 ───────── */
-  var hold = null;
-  function holdStart(e) {
-    e.preventDefault();
-    var b = $('lock_bt');
-    b.classList.add('is-hold');
-    hold = setTimeout(function () { b.classList.remove('is-hold'); hold = null; openPin(); }, 3000);
-  }
-  function holdEnd() {
-    if (hold) { clearTimeout(hold); hold = null; toast(tr('kids_teacher_hold')); }
-    $('lock_bt').classList.remove('is-hold');
-  }
-  $('lock_bt').addEventListener('pointerdown', holdStart);
-  ['pointerup', 'pointerleave', 'pointercancel'].forEach(function (ev) { $('lock_bt').addEventListener(ev, holdEnd); });
-  $('lock_bt').addEventListener('contextmenu', function (e) { e.preventDefault(); });
+  /* ── 설정 — 잠금 없이 누구나 연다(261124, 사용자 — 전엔 자물쇠 3초 + 숫자 4개였다) ── */
+  $('set_bt').addEventListener('click', function () { openTeacher(); });
 
   /* IDE 와 연결(261028) — [IDE] 는 이 탭을 닫거나 IDE 로 간다. 탭이 닫히면 IDE 가 체험 앱을 끈다(keepalive 가 있어야 언로드 중에도 간다).
      손으로 띄운 경우(IDE 없이 시험)엔 /cards 가 없어 실패해도 상관없다 */
@@ -650,35 +637,6 @@
     try { fetch('http://' + location.hostname + '/cards?enable=off', { method: 'GET', keepalive: true }).catch(function () {}); } catch (e) { /* 무시 */ }
   });
 
-  var pin = '';
-  function openPin() {
-    if (S.token) { openTeacher(); return; }
-    pin = ''; dots();
-    var pad = $('pin_pad');
-    if (!pad.childNodes.length) {
-      ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'del'].forEach(function (k) {
-        var b = btn('kids-key' + (k ? '' : ' is-blank'), k === 'del' ? icon('fa-delete-left') : k);
-        if (!k) b.disabled = true;
-        b.addEventListener('click', function () { press(k); });
-        pad.appendChild(b);
-      });
-    }
-    $('dlg_pin').hidden = false;
-  }
-  function dots() { each('#pin_dots i', function (d, i) { d.className = i < pin.length ? 'on' : ''; }); }
-  function press(k) {
-    if (k === 'del') pin = pin.slice(0, -1);
-    else if (pin.length < 4) pin += k;
-    dots();
-    if (pin.length === 4) {
-      post('/api/teacher/unlock', { pin: pin }).then(function (r) {
-        if (r.token) { S.token = r.token; $('dlg_pin').hidden = true; openTeacher(r.settings); return; }
-        var d = $('pin_dots'); d.classList.remove('is-wrong'); void d.offsetWidth; d.classList.add('is-wrong');
-        toast(tr('kids_pin_wrong'), 'error');
-        pin = ''; dots();
-      }).catch(function () { toast(tr('kids_err_conn'), 'error'); });
-    }
-  }
   function lessonHelp() {
     var n = Number($('t_lesson').value), box = $('t_lesson_help');
     if (!n) { box.textContent = tr('kids_t_free_help'); return; }
@@ -688,8 +646,9 @@
     box.childNodes[1].textContent = tr('kids_t_goal') + ' ' + (L() === 'en' ? l.goal_en : l.goal_ko);
     box.childNodes[2].textContent = tr('kids_t_ask') + ' ' + (L() === 'en' ? l.ask_en : l.ask_ko);
   }
-  function openTeacher(s) {
-    var T = Object.assign({}, S.settings, s || {});
+  function openTeacher() {
+    var T = Object.assign({}, S.settings);
+    disarmReset();
     var ls = $('t_lesson');
     ls.innerHTML = '';
     var o0 = el('option'); o0.value = '0'; o0.textContent = tr('kids_lesson_free'); ls.appendChild(o0);
@@ -706,19 +665,14 @@
     vs.value = T.voice || 'f1';
     $('t_volume').value = T.volume;
     $('t_volume_v').textContent = T.volume;
-    $('t_pin').value = '';
-    $('t_pin').placeholder = tr('kids_t_pin_ph');
-    $('t_code').href = 'http://' + location.hostname + '/ide';   // [코딩] 화면(대문 카드와 같은 이름, 261123)
     $('dlg_teacher').hidden = false;
   }
   $('t_lesson').addEventListener('change', lessonHelp);
   $('t_volume').addEventListener('input', function () { $('t_volume_v').textContent = this.value; });
   $('t_save').addEventListener('click', function () {
-    var p = $('t_pin').value.trim();
-    if (p && !/^\d{4}$/.test(p)) { toast(tr('kids_t_pin_ph'), 'error'); return; }
-    var body = { token: S.token, settings: { lesson: Number($('t_lesson').value),
-      voice: $('t_voice').value, volume: Number($('t_volume').value), pin: p } };
-    post('/api/teacher/settings', body).then(function (r) {
+    var body = { settings: { lesson: Number($('t_lesson').value),
+      voice: $('t_voice').value, volume: Number($('t_volume').value) } };
+    post('/api/settings', body).then(function (r) {
       if (!r.ok) { toast(tr('kids_err'), 'error'); return; }
       S.settings = r.settings;
       $('dlg_teacher').hidden = true;
@@ -726,15 +680,23 @@
       show(S.view === 'make' ? 'home' : S.view);
     }).catch(function () { toast(tr('kids_err_conn'), 'error'); });
   });
-  $('t_lock').addEventListener('click', function () {
-    post('/api/teacher/lock', { token: S.token }).catch(function () {});
-    S.token = null;
-    $('dlg_teacher').hidden = true;
-  });
   $('t_report').addEventListener('click', openReport);
+  /* [처음부터 하기] — 대문 공장 초기화처럼 두 번 누르기: 첫 번째는 무엇이 지워지는지 보여 주고, 두 번째에 지운다 */
+  function disarmReset() {
+    $('t_reset_all').removeAttribute('data-armed');
+    $('t_reset_note').hidden = true;
+  }
   $('t_reset_all').addEventListener('click', function () {
-    if (!window.confirm(tr('kids_t_reset_all_q'))) return;
-    post('/api/teacher/reset', { token: S.token, what: 'all' }).then(function (r) {
+    var b = $('t_reset_all');
+    if (!b.getAttribute('data-armed')) {
+      b.setAttribute('data-armed', '1');
+      var n = $('t_reset_note');
+      n.textContent = tr('kids_t_reset_all_q') + ' ' + tr('home_set_sure');
+      n.hidden = false;
+      return;
+    }
+    disarmReset();
+    post('/api/reset', { what: 'all' }).then(function (r) {
       if (!r.ok) { toast(tr(r.error === 'busy' ? 'kids_busy' : 'kids_err'), 'error'); return; }
       toast(tr('kids_saved'), 'ok');
       refreshState().then(function () { $('dlg_teacher').hidden = true; show('home'); });
@@ -743,34 +705,25 @@
 
   /* 도달 기록 — 아이 × 개념(◎ 스스로 했어요 · ○ 써 봤어요). 점수·순위는 없다 */
   function openReport() {
-    post('/api/teacher/report', { token: S.token }).then(function (r) {
+    post('/api/report', {}).then(function (r) {
       if (!r.rows) { toast(tr('kids_err'), 'error'); return; }
       var cons = C.concepts.filter(function (c) { return c.phase === 1; });
-      var tb = '<table class="kids-report"><thead><tr><th>' + tr('kids_t_no') + '</th>';
+      // 저장이 한 벌이라(261116) 번호 칸·줄마다 지우기는 뺐다(261124 — 지우기는 [처음부터 하기] 하나)
+      var tb = '<table class="kids-report"><thead><tr>';
       cons.forEach(function (c) { tb += '<th>' + icon(c.icon) + '<span>' + txt(c) + '</span></th>'; });
-      tb += '<th>' + icon('fa-star') + '</th><th>' + icon('fa-wand-magic-sparkles') + '</th><th></th></tr></thead><tbody>';
+      tb += '<th>' + icon('fa-star') + '</th><th>' + icon('fa-wand-magic-sparkles') + '</th></tr></thead><tbody>';
       r.rows.forEach(function (row) {
         var stars = Object.keys(row.stars).reduce(function (a, k) { return a + row.stars[k]; }, 0);
-        tb += '<tr><td>' + icon(row.icon || 'fa-user') + ' <b>' + row.id + '</b></td>';
+        tb += '<tr>';
         cons.forEach(function (c) {
           var v = row.concepts[c.key];
           tb += '<td class="is-' + (v || 'none') + '">' + (v === 'own' ? '◎' : v === 'tried' ? '○' : '·') + '</td>';
         });
-        tb += '<td>' + stars + '</td><td>' + row.tricks + '</td><td><button type="button" class="kids-mini-del" data-id="' + row.id + '">' + icon('fa-trash-can') + '</button></td></tr>';
+        tb += '<td>' + stars + '</td><td>' + row.tricks + '</td></tr>';
       });
-      if (!r.rows.length) tb += '<tr><td colspan="' + (cons.length + 4) + '" class="kids-note">' + tr('kids_t_report_empty') + '</td></tr>';
+      if (!r.rows.length) tb += '<tr><td colspan="' + (cons.length + 2) + '" class="kids-note">' + tr('kids_t_report_empty') + '</td></tr>';
       tb += '</tbody></table>';
       $('rp_table').innerHTML = tb;
-      each('#rp_table .kids-mini-del', function (b) {
-        b.addEventListener('click', function () {
-          var id = b.getAttribute('data-id');
-          if (!window.confirm(tr('kids_t_reset_one_q', id))) return;
-          post('/api/teacher/reset', { token: S.token, what: 'profile', id: id }).then(function (x) {
-            if (!x.ok) { toast(tr(x.error === 'busy' ? 'kids_busy' : 'kids_err'), 'error'); return; }
-            refreshState().then(function () { openReport(); show('home'); });
-          });
-        });
-      });
       $('dlg_report').hidden = false;
     });
   }

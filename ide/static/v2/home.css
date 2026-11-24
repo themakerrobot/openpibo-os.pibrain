@@ -2,7 +2,7 @@
    첫 화면(대문, 261123) — / . 앱을 골라 같은 탭으로 들어간다. 파이보·PiBrain 같은 파일.
    '학습지' 컨셉(사용자 — ai-lab 과 같게, 디자이너가 한 것처럼):
    · 책상 위 모눈 바탕에 활동지 한 장 — 왼쪽 철 구멍 셋 · 빨간 여백선 두 줄 · 머리(캐릭터 · 눈썹 글 · 형광펜 제목 · 날짜 도장)
-   · 활동 1 만들기(큰 카드 넷) · 활동 2 놀이 · 배우기 / 활동 3 선생님 · 관리(가로 카드 둘씩) — 활동마다 펜 색 하나(남색 · 초록 · 갈색)
+   · 활동 1 만들기(큰 카드 넷) · 활동 2 놀이 · 배우기 / 활동 3 설정 · 도움말(가로 카드 둘씩) — 활동마다 펜 색 하나(남색 · 초록 · 갈색)
    · 카드 = 흰 종이 + 아이콘 딱지(옅은 칸 + 판화처럼 어긋난 색 그림자) + 이름 + 설명 + '시작하기 →'. 누르면 종이가 들리고 그림자가 커진다
    · 켜진 앱은 빨간 고무 도장 '켜져 있음', 아니면 마지막에 쓴 앱에 노란 꼬리표 '지난번'
    · 오른쪽: 로봇 상태(괘선 표 · 막대) · 이어서 하기(노란 메모지 + 마스킹 테이프)
@@ -201,7 +201,7 @@ html[data-theme="dark"] .home-li:hover { background: rgba(255, 255, 255, .06); }
   display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
 .home-seg button:first-child { border-left: 0; }
 .home-seg button[aria-checked="true"] { background: var(--v2-accent-t); color: var(--v2-accent-ink); }
-.home-set__row { display: flex; align-items: center; gap: 12px; width: 100%; padding: 11px 12px; margin-top: 8px; border: 1px solid var(--v2-line); border-radius: 8px;
+.home-set__row { display: flex; align-items: center; gap: 12px; width: 100%; box-sizing: border-box; padding: 11px 12px; margin-top: 8px; border: 1px solid var(--v2-line); border-radius: 8px;
   cursor: pointer; text-align: left; background: var(--v2-surface); color: var(--v2-ink); }
 .home-set__row:hover { background: var(--v2-hover); }
 .home-set__row > span { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
