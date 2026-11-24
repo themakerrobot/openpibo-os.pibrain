@@ -111,7 +111,7 @@ body.kids .kids-main { background-image: radial-gradient(var(--pb-grid, transpar
 .kids-big__tx b { font-family: var(--serif, inherit); font-size: 26px; font-weight: 700; line-height: 1.25; }
 .kids-big__nic { font-size: .78em; color: var(--app); margin-right: 8px; }
 .kids-big__sub { font-size: 16px; color: var(--v2-ink-3); word-break: keep-all; line-height: 1.4; }
-.kids-big__go { display: flex; align-items: center; gap: 6px; padding-top: 10px; border-top: 1px dashed var(--v2-line); font-size: 15px; font-weight: 700; color: var(--app); }
+.kids-big__go { display: flex; align-items: center; gap: 6px; padding-top: 10px; border-top: 1px dashed var(--v2-line); font-size: 15px; font-weight: 700; color: var(--v2-accent-ink); }   /* 대문 [시작하기]와 같은 펜 색 — 앱 색 글자는 대비 4.5:1 이 안 됐다(261124) */
 .kids-big__go i { font-size: 13px; transition: transform .16s ease; }
 .kids-big:hover .kids-big__go i { transform: translateX(4px); }
 @media (max-width: 900px) {

@@ -32,6 +32,7 @@ PiBrain OS 리포. 기기의 `/home/pi/openpibo-os` 가 이 리포의 작업본�
 자동 항목(S 파일·B 화면)은 파이보 리포의 `PY=<파이썬> bash design/audit/run.sh ../openpibo-os.pibrain`, 사람이 볼 항목(M)·기기 항목(D)은 표대로 보고 항목 ID 마다 OK/FAIL 로 보고한다.
 **일관성은 기본이다**(사용자) — 화면마다 같은 부품·순서·크기, 다르면 고친다. 일부러 다른 것은 `AUDIT.md` '예외' 표에만 둔다.
 새 규칙이 생기면 `AUDIT.md`·검사 도구에 먼저 넣는다. `AUDIT.md` 는 두 리포 같은 파일, 도구(`design/audit/`)는 파이보 리포에만 있다.
+**화면은 Lighthouse 접근성·SEO 100 을 지킨다(261124, 사용자가 코딩 화면 점수를 보여 줌 — `AUDIT.md` M9).** 두 제품 전 화면 100 으로 맞췄다. Best Practices 는 HTTPS 2항목(LAN http)만 남는다
 
 ---
 

@@ -192,6 +192,10 @@
     Array.prototype.forEach.call(document.querySelectorAll('[data-aria-key]'), function (el) {
       el.setAttribute('aria-label', tr(el.getAttribute('data-aria-key')));
     });
+    // 파이썬 편집기에서 실제로 글자를 받는 칸은 CodeMirror 가 만든 숨은 textarea 다(원래 칸은 숨겨진다, 261124 Lighthouse)
+    Array.prototype.forEach.call(document.querySelectorAll('.CodeMirror textarea'), function (el) {
+      el.setAttribute('aria-label', tr('v2_code_editor'));
+    });
     // 아이콘만 남는 폭에서도 뜻이 보이게 라벨을 툴팁으로 복사한다
     Array.prototype.forEach.call(document.querySelectorAll('.v2-top a.pb-iconbtn, .v2-top .v2-seg > button, #pycode_bt'), function (el) {
       var lab = el.querySelector('[data-key]');

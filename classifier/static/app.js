@@ -591,13 +591,15 @@ function renderSeeHint() {
 
 function renderLearnLeft() {
   const segSrc = $('src_seg');
+  segSrc.setAttribute('role', 'tablist');   // aria-selected 는 tab 에만 맞다(261124 Lighthouse)
   segSrc.innerHTML = SOURCES.map(s =>
-    `<button type="button" data-src="${s.id}" aria-selected="${s.id === S.source}"><i class="fa-solid ${s.icon}"></i><span>${esc(t('src_' + s.id))}</span></button>`).join('');
+    `<button type="button" role="tab" data-src="${s.id}" aria-selected="${s.id === S.source}"><i class="fa-solid ${s.icon}"></i><span>${esc(t('src_' + s.id))}</span></button>`).join('');
   const vars = VARIANTS[S.source];
   const segVar = $('var_seg');
   segVar.hidden = !vars;
+  segVar.setAttribute('role', 'tablist');
   segVar.innerHTML = vars ? vars.map(([id]) =>
-    `<button type="button" data-var="${id}" aria-selected="${id === S.variant}"><i class="fa-solid ${VARIANT_ICON[id]}"></i><span>${esc(t('var_' + id))}</span></button>`).join('') : '';
+    `<button type="button" role="tab" data-var="${id}" aria-selected="${id === S.variant}"><i class="fa-solid ${VARIANT_ICON[id]}"></i><span>${esc(t('var_' + id))}</span></button>`).join('') : '';
 
   const list = $('cls_list');
   list.innerHTML = S.classes.map((c, i) => classCardHtml(c, i)).join('');
@@ -737,17 +739,18 @@ function renderTestLeft() {
   if (!list) return;
   const items = [];
   if (S.trained && !S.trained.saved) {
-    items.push(`<button type="button" class="model-pick" data-pick="__trained__" aria-selected="${!!(S.test && S.test.unsaved)}">
+    items.push(`<button type="button" role="option" class="model-pick" data-pick="__trained__" aria-selected="${!!(S.test && S.test.unsaved)}">
       <i class="fa-solid fa-graduation-cap"></i><span class="model-pick__name">${esc(t('test_unsaved'))}</span>
       <span class="model-pick__meta">${esc(t('src_' + S.trained.source))} · ${S.trained.classes.length}</span></button>`);
   }
   S.models.forEach(m => {
     const src = SOURCES.find(s => s.id === m.source) || SOURCES[0];
-    items.push(`<button type="button" class="model-pick" data-pick="${esc(m.name)}" aria-selected="${!!(S.test && !S.test.unsaved && S.test.name === m.name)}">
+    items.push(`<button type="button" role="option" class="model-pick" data-pick="${esc(m.name)}" aria-selected="${!!(S.test && !S.test.unsaved && S.test.name === m.name)}">
       <i class="fa-solid ${src.icon}"></i><span class="model-pick__name">${esc(m.name)}</span>
       <span class="model-pick__meta">${esc(t('src_' + m.source))} · ${m.classes.length}</span></button>`);
   });
   list.innerHTML = items.join('') || noModelsHtml('');
+  if (items.length) list.setAttribute('role', 'listbox'); else list.removeAttribute('role');   // 고르는 목록일 때만(빈 안내는 목록이 아니다)
   $('thr').value = Math.round(S.threshold * 100);
   $('thr_val').textContent = Math.round(S.threshold * 100) + '%';
 }

@@ -344,6 +344,7 @@ socket.on("update", async (data) => {
     execute.classList.remove("disabled");
     stop.classList.add("disabled");
     execute.disabled = false;
+    stop.disabled = true;   // 보이는 모양(.disabled)과 같게 — 화면 읽기·대비 검사가 꺼진 버튼으로 안다(261124)
   }
 });
 

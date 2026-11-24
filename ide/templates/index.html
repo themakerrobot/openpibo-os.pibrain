@@ -14,6 +14,7 @@
   <meta charset="UTF-8" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PiBrain — 블록·파이썬 코딩 · 도구 · AI 가르치기 / Block and Python coding, tools, teach AI" />
   <meta name="mobile-web-app-capable" content="yes" />
 
   <script>/* 화면 밝기(pibo-ui.js 와 같은 규칙): 쿠키 → OS 어두운 모드 → 부드럽게. 첫 페인트 전에 정해 번쩍임을 막는다 */
@@ -22,7 +23,7 @@
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
   <link rel="stylesheet" href="../static/codemirror.css" />
   <link rel="stylesheet" href="../static/jquery.jsonview.min.css" />
-  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261123v20" />
+  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261124v1" />
   <link rel="stylesheet" href="../static/v2/ide.css?ver=261123v21" />
   <link rel="shortcut icon" href="../static/icon.png?ver=261123v1" type="image/png" />
 
@@ -114,7 +115,7 @@
             </details>
             <div class="filebox">
               <form method="post" action="/upload" enctype="multipart/form-data">
-                <input type="file" id="upload" multiple>
+                <input type="file" id="upload" multiple aria-label="Upload" data-aria-key="upload">
               </form>
             </div>
           </div>
@@ -171,7 +172,7 @@
       <aside class="pb-pane pb-pane--fixed v2-stage" id="v2_stage">
         <div class="v2-run">
           <button id="execute" class="v2-btn v2-btn--run"><i class="fa-solid fa-flag"></i><span data-key="execute"></span></button>
-          <button id="stop" class="v2-btn v2-btn--stop disabled"><i class="fa-solid fa-stop"></i><span data-key="stop"></span></button>
+          <button id="stop" class="v2-btn v2-btn--stop disabled" disabled><i class="fa-solid fa-stop"></i><span data-key="stop"></span></button>
           <span id="run_status" class="pb-runstat" hidden aria-live="polite"></span>
         </div>
         <section class="v2-stage__body" id="result_en">
@@ -257,11 +258,11 @@
   </div>
 
 
-  <script src="../static/pibo-ui.js?ver=261123v20"></script>
-  <script src="../static/index.js?ver=261123v20"></script>
+  <script src="../static/pibo-ui.js?ver=261124v1"></script>
+  <script src="../static/index.js?ver=261124v1"></script>
   <script src="../static/v2/errhelp.js?ver=261120v1"></script>
   <script src="../static/v2/vendor/toolbox-search.js?ver=1.2.11"></script>
-  <script src="../static/v2/ide.js?ver=261124v1"></script>
+  <script src="../static/v2/ide.js?ver=261124v2"></script>
 </body>
 
 </html>

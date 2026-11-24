@@ -517,7 +517,7 @@ body.pb .pb-header select.pb-field--sm option, body.pb .pb-header .pb-lang optio
    그 방식은 헤더 높이가 바뀔 때마다 전부 틀어지고, 폭이 모자라면
    flex-wrap 으로 패널이 아래로 떨어진다.
    ========================================================================== */
-html { height: 100%; }
+html { height: 100%; touch-action: manipulation; }   /* 두 번 눌러 확대만 막는다 — 손가락 확대는 된다(user-scalable=no 대신, 261124) */
 .pb-shell {
   display: flex;
   flex-direction: column;
@@ -1188,8 +1188,8 @@ body.pb-v2 #article_motion .mstage .mdot .mdot__in::selection { background: rgba
 body.pb-v2 #article_motion .mstage .mdot.is-clamped { animation: pb-clamp .6s ease; }
 @keyframes pb-clamp { 0%, 60% { outline: 3px solid var(--v2-red); outline-offset: 1px; } }   /* 범위 밖 → 끝값으로 맞췄다는 표시 */
 body.pb-v2 #article_motion .mstage .mdot:hover { transform: translate(-50%, -50%) scale(1.06); }
-body.pb-v2 #article_motion .mstage .mdot[aria-pressed="true"] { background: var(--v2-accent) !important; color: var(--v2-on-accent) !important; }
-body.pb-v2 #article_motion .mstage .mdot[aria-pressed="true"] > b { background: var(--v2-raise); color: var(--v2-accent-ink); }
+body.pb-v2 #article_motion .mstage .mdot[aria-current="true"] { background: var(--v2-accent) !important; color: var(--v2-on-accent) !important; }
+body.pb-v2 #article_motion .mstage .mdot[aria-current="true"] > b { background: var(--v2-raise); color: var(--v2-accent-ink); }
 /* 왼쪽 칸은 사진+패널 크기만큼만(예전 모터 칸 때문에 걸려 있던 min-width 590 해제) → 오른쪽 표 폭이 는다 */
 body.pb-v2 #article_motion > .pibo-section { min-width: 0; width: auto; }
 /* 저장 칸 머리줄의 내보내기·가져오기·모두 지우기는 보조 동작이라 늘 아이콘만(이름은 title).
@@ -1621,7 +1621,7 @@ body.pb-v2 .v-stage:not([data-has])::before { content: ""; position: absolute; t
 /* 3) [동작] 모터 번호 점에 각도 링: 0° 는 빈 링, 한쪽 끝까지 가면 한 바퀴. + 는 시계 방향, − 는 반대.
       index.js 가 --g-a(호의 크기)·--g-s(시작 각)를 단다 */
 body.pb-v2 #article_motion .mstage .mdot > b { position: relative; --g-t: rgba(255, 255, 255, .28); }
-body.pb-v2 #article_motion .mstage .mdot[aria-pressed="true"] > b { --g-t: rgba(37, 99, 235, .16); }
+body.pb-v2 #article_motion .mstage .mdot[aria-current="true"] > b { --g-t: rgba(37, 99, 235, .16); }
 body.pb-v2 #article_motion .mstage .mdot > b::after {
   content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; border-radius: 50%; pointer-events: none;
   background: conic-gradient(from var(--g-s, 0deg), currentColor 0deg var(--g-a, 0deg), var(--g-t) var(--g-a, 0deg) 360deg);
