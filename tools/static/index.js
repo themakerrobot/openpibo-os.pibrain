@@ -290,6 +290,7 @@ async function loadCams() {
 async function selectCam(n) {
   const sel = document.getElementById('cam-sel');
   sel.disabled = true;
+  sel.title = t('cam_switching');   // 바꾸는 동안(파이보 도구와 같은 안내, 261124)
   try {
     const j = await (await fetch(`/cam_select?n=${n}`, { cache: 'no-store' })).json();
     if (typeof j.cam === 'number') camCur = j.cam;
@@ -298,6 +299,7 @@ async function selectCam(n) {
     if (window.PiboUI) PiboUI.toast(t('cam_sel_fail', String(e)), 'error');
   }
   sel.disabled = false;
+  sel.title = '';
   paintCams(true);
 }
 (function initCamSel() {

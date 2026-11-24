@@ -13,11 +13,11 @@ DHCP 가 밀리면 일부가 AP 로 넘어가 그대로 갇혔다(재부팅 말�
   IP 없음 + 저장된 SSID 보임        → 기다린다. 9번 연속(90초)이면 AP
                                      (NetworkManager DHCP 기본 대기 45초 × 2)
   AP 모드                         → 스스로 끄지 않는다. AP 로 계속 쓰는 수업도 있다.
-                                     [인터넷 설정] 으로 학교 WiFi 를 잡아 IP 를 받거나 재부팅하면 나온다
+                                     [WiFi 설정] 으로 학교 WiFi 를 잡아 IP 를 받거나 재부팅하면 나온다
 
 스캔은 AP 로 넘어가기 전, IP 가 없을 때만 본다(--rescan auto: 마지막 스캔이 30초보다 오래됐을 때만
 새로 스캔 — 끊겨 있을 때 NetworkManager 가 스스로 하는 스캔을 재사용). AP 모드에서는 스캔하지 않는다
-(스캔은 된다 — [인터넷 설정] 의 WiFi 목록이 AP 모드에서 뜬다. AP 를 스스로 끄지 않으니 판단할 게 없을 뿐).
+(스캔은 된다 — [WiFi 설정] 의 WiFi 목록이 AP 모드에서 뜬다. AP 를 스스로 끄지 않으니 판단할 게 없을 뿐).
 ※ AP 모드에서 아무도 안 붙어 있으면 2분마다 학교 WiFi 로 돌아가 보는 자력 복귀를 넣었다가 뺐다(260929) —
   AP 로 계속 쓰는 경우가 있어 로봇이 스스로 AP 를 끄면 안 된다
 
@@ -156,7 +156,7 @@ class NetWatch:
     return 'wait'
 
   def wifi_failed(self):
-    """[인터넷 설정] 의 연결이 실패했다(booting.py POST /wifi). AP 였으면 conwifi.sh 가 wlan0 을 건드렸을 수 있으니
+    """[WiFi 설정] 의 연결이 실패했다(booting.py POST /wifi). AP 였으면 conwifi.sh 가 wlan0 을 건드렸을 수 있으니
     다음 점검에서 AP 를 다시 켠다(hotspot.sh start 는 먼저 끄고 켠다)"""
     if self.apmode:
       print('[netwatch] WiFi 설정 실패 → 다음 점검에서 AP 다시 켬', flush=True)

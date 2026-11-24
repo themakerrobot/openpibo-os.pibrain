@@ -11,14 +11,13 @@ Class:
 :obj:`~openpibo.speech.Dialog`
 """
 
-import json
 import os
 import subprocess
 import time
 import requests
 
 import numpy as np
-import onnxruntime as ort
+import onnxruntime as ort  # noqa: F401 — 직접 쓰지 않는다. sherpa-onnx 가 자기 onnxruntime 을 따로 싣는 것과 불러오는 순서가 엮일 수 있어 그대로 둔다(261124, 확인 필요)
 import soundfile as sf
 from .modules.speech.mtts import (
     load_text_to_speech,

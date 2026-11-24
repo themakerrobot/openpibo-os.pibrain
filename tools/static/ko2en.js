@@ -20,7 +20,6 @@ const T = {
   tab_lcd:           { ko: "화면",              en: "Screen" },
 
   /* ── Buttons tab ─────────────────────────────────────────── */
-  button_status:     { ko: "버튼 상태 (실시간)", en: "Button status (live)" },
   event_waiting:     { ko: "버튼을 기다리는 중…", en: "Waiting for a button press…" },
   btn_pressed:       {
     ko: (n) => `버튼 ${n} 눌림`,
@@ -78,7 +77,6 @@ const T = {
   tts_stopped:       { ko: "멈췄어요", en: "Stopped" },
 
   /* ── Screen tab (LCD) ─────────────────────────────────────────────── */
-  lcd_preview_title: { ko: "화면 미리보기 (240×320)", en: "Screen preview (240×320)" },
   lcd_text_title:    { ko: "글자 출력", en: "Text output" },
   lcd_text_label:    { ko: "출력할 글자 (Enter로 줄바꿈)", en: "Text to show (Enter for a new line)" },
   lcd_ph:            { ko: "화면에 보일 글자를 적어 보세요", en: "Type the text to show" },
@@ -92,15 +90,15 @@ const T = {
   lcd_sending:       { ko: "보내는 중…", en: "Sending…" },
   lcd_done:          { ko: "화면에 보냈어요", en: "Sent" },
   lcd_clearing:      { ko: "지우는 중…", en: "Clearing…" },
-  lcd_cleared:       { ko: "화면을 지웠어요", en: "Cleared" },
+  lcd_cleared:       { ko: "화면을 지웠어요.", en: "Screen cleared." },
   system_title:      { ko: "시스템",               en: "System" },
   lcd_reset_desc:    {
-    ko: "IP 주소가 보이는 처음 화면으로 되돌려요.<br>카메라가 꺼져 있을 때만 돼요.",
-    en: "Returns the screen to its home view (IP address).<br>Only works when the camera is off."
+    ko: "로봇 화면을 IP 주소가 보이는 처음 화면으로 되돌려요.<br>카메라가 꺼져 있을 때만 돼요.",
+    en: "Returns the robot screen to the IP address view.<br>Only works when the camera is off."
   },
-  lcd_reset_btn:     { ko: "처음 화면으로", en: "Home screen" },
-  lcd_resetting:     { ko: "처음 화면으로 되돌리는 중…", en: "Restoring the home screen…" },
-  lcd_reset_done:    { ko: "처음 화면으로 되돌렸어요", en: "Home screen restored" },
+  lcd_reset_btn:     { ko: "로봇 화면 처음으로", en: "Reset robot screen" },   // 대문 [설정]과 같은 이름 — 상단바 [처음 화면](대문)과 헷갈리지 않게(261124)
+  lcd_resetting:     { ko: "로봇 화면을 되돌리는 중…", en: "Resetting the robot screen…" },
+  lcd_reset_done:    { ko: "로봇 화면을 되돌렸어요.", en: "Robot screen reset." },
 
   // 260930 — 목소리 이름(전엔 k0~k9). 파이보 도구·IDE 블록과 같은 이름
   voice_m1: { ko: "남성 1", en: "Male 1" },

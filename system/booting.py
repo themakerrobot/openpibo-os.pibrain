@@ -7,8 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 
 from threading import Timer
-from collections import Counter
-import json,time,os,shutil,subprocess,asyncio
+import json,time,os,subprocess,asyncio
 import wifi
 import netwatch
 import network_disp
@@ -43,9 +42,8 @@ async def read_root(request: Request):
 async def f():
   return JSONResponse(content=wifi.wifi_scan(), status_code=200)
 
-@app.get('/wifi')
-async def f():
-  return JSONResponse(content={'result':'ok', 'ssid':winfo[2], 'psk':winfo[3], 'ipaddress':winfo[0], 'eth1': winfo[1], 'identity':winfo[4], 'key-mgmt':winfo[5]}, status_code=200)
+# GET /wifi(저장된 SSID·비밀번호를 돌려주던 것)는 261124 에 지웠다 — 부르는 화면이 없었고(예전 IDE WiFi 창),
+# 8080 은 로그인 없이 받아 같은 공유기에 붙은 누구나 비밀번호를 읽을 수 있었다
 
 CONWIFI = '/home/pi/openpibo-os/system/conwifi.sh'
 
@@ -113,7 +111,8 @@ def wifi_update():
     nw.step(has_ip)
     apmode = nw.apmode
     if winfo != tmp[6:12]:
-      print(f'Network Change {winfo} -> {tmp[6:12]}')
+      _hide = lambda w: [x if i != 3 else ('***' if x else '') for i, x in enumerate(w)]   # 비밀번호(3번 칸)는 로그에 남기지 않는다(261124)
+      print(f'Network Change {_hide(winfo)} -> {_hide(tmp[6:12])}')
       network_disp.run()
     winfo = tmp[6:12]
   except Exception as ex:

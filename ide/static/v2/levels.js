@@ -379,7 +379,7 @@
     return orig.call(this, tree);
   };
 
-  /* ── [더보기] 의 '블록 수준' ───────────────────────────────────────── */
+  /* ── 블록 수준 [쉬움 | 전체] (편집기 줄) ─────────────────────────────── */
   function tr(k) { return (typeof t === 'function') ? t(k) : k; }
   function setLevel(lv) {
     if (lv !== 'easy' && lv !== 'all') return;

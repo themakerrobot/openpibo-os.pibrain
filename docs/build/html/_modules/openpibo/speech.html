@@ -356,14 +356,13 @@
 <span class="sd">:obj:`~openpibo.speech.Dialog`</span>
 <span class="sd">"""</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">onnxruntime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ort</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">onnxruntime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ort</span>  <span class="c1"># noqa: F401 — 직접 쓰지 않는다. sherpa-onnx 가 자기 onnxruntime 을 따로 싣는 것과 불러오는 순서가 엮일 수 있어 그대로 둔다(261124, 확인 필요)</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">soundfile</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sf</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.modules.speech.mtts</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">load_text_to_speech</span><span class="p">,</span>

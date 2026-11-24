@@ -57,16 +57,6 @@ Blockly.Python.forBlock['audio_stop'] = function(block) {
 
   return 'audio.stop()\n'
 }
-// Blockly.Python.forBlock['audio_record'] = function(block) {
-//   Blockly.Python.definitions_['from_audio_import_Audio'] = 'from openpibo.audio import Audio';
-//   Blockly.Python.definitions_['assign_audio'] = 'audio = Audio()';
-
-//   const dir = block.getFieldValue("dir");
-//   const filename = Blockly.Python.valueToCode(block, 'filename', Blockly.Python.ORDER_ATOMIC);
-//   const extension = block.getFieldValue("extension");
-//   const timeout = Blockly.Python.valueToCode(block, 'timeout', Blockly.Python.ORDER_ATOMIC);
-//   return `audio.record('${dir}'+${filename}+'${extension}', ${timeout}, False)\n`;
-// }
 
 // collect
 Blockly.Python.forBlock['wikipedia_search'] = function(block) {
@@ -103,58 +93,6 @@ Blockly.Python.forBlock['news_search'] = function(block) {
 }
 
 // device
-// Blockly.Python.forBlock['device_eye_on'] = function(block) {
-//   Blockly.Python.definitions_['from_device_import_Device'] = 'from openpibo.device import Device';
-//   Blockly.Python.definitions_['assign_device'] = 'device = Device()';
-  
-//   const val0 = Blockly.Python.valueToCode(block, 'val0', Blockly.Python.ORDER_ATOMIC);
-//   const val1 = Blockly.Python.valueToCode(block, 'val1', Blockly.Python.ORDER_ATOMIC);
-//   const val2 = Blockly.Python.valueToCode(block, 'val2', Blockly.Python.ORDER_ATOMIC);
-//   const val3 = Blockly.Python.valueToCode(block, 'val3', Blockly.Python.ORDER_ATOMIC);
-//   const val4 = Blockly.Python.valueToCode(block, 'val4', Blockly.Python.ORDER_ATOMIC);
-//   const val5 = Blockly.Python.valueToCode(block, 'val5', Blockly.Python.ORDER_ATOMIC);
-
-//   return `device.eye_on(${val0}, ${val1}, ${val2}, ${val3}, ${val4}, ${val5})\n`
-// }
-// Blockly.Python.forBlock['device_eye_colour_on'] = function(block) {
-//   Blockly.Python.definitions_['from_device_import_Device'] = 'from openpibo.device import Device';
-//   Blockly.Python.definitions_['assign_device'] = 'device = Device()';
-
-//   const l = Blockly.Python.valueToCode(block, 'left', Blockly.Python.ORDER_ATOMIC);
-//   const r = Blockly.Python.valueToCode(block, 'right', Blockly.Python.ORDER_ATOMIC);
-
-//   return `device.eye_on_s([${l}, ${r}])\n`
-// }
-// Blockly.Python.forBlock['device_get_dc'] = function(block) {
-//   Blockly.Python.definitions_['from_device_import_Device'] = 'from openpibo.device import Device';
-//   Blockly.Python.definitions_['assign_device'] = 'device = Device()';
-//   return ["device.get_dc(True)", Blockly.Python.ORDER_ATOMIC];
-// }
-// Blockly.Python.forBlock['device_get_battery'] = function(block) {
-//   Blockly.Python.definitions_['from_device_import_Device'] = 'from openpibo.device import Device';
-//   Blockly.Python.definitions_['assign_device'] = 'device = Device()';
-//   return ["device.get_battery(True)", Blockly.Python.ORDER_ATOMIC];
-// }
-// Blockly.Python.forBlock['device_get_system'] = function(block) {
-//   Blockly.Python.definitions_['from_device_import_Device'] = 'from openpibo.device import Device';
-//   Blockly.Python.definitions_['assign_device'] = 'device = Device()';
-//   return ["device.get_system(True)", Blockly.Python.ORDER_ATOMIC];
-// }
-// Blockly.Python.forBlock['device_get_pir'] = function(block) {
-//   Blockly.Python.definitions_['from_device_import_Device'] = 'from openpibo.device import Device';
-//   Blockly.Python.definitions_['assign_device'] = 'device = Device()';
-//   return ["device.get_pir()", Blockly.Python.ORDER_ATOMIC];
-// }
-// Blockly.Python.forBlock['device_get_touch'] = function(block) {
-//   Blockly.Python.definitions_['from_device_import_Device'] = 'from openpibo.device import Device';
-//   Blockly.Python.definitions_['assign_device'] = 'device = Device()';
-//   return ["device.get_touch()", Blockly.Python.ORDER_ATOMIC];
-// }
-// Blockly.Python.forBlock['device_get_button'] = function(block) {
-//   Blockly.Python.definitions_['from_device_import_Device'] = 'from openpibo.device import Device';
-//   Blockly.Python.definitions_['assign_device'] = 'device = Device()';
-//   return ["device.get_button()", Blockly.Python.ORDER_ATOMIC];
-// }
 Blockly.Python.forBlock['device_pibrain_button'] = function(block) {
   Blockly.Python.definitions_['from_device_import_DeviceByPiBrain'] = 'from openpibo.device import DeviceByPiBrain as Device';
   Blockly.Python.definitions_['assign_device'] = 'device = Device()';
@@ -209,80 +147,6 @@ Blockly.Python.forBlock['device_pibrain_uart_close'] = function(block) {
 }
 
 // motion
-// Blockly.Python.forBlock['motion_get_motion'] = function(block) {
-//   Blockly.Python.definitions_['from_motion_import_Motion'] = 'from openpibo.motion import Motion';
-//   Blockly.Python.definitions_['assgin_motion'] = 'motion = Motion()';
-
-//   return ["motion.get_motion()", Blockly.Python.ORDER_ATOMIC];
-// }
-// Blockly.Python.forBlock['motion_get_mymotion'] = function(block) {
-//   Blockly.Python.definitions_['from_motion_import_Motion'] = 'from openpibo.motion import Motion';
-//   Blockly.Python.definitions_['assgin_motion'] = 'motion = Motion()';
-
-//   return ["motion.get_motion(path='/home/pi/mymotion.json')", Blockly.Python.ORDER_ATOMIC];
-// }
-// Blockly.Python.forBlock['motion_set_motion_dropdown'] = function(block) {
-//   Blockly.Python.definitions_['from_motion_import_Motion'] = 'from openpibo.motion import Motion';
-//   Blockly.Python.definitions_['assgin_motion'] = 'motion = Motion()';
-
-//   const name = block.getFieldValue("name");
-//   const cycle = Blockly.Python.valueToCode(block, 'cycle', Blockly.Python.ORDER_ATOMIC);
-//   return `motion.set_motion('${name}', ${cycle})\n`;
-// }
-// Blockly.Python.forBlock['motion_set_motion'] = function(block) {
-//   Blockly.Python.definitions_['from_motion_import_Motion'] = 'from openpibo.motion import Motion';
-//   Blockly.Python.definitions_['assgin_motion'] = 'motion = Motion()';
-
-//   const name = Blockly.Python.valueToCode(block, 'name', Blockly.Python.ORDER_ATOMIC);
-//   const cycle = Blockly.Python.valueToCode(block, 'cycle', Blockly.Python.ORDER_ATOMIC);
-//   return `motion.set_motion(${name}, ${cycle})\n`;
-// }
-// Blockly.Python.forBlock['motion_set_mymotion'] = function(block) {
-//   Blockly.Python.definitions_['from_motion_import_Motion'] = 'from openpibo.motion import Motion';
-//   Blockly.Python.definitions_['assgin_motion'] = 'motion = Motion()';
-
-//   const name = Blockly.Python.valueToCode(block, 'name', Blockly.Python.ORDER_ATOMIC);
-//   const cycle = Blockly.Python.valueToCode(block, 'cycle', Blockly.Python.ORDER_ATOMIC);
-//   return `motion.set_mymotion(${name}, ${cycle})\n`;
-// }
-// Blockly.Python.forBlock['motion_init_motion'] = function(block) {
-//   Blockly.Python.definitions_['from_motion_import_Motion'] = 'from openpibo.motion import Motion';
-//   Blockly.Python.definitions_['assgin_motion'] = 'motion = Motion()';
-
-//   return `motion.set_motors([0,0,-80,0,0,0,0,0,80,0], 500)\n`;
-// }
-// Blockly.Python.forBlock['motion_set_motor'] = function(block) {
-//   Blockly.Python.definitions_['from_motion_import_Motion'] = 'from openpibo.motion import Motion';
-//   Blockly.Python.definitions_['assgin_motion'] = 'motion = Motion()';
-
-//   const no = block.getFieldValue("no");
-//   const pos = Blockly.Python.valueToCode(block, 'pos', Blockly.Python.ORDER_ATOMIC);
-//   return `motion.set_motor(${no}, ${pos})\n`;
-// }
-// Blockly.Python.forBlock['motion_set_speed'] = function(block) {
-//   Blockly.Python.definitions_['from_motion_import_Motion'] = 'from openpibo.motion import Motion';
-//   Blockly.Python.definitions_['assgin_motion'] = 'motion = Motion()';
-
-//   const no = block.getFieldValue("no");
-//   const val = Blockly.Python.valueToCode(block, 'val', Blockly.Python.ORDER_ATOMIC);
-//   return `motion.set_speed(${no}, ${val})\n`;
-// }
-// Blockly.Python.forBlock['motion_set_acceleration'] = function(block) {
-//   Blockly.Python.definitions_['from_motion_import_Motion'] = 'from openpibo.motion import Motion';
-//   Blockly.Python.definitions_['assgin_motion'] = 'motion = Motion()';
-
-//   const no = block.getFieldValue("no");
-//   const val = Blockly.Python.valueToCode(block, 'val', Blockly.Python.ORDER_ATOMIC);
-//   return `motion.set_acceleration(${no}, ${val})\n`;
-// }
-// Blockly.Python.forBlock['motion_set_motors'] = function(block) {
-//   Blockly.Python.definitions_['from_motion_import_Motion'] = 'from openpibo.motion import Motion';
-//   Blockly.Python.definitions_['assgin_motion'] = 'motion = Motion()';
-
-//   const val_list = Blockly.Python.valueToCode(block, 'val_list', Blockly.Python.ORDER_ATOMIC);
-//   const time = Blockly.Python.valueToCode(block, 'time', Blockly.Python.ORDER_ATOMIC);
-//   return `motion.set_motors(${val_list}, ${time})\n`;
-// }
 
 // oled
 Blockly.Python.forBlock['oled_set_font'] = function(block) {
@@ -378,13 +242,6 @@ Blockly.Python.forBlock['oled_clear'] = function(block) {
 
 // speech
 // speech_stt — 마이크가 없어 막아 둔다(260930). 마이크를 달면 주석을 걷어내고 툴박스도 같이 풀 것
-// Blockly.Python.forBlock['speech_stt'] = function(block) {
-//   Blockly.Python.definitions_['from_speech_import_Speech'] = 'from openpibo.speech import Speech';
-//   Blockly.Python.definitions_['assign_speech'] = 'speech = Speech()';
-//
-//   const timeout = Blockly.Python.valueToCode(block, 'timeout', Blockly.Python.ORDER_ATOMIC);
-//   return [`speech.stt(timeout=${timeout}, verbose=False)`, Blockly.Python.ORDER_ATOMIC];
-// }
 // 말하기 블록(261102): 목소리가 espeak 면 Speech.tts(espeak), 아니면 SpeechOnDevice.
 // 예전 speech_otts*·speech_etts* 는 불러올 때 이 두 블록으로 바뀐다(이 파일 끝)
 function ttsDefs(voice, play) {
@@ -799,13 +656,6 @@ Blockly.Python.forBlock['vision_analyze_pose'] = function(block) {
   }
   return [res, Blockly.Python.ORDER_ATOMIC];
 }
-// Blockly.Python.forBlock['vision_classification'] = function(block) {
-//   Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_detect import Detect';
-//   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';
-
-//   const img = Blockly.Python.valueToCode(block, 'img', Blockly.Python.ORDER_ATOMIC);
-//   return [`[ item['name'] for item in detect.classify_image(${img})]`, Blockly.Python.ORDER_ATOMIC];
-// }
 Blockly.Python.forBlock['vision_marker_detect'] = function(block) {
   Blockly.Python.definitions_['from_vision_import_Detect'] = 'from openpibo.vision_detect import Detect';
   Blockly.Python.definitions_['assign_detect'] = 'detect = Detect()';

@@ -396,7 +396,6 @@
   });
 
   /* ── 머리줄 ───────────────────────────────────────────────────────── */
-  $('logo_bt').addEventListener('click', function () { location.href = 'http://' + location.hostname; });
   // 탭을 닫으면 대화 서비스와 llama-server 를 끈다. keepalive 가 없으면 브라우저가 언로드 중 요청을 취소한다
   window.addEventListener('beforeunload', function () {
     fetch('http://' + location.hostname + '/llm?enable=off', { method: 'GET', keepalive: true })

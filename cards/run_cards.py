@@ -62,7 +62,6 @@ MAX_CARDS = 20            # 한 줄에 놓을 수 있는 카드(반복 안의 �
 MAX_TRICKS = 24           # 한 아이가 저장할 수 있는 재주
 TRICK_DEPTH = 3           # 재주 안의 재주 안의 재주까지
 MAX_ACTIONS = 300         # 재주·반복을 다 펼쳤을 때 한 번에 하는 일(너무 오래 도는 것 막기)
-ROSTER_MAX = 40
 ONLY = '1'                # 저장 한 벌(프로필 '1')
 BOX = ('repeat', 'if')    # 안에 카드를 넣는 카드
 FREE_MAX = 20             # 내가 쓴 말·글자 카드의 글자 수
@@ -100,7 +99,7 @@ def write_json(rel, data):
   os.replace(tmp, full)
 
 
-DEFAULT_SETTINGS = {'lesson': 0, 'roster': 4, 'volume': 60, 'voice': 'f1'}
+DEFAULT_SETTINGS = {'lesson': 0, 'volume': 60, 'voice': 'f1'}
 settings = dict(DEFAULT_SETTINGS)
 profiles = {}             # {'7': {'icon': 'fa-cat', 'made': 시각}}
 
@@ -160,7 +159,7 @@ def content_for_device():
     'phrases': {k: {lang: fmt(v[lang], lang) for lang in ('ko', 'en')} for k, v in CONTENT['phrases'].items()},
     'guides': {k: {lang: fmt(v[lang], lang) for lang in ('ko', 'en')} for k, v in CONTENT['guides'].items()},
     'concepts': CONTENT['concepts'], 'lessons': lessons, 'challenges': chs,
-    'trick_icons': CONTENT['trick_icons'], 'profile_icons': CONTENT['profile_icons'],
+    'trick_icons': CONTENT['trick_icons'],
     'max_cards': MAX_CARDS, 'max_tricks': MAX_TRICKS, 'lesson_max': LESSON_MAX,
     'mymotions': mymotions(), 'free_max': FREE_MAX, 'sense_max': SENSE_MAX, 'if_wait': IF_WAIT,
   }
@@ -665,28 +664,6 @@ async def api_state():
   return state()
 
 
-@app.post('/api/profile')
-async def api_profile(body: dict = Body(...)):
-  """번호를 고른다. 처음 고르는 번호면 그림(icon)도 같이 받아 만든다. id 가 null 이면 나가기"""
-  if run['running']:
-    return bad('busy', 409)
-  pid = body.get('id')
-  if pid is None:                    # 저장 한 벌 — 나가기가 없다
-    ensure_only()
-    return state()
-  pid = str(pid)
-  if not pid.isdigit() or not 1 <= int(pid) <= settings['roster']:
-    return bad('bad profile')
-  if pid not in profiles:
-    icon = body.get('icon')
-    if icon not in CONTENT['profile_icons']:
-      return bad('need icon')
-    profiles[pid] = {'icon': icon, 'made': int(time.time())}
-    write_json('profiles.json', profiles)
-  load_profile(pid)
-  return state()
-
-
 def need_profile():
   return None if cur['id'] else bad('no profile', 409)
 
@@ -929,8 +906,6 @@ async def api_settings(body: dict = Body(...)):
   try:
     if 'lesson' in s:
       settings['lesson'] = max(0, min(LESSON_MAX, int(s['lesson'])))     # 0 = 자유(지금까지 차시 전부)
-    if 'roster' in s:
-      settings['roster'] = max(1, min(ROSTER_MAX, int(s['roster'])))
     if 'volume' in s:
       settings['volume'] = robot.volume = max(0, min(100, int(s['volume'])))
   except (TypeError, ValueError):

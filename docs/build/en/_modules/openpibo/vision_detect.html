@@ -807,12 +807,6 @@
         <span class="n">cY</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">topLeft</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">bottomRight</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
         <span class="n">distance</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">tvec</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c1">#[cm]</span>
 
-        <span class="c1"># cv2.line(img, topLeft, topRight, (255, 0, 0), 4)</span>
-        <span class="c1"># cv2.line(img, topRight, bottomRight, (255, 0, 0), 4)</span>
-        <span class="c1"># cv2.line(img, bottomRight, bottomLeft, (255, 0, 0), 4)</span>
-        <span class="c1"># cv2.line(img, bottomLeft, topLeft, (255, 0, 0), 4)</span>
-        <span class="c1"># cv2.circle(img, (cX, cY), 4, (0, 0, 255), -1)</span>
-        <span class="c1"># putTextPIL(img, str(markerID), (topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)</span>
         <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"id"</span><span class="p">:</span><span class="n">markerID</span><span class="p">,</span> <span class="s2">"center"</span><span class="p">:</span> <span class="p">(</span><span class="n">cX</span><span class="p">,</span> <span class="n">cY</span><span class="p">),</span> <span class="s2">"box"</span><span class="p">:</span> <span class="p">[</span><span class="n">topLeft</span><span class="p">,</span> <span class="n">topRight</span><span class="p">,</span> <span class="n">bottomRight</span><span class="p">,</span> <span class="n">bottomLeft</span><span class="p">],</span> <span class="s2">"distance"</span><span class="p">:</span><span class="n">distance</span><span class="p">})</span>
 
     <span class="k">return</span> <span class="n">res</span></div>

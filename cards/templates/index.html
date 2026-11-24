@@ -9,11 +9,11 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
   <link rel="stylesheet" href="../static/pibo-ui.css?ver=261124v1" />
-  <link rel="stylesheet" href="../static/cards.css?ver=261124v2" />
+  <link rel="stylesheet" href="../static/cards.css?ver=261124v4" />
   <link rel="shortcut icon" href="../static/icon.png?ver=261123v1" type="image/png" />
   <!-- 문구는 IDE 의 ko2en.js 를 같이 쓴다(kids_* 키, 영문판 델타를 늘리지 않으려고). IDE(80)는 늘 떠 있다 -->
   <script>(function () { var p = new URLSearchParams(location.search).get('ide') || 80;   /* ?ide= 는 시험용 */
-    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261124v1"><\/script>');
+    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261124v2"><\/script>');
     /* 처음 화면 그림 — 대문과 같은 파이보 캐릭터 장면(IDE 의 pibo-art.js, 261123). 못 받으면 Font Awesome 기호 */
     document.write('<script src="http://' + location.hostname + ':' + p + '/static/v2/pibo-art.js?ver=261123v5"><\/script>'); })();</script>
 </head>
@@ -26,7 +26,6 @@
   <header class="pb-header">
     <span class="pb-header__brand"><i class="fa-solid fa-robot" id="brand_icon"></i><b id="brand_name">piBo</b><span class="pb-header__app" id="app_title"></span></span>
     <div class="pb-iconbar">
-      <button type="button" class="pb-iconbtn kids-whobt" id="who_bt" data-title-key="kids_switch" hidden><i class="fa-solid fa-user" id="who_icon"></i><span class="pb-iconbtn__label" id="who_no"></span></button>
       <button type="button" class="pb-iconbtn" id="start_bt" hidden><i class="fa-solid fa-shapes"></i><span class="pb-iconbtn__label" id="start_label"></span></button>
       <!-- 설정(차시·목소리·소리 크기·기록·처음부터 하기). 잠금 없이 누구나 연다(261124, 사용자). 앱 동작이라 [처음 화면] 왼쪽(상단바 규칙 — AUDIT.md B2) -->
       <button type="button" class="pb-iconbtn" id="set_bt"><i class="fa-solid fa-gear"></i><span class="pb-iconbtn__label" data-key="kids_settings"></span></button>
@@ -37,12 +36,6 @@
   </header>
 
   <main class="kids-main">
-    <!-- 번호 고르기 -->
-    <section class="kids-view" id="v_who" hidden>
-      <h1 class="kids-h1" data-key="kids_who_title"></h1>
-      <div class="kids-whogrid" id="who_grid"></div>
-    </section>
-
     <!-- 처음 — 도전 · 만들기 · 내 재주. cards.js 가 그린다 -->
     <section class="kids-view" id="v_home" hidden>
       <div class="kids-home" id="home_grid"></div>
@@ -101,14 +94,6 @@
 
   </main>
 
-  <!-- 처음 고르는 번호: 내 그림 -->
-  <div class="kids-modal" id="dlg_icon" hidden>
-    <div class="kids-modal__box kids-iconpick">
-      <h2 class="pb-title"><span data-key="kids_icon_title"></span> <b id="icon_no"></b></h2>
-      <div class="kids-picks" id="icon_grid"></div>
-      <div class="kids-modal__btns"><button type="button" class="kids-btn" data-close><span data-key="kids_cancel"></span></button></div>
-    </div>
-  </div>
 
   <!-- 재주로 저장 -->
   <div class="kids-modal" id="dlg_save" hidden>
@@ -202,6 +187,6 @@
 
   <script src="../static/pibo-ui.js?ver=261124v1"></script>
   <script src="../static/pet.js?ver=261123v1"></script>   <!-- 도전 결과 그림(로봇 놀이 키우기 친구와 같은 그림) -->
-  <script src="../static/cards.js?ver=261124v1"></script>
+  <script src="../static/cards.js?ver=261124v2"></script>
 </body>
 </html>

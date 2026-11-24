@@ -956,7 +956,6 @@ language.addEventListener('change', () => { setLanguage(language.value); renderA
 
 // 전체화면 버튼(#fullscreen_bt)은 pibo-ui.js 가 맡는다(260930)
 
-$('logo_bt').addEventListener('click', () => { location.href = `http://${location.hostname}`; });
 
 // 탭을 닫으면 IDE 에 이 서비스를 끄라고 알린다. keepalive 가 없으면 언로드 중에 취소된다
 window.addEventListener('beforeunload', () => {
