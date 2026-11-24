@@ -120,6 +120,7 @@ body.v2-app a { color: inherit; text-decoration: none; cursor: pointer; }
   align-items: center; gap: 12px;
   height: 48px; min-height: 48px; padding: 0 8px 0 6px;
   background: var(--c-brand); color: var(--c-brand-ink); border-bottom: 1px solid var(--v2-frame-line);   /* 도구·분류기와 같은 아래 선 */
+  position: relative; z-index: 90;   /* 열린 파일 서랍(z 80)의 그림자가 상단바 위로 비치지 않게(261123) */
 }
 .v2-top__left, .v2-top__right { display: flex; align-items: center; gap: 4px; min-width: 0; }
 .v2-top__right { justify-content: flex-end; }
