@@ -45,7 +45,7 @@ html[data-pb-theme="dark"] .pb-topbar__app { border-color: #7fb6cf; color: #b8db
 .pb-topbar__btn:active { background: var(--pb-frame-3); }
 .pb-topbar__btn svg { width: 16px; height: 16px; flex: none; }
 /* 밝기·전체화면(261120): 키트와 같은 버튼. 아이콘은 지금 상태 하나만 */
-.pb-topbar__ide svg, .pb-topbar__fs svg, .pb-topbar__theme svg { width: 18px; height: 15px; }   /* 키트 아이콘(15px, 칸 18px)과 같은 크기 */
+.pb-topbar__home svg, .pb-topbar__fs svg, .pb-topbar__theme svg { width: 18px; height: 15px; }   /* 키트 아이콘(15px, 칸 18px)과 같은 크기 */
 .pb-topbar__theme svg, .pb-topbar__fs .pb-ic-min { display: none; }
 html[data-pb-theme="light"] .pb-topbar__theme .pb-ic-light,
 html[data-pb-theme="soft"] .pb-topbar__theme .pb-ic-soft,

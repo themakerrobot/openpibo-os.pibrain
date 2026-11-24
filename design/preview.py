@@ -12,7 +12,7 @@
   두 개는 fastapi·uvicorn·pillow·numpy 가 있어야 한다(pip install fastapi uvicorn pillow numpy). 없으면 건너뛴다
   - 주소는 localhost 가 아니라 PC 의 IP 로 연다. localhost·127.0.0.1 은 브라우저가 '보안 컨텍스트' 로 봐서
     vendor socket.io 가 죽고(navigator.userAgentData) IDE·도구·분류기 화면이 깨진다. 같은 WiFi 의 태블릿에서도 그 주소로 열린다
-  - IDE 상단바의 [도구][로봇 놀이] 등은 로봇 주소(80번)로 가므로 미리보기에선 안 열린다 — 목록 페이지에서 바로 연다
+  - 대문 카드·[처음 화면] 은 로봇 주소(80번)·대기 페이지로 가므로 미리보기에선 앱이 안 켜진다 — 목록 페이지에서 바로 연다
   - 데이터(아이 번호·재주·키우기)는 임시 폴더에 쌓이고 끄면 지운다. Ctrl+C 로 모두 끈다
 """
 import os

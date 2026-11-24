@@ -2,7 +2,7 @@
 <html lang="ko" data-product="PiBrain">
 <!--
   Tools for PiBrain — 화면 v2 (260924, Pibo IDE v2 와 같은 모양)
-    상단바(노랑)  PiBrain · 도구 | IDE · 전체화면 · 화면 밝기 · 언어(한국어/English) — 파이보 도구·분류기와 같은 순서
+    상단바  PiBrain · 도구 | 처음 화면 · 전체화면 · 화면 밝기 · 언어(한국어/English) — 파이보 도구·분류기와 같은 순서
     2분할(261102) 왼쪽 = PiBrain 그림(LED·버튼·화면 상태, 크게) · 오른쪽 = 탭 줄(버튼 · LED · 카메라 · 음성 · 화면) + 조작 카드
                   카메라 칸·화면 미리보기·버튼 상태 칸은 그림이 대신한다. 900px 이하는 그림이 위
   동작은 index.js(REST/SSE) 그대로다. id·onclick 은 바꾸지 않았다.
@@ -11,9 +11,9 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="shortcut icon" href="/static/icon.png?ver=261102v2" type="image/png"/>
+  <link rel="shortcut icon" href="/static/icon.png?ver=261123v1" type="image/png"/>
   <link rel="stylesheet" href="/static/all.min.css"/>
-  <link rel="stylesheet" href="/static/pibo-ui.css?ver=261123v9"/>
+  <link rel="stylesheet" href="/static/pibo-ui.css?ver=261123v20"/>
   <link rel="stylesheet" href="/static/index.css?ver=261120v2"/>
   <title data-key="title">도구</title>
   <script>/* 화면 밝기를 첫 페인트 전에 (쿠키 pibo_theme, 기본 soft) */
@@ -26,7 +26,7 @@
   <span class="pb-header__brand"><i class="fa-solid fa-brain"></i><b>PiBrain</b><span class="pb-header__app" data-key="title">도구</span>
     <span class="pb-conn" id="conn_chip" data-state="off"></span></span>
   <div class="tl-actions">
-    <button type="button" class="tl-hbtn" id="ide_bt" title="IDE"><i class="fa-solid fa-code"></i><span>IDE</span></button>
+    <button type="button" class="tl-hbtn" id="home_bt" data-pb-home><i class="fa-solid fa-house"></i><span></span></button>
     <button type="button" class="tl-hbtn" id="fullscreen_bt"><i class="fa-solid fa-maximize" data-pb-fs-icon></i><span data-key="nav_fullscreen">전체화면</span></button>
     <button type="button" class="tl-hbtn" id="theme_bt"><i class="fa-solid fa-circle-half-stroke"></i><span id="theme_lbl"></span></button>
     <!-- 언어: 지금 언어를 보여 주는 select(파이보 도구·분류기와 같다). index.js 의 toggleLang 을 그대로 쓰고, 예전 버튼은 숨겨 둔다 -->
@@ -276,9 +276,9 @@
     </div>
   </div>
 </div>
-<script src="/static/ko2en.js?ver=261120v3"></script>
-<script src="/static/pibo-ui.js?ver=261123v10"></script>
-<script src="/static/index.js?ver=261120v3"></script>
+<script src="/static/ko2en.js?ver=261123v20"></script>
+<script src="/static/pibo-ui.js?ver=261123v20"></script>
+<script src="/static/index.js?ver=261123v20"></script>
 <script>/* 언어 select 를 지금 언어에 맞춘다(바꾸는 건 toggleLang → applyLang) */
   (function () { var sel = document.getElementById('lang_sel'); if (!sel) return;
     var sync = function () { sel.value = lang; }; sync();

@@ -181,7 +181,7 @@ async def main():
     # 분류는 표로(261027v4 — 전엔 코드 블록 안 ├── 나무 그림이었다). 안내 상자에는 인터넷이 필요한 분류만 적는다
     if ko:
         L = ['# 블록 코딩', '',
-             f'{PRODUCT} 메이커는 Blockly 기반의 블록 코딩을 지원합니다. 기본 블록 외에 {PRODUCT}{"을" if PRODUCT == "PiBrain" else "를"} 쉽게 쓸 수 있도록',
+             f'{PRODUCT} [코딩]은 Blockly 기반의 블록 코딩을 지원합니다. 기본 블록 외에 {PRODUCT}{"을" if PRODUCT == "PiBrain" else "를"} 쉽게 쓸 수 있도록',
              '**openpibo** 파이썬 패키지와 이어진 블록이 있습니다. 블록 코드는 [파이썬 코드] 버튼으로 파이썬으로 볼 수 있습니다.', '',
              '```{note}', '모든 기능은 **' + PRODUCT + ' 안에서** 돌아가며 인터넷이 필요한 것은 [수집] 분류뿐입니다.', '```', '',
              '## 블록 구성', '']
@@ -189,7 +189,7 @@ async def main():
         head = '| 분류 | 블록 수 |'
     else:
         L = ['# Block coding', '',
-             f'{PRODUCT} Maker uses Blockly for block coding. Besides the standard blocks there are {PRODUCT} blocks that call',
+             f'{PRODUCT} Coding uses Blockly for block coding. Besides the standard blocks there are {PRODUCT} blocks that call',
              'the **openpibo** Python package. The [Python code] button shows the Python code your blocks make.', '',
              '```{note}', 'Everything runs **inside ' + PRODUCT + '**. Only the [Collect] category needs the internet, and it is only in the Korean edition.', '```', '',
              '## Categories', '']

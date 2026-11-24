@@ -1,6 +1,6 @@
-"""대화 웹 (IDE [대화], 50030)
+"""대화 웹 (대문 [대화], 50030)
 
-llama-server(50020) 의 대화 모델과 글자로 이야기하는 웹 화면이다. IDE 가 /llm?enable=on 때 직접 띄운다
+llama-server(50020) 의 대화 모델과 글자로 이야기하는 웹 화면이다. IDE 서버(80)가 /llm?enable=on 때 직접 띄운다
 (H/W 검수처럼 systemd 유닛이 아니다 — 유닛 파일은 리포 밖이라 이미지 작업이 되므로).
 
   브라우저 ── POST /api/chat ──▶ 이 서버 ── /v1/chat/completions (stream) ──▶ llama-server :50020

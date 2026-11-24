@@ -10,7 +10,7 @@ kids/(robot.py · screen.py · sounds/), 저장 폴더(/home/pi/.kids)도 같이
 (카드 코딩 선생님 잠금의 [처음부터 하기]가 p/1 을 통째로 지운다). 목소리·소리 크기는 카드 코딩이 저장한 settings.json 을 읽기만 한다.
 두 앱은 같은 모터·화면·스피커를 쓰므로 한 번에 하나만 뜬다(IDE 가 하나를 켤 때 다른 것을 끈다).
 
-보통은 IDE 가 띄운다(대문 [로봇 놀이] · IDE [로봇 놀이] → /play?enable=on). 손으로 띄울 때:
+보통은 대문 [로봇 놀이] → 대기 페이지 → IDE 서버(80)의 /play?enable=on 이 띄운다. 손으로 띄울 때:
   sudo systemctl stop tools.service classify.service 'llama-server@*'
   sudo /home/pi/.pyenv/bin/python3 play/run_play.py --device pibo      # PiBrain 은 --device pibrain
 기기 없이:  python3 play/run_play.py --fake [--data-dir /tmp/kids]

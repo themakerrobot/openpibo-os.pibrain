@@ -215,7 +215,7 @@ $PY -c "from openpibo.speech import SpeechOnDevice; SpeechOnDevice(); print('tts
 ### H/W 검수
 
 카드를 뜨기 전에 기준 기기를 한 번 통과시킨다.
-IDE → 푸터의 **시리얼번호 클릭** → 검수 페이지(50050).
+대문(`/`) [설정] → **[H/W 검수]** → 검수 페이지(50050). (261123 전엔 IDE 아래 상태 줄의 시리얼 클릭)
 5항목(LCD · 스피커 · 카메라 · LED · 버튼)을 돌리고 인쇄하거나 PDF 로 저장한다.
 파일명은 시리얼로 붙는다.
 

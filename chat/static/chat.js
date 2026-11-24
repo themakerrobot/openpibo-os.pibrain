@@ -381,7 +381,7 @@
         if (++failCount === 3 && window.PiboUI) {
           PiboUI.banner('svc', { text: PiboUI.text('svc_stopped'), kind: 'warn', actions: [
             { label: PiboUI.text('restart'), primary: true, onClick: function () { PiboUI.restartSelf('llm'); } },
-            { label: PiboUI.text('close'), onClick: function () { PiboUI.backToIDE(); } }] });
+            { label: PiboUI.text('close'), onClick: function () { PiboUI.goHome(); } }] });
         }
       });
   }
@@ -396,7 +396,6 @@
   });
 
   /* ── 머리줄 ───────────────────────────────────────────────────────── */
-  $('ide_bt').addEventListener('click', function () { PiboUI.backToIDE(); });
   $('logo_bt').addEventListener('click', function () { location.href = 'http://' + location.hostname; });
   // 탭을 닫으면 대화 서비스와 llama-server 를 끈다. keepalive 가 없으면 브라우저가 언로드 중 요청을 취소한다
   window.addEventListener('beforeunload', function () {

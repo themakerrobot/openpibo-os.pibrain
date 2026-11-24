@@ -612,8 +612,8 @@ window.addEventListener('beforeunload', () => {
   fetch(`http://${location.hostname}/tools?enable=off`, { keepalive: true }).catch(() => {});
 });
 
-/* ── 상단바: IDE · 화면 밝기 (260924 v2) ──────────────────────
-   IDE: 스크립트로 연 탭이면 닫고, 아니면 IDE 로 간다. 둘 다 beforeunload 가 서비스를 끈다.
+/* ── 상단바: 처음 화면 · 화면 밝기 (260924 v2) ──────────────────────
+   처음 화면: 키트(data-pb-home)가 대문(/)으로 보낸다(261123). beforeunload 가 서비스를 끈다.
    밝기: 쿠키 pibo_theme (PiboUI.setTheme). IDE·분류기와 같은 값을 쓴다 */
 const THEMES = ['light', 'soft', 'dark'];   // 키트(pibo-ui.js)·IDE 와 같은 순서
 function syncThemeLabel() {
@@ -623,7 +623,6 @@ function syncThemeLabel() {
   const ic = document.querySelector('#theme_bt > i');
   if (ic) ic.className = 'fa-solid ' + ({ light: 'fa-sun', soft: 'fa-circle-half-stroke', dark: 'fa-moon' }[cur] || 'fa-circle-half-stroke');
 }
-document.getElementById('ide_bt').addEventListener('click', () => PiboUI.backToIDE());
 document.getElementById('theme_bt').addEventListener('click', () => {
   const cur = document.documentElement.getAttribute('data-theme') || 'soft';
   const next = THEMES[(THEMES.indexOf(cur) + 1) % THEMES.length];
@@ -662,7 +661,7 @@ function syncConn() {
         text: PiboUI.text('svc_stopped'), kind: 'warn',
         actions: [
           { label: PiboUI.text('restart'), primary: true, onClick: () => PiboUI.restartSelf('tools') },
-          { label: PiboUI.text('close'), onClick: () => PiboUI.backToIDE() }
+          { label: PiboUI.text('close'), onClick: () => PiboUI.goHome() }
         ]
       });
     }

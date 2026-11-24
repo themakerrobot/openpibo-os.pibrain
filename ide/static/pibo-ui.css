@@ -284,12 +284,12 @@ html[data-theme="dark"] {
 }
 .pb-header__brand > i.fa-robot::before, .pb-header__brand > i.fa-brain::before,
 .v2-brand > i.fa-robot::before, .v2-brand > i.fa-brain::before,
-.v2-stat > i.fa-robot::before, .v2-stat > i.fa-brain::before, i.pb-mark::before {
+i.pb-mark::before {
   content: ""; display: inline-block; width: 1.12em; height: 1.12em; vertical-align: -.2em;
   background-color: currentColor;
   -webkit-mask: var(--pb-mark-pibo) center / contain no-repeat; mask: var(--pb-mark-pibo) center / contain no-repeat;
 }
-.pb-header__brand > i.fa-brain::before, .v2-brand > i.fa-brain::before, .v2-stat > i.fa-brain::before, i.pb-mark--pibrain::before {
+.pb-header__brand > i.fa-brain::before, .v2-brand > i.fa-brain::before, i.pb-mark--pibrain::before {
   -webkit-mask-image: var(--pb-mark-pibrain); mask-image: var(--pb-mark-pibrain);
 }
 /* 앱 이름: "piBo · 도구". 가운데 점은 글자가 아니라 꾸밈이다(읽기 프로그램이 읽지 않게) */
@@ -1760,11 +1760,8 @@ html[data-theme="dark"] {
   --app-settings: #aab3bf; --app-settings-t: #2a2d32;
   --app-guide: #e8bd52; --app-guide-t: #3a311b;
 }
-#tools_bt > i { color: var(--app-tools); }
-#llm_bt > i { color: var(--app-llm); }
-#classifier_bt > i { color: var(--app-classifier); }
-#kids_bt > i, body.kids[data-app="play"] #home_bt > i { color: var(--app-play); }   /* IDE [로봇 놀이] · 로봇 놀이 [놀이 처음] */
-body.kids[data-app="cards"] #home_bt > i { color: var(--app-kids); }                 /* 카드 코딩 [카드 처음] */
-#guide_bt > i { color: var(--app-guide); }
-#ide_bt > i.fa-code { color: var(--app-code); }
+/* 체험 앱 안의 [카드 처음]·[놀이 처음](앱 동작, #start_bt)은 그 앱 색. 상단바의 [처음 화면](#home_bt)은 모든 앱이 같은 글자색(261123 —
+   예전 IDE 상단바의 앱 버튼 색·앱의 [IDE] 코딩 색은 IDE 가 중심이던 시절의 것이라 뺐다) */
+body.kids[data-app="play"] #start_bt > i { color: var(--app-play); }
+body.kids[data-app="cards"] #start_bt > i { color: var(--app-kids); }
 

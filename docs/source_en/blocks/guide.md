@@ -1,6 +1,6 @@
 # Block coding
 
-PiBrain Maker uses Blockly for block coding. Besides the standard blocks there are PiBrain blocks that call
+PiBrain Coding uses Blockly for block coding. Besides the standard blocks there are PiBrain blocks that call
 the **openpibo** Python package. The [Python code] button shows the Python code your blocks make.
 
 ```{note}

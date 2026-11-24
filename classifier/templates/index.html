@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="ko" data-product="PiBrain">
 <head>
-  <title data-key="title">분류기</title>
+  <title data-key="title">AI 가르치기</title>
   <meta charset="UTF-8" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
-  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261123v9" />
+  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261123v20" />
   <link rel="stylesheet" href="../static/index.css?ver=261120v3" />
-  <link rel="shortcut icon" href="../static/icon.png?ver=261102v2" type="image/png" />
+  <link rel="shortcut icon" href="../static/icon.png?ver=261123v1" type="image/png" />
 
   <script src="../static/socket.io.min.js"></script>
   <script src="../static/vendor/tfjs/tf.min.js"></script>
-  <script src="../static/ko2en.js?ver=261120v4"></script>
+  <script src="../static/ko2en.js?ver=261123v20"></script>
 </head>
 
 <body class="pb pb-shell pb-refresh pb-v2" data-tab="learn">
@@ -28,7 +28,7 @@
       <button type="button" data-tab="store" role="tab"><i class="fa-solid fa-box-archive"></i><span data-key="tab_store"></span></button>
     </div>
     <div class="pb-iconbar">
-      <button type="button" class="pb-iconbtn" id="ide_bt" title="IDE"><i class="fa-solid fa-code"></i><span class="pb-iconbtn__label">IDE</span></button>
+      <button type="button" class="pb-iconbtn" id="home_bt" data-pb-home><i class="fa-solid fa-house"></i><span class="pb-iconbtn__label"></span></button>
       <a class="pb-iconbtn" id="fullscreen_bt" data-title-key="nav_fullscreen"><span id="fullscreen_txt"></span><span class="pb-iconbtn__label" data-key="nav_fullscreen"></span></a>
       <select class="pb-field pb-field--sm" id="language" aria-label="Language" data-aria-key="language">
         <option value="ko">한국어</option>
@@ -165,7 +165,7 @@
   </div>
 
 
-  <script src="../static/pibo-ui.js?ver=261123v10"></script>
-  <script type="module" src="../static/app.js?ver=261120v5"></script>
+  <script src="../static/pibo-ui.js?ver=261123v20"></script>
+  <script type="module" src="../static/app.js?ver=261123v20"></script>
 </body>
 </html>

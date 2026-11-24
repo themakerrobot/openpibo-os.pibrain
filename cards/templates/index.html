@@ -7,12 +7,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
-  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261123v9" />
+  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261123v20" />
   <link rel="stylesheet" href="../static/cards.css?ver=261123v2" />
-  <link rel="shortcut icon" href="../static/icon.png?ver=261102v2" type="image/png" />
+  <link rel="shortcut icon" href="../static/icon.png?ver=261123v1" type="image/png" />
   <!-- 문구는 IDE 의 ko2en.js 를 같이 쓴다(kids_* 키, 영문판 델타를 늘리지 않으려고). IDE(80)는 늘 떠 있다 -->
   <script>(function () { var p = new URLSearchParams(location.search).get('ide') || 80;   /* ?ide= 는 시험용 */
-    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261123v9"><\/script>');
+    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261123v20"><\/script>');
     /* 처음 화면 그림 — 대문과 같은 파이보 캐릭터 장면(IDE 의 pibo-art.js, 261123). 못 받으면 Font Awesome 기호 */
     document.write('<script src="http://' + location.hostname + ':' + p + '/static/v2/pibo-art.js?ver=261123v5"><\/script>'); })();</script>
 </head>
@@ -26,10 +26,10 @@
     <span class="pb-header__brand"><i class="fa-solid fa-robot" id="brand_icon"></i><b id="brand_name">piBo</b><span class="pb-header__app" id="app_title"></span></span>
     <div class="pb-iconbar">
       <button type="button" class="pb-iconbtn kids-whobt" id="who_bt" data-title-key="kids_switch" hidden><i class="fa-solid fa-user" id="who_icon"></i><span class="pb-iconbtn__label" id="who_no"></span></button>
-      <button type="button" class="pb-iconbtn" id="home_bt" hidden><i class="fa-solid fa-shapes"></i><span class="pb-iconbtn__label" id="home_label"></span></button>
+      <button type="button" class="pb-iconbtn" id="start_bt" hidden><i class="fa-solid fa-shapes"></i><span class="pb-iconbtn__label" id="start_label"></span></button>
       <!-- 선생님 잠금: 3초 길게 누르기 → 숫자 4개. 앱 동작이라 IDE 왼쪽(상단바 규칙 — AUDIT.md B2) -->
       <button type="button" class="pb-iconbtn kids-lockbt" id="lock_bt" data-title-key="kids_teacher_hold"><i class="fa-solid fa-lock"></i><svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="16"/></svg></button>
-      <button type="button" class="pb-iconbtn" id="ide_bt" title="IDE"><i class="fa-solid fa-code"></i><span class="pb-iconbtn__label">IDE</span></button>
+      <button type="button" class="pb-iconbtn" id="home_bt" data-pb-home><i class="fa-solid fa-house"></i><span class="pb-iconbtn__label"></span></button>
       <a class="pb-iconbtn" id="fullscreen_bt" data-title-key="kids_fullscreen"><span id="fullscreen_txt"></span><span class="pb-iconbtn__label" data-key="kids_fullscreen"></span></a>
       <select class="pb-field pb-field--sm" id="language" aria-label="Language"><option value="ko">한국어</option><option value="en">English</option></select>
     </div>
@@ -191,7 +191,7 @@
       <div class="kids-teacher__more">
         <button type="button" class="kids-btn" id="t_report"><i class="fa-solid fa-table-cells"></i><span data-key="kids_t_report"></span></button>
         <button type="button" class="kids-btn kids-btn--danger" id="t_reset_all"><i class="fa-solid fa-trash-can"></i><span data-key="kids_t_reset_all"></span></button>
-        <a class="kids-btn" id="t_ide"><i class="fa-solid fa-code"></i><span>IDE</span></a>
+        <a class="kids-btn" id="t_code"><i class="fa-solid fa-code"></i><span data-key="home_code"></span></a>
       </div>
       <div class="kids-modal__btns">
         <button type="button" class="kids-btn" id="t_lock"><i class="fa-solid fa-lock"></i><span data-key="kids_t_lock"></span></button>
@@ -213,8 +213,8 @@
   </div>
 
 
-  <script src="../static/pibo-ui.js?ver=261123v10"></script>
+  <script src="../static/pibo-ui.js?ver=261123v20"></script>
   <script src="../static/pet.js?ver=261123v1"></script>   <!-- 도전 결과 그림(로봇 놀이 키우기 친구와 같은 그림) -->
-  <script src="../static/cards.js?ver=261123v7"></script>
+  <script src="../static/cards.js?ver=261123v20"></script>
 </body>
 </html>

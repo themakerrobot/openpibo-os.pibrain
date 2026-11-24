@@ -33,7 +33,7 @@
     if (S.view === 'art' && view !== 'art') leaveArt();
     S.view = view;
     VIEWS.forEach(function (v) { $('v_' + v).hidden = v !== view; });
-    $('home_bt').hidden = view === 'home';
+    $('start_bt').hidden = view === 'home';
     if (view === 'home') renderHome();
     if (view === 'pet') enterPet();
     if (view === 'drive') enterDrive();
@@ -41,7 +41,7 @@
     window.scrollTo(0, 0);
   }
   each('[data-go]', function (b) { b.addEventListener('click', function () { show(b.getAttribute('data-go')); }); });
-  $('home_bt').addEventListener('click', function () { show('home'); });
+  $('start_bt').addEventListener('click', function () { show('home'); });
 
   /* ── 처음 — 키우기 + (파이보 조종하기 / PiBrain 픽셀 그림). 대문과 같은 활동지 카드 ── */
   function homeItems() {
@@ -630,7 +630,7 @@
     var name = tr('kids_title');
     $('app_title').textContent = name;
     document.title = name + ' · ' + (document.documentElement.getAttribute('data-product') || 'piBo');
-    $('home_label').textContent = tr('kids_home');
+    $('start_label').textContent = tr('kids_home');
     if (!C) return;
     $('pet_acts').innerHTML = ''; $('pet_stats').innerHTML = '';
     if (S.view === 'pet') { renderPetStatic(); if (S.pet) applyPet(S.pet, true); }
@@ -667,7 +667,6 @@
   }
   /* IDE 와 연결 — [IDE] 는 이 탭을 닫거나 IDE(대문)로 간다. 탭이 닫히면 IDE 가 로봇 놀이를 끈다(keepalive 가 있어야 언로드 중에도 간다).
      손으로 띄운 경우(IDE 없이 시험)엔 /play 가 없어 실패해도 상관없다 */
-  $('ide_bt').addEventListener('click', function () { PiboUI.backToIDE(); });
   window.addEventListener('beforeunload', function (e) {
     try { fetch('http://' + location.hostname + '/play?enable=off', { method: 'GET', keepalive: true }).catch(function () {}); } catch (x) { /* 무시 */ }
     var url = S.view === 'pet' ? '/api/pet/mode' : S.view === 'art' ? '/api/art/mode' : null;

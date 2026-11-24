@@ -211,6 +211,34 @@ html[data-theme="dark"] .home-li:hover { background: rgba(255, 255, 255, .06); }
 .home-set__row--red .home-set__ic { color: var(--pen-red); }
 .home-set__row--red[data-armed] { background: var(--v2-red-t); border-color: var(--pen-red); }
 .home-set__row--red[data-armed] small { color: var(--v2-red-ink); }
+.home-set__row--link { margin-top: 16px; text-decoration: none; }
+.home-set__row--link > i:last-child { color: var(--v2-ink-3); font-size: 13px; }
+
+/* WiFi 설정 창(261123 — 대문 안에서). 목록 · 직접 입력 · 연결은 두 번 누르기 */
+.home-set__lbl { display: flex; align-items: center; gap: 8px; }
+.home-wifi__re { margin-left: auto; width: 30px; height: 30px; border: 1px solid var(--v2-line); border-radius: 8px; background: var(--v2-surface); color: var(--v2-ink-2); cursor: pointer; }
+.home-wifi__list { list-style: none; margin: 0; padding: 0; border: 1px solid var(--v2-line); border-radius: 8px; max-height: 220px; overflow-y: auto; }
+.home-wifi__list > li + li { border-top: 1px solid var(--v2-line); }
+.home-wifi__net { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; padding: 10px 12px; border: 0; background: transparent;
+  color: var(--v2-ink); font-size: 14px; text-align: left; cursor: pointer; }
+.home-wifi__net:hover { background: var(--v2-hover); }
+.home-wifi__net[aria-current] { background: var(--v2-accent-t); color: var(--v2-accent-ink); }
+.home-wifi__net b { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.home-wifi__net span { flex: none; font-size: 12.5px; color: var(--v2-ink-3); white-space: nowrap; }
+.home-wifi__net span i { margin: 0 2px 0 6px; }
+.home-wifi__note { padding: 12px; font-size: 14px; color: var(--v2-ink-3); }
+.home-wifi__note[data-err] { color: var(--v2-red-ink); }
+.home-wifi__manual { margin: 8px 2px 0; text-align: right; font-size: 13px; }
+.home-wifi__manual a { color: var(--v2-accent-ink); font-weight: 700; }
+.home-wifi__form { margin-top: 12px; display: flex; flex-direction: column; gap: 10px; }
+.home-wifi__form[hidden], .home-wifi__form label[hidden] { display: none; }
+.home-wifi__form label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 700; color: var(--v2-ink-2); }
+.home-wifi__form input { height: 40px; padding: 0 12px; border: 1px solid var(--v2-line-2); border-radius: 8px; background: var(--v2-surface); color: var(--v2-ink); font-size: 15px; }
+.home-wifi__form input:read-only { background: var(--v2-sunken); }
+.home-wifi__form input:focus { outline: none; border-color: var(--v2-accent); box-shadow: 0 0 0 3px var(--v2-ring, rgba(31, 95, 122, .2)); }
+.home-wifi__msg { margin: 0; min-height: 1.4em; font-size: 13.5px; line-height: 1.5; white-space: pre-line; color: var(--v2-ink-2); }
+.home-wifi__msg[data-err] { color: var(--v2-red-ink); }
+#wf_go[data-armed] { background: var(--pen-red); border-color: var(--pen-red); color: var(--v2-on-red); }
 
 /* 좁은 화면: 1180 이하 오른쪽을 아래로, 900 이하 큰 카드 2칸 · 활동 2·3 위아래, 600 이하 철 구멍 숨김 */
 @media (max-width: 1180px) {

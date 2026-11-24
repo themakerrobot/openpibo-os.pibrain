@@ -6,12 +6,12 @@
 PiBrain 도움말
 ====================================
 
-PiBrain 메이커(IDE·도구·분류기·대화·로봇 놀이) 사용법, 블록 목록, ``openpibo`` 파이썬 API 를 안내합니다.
+PiBrain 메이커(처음 화면·코딩·도구·AI 가르치기·대화·카드 코딩·로봇 놀이) 사용법, 블록 목록, ``openpibo`` 파이썬 API 를 안내합니다.
 
 .. raw:: html
 
    <div class="pb-cards">
-     <a class="pb-card" href="notes/piboMaker.html"><b>PiBrain 메이커</b><span>IDE·도구·분류기·대화·로봇 놀이 — 화면별 사용법</span></a>
+     <a class="pb-card" href="notes/piboMaker.html"><b>PiBrain 메이커</b><span>처음 화면·코딩·도구·AI 가르치기·대화·체험 앱 — 화면별 사용법</span></a>
      <a class="pb-card" href="blocks/guide.html"><b>블록</b><span>분류별 블록 모양과 설명</span></a>
      <a class="pb-card" href="notes/software.html"><b>파이썬</b><span>openpibo 패키지 구성과 예제 코드</span></a>
      <a class="pb-card" href="notes/hardware.html"><b>하드웨어</b><span>PiBrain 을 이루는 부품</span></a>

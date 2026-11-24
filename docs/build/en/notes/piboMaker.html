@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=72be69f6" />
+    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=0c64a450" />
     
     
 
@@ -108,7 +108,7 @@
     <b>PiBrain</b><span class="pb-topbar__app">Help</span>
   </a>
   <div class="pb-topbar__right">
-    <a class="pb-topbar__btn pb-topbar__ide" href="/" title="Home">
+    <a class="pb-topbar__btn pb-topbar__home" href="/" title="Home">
       <svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true"><path d="M575.8 255.5c0 18-15 32.1-32 32.1h-32l.7 160.2c0 2.7-.2 5.4-.5 8.1V472c0 22.1-17.9 40-40 40H456c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1H392c-22.1 0-40-17.9-40-40V384c0-17.7-14.3-32-32-32H256c-17.7 0-32 14.3-32 32v88c0 22.1-17.9 40-40 40H128.1c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2H104c-22.1 0-40-17.9-40-40V360c0-.9 0-1.9 .1-2.8V287.6H32c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z"/></svg><span>Home</span>
     </a>
     <button type="button" class="pb-topbar__btn pb-topbar__fs" title="Full screen" hidden>
@@ -356,7 +356,8 @@ as PiBrain, type <strong>PiBrain’s IP address</strong> (shown on the PiBrain s
 <p>The address opens the <strong>home screen</strong> (a worksheet page). Tap a big picture button to enter an app, and use [Home] (house button) in an app’s top bar to come back.
 Row 1 <strong>Make</strong> (Coding · Tools · Teach AI · Chat), row 2 <strong>Play &amp; learn</strong> (Card coding · Robot Play), row 3 <strong>Teacher tools</strong> (Settings · Help).
 The app that is running now gets a red ‘Running’ stamp and the one you used last gets a yellow tag; on the right are the robot status and [Continue] (recent files, AI you taught).
-[Settings] has screen brightness, WiFi settings, reset robot screen, H/W check, factory reset and power off.</p>
+[Settings] has screen brightness, WiFi settings (pick and join a WiFi right there), reset robot screen, H/W check, factory reset, power off and the source code and license.
+The robot status (battery, temperature, memory, WiFi, serial, uptime) is on the home screen too. Every app has the same top bar — the app name on the left, and (app actions) · [Home] · [Full screen] · [Brightness] · language on the right.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -366,21 +367,21 @@ The app that is running now gets a red ‘Running’ stamp and the one you used 
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><strong>IDE</strong></p></td>
+<tr class="row-even"><td><p><strong>Coding</strong></p></td>
 <td><p>Build and run programs with blocks or Python</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">http://&lt;PiBrain</span> <span class="pre">IP&gt;</span></code> → home screen [Coding]</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Tools</strong></p></td>
 <td><p>Try the buttons, LED, camera, voice and screen right away, without code</p></td>
-<td><p>Home screen, or [Tools] at the top of the IDE</p></td>
+<td><p>Home screen [Tools]</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Chat</strong></p></td>
 <td><p>Chat in text with the language model (LLM) running inside PiBrain</p></td>
-<td><p>Home screen, or [Chat] at the top of the IDE</p></td>
+<td><p>Home screen [Chat]</p></td>
 </tr>
-<tr class="row-odd"><td><p><strong>Classifier</strong></p></td>
+<tr class="row-odd"><td><p><strong>Teach AI</strong></p></td>
 <td><p>Collect examples with the camera and teach your own AI</p></td>
-<td><p>Home screen, or [Classifier] at the top of the IDE</p></td>
+<td><p>Home screen [Teach AI]</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Card coding</strong></p></td>
 <td><p>Elementary students teach the robot friend tricks with cards (no coding) — Challenges · Make · My tricks</p></td>
@@ -388,11 +389,11 @@ The app that is running now gets a red ‘Running’ stamp and the one you used 
 </tr>
 <tr class="row-odd"><td><p><strong>Robot Play</strong></p></td>
 <td><p><strong>Pet</strong> (look after your robot friend) and <strong>Pixel art</strong> (color squares on the tablet and they appear on the LCD; animations, drawing replay and a sketchbook)</p></td>
-<td><p>Home screen, or [Robot Play] at the top of the IDE</p></td>
+<td><p>Home screen [Robot Play]</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Help</strong></p></td>
 <td><p>This document</p></td>
-<td><p>Home screen, or [Help] at the top of the IDE</p></td>
+<td><p>Home screen [Help]</p></td>
 </tr>
 </tbody>
 </table>
@@ -402,12 +403,11 @@ The app that is running now gets a red ‘Running’ stamp and the one you used 
 <p>Everything runs <strong>inside PiBrain</strong> (voices, chat and the classifier included). Only the blocks in the
 [Collect] category (Wikipedia, weather, news) need the internet, and that category is only in the Korean edition.</p>
 </div>
-<section id="ide">
-<h2>IDE<a class="headerlink" href="#ide" title="Link to this heading">¶</a></h2>
-<p><img alt="IDE with blocks" src="../_images/ide_block.png" /></p>
+<section id="coding-ide">
+<h2>Coding (IDE)<a class="headerlink" href="#coding-ide" title="Link to this heading">¶</a></h2>
+<p><img alt="Coding with blocks" src="../_images/ide_block.png" /></p>
 <ul class="simple">
-<li><p><strong>Top bar</strong>: the folder button on the far left opens the <strong>file drawer</strong>. [Blocks | Python] in the middle switches the editor. On the right are Tools, Chat, Classifier, Robot Play, Help, Full screen and [⋯] More
-(brightness · font size · Python editor theme · language · factory reset · power off · source code and license)</p></li>
+<li><p><strong>Top bar</strong>: the folder button on the far left opens the <strong>file drawer</strong>. [Blocks | Python] in the middle switches the editor. On the right are [⋯] (font size · Python editor theme) · [Home] · [Full screen] · [Brightness] · language, the same as every other app</p></li>
 <li><p><strong>File drawer</strong>: the file list, [Add] (new file / new folder / upload) and a preview for pictures and sounds. It is open at first and closes when you open a file or tap the editor.
 Tapping the file name in the editor bar opens it again. The icons on each file download, rename, <strong>copy or move</strong> and delete it.
 To copy or move, choose a folder (code · myimage · myaudio · mymodel · usb) and tap [Copy] or [Move]. It works between a USB drive and the robot too.
@@ -416,14 +416,13 @@ If the name is already taken, the copy gets a new name like <code class="docutil
 Once a file is open, the editor bar shows the folder and name, like <code class="docutils literal notranslate"><span class="pre">code</span> <span class="pre">›</span> <span class="pre">hand.json</span></code> (hover to see the full path)</p></li>
 <li><p><strong>Run panel on the right</strong>: <strong>[Run] [Stop]</strong> with the run status, screen output (pictures sent with the <code class="docutils literal notranslate"><span class="pre">Show</span> <span class="pre">image</span> <span class="pre">…</span> <span class="pre">on</span> <span class="pre">the</span> <span class="pre">monitor</span></code> block), program output and sending input to the program.
 The button at the right end of the editor bar hides or shows it, and it opens again when you run a program. Hide both the drawer and the run panel to give the blocks the whole width</p></li>
-<li><p><strong>Status bar at the bottom</strong>: connection · version · serial | WiFi (tap for WiFi settings) · temperature · memory · uptime</p></li>
 <li><p><strong>Blocks</strong>: drag blocks out of the categories on the left. Type a word such as “sound” or “face” into <strong>Search blocks</strong> at the top to find blocks.
 Choose [Easy] in <strong>[Easy | All]</strong> on the editor bar to see only beginner blocks (repeat forever, motions, lights, sounds, sensors, AI eyes, score and more).
 [Python code] shows the Python code your blocks make. See <strong>Blocks</strong> on the left for every block.</p></li>
 <li><p><strong>When there is an error</strong>: a red box above the output says where (the block outlined in red in block mode, or the line number in Python) and what went wrong in plain words.
 [Show block] / [Show line] takes you there, and the red outline goes away when you change the block</p></li>
 </ul>
-<p><img alt="IDE with Python" src="../_images/ide_python.png" /></p>
+<p><img alt="Coding with Python" src="../_images/ide_python.png" /></p>
 <ul class="simple">
 <li><p><strong>Python</strong>: the <code class="docutils literal notranslate"><span class="pre">openpibo</span></code> package gives you every PiBrain feature. <code class="docutils literal notranslate"><span class="pre">print</span></code> goes to [Output] on the right and <code class="docutils literal notranslate"><span class="pre">input</span></code> reads from the input box below it.
 See <strong>Python</strong> on the left for the API</p></li>
@@ -455,9 +454,9 @@ If a USB camera is plugged in, switch between the <strong>board camera and USB c
 <li><p><strong>Screen</strong>: choose the text, size, position and color and show it on the screen (LCD, 240×320). [Home screen] goes back to the first screen with the IP address</p></li>
 </ul>
 </section>
-<section id="classifier">
-<h2>Classifier<a class="headerlink" href="#classifier" title="Link to this heading">¶</a></h2>
-<p><img alt="Classifier: Train" src="../_images/classifier_learn.jpg" /></p>
+<section id="teach-ai-classifier">
+<h2>Teach AI (classifier)<a class="headerlink" href="#teach-ai-classifier" title="Link to this heading">¶</a></h2>
+<p><img alt="Teach AI: Train" src="../_images/classifier_learn.jpg" /></p>
 <p>Collect examples with the camera and teach the AI, for example “this is a cat, this is food”. The PiBrain camera is portrait (3:4), so the view is portrait too.</p>
 <p><strong>Training steps</strong> at the top of the right panel (① Collect examples → ② Teach the AI → ③ Save and test) outline the step to do now in blue and check off finished steps.</p>
 <ol class="arabic simple">
@@ -466,13 +465,13 @@ If a USB camera is plugged in, switch between the <strong>board camera and USB c
 The picker under the camera switches to a USB camera — use the same camera for training and for use for better results</p></li>
 <li><p><strong>[Teach the AI]</strong> — the tablet or laptop browser learns in a few seconds and shows the accuracy, a confusion table and live scores</p></li>
 <li><p><strong>[Save]</strong> — saved on PiBrain in <code class="docutils literal notranslate"><span class="pre">/home/pi/mymodel/&lt;model</span> <span class="pre">name&gt;</span></code></p></li>
-<li><p>In the IDE use <code class="docutils literal notranslate"><span class="pre">Load</span> <span class="pre">classification</span> <span class="pre">model</span> <span class="pre">(mymodel)</span> <span class="pre">(model</span> <span class="pre">name)</span></code> → <code class="docutils literal notranslate"><span class="pre">Classify</span> <span class="pre">image</span> <span class="pre">(image)</span> <span class="pre">with</span> <span class="pre">the</span> <span class="pre">classification</span> <span class="pre">model</span></code>.
+<li><p>In Coding use <code class="docutils literal notranslate"><span class="pre">Load</span> <span class="pre">classification</span> <span class="pre">model</span> <span class="pre">(mymodel)</span> <span class="pre">(model</span> <span class="pre">name)</span></code> → <code class="docutils literal notranslate"><span class="pre">Classify</span> <span class="pre">image</span> <span class="pre">(image)</span> <span class="pre">with</span> <span class="pre">the</span> <span class="pre">classification</span> <span class="pre">model</span></code>.
 <code class="docutils literal notranslate"><span class="pre">Show</span> <span class="pre">the</span> <span class="pre">classification</span> <span class="pre">result</span> <span class="pre">on</span> <span class="pre">image</span> <span class="pre">(image)</span></code> draws the hand, face or body points and the class name on the picture</p></li>
 </ol>
 <p>The [Test] tab tries a saved model again. [Models] lets you test, keep training, rename, download (zip) or delete a model.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>The classifier downloads its AI files (about 10 MB) the first time it opens. Open it once on every tablet before class and it
+<p>Teach AI downloads its AI files (about 10 MB) the first time it opens. Open it once on every tablet before class and it
 will start right away during class.</p>
 </div>
 </section>
@@ -533,7 +532,7 @@ will start right away during class.</p>
 Blocks chat in text only and do not run tools.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Tools, Chat, Classifier, Card coding/Robot Play and H/W check run <strong>one at a time</strong>. Opening one closes the others, and running a program in the IDE closes them too
+<p>Tools, Chat, Teach AI, Card coding/Robot Play and H/W check run <strong>one at a time</strong>. Opening one closes the others, and running a program in Coding closes them too
 (they share the camera, speaker and memory). A closed screen shows [Restart].</p>
 </div>
 </section>
@@ -588,9 +587,9 @@ Blocks chat in text only and do not run tools.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">PiBrain Maker</a><ul>
-<li><a class="reference internal" href="#ide">IDE</a></li>
+<li><a class="reference internal" href="#coding-ide">Coding (IDE)</a></li>
 <li><a class="reference internal" href="#tools">Tools</a></li>
-<li><a class="reference internal" href="#classifier">Classifier</a></li>
+<li><a class="reference internal" href="#teach-ai-classifier">Teach AI (classifier)</a></li>
 <li><a class="reference internal" href="#chat">Chat</a></li>
 </ul>
 </li>
