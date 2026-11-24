@@ -448,6 +448,14 @@
     Array.prototype.forEach.call(fsButtons(), function (b) {
       if (b._pbFs) return; b._pbFs = true;
       b.addEventListener('click', function (e) { e.preventDefault(); fsToggle(); });
+      // <a> 로 쓴 단추(href 없음)는 버튼 역할·키보드 초점을 준다 — aria-pressed 는 버튼에만 맞다(261124 Lighthouse)
+      if (b.tagName === 'A' && !b.hasAttribute('href')) {
+        if (!b.hasAttribute('role')) b.setAttribute('role', 'button');
+        if (!b.hasAttribute('tabindex')) b.setAttribute('tabindex', '0');
+        b.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); fsToggle(); }
+        });
+      }
     });
     fsSync();
     fsHint();

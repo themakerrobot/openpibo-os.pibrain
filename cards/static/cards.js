@@ -9,7 +9,7 @@
   var L = function () { return (typeof lang === 'string' && lang === 'en') ? 'en' : 'ko'; };
   var C = null;                         // /api/content
   var S = {
-    view: 'who', settings: { lesson: 0, roster: 4 }, profile: null, profiles: {}, progress: { stars: {} }, tricks: [],
+    view: 'home', settings: { lesson: 0 }, profile: null, profiles: {}, progress: { stars: {} }, tricks: [],
     ch: null,                           // 지금 도전(없으면 자유 만들기)
     editing: null,                      // 고치는 중인 재주 id
     program: [], cursor: -1, tab: null, running: false,
@@ -41,15 +41,13 @@
   }
 
   /* ── 화면 바꾸기 ─────────────────────────────────────────────────── */
-  var VIEWS = ['who', 'home', 'challenges', 'make', 'tricks'];
+  var VIEWS = ['home', 'challenges', 'make', 'tricks'];
   function show(view) {
     // 만들기·내 재주에서 처음으로 돌아오면 로봇 화면은 IP 로(261116 — 그림·글자·사진 카드가 남아 있지 않게)
     if (view === 'home' && (S.view === 'make' || S.view === 'tricks' || S.view === 'challenges')) post('/api/screen/home').catch(function () {});
     S.view = view;
     VIEWS.forEach(function (v) { $('v_' + v).hidden = v !== view; });
-    $('who_bt').hidden = true;                    // 저장 한 벌(261116) — 번호 고르기는 없다
-    $('start_bt').hidden = view === 'who';
-    if (view === 'who') renderWho();
+    $('start_bt').hidden = false;
     if (view === 'home') renderHome();
     if (view === 'challenges') renderChallenges();
     if (view === 'tricks') renderTricks();
@@ -59,44 +57,6 @@
     b.addEventListener('click', function () { if (!S.running) show(b.getAttribute('data-go')); });
   });
   $('start_bt').addEventListener('click', function () { if (!S.running) show('home'); });
-  $('who_bt').addEventListener('click', function () {
-    if (S.running) return;
-    post('/api/profile', { id: null }).then(function (s) { applyState(s); show('who'); });
-  });
-
-  /* ── 번호 고르기 — 아이마다 재주·별·키우기가 따로 ───────────────────── */
-  function renderWho() {
-    var grid = $('who_grid');
-    grid.innerHTML = '';
-    for (var n = 1; n <= S.settings.roster; n++) {
-      (function (id) {
-        var ic = S.profiles[id];
-        var b = btn('kids-who' + (ic ? ' is-made' : ''), '<b>' + id + '</b>' + (ic ? icon(ic) : ''));
-        b.addEventListener('click', function () { if (ic) pickProfile(id); else askIcon(id); });
-        grid.appendChild(b);
-      })(String(n));
-    }
-  }
-  function pickProfile(id, ic) {
-    post('/api/profile', { id: id, icon: ic }).then(function (s) {
-      if (s._status !== 200) { toast(tr('kids_err'), 'error'); return; }
-      applyState(s);
-      $('dlg_icon').hidden = true;
-      show('home');
-      post('/api/say', { guide: 'welcome', lang: L() }).catch(function () {});
-    }).catch(function () { toast(tr('kids_err_conn'), 'error'); });
-  }
-  function askIcon(id) {
-    $('icon_no').textContent = id;
-    var g = $('icon_grid');
-    g.innerHTML = '';
-    C.profile_icons.forEach(function (ic) {
-      var b = btn('kids-pick', icon(ic));
-      b.addEventListener('click', function () { pickProfile(id, ic); });
-      g.appendChild(b);
-    });
-    $('dlg_icon').hidden = false;
-  }
 
   /* ── 처음 ───────────────────────────────────────────────────────── */
   // 처음 화면 카드 — 대문과 같은 활동지 카드(그림 칸 · 이름 · 한 줄 · 시작하기). 그림은 대문의 파이보 캐릭터 장면(pibo-art.js)
@@ -631,7 +591,7 @@
   /* ── 설정 — 잠금 없이 누구나 연다(261124, 사용자 — 전엔 자물쇠 3초 + 숫자 4개였다) ── */
   $('set_bt').addEventListener('click', function () { openTeacher(); });
 
-  /* IDE 와 연결(261028) — [IDE] 는 이 탭을 닫거나 IDE 로 간다. 탭이 닫히면 IDE 가 체험 앱을 끈다(keepalive 가 있어야 언로드 중에도 간다).
+  /* IDE 와 연결(261028) — [처음 화면] 은 대문으로 간다(261123). 탭이 닫히면 IDE 가 체험 앱을 끈다(keepalive 가 있어야 언로드 중에도 간다).
      손으로 띄운 경우(IDE 없이 시험)엔 /cards 가 없어 실패해도 상관없다 */
   window.addEventListener('beforeunload', function () {
     try { fetch('http://' + location.hostname + '/cards?enable=off', { method: 'GET', keepalive: true }).catch(function () {}); } catch (e) { /* 무시 */ }

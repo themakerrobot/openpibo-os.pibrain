@@ -32,6 +32,8 @@ PiBrain OS 리포. 기기의 `/home/pi/openpibo-os` 가 이 리포의 작업본�
 자동 항목(S 파일·B 화면)은 파이보 리포의 `PY=<파이썬> bash design/audit/run.sh ../openpibo-os.pibrain`, 사람이 볼 항목(M)·기기 항목(D)은 표대로 보고 항목 ID 마다 OK/FAIL 로 보고한다.
 **일관성은 기본이다**(사용자) — 화면마다 같은 부품·순서·크기, 다르면 고친다. 일부러 다른 것은 `AUDIT.md` '예외' 표에만 둔다.
 새 규칙이 생기면 `AUDIT.md`·검사 도구에 먼저 넣는다. `AUDIT.md` 는 두 리포 같은 파일, 도구(`design/audit/`)는 파이보 리포에만 있다.
+**화면은 Lighthouse 접근성·SEO 100 을 지킨다(261124, 사용자가 코딩 화면 점수를 보여 줌 — `AUDIT.md` M9).** 두 제품 전 화면 100 으로 맞췄다. Best Practices 는 HTTPS 2항목(LAN http)만 남는다
+**쓰레기 코드 정리(261124, 사용자 '이전에 남은 쓰레기 코드') — 지운 것**: `booting.py` `GET /wifi`(저장된 SSID·**비밀번호**를 로그인 없이 돌려주던 것, 부르는 곳 없음 — 네트워크가 바뀔 때 로그에도 비밀번호가 찍혀서 가려 찍는다) · IDE 소켓 `restart` · 늘 숨겨져 있던 THE MAKER 로고 `#logo_bt`(코딩·도구·AI 가르치기·대화)와 `themaker.png` · 안 쓰던 `jquery.jsonview` · 카드 코딩 '번호 고르기'(`#who_bt`·`#v_who`·`#dlg_icon`·`/api/profile`·`roster`·`profile_icons`) · v1 시절 숨은 칸(`#hiddenfile`·`#result_check`)을 읽던 코드 · 도구(파이보) `#v_upload_tm`·`#article_home` 처리, `simulator.css`(이름표 규칙만 남김)·`index.css` 의 v1 규칙, `tools/log.py` · 상대 앱 것이 섞여 있던 `cards.css`·`play.css` 규칙 · `ide.css` 의 예전 상태 줄·WiFi 창·[더보기] 항목·왼쪽 패널 규칙 · 주석 처리된 블록 생성기(`customblock_callback.js` — PiBrain 은 파이보 전용 생성기 150줄)·툴박스 끝 codelab 주석 · 안 쓰는 파이썬 import · 고아 파일(`ide/svg` 3개·`system/themaker*.jpg` 등). **남긴 것**: `speech.py` 의 `import onnxruntime`(sherpa-onnx 와 불러오는 순서 — 확인 필요), `system/openpibo_python-*.whl`(PiBrain 새 pyenv 용), 시험용으로 보이는 경로(`play` `/api/state`·`/api/stop`, 분류기 `/control_cam`, 대화 `/api/voice/warm`), 키트 데모(`design/index.html`)가 쓰는 `.pb-statusbar`
 
 ---
 

@@ -14,7 +14,6 @@ in each file are kept as they are.
 | @blockly/field-bitmap | `ide/static/field-bitmap.js` | Apache-2.0 |
 | CodeMirror 5.61.0 (+ `python.js`, `comment.js` addons) | `ide/static/codemirror.min.js` `codemirror.css` `python.js` `comment.js` | MIT |
 | jQuery 3.7.1 | `ide/static/jquery-3.7.1.min.js` | MIT |
-| jquery-jsonview | `ide/static/jquery.jsonview.min.*` | MIT |
 | Socket.IO client 4.x | `ide/static/`, `classifier/static/` `socket.io.min.js` | MIT |
 | Font Awesome Free 6.2.0 | `*/static/all.min.css`, `ide/webfonts/`, `docs/source/_templates/base.html`(도움말 상단바 아이콘 6개를 SVG 로 옮김) | Icons CC BY 4.0, Fonts SIL OFL 1.1, Code MIT |
 | Pretendard 1.3.9 | `design/fonts/`, `ide/static/fonts/`, `docs/source/_static/fonts/` (`LICENSE.txt`) | SIL OFL 1.1 |

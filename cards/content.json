@@ -82,7 +82,6 @@
 
   "trick_icons": ["fa-star", "fa-heart", "fa-music", "fa-cake-candles", "fa-gift", "fa-rocket", "fa-sun", "fa-moon", "fa-tree", "fa-seedling", "fa-apple-whole", "fa-bolt", "fa-crown", "fa-ghost", "fa-car", "fa-feather"],
 
-  "profile_icons": ["fa-cat", "fa-dog", "fa-fish", "fa-crow", "fa-frog", "fa-hippo", "fa-horse", "fa-dove", "fa-dragon", "fa-kiwi-bird", "fa-otter", "fa-cow", "fa-spider", "fa-robot", "fa-rocket", "fa-seedling"],
 
   "phrases": {
     "hello":  {"ko": "안녕!", "en": "Hello!"},

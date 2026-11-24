@@ -184,11 +184,6 @@ async function prompt_popup(message, defaultValue = '') {
 
 // 261123: 앱(도구·대화·AI 가르치기·체험 앱·도움말)은 대문(/)에서 고른다. IDE 상단바는 다른 앱과 같이
 // [더보기] · [처음 화면] · [전체화면] · [밝기] · [언어] 뿐이고, H/W 검수·WiFi 설정·공장 초기화·전원 끄기는 대문 [설정] 에 있다.
-// 로고는 [처음 화면] 과 같다(저장 안 했으면 묻는다 — v2/ide.js 12)
-document.getElementById("logo_bt").addEventListener("click", function () {
-  const b = document.getElementById("home_bt");
-  if (b) b.click();
-});
 
 const MAX_FILENAME_LENGTH = 50;
 const RESULT_MAX = 200 * 1024;   // 실행 출력 칸에 남기는 글자 수
@@ -344,6 +339,7 @@ socket.on("update", async (data) => {
     execute.classList.remove("disabled");
     stop.classList.add("disabled");
     execute.disabled = false;
+    stop.disabled = true;   // 보이는 모양(.disabled)과 같게 — 화면 읽기·대비 검사가 꺼진 버튼으로 안다(261124)
   }
 });
 
@@ -488,10 +484,6 @@ execute.addEventListener("click", async function () {
     if (el.classList.value.includes("checked")) codetype = el.name;
   });
   if (codetype == "block") {
-    // if (filepath.substring(filepath.lastIndexOf(".") + 1, filepath.length) != "json") {
-    //   await alert_popup("json 파일만 실행 가능합니다.");
-    //   return;
-    // }
     saveBlock = JSON.stringify(Blockly.serialization.workspaces.save(workspace))
     socket.emit("save", {
       codepath: filepath,
@@ -598,16 +590,11 @@ socket.on("update_file_manager", (d) => {
   $('#path').text(CURRENT_DIR.join("/"));
   $("#fm_table > tbody").empty();
 
-  let data;
-  if ($("#hiddenfile").is(":checked") == false) {
-    data = [];
-    for (let i = 0; i < d['data'].length; i++)
-      if (d['data'][i].name[0] != ".")
-        data.push(d['data'][i])
-  }
-  else {
-    data = d['data'];
-  }
+  // 숨은 파일(. 으로 시작)은 보이지 않는다(예전 v1 의 '숨은 파일 보기' 칸은 260929 에 없어졌다)
+  const data = [];
+  for (let i = 0; i < d['data'].length; i++)
+    if (d['data'][i].name[0] != ".")
+      data.push(d['data'][i]);
 
   data.unshift({ name: "..", type: "" });
   for (let i = 0; i < data.length; i++) {
@@ -651,10 +638,6 @@ socket.on("update_file_manager", (d) => {
                     if (el.classList.value.includes("checked")) codetype = el.name;
                   });
                   if (codetype == "block") {
-                    // if(["json"].includes(ext.toLowerCase()) == false) {
-                    //   await alert_popup("json 파일만 로드 가능합니다.");
-                    //   return;
-                    // }
                     if (saveBlock != JSON.stringify(Blockly.serialization.workspaces.save(workspace))) {
                       if (await confirm_popup(translations['confirm_save_file'][lang]($("#codepath").text())))
                         socket.emit("save", { codepath: $("#codepath").text(), codetext: JSON.stringify(Blockly.serialization.workspaces.save(workspace)) });
@@ -679,7 +662,6 @@ socket.on("update_file_manager", (d) => {
               if ($(this).html() == "") return;
 
               let idx = $(this).closest('tr').index();
-              //let type = $(`#fm_table tr:eq(${idx}) td:eq(0)`).html();
               let name = $(`#fm_table tr:eq(${idx}) td:eq(1)`).text();
               let newname = await prompt_popup(translations['check_newfile_name'][lang], name);
 
@@ -750,7 +732,6 @@ socket.on("update_file_manager", (d) => {
               if ($(this).html() == "") return;
 
               let idx = $(this).closest('tr').index();
-              //let type = $(`#fm_table tr:eq(${idx}) td:eq(0)`).html();
               let name = $(`#fm_table tr:eq(${idx}) td:eq(1)`).text();
               if (await confirm_popup(translations['confirm_delete_file'][lang](`${CURRENT_DIR.join("/")}/${name}`), { danger: true, okLabel: t("ok_delete") })) {
                 if (isPathOrInside($("#codepath").text(), CURRENT_DIR.join("/") + "/" + name)) {
@@ -781,10 +762,6 @@ socket.on("update_file_manager", (d) => {
         $("<td colspan='9'>").append(
           $("<div class='pb-empty'>").append("<i class='fa-solid fa-folder-open'></i>", $("<p>").text(t('v2_folder_empty'))))));
   }
-});
-
-$("#hiddenfile").on("change", function () {
-  socket.emit("load_directory", CURRENT_DIR.join("/"));
 });
 
 $("#add_directory").on("click", async function () {
@@ -924,36 +901,10 @@ $("#eraser").on("click", function () {
 
 window.dispatchEvent(new Event('onresize'));
 window.onresize = function () {
-  const isResultHidden = $("#result_check").is(":checked");
-  const elementsToResize = $("div.CodeMirror, #blocklyDiv"); // jQuery 선택자 사용
-
-  if (isResultHidden) {
-    // 결과가 숨겨져 있을 때: 무조건 calc(100vw - 20px)로 설정
-    elementsToResize.css('width', 'calc(100vw - 20px)');
-  } else {
-    // 결과가 보일 때: 인라인 스타일 제거하여 CSS 미디어 쿼리가 적용되도록 함
-    elementsToResize.css('width', '');
-  }
+  $("div.CodeMirror, #blocklyDiv").css('width', '');   // 폭은 CSS 가 정한다(예전 v1 '결과 숨기기' 칸은 없어졌다)
   codeEditor.refresh();
   Blockly.svgResize(workspace);
 };
-
-$("#result_check").on("change", function () {
-  const isChecked = $(this).is(":checked");
-  const elementsToToggle = $("#result_en, #browser_en");
-  const elementsToResize = $("div.CodeMirror, #blocklyDiv");
-
-  if (isChecked) {
-    elementsToToggle.hide();
-    elementsToResize.css('width', 'calc(100vw - 20px)');
-  } else {
-    elementsToResize.css('width', ''); // CSS가 적용되도록 인라인 스타일 제거
-    elementsToToggle.show();
-  }
-  codeEditor.refresh();
-  Blockly.svgResize(workspace);
-  window.dispatchEvent(new Event('resize'));
-});
 
 $("#theme_check").on("change", function () {
   codeEditor.setOption(
@@ -1176,7 +1127,7 @@ $(document).keydown(async (evt) => {
 });
 
 
-// WiFi 설정 창은 대문(/) [설정] 으로 옮겼다(261123 — home.js). IDE 아래 상태 줄도 뺐다
+// WiFi 설정 창은 대문(/) [설정] 으로 옮겼다(261123 — home.js)
 
 window.addEventListener('beforeunload', (evt) => {
   socket.emit("stop");
@@ -1185,7 +1136,6 @@ window.addEventListener('beforeunload', (evt) => {
 $("#prompt").on("keypress", (evt) => {
   if (evt.keyCode == 13) {
     socket.emit("prompt", $("#prompt").val().trim());
-    //$("#prompt").val("");
   }
 });
 

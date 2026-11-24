@@ -275,7 +275,6 @@ body.pb-v2 .store-menu > .is-danger:hover { background: var(--v2-red-t) !importa
   .pb-resizer { display: none !important; }
   .center { order: -1; }
   .stage, .stage-bar { width: 100%; }
-  #logo_bt { display: none; }
 }
 
 /* 카메라 고르기(261120) — 카메라 끄기 옆 */

@@ -273,8 +273,10 @@ def drive_worker(item, seq):
       robot.stop_flag.clear()
       if item:
         robot.motion(item['id'])
-      # 팔을 든 채 끝나는 동작이 많아 끝나면 처음 자세로. 자세만 잡는 것(hold)·끊긴 것은 그대로
-      if seq == drive['seq'] and not robot.stop_flag.is_set() and not (item or {}).get('hold'):
+      # 팔을 든 채 끝나는 동작이 많아 끝나면 처음 자세로. 방향 버튼(걷기·돌기)·자세만 잡는 것(hold)·끊긴 것은 그대로
+      # (방향 버튼 뒤의 처음 자세는 261124 에 뺐다 — 사용자)
+      move = item is not None and any(x['id'] == item['id'] for x in drive_items()['move'])
+      if seq == drive['seq'] and not robot.stop_flag.is_set() and not move and not (item or {}).get('hold'):
         robot.motion('stop')
   except Exception as exc:  # noqa: BLE001 — 동작 이름이 없는 기기 등. 화면엔 짧은 알림
     drive['error'] = str(exc)

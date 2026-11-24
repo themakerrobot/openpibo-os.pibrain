@@ -78,7 +78,7 @@
       if (!d.open) return;
       if (!d.contains(e.target)) d.open = false;
       // 메뉴 안의 항목(링크·버튼)을 누르면 닫는다. 입력칸·선택·스위치·밝기는 그대로 둔다
-      else if (e.target.closest('.v2-pop__item') && !e.target.closest('.v2-pop__item--field')) d.open = false;
+      else if (e.target.closest('.v2-pop__item')) d.open = false;
     });
   });
   document.addEventListener('keydown', function (e) {
@@ -129,14 +129,18 @@
       var blockOn = bd && bd.offsetParent !== null;
       var left = blockOn && tb ? tb.offsetWidth : 0;
       // 파일 서랍이 열려 있으면 서랍 오른쪽부터(서랍이 [새 파일] 카드를 가렸다, 261124)
-      var side = $id('v2_side'), host = start.offsetParent;
+      var side = $id('v2_side'), host = start.offsetParent, covered = false;
       if (side && host && document.body.getAttribute('data-side') !== 'closed' && side.offsetParent !== null) {
         // 미끄러지는 중이어도 다 열린 자리로 잰다(transform 은 빼고)
         var tx = 0; try { tx = new DOMMatrix(getComputedStyle(side).transform).m41 || 0; } catch (e) { /* */ }
         var hr = host.getBoundingClientRect(), r = side.getBoundingClientRect().right - tx - hr.left;
-        if (r > left && hr.width - r >= 520) left = r;   // 좁은 화면은 서랍이 거의 다 덮으므로 그대로
+        if (r > left) {
+          if (hr.width - r >= 520) left = r;
+          else covered = true;   // 좁은 화면(태블릿 세로)은 카드가 반쯤 가려져 어색했다 — 서랍이 열린 동안 숨긴다(서랍에서 고르면 된다, 261124)
+        }
       }
       start.style.left = Math.max(0, Math.round(left)) + 'px';
+      start.classList.toggle('is-covered', covered);
     };
     var syncStart = function () {
       start.hidden = !!(cp.textContent || '').trim();
@@ -191,6 +195,10 @@
     // 접근성 이름만(보이는 글자·툴팁 없음, 261028) — 입력칸·편집기 등
     Array.prototype.forEach.call(document.querySelectorAll('[data-aria-key]'), function (el) {
       el.setAttribute('aria-label', tr(el.getAttribute('data-aria-key')));
+    });
+    // 파이썬 편집기에서 실제로 글자를 받는 칸은 CodeMirror 가 만든 숨은 textarea 다(원래 칸은 숨겨진다, 261124 Lighthouse)
+    Array.prototype.forEach.call(document.querySelectorAll('.CodeMirror textarea'), function (el) {
+      el.setAttribute('aria-label', tr('v2_code_editor'));
     });
     // 아이콘만 남는 폭에서도 뜻이 보이게 라벨을 툴팁으로 복사한다
     Array.prototype.forEach.call(document.querySelectorAll('.v2-top a.pb-iconbtn, .v2-top .v2-seg > button, #pycode_bt'), function (el) {

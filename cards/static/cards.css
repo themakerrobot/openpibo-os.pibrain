@@ -46,8 +46,7 @@ html[data-theme="dark"] body.kids { --k-motion: #5b8cff; --k-say: #a477ff; --k-s
 .kids-round--soft { background: var(--v2-tint); color: var(--v2-tint-ink); }
 .kids-round--save { color: var(--k-trick); }
 .kids-round--save.is-goal { background: var(--k-trick); color: #fff; animation: kids-breathe 1.6s ease-in-out infinite; }
-.kids-back:active, .kids-round:active, .kids-go:active, .kids-btn:active, .kcard:active, .kids-act:active,
-.kids-ctile:active, .kids-big:active, .kids-who:active, .kids-ttile:active, .kids-pick:active { transform: scale(.95); }
+.kids-back:active, .kids-round:active, .kids-go:active, .kids-btn:active, .kcard:active, .kids-act:active, .kids-ctile:active, .kids-big:active, .kids-ttile:active, .kids-pick:active { transform: scale(.95); }
 .kids-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   min-height: 56px; padding: 0 22px; border-radius: 16px; border: 0;
@@ -66,23 +65,11 @@ html[data-theme="dark"] body.kids { --k-motion: #5b8cff; --k-say: #a477ff; --k-s
 .kids-empty { margin: 40px auto; display: flex; flex-direction: column; align-items: center; gap: 12px; font-size: 20px; color: var(--v2-ink-3); text-align: center; word-break: keep-all; }
 .kids-empty i { font-size: 48px; color: var(--k-trick); }
 
-.kids-whobt i { font-size: 18px; }
-.kids-whobt .pb-iconbtn__label { font-size: 16px; }
-
 /* ── 번호 고르기 ─────────────────────────────────────────────────────── */
-.kids-whogrid { display: flex; flex-wrap: wrap; gap: 12px; }
-.kids-who {
-  width: 96px; height: 96px; border: 0; border-radius: 22px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-  background: var(--v2-raise); color: var(--v2-ink-3); box-shadow: 0 1px 3px var(--v2-shadow);
-}
-.kids-who b { font-size: 30px; color: var(--v2-ink); }
-.kids-who i { font-size: 22px; color: var(--k-motion); }
-.kids-who.is-made { background: var(--v2-tint); }
 .kids-picks { display: flex; flex-wrap: wrap; gap: 10px; }
 .kids-pick { width: 72px; height: 72px; border: 0; border-radius: 18px; background: var(--v2-raise); color: var(--v2-ink); font-size: 32px; box-shadow: 0 1px 3px var(--v2-shadow); }
 .kids-pick--sm { width: 56px; height: 56px; font-size: 24px; border-radius: 14px; }
 .kids-pick.is-on { background: var(--k-trick); color: #fff; }
-.kids-iconpick h2 b { font-size: 22px; }
 
 /* ── 처음 — 대문과 같은 활동지 카드(261123): 위에 파이보 캐릭터 그림 칸(앱 색 옅은 바탕) · 명조 이름 · 한 줄 · 시작하기 ── */
 body.kids .kids-main { background-image: radial-gradient(var(--pb-grid, transparent) 1.2px, transparent 1.3px); background-size: 22px 22px; }   /* 대문·도구와 같은 모눈 점 */
@@ -97,8 +84,6 @@ body.kids .kids-main { background-image: radial-gradient(var(--pb-grid, transpar
 }
 @keyframes kids-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .kids-big:hover { transform: translateY(-3px); border-color: var(--app); box-shadow: 4px 5px 0 var(--app-t); }
-.kids-big--pet { --app: var(--app-pet); --app-t: var(--app-pet-t); }
-.kids-big--drive { --app: var(--app-play); --app-t: var(--app-play-t); }
 .kids-big__art { display: block; height: 190px; border-radius: 12px; background: var(--app-t); overflow: hidden; box-shadow: 4px 4px 0 var(--v2-line); }
 .kids-big__art svg { display: block; height: 100%; width: auto; margin: 0 auto; transition: transform .2s ease; }
 .kids-big:hover .kids-big__art svg { transform: translateY(-3px) scale(1.03); }
@@ -107,7 +92,7 @@ body.kids .kids-main { background-image: radial-gradient(var(--pb-grid, transpar
 .kids-big__tx b { font-family: var(--serif, inherit); font-size: 26px; font-weight: 700; line-height: 1.25; }
 .kids-big__nic { font-size: .78em; color: var(--app); margin-right: 8px; }
 .kids-big__sub { font-size: 16px; color: var(--v2-ink-3); word-break: keep-all; line-height: 1.4; }
-.kids-big__go { display: flex; align-items: center; gap: 6px; padding-top: 10px; border-top: 1px dashed var(--v2-line); font-size: 15px; font-weight: 700; color: var(--app); }
+.kids-big__go { display: flex; align-items: center; gap: 6px; padding-top: 10px; border-top: 1px dashed var(--v2-line); font-size: 15px; font-weight: 700; color: var(--v2-accent-ink); }   /* 대문 [시작하기]와 같은 펜 색 — 앱 색 글자는 대비 4.5:1 이 안 됐다(261124) */
 .kids-big__go i { font-size: 13px; transition: transform .16s ease; }
 .kids-big:hover .kids-big__go i { transform: translateX(4px); }
 @media (max-width: 900px) {
@@ -117,8 +102,15 @@ body.kids .kids-main { background-image: radial-gradient(var(--pb-grid, transpar
 
 /* ── 도전 ───────────────────────────────────────────────────────────── */
 .kids-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
-.kids-bar__fill { flex: 1; }
-.kids-lsec { margin-bottom: 22px; }
+/* 도전 목록 — 차시 묶음을 화면 폭에 맞춰 여러 칸으로, 가운데에(261124, 사용자 — 넓은 화면에서 왼쪽에만 몰려 있었다) */
+#v_challenges > .kids-bar, #ch_list { width: 100%; max-width: 1560px; margin-left: auto; margin-right: auto; }
+#ch_list { display: grid; grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); gap: 6px 28px; align-items: start; }
+@media (max-width: 1059px) {   /* 한 칸만 들어가는 폭(태블릿)은 왼쪽에 붙지 않게 가운데 좁은 칸으로 */
+  #v_challenges > .kids-bar, #ch_list { max-width: 520px; }
+}
+.kids-lsec { margin-bottom: 22px; min-width: 0; }
+#ch_list .kids-cgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }   /* 칸 안의 도전 카드도 칸 폭에 맞춘다 */
+#ch_list .kids-ctile { width: auto; }
 .kids-lsec__head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 20px; }
 .kids-lsec__head > i { color: var(--k-motion); }
 .kids-lsec__n { width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
@@ -172,7 +164,8 @@ body.kids .kids-main { background-image: radial-gradient(var(--pb-grid, transpar
 }
 .kcard:disabled { opacity: .35; }
 .kcard__ic { font-size: 30px; line-height: 1; display: flex; align-items: center; justify-content: center; height: 34px; }
-.kcard__t { font-size: 15px; font-weight: 700; line-height: 1.1; max-width: 100%; padding: 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kcard__t { font-size: 15px; font-weight: 700; line-height: 1.08; max-width: 100%; padding: 0 4px; overflow: hidden; word-break: keep-all;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }   /* 긴 이름(왼쪽으로 돌기)은 두 줄로 — 한 줄 말줄임은 '왼쪽으로 돌…' 로 잘렸다(261124) */
 .k-motion { background: var(--k-motion); }
 .k-say    { background: var(--k-say); }
 .k-sound  { background: var(--k-sound); }
@@ -288,37 +281,9 @@ body.is-running .kids-row .kcard, body.is-running .kids-loop__head, body.is-runn
 .kids-save__form { flex: 1; display: flex; flex-direction: column; gap: 8px; }
 .kids-namein { height: 52px; font-size: 20px; }
 
-.kids-custom { max-width: 760px; }
-.kids-custom__grid { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 12px; }
-.kids-custom__preview { width: 160px; height: 160px; flex: 0 0 160px; }
-.kids-custom__preview svg { width: 100%; height: 100%; }
-.kids-custom__grid > div:last-child { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-.kids-names { display: flex; flex-wrap: wrap; gap: 8px; }
-.kids-colors { display: flex; flex-wrap: wrap; gap: 10px; }
-.kids-swatch { width: 52px; height: 52px; border-radius: 50%; border: 0; box-shadow: inset 0 0 0 2px rgba(0,0,0,.1); }
-.kids-swatch.is-on { box-shadow: 0 0 0 4px var(--v2-surface), 0 0 0 7px var(--v2-accent); }
-.kids-kinds { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
-.kids-kind { flex: 1 1 calc(50% - 5px); min-height: 96px; border: 0; border-radius: 18px; padding: 12px 14px; text-align: left;
-  display: flex; flex-direction: column; align-items: flex-start; gap: 4px; background: var(--v2-raise); color: var(--v2-ink); box-shadow: 0 1px 3px var(--v2-shadow); }
-.kids-kind > i { font-size: 22px; color: var(--v2-ink-3); }
-.kids-kind b { font-size: 18px; }
-.kids-kind span { font-size: 14px; color: var(--v2-ink-2); }
-.kids-kind small { font-size: 12px; color: var(--v2-ink-3); }
-.kids-kind.is-on { background: var(--v2-tint); box-shadow: 0 0 0 3px var(--v2-accent); }
-.kids-kind.is-on > i { color: var(--v2-accent); }
-
-.kids-graph { max-width: 640px; }
-.kids-graph__chart svg { width: 100%; height: auto; display: block; }
-.kids-chart__grid { stroke: var(--v2-line); stroke-width: 1; }
-.kids-chart__lbl { fill: var(--v2-ink-3); font-size: 13px; }
-.kids-graph__legend { display: flex; gap: 18px; justify-content: center; margin-top: 8px; font-size: 16px; font-weight: 700; }
-.kids-graph__legend i { display: inline-block; width: 18px; height: 6px; border-radius: 3px; margin-right: 6px; vertical-align: middle; }
-.kids-graph__rates { margin: 12px 0 0; font-size: 15px; color: var(--v2-ink-2); text-align: center; word-break: keep-all; }
-
 .kids-teacher { max-width: 680px; }
 .kids-form { display: grid; grid-template-columns: 110px 1fr; gap: 12px 14px; align-items: center; }
 .kids-form .pb-field { height: 44px; font-size: 16px; }
-.kids-form .kids-num { width: 110px; }
 .kids-lhelp { margin: 8px 0 0; padding: 10px 12px; border-radius: 12px; background: var(--v2-sunken); font-size: 14px; line-height: 1.5; word-break: keep-all; }
 .kids-lhelp b, .kids-lhelp span { display: block; }
 .kids-lhelp span { color: var(--v2-ink-2); }
@@ -343,9 +308,6 @@ body.is-running .kids-row .kcard, body.is-running .kids-loop__head, body.is-runn
 
 /* ── 좁은 화면 (태블릿 세로·폰) ──────────────────────────────────────── */
 @media (max-width: 900px) {
-  .kids-petwrap { flex-direction: column; gap: 12px; }
-  .kids-petside { flex-basis: auto; width: 100%; max-width: 520px; }
-  .kids-pet { width: 240px; height: 240px; }
   .kids-dock { flex-direction: column; align-items: stretch; }
   .kids-actions { flex-direction: row; justify-content: center; }
   .kids-go { width: 88px; height: 88px; font-size: 38px; }
@@ -357,10 +319,8 @@ body.is-running .kids-row .kcard, body.is-running .kids-loop__head, body.is-runn
   .kids-big__tx b { font-size: 22px; }
   .kids-task__txt { font-size: 17px; }
   .kids-ctile { width: 100%; }
-  .kids-who { width: 72px; height: 72px; }
-  .kids-who b { font-size: 24px; }
-  .kids-custom__grid, .kids-save__grid { flex-direction: column; align-items: center; }
-  .kids-kind { flex-basis: 100%; }
+  #ch_list { grid-template-columns: 1fr; }
+  .kids-save__grid { flex-direction: column; align-items: center; }
   .kids-form { grid-template-columns: 1fr; }
   .kids-bar { flex-wrap: wrap; }
 }

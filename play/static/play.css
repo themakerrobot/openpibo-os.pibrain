@@ -38,51 +38,27 @@ html[data-theme="dark"] body.kids { --k-motion: #5b8cff; --k-say: #a477ff; --k-s
 /* ── 버튼 ───────────────────────────────────────────────────────────── */
 .kids button, .kids input, .kids select { font-family: inherit; }
 .kids button { cursor: pointer; }
-.kids-back, .kids-round {
+.kids-back {
   width: 64px; height: 64px; flex: 0 0 64px; border-radius: 50%; border: 0;
   background: var(--v2-raise); color: var(--v2-ink-2); font-size: 26px;
   box-shadow: 0 1px 3px var(--v2-shadow);
 }
-.kids-round--soft { background: var(--v2-tint); color: var(--v2-tint-ink); }
-.kids-round--save { color: var(--k-trick); }
-.kids-round--save.is-goal { background: var(--k-trick); color: #fff; animation: kids-breathe 1.6s ease-in-out infinite; }
-.kids-back:active, .kids-round:active, .kids-go:active, .kids-btn:active, .kcard:active, .kids-act:active,
-.kids-ctile:active, .kids-big:active, .kids-who:active, .kids-ttile:active, .kids-pick:active { transform: scale(.95); }
+.kids-back:active, .kids-btn:active, .kids-act:active, .kids-big:active { transform: scale(.95); }
 .kids-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   min-height: 56px; padding: 0 22px; border-radius: 16px; border: 0;
   background: var(--v2-sunken); color: var(--v2-ink); font-size: 18px; font-weight: 700; text-decoration: none;
 }
 .kids-btn--main { background: var(--v2-dark); color: var(--v2-on-dark); box-shadow: var(--v2-btn-sh); }
-.kids-btn--danger { background: var(--v2-red-t); color: var(--v2-red-ink); }
 .kids-chip {
   display: inline-flex; align-items: center; gap: 6px; min-height: 48px; padding: 0 16px;
   border-radius: 999px; border: 0; background: var(--v2-raise); color: var(--v2-ink); font-size: 16px; font-weight: 700;
   box-shadow: 0 1px 3px var(--v2-shadow);
 }
 .kids-chip.is-on { background: var(--v2-tint); color: var(--v2-tint-ink); box-shadow: 0 0 0 2px var(--v2-accent); }
-.kids-chip--soft { min-height: 32px; padding: 0 12px; font-size: 14px; background: var(--v2-tint); color: var(--v2-tint-ink); box-shadow: none; }
 .kids-note { margin: 4px 0 0; font-size: 13px; color: var(--v2-ink-3); }
-.kids-empty { margin: 40px auto; display: flex; flex-direction: column; align-items: center; gap: 12px; font-size: 20px; color: var(--v2-ink-3); text-align: center; word-break: keep-all; }
-.kids-empty i { font-size: 48px; color: var(--k-trick); }
-
-.kids-whobt i { font-size: 18px; }
-.kids-whobt .pb-iconbtn__label { font-size: 16px; }
 
 /* ── 번호 고르기 ─────────────────────────────────────────────────────── */
-.kids-whogrid { display: flex; flex-wrap: wrap; gap: 12px; }
-.kids-who {
-  width: 96px; height: 96px; border: 0; border-radius: 22px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-  background: var(--v2-raise); color: var(--v2-ink-3); box-shadow: 0 1px 3px var(--v2-shadow);
-}
-.kids-who b { font-size: 30px; color: var(--v2-ink); }
-.kids-who i { font-size: 22px; color: var(--k-motion); }
-.kids-who.is-made { background: var(--v2-tint); }
-.kids-picks { display: flex; flex-wrap: wrap; gap: 10px; }
-.kids-pick { width: 72px; height: 72px; border: 0; border-radius: 18px; background: var(--v2-raise); color: var(--v2-ink); font-size: 32px; box-shadow: 0 1px 3px var(--v2-shadow); }
-.kids-pick--sm { width: 56px; height: 56px; font-size: 24px; border-radius: 14px; }
-.kids-pick.is-on { background: var(--k-trick); color: #fff; }
-.kids-iconpick h2 b { font-size: 22px; }
 
 /* 위 줄(뒤로 · 제목 · 오른쪽 단추) — 카드 코딩 cards.css '도전' 절과 같은 규칙 */
 .kids-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
@@ -111,7 +87,7 @@ body.kids .kids-main { background-image: radial-gradient(var(--pb-grid, transpar
 .kids-big__tx b { font-family: var(--serif, inherit); font-size: 26px; font-weight: 700; line-height: 1.25; }
 .kids-big__nic { font-size: .78em; color: var(--app); margin-right: 8px; }
 .kids-big__sub { font-size: 16px; color: var(--v2-ink-3); word-break: keep-all; line-height: 1.4; }
-.kids-big__go { display: flex; align-items: center; gap: 6px; padding-top: 10px; border-top: 1px dashed var(--v2-line); font-size: 15px; font-weight: 700; color: var(--app); }
+.kids-big__go { display: flex; align-items: center; gap: 6px; padding-top: 10px; border-top: 1px dashed var(--v2-line); font-size: 15px; font-weight: 700; color: var(--v2-accent-ink); }   /* 대문 [시작하기]와 같은 펜 색 — 앱 색 글자는 대비 4.5:1 이 안 됐다(261124) */
 .kids-big__go i { font-size: 13px; transition: transform .16s ease; }
 .kids-big:hover .kids-big__go i { transform: translateX(4px); }
 @media (max-width: 900px) {
@@ -265,26 +241,6 @@ body.pet-sleeping .kids-petstage { filter: brightness(.85); }
 .kids-modal__box h2 { margin: 0 0 16px; }
 .kids-modal__btns { display: flex; gap: 12px; justify-content: flex-end; flex-wrap: wrap; margin-top: 20px; }
 
-.kids-result { text-align: center; max-width: 560px; }
-.kids-result__art { width: 150px; height: 150px; margin: -4px auto 0; }
-.kids-result__art svg { width: 100%; height: 100%; overflow: visible; }
-.kids-result__stars { display: flex; justify-content: center; gap: 14px; font-size: 64px; color: var(--v2-line-2); margin: 6px 0 10px; }
-.kids-result__stars .on { color: #f7b500; animation: kids-star .5s ease-out both; }
-.kids-result__msg { margin: 0; font-size: 26px; font-weight: 700; word-break: keep-all; }
-.kids-result .kids-modal__btns { justify-content: center; }
-.kids-compare { margin-top: 18px; display: flex; flex-direction: column; gap: 10px; text-align: left; }
-.kids-compare__lbl { display: block; font-size: 14px; font-weight: 700; color: var(--v2-ink-3); margin-bottom: 4px; }
-.kids-compare__row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-.kids-miss { margin: 16px 0 0; padding: 12px 16px; list-style: none; text-align: left; border-radius: 16px; background: var(--v2-yellow-t); color: var(--v2-yellow-ink); }
-.kids-miss li { display: flex; gap: 8px; align-items: flex-start; font-size: 17px; font-weight: 700; line-height: 1.4; word-break: keep-all; }
-.kids-miss li + li { margin-top: 6px; }
-.kids-miss i { margin-top: 3px; }
-
-.kids-save { max-width: 620px; }
-.kids-save__grid { display: flex; gap: 20px; align-items: flex-start; }
-.kids-save__preview .kcard { width: 112px; height: 112px; flex-basis: 112px; }
-.kids-save__preview .kcard__ic { font-size: 42px; height: 46px; }
-.kids-save__form { flex: 1; display: flex; flex-direction: column; gap: 8px; }
 .kids-namein { height: 52px; font-size: 20px; }
 
 .kids-custom { max-width: 760px; }
@@ -314,58 +270,22 @@ body.pet-sleeping .kids-petstage { filter: brightness(.85); }
 .kids-graph__legend i { display: inline-block; width: 18px; height: 6px; border-radius: 3px; margin-right: 6px; vertical-align: middle; }
 .kids-graph__rates { margin: 12px 0 0; font-size: 15px; color: var(--v2-ink-2); text-align: center; word-break: keep-all; }
 
-.kids-teacher { max-width: 680px; }
-.kids-form { display: grid; grid-template-columns: 110px 1fr; gap: 12px 14px; align-items: center; }
-.kids-form .pb-field { height: 44px; font-size: 16px; }
-.kids-form .kids-num { width: 110px; }
-.kids-lhelp { margin: 8px 0 0; padding: 10px 12px; border-radius: 12px; background: var(--v2-sunken); font-size: 14px; line-height: 1.5; word-break: keep-all; }
-.kids-lhelp b, .kids-lhelp span { display: block; }
-.kids-lhelp span { color: var(--v2-ink-2); }
-.kids-vol { display: flex; align-items: center; gap: 10px; }
-.kids-vol input { flex: 1; }
-.kids-teacher__more { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--v2-line); }
-.kids-teacher__more .kids-btn { min-height: 48px; font-size: 16px; }
-/* [처음부터 하기] 두 번 누르기 — 첫 번째에 빨갛게 무엇이 지워지는지 보인다(대문 공장 초기화와 같다, 261124) */
-#t_reset_all[data-armed] { background: var(--v2-red); border-color: var(--v2-red); color: var(--v2-on-red, #fff); }
-.kids-teacher__warn { margin-top: 10px; color: var(--v2-red-ink); font-size: 14px; line-height: 1.5; word-break: keep-all; }
-
-.kids-reportbox { max-width: 760px; }
-.kids-report__wrap { overflow-x: auto; }
-.kids-report { width: 100%; border-collapse: collapse; font-size: 15px; }
-.kids-report th, .kids-report td { padding: 8px 6px; text-align: center; border-bottom: 1px solid var(--v2-line); white-space: nowrap; }
-.kids-report th { font-size: 13px; color: var(--v2-ink-2); }
-.kids-report th span { display: block; margin-top: 2px; }
-.kids-report td:first-child, .kids-report th:first-child { text-align: left; }
-.kids-report td.is-own { color: var(--v2-green-ink); font-weight: 800; font-size: 18px; }
-.kids-report td.is-tried { color: var(--v2-accent-ink); font-size: 18px; }
-.kids-report td.is-none { color: var(--v2-line-2); }
-
 /* ── 좁은 화면 (태블릿 세로·폰) ──────────────────────────────────────── */
 @media (max-width: 900px) {
   .kids-petwrap { flex-direction: column; gap: 12px; }
   .kids-petside { flex-basis: auto; width: 100%; max-width: 520px; }
   .kids-pet { width: 240px; height: 240px; }
-  .kids-dock { flex-direction: column; align-items: stretch; }
-  .kids-actions { flex-direction: row; justify-content: center; }
-  .kids-go { width: 88px; height: 88px; font-size: 38px; }
 }
 @media (max-width: 600px) {
   body.kids { --k-card: 72px; }
   .kids-view { padding: 12px; }
   .kids-big__art { height: 130px; }
   .kids-big__tx b { font-size: 22px; }
-  .kids-task__txt { font-size: 17px; }
-  .kids-ctile { width: 100%; }
-  .kids-who { width: 72px; height: 72px; }
-  .kids-who b { font-size: 24px; }
-  .kids-custom__grid, .kids-save__grid { flex-direction: column; align-items: center; }
+  .kids-custom__grid { flex-direction: column; align-items: center; }
   .kids-kind { flex-basis: 100%; }
-  .kids-form { grid-template-columns: 1fr; }
   .kids-bar { flex-wrap: wrap; }
 }
 @media (max-height: 700px) and (min-width: 901px) {
-  .kids-rowwrap { min-height: 110px; }
-  .kids-go { width: 88px; height: 88px; }
   .kids-big__art { height: 150px; }
 }
 
@@ -383,11 +303,3 @@ body.pet-sleeping .kids-petstage { filter: brightness(.85); }
   .kids *, .kids *:before, .kids *:after { animation: none !important; transition: none !important; }
 }
 
-/* 내가 쓴 말·글자 입력 창, 찍은 사진 (261116) */
-.kids-textbox { width: 420px; max-width: calc(100vw - 32px); }
-.kids-textin { width: 100%; font-size: 22px; margin: 8px 0 4px; }
-.kids-photo { position: fixed; right: 16px; bottom: 16px; z-index: 60; padding: 6px; border: 0; border-radius: 16px;
-  background: var(--v2-raise); box-shadow: 0 6px 20px var(--v2-shadow); }
-.kids-photo img { display: block; max-width: 260px; max-height: 260px; border-radius: 12px; }
-.kids-photo span { position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.55); color: #fff; }

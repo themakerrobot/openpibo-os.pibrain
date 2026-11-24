@@ -303,9 +303,6 @@ const translations = {
   play_art_del_q:   { ko: "이 그림을 지울까요?", en: "Delete this picture?" },
   kids_fullscreen:  { ko: "전체화면", en: "Full screen" },
   kids_back:        { ko: "뒤로", en: "Back" },
-  kids_switch:      { ko: "번호 바꾸기", en: "Change number" },
-  kids_who_title:   { ko: "내 번호를 눌러 줘", en: "Tap your number" },
-  kids_icon_title:  { ko: "내 그림을 골라 줘", en: "Pick your picture" },
   kids_challenges:  { ko: "도전", en: "Challenges" },
   kids_make:        { ko: "만들기", en: "Make" },
   kids_make_sub:    { ko: "카드로 재주를 만들어요", en: "Make tricks with cards" },
@@ -432,7 +429,7 @@ const translations = {
   kids_t_reset_all_q: { ko: "재주·별·기록·키우기 친구·그림첩을 모두 지우고 처음부터 할까요? 되돌릴 수 없어요.", en: "Delete all tricks, stars, records, the pet and saved drawings and start over? This cannot be undone." },
   kids_t_save:      { ko: "저장", en: "Save" },
   kids_saved:       { ko: "저장했어요.", en: "Saved." },
-  // A안 배치(261118): 파일 서랍 · 오른쪽 실행 화면 · 아래 상태 줄
+  // A안 배치(261118): 파일 서랍 · 오른쪽 실행 화면(아래 상태 줄은 261123 에 뺐다)
   v2_stage:         { ko: "실행 화면 접기/펴기", en: "Show or hide run panel" },
   v2_connected:     { ko: "연결됨", en: "Connected" },
   v2_disconnected:  { ko: "연결 끊김", en: "Disconnected" },
@@ -446,7 +443,7 @@ const translations = {
   v2_start_open_d:  { ko: "저장해 둔 파일을 열어요", en: "Open a saved file" },
   // 대화 화면 모델 카드(261120) — 고르기 전 빈 화면
   chat_pick_title:  { ko: "어떤 모델과 이야기할까요?", en: "Which model would you like to talk to?" },
-  chat_pick_hint:   { ko: "고르면 그 모델을 켜요. 위 [대화 모델] 에서 언제든 바꿀 수 있어요.", en: "Pick one to start it. You can change it any time from [Chat model] above." },
+  chat_pick_hint:   { ko: "고르면 그 모델을 켜요. 위 [대화 모델]에서 언제든 바꿀 수 있어요.", en: "Pick one to start it. You can change it any time from [Chat model] above." },
   chat_desc_general:     { ko: "자유롭게 이야기해요. 로봇 기능은 쓰지 않아요.", en: "Free conversation. It does not control the robot." },
   chat_desc_themaker_ko: { ko: "한국어로 이야기하고 로봇 기능도 써요.", en: "Talks in Korean and can use the robot." },
   chat_desc_themaker_en: { ko: "영어로 이야기하고 로봇 기능도 써요.", en: "Talks in English and can use the robot." },
@@ -505,8 +502,8 @@ const translations = {
   home_set_sent:    { ko: "로봇에 보냈어요.", en: "Sent to the robot." },
   home_hw_go:       { ko: "검수 시작", en: "Start the check" },
   home_sec_make_d:  { ko: "코드와 AI로 로봇을 움직여요", en: "Move the robot with code and AI" },
-  home_sec_play_d:  { ko: "카드와 친구로 놀며 배워요", en: "Learn by playing with cards and a friend" },
-  home_sec_admin_d: { ko: "로봇을 맞추고 쓰는 법을 봐요", en: "Set up the robot and learn how to use it" },
+  home_sec_play_d:  { ko: "카드와 친구로 놀며 배워요", en: "Learn by playing" },
+  home_sec_admin_d: { ko: "로봇을 맞추고 쓰는 법을 봐요", en: "Setup and how-to" },
   home_eyebrow:     { ko: "오늘의 활동지", en: "Today's activity sheet" },
   home_start:       { ko: "시작하기", en: "Start" },
   home_last:        { ko: "지난번", en: "Last time" },

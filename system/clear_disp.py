@@ -1,6 +1,5 @@
 def run():
   try:
-    import os, time
     from openpibo.oled import OledByPiBrain as Oled
 
     o = Oled()

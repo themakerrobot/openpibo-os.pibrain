@@ -11,9 +11,10 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="PiBrain — 블록·파이썬 코딩 · 도구 · AI 가르치기 / Block and Python coding, tools, teach AI" />
   <link rel="shortcut icon" href="/static/icon.png?ver=261123v1" type="image/png"/>
   <link rel="stylesheet" href="/static/all.min.css"/>
-  <link rel="stylesheet" href="/static/pibo-ui.css?ver=261123v20"/>
+  <link rel="stylesheet" href="/static/pibo-ui.css?ver=261124v1"/>
   <link rel="stylesheet" href="/static/index.css?ver=261120v2"/>
   <title data-key="title">도구</title>
   <script>/* 화면 밝기를 첫 페인트 전에 (쿠키 pibo_theme, 기본 soft) */
@@ -42,7 +43,7 @@
 <!-- ── 기기 그림(261102) ─────────────────────────────────────────
      왼쪽 절반에 크게 보이는 PiBrain 그림(261102 2분할 — 오른쪽은 탭·조작 카드). LED(흰 네모)·버튼 4개·화면이 도구가 보낸 상태를 따라 바뀐다.
      버튼 자리(사용자 확인 261102): 십자 — 위 4 · 왼쪽 1 · 오른쪽 3 · 아래 2. LED 는 오른쪽 흰 네모(NeoPixel 1개).
-     화면은 도구가 보낸 것만 안다(학생 프로그램·로봇 놀이가 그린 화면은 모른다). 처음·카메라 끈 뒤·[처음 화면으로] 는 IP 화면 -->
+     화면은 도구가 보낸 것만 안다(학생 프로그램·로봇 놀이가 그린 화면은 모른다). 처음·카메라 끈 뒤·[로봇 화면 처음으로] 는 IP 화면 -->
 <aside class="tl-device" aria-label="PiBrain">
   <div class="dev">
     <svg class="dev-svg" viewBox="0 0 680 520" role="img" aria-hidden="true">
@@ -256,9 +257,9 @@
   <div class="card">
     <h2 class="card-title" data-key="system_title">시스템</h2>
     <p class="card-desc" data-key="lcd_reset_desc" data-html>
-      IP 주소가 보이는 처음 화면으로 되돌려요.<br>카메라가 꺼져 있을 때만 돼요.
+      로봇 화면을 IP 주소가 보이는 처음 화면으로 되돌려요.<br>카메라가 꺼져 있을 때만 돼요.
     </p>
-    <button class="btn" onclick="resetOled()"><i class="fa-solid fa-rotate"></i><span data-key="lcd_reset_btn">처음 화면으로</span></button>
+    <button class="btn" onclick="resetOled()"><i class="fa-solid fa-rotate"></i><span data-key="lcd_reset_btn">로봇 화면 처음으로</span></button>
     <div class="result-box" id="oled-reset-status" data-key="waiting">대기 중…</div>
   </div>
 </section>
@@ -276,9 +277,9 @@
     </div>
   </div>
 </div>
-<script src="/static/ko2en.js?ver=261124v1"></script>
-<script src="/static/pibo-ui.js?ver=261123v20"></script>
-<script src="/static/index.js?ver=261123v20"></script>
+<script src="/static/ko2en.js?ver=261124v2"></script>
+<script src="/static/pibo-ui.js?ver=261124v1"></script>
+<script src="/static/index.js?ver=261124v1"></script>
 <script>/* 언어 select 를 지금 언어에 맞춘다(바꾸는 건 toggleLang → applyLang) */
   (function () { var sel = document.getElementById('lang_sel'); if (!sel) return;
     var sync = function () { sel.value = lang; }; sync();

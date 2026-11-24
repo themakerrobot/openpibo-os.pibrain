@@ -14,6 +14,7 @@
   <meta charset="UTF-8" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PiBrain — 블록·파이썬 코딩 · 도구 · AI 가르치기 / Block and Python coding, tools, teach AI" />
   <meta name="mobile-web-app-capable" content="yes" />
 
   <script>/* 화면 밝기(pibo-ui.js 와 같은 규칙): 쿠키 → OS 어두운 모드 → 부드럽게. 첫 페인트 전에 정해 번쩍임을 막는다 */
@@ -21,23 +22,21 @@
       document.documentElement.setAttribute('data-theme', m ? m[1] : 'soft'); } catch (e) {} })();</script>
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
   <link rel="stylesheet" href="../static/codemirror.css" />
-  <link rel="stylesheet" href="../static/jquery.jsonview.min.css" />
-  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261123v20" />
-  <link rel="stylesheet" href="../static/v2/ide.css?ver=261123v21" />
+  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261124v1" />
+  <link rel="stylesheet" href="../static/v2/ide.css?ver=261124v1" />
   <link rel="shortcut icon" href="../static/icon.png?ver=261123v1" type="image/png" />
 
-  <script src="../static/ko2en.js?ver=261124v1"></script>
+  <script src="../static/ko2en.js?ver=261124v2"></script>
   <script src="../static/blockly_compressed.js?ver=240319v1"></script>
   <script src="../static/blocks_compressed.js?ver=240319v1"></script>
   <script src="../static/python_compressed.js?ver=240319v1"></script>
-  <script src="../static/customblock.js?ver=261113v2"></script>
-  <script src="../static/customblock_callback.js?ver=261113v2"></script>
-  <script src="../static/customblock_toolbox.js?ver=261113v2"></script>
+  <script src="../static/customblock.js?ver=261124v1"></script>
+  <script src="../static/customblock_callback.js?ver=261124v1"></script>
+  <script src="../static/customblock_toolbox.js?ver=261124v1"></script>
   <script src="../static/v2/usbcam_block.js?ver=261120v3"></script>
   <script src="../static/v2/levels.js?ver=261120v3"></script>
   <script src="../static/jquery-3.7.1.min.js"></script>
   <script src="../static/field-bitmap.js"></script>
-  <script src="../static/jquery.jsonview.min.js"></script>
   <script src="../static/codemirror.min.js"></script>
   <script src="../static/comment.js"></script>
   <script src="../static/python.js"></script>
@@ -55,7 +54,7 @@
 
     <div class="v2-top__mid">
       <div name="codetype" class="v2-seg">
-        <button name="block"><i class="fa-solid fa-puzzle-piece"></i><span data-key="block"></span></button>
+        <button name="block" class="checked"><i class="fa-solid fa-puzzle-piece"></i><span data-key="block"></span></button>
         <button name="python"><i class="fa-solid fa-code"></i><span data-key="python"></span></button>
       </div>
     </div>
@@ -87,7 +86,6 @@
           <option value="ko">한국어</option>
           <option value="en">English</option>
         </select>
-        <a id="logo_bt"><img src="../static/themaker.png" style="height:22px" alt="" /></a>
       </div>
     </div>
   </header>
@@ -114,7 +112,7 @@
             </details>
             <div class="filebox">
               <form method="post" action="/upload" enctype="multipart/form-data">
-                <input type="file" id="upload" multiple>
+                <input type="file" id="upload" multiple aria-label="Upload" data-aria-key="upload">
               </form>
             </div>
           </div>
@@ -171,7 +169,7 @@
       <aside class="pb-pane pb-pane--fixed v2-stage" id="v2_stage">
         <div class="v2-run">
           <button id="execute" class="v2-btn v2-btn--run"><i class="fa-solid fa-flag"></i><span data-key="execute"></span></button>
-          <button id="stop" class="v2-btn v2-btn--stop disabled"><i class="fa-solid fa-stop"></i><span data-key="stop"></span></button>
+          <button id="stop" class="v2-btn v2-btn--stop disabled" disabled><i class="fa-solid fa-stop"></i><span data-key="stop"></span></button>
           <span id="run_status" class="pb-runstat" hidden aria-live="polite"></span>
         </div>
         <section class="v2-stage__body" id="result_en">
@@ -257,11 +255,11 @@
   </div>
 
 
-  <script src="../static/pibo-ui.js?ver=261123v20"></script>
-  <script src="../static/index.js?ver=261123v20"></script>
+  <script src="../static/pibo-ui.js?ver=261124v1"></script>
+  <script src="../static/index.js?ver=261124v1"></script>
   <script src="../static/v2/errhelp.js?ver=261120v1"></script>
   <script src="../static/v2/vendor/toolbox-search.js?ver=1.2.11"></script>
-  <script src="../static/v2/ide.js?ver=261124v1"></script>
+  <script src="../static/v2/ide.js?ver=261124v3"></script>
 </body>
 
 </html>

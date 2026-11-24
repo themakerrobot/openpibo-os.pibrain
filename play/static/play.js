@@ -665,7 +665,7 @@
       document.body.appendChild(el('p', 'kids-dead', icon('fa-plug-circle-xmark') + ' ' + tr('kids_err_conn')));
     });
   }
-  /* IDE 와 연결 — [IDE] 는 이 탭을 닫거나 IDE(대문)로 간다. 탭이 닫히면 IDE 가 로봇 놀이를 끈다(keepalive 가 있어야 언로드 중에도 간다).
+  /* IDE 와 연결 — [처음 화면] 은 대문으로 간다(261123). 탭이 닫히면 IDE 가 로봇 놀이를 끈다(keepalive 가 있어야 언로드 중에도 간다).
      손으로 띄운 경우(IDE 없이 시험)엔 /play 가 없어 실패해도 상관없다 */
   window.addEventListener('beforeunload', function (e) {
     try { fetch('http://' + location.hostname + '/play?enable=off', { method: 'GET', keepalive: true }).catch(function () {}); } catch (x) { /* 무시 */ }

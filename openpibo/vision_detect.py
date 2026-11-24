@@ -422,12 +422,6 @@ Functions:
         cY = int((topLeft[1] + bottomRight[1]) / 2.0)
         distance = round(tvec[0][0][2] * 100, 1) #[cm]
 
-        # cv2.line(img, topLeft, topRight, (255, 0, 0), 4)
-        # cv2.line(img, topRight, bottomRight, (255, 0, 0), 4)
-        # cv2.line(img, bottomRight, bottomLeft, (255, 0, 0), 4)
-        # cv2.line(img, bottomLeft, topLeft, (255, 0, 0), 4)
-        # cv2.circle(img, (cX, cY), 4, (0, 0, 255), -1)
-        # putTextPIL(img, str(markerID), (topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
         res.append({"id":markerID, "center": (cX, cY), "box": [topLeft, topRight, bottomRight, bottomLeft], "distance":distance})
 
     return res

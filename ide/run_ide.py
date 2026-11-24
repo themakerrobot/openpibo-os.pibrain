@@ -1,6 +1,5 @@
 import os
 import codecs
-import sys
 import asyncio
 import shutil
 import tempfile
@@ -11,16 +10,14 @@ import signal
 import subprocess
 import time
 import threading
-from pathlib import Path
-from typing import List, Union
+from typing import List
 
-from fastapi import FastAPI, Request, UploadFile, File, Form, Body, Depends
-from fastapi.responses import HTMLResponse, FileResponse, JSONResponse, RedirectResponse
+from fastapi import FastAPI, Request, UploadFile, File
+from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi_socketio import SocketManager
-from starlette.websockets import WebSocketDisconnect
 from starlette.background import BackgroundTask
 from contextlib import asynccontextmanager
 
@@ -160,10 +157,6 @@ def read_directory(d):
     print(err)
     return False
   return sorted(dlst, key=lambda x:x['name'])  + sorted(flst, key=lambda x:x['name'])
-
-
-def file_extension_check(filename):
-  return filename.split('.')[-1].lower()
 
 
 @app.get('/dir')
@@ -628,10 +621,6 @@ async def handle_poweroff(sid):
   subprocess.Popen(['shutdown', '-h', 'now'])
   #subprocess.Popen(['echo', '"#11:!"', '>', '/dev/ttyS0'])
 
-
-@app.sio.on('restart')
-async def handle_restart(sid):
-  subprocess.Popen(['shutdown', '-r', 'now'])
 
 
 @app.sio.on('load_directory')

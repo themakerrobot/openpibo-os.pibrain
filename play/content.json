@@ -29,7 +29,7 @@
   },
 
   "drive": {
-    "_": "로봇 놀이 [조종하기](파이보만, 261123) — 누르면 바로 한다. move = 방향 버튼(걷기·돌기), motion = 다리·발을 쓰지 않는 동작(openpibo-models 0.4.9 motion_db 에서 M0·M1·M6·M7 이 안 움직이는 것만). hold = 자세를 잡고 그대로 둔다(나머지는 끝나면 처음 자세)",
+    "_": "로봇 놀이 [조종하기](파이보만, 261123) — 누르면 바로 한다. move = 방향 버튼(걷기·돌기), motion = 다리·발을 쓰지 않는 동작(openpibo-models 0.4.9 motion_db 에서 M0·M1·M6·M7 이 안 움직이는 것만). 방향 버튼과 hold(자세를 잡고 그대로 둔다)는 끝나도 그대로, 나머지 동작은 끝나면 처음 자세",
     "move": [
       {"id": "forward1",  "icon": "fa-arrow-up",     "ko": "앞으로",        "en": "Forward"},
       {"id": "backward1", "icon": "fa-arrow-down",   "ko": "뒤로",          "en": "Back"},
