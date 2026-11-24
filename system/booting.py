@@ -49,7 +49,6 @@ CONWIFI = '/home/pi/openpibo-os/system/conwifi.sh'
 
 @app.post('/wifi')
 async def f(data: dict = Body(...)):
-  global apmode
   # 입력값은 셸을 거치지 않고 인자 목록으로 넘긴다(260929). 전엔 f"... '{ssid}' '{psk}'" 를 os.system 에 넘겨서
   # SSID·비밀번호에 ' 가 들어가면 따옴표가 닫히고 그 뒤가 root 명령으로 실행됐다(Kim's WiFi 같은 이름은 연결도 안 됐다).
   # 비밀번호는 로그에 남기지 않는다
@@ -127,14 +126,14 @@ def boot():
   try:
     with open('/home/pi/.OS_VERSION', 'r') as f:
       os_version = str(f.readlines()[0].split('\n')[0])
-  except Exception as ex:
+  except Exception:
     os_version = "OS (None)"
     pass
 
   try:
     with open('/home/pi/config.json', 'r') as f:
       tmp = json.load(f)
-  except Exception as ex:
+  except Exception:
     pass
 
   aud.play("/home/pi/openpibo-os/system/opening.mp3", 70)

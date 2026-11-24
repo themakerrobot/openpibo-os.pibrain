@@ -53,7 +53,6 @@ async function alert_popup(message) {
 // opts(261027v4): { danger: true } 면 확인 버튼이 빨강(ide.css .is-danger)이고 처음 포커스가 [취소]다.
 // { okLabel: '지우기' } 면 확인 버튼에 그 동사를 쓴다. 닫을 때 원래대로 되돌린다
 async function confirm_popup(message, opts = {}) {
-  console.log("await confirm_popup: 함수 시작, 메시지:", message); // 디버깅 로그
   return new Promise((resolve) => {
     hidePopups(); // 다른 팝업 숨기기
 
@@ -68,25 +67,21 @@ async function confirm_popup(message, opts = {}) {
       resolve(false); // 요소를 찾을 수 없으면 즉시 false 반환 (오류 상황)
       return;
     }
-    console.log("await confirm_popup: 요소 찾음:", { popupElement, msgElement, okButton, cancelButton }); // 디버깅 로그
 
     msgElement.textContent = message;
     const okText = okButton.querySelector('[data-key]') || okButton;
     okText.textContent = opts.okLabel || t('confirm');
     okButton.classList.toggle('is-danger', !!opts.danger);
     popupElement.style.display = 'flex'; // 팝업 표시
-    console.log("await confirm_popup: 팝업 표시됨. 사용자 입력 대기 중..."); // 디버깅 로그
     (opts.danger ? cancelButton : okButton).focus();
 
     // --- 이벤트 핸들러 정의 ---
     const okHandler = function () {
-      console.log("await confirm_popup: 확인 버튼 클릭됨"); // 디버깅 로그
       cleanup();
       resolve(true); // Promise를 true로 완료
     };
 
     const cancelHandler = function () {
-      console.log("await confirm_popup: 취소 버튼 클릭됨"); // 디버깅 로그
       cleanup();
       resolve(false); // Promise를 false로 완료
     };
@@ -94,7 +89,6 @@ async function confirm_popup(message, opts = {}) {
     // --- 리스너 정리 함수 ---
     // 이 함수는 버튼이 클릭될 때 호출되어 리스너를 제거하고 팝업을 숨김
     const cleanup = function () {
-      console.log("await confirm_popup: 리스너 정리 및 팝업 숨김"); // 디버깅 로그
       okButton.removeEventListener('click', okHandler);
       cancelButton.removeEventListener('click', cancelHandler);
       okText.textContent = t('confirm');
@@ -110,7 +104,6 @@ async function confirm_popup(message, opts = {}) {
     // 새 리스너 추가
     okButton.addEventListener('click', okHandler);
     cancelButton.addEventListener('click', cancelHandler);
-    console.log("await confirm_popup: 이벤트 리스너 추가됨"); // 디버깅 로그
 
     // 이 시점에서는 resolve()가 호출되지 않음! 핸들러 내부에서만 호출됨.
   });
@@ -119,7 +112,6 @@ async function confirm_popup(message, opts = {}) {
 
 // --- prompt_popup Function (리스너 관리 강화) ---
 async function prompt_popup(message, defaultValue = '') {
-  console.log("await prompt_popup: 함수 시작, 메시지:", message); // 디버깅 로그
   return new Promise((resolve) => {
     hidePopups();
 
@@ -134,35 +126,29 @@ async function prompt_popup(message, defaultValue = '') {
       resolve(null); // 오류 시 null 반환
       return;
     }
-    console.log("await prompt_popup: 요소 찾음:", { popupElement, msgElement, inputElement, okButton, cancelButton }); // 디버깅 로그
 
     msgElement.textContent = message;
     inputElement.value = defaultValue;
     popupElement.style.display = 'flex';
     inputElement.focus(); // 입력 필드에 포커스
-    console.log("await prompt_popup: 팝업 표시됨. 사용자 입력 대기 중..."); // 디버깅 로그
 
     const okHandler = function () {
-      console.log("await prompt_popup: 확인 버튼 클릭됨"); // 디버깅 로그
       cleanup();
       resolve(inputElement.value); // 입력된 값으로 완료
     };
 
     const cancelHandler = function () {
-      console.log("await prompt_popup: 취소 버튼 클릭됨"); // 디버깅 로그
       cleanup();
       resolve(null); // 취소 시 null로 완료
     };
 
     const enterKeyHandler = (event) => {
       if (event.key === 'Enter') {
-        console.log("await prompt_popup: Enter 키 입력됨"); // 디버깅 로그
         okHandler(); // 확인 버튼 클릭과 동일하게 처리
       }
     };
 
     const cleanup = function () {
-      console.log("await prompt_popup: 리스너 정리 및 팝업 숨김"); // 디버깅 로그
       okButton.removeEventListener('click', okHandler);
       cancelButton.removeEventListener('click', cancelHandler);
       inputElement.removeEventListener('keydown', enterKeyHandler);
@@ -178,7 +164,6 @@ async function prompt_popup(message, defaultValue = '') {
     okButton.addEventListener('click', okHandler);
     cancelButton.addEventListener('click', cancelHandler);
     inputElement.addEventListener('keydown', enterKeyHandler);
-    console.log("await prompt_popup: 이벤트 리스너 추가됨"); // 디버깅 로그
   });
 }
 
@@ -655,7 +640,6 @@ socket.on("update_file_manager", (d) => {
             })
           ,
           $("<td style='width:15px;text-align:center'>").append(data[i].type == "" || data[i].protect == true ? "" : $("<a>").attr("href", "/download?filename=" + encodeURIComponent(data[i].name)).attr("download", "").append("<i class='fa-solid fa-circle-down'></i>"))
-            //$("<td style='width:15px;text-align:center'>").append(["", "folder"].includes(data[i].type) || data[i].protect==true?"":`<a href='/download?filename=${data[i].name}'><i class='fa-solid fa-circle-down'></i></a>`)
           ,
           $("<td style='width:15px;text-align:center'>").append([""].includes(data[i].type) || data[i].protect == true ? "" : "<i class='fa-solid fa-pencil-alt'></i>")
             .click(async function () {
@@ -833,7 +817,6 @@ async function uploadFiles(fileList) {
     processData: false
   })
     .always(async (xhr, status) => {
-      console.log(status)
       if (status == "success") {
         await alert_popup(translations['file_ok'][lang]);
       } else {

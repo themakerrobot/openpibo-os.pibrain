@@ -269,7 +269,7 @@ async def cam_list(sid, d=None):
 @sio.on('cam_select')
 async def cam_select(sid, d=None):
   """켜져 있으면 새 카메라를 먼저 열어 한 장 읽어 보고, 되면 바꾼다(안 되면 그대로). 꺼져 있으면 고르기만"""
-  global camera, cam_no
+  global cam_no
   try:
     n = int((d or {}).get('cam', 0))
   except (TypeError, ValueError, AttributeError):

@@ -169,7 +169,7 @@ async def get_directory(folderName: str):
         #ext = file_extension_check(p.name)
         #if ext in file_types:
         files.append(p.name)
-  except Exception as err:
+  except Exception:
     files = []
   return files
 
@@ -387,7 +387,7 @@ async def handle_connection(sid, *args, **kwargs):
 
 @app.sio.on('init')
 async def handle_init(sid):
-  global codeText, codePath
+  global codeText
   # 실행 중에 새로 붙은 화면(새로고침 등)은 지금까지의 출력을 한 번 통째로 받는다.
   # 이후로는 다른 화면과 똑같이 늘어난 부분(record_add)만 받는다
   if ps and ps.returncode is None:
@@ -396,7 +396,7 @@ async def handle_init(sid):
   try:
     with open(codePath, 'r') as f:
       codeText = f.read()
-  except Exception as err:
+  except Exception:
     codeText = ''
   await app.sio.emit('init', {'codepath': codePath, 'codetext': codeText, 'path': PATH}, to=sid)
 
@@ -702,7 +702,7 @@ async def handle_rename(sid, d):
     return
   try:
     os.rename(oldpath, newpath)
-  except Exception as err:
+  except Exception:
     await app.sio.emit('update', {'dialog': 'err_rename_parse'}, to=sid)
     return
   directory_data = read_directory(PATH)
@@ -1018,7 +1018,7 @@ async def execute(EXEC, codepath):
 # execute 핸들러 수정
 @app.sio.on('execute')
 async def handle_execute(sid, d):
-  global codeText, codePath, ps
+  global codeText, codePath
   stop_hwtest()   # 사용자 코드가 카메라·LCD 를 쓰므로 검수 서버를 먼저 내린다
   stop_kids()     # 체험 앱도 모터·소리를 쓴다
   stop_chat()
@@ -1043,7 +1043,6 @@ async def handle_execute(sid, d):
 # executeb 핸들러 수정
 @app.sio.on('executeb')
 async def handle_executeb(sid, d):
-  global ps
   stop_hwtest()   # 〃
   stop_kids()     # 체험 앱도 모터·소리를 쓴다
   stop_chat()
@@ -1063,7 +1062,6 @@ async def handle_executeb(sid, d):
 # stop 핸들러 수정
 @app.sio.on('stop')
 async def handle_stop(sid):
-  global ps, ps_pgid
   subprocess.Popen(['pkill', 'play'])
   subprocess.Popen(['pkill', 'llama-server'])
   stop_chat()
@@ -1075,7 +1073,6 @@ async def handle_stop(sid):
 
 @app.sio.on('prompt')
 async def handle_prompt(sid, s):
-  global ps
   if ps and ps.stdin:
     ps.stdin.write((s + "\n").encode())
     await ps.stdin.drain()
