@@ -188,7 +188,7 @@ def camera_read():
 
 # ── 비전 루프 ─────────────────────────────────────────────────
 async def vision_loop():
-    global latest_proc, latest_seq, latest_result, latest_img, vision_en
+    global latest_proc, latest_seq, latest_result, latest_img
     while vision_en:
         try:
             img = await asyncio.to_thread(camera_read)
@@ -255,7 +255,6 @@ detect_load_lock = threading.Lock()
 audio_load_lock  = threading.Lock()
 speech_load_lock = threading.Lock()
 async def ensure_face():
-    global face
     if face: return face
     def _load():
         global face
@@ -275,7 +274,6 @@ async def ensure_face():
     return face
 
 async def ensure_detect():
-    global detect
     if detect: return detect
     def _load():
         global detect
@@ -287,7 +285,6 @@ async def ensure_detect():
     return detect
 
 async def ensure_audio():
-    global audio
     if audio: return audio
     def _load():
         global audio
@@ -299,7 +296,6 @@ async def ensure_audio():
     return audio
 
 async def ensure_speech():
-    global speech
     if speech: return speech
     def _load():
         global speech
@@ -312,7 +308,6 @@ async def ensure_speech():
 
 # ── 백그라운드 초기화 ─────────────────────────────────────────
 async def background_init():
-    global device, oled
     def _init():
         global device, oled, buttons
         try:
@@ -433,7 +428,7 @@ async def cam_list():
 @app.get('/cam_select')
 async def cam_select(n: int = 0):
     """카메라가 켜져 있으면 새 카메라를 먼저 열어 한 장 읽어 보고, 되면 바꾼다(안 되면 그대로). 꺼져 있으면 고르기만"""
-    global camera, cam_no
+    global cam_no
     if not 0 <= n <= 9:
         return JSONResponse({"ok": False, "cam": cam_no, "error": '"n" must be 0~9'})
     async with camera_lock:
