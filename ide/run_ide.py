@@ -26,7 +26,8 @@ from contextlib import asynccontextmanager
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-  asyncio.create_task(periodic_system_update())
+  # 로봇 상태(버전·온도 …)는 대문(/)이 /home_info 로 읽는다. IDE 아래 상태 줄을 뺀 뒤로(261123)
+  # 10초마다 모든 화면에 'system' 을 보내던 일(periodic_system_update)은 하지 않는다
   yield
 
 try:
@@ -278,7 +279,7 @@ def home_info_sync():
     s = get_system_info()
     # WiFi 비밀번호(s[9]) 등은 보내지 않는다 — 대문에 필요한 것만
     # uptime: 켜진 시간(초) — 오프라인 기기라 날짜·시계는 못 믿어서 대문엔 날짜 대신 이것(261123, 사용자)
-    info.update({'version': s[1], 'uptime': int(float(s[2] or 0)), 'temp': s[3].replace("'C", '°C'),
+    info.update({'serial': s[0], 'version': s[1], 'uptime': int(float(s[2] or 0)), 'temp': s[3].replace("'C", '°C'),
                  'mem': int((int(s[4]) - int(s[5])) / int(s[4]) * 100) if s[4] else None,
                  'wifi_ip': s[6], 'wired_ip': s[7], 'ssid': s[8]})
   except Exception as e:
@@ -394,13 +395,6 @@ async def handle_connection(sid, *args, **kwargs):
 @app.sio.on('init')
 async def handle_init(sid):
   global codeText, codePath
-  try:
-    system_info = await run_blocking(get_system_info)
-    await app.sio.emit('system', system_info, to=sid)
-  except Exception as err:
-    print(err)
-    await app.sio.emit('update', {'dialog': 'err_init_sysfile'}, to=sid)
-
   # 실행 중에 새로 붙은 화면(새로고침 등)은 지금까지의 출력을 한 번 통째로 받는다.
   # 이후로는 다른 화면과 똑같이 늘어난 부분(record_add)만 받는다
   if ps and ps.returncode is None:
@@ -1096,21 +1090,6 @@ async def handle_prompt(sid, s):
   if ps and ps.stdin:
     ps.stdin.write((s + "\n").encode())
     await ps.stdin.drain()
-
-# Additional code for the periodic system status updates
-async def periodic_system_update():
-  while True:
-    try:
-      system_info = await run_blocking(get_system_info)
-      await app.sio.emit('system', system_info)
-    except Exception as err:
-      await app.sio.emit('update', {'dialog': 'err_init_sysfile'})
-
-    await asyncio.sleep(10)
-
-#@app.on_event('startup')
-#async def on_startup():
-#  asyncio.create_task(periodic_system_update())
 
 if __name__ == '__main__':
   import argparse

@@ -10,8 +10,8 @@
      2) 알림 : PiboUI.toast(text, kind)          화면 아래에서 잠깐 뜨는 알림
      3) 배너 : PiboUI.banner(id, {...}) / hideBanner(id)   헤더 바로 아래 고정 안내
      4) 연결 : PiboUI.watchSocket(socket, opts)  socket.io 가 끊기면 배너
-     5) 서비스: PiboUI.openService('tools'|'classifier'|'llm'|'cards'|'play')  이름 붙인 새 탭으로 연다
-              PiboUI.backToIDE()                 도구 탭을 닫고 IDE 로
+     5) 서비스: PiboUI.enterService(svc, go)    대문(/)에서 같은 탭으로 들어간다(대기 페이지 launch.html)
+              PiboUI.goHome()                    대문(/)으로 — 상단바 [처음 화면](data-pb-home)이 부른다
      6) 버튼 : PiboUI.busy(el, on)               아이콘만 스피너로. 라벨·크기는 그대로
      7) 화면 : 도구·분류기는 body.pb-v2 층(예전 v1 화면은 260929 에 지웠다). IDE 는 자체 CSS(body.v2-app)
      8) 밝기 : PiboUI.setTheme('light'|'soft'|'dark') → html[data-theme] + 쿠키 pibo_theme
@@ -32,8 +32,6 @@
                      en: 'This window has stopped. It stops when Tools, Chat or Classifier is opened from the IDE, or when code runs.' },
     restart:       { ko: '다시 켜기', en: 'Restart' },
     close:         { ko: '닫기', en: 'Close' },
-    popup_blocked: { ko: '새 탭이 열리지 않았어요. 이 주소의 팝업을 허용해 주세요.',
-                     en: 'The new tab was blocked. Allow pop-ups for this address.' },
     fs_tap:        { ko: '화면을 한 번 누르면 전체화면으로 돌아가요.', en: 'Tap the screen once to return to full screen.' },
     scr_tip:       { ko: '로봇 화면을 처음(IP)으로', en: 'Reset the robot screen (IP)' },
     scr_done:      { ko: '로봇 화면을 처음으로 돌렸어요.', en: 'The robot screen is reset.' },
@@ -91,9 +89,8 @@
     var b = e.target.closest && e.target.closest('[data-theme-set]');
     if (b) setTheme(b.getAttribute('data-theme-set'));
   });
-  /* 도구·분류기(pb-v2) 헤더에 밝기 버튼을 하나 끼운다. 누를 때마다 밝게 → 부드럽게 → 어둡게 */
+  /* 모든 앱(IDE 포함, 261123) 헤더에 밝기 버튼을 하나 끼운다 — 언어 select 바로 앞. 누를 때마다 밝게 → 부드럽게 → 어둡게 */
   function addThemeButton() {
-    if (document.body.classList.contains('v2-app')) return;
     var bar = document.querySelector('.pb-header .pb-iconbar');
     if (!bar || document.getElementById('pb_theme_bt')) return;
     var b = document.createElement('button');
@@ -345,60 +342,42 @@
     el._pbCount = requestAnimationFrame(frame);
   }
 
-  /* ── 서비스 열기 ───────────────────────────────────────────────────────
-     누르는 '그 순간' 탭을 연다(팝업 차단 회피). 탭은 IDE 가 서빙하는 대기 페이지
-     launch.html 로 열리고, 거기서 서비스를 켜고 준비될 때까지 기다린 뒤 스스로 이동한다.
-     탭에 이름을 붙여 두 번 눌러도 탭이 하나로 유지된다. */
-  var TAB = { tools: 'pibo_tools', classifier: 'pibo_classifier', llm: 'pibo_llm', cards: 'pibo_cards', play: 'pibo_play' };
+  /* ── 서비스 열기 (261123 — 앱은 대문(/)에서 고른다) ─────────────────────────
+     대문이 같은 탭으로 대기 페이지 launch.html 을 열고, 거기서 서비스를 켜고 준비될 때까지 기다린 뒤 스스로 이동한다.
+     앱 상단바의 [처음 화면](data-pb-home)은 대문으로 돌아간다. 떠날 때 각 앱의 beforeunload 가 서비스를 끈다.
+     (예전엔 IDE 상단바가 이름 붙인 새 탭으로 열었다 — openService·backToIDE. IDE 가 중심이던 시절의 것이라 뺐다) */
   // launch.html 은 ?ver 없이 열려 브라우저가 옛 판을 쓸 수 있다(포트가 바뀌면 옛 포트를 기다린다).
   // 대기 페이지를 고치면 이 번호를 올릴 것
-  var LAUNCH_VER = '261123v9';
+  var LAUNCH_VER = '261123v10';
   function launchUrl(svc, go) {
     return 'http://' + location.hostname + '/static/launch.html?svc=' +
            encodeURIComponent(svc) + (go ? '&go=' + encodeURIComponent(go) : '') + '&lang=' + curLang() + '&v=' + LAUNCH_VER;
   }
-  function openService(svc) {
-    fsLeaving = Date.now();   // 새 탭으로 가며 풀리는 전체화면은 '사용자가 끈 것' 이 아니다
-    var w = window.open(launchUrl(svc), TAB[svc] || ('pibo_' + svc));
-    if (!w) { toast(tr('popup_blocked'), 'error', 6000); return null; }
-    try { w.focus(); } catch (e) { /* 무시 */ }
-    return w;
-  }
-  /* 도구 탭에서: 스크립트로 연 탭(IDE 상단바 버튼)이면 닫는다(원래 IDE 탭이 남아 있다).
-     대문에서 같은 탭으로 들어왔거나 주소를 쳐서 연 탭은 닫을 수 없으니 대문(/)으로 간다(261123).
-     둘 다 beforeunload 가 서비스를 끈다. */
-  function backToIDE() {
-    try { window.close(); } catch (e) { /* 무시 */ }
-    setTimeout(function () {
-      if (!window.closed) location.href = 'http://' + location.hostname + '/';
-    }, 200);
+  function goHome() {
+    fsLeaving = Date.now();   // 페이지를 옮기며 풀리는 전체화면은 '사용자가 끈 것' 이 아니다
+    location.href = 'http://' + location.hostname + '/';
   }
   function restartSelf(svc) {
     location.href = launchUrl(svc);
   }
-  /* 대문(/, 261123)에서: 같은 탭으로 들어간다. 탭이 하나라 [처음 화면]으로 돌아오면 대문이다 */
   function enterService(svc, go) {
-    fsLeaving = Date.now();   // 페이지를 옮기며 풀리는 전체화면은 '사용자가 끈 것' 이 아니다
+    fsLeaving = Date.now();
     location.href = launchUrl(svc, go);
   }
-  /* 앱 상단바의 [IDE](#ide_bt): IDE 가 새 탭으로 연 경우만 'IDE'(누르면 탭을 닫아 IDE 로),
-     대문에서 들어왔거나 주소로 연 탭은 [처음 화면](집 아이콘) — 누르면 대문으로 간다 */
+  /* 앱 상단바의 [처음 화면](<… data-pb-home>): 집 아이콘 + '처음 화면'. 글자가 비어 있으면 키트가 넣는다(도구·분류기는 ko2en 이 앱마다 따로라).
+     IDE 는 data-pb-home 이 없다 — 저장 안 한 코드를 물어야 해서 v2/ide.js 가 따로 건다 */
   function initHomeButton() {
-    var b = document.getElementById('ide_bt');
-    if (!b) return;
-    var opened = false;
-    try { opened = !!window.opener; } catch (e) { opened = false; }
-    if (opened) return;
-    function label() {
-      var i = b.querySelector('i'), l = b.querySelector('.pb-iconbtn__label') || b.querySelector('span');   // PiBrain 도구는 이름 칸이 그냥 span
-      if (i) i.className = 'fa-solid fa-house';
-      if (l) { l.textContent = tr('home'); l.removeAttribute('data-key'); }
-      b.title = tr('home');
-      b.removeAttribute('data-title-key');
-    }
-    label();
-    var sel = document.getElementById('language');
-    if (sel) sel.addEventListener('change', function () { setTimeout(label, 0); });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-pb-home]'), function (b) {
+      function label() {
+        var l = b.querySelector('.pb-iconbtn__label') || b.querySelector('span');   // PiBrain 도구는 이름 칸이 그냥 span
+        if (l && !l.hasAttribute('data-key')) l.textContent = tr('home');
+        if (!b.hasAttribute('data-title-key')) b.title = tr('home');
+      }
+      label();
+      b.addEventListener('click', goHome);
+      var sel = document.getElementById('language');
+      if (sel) sel.addEventListener('change', function () { setTimeout(label, 0); });
+    });
   }
 
   /* ── 버튼 바쁨 표시 ────────────────────────────────────────────────────
@@ -486,13 +465,13 @@
   /* ── 탭 제목 (261028) ───────────────────────────────────────────────────
      모든 화면이 같은 꼴: "도구 · piBo", "Tools · PiBrain". 앱은 <title> 에 앱 이름만 넣고(번역은 data-key 로),
      제품 이름은 <html data-product="piBo"> 에 둔다. 앱 JS 가 document.title 을 바꿔도(대화·대기 페이지) 여기서 뒤에 붙인다.
-     <html data-title="lead"> 면 앞에 붙인다 — IDE 의 "piBo 메이커" */
+     IDE 도 같다 — "코딩 · piBo"(261123 전엔 앞에 붙여 "piBo 메이커") */
   function fixTitle() {
     var root = document.documentElement, product = root.getAttribute('data-product');
     if (!product) return;
     var t = (document.title || '').trim();
     if (!t || t.indexOf(product) >= 0) return;
-    document.title = root.getAttribute('data-title') === 'lead' ? product + ' ' + t : t + ' · ' + product;
+    document.title = t + ' · ' + product;
   }
   function watchTitle() {
     fixTitle();
@@ -560,7 +539,7 @@
 
   window.PiboUI = {
     toast: toast, banner: banner, hideBanner: hideBanner, watchSocket: watchSocket,
-    openService: openService, backToIDE: backToIDE, restartSelf: restartSelf, enterService: enterService,
+    goHome: goHome, restartSelf: restartSelf, enterService: enterService,
     busy: busy, text: tr, lang: curLang,
     getTheme: getTheme, setTheme: setTheme, ui: UI, countTo: countTo,
     fullscreen: fsToggle, screenReset: screenReset

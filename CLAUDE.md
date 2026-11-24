@@ -244,10 +244,8 @@ fetch(`http://${location.hostname}/tools?enable=off`, { keepalive: true })
 `/tools` `/classifier` `/llm` `execute` `executeb` 는 **진입 시 전부 `stop_hwtest()` 를 부른다.**
 안 그러면 검수 서버가 카메라를 쥔 채로 남아 tools 가 이유 없이 실패한다.
 
-검수 진입점은 IDE **푸터의 시리얼번호 클릭**(`usedata_bt`)이다. 헤더 아이콘으로 내놓지 않는다.
-socket `'system'` 이벤트가 10초마다 `#s_serial` 에 텍스트를 다시 쓰는데, jQuery `.text()` 라
-그 span 자체는 남는다. 다만 **`usedata_bt` 의 `innerHTML` 을 스피너로 갈아끼우지 말 것.**
-span 이 날아가면 시리얼이 영영 안 돌아온다.
+검수 진입점은 **대문 [설정] → [H/W 검수]**(한 번 묻고 `launch.html?svc=hwtest`, 261123 — 전엔 IDE 아래 상태 줄의 시리얼 클릭 `usedata_bt`. 그 줄은 없앴다).
+검수 화면 띠의 [처음 화면] 으로 대문에 돌아간다(떠날 때 `/hwtest?enable=off`).
 
 ---
 
@@ -258,7 +256,7 @@ span 이 날아가면 시리얼이 영영 안 돌아온다.
 
 | 경로 | 띄우는 모델 |
 |---|---|
-| IDE [대화] | **켤 때는 아무것도 안 띄운다**(떠 있던 것도 끈다). 대화 화면 위 [대화 모델] select 에서 고른 것(사용자, 261029) |
+| 대문 [대화] | **켤 때는 아무것도 안 띄운다**(떠 있던 것도 끈다). 대화 화면 위 [대화 모델] select 에서 고른 것(사용자, 261029) |
 | 블록, [대화 모델 고르기] 있음 | 고른 것 |
 | 블록, 고르지 않음(예전 프로그램) | **`general`(지금 젬마3)** — 예전 프로그램은 젬마 시절(261026 전)에 만든 것이라(사용자, 261029) |
 
@@ -322,10 +320,10 @@ span 이 날아가면 시리얼이 영영 안 돌아온다.
 - 파이보 젬마 로그에 `W common_fit_params: failed to fit params to free device memory: ... abort` 가 한 줄 나왔다. **경고이고 서버는 정상**이었다 — 새 빌드가 '자동 맞춤'을 하려다 `free`(페이지 캐시 제외, 약 100MB)만 보고 포기한 것으로 보인다(available 은 1.4GB). 자동 맞춤을 끄는 옵션 이름은 **확인 필요**
 - 두 모델 모두 사실 질문(하늘이 왜 파래?)에 틀린 답을 했다 — 1B 이하 모델의 한계. TTS·STT 를 같이 올린 메모리·시간은 아직 안 쟀다(젬마는 '음성 인식 · TTS · 메모리' 절대로 여유가 거의 없다)
 
-## 대화 웹 (261026) — IDE [대화]
+## 대화 웹 (261026) — 대문 [대화]
 
 **파이보와 같은 코드다. 원본은 파이보 리포**(`openpibo-os.pibo/CLAUDE.md` '대화 웹' 절에 구조·이유·시험이 있다). `chat/` 를 통째로 복사해 왔다.
-IDE [대화] 가 llama-server 기본 웹 화면 대신 대화 웹(`chat/run_chat.py`, 50030)을 연다 — 글자 대화, 대답을 흘려 보여 주고, [소리로 말하기] 면 스피커로 말한다.
+대문 [대화] 가 llama-server 기본 웹 화면 대신 대화 웹(`chat/run_chat.py`, 50030)을 연다 — 글자 대화, 대답을 흘려 보여 주고, [소리로 말하기] 면 스피커로 말한다.
 
 - 도구(함수 호출)는 261026 에 뺐다가 **261029 에 더메이커 모델용으로 다시 넣었다** — 불빛·보기·움직이기, PiBrain 은 `pibrain_chat.PiBrain`(NeoPixel, 움직이기는 '몸이 없어서…'). 자세한 건 파이보 CLAUDE.md '대화 모델 고르기'. `--device pibrain` 은 도구 기기와 시스템 글의 로봇 이름을 고른다
 - IDE 가 `/llm` 때 직접 띄운다. 끄기: `/llm?enable=off` · [도구][분류기][H/W 검수] 켜기 · 코드 실행 · [정지]
@@ -347,7 +345,7 @@ IDE [대화] 가 llama-server 기본 웹 화면 대신 대화 웹(`chat/run_chat
 
 - `LICENSE`(Apache-2.0 원문, 고치지 말 것) · `THIRD_PARTY_NOTICES.md`(vendor·모델 표 — **넣거나 바꾸면 같이 고칠 것**)
   (`.model/object/` 의 모델 고지는 THIRD_PARTY_NOTICES 표 — 따로 복사할 고지 파일은 없다)
-- IDE [더보기] → **소스 코드 · 라이선스 (Apache-2.0)**(`#source_bt`). 링크는 기기 버전의 마지막 `_` 뒤
+- 대문 [설정] → **소스 코드 · 라이선스 (Apache-2.0)**(`#set_source`, 261123 — 전엔 IDE [더보기] `#source_bt`). 링크는 기기 버전의 마지막 `_` 뒤
   (`YYMMDDvN` / `YYMMDDvN-gl`)를 태그로 본 GitHub 트리. 형식이 다르면 리포 첫 화면
 - GPL·AGPL 코드는 넣지 말 것(리포 전체가 GPL 이 된다)
 - 비상업·연구 전용 라이선스의 코드·모델은 넣지 말 것
@@ -536,7 +534,7 @@ sudo raspi-config nonint get_wifi_country
 | `design/fonts/` (Pretendard 보통·굵게 두 벌, SIL OFL) | Pibo `design/fonts/` | 없음. 원본 배포판 파일 그대로 — 이유는 Pibo CLAUDE.md '다듬기'. **파일은 `ide/static/fonts/` 에만** 있고 도구·분류기 서버가 IDE(80) 로 넘긴다(`SharedFonts`, 260929) |
 | `ide/static/pibo-ui.*`, `tools/static/pibo-ui.*`, `classifier/static/pibo-ui.*`, `*/static/fonts/` | `design/sync.sh` 가 만든 사본 | 직접 고치지 말 것. `bash design/sync.sh --check` |
 | `ide/static/launch.html` | Pibo | 제목·브랜드만(도구 포트는 260930 부터 Pibo 와 같은 50000) |
-| `ide/templates/index.html` (전 `index_v2.html`) | Pibo | 브랜드 `PiBrain`(fa-brain), **상태 줄에 배터리 칸 없음**, 버전 아이콘 fa-brain, 소스 링크. 배치는 261118 부터 **A안**(파일 서랍 · 오른쪽 실행 화면 · 아래 상태 줄 — Pibo CLAUDE.md 'A안 배치') |
+| `ide/templates/index.html` (전 `index_v2.html`) | Pibo | 브랜드 `PiBrain`(fa-brain), 버전 아이콘 fa-brain, 소스 링크. 배치는 261118 부터 **A안**(파일 서랍 · 오른쪽 실행 화면 · 아래 상태 줄 — Pibo CLAUDE.md 'A안 배치') |
 | `ide/static/v2/ide.css` `ide.js` `vendor/toolbox-search.*` | Pibo | 주석의 탭 이름만 |
 | `ide/static/index.js` | Pibo 를 기준으로 | H/W 검수(50050, 4초 뒤 열기). `langFileVersion` 은 260929 부터 Pibo 와 같다(`ko.js`·`en.js` 가 같은 파일) |
 | `ide/run_ide.py` | 항목별로 | gzip, `run_blocking`, 실행 로그 `record`/`record_add`, 저장 확인 `saved`, `/` 는 늘 `index.html`. MCU 조회(`get_device`)는 안 가져왔다 |
@@ -572,7 +570,7 @@ edge-lab 의 블록 수준을 본떠 IDE 에 **2단계**(사용자: 3단계 대�
 ### 전체화면 (260930) — Pibo 와 같다
 
 키트(`pibo-ui.js`)가 IDE·도구·분류기의 전체화면 버튼을 맡는다. 탭을 바꾸면 브라우저가 풀고, 돌아오면 한 번 눌러 복귀.
-자세한 건 Pibo CLAUDE.md '전체화면'. PiBrain 에서 다른 점: **도구 머리줄에 버튼을 새로 넣었다**(`#fullscreen_bt`, [IDE] 옆,
+자세한 건 Pibo CLAUDE.md '전체화면'. PiBrain 에서 다른 점: **도구 머리줄에 버튼을 새로 넣었다**(`#fullscreen_bt`, [처음 화면] 옆,
 `tools/static/ko2en.js` 끝의 `nav_fullscreen`). IDE 는 Pibo 처럼 [더보기] 에서 상단바로 옮겼다.
 
 도구·분류기를 IDE 안 iframe 으로 합치는 안(C)은 **하지 않는다**(260930, 사용자 결정). 근거(숨긴 iframe 에서 카메라가 안 멈춤·학습이 멈춤·서비스가 안 꺼짐 등)는
@@ -583,7 +581,7 @@ Pibo CLAUDE.md 'iframe 으로 합치기(안 C)' 에 있다. PiBrain 도 같다.
 Pibo 도구와 기능·마크업이 달라(REST/SSE, 5탭) 키트의 `pb-v2` 층을 쓰지 않고 **같은 색 토큰으로 따로 짰다.**
 `body.v2-app` 이라 키트가 `pb-v2` 를 얹지 않는다.
 
-- 상단바(노랑): 도구 · PiBrain | [IDE](`PiboUI.backToIDE`) · 화면 밝기(누를 때마다 부드럽게→밝게→어둡게, 쿠키 `pibo_theme`) · KO/EN
+- 상단바: PiBrain · 도구 | [처음 화면](`#home_bt[data-pb-home]`, 키트 `goHome` — 261123 전엔 [IDE] `backToIDE`) · 전체화면 · 화면 밝기(누를 때마다 부드럽게→밝게→어둡게, 쿠키 `pibo_theme`) · KO/EN
   - 도구 [카메라] 는 기기 LCD 로 보내고 웹은 [캡처] 때 한 장만 받는다(`/capture.jpg`, JPEG 바이트). 서버는 매 장을 JPEG 로 만들지 않고
     누가 달라고 할 때만 만든다(260929, 전엔 초당 약 5장을 받는 사람이 없어도 base64 로 만들어 두었다). `/capture_frame`(base64 JSON)·
     `/camera_stream`(새 그림일 때만) 은 외부 도구용으로 남겨 뒀다. 도구 서버도 gzip
@@ -664,7 +662,7 @@ Pibo 리포의 변경을 가져올 때 **항목마다 적용 여부를 먼저 �
 | IDE 블록 | `device_eye_*` `device_get_*` | **`device_pibrain_*` 별도 세트.** 아래 참고 |
 | MCU | 있음 (`send_raw`, 펌웨어 버전) | **없음.** 검수 보고서에 Firmware 행이 없다 |
 | 배터리 | 게이지 있음 | 없음 |
-| 진입 UI | IDE v2 A안(261118 — 노랑 상단바 + 파일 서랍 + 오른쪽 실행 화면 + 아래 상태 줄) | 동일. 배터리 칸 없음. 랜딩 페이지는 쓰지 않는다 |
+| 진입 UI | IDE v2 A안(261118 — 상단바 + 파일 서랍 + 오른쪽 실행 화면. 아래 상태 줄은 261123 에 뺐다) | 동일. 배터리 칸 없음. 랜딩 페이지는 쓰지 않는다 |
 | Tools | socket.io + 모션 편집기·시뮬레이터 | REST/SSE. 버튼·LED·카메라·TTS·LCD 5개 패널. 컨셉만 같다. 화면은 v2 색으로 따로 짰다(260924) |
 | Classifier | teach-lab 방식(260924) | 같다(260924~). 언어 저장 키만 `classifier_language` |
 | 마이크 | 2-mic HAT (`arecord -D plug:dmic_sv`) | **없음.** 녹음·STT 경로 전부 무관 |
@@ -829,7 +827,7 @@ classifier 언어 토글, 검수 보고서 구조, Tools 서비스.
 **파이보·PiBrain 같은 코드**(`cards/` · `play/` · `kids/` 통째로, 원본은 파이보 리포 — 고치면 PiBrain 에도 복사). 제품은 `--device pibo|pibrain`.
 설계·차시·도전 규칙·확인 필요는 **파이보 리포 `KIDS.md`**.
 
-- **IDE [로봇 놀이] 버튼으로도 연다(261028, 사용자 — 안 쓰기로 하면 `ide/templates/index.html` 의 `#kids_bt` 만 지우면 된다).** 대기 페이지 `launch.html?svc=play` → `/play?enable=on`(IDE 가 띄움) → 50070. 탭을 닫으면 `beforeunload` 가 `/cards|/play?enable=off`(keepalive). 손으로 띄울 때는 `sudo /home/pi/.pyenv/bin/python3 cards/run_cards.py --device pibrain`(또는 `play/run_play.py`)
+- **대문 카드로 연다**(261123 — IDE [로봇 놀이] 버튼 `#kids_bt` 는 IDE 상단바의 다른 앱 버튼과 같이 뺐다). 대기 페이지 `launch.html?svc=play` → `/play?enable=on`(IDE 가 띄움) → 50070. 탭을 닫으면 `beforeunload` 가 `/cards|/play?enable=off`(keepalive). 손으로 띄울 때는 `sudo /home/pi/.pyenv/bin/python3 cards/run_cards.py --device pibrain`(또는 `play/run_play.py`)
 - **저장 한 벌(261116, 사용자)**: 번호·그림 고르기를 뺐다 — 앱을 켜면 바로 처음 화면, 저장은 `/home/pi/.kids/p/1/` 하나. 반이 바뀌면 선생님 잠금 [처음부터 하기]
 - **카드 더(261116, 사용자)**: 동작·이동·내 동작(도구에서 저장한 `mymotion.json`, 파이보) · 내가 쓴 말(20자) · 화면(그림·글자, `kids/screen.py`) · 사진 찍기 · 센서 '~할 때까지'(파이보 터치·PIR, PiBrain 버튼) · '만약 ~하면'(3초 동안 살핌 — 주사위 카드는 261120 에 뺐다, 사용자) · 차시 9(이벤트)·10(조건) · **저장한 재주 카드는 1차시부터 [재주] 탭에**(전엔 7차시부터). 음 카드(도~솔)는 다른 카드처럼 아이콘 + 이름(261120 — 큰 글자와 이름이 두 번 나왔다). 자세한 건 파이보 리포 `KIDS.md` '0-1'. **실기기 확인 필요** — 터치·PIR 읽기, 동작 이름, 카메라
 - **차시·도전은 `cards/content.json` 만 고친다**(`concepts` `lessons` `challenges`, 정답형 `want`·열린형 조건 열쇠). 코드는 안 바뀐다
@@ -847,12 +845,12 @@ classifier 언어 토글, 검수 보고서 구조, Tools 서비스.
 **대문 `/`** — 접속하면 앱을 큰 젤리 아이콘으로 고르고 **같은 탭으로** 들어간다(edge-lab 런처처럼). **앱 서버는 그대로 따로 돈다**(합치지 않는다 — 사용자). IDE 는 **`/ide`**.
 - 파일: `ide/templates/home.html`(두 리포 차이는 `data-product`·마크 클래스뿐) · `ide/static/v2/home.js` · `home.css`(**두 리포 같은 파일**). 서버는 `run_ide.py` 의 `/`·`/ide`·`GET /home_info`(상태·최근 파일 4·내가 가르친 AI 3·켜진 앱 — WiFi 비밀번호는 안 보낸다)
 - 앱 8개(H/W 검수는 설정 안), 줄 셋: **만들기**(코딩 → `/ide` · 도구 · AI 가르치기 · 대화) · **놀이 · 배우기**(카드 코딩 → `launch.html?svc=cards` · 로봇 놀이 → `svc=play`(키우기 · 픽셀 그림, 261123)) · **선생님 · 관리**(설정 · H/W 검수 `svc=hwtest` · 도움말 :8080)
-  - 설정은 대문 안의 창: 화면 밝기 · WiFi 설정(`/ide?panel=wifi` 가 WiFi 창을 연다) · 로봇 화면 처음으로 · 공장 초기화 · 전원 끄기(두 번 누르기, IDE 와 같은 socket `restore`·`poweroff`)
+  - 설정은 대문 안의 창: 화면 밝기 · WiFi 설정(**대문 안의 창**, 261123 — 전엔 `/ide?panel=wifi`) · 로봇 화면 처음으로 · H/W 검수 · 공장 초기화 · 전원 끄기(두 번 누르기, socket `restore`·`poweroff`) · 소스 코드 · 라이선스. 이것들은 이제 대문에만 있다(파이보 CLAUDE.md '대문 중심 정리')
   - H/W 검수는 다른 앱을 다 끄므로 한 번 묻는다(`confirm_hwtest`). 켜진 앱은 '켜져 있음' + 하늘색 링·별 하나(없으면 마지막에 쓴 앱, `localStorage pibo_home_last`)
   - 캐릭터: 실제 로봇처럼 **흰 얼굴**(사용자) + 남색 얼굴판 · 하늘색 눈 깜빡임 · 안테나 흔들기 — 제품 마크를 바탕으로 SVG 로 직접 그림. **PiBrain 보드 색은 확인 필요**(흰색으로 그림)
   - [이어서 하기] 파일 → `/ide?open=<경로>`(`ide.js` 11 — init 을 놓치면 2.5초 보조 타이머)
-- **앱의 [IDE](#ide_bt)**: IDE 가 새 탭으로 연 탭(`window.opener`)이면 그대로 [IDE](탭을 닫음), 아니면 키트가 **[처음 화면]**(집 아이콘)으로 바꾼다 → 대문. IDE 상단바에도 [처음 화면](저장 안 했으면 묻기). 체험 앱 안의 [처음]은 카드 코딩 [카드 처음](도형 아이콘) · 로봇 놀이 [놀이 처음](게임패드)
-- 대기 페이지 `launch.html`: `svc=hwtest`(50050) · `svc=cards|play[&go=make|pet|game]`(`svc=kids` 는 예전 이름 → play). `LAUNCH_VER` 261123v8. 체험 앱은 `?go=` 를 읽고 주소에서 지운다
+- **모든 앱의 [처음 화면](`#home_bt[data-pb-home]`)** → 대문(261123 — 예전 [IDE] `#ide_bt` 는 지웠다. 코딩(IDE)은 저장 안 했으면 묻는다). 체험 앱 안의 [처음]은 카드 코딩 [카드 처음](도형 아이콘) · 로봇 놀이 [놀이 처음](게임패드) — `#start_bt`
+- 대기 페이지 `launch.html`: `svc=hwtest`(50050) · `svc=cards|play[&go=make|pet|art]`(`svc=kids` 는 예전 이름 → play). `LAUNCH_VER` 261123v10. 체험 앱은 `?go=` 를 읽고 주소에서 지운다
 - 미리보기 `design/preview.py` 와 검사 `design/audit/browser_check.js` 가 대문(`/`)·IDE(`/ide`)를 안다. `AUDIT.md` B2 예외에 대문·[처음 화면] 을 넣었다
 
 **학습지 층**: 파이보와 같은 키트·IDE CSS(색은 키트 토큰) — 설명은 파이보 CLAUDE.md '첫 화면(대문) · 학습지 층'. 대문 카드 그림·키우기 친구는 **PiBrain 캐릭터**(몸은 파이보와 같고 머리가 PiBrain 보드 — 검은 화면 속 하늘색 얼굴 · 카메라 · 버튼 넷, 261123 사용자). 파일은 파이보와 같다(`ide/static/v2/pibo-art.js` · `play/static/pet.js` — 제품을 보고 고른다). 상단바 아이콘은 작은 Font Awesome 기호(캐릭터 아이콘은 넣었다 뺐다).
@@ -1057,7 +1055,7 @@ grep -n "[가-힣]" ide/run_ide.py | grep -E "emit|JSONResponse"            # 0 
 - 손으로 쓰는 페이지: `notes/piboMaker.md`(PiBrain 메이커 사용법, 캡처 `notes/images/*`), `notes/software.md`, `notes/hardware.md`
 - 확인은 autodoc 앵커로: `grep -c 'id="openpibo.speech.SpeechToText"' docs/build/html/libraries/speech.html`
 - **영문 도움말(261001)** — 한 리포(main)에서 한/영 두 벌을 같이 빌드한다: `docs/build/html`(한국어) · `docs/build/en`(영문). `global` 에도 같은 `docs/build` 가 간다(델타 아님)
-  - `docs/index.html` 이 `?lang=en` 이면 `build/en/`, 아니면 `build/html/` 로 보낸다. IDE [도움말] 은 `:8080/?lang=<IDE 언어>` 를 연다(`index.js` 의 `guide_bt`) —
+  - `docs/index.html` 이 `?lang=en` 이면 `build/en/`, 아니면 `build/html/` 로 보낸다. 대문 [도움말] 은 `:8080/?lang=<지금 언어>` 를 연다(`home.js` — 261123 전엔 IDE `guide_bt`) —
     영문판은 `blang='en'` 이라 처음부터 영문 도움말. 두 벌 모두 상단바의 언어 select(`_static/langswitch.js`, 주소의 `/html/`↔`/en/`)로 서로 오간다
   - 페이지(`index.rst`·`notes/*`·`libraries/*.rst` 제목)는 **`source_en/` 에 영문으로 따로** 있다. 한국어 페이지를 고치면 영문도 고칠 것.
     `source_en/conf.py` 는 `source/conf.py` 를 exec 해 물려받고 언어·제목·번역 위치만 바꾼다. 영문 캡처는 `source_en/notes/images/`(영문 UI 로 찍는다), 하드웨어 사진은 한국어 쪽 것을 같이 쓴다

@@ -21,8 +21,8 @@
     --ink-soft:   #555;
     --line:       #b9bcc2;
     --head-bg:    #eef1f5;
-    --accent:     #2563eb;   /* 파이보 화면들의 주 동작 파랑 */
-    --accent-hov: #1d4fd8;
+    --accent:     #1f5f7a;   /* 주 동작 — 학습지 층의 남색 펜(261123, 다른 화면과 같게. 전엔 파랑 #2563eb) */
+    --accent-hov: #174b61;
     --canvas:     #eceef4;   /* 화면 바닥 — IDE·도구의 부드럽게와 같다 */
     --frame:      #fbf7ef;   /* 상단바 — 학습지 종이색(261123, 다른 앱과 같게) */
     --frame-ink:  #3d2f12;
@@ -194,22 +194,25 @@
   }
 
   /* print */
-  /* 화면에서만: IDE·도구와 같은 48px 노랑 상단바, 밝기 쿠키. 인쇄(보고서)는 그대로 흰 종이 */
+  /* 화면에서만: 다른 앱과 같은 48px 종이색 상단바 + [처음 화면], 밝기 쿠키. 인쇄(보고서)는 그대로 흰 종이 */
   .hw-top { display: none; }
   @media screen {
     body { padding-top: 0; }
     .hw-top { display: flex; align-items: center; gap: 8px; height: 48px; margin: 0 -12px 16px; padding: 0 16px;
-              background: var(--frame); color: var(--frame-ink); border-bottom: 1px solid rgba(61, 47, 18, .14);
+              background: var(--frame); color: var(--frame-ink); border-bottom: 1px solid #4a3f2e;
               font-size: 16px; font-weight: 700; letter-spacing: -.2px; }
     .hw-top span { font-weight: 400; }
     .hw-top .hw-mark { flex: none; margin-right: 2px; }
     .hw-top span::before { content: "·"; margin: 0 6px 0 -2px; opacity: .55; font-weight: 700; }
     html[data-theme="light"] body { --canvas: #f1f3f8; }
-    html[data-theme="light"] .hw-top { background: #ffcb2f; }
+    html[data-theme="light"] .hw-top { background: #ffffff; }
     html[data-theme="dark"] body { --canvas: #151922; }
-    html[data-theme="dark"] .hw-top { background: #1b1e26; color: #eceef2; border-bottom-color: #0d0f14; }
+    html[data-theme="dark"] .hw-top { background: #24211c; color: #efe8db; border-bottom-color: #b9ab92; }
     html[data-theme="dark"] .toolbar .btn:not(.btn-primary):not(.btn-danger) { background: #242935; color: #e4e7ef; border-color: #3b4252; }
-    html[data-theme="dark"] .toolbar .btn-primary { background: #f2c94c; color: #1b1d20; border-color: #f2c94c; }   /* 어둡게의 주 동작은 노랑(다른 화면과 같게) */
+    html[data-theme="dark"] .toolbar .btn-primary { background: #7fb6cf; color: #1c1a16; border-color: #7fb6cf; }   /* 어둡게의 주 동작은 옅은 남색(다른 화면과 같게, 261123 전엔 노랑) */
+    .hw-home { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 10px; border-radius: 8px;
+               color: inherit; text-decoration: none; font-size: 13px; font-weight: 700; }
+    .hw-home:hover { background: rgba(74, 63, 46, .08); }
     html[data-theme="dark"] .toolbar .btn-danger { background: #242935; color: #ffb0b2; border-color: #e8676b; }
     .sheet { border-radius: 12px; }
   }
@@ -236,7 +239,7 @@
 </head>
 <body>
 
-<header class="hw-top no-print"><svg class="hw-mark" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M4.5 3h15a3 3 0 0 1 3 3v10.5a3 3 0 0 1-3 3h-15a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3zM5.2 5.8a.8.8 0 0 0-.8.8v9.3a.8.8 0 0 0 .8.8h6a.8.8 0 0 0 .8-.8V6.6a.8.8 0 0 0-.8-.8zM15.4 5.1499999999999995a1.45 1.45 0 1 0 0 2.9a1.45 1.45 0 1 0 0 -2.9zM18.9 5.3h1.6a0.5 0.5 0 0 1 0.5 0.5v1.6a0.5 0.5 0 0 1 -0.5 0.5h-1.6a0.5 0.5 0 0 1 -0.5 -0.5v-1.6a0.5 0.5 0 0 1 0.5 -0.5zM17.0 9.5a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0 -2.4zM14.6 11.9a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0 -2.4zM19.4 11.9a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0 -2.4zM17.0 14.3a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0 -2.4z"/><rect x="8.6" y="20.2" width="6.8" height="2.6" rx="1"/></svg><b>PiBrain</b><span>H/W 검수</span></header>
+<header class="hw-top no-print"><svg class="hw-mark" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M4.5 3h15a3 3 0 0 1 3 3v10.5a3 3 0 0 1-3 3h-15a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3zM5.2 5.8a.8.8 0 0 0-.8.8v9.3a.8.8 0 0 0 .8.8h6a.8.8 0 0 0 .8-.8V6.6a.8.8 0 0 0-.8-.8zM15.4 5.1499999999999995a1.45 1.45 0 1 0 0 2.9a1.45 1.45 0 1 0 0 -2.9zM18.9 5.3h1.6a0.5 0.5 0 0 1 0.5 0.5v1.6a0.5 0.5 0 0 1 -0.5 0.5h-1.6a0.5 0.5 0 0 1 -0.5 -0.5v-1.6a0.5 0.5 0 0 1 0.5 -0.5zM17.0 9.5a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0 -2.4zM14.6 11.9a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0 -2.4zM19.4 11.9a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0 -2.4zM17.0 14.3a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0 -2.4z"/><rect x="8.6" y="20.2" width="6.8" height="2.6" rx="1"/></svg><b>PiBrain</b><span>H/W 검수</span><a class="hw-home" id="hw_home" href="/"><svg viewBox="0 0 576 512" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M575.8 255.5c0 18-15 32.1-32 32.1h-32l.7 160.2c0 2.7-.2 5.4-.5 8.1V472c0 22.1-17.9 40-40 40H456c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1H416 392c-22.1 0-40-17.9-40-40V448 384c0-17.7-14.3-32-32-32H256c-17.7 0-32 14.3-32 32v64 24c0 22.1-17.9 40-40 40H160 128.1c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2H104c-22.1 0-40-17.9-40-40V360c0-.9 0-1.9 .1-2.8V287.6H32c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z"/></svg>처음 화면</a></header>
 
 <div class="toolbar no-print">
   <button class="btn btn-primary" id="btn-run-all">Run all tests</button>
@@ -597,5 +600,6 @@ function haltSystem() {
     .catch(() => alert('Failed to send the shutdown command.'));
 }
 </script>
+<script>(function(){var a=document.getElementById('hw_home');if(a)a.href='http://'+location.hostname+'/';})();</script>
 </body>
 </html>

@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=72be69f6" />
+    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=0c64a450" />
     
     
 
@@ -108,7 +108,7 @@
     <b>PiBrain</b><span class="pb-topbar__app">도움말</span>
   </a>
   <div class="pb-topbar__right">
-    <a class="pb-topbar__btn pb-topbar__ide" href="/" title="처음 화면">
+    <a class="pb-topbar__btn pb-topbar__home" href="/" title="처음 화면">
       <svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true"><path d="M575.8 255.5c0 18-15 32.1-32 32.1h-32l.7 160.2c0 2.7-.2 5.4-.5 8.1V472c0 22.1-17.9 40-40 40H456c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1H392c-22.1 0-40-17.9-40-40V384c0-17.7-14.3-32-32-32H256c-17.7 0-32 14.3-32 32v88c0 22.1-17.9 40-40 40H128.1c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2H104c-22.1 0-40-17.9-40-40V360c0-.9 0-1.9 .1-2.8V287.6H32c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z"/></svg><span>처음 화면</span>
     </a>
     <button type="button" class="pb-topbar__btn pb-topbar__fs" title="전체화면" hidden>
@@ -356,7 +356,8 @@
 <p>주소를 열면 <strong>처음 화면</strong>(학습지 한 장)이 나옵니다. 큰 그림 단추를 눌러 앱으로 들어가고, 앱 위 줄의 [처음 화면](집 단추)으로 돌아옵니다.
 줄 1 <strong>만들기</strong>(코딩 · 도구 · AI 가르치기 · 대화), 줄 2 <strong>놀이 · 배우기</strong>(카드 코딩 · 로봇 놀이), 줄 3 <strong>선생님 · 관리</strong>(설정 · 도움말)입니다.
 지금 켜져 있는 앱에는 빨간 도장 ‘켜져 있음’, 지난번에 쓴 앱에는 노란 꼬리표가 붙고, 오른쪽에는 로봇 상태와 [이어서 하기](최근 파일·내가 가르친 AI)가 있습니다.
-[설정]에서 화면 밝기 · WiFi 설정 · 로봇 화면 처음으로 · H/W 검수 · 공장 초기화 · 전원 끄기를 합니다.</p>
+[설정]에서 화면 밝기 · WiFi 설정(여기서 바로 WiFi 를 골라 연결) · 로봇 화면 처음으로 · H/W 검수 · 공장 초기화 · 전원 끄기 · 소스 코드와 라이선스를 봅니다.
+로봇 상태(배터리 · 온도 · 메모리 · WiFi · 시리얼 · 켜진 시간)도 처음 화면에서 봅니다. 모든 앱의 위 줄은 같은 모양입니다 — 왼쪽 앱 이름, 오른쪽 (앱 기능) · [처음 화면] · [전체화면] · [밝기] · 언어.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -366,21 +367,21 @@
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><strong>IDE</strong></p></td>
+<tr class="row-even"><td><p><strong>코딩</strong></p></td>
 <td><p>블록·파이썬으로 프로그램을 만들고 실행합니다</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">http://&lt;PiBrain</span> <span class="pre">IP&gt;</span></code> → 처음 화면 [코딩]</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>도구</strong></p></td>
 <td><p>버튼·LED·카메라·목소리·화면을 코드 없이 바로 써 봅니다</p></td>
-<td><p>처음 화면 · IDE 위 [도구]</p></td>
+<td><p>처음 화면 [도구]</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>대화</strong></p></td>
 <td><p>PiBrain 안의 언어 모델(LLM)과 글로 대화합니다</p></td>
-<td><p>처음 화면 · IDE 위 [대화]</p></td>
+<td><p>처음 화면 [대화]</p></td>
 </tr>
-<tr class="row-odd"><td><p><strong>분류기</strong></p></td>
+<tr class="row-odd"><td><p><strong>AI 가르치기</strong></p></td>
 <td><p>카메라로 예시를 모아 나만의 AI 를 가르칩니다</p></td>
-<td><p>처음 화면 · IDE 위 [분류기]</p></td>
+<td><p>처음 화면 [AI 가르치기]</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>카드 코딩</strong></p></td>
 <td><p>초등학생이 카드로 로봇 친구에게 재주를 가르칩니다(코딩 없이) — 도전 · 만들기 · 내 재주</p></td>
@@ -388,11 +389,11 @@
 </tr>
 <tr class="row-odd"><td><p><strong>로봇 놀이</strong></p></td>
 <td><p>로봇 친구를 돌보는 <strong>키우기</strong>와, 태블릿에서 칸을 칠하면 LCD 에 바로 나오는 <strong>픽셀 그림</strong>(움직이는 그림 · 그린 순서 다시 보기 · 내 그림첩)</p></td>
-<td><p>처음 화면 · IDE 위 [로봇 놀이]</p></td>
+<td><p>처음 화면 [로봇 놀이]</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>도움말</strong></p></td>
 <td><p>지금 보고 있는 이 문서입니다</p></td>
-<td><p>처음 화면 · IDE 위 [도움말]</p></td>
+<td><p>처음 화면 [도움말]</p></td>
 </tr>
 </tbody>
 </table>
@@ -403,11 +404,10 @@
 블록 [수집] 분류(위키백과·날씨·뉴스)뿐입니다.</p>
 </div>
 <section id="ide">
-<h2>IDE<a class="headerlink" href="#ide" title="Link to this heading">¶</a></h2>
-<p><img alt="IDE 블록 화면" src="../_images/ide_block.png" /></p>
+<h2>코딩 (IDE)<a class="headerlink" href="#ide" title="Link to this heading">¶</a></h2>
+<p><img alt="코딩 블록 화면" src="../_images/ide_block.png" /></p>
 <ul class="simple">
-<li><p><strong>위 줄</strong>: 왼쪽 끝 폴더 단추로 <strong>파일 서랍</strong>을 엽니다. 가운데 [블록 | 파이썬] 으로 편집기를 바꾸고, 오른쪽은 도구·대화·분류기·로봇 놀이·도움말·전체화면과 [⋯] 더보기
-(화면 밝기 · 글자 크기 · 파이썬 편집기 테마 · 언어 · 공장 초기화 · 전원 끄기 · 소스 코드와 라이선스)</p></li>
+<li><p><strong>위 줄</strong>: 왼쪽 끝 폴더 단추로 <strong>파일 서랍</strong>을 엽니다. 가운데 [블록 | 파이썬] 으로 편집기를 바꾸고, 오른쪽은 [⋯](글자 크기 · 파이썬 편집기 테마) · [처음 화면] · [전체화면] · [밝기] · 언어로 다른 앱과 같습니다</p></li>
 <li><p><strong>파일 서랍</strong>: 파일 목록, [추가](새 파일·새 폴더·올리기), 사진·소리 미리보기. 처음 열면 펼쳐져 있고, 파일을 열거나 편집기를 누르면 접힙니다.
 편집기 줄의 파일 이름을 눌러도 열립니다. 파일마다 오른쪽 아이콘으로 내려받기 · 이름 바꾸기 · <strong>복사·옮기기</strong> · 지우기를 합니다.
 복사·옮기기는 받을 폴더(code · myimage · myaudio · mymodel · usb)를 고르고 [복사] 나 [옮기기] 를 누릅니다. USB 와 로봇 사이도 됩니다.
@@ -416,14 +416,13 @@
 파일을 열면 편집기 줄에 <code class="docutils literal notranslate"><span class="pre">code</span> <span class="pre">›</span> <span class="pre">손동작.json</span></code> 처럼 폴더와 이름이 보입니다(전체 경로는 마우스를 올리면 나옵니다)</p></li>
 <li><p><strong>오른쪽 실행 화면</strong>: <strong>[실행] [정지]</strong> 와 실행 상태, 화면 출력(<code class="docutils literal notranslate"><span class="pre">(이미지)</span> <span class="pre">이미지를</span> <span class="pre">모니터</span> <span class="pre">화면에</span> <span class="pre">보여주기</span></code> 블록으로 보낸 그림), 실행 출력, 프로그램에 입력 보내기.
 편집기 줄 오른쪽 끝 단추로 접고 펼 수 있고, 실행하면 다시 펼쳐집니다. 서랍과 실행 화면을 둘 다 접으면 블록을 넓게 씁니다</p></li>
-<li><p><strong>아래 상태 줄</strong>: 연결 상태 · 버전 · 시리얼 | WiFi(누르면 WiFi 설정) · 온도 · 메모리 · 켜진 시간</p></li>
 <li><p><strong>블록</strong>: 왼쪽 분류에서 블록을 끌어다 놓습니다. 맨 위 <strong>블록 찾기</strong> 에 ‘소리’·’얼굴’ 처럼 적으면 해당 블록이 나옵니다.
 편집기 줄의 <strong>[쉬움 | 전체]</strong> 에서 [쉬움]을 고르면 처음 배우는 학생용 블록(계속 반복·동작·불빛·소리·센서·AI 눈·점수 등)만 보입니다.
 [파이썬 코드] 를 누르면 블록이 만든 파이썬 코드를 볼 수 있습니다. 블록 목록은 왼쪽 <strong>BLOCK</strong> 을 보세요.</p></li>
 <li><p><strong>오류가 나면</strong>: 출력 위 빨간 상자에 어디서(블록 모드는 빨간 테두리로 표시한 블록, 파이썬은 몇 번째 줄) 무슨 오류인지 쉬운 말로 나옵니다.
 [블록 보기]·[줄 보기] 로 그 자리로 가고, 블록을 고치면 빨간 테두리는 없어집니다</p></li>
 </ul>
-<p><img alt="IDE 파이썬 화면" src="../_images/ide_python.png" /></p>
+<p><img alt="코딩 파이썬 화면" src="../_images/ide_python.png" /></p>
 <ul class="simple">
 <li><p><strong>파이썬</strong>: <code class="docutils literal notranslate"><span class="pre">openpibo</span></code> 패키지로 PiBrain의 기능을 씁니다. <code class="docutils literal notranslate"><span class="pre">print</span></code> 는 오른쪽 [출력] 에, <code class="docutils literal notranslate"><span class="pre">input</span></code> 은 그 아래 입력 칸으로 받습니다.
 API 는 왼쪽 <strong>PYTHON</strong> 을 보세요</p></li>
@@ -455,9 +454,9 @@ USB 카메라를 꽂았으면 [여기에 보기] 옆 고르는 칸에서 <strong
 <li><p><strong>화면</strong>: 글자·크기·위치·색을 정해 화면(LCD 240×320)에 띄웁니다. [처음 화면으로] 는 IP 주소가 나오는 첫 화면으로 되돌립니다</p></li>
 </ul>
 </section>
-<section id="id2">
-<h2>분류기<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
-<p><img alt="분류기 학습" src="../_images/classifier_learn.jpg" /></p>
+<section id="ai">
+<h2>AI 가르치기 (분류기)<a class="headerlink" href="#ai" title="Link to this heading">¶</a></h2>
+<p><img alt="AI 가르치기 학습" src="../_images/classifier_learn.jpg" /></p>
 <p>카메라로 예시를 모아 AI 에게 ‘이건 고양이, 이건 음식’ 처럼 가르칩니다. PiBrain 카메라는 세로(3:4)라 화면도 세로로 나옵니다.</p>
 <p>오른쪽 칸 위의 <strong>학습 순서</strong>(① 예시 모으기 → ② AI 가르치기 → ③ 저장하고 시험하기)가 지금 할 단계를 파랑 테두리로, 끝난 단계를 체크로 보여 줍니다.</p>
 <ol class="arabic simple">
@@ -466,17 +465,17 @@ USB 카메라를 꽂았으면 [여기에 보기] 옆 고르는 칸에서 <strong
 카메라 아래 고르는 칸에서 USB 카메라로 바꿀 수 있어요 — 학습할 때와 쓸 때 같은 카메라를 쓰면 더 잘 맞습니다</p></li>
 <li><p><strong>[AI 가르치기]</strong> — 태블릿·노트북 브라우저에서 몇 초 만에 배웁니다. 맞힌 비율·헷갈린 표·지금 보이는 것의 점수가 나옵니다</p></li>
 <li><p><strong>[저장]</strong> — PiBrain 의 <code class="docutils literal notranslate"><span class="pre">/home/pi/mymodel/&lt;모델</span> <span class="pre">이름&gt;</span></code> 에 저장됩니다</p></li>
-<li><p>IDE 에서 블록 <code class="docutils literal notranslate"><span class="pre">분류</span> <span class="pre">모델</span> <span class="pre">[mymodel]</span> <span class="pre">(모델</span> <span class="pre">이름)</span> <span class="pre">을(를)</span> <span class="pre">불러오기</span></code> → <code class="docutils literal notranslate"><span class="pre">(이미지)</span> <span class="pre">이미지를</span> <span class="pre">분류</span> <span class="pre">모델로</span> <span class="pre">알아보기</span></code> 로 씁니다.
+<li><p>[코딩]에서 블록 <code class="docutils literal notranslate"><span class="pre">분류</span> <span class="pre">모델</span> <span class="pre">[mymodel]</span> <span class="pre">(모델</span> <span class="pre">이름)</span> <span class="pre">을(를)</span> <span class="pre">불러오기</span></code> → <code class="docutils literal notranslate"><span class="pre">(이미지)</span> <span class="pre">이미지를</span> <span class="pre">분류</span> <span class="pre">모델로</span> <span class="pre">알아보기</span></code> 로 씁니다.
 <code class="docutils literal notranslate"><span class="pre">(이미지)</span> <span class="pre">이미지</span> <span class="pre">위에</span> <span class="pre">분류</span> <span class="pre">결과</span> <span class="pre">표시하기</span></code> 는 본 손·얼굴·몸의 점과 종류 이름을 그림에 그립니다</p></li>
 </ol>
 <p>[시험] 탭에서 저장한 모델을 다시 써 보고, [보관함] 에서 시험·이어서 배우기·이름 바꾸기·내려받기(zip)·지우기를 합니다.</p>
 <div class="admonition tip">
 <p class="admonition-title">팁</p>
-<p>분류기는 처음 열 때 AI 파일(약 10MB)을 받습니다. 수업 전에 태블릿마다 한 번씩 열어 두면 수업 중에는 바로 뜹니다.</p>
+<p>AI 가르치기는 처음 열 때 AI 파일(약 10MB)을 받습니다. 수업 전에 태블릿마다 한 번씩 열어 두면 수업 중에는 바로 뜹니다.</p>
 </div>
 </section>
-<section id="id3">
-<h2>대화<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<section id="id2">
+<h2>대화<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
 <p>PiBrain 안에서 도는 언어 모델(LLM)과 글로 대화합니다. 처음 화면의 <strong>모델 카드</strong>(또는 위 <strong>[대화 모델]</strong>)에서 모델을 고르면 그때 모델을 올립니다
 (처음 한 번은 준비하는 데 수십 초 걸립니다). 모델을 바꾸면 대화가 처음부터 다시 시작됩니다.</p>
 <div class="table-wrapper colwidths-auto docutils container">
@@ -532,7 +531,7 @@ USB 카메라를 꽂았으면 [여기에 보기] 옆 고르는 칸에서 <strong
 블록에서는 글자로만 대화하고 도구는 실행하지 않습니다.</p>
 <div class="admonition note">
 <p class="admonition-title">참고</p>
-<p>도구·대화·분류기·카드 코딩/로봇 놀이·H/W 검수는 <strong>한 번에 하나만</strong> 켜집니다. 하나를 열면 나머지는 꺼지고, IDE 에서 프로그램을 실행해도 꺼집니다
+<p>도구·대화·AI 가르치기·카드 코딩/로봇 놀이·H/W 검수는 <strong>한 번에 하나만</strong> 켜집니다. 하나를 열면 나머지는 꺼지고, [코딩]에서 프로그램을 실행해도 꺼집니다
 (카메라·스피커·메모리를 나눠 쓰기 때문입니다). 꺼진 화면에는 [다시 켜기] 가 나옵니다.</p>
 </div>
 </section>
@@ -587,10 +586,10 @@ USB 카메라를 꽂았으면 [여기에 보기] 옆 고르는 칸에서 <strong
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">PiBrain 메이커</a><ul>
-<li><a class="reference internal" href="#ide">IDE</a></li>
+<li><a class="reference internal" href="#ide">코딩 (IDE)</a></li>
 <li><a class="reference internal" href="#id1">도구</a></li>
-<li><a class="reference internal" href="#id2">분류기</a></li>
-<li><a class="reference internal" href="#id3">대화</a></li>
+<li><a class="reference internal" href="#ai">AI 가르치기 (분류기)</a></li>
+<li><a class="reference internal" href="#id2">대화</a></li>
 </ul>
 </li>
 </ul>

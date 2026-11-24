@@ -1,7 +1,7 @@
 {#- Furo 의 base.html 위에 얹는 것.
     1) 화면 밝기(쿠키 pibo_theme)를 첫 페인트 전에 맞춘다(_static/pibotheme.js).
        html_js_files 는 Furo 가 본문 끝에 싣기 때문에 너무 늦다(먼저 밝게 그렸다가 어둡게 바뀐다)
-    2) 다른 앱(IDE·도구·분류기)과 같은 48px 상단바(261028): 왼쪽 [제품 아이콘] 제품 · 도움말, 오른쪽 IDE · 전체화면 · 밝기 · 언어(261120 — 다른 앱과 같은 순서·같은 글자, 999px 이하는 아이콘만).
+    2) 다른 앱(코딩·도구·분류기)과 같은 48px 상단바(261028): 왼쪽 [제품 아이콘] 제품 · 도움말, 오른쪽 처음 화면 · 전체화면 · 밝기 · 언어(261120 — 다른 앱과 같은 순서·같은 글자, 999px 이하는 아이콘만).
        제품 이름은 html_title('도움말 · piBo' / 'Help · PiBrain')에서 뗀다 — conf.py 를 두 리포가 같게 두려고.
        밝기는 Furo 버튼 대신 키트와 같은 밝게 → 부드럽게 → 어둡게 버튼(pibotheme.js). [처음 화면](대문 80 /)·전체화면·밝기 아이콘은 다른 앱과 같은 Font Awesome Free 6.2.0 글리프(ide/webfonts/fa-solid-900.ttf 에서 뽑은 SVG — 8080 은 IDE 아이콘 글꼴을 못 받는다). 좁은 화면(63em 이하)에서는 Furo 의 모바일 머리줄을 숨기고 그 버튼(목록·목차)을 이 상단바로 옮긴다(mycss.css '상단바') -#}
 {% extends "!base.html" %}
@@ -26,7 +26,7 @@
     <b>{{ pb_product }}</b><span class="pb-topbar__app">{{ pb_app }}</span>
   </a>
   <div class="pb-topbar__right">
-    <a class="pb-topbar__btn pb-topbar__ide" href="/" title="{{ 'Home' if language == 'en' else '처음 화면' }}">
+    <a class="pb-topbar__btn pb-topbar__home" href="/" title="{{ 'Home' if language == 'en' else '처음 화면' }}">
       <svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true"><path d="M575.8 255.5c0 18-15 32.1-32 32.1h-32l.7 160.2c0 2.7-.2 5.4-.5 8.1V472c0 22.1-17.9 40-40 40H456c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1H392c-22.1 0-40-17.9-40-40V384c0-17.7-14.3-32-32-32H256c-17.7 0-32 14.3-32 32v88c0 22.1-17.9 40-40 40H128.1c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2H104c-22.1 0-40-17.9-40-40V360c0-.9 0-1.9 .1-2.8V287.6H32c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z"/></svg><span>{{ 'Home' if language == 'en' else '처음 화면' }}</span>
     </a>
     <button type="button" class="pb-topbar__btn pb-topbar__fs" title="{{ 'Full screen' if language == 'en' else '전체화면' }}" hidden>

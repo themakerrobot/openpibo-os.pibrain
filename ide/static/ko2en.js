@@ -1,7 +1,7 @@
 const blang = (navigator.language || navigator.userLanguage).includes('ko')?'ko':'en';
 let lang = localStorage.getItem("language")?localStorage.getItem("language"):blang;
 
-// IDE 화면 문구. 대화 화면(chat/)도 이 파일을 같이 읽는다(chat_* 키).
+// IDE(코딩)·대문 문구. 대화·체험 앱 화면도 이 파일을 같이 읽는다(chat_* · kids_* · play_* 키).
 // 261028: 말투·용어 정리 — 알림·확인·오류는 해요체, 버튼·이름표는 짧게. 쓰지 않던 옛 키를 정리했다
 const translations = {
   cf_model_default: { ko: "모델 이름", en: "model name" },
@@ -21,8 +21,6 @@ const translations = {
   nav_files:      { ko: "파일",     en: "Files" },
   nav_tools:      { ko: "도구",     en: "Tools" },
   nav_llm:        { ko: "대화",     en: "Chat" },
-  nav_classifier: { ko: "분류기",   en: "Classifier" },
-  nav_kids:       { ko: "로봇 놀이", en: "Robot Play" },
   nav_guide:      { ko: "도움말",   en: "Help" },
   nav_fullscreen: { ko: "전체화면", en: "Full screen" },
   nav_restore:    { ko: "공장 초기화", en: "Factory reset" },
@@ -39,9 +37,7 @@ const translations = {
   v2_no_file:       { ko: "열린 파일 없음", en: "No file open" },
   v2_prompt_ph:     { ko: "프로그램에 입력 보내기", en: "Send input to the program" },
   v2_add:           { ko: "추가",     en: "Add" },
-  v2_brand:         { ko: "메이커",   en: "Maker" },
-  v2_panel:         { ko: "패널 접기/펴기", en: "Show or hide panel" },
-  v2_tab_robot:     { ko: "PiBrain", en: "PiBrain" },
+  v2_brand:         { ko: "코딩",     en: "Coding" },   // 대문 카드 이름(home_code)과 같게(261123 — 전엔 "piBo 메이커")
   v2_live_empty:    { ko: "[… 이미지를 모니터 화면에 보여주기] 블록을 쓰면 여기에 화면이 나와요.", en: "Use the \"Show image … on the monitor\" block to see the picture here." },
   v2_settings:      { ko: "설정",     en: "Settings" },
   v2_output:        { ko: "출력",     en: "Output" },
@@ -163,7 +159,6 @@ const translations = {
   err_upload_protected:   { ko: "보호된 폴더라 파일을 올릴 수 없어요.", en: "This folder is protected. You can't upload files here." },
   msg_upload_done:        { ko: "파일을 올렸어요.", en: "File uploaded." },
   msg_view_done:          { ko: "그림을 보여 줬어요.", en: "Picture shown." },
-  err_init_sysfile:       { ko: "시스템 정보를 읽지 못했어요.", en: "Could not read the system information." },
   err_load_protected:     { ko: "보호된 파일이라 열 수 없어요.", en: "This file is protected and can't be opened." },
   err_delete_protected:   { ko: "보호된 파일이라 지울 수 없어요.", en: "This file is protected and can't be deleted." },
   err_delete_parse:       { ko: "파일 이름이 올바르지 않아 지우지 못했어요.", en: "Could not delete. The file name is not valid." },
@@ -183,24 +178,15 @@ const translations = {
   err_run:    { ko: (d) => `실행하지 못했어요.\n${d}`,         en: (d) => `Could not run.\n${d}` },
   // 소스 위치와 라이선스 안내(261027 에 AGPL-3.0 → Apache-2.0)
   v2_source:  { ko: "소스 코드 · 라이선스 (Apache-2.0)", en: "Source code · License (Apache-2.0)" },
-  // 260930 — 상태 칸: 켜진 시간 단위(전엔 늘 'N hours'), 이름표·툴팁
+  // 260930 — 켜진 시간 단위(전엔 늘 'N hours'). 지금은 대문의 켜진 시간 도장이 쓴다
   v2_uptime:  { ko: (h, m) => h ? `${h}시간 ${m}분` : `${m}분`, en: (h, m) => h ? `${h} h ${m} min` : `${m} min` },
-  v2_mem:     { ko: "메모리", en: "RAM" },
-  v2_tip_temp:    { ko: "CPU 온도", en: "CPU temperature" },
-  v2_tip_mem:     { ko: "메모리 사용량", en: "Memory in use" },
-  v2_tip_uptime:  { ko: "켜진 시간", en: "Time since power-on" },
-  v2_tip_version: { ko: "OS 버전", en: "OS version" },
-  v2_tip_serial:  { ko: "시리얼 번호 · 누르면 하드웨어 검수", en: "Serial number · click for the hardware test" },
-  v2_tip_battery: { ko: "배터리", en: "Battery" },
   // 260930 — [WiFi 설정] 안내(전엔 영어로만 나왔다)
   wifi_scanning:    { ko: "WiFi를 찾는 중…", en: "Looking for WiFi…" },
   wifi_none:        { ko: "찾은 WiFi가 없어요.", en: "No WiFi found." },
   wifi_scan_failed: { ko: "WiFi를 찾지 못했어요. 다시 시도해 주세요.", en: "Could not look for WiFi. Please try again." },
-  wifi_manual:      { ko: "직접 입력", en: "Entered manually" },
   wifi_connecting:  { ko: "연결 중…", en: "Connecting…" },
   wifi_sent:        { ko: "연결을 요청했어요. 잠시 뒤 새 주소로 다시 들어와 주세요.", en: "Connection requested. Reconnect at the new address in a moment." },
   wifi_failed:      { ko: "연결을 요청하지 못했어요.", en: "Could not send the connection request." },
-  wifi_cancelled:   { ko: "연결을 취소했어요.", en: "Connection cancelled." },
   // 261026 — 대화 웹(chat/, 50030). 대화 화면이 IDE 의 이 파일을 같이 읽는다(영문판 델타를 늘리지 않으려고)
   chat_title:       { ko: "대화", en: "Chat" },
   chat_new:         { ko: "새 대화", en: "New chat" },
@@ -338,7 +324,7 @@ const translations = {
   kids_clear:       { ko: "모두 비우기", en: "Clear all" },
   kids_save:        { ko: "재주로 저장", en: "Save as a trick" },
   kids_export:      { ko: "블록으로 보기", en: "See as blocks" },
-  kids_export_done: { ko: (n) => `IDE의 code 폴더에 ${n} 으로 저장했어요.`, en: (n) => `Saved as ${n} in the IDE code folder.` },
+  kids_export_done: { ko: (n) => `code 폴더에 ${n} 으로 저장했어요. [코딩]에서 열 수 있어요.`, en: (n) => `Saved as ${n} in the code folder. Open it in Coding.` },
   kids_kind_motion: { ko: "동작", en: "Moves" },
   kids_kind_colour: { ko: "색", en: "Colors" },
   kids_kind_say:    { ko: "말", en: "Words" },
@@ -438,8 +424,6 @@ const translations = {
   kids_t_free_help: { ko: "지금까지의 모든 카드와 도전이 열려요.", en: "All cards and challenges are open." },
   kids_t_goal:      { ko: "목표:", en: "Goal:" },
   kids_t_ask:       { ko: "발문:", en: "Ask:" },
-  kids_t_roster:    { ko: "번호 수", en: "Students" },
-  kids_t_lang:      { ko: "언어", en: "Language" },
   kids_t_voice:     { ko: "목소리", en: "Voice" },
   kids_t_voice_note:{ ko: "새 목소리는 처음 말할 때 몇 초 걸려요.", en: "A new voice takes a few seconds the first time." },
   kids_t_volume:    { ko: "음량", en: "Volume" },
@@ -457,7 +441,6 @@ const translations = {
   kids_saved:       { ko: "저장했어요.", en: "Saved." },
   // A안 배치(261118): 파일 서랍 · 오른쪽 실행 화면 · 아래 상태 줄
   v2_stage:         { ko: "실행 화면 접기/펴기", en: "Show or hide run panel" },
-  v2_files_open:    { ko: "파일 열기", en: "Open files" },
   v2_connected:     { ko: "연결됨", en: "Connected" },
   v2_disconnected:  { ko: "연결 끊김", en: "Disconnected" },
   // 빈 작업판 안내(261120) · 화면 출력 한 줄
@@ -489,13 +472,14 @@ const translations = {
   home_cls:         { ko: "AI 가르치기", en: "Teach AI" },
   home_cls_d:       { ko: "사진 · 손 · 얼굴 · 몸", en: "Photos · Hands · Faces · Bodies" },
   home_llm_d:       { ko: "글로 이야기해요", en: "Talk in text" },
-  home_kids_d:      { ko: "카드로 재주 가르치기", en: "Teach tricks with cards" },
   home_guide_d:     { ko: "사용법 · 블록 가이드", en: "How-to · Block guide" },
   home_running:     { ko: "켜져 있음", en: "Running" },
   home_battery:     { ko: "배터리", en: "Battery" },
   home_temp:        { ko: "온도", en: "Temp." },
   home_mem:         { ko: "메모리", en: "Memory" },
-  home_net:         { ko: "주소", en: "Address" },
+  home_dc:          { ko: "충전 중", en: "Charging" },
+  home_wired:       { ko: "유선", en: "Wired" },
+  home_serial:      { ko: "시리얼", en: "Serial" },
   home_continue:    { ko: "이어서 하기", en: "Continue" },
   home_none:        { ko: "아직 저장한 파일이 없어요.", en: "No saved files yet." },
   home_uptime:      { ko: "켜진 시간", en: "Uptime" },
@@ -513,16 +497,14 @@ const translations = {
   home_sec_admin:   { ko: "선생님 · 관리", en: "Teacher tools" },
   home_cards:       { ko: "카드 코딩", en: "Card coding" },
   home_cards_d:     { ko: "카드로 순서 · 반복 익히기", en: "Learn steps and loops with cards" },
-  home_pet:         { ko: "키우기", en: "Pet" },
   home_play:        { ko: "로봇 놀이", en: "Robot Play" },   // 261123 — 카드 코딩을 따로 빼고 키우기 + 조종하기
   home_play_d:      { ko: "키우기 · 조종하기", en: "Pet · Remote control" },
   home_play_d_pb:   { ko: "키우기 · 픽셀 그림", en: "Pet · Pixel art" },
-  home_pet_d:       { ko: "로봇 친구 돌보기", en: "Look after your robot friend" },
   home_settings_d:  { ko: "밝기 · WiFi · 전원", en: "Brightness · WiFi · Power" },
   home_hw:          { ko: "H/W 검수", en: "H/W check" },
   home_hw_d:        { ko: "부품이 잘 되는지 확인", en: "Check that the parts work" },
   home_set_wifi:    { ko: "WiFi 설정", en: "WiFi settings" },
-  home_set_wifi_d:  { ko: "코딩 화면에서 WiFi 창을 열어요", en: "Opens the WiFi window in Coding" },
+  home_set_wifi_d:  { ko: "로봇이 붙을 WiFi를 골라요", en: "Choose the WiFi the robot joins" },
   home_set_screen:  { ko: "로봇 화면 처음으로", en: "Reset robot screen" },
   home_set_screen_d:{ ko: "로봇 화면을 IP 정보로 되돌려요", en: "Shows the IP information again" },
   home_set_danger:  { ko: "조심해서 쓰기", en: "Use with care" },

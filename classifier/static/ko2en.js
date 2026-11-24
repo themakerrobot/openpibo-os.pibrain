@@ -2,7 +2,7 @@ const blang = (navigator.language || navigator.userLanguage).includes('ko')?'ko'
 let lang = localStorage.getItem("classifier_language")?localStorage.getItem("classifier_language"):blang;
 
 const translations = {
-  title:            { ko: "분류기",                   en: "Classifier" },
+  title:            { ko: "AI 가르치기",              en: "Teach AI" },   // 대문 카드(home_cls)와 같은 이름(261123 — 전엔 분류기)
   tab_learn:        { ko: "학습",                     en: "Train" },
   tab_test:         { ko: "시험",                     en: "Test" },
   tab_store:        { ko: "보관함",                   en: "Models" },

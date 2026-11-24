@@ -440,15 +440,6 @@
     });
   })();
 
-  /* 11-1) 대문 [설정] → WiFi 설정(261123): /ide?panel=wifi 면 WiFi 창을 연다 */
-  (function openPanel() {
-    var q = null;
-    try { q = new URLSearchParams(location.search).get('panel'); } catch (e) { q = null; }
-    if (q !== 'wifi') return;
-    try { history.replaceState(null, '', location.pathname); } catch (e) { /* 무시 */ }
-    setTimeout(function () { var b = document.getElementById('showNetwork'); if (b) b.click(); }, 800);
-  })();
-
   /* 12) [처음 화면] (261123) ────────────────────────────────────────────────── */
   /* 같은 탭으로 대문에 간다. 저장 안 한 게 있으면 묻는다(떠나면 실행 중인 프로그램도 멈춘다 — index.js beforeunload) */
   var homeBt = document.getElementById('home_bt');

@@ -1,4 +1,4 @@
-/* 도움말(8080) 상단바 — 밝기 · 전체화면 · IDE 링크. 다른 앱(키트 design/pibo-ui.js)과 같은 쿠키·같은 순서로 동작한다.
+/* 도움말(8080) 상단바 — 처음 화면 · 밝기 · 전체화면. 다른 앱(키트 design/pibo-ui.js)과 같은 쿠키·같은 순서로 동작한다.
    화면 밝기: 쿠키 pibo_theme(포트와 상관없이 같은 값)
      soft  → Furo '밝게' + 옅은 청회색 면(mycss.css 의 html[data-pb-theme="soft"])
      light → Furo '밝게'
@@ -6,7 +6,7 @@
    Furo 는 localStorage.theme 을 본문 맨 앞에서 읽으므로, 그보다 먼저(<head>, _templates/base.html) 넣는다.
    상단바의 밝기 버튼은 키트와 같이 누를 때마다 밝게 → 부드럽게 → 어둡게(261120 — 전엔 Furo 버튼이라 '부드럽게'를 고를 수 없었다).
    전체화면: 쿠키 pibo_fs=1 을 다른 앱과 같이 본다. 켜 둔 적이 있는데 전체화면이 아니면(탭을 바꿔 풀림) 처음 누를 때 다시 켠다.
-   상단바의 [IDE] 링크를 이 기기의 IDE(80) 주소로 맞춘다 */
+   상단바의 [처음 화면] 링크를 이 기기의 대문(80 /) 주소로 맞춘다 */
 (function () {
   'use strict';
   var THEMES = ['light', 'soft', 'dark'];
@@ -81,7 +81,7 @@
   } catch (e) { /* 무시 — 기기 기본 명조로 */ }
 
   function setup() {
-    var a = document.querySelector('.pb-topbar__ide');   // 도움말은 8080, 대문·IDE 는 같은 기기의 80
+    var a = document.querySelector(".pb-topbar__home");   // 도움말은 8080, 대문은 같은 기기의 80
     if (a && location.hostname) {
       a.href = 'http://' + location.hostname + '/';   // [처음 화면] — 대문(261123). 다른 앱의 [처음 화면] 과 같다
       a.addEventListener('click', function () { fsLeaving = Date.now(); });

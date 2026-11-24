@@ -127,10 +127,13 @@
     $('st_ver').textContent = s.version || '';
     $('home_date').innerHTML = uptimeText(s.uptime);
     var rows = [];
-    if (!PIBRAIN && s.battery != null && s.battery !== '') rows.push(['fa-battery-three-quarters', t('home_battery'), s.battery, parseInt(s.battery, 10)]);
+    // 261123: IDE 아래 상태 줄을 빼면서 거기 있던 것(어댑터 · 유선 IP · 시리얼)도 여기로
+    if (!PIBRAIN && s.battery != null && s.battery !== '') rows.push(['fa-battery-three-quarters', t('home_battery'), s.battery + (s.dc ? ' · ' + t('home_dc') : ''), parseInt(s.battery, 10)]);
     if (s.temp) rows.push(['fa-temperature-half', t('home_temp'), s.temp]);
     if (s.mem != null) rows.push(['fa-memory', t('home_mem'), s.mem + '%', s.mem]);
-    rows.push(['fa-wifi', 'WiFi', s.ssid || '—']);
+    rows.push(['fa-wifi', 'WiFi', s.ssid ? s.ssid + (s.wifi_ip ? ' · ' + s.wifi_ip : '') : '—']);
+    if (s.wired_ip) rows.push(['fa-network-wired', t('home_wired'), s.wired_ip]);
+    if (s.serial) rows.push(['fa-tag', t('home_serial'), s.serial]);
     $('st_rows').innerHTML = rows.map(function (r) {
       var bar = (r[3] != null && !isNaN(r[3])) ? '<span class="home-bar"><i style="width:' + Math.max(0, Math.min(100, r[3])) + '%"></i></span>' : '';
       return '<div class="home-row"><i class="fa-solid ' + r[0] + '"></i><span>' + esc(r[1]) + '</span>' + bar + '<b>' + esc(r[2]) + '</b></div>';
@@ -200,7 +203,8 @@
       '<button type="button" class="home-set__row" id="set_hw"><i class="fa-solid fa-stethoscope home-set__ic"></i><span><b>' + esc(t('home_hw')) + '</b><small>' + esc(t('home_hw_d')) + '</small></span><i class="fa-solid fa-chevron-right"></i></button>' +
       '<div class="home-set__lbl home-set__lbl--red">' + esc(t('home_set_danger')) + '</div>' +
       '<button type="button" class="home-set__row home-set__row--red" id="set_restore"><i class="fa-solid fa-eraser home-set__ic"></i><span><b>' + esc(t('nav_restore')) + '</b><small></small></span></button>' +
-      '<button type="button" class="home-set__row home-set__row--red" id="set_power"><i class="fa-solid fa-power-off home-set__ic"></i><span><b>' + esc(t('nav_poweroff')) + '</b><small></small></span></button>';
+      '<button type="button" class="home-set__row home-set__row--red" id="set_power"><i class="fa-solid fa-power-off home-set__ic"></i><span><b>' + esc(t('nav_poweroff')) + '</b><small></small></span></button>' +
+      '<a class="home-set__row home-set__row--link" id="set_source" href="' + esc(sourceUrl()) + '" target="_blank" rel="noopener"><i class="fa-solid fa-code home-set__ic"></i><span><b>' + esc(t('v2_source')) + '</b><small>' + esc((info && info.version) || '') + '</small></span><i class="fa-solid fa-arrow-up-right-from-square"></i></a>';
     wireClose(); modal.hidden = false;
     Array.prototype.forEach.call(box.querySelectorAll('[data-theme-pick]'), function (b) {
       b.addEventListener('click', function () {
@@ -208,7 +212,7 @@
         Array.prototype.forEach.call(box.querySelectorAll('[data-theme-pick]'), function (x) { x.setAttribute('aria-checked', String(x === b)); });
       });
     });
-    $('set_wifi').addEventListener('click', function () { location.href = location.origin + '/ide?panel=wifi'; });
+    $('set_wifi').addEventListener('click', openWifi);
     $('set_screen').addEventListener('click', function () { if (window.PiboUI) PiboUI.screenReset(); });
     // H/W 검수는 켜진 앱을 다 끄므로 한 번 묻는다(IDE 와 같은 문구)
     $('set_hw').addEventListener('click', function () { ask(t('confirm_hwtest'), t('home_hw_go'), false, function () { enter(HWTEST, null); }); });
@@ -222,6 +226,116 @@
         b.querySelector('small').textContent = t(x[1]) + '\n' + t('home_set_sure');
       });
     });
+  }
+
+  /* 소스 코드 · 라이선스(261123 — 예전 IDE [더보기] 에 있었다). 기기가 돌리는 태그(piBo_260930v2 → 260930v2)의 GitHub 트리, 모르면 리포 첫 화면 */
+  function sourceUrl() {
+    var repo = 'https://github.com/themakerrobot/openpibo-os.' + (PIBRAIN ? 'pibrain' : 'pibo');
+    var tag = String((info && info.version) || '').trim().split('_').pop();
+    return /^\d{6}v\d+(-gl|-ph)?$/.test(tag) ? repo + '/tree/' + tag : repo;
+  }
+
+  /* ── WiFi 설정(261123 — 대문 안에서. 전엔 IDE 아래 상태 줄의 창을 /ide?panel=wifi 로 열었다) ─────────────
+     booting.py(8080)의 GET /wifi_scan · POST /wifi 를 그대로 쓴다(IDE 창과 같은 규칙). 연결은 두 번 눌러 보낸다(무엇에 연결하는지 먼저 보여 준다).
+     저장되면 로봇이 다시 켜진다(booting.py). AP 모드에서도 이 창으로 학교 WiFi 를 넣는다 */
+  var SYS = 'http://' + HOST + ':8080';
+  function fetchT(url, opt, ms) {   // 시간 제한(AbortController — Chrome 66 · Safari 12.1 이상)
+    var c = window.AbortController ? new AbortController() : null, tm = c ? setTimeout(function () { c.abort(); }, ms) : 0;
+    opt = opt || {}; if (c) opt.signal = c.signal;
+    return fetch(url, opt).then(function (r) { clearTimeout(tm); return r; }, function (e) { clearTimeout(tm); throw e; });
+  }
+  function bytes(v) { try { return new TextEncoder().encode(v).length; } catch (e) { return v.length; } }
+  function openWifi() {
+    box.innerHTML = head('fa-wifi', 'home-c-set', t('internet_settings')) +
+      '<div class="home-set__lbl">' + esc(t('available_networks')) + '<button type="button" class="home-wifi__re" id="wf_rescan" aria-label="Rescan"><i class="fa-solid fa-rotate-right"></i></button></div>' +
+      '<ul class="home-wifi__list" id="wf_list"></ul>' +
+      '<p class="home-wifi__manual"><a href="#" id="wf_manual">' + esc(t('manual_connection')) + '</a></p>' +
+      '<form class="home-wifi__form" id="wf_form" hidden autocomplete="off">' +
+        '<label><span>' + esc(t('wifi_name')) + '</span><input id="wf_ssid" maxlength="64"></label>' +
+        '<label id="wf_id_row" hidden><span>' + esc(t('wifi_identity')) + '</span><input id="wf_id"></label>' +
+        '<label id="wf_psk_row"><span>' + esc(t('password')) + '</span><input id="wf_psk" type="password"></label>' +
+        '<p class="home-wifi__msg" id="wf_msg" role="status"></p>' +
+        '<div class="home-modal__btns"><button type="button" class="home-btn" id="wf_back">' + esc(t('v2_settings')) + '</button>' +
+        '<button type="submit" class="home-btn home-btn--main" id="wf_go"><i class="fa-solid fa-check"></i> ' + esc(t('wifi_connect')) + '</button></div>' +
+      '</form>';
+    wireClose(); modal.hidden = false;
+    var list = $('wf_list'), form = $('wf_form'), msg = $('wf_msg'), go = $('wf_go');
+    var sec = 'wpa-psk', armed = false;
+    function say(text, err) { msg.textContent = text || ''; if (err) msg.setAttribute('data-err', ''); else msg.removeAttribute('data-err'); }
+    function disarm() { armed = false; go.removeAttribute('data-armed'); }
+    function pick(ssid, security, manual) {
+      sec = manual ? 'custom' : (security || '');
+      form.hidden = false; disarm(); say('');
+      $('wf_ssid').value = ssid || ''; $('wf_ssid').readOnly = !manual;
+      $('wf_id').value = ''; $('wf_psk').value = '';
+      var s2 = String(sec).toLowerCase();
+      $('wf_id_row').hidden = !(manual || s2.indexOf('eap') >= 0);
+      $('wf_psk_row').hidden = !manual && (!s2 || s2 === 'none');
+      var f = manual ? $('wf_ssid') : ($('wf_id_row').hidden ? $('wf_psk') : $('wf_id'));
+      if (f && !f.closest('[hidden]')) f.focus();
+    }
+    function scan() {
+      list.innerHTML = '<li class="home-wifi__note">' + esc(t('wifi_scanning')) + '</li>';
+      fetchT(SYS + '/wifi_scan', { cache: 'no-store' }, 15000).then(function (r) { return r.json(); }).then(function (data) {
+        list.innerHTML = '';
+        (data || []).forEach(function (n) {
+          var name = String(n.essid || '');
+          if (!name || name.length > 50 || name.indexOf('\x00') >= 0) return;
+          var open = String(n.encryption || '').toLowerCase() === 'none';
+          var li = document.createElement('li');
+          li.innerHTML = '<button type="button" class="home-wifi__net"><b></b><span><i class="fa-solid fa-wifi"></i> ' + esc(parseInt(n.signal_quality, 10) || 0) + '%' +
+            ' <i class="fa-solid ' + (open ? 'fa-lock-open' : 'fa-lock') + '"></i> ' + esc(n.encryption || t('wifi_sec_unknown')) + '</span></button>';
+          li.querySelector('b').textContent = name;
+          li.firstChild.addEventListener('click', function () {
+            Array.prototype.forEach.call(list.querySelectorAll('.home-wifi__net'), function (x) { x.removeAttribute('aria-current'); });
+            li.firstChild.setAttribute('aria-current', 'true');
+            pick(name, n.encryption, false);
+          });
+          list.appendChild(li);
+        });
+        if (!list.children.length) list.innerHTML = '<li class="home-wifi__note">' + esc(t('wifi_none')) + '</li>';
+      }).catch(function () {
+        list.innerHTML = '<li class="home-wifi__note" data-err>' + esc(t('wifi_scan_failed')) + '</li>';
+      });
+    }
+    $('wf_rescan').addEventListener('click', scan);
+    $('wf_manual').addEventListener('click', function (e) {
+      e.preventDefault();
+      Array.prototype.forEach.call(list.querySelectorAll('.home-wifi__net'), function (x) { x.removeAttribute('aria-current'); });
+      pick('', '', true);
+    });
+    $('wf_back').addEventListener('click', openSettings);
+    ['wf_ssid', 'wf_id', 'wf_psk'].forEach(function (id) { $(id).addEventListener('input', disarm); });
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      // SSID·비밀번호는 다듬지(trim) 않는다 — 앞뒤 띄어쓰기도 쓸 수 있는 글자다. 규칙은 booting.py 와 같다
+      var ssid = $('wf_ssid').value, psk = $('wf_psk_row').hidden ? '' : $('wf_psk').value;
+      var identity = $('wf_id_row').hidden ? '' : $('wf_id').value.trim();
+      var key = sec;
+      if (key === 'custom' || !key) key = identity && psk ? 'wpa-eap' : (psk ? 'wpa-psk' : 'none');
+      if (!ssid || bytes(ssid) > 32) { say(t('wifi_err_ssid'), true); return; }
+      if (psk && !identity && !((bytes(psk) >= 8 && bytes(psk) <= 63) || /^[0-9a-fA-F]{64}$/.test(psk))) { say(t('wifi_err_psk'), true); return; }
+      if (!armed) {   // 첫 번째: 무엇에 연결하는지 보여 준다(연결하면 로봇이 다시 켜진다)
+        armed = true; go.setAttribute('data-armed', '');
+        say(t('confirm_wifi', ssid) + '\n' + t('home_set_sure'));
+        return;
+      }
+      disarm(); go.disabled = true; say(t('wifi_connecting'));
+      fetchT(SYS + '/wifi', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ssid: ssid, psk: psk, identity: identity, key_mgmt: key }) }, 100000)   // booting.py 가 최대 90초 기다린 뒤 답한다
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+          go.disabled = false;
+          if (res && res.result === 'fail') {
+            var why = String(res.reason || '');
+            say(t(why.indexOf('ssid') >= 0 ? 'wifi_err_ssid' : why.indexOf('psk') >= 0 ? 'wifi_err_psk' : 'wifi_err_connect'), true);
+            return;
+          }
+          say(t('wifi_sent'));
+        })
+        .catch(function () { go.disabled = false; say(t('wifi_failed'), true); });
+    });
+    scan();
   }
 
   function render() { applyText(); renderApps(); renderSide(); }

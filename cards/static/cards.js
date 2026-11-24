@@ -48,7 +48,7 @@
     S.view = view;
     VIEWS.forEach(function (v) { $('v_' + v).hidden = v !== view; });
     $('who_bt').hidden = true;                    // 저장 한 벌(261116) — 번호 고르기는 없다
-    $('home_bt').hidden = view === 'who';
+    $('start_bt').hidden = view === 'who';
     if (view === 'who') renderWho();
     if (view === 'home') renderHome();
     if (view === 'challenges') renderChallenges();
@@ -58,7 +58,7 @@
   each('[data-go]', function (b) {
     b.addEventListener('click', function () { if (!S.running) show(b.getAttribute('data-go')); });
   });
-  $('home_bt').addEventListener('click', function () { if (!S.running) show('home'); });
+  $('start_bt').addEventListener('click', function () { if (!S.running) show('home'); });
   $('who_bt').addEventListener('click', function () {
     if (S.running) return;
     post('/api/profile', { id: null }).then(function (s) { applyState(s); show('who'); });
@@ -646,7 +646,6 @@
 
   /* IDE 와 연결(261028) — [IDE] 는 이 탭을 닫거나 IDE 로 간다. 탭이 닫히면 IDE 가 체험 앱을 끈다(keepalive 가 있어야 언로드 중에도 간다).
      손으로 띄운 경우(IDE 없이 시험)엔 /cards 가 없어 실패해도 상관없다 */
-  $('ide_bt').addEventListener('click', function () { PiboUI.backToIDE(); });
   window.addEventListener('beforeunload', function () {
     try { fetch('http://' + location.hostname + '/cards?enable=off', { method: 'GET', keepalive: true }).catch(function () {}); } catch (e) { /* 무시 */ }
   });
@@ -709,7 +708,7 @@
     $('t_volume_v').textContent = T.volume;
     $('t_pin').value = '';
     $('t_pin').placeholder = tr('kids_t_pin_ph');
-    $('t_ide').href = 'http://' + location.hostname + '/ide';   // 대문(/)이 생겨 IDE 는 /ide (261123)
+    $('t_code').href = 'http://' + location.hostname + '/ide';   // [코딩] 화면(대문 카드와 같은 이름, 261123)
     $('dlg_teacher').hidden = false;
   }
   $('t_lesson').addEventListener('change', lessonHelp);
@@ -785,7 +784,7 @@
     var name = tr('kids_title_cards');
     $('app_title').textContent = name;
     document.title = name + ' · ' + (document.documentElement.getAttribute('data-product') || 'piBo');
-    $('home_label').textContent = tr('kids_home_cards');
+    $('start_label').textContent = tr('kids_home_cards');
     if (!C) return;
     if (S.view === 'make') { renderTask(); renderPalette(); renderRow(); }
     if (S.view !== 'make') show(S.view);

@@ -6,18 +6,15 @@
 <title>PiBrain</title>
 <link rel="stylesheet" href="all.min.css">
 <link rel="stylesheet" href="pibo-ui.css?ver=261123v9">
-<link rel="shortcut icon" href="icon.png?ver=261102v2" type="image/png">
+<link rel="shortcut icon" href="icon.png?ver=261123v1" type="image/png">
 <script>/* 화면 밝기를 첫 페인트 전에 (pibo-ui.js 의 getTheme 과 같은 규칙. 고른 적 없으면 soft) */
 (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
   document.documentElement.setAttribute('data-theme', m ? m[1] : 'soft'); } catch (e) {} })();</script>
 <style>
-  /* 도구·분류기·대화를 새 탭으로 열 때 거치는 대기 페이지.
-     IDE 가 버튼을 누른 '그 순간' 이 탭을 연다 — 몇 초 뒤에 window.open 하면
-     브라우저가 팝업으로 막을 수 있어서다. 여기서 서비스를 켜고, 실제로 응답할
-     때까지 기다린 뒤 스스로 그 주소로 이동한다. */
+  /* 대문(/)에서 앱을 고르면 같은 탭으로 거치는 대기 페이지(261123 — 전엔 IDE 상단바가 이름 붙인 새 탭으로 열었다).
+     여기서 서비스를 켜고, 실제로 응답할 때까지 기다린 뒤 스스로 그 주소로 이동한다. */
   html, body { height: 100%; margin: 0; }
   body { font-family: var(--pb-font); color: var(--v2-ink); position: relative; isolation: isolate; }
-  /* 배경: 노랑·파랑·초록 빛 번짐이 천천히 흐른다(그림 파일 없이 그라데이션만, transform 으로만 움직인다) */
   /* 학습지(261123): 종이 바탕에 옅은 괘선 — 빛 번짐 장식은 뺐다 */
   body::before { content: ""; position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: -1; pointer-events: none;
     background: var(--v2-canvas) repeating-linear-gradient(180deg, transparent 0 31px, rgba(154, 143, 125, .14) 31px 32px); }
@@ -80,7 +77,7 @@
     <div class="bar"><div id="bar"></div></div>
     <p class="msg" id="msg"></p>
     <div class="acts">
-      <button type="button" class="pb-btn" id="close"><span data-t="close"></span></button>
+      <button type="button" class="pb-btn" id="close"><i class="fa-solid fa-house"></i> <span data-t="close"></span></button>
       <button type="button" class="pb-btn pb-btn--accent" id="retry" hidden><i class="fa-solid fa-rotate-right"></i><span data-t="retry"></span></button>
     </div>
   </div>
@@ -97,7 +94,7 @@
     s1:      { ko: '켜기 요청',                   en: 'Request' },
     s2:      { ko: '준비 확인',                   en: 'Check ready' },
     s3:      { ko: '열기',                        en: 'Open' },
-    close:   { ko: '닫기',                        en: 'Close' },
+    close:   { ko: '처음 화면',                   en: 'Home' },
     retry:   { ko: '다시 시도',                   en: 'Try again' },
     title:   { ko: '{0} 켜는 중…',                en: 'Starting {0}…' },
     slow:    { ko: '처음 켤 때는 조금 더 걸릴 수 있어요.', en: 'The first start can take a little longer.' },
@@ -118,7 +115,7 @@
     tools:      { port: 50000, on: '/tools?enable=on',      check: 'port',   limit: 60,
                   name: { ko: '도구', en: 'Tools' },               icon: 'fa-screwdriver-wrench' },
     classifier: { port: 50010, on: '/classifier?enable=on', check: 'port',   limit: 60,
-                  name: { ko: '분류기', en: 'Classifier' },   icon: 'fa-graduation-cap' },
+                  name: { ko: 'AI 가르치기', en: 'Teach AI' },   icon: 'fa-graduation-cap' },
     // 대화: 대화 웹(chat/run_chat.py, 50030)이 열리면 바로 간다. 모델 준비(1~2분)는 대화 화면이 보여 준다(261026)
     llm:        { port: 50030, on: '/llm?enable=on',        check: 'port',   limit: 60,
                   name: { ko: '대화', en: 'Chat' },                icon: 'fa-comments' },
@@ -140,10 +137,7 @@
                       art: { ko: '픽셀 그림', en: 'Pixel art', icon: 'fa-palette', color: 'play' } } };
   var key = Q.get('svc'), S = SVC[key];
   var $ = function (id) { return document.getElementById(id); };
-  $('close').onclick = function () {
-    try { window.close(); } catch (e) {}
-    setTimeout(function () { if (!window.closed) location.href = 'http://' + HOST + '/'; }, 200);
-  };
+  $('close').onclick = function () { location.href = 'http://' + HOST + '/'; };   // 대문에서 같은 탭으로 왔다(261123 — 전엔 새 탭이라 닫았다)
   var PRODUCT = document.documentElement.getAttribute('data-product') || '';
   function setTitle(s) { $('title').textContent = s; document.title = PRODUCT ? s + ' · ' + PRODUCT : s; }   // 탭 제목은 '… · PiBrain' (다른 화면과 같은 꼴)
   if (!S) { document.body.dataset.state = 'fail'; setTitle(t('bad')); $('icon').className = 'fa-solid fa-circle-exclamation'; return; }
