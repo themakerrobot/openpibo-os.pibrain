@@ -117,6 +117,10 @@ async def run_blocking(fn, *args):
   # 루프 안에서 돌리면 그동안 IDE 전체(실행 출력·저장·파일 목록)가 멈춘다
   return await asyncio.get_running_loop().run_in_executor(None, fn, *args)
 
+# 앱 끄기(stop_chat·stop_kids·stop_hwtest)는 프로세스가 끝날 때까지 최대 5~10초 기다린다. 핸들러에서는 늘
+# await asyncio.to_thread(stop_…) 로 부를 것 — 직접 부르면 그동안 IDE 서버 전체가 멈춰, 같은 서버가 주는 대문(처음 화면)이
+# 그만큼 늦게 열렸다(261124 — 대화에서 [처음 화면] 을 누르면 대화 웹이 끝날 때까지 기다렸다)
+
 def stop_units_wait():
   # 코드 실행 전에 카메라·마이크·모터를 쥔 서비스가 실제로 내려갈 때까지 기다린다(261119).
   # 전엔 Popen 으로 끄라고만 하고 바로 학생 프로그램을 띄워서, 도구·분류기가 아직 카메라를 쥔 순간에
@@ -429,13 +433,13 @@ async def hwtest(enable: str):
     subprocess.Popen(['systemctl', 'stop', 'tools.service'])
     subprocess.Popen(['systemctl', 'stop', 'classify.service'])
     subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
-    stop_chat()
-    stop_kids()
+    await asyncio.to_thread(stop_chat)
+    await asyncio.to_thread(stop_kids)
     if hwtest_proc is None or hwtest_proc.poll() is not None:
       hwtest_proc = subprocess.Popen([f'{ENV_PATH}/python3', HWTEST_PY], cwd=HWTEST_DIR)
     await asyncio.sleep(3)
   elif enable == "off":
-    stop_hwtest()
+    await asyncio.to_thread(stop_hwtest)
   show_ip(keep=HWTEST_PY if enable == "on" else None)   # 나가거나 다른 앱으로 옮기면 로봇 화면은 늘 IP 화면(261116)
   return HTMLResponse(content="", status_code=200)
 
@@ -444,9 +448,9 @@ async def hwtest(enable: str):
 async def tools(enable: str):
   print(f'[tools] enable={enable}')
   if enable == "on":
-    stop_hwtest()   # 검수 서버가 카메라·오디오를 쥐고 있으면 tools 가 실패한다
-    stop_kids()     # 체험 앱도 모터·소리를 쓴다
-    stop_chat()     # 대화 웹이 카메라를 쥐고 있을 수 있다(find_objects)
+    await asyncio.to_thread(stop_hwtest)   # 검수 서버가 카메라·오디오를 쥐고 있으면 tools 가 실패한다
+    await asyncio.to_thread(stop_kids)     # 체험 앱도 모터·소리를 쓴다
+    await asyncio.to_thread(stop_chat)     # 대화 웹이 카메라를 쥐고 있을 수 있다(find_objects)
     subprocess.Popen(['systemctl', 'stop', 'classify.service'])
     subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
     subprocess.Popen(['systemctl', 'start', 'tools.service'])
@@ -463,9 +467,9 @@ async def tools(enable: str):
 async def classifier(enable: str):
   print(f'[classifier] enable={enable}')
   if enable == "on":
-    stop_hwtest()   # 〃 (classifier 는 카메라를 직접 쓴다)
-    stop_kids()     # 체험 앱도 모터·소리를 쓴다
-    stop_chat()     # 〃
+    await asyncio.to_thread(stop_hwtest)   # 〃 (classifier 는 카메라를 직접 쓴다)
+    await asyncio.to_thread(stop_kids)     # 체험 앱도 모터·소리를 쓴다
+    await asyncio.to_thread(stop_chat)     # 〃
     subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
     subprocess.Popen(['systemctl', 'stop', 'tools.service'])
     subprocess.Popen(['systemctl', 'start', 'classify.service'])
@@ -527,8 +531,8 @@ async def kids_app(name, enable):
     subprocess.Popen(['systemctl', 'stop', 'tools.service'])
     subprocess.Popen(['systemctl', 'stop', 'classify.service'])
     subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
-    stop_hwtest()
-    stop_chat()
+    await asyncio.to_thread(stop_hwtest)
+    await asyncio.to_thread(stop_chat)
     for other in KIDS_APPS:
       if other != name:
         await asyncio.to_thread(stop_kids, other)
@@ -559,15 +563,15 @@ async def llm(enable: str):
   global chat_proc
   print(f'[llm] enable={enable}')
   if enable == "on":
-    stop_hwtest()   # 〃
-    stop_kids()     # 체험 앱도 모터·소리를 쓴다
+    await asyncio.to_thread(stop_hwtest)   # 〃
+    await asyncio.to_thread(stop_kids)     # 체험 앱도 모터·소리를 쓴다
     subprocess.Popen(['systemctl', 'stop', 'classify.service'])
     subprocess.Popen(['systemctl', 'stop', 'tools.service'])
     subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 모델은 대화 화면에서 고를 때 띄운다
     if chat_proc is None or chat_proc.poll() is not None:
       chat_proc = subprocess.Popen([f'{ENV_PATH}/python3', CHAT_PY, '--device', CHAT_DEVICE], cwd=CHAT_DIR)
   elif enable == "off":
-    stop_chat()
+    await asyncio.to_thread(stop_chat)
     subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
   await asyncio.sleep(2)
   show_ip(keep=CHAT_PY if enable == "on" else None)   # 나가거나 다른 앱으로 옮기면 로봇 화면은 늘 IP 화면(261116)
@@ -1019,9 +1023,9 @@ async def execute(EXEC, codepath):
 @app.sio.on('execute')
 async def handle_execute(sid, d):
   global codeText, codePath
-  stop_hwtest()   # 사용자 코드가 카메라·LCD 를 쓰므로 검수 서버를 먼저 내린다
-  stop_kids()     # 체험 앱도 모터·소리를 쓴다
-  stop_chat()
+  await asyncio.to_thread(stop_hwtest)   # 사용자 코드가 카메라·LCD 를 쓰므로 검수 서버를 먼저 내린다
+  await asyncio.to_thread(stop_kids)     # 체험 앱도 모터·소리를 쓴다
+  await asyncio.to_thread(stop_chat)
   await run_blocking(stop_units_wait)   # 도구·분류기·대화 모델이 카메라 등을 놓을 때까지
   try:
     if is_protect(d['codepath']) or is_protect(os.path.dirname(d['codepath'])):
@@ -1043,9 +1047,9 @@ async def handle_execute(sid, d):
 # executeb 핸들러 수정
 @app.sio.on('executeb')
 async def handle_executeb(sid, d):
-  stop_hwtest()   # 〃
-  stop_kids()     # 체험 앱도 모터·소리를 쓴다
-  stop_chat()
+  await asyncio.to_thread(stop_hwtest)   # 〃
+  await asyncio.to_thread(stop_kids)     # 체험 앱도 모터·소리를 쓴다
+  await asyncio.to_thread(stop_chat)
   await run_blocking(stop_units_wait)   # 도구·분류기·대화 모델이 카메라 등을 놓을 때까지
   try:
     kill_run()
@@ -1064,7 +1068,7 @@ async def handle_executeb(sid, d):
 async def handle_stop(sid):
   subprocess.Popen(['pkill', 'play'])
   subprocess.Popen(['pkill', 'llama-server'])
-  stop_chat()
+  await asyncio.to_thread(stop_chat)
   #subprocess.Popen(['servo', 'init'])
   kill_run()
   if ps and ps.returncode is None:
