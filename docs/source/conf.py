@@ -84,7 +84,7 @@ exclude_patterns = []
 # Furo(MIT) — 밝게·어둡게는 브라우저 설정을 따른다. 색은 IDE 와 같게(노랑 포인트, 파랑 링크).
 # 외부 글꼴·CDN 을 쓰지 않아 기기(AP 모드, 인터넷 없음)에서도 그대로 보인다
 html_theme = 'furo'
-html_title = '도움말 · PiBrain'   # 탭 제목: 다른 화면과 같은 꼴('도구 · PiBrain', '분류기 · PiBrain'). 영문은 source_en 이 'Help · PiBrain' 로
+html_title = '도움말 · piBrain'   # 탭 제목: 다른 화면과 같은 꼴('도구 · PiBrain', '분류기 · PiBrain'). 영문은 source_en 이 'Help · PiBrain' 로
 # 색은 키트(design/pibo-ui.css '디자인 토큰')와 같은 값. 밝게·어둡게·부드럽게는 쿠키 pibo_theme 를 따른다
 # (_static/pibotheme.js + _templates/base.html). 부드럽게의 면 색은 mycss.css 의 html[data-pb-theme="soft"]
 html_theme_options = {

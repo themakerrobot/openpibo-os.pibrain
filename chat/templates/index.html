@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="ko" data-product="PiBrain">
+<html lang="ko" data-product="piBrain">
 <head>
   <title data-key="chat_title">대화</title>
   <meta charset="UTF-8" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="PiBrain — 블록·파이썬 코딩 · 도구 · AI 가르치기 / Block and Python coding, tools, teach AI" />
+  <meta name="description" content="piBrain — 블록·파이썬 코딩 · 도구 · AI 가르치기 / Block and Python coding, tools, teach AI" />
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
   <link rel="stylesheet" href="../static/pibo-ui.css?ver=261124v3" />
@@ -13,7 +13,7 @@
   <link rel="shortcut icon" href="../static/icon.png?ver=261124v1" type="image/png" />
   <!-- 문구는 IDE 의 ko2en.js 를 같이 쓴다(영문판 델타 파일을 늘리지 않으려고). IDE(80)는 늘 떠 있다 -->
   <script>(function () { var p = new URLSearchParams(location.search).get('ide') || 80;   /* ?ide= 는 시험용 */
-    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261124v2"><\/script>'); })();</script>
+    document.write('<script src="http://' + location.hostname + ':' + p + '/static/ko2en.js?ver=261125v2"><\/script>'); })();</script>
 </head>
 
 <body class="pb pb-shell pb-refresh pb-v2">
@@ -21,7 +21,7 @@
   (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
     document.documentElement.setAttribute('data-theme', m ? m[1] : 'soft'); } catch (e) {} })();</script>
   <header class="pb-header">
-    <span class="pb-header__brand"><i class="fa-solid fa-brain"></i><b>PiBrain</b><span class="pb-header__app" data-key="chat_title"></span></span>
+    <span class="pb-header__brand"><i class="fa-solid fa-brain"></i><b>piBrain</b><span class="pb-header__app" data-key="chat_title"></span></span>
     <div class="pb-iconbar">
       <button type="button" class="pb-iconbtn" id="new_bt"><i class="fa-solid fa-rotate-left"></i><span class="pb-iconbtn__label" data-key="chat_new"></span></button>
       <button type="button" class="pb-iconbtn" id="home_bt" data-pb-home><i class="fa-solid fa-house"></i><span class="pb-iconbtn__label"></span></button>
@@ -66,6 +66,6 @@
 
 
   <script src="../static/pibo-ui.js?ver=261125v1"></script>
-  <script src="../static/chat.js?ver=261124v1"></script>
+  <script src="../static/chat.js?ver=261125v2"></script>
 </body>
 </html>

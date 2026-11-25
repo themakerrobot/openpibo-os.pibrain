@@ -55,7 +55,7 @@ ROBOTS = {
   'pibo':    {'ko': {'name': '파이보', 'name_ya': '파이보야', 'light': '눈'},
               'en': {'name': 'Pibo', 'name_ya': 'Pibo', 'light': 'eyes'}},
   'pibrain': {'ko': {'name': '파이브레인', 'name_ya': '파이브레인이야', 'light': '불빛'},
-              'en': {'name': 'PiBrain', 'name_ya': 'PiBrain', 'light': 'light'}},
+              'en': {'name': 'piBrain', 'name_ya': 'piBrain', 'light': 'light'}},
 }
 VOICES = ('m1', 'm2', 'm3', 'm4', 'm5', 'f1', 'f2', 'f3', 'f4', 'f5')
 MAX_CARDS = 20            # 한 줄에 놓을 수 있는 카드(반복 안의 카드 포함, 재주 카드는 1장)

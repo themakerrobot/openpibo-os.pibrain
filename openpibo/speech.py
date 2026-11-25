@@ -1,7 +1,7 @@
 """
 음성 합성(TTS)·음성 인식(STT)과 온디바이스 LLM 대화 기능을 제공합니다.
 
-PiBrain 은 아직 마이크가 없다. STT(``Speech.stt`` · ``SpeechToText``)는 Pibo 와 같은 마이크
+piBrain 은 아직 마이크가 없다. STT(``Speech.stt`` · ``SpeechToText``)는 Pibo 와 같은 마이크
 (2-mic HAT, ``arecord -D plug:dmic_sv``)를 달 때를 위해 넣어 둔 것이고, 블록은 막혀 있다.
 
 Class:

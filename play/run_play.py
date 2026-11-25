@@ -48,7 +48,7 @@ ROBOTS = {
   'pibo':    {'ko': {'name': '파이보', 'name_ya': '파이보야', 'light': '눈'},
               'en': {'name': 'Pibo', 'name_ya': 'Pibo', 'light': 'eyes'}},
   'pibrain': {'ko': {'name': '파이브레인', 'name_ya': '파이브레인이야', 'light': '불빛'},
-              'en': {'name': 'PiBrain', 'name_ya': 'PiBrain', 'light': 'light'}},
+              'en': {'name': 'piBrain', 'name_ya': 'piBrain', 'light': 'light'}},
 }
 ONLY = '1'                # 저장 한 벌(카드 코딩과 같은 프로필 '1')
 PET_REACT = {'eat': 'munch', 'full': 'oops', 'play': 'boing', 'tired': 'oops', 'starving': 'oops',

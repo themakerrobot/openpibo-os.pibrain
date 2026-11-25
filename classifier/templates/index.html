@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="ko" data-product="PiBrain">
+<html lang="ko" data-product="piBrain">
 <head>
   <title data-key="title">AI 가르치기</title>
   <meta charset="UTF-8" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="PiBrain — 블록·파이썬 코딩 · 도구 · AI 가르치기 / Block and Python coding, tools, teach AI" />
+  <meta name="description" content="piBrain — 블록·파이썬 코딩 · 도구 · AI 가르치기 / Block and Python coding, tools, teach AI" />
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
   <link rel="stylesheet" href="../static/pibo-ui.css?ver=261124v3" />
@@ -14,7 +14,7 @@
 
   <script src="../static/socket.io.min.js"></script>
   <script src="../static/vendor/tfjs/tf.min.js"></script>
-  <script src="../static/ko2en.js?ver=261124v1"></script>
+  <script src="../static/ko2en.js?ver=261125v2"></script>
 </head>
 
 <body class="pb pb-shell pb-refresh pb-v2" data-tab="learn">
@@ -22,7 +22,7 @@
   (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
     document.documentElement.setAttribute('data-theme', m ? m[1] : 'soft'); } catch (e) {} })();</script>
   <header class="pb-header">
-    <span class="pb-header__brand"><i class="fa-solid fa-brain"></i><b>PiBrain</b><span class="pb-header__app" data-key="title"></span></span>
+    <span class="pb-header__brand"><i class="fa-solid fa-brain"></i><b>piBrain</b><span class="pb-header__app" data-key="title"></span></span>
     <div class="pb-seg cls-tabs" id="tabs" role="tablist">
       <button type="button" data-tab="learn" role="tab"><i class="fa-solid fa-graduation-cap"></i><span data-key="tab_learn"></span></button>
       <button type="button" data-tab="test" role="tab"><i class="fa-solid fa-flask"></i><span data-key="tab_test"></span></button>
@@ -68,7 +68,7 @@
       <section class="not-store stage-wrap">
         <div class="stage pb-stage" id="stage">
           <div class="stage__sizer"></div>
-          <img id="cam" alt="PiBrain camera">
+          <img id="cam" alt="piBrain camera">
           <canvas id="overlay"></canvas>
           <div class="stage-msg" id="see_hint" hidden></div>
           <div class="stage-msg stage-msg--busy" id="stage_loading" hidden><i class="fa-solid fa-spinner fa-spin"></i> <span data-key="loading_model"></span></div>

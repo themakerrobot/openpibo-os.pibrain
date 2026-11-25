@@ -193,7 +193,7 @@
     var cur = null;
     modelList.forEach(function (m) { if (m.name === st.model) cur = m; });
     var tool = /themaker/.test(st.model || '') || !!(cur && /themaker/.test(cur.file || ''));
-    var pibrain = document.documentElement.getAttribute('data-product') === 'PiBrain';
+    var pibrain = /brain/i.test(document.documentElement.getAttribute('data-product') || '');
     var keys = !tool ? ['chat_try_hello', 'chat_try_dino', 'chat_try_school', 'chat_try_english']
       : pibrain ? ['chat_try_light_red', 'chat_try_look', 'chat_try_light_off']
       : ['chat_try_eye_red', 'chat_try_look', 'chat_try_wave'];
@@ -293,7 +293,7 @@
     box.innerHTML = '';
     box.hidden = !show;
     if (!show) return;
-    var pibrain = document.documentElement.getAttribute('data-product') === 'PiBrain';
+    var pibrain = /brain/i.test(document.documentElement.getAttribute('data-product') || '');
     modelList.forEach(function (m) {
       var key = m.name.replace('-', '_');
       var tool = /themaker/.test(m.name) || /themaker/.test(m.file || '');

@@ -63,8 +63,8 @@ const translations = {
   confirm:            { ko: "확인",              en: "OK" },
   cancel:             { ko: "취소",              en: "Cancel" },
   confirm_wifi: {
-    ko: (ssid) => `PiBrain의 WiFi를 "${ssid}"(으)로 바꿀까요?\n이름과 비밀번호를 한 번 더 확인해 주세요. 틀리면 PiBrain이 WiFi에 연결되지 않아요.`,
-    en: (ssid) => `Switch PiBrain to the WiFi "${ssid}"?\nCheck the name and password once more. If they are wrong, PiBrain can't connect.`
+    ko: (ssid) => `piBrain의 WiFi를 "${ssid}"(으)로 바꿀까요?\n이름과 비밀번호를 한 번 더 확인해 주세요. 틀리면 piBrain이 WiFi에 연결되지 않아요.`,
+    en: (ssid) => `Switch piBrain to the WiFi "${ssid}"?\nCheck the name and password once more. If they are wrong, piBrain can't connect.`
   },
   file_error:      { ko: "파일을 올리지 못했어요.", en: "Could not upload the file." },
   file_ok:         { ko: "파일을 올렸어요.", en: "File uploaded." },
@@ -95,7 +95,7 @@ const translations = {
     ko: "하드웨어 검수를 시작할까요?\n켜져 있는 도구·대화·분류기는 꺼지고, 검수 창을 닫으면 검수도 끝나요.",
     en: "Start the hardware test?\nTools, Chat and Classifier will be turned off. Closing the test tab ends the test."
   },
-  confirm_poweroff: { ko: "PiBrain 전원을 끌까요?", en: "Turn off PiBrain?" },
+  confirm_poweroff: { ko: "piBrain 전원을 끌까요?", en: "Turn off piBrain?" },
   check_newfolder_name: { ko: "새 폴더 이름을 적어 주세요.", en: "Enter a name for the new folder." },
   check_newfile_name:   { ko: "새 파일 이름을 적어 주세요.", en: "Enter a name for the new file." },
   name_size_limit: {

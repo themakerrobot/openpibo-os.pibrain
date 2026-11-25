@@ -1,10 +1,10 @@
 # Block coding
 
-PiBrain Coding uses Blockly for block coding. Besides the standard blocks there are PiBrain blocks that call
+piBrain Coding uses Blockly for block coding. Besides the standard blocks there are piBrain blocks that call
 the **openpibo** Python package. The [Python code] button shows the Python code your blocks make.
 
 ```{note}
-Everything runs **inside PiBrain**. Only the [Collect] category needs the internet, and it is only in the Korean edition.
+Everything runs **inside piBrain**. Only the [Collect] category needs the internet, and it is only in the Korean edition.
 ```
 
 ## Categories
@@ -22,7 +22,7 @@ Everything runs **inside PiBrain**. Only the [Collect] category needs the intern
 | Variables | appear when you make one |
 | Functions | appear when you make one |
 
-**PiBrain blocks**
+**piBrain blocks**
 
 | Category | Blocks |
 |---|---|
@@ -38,7 +38,7 @@ Everything runs **inside PiBrain**. Only the [Collect] category needs the intern
 
 **Easy blocks** — 16 beginner blocks shown when you choose [Easy] in [Easy | All] on the editor bar (see 'Easy blocks' below)
 
-## PiBrain blocks
+## piBrain blocks
 
 ### Start
 

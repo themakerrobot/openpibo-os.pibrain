@@ -10,7 +10,7 @@
 (function () {
   'use strict';
   if (!window.Blockly) return;
-  var PIBRAIN = (document.documentElement.getAttribute('data-product') || '') === 'PiBrain';
+  var PIBRAIN = /brain/i.test(document.documentElement.getAttribute('data-product') || '');
   var KEY = 'pibo_block_level';
   var LEVEL = 'all';
   try { var v = localStorage.getItem(KEY); if (v === 'easy' || v === 'all') LEVEL = v; } catch (e) { /* 사생활 모드 */ }
