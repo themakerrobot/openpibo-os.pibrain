@@ -26,6 +26,7 @@ PiBrain OS 리포. 기기의 `/home/pi/openpibo-os` 가 이 리포의 작업본�
   라이선스 고지(`THIRD_PARTY_NOTICES.md`·`LICENSE`)에 필요한 저작권자 이름과 자사(Circulus)는 예외
 - 출하 기본 WiFi(`pibo` / `!pibo0314`)가 문서에 있는 것은 괜찮다(261101, 사용자). 다시 문제 삼지 말 것
 - **다시 거론하지 말 것(261124, 사용자)**: `rps_recognizer.task` 학습 데이터셋(`rps_data_sample.zip`)의 라이선스 확인·다시 학습, HF `.model/stt/LICENSE-SenseVoice` 를 원문으로 바꿔 올리기. 보고·'남은 일'·'확인 필요' 목록에 넣지 말 것
+- **그림(캐릭터·아이콘·마크)을 바꿀 땐 시안 이미지를 먼저 보여 승인받고 반영한다(261124, 사용자).** 승인 전에는 커밋하지 않는다
 
 ## 전수 조사 — `AUDIT.md` 체크리스트 (261120, 사용자)
 
@@ -840,7 +841,7 @@ classifier 언어 토글, 검수 보고서 구조, Tools 서비스.
 - 로봇 말은 처음 한 번 6~15초라 **`kids/make_voice.py --device <제품>` 으로 미리** 만든다. 문구는 IDE `ko2en.js` 끝의 `kids_*` 키(두 리포 같은 블록)
 - **[설정] — 잠금 없음(261124, 사용자 — 학생도 쓰는 앱이라)**: 상단바 [설정](톱니, `#set_bt`, [처음 화면] 왼쪽) → 오늘 차시(목표·생각해 보기 — **처음엔 '자유'(모든 차시·모든 카드)**, 261120 사용자)·목소리·소리 크기·도달 기록·[처음부터 하기](대문 공장 초기화처럼 두 번 누르기). 전엔 자물쇠 3초 → 숫자 4개(기본 1234) 잠금이었다 — 번호가 공개 문서에 있어 막지 못했고, 대문 공장 초기화도 잠금 없이 두 번 누르기라 규칙이 둘이었다. API `/api/settings`·`/api/report`·`/api/reset`(토큰 없음). 기기의 예전 `settings.json` 에 남은 `pin` 은 읽을 때 버린다. **한/영은 다른 앱처럼 상단바 언어 select**(261120, 사용자)
 - **키트 변경**: body `pb-plain` 이면 `pibo-ui.js` 가 `pb-v2` 층을 얹지 않는다(그 층의 앱 버튼 규칙이 카드 색을 덮었다). `design/sync.sh` 가 `cards/static` · `play/static` 에도 복사
-- **키우기 친구는 파이보 실물 얼굴(261123, 사용자 — 261028~261122 는 써큘러스 캐릭터였다), PiBrain 에서는 머리가 PiBrain 보드**(검은 화면 속 하늘색 얼굴 · 카메라 · 버튼 넷): `play/static/pet.js`(`PetArt.svg(포즈, {color, hat, glasses, device})` — `kids.js` 가 `C.device` 를 넘긴다). 대문 그림(`pibo-art.js`)과 같은 생김새. 상태 6(normal·happy·hungry·sleepy·sleep·sad) + 돌보기 반응(밥 eat · 놀기 ball · 씻기 wash, 2.5초) + 도전 결과(cheer·oops). 꾸미기: 색(안테나·모자·팻말·밥그릇) · 머리 소품(안테나/모자) · 안경. 돌보기는 **PiBrain 버튼 4개에 맞춰 4가지**(밥·놀기·재우기·씻기 — 늘리지 말 것, 사용자). PiBrain LCD 는 `play/make_pet_png.py` 가 미리 만든 PNG(`static/pet/lcd/`, 36장 — 상태 6 + 반응 3 × 소품·안경 4벌, **보드 머리로**)를 `face.py` 가 친구 색으로 바꿔 띄운다. LCD 에는 **점수 세 줄**(배고픔·기분·졸림, 바뀌면 다시 그림)과 **말풍선**(버튼·화면으로 돌보면 반응 포즈 + 로봇이 하는 말, 2.5초 이상)도 그린다. 글꼴은 리포의 Pretendard(woff2 — 기기 PIL 이 못 읽으면 KDL.ttf, **확인 필요**) — **pet.js 를 고치면 PNG 를 다시 만들 것**
+- **키우기 친구는 회사 파이보 캐릭터(261124, 사용자 — PiBrain 에서는 머리가 보드. 261123 은 실물 얼굴, 261028~261122 는 써큘러스 캐릭터), PiBrain 에서는 머리가 PiBrain 보드**(검은 화면 속 하늘색 얼굴 · 카메라 · 버튼 넷): `play/static/pet.js`(`PetArt.svg(포즈, {color, hat, glasses, device})` — `kids.js` 가 `C.device` 를 넘긴다). 대문 그림(`pibo-art.js`)과 같은 생김새. 상태 6(normal·happy·hungry·sleepy·sleep·sad) + 돌보기 반응(밥 eat · 놀기 ball · 씻기 wash, 2.5초) + 도전 결과(cheer·oops). 꾸미기: 색(안테나·모자·팻말·밥그릇) · 머리 소품(안테나/모자) · 안경. 돌보기는 **PiBrain 버튼 4개에 맞춰 4가지**(밥·놀기·재우기·씻기 — 늘리지 말 것, 사용자). PiBrain LCD 는 `play/make_pet_png.py` 가 미리 만든 PNG(`static/pet/lcd/`, 36장 — 상태 6 + 반응 3 × 소품·안경 4벌, **보드 머리로**)를 `face.py` 가 친구 색으로 바꿔 띄운다. LCD 에는 **점수 세 줄**(배고픔·기분·졸림, 바뀌면 다시 그림)과 **말풍선**(버튼·화면으로 돌보면 반응 포즈 + 로봇이 하는 말, 2.5초 이상)도 그린다. 글꼴은 리포의 Pretendard(woff2 — 기기 PIL 이 못 읽으면 KDL.ttf, **확인 필요**) — **pet.js 를 고치면 PNG 를 다시 만들 것**
 - 세로 스크롤: 키트 `.pb-shell` 이 body 스크롤을 막으므로 `.kids-main` 이 스크롤 칸이다(261028 — 전엔 작은 화면에서 아래가 잘렸다)
 - **화면(파이보 OLED·PiBrain LCD)은 IP 정보가 기본이다(261028, 사용자).** 체험 앱은 켤 때·키우기를 나갈 때·끝날 때(Ctrl+C·SIGTERM) `system/network_disp.py` 로 IP 화면을 다시 그린다(`robot.show_network`). PiBrain LCD 는 키우기에서 얼굴을 처음 그릴 때 연다(`OledByPiBrain()` 이 LCD 를 검게 초기화해서, 켜자마자 열면 IP 화면이 꺼진 것처럼 지워졌다)
 - 확인은 컨테이너(가짜 로봇)뿐: 서버 51/51, 재주 → IDE Blockly 함수·파이썬 생성까지. **실기기 확인 필요** — 동작 이름(`greeting` 등)·머리 터치 값·PiBrain 버튼 순서·LCD 방향
@@ -859,6 +860,7 @@ classifier 언어 토글, 검수 보고서 구조, Tools 서비스.
 - 미리보기 `design/preview.py` 와 검사 `design/audit/browser_check.js` 가 대문(`/`)·IDE(`/ide`)를 안다. `AUDIT.md` B2 예외에 대문·[처음 화면] 을 넣었다
 
 **학습지 층**: 파이보와 같은 키트·IDE CSS(색은 키트 토큰) — 설명은 파이보 CLAUDE.md '첫 화면(대문) · 학습지 층'. 대문 카드 그림·키우기 친구는 **PiBrain 캐릭터**(몸은 파이보와 같고 머리가 PiBrain 보드 — 검은 화면 속 하늘색 얼굴 · 카메라 · 버튼 넷, 261123 사용자). 파일은 파이보와 같다(`ide/static/v2/pibo-art.js` · `play/static/pet.js` — 제품을 보고 고른다). 상단바 아이콘은 작은 Font Awesome 기호(캐릭터 아이콘은 넣었다 뺐다).
+- **캐릭터를 회사 파이보 캐릭터 컨셉으로(261124, 사용자)**: 몸은 공 머리 파이보와 같은 짧은 몸 · 동그란 손발, **PiBrain 보드 머리는 원래 네모라 모서리만 조금 더 둥글게**(pibo-art.js 12 · pet.js 26 · 마크 rx 4). 탭 아이콘·LCD 친구 PNG 도 다시 만들었다 — 자세한 건 파이보 CLAUDE.md '첫 화면(대문)'
 
 ## 빈 화면 안내 · 읽기 다듬기 (261120, 사용자 — UX 점검 A~F 전부)
 

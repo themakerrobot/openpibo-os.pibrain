@@ -1,6 +1,6 @@
-/* 키우기 친구 그림 — 파이보 실물 얼굴(261123, 사용자 — 대문 그림 pibo-art.js 와 같은 생김새):
-   네모난 둥근 흰 머리 · 하늘색 테 + 검은 눈 · 검은 반달 입(가운데 카메라) · 고리 안테나(작은 고리 둘) · 네모난 몸통 · 장화 발.
-   PiBrain(opt.device 'pibrain')은 머리가 PiBrain 보드(검은 화면 속 하늘색 얼굴 · 카메라 · 버튼 넷)다. 예전엔 써큘러스 캐릭터(동그란 머리 · 점 눈 · 분홍 볼)였다.
+/* 키우기 친구 그림 — 회사 파이보 캐릭터(261124, 사용자 — 대문 그림 pibo-art.js 와 같은 생김새):
+   공 모양 흰 머리 · 검은 눈 + 반짝임 · 볼터치 · 벌린 입 + 혀 · 고리 안테나(작은 고리 둘) · 둥근 몸통 · 동그란 손발. 안경은 꾸미기(glasses).
+   PiBrain(opt.device 'pibrain')은 머리가 PiBrain 보드(검은 화면 속 하늘색 얼굴 · 카메라 · 버튼 넷)다. 261123~261124 엔 실물 얼굴(네모 머리 · 하늘색 테 눈)이었다.
    그림 파일 없이 SVG 로 그린다. 상태·반응마다 포즈가 하나씩 있고, 꾸미기는
    머리 소품(hat: 'antenna' 링 안테나 | 'cap' 모자) · 안경(glasses) · 색(color — 안테나·모자·팻말에 칠함).
 
@@ -49,30 +49,33 @@
     s += ell(120, 233, 54, 5, 'rgba(0,0,0,.13)', ' class="kids-face__shadow"');
     s += '<g class="kids-face__body">';
 
-    // 다리 · 장화 발(실물처럼 네모 다리 + 앞이 둥근 장화)
+    // 다리 · 동그란 발 — 경계선 없이 한 덩어리(261124, 사용자)
+    var legs = '';
     [-1, 1].forEach(function (k) {
       var cx = 120 + k * 21;
-      s += '<rect x="' + (cx - 12) + '" y="196" width="24" height="24" rx="6" fill="' + SHELL + '"' + ST + '/>';
-      s += path('M' + (cx - 20) + ' 232 V223 Q' + (cx - 20) + ' 213 ' + (cx - 10) + ' 213 H' + (cx + 10) + ' Q' + (cx + 20) + ' 213 ' + (cx + 20) + ' 223 V232 Z', SHELL, ST);
+      legs += '<rect x="' + (cx - 12) + '" y="194" width="24" height="26" rx="12" fill="' + SHELL + '"' + LIMB + '/>';
+      legs += ell(cx, 221, 21, 12, SHELL, LIMB);
     });
+    s += seamless(legs);
     // 몸통 · 가슴 화면 · 단추
-    s += '<rect x="78" y="148" width="84" height="64" rx="18" fill="' + SHELL + '"' + ST + '/>';
+    s += '<rect x="77" y="147" width="86" height="66" rx="26" ry="22" fill="' + SHELL + '"' + ST + '/>';
     s += '<rect x="108" y="160" width="24" height="10" rx="2.4" fill="' + SCREEN + '"/>' + circ(120, 196, 5, '#e8ecf1', ' stroke="' + EDGE + '" stroke-width="1.5"');
     var A = arms(P.arms, SHELL, ST, color);
     s += A.back;
 
-    // 머리 — 파이보: 네모난 둥근 머리 / PiBrain: 보드(검은 화면 · 카메라 · 버튼 넷)
+    // 머리 — 파이보: 회사 캐릭터의 공 모양 머리 · 볼터치(261124) / PiBrain: 보드(모서리만 조금 더 둥글게)(검은 화면 · 카메라 · 버튼 넷)
     if (PB) {
-      s += '<rect x="36" y="40" width="168" height="120" rx="20" fill="' + SHELL + '"' + ST + '/>';
-      s += '<rect x="46" y="54" width="118" height="94" rx="12" fill="' + SCREEN + '"/>';
+      s += '<rect x="36" y="40" width="168" height="120" rx="26" fill="' + SHELL + '"' + ST + '/>';
+      s += '<rect x="46" y="54" width="118" height="94" rx="15" fill="' + SCREEN + '"/>';
       s += circ(186, 66, 6, SCREEN) + circ(184, 64, 2, '#9fb2c8');
       [[186, 96], [173, 109], [199, 109], [186, 122]].forEach(function (q) { s += circ(q[0], q[1], 5.6, '#e8ecf1', ' stroke="' + EDGE + '" stroke-width="1.5"'); });
       s += '<rect x="100" y="158" width="40" height="8" rx="3" fill="' + SHELL + '"' + ST + '/>';
       s += hat === 'cap' ? '<g transform="translate(0 16.2) scale(1 .76)">' + cap(color) + '</g>' : '<g transform="translate(0 -12)">' + antenna(color) + '</g>';
       s += '<g transform="translate(-14 0)">' + eyes(P.eyes, P.brows) + (opt.glasses ? glasses() : '') + mouth(P.mouth) + '</g>';
     } else {
-      s += '<rect x="50" y="52" width="140" height="106" rx="30" fill="' + SHELL + '"' + ST + '/>';
-      s += line('M68 70 Q80 60 100 60', '#fff', 5);
+      s += path('M120 38 C170.3 38 196 70.8 197.2 109.7 C198.5 142.5 169 162 120 162 C71 162 41.5 142.5 42.8 109.7 C44 70.8 69.7 38 120 38 Z', SHELL, ST);   // 호빵 머리(위는 좁고 아래가 퍼짐, 회사 캐릭터 261124)
+      s += line('M68 80 Q78 55 102 46', '#fff', 5);
+      s += ell(79, 137, 14, 11, '#f59ab0', ' opacity=".7"') + ell(161, 137, 14, 11, '#f59ab0', ' opacity=".7"');   // 볼터치
       s += hat === 'cap' ? '<g transform="translate(0 32) scale(1 .58)">' + cap(color) + '</g>' : antenna(color);
       s += eyes(P.eyes, P.brows);
       if (opt.glasses) s += glasses();
@@ -101,10 +104,10 @@
 
   function arms(kind, SHELL, ST, color) {
     var s = '', front = '';
-    function arm(cx, cy, a) { s += ell(cx, cy, 13, 21, SHELL, ST + rot(a, cx, cy)); }
-    function hand(cx, cy) { s += circ(cx, cy, 12, SHELL, ST); }
-    function farm(cx, cy, a) { front += ell(cx, cy, 13, 22, SHELL, ST + rot(a, cx, cy)); }
-    function fhand(cx, cy) { front += circ(cx, cy, 12.5, SHELL, ST); }
+    function arm(cx, cy, a) { s += ell(cx, cy, 13, 21, SHELL, LIMB + rot(a, cx, cy)); }
+    function hand(cx, cy) { s += circ(cx, cy, 12, SHELL, LIMB); }
+    function farm(cx, cy, a) { front += ell(cx, cy, 13, 22, SHELL, LIMB + rot(a, cx, cy)); }
+    function fhand(cx, cy) { front += circ(cx, cy, 12.5, SHELL, LIMB); }
     if (kind === 'wave') { arm(78, 182, 24); farm(178, 150, 38); fhand(191, 131); }
     else if (kind === 'tummy') { arm(94, 180, -40); arm(146, 180, 40); hand(106, 194); hand(134, 194); }
     else if (kind === 'eat') {                       // 밥그릇을 들고 숟가락으로 떠먹기
@@ -127,41 +130,61 @@
       hand(52, 180); hand(188, 180);
     } else if (kind === 'scratch') { arm(78, 182, 24); farm(184, 128, 20); fhand(190, 104); }
     else { arm(78, 182, 24); arm(162, 182, -24); }
-    return { back: s, front: front };
+    return { back: seamless(s), front: seamless(front) };
   }
 
-  function eyes(kind, brows) {                  // 파이보: 하늘색 테 + 검은 눈 / PiBrain: 검은 화면 위 하늘색 눈
-    var s = '', LIGHT = '#f3f6f9', E = PB ? CYAN : INK;
+  var OPEN = '#5b1a1d', TONGUE = '#f2737f';
+  /* 팔·손, 다리·발을 경계선 없이(261124, 사용자): 굵은 테두리로 한 번 그리고 그 위에 테두리 없이 다시 칠한다 —
+     안쪽 이음선은 덮이고 바깥 윤곽만 남는다. LIMB 자리표가 테두리 자리 */
+  var LIMB = ' data-limb="1"';
+  function seamless(x) {
+    return x.split(LIMB).join(' stroke="' + EDGE + '" stroke-width="3"') + x.split(LIMB).join('');
+  }
+  function eyes(kind, brows) {                  // 파이보: 회사 캐릭터의 검은 눈 + 반짝임(261124) / PiBrain: 검은 화면 위 하늘색 눈
+    var s = '', E = PB ? CYAN : INK;
     [-1, 1].forEach(function (k) {
-      var x = 120 + k * 28, y = 100, e = kind;
+      var x = 120 + k * (PB ? 28 : 35), y = PB ? 100 : 106, e = kind;   // 파이보는 회사 캐릭터 비율로 눈을 크게·멀리(261124)
       if (kind === 'wink' && k === 1) e = 'happy';
       else if (kind === 'wink') e = 'open';
       if (e === 'open') {
         s += '<g class="kids-face__eye">' + (PB ? circ(x, y, 13, CYAN) + circ(x + 3.6, y - 4.2, 3.6, '#fff')
-          : circ(x, y, 16, CYAN) + circ(x, y, 12, INK) + circ(x - 4, y - 4.4, 3.8, '#fff') + circ(x + 3.8, y + 4, 1.7, '#fff')) + '</g>';
+          : circ(x, y, 13.65, INK) + circ(x + 4.4, y - 4.8, 4.6, '#fff')) + '</g>';
       } else if (e === 'happy') {
-        s += (PB ? '' : circ(x, y, 14, LIGHT, ' stroke="' + CYAN + '" stroke-width="4"')) + line('M' + (x - 8) + ' ' + (y + 3) + ' Q' + x + ' ' + (y - 9) + ' ' + (x + 8) + ' ' + (y + 3), E, 4.5);
+        s += line('M' + (x - 11) + ' ' + (y + 4) + ' Q' + x + ' ' + (y - 11) + ' ' + (x + 11) + ' ' + (y + 4), E, PB ? 4.5 : 5.5);
       } else if (e === 'closed') {
-        s += (PB ? '' : circ(x, y, 14, LIGHT, ' stroke="' + CYAN + '" stroke-width="4"')) + line('M' + (x - 8) + ' ' + (y - 1) + ' Q' + x + ' ' + (y + 8) + ' ' + (x + 8) + ' ' + (y - 1), E, 4.5);
+        s += line('M' + (x - 11) + ' ' + (y - 1) + ' Q' + x + ' ' + (y + 9) + ' ' + (x + 11) + ' ' + (y - 1), E, PB ? 4.5 : 5.5);
       } else if (e === 'half') {                   // 반쯤 감긴 눈
         s += PB ? path('M' + (x - 13) + ' ' + y + ' A13 13 0 0 0 ' + (x + 13) + ' ' + y + ' Z', CYAN)
-          : circ(x, y, 16, CYAN) + path('M' + (x - 12) + ' ' + y + ' A12 12 0 0 0 ' + (x + 12) + ' ' + y + ' Z', INK) + line('M' + (x - 13) + ' ' + y + ' H' + (x + 13), LIGHT, 3);
+          : path('M' + (x - 13) + ' ' + y + ' A13 13 0 0 0 ' + (x + 13) + ' ' + y + ' Z', INK) + line('M' + (x - 14) + ' ' + y + ' H' + (x + 14), INK, 3.4);
       }
       if (brows) s += line('M' + (x - k * 12) + ' ' + (y - 24) + ' L' + (x + k * 6) + ' ' + (y - 19), E, 3.5);
     });
     return s;
   }
 
-  function glasses() {
-    var C2 = PB ? '#dfe4ec' : INK, s = '', g = ' stroke="' + C2 + '" stroke-width="3.6"';
-    s += circ(92, 100, 18, 'rgba(255,255,255,.12)', g) + circ(148, 100, 18, 'rgba(255,255,255,.12)', g);
-    s += line('M110 98 Q120 92 130 98', C2, 3.4);
-    if (!PB) s += line('M74 97 L50 92', C2, 3.2) + line('M166 97 L190 92', C2, 3.2);
+  function glasses() {                          // 파이보: 회사 캐릭터처럼 큰 동그란 안경(261124) / PiBrain: 화면 위
+    var C2 = PB ? '#dfe4ec' : INK, s = '';
+    if (PB) {
+      var g = ' stroke="' + C2 + '" stroke-width="3.6"';
+      return circ(92, 100, 18, 'rgba(255,255,255,.12)', g) + circ(148, 100, 18, 'rgba(255,255,255,.12)', g) + line('M110 98 Q120 92 130 98', C2, 3.4);
+    }
+    var g2 = ' stroke="' + C2 + '" stroke-width="4.2"';
+    s += circ(85, 106, 27, 'none', g2) + circ(155, 106, 27, 'none', g2);
+    s += line('M111 104 Q120 99 129 104', C2, 4) + line('M58 104 Q51 104 44 109', C2, 3.8) + line('M182 104 Q189 104 196 109', C2, 3.8);
     return s;
   }
 
-  function mouth(kind) {                        // 실물 반달 입(가운데 카메라). PiBrain 은 화면 위 하늘색
+  function mouth(kind) {                        // 파이보: 회사 캐릭터의 입(웃을 땐 벌린 입 + 혀). PiBrain 은 화면 위 하늘색
     var M = PB ? CYAN : MOUTH, lens = PB ? '' : circ(120, 125, 3.2, LENS) + circ(119, 124, 1, '#9fb2c8');
+    if (!PB && (kind === 'smile' || kind === 'big')) {   // 회사 캐릭터의 벌린 입 + 혀(261124 — 머리 폭의 20%)
+      var w = kind === 'big' ? 18 : 15.5, d = kind === 'big' ? 21 : 18, t = 127;
+      return path('M' + (120 - w) + ' ' + t + ' Q120 ' + (t - 3) + ' ' + (120 + w) + ' ' + t + ' Q' + (120 + w - 1.5) + ' ' + (t + d) + ' 120 ' + (t + d + 1) + ' Q' + (120 - w + 1.5) + ' ' + (t + d) + ' ' + (120 - w) + ' ' + t + ' Z', OPEN) +
+        path('M' + (120 - w * .65) + ' ' + (t + d - 6) + ' Q120 ' + (t + d - 12) + ' ' + (120 + w * .65) + ' ' + (t + d - 6) + ' Q' + (120 + w * .4) + ' ' + (t + d - .5) + ' 120 ' + (t + d + .5) + ' Q' + (120 - w * .4) + ' ' + (t + d - .5) + ' ' + (120 - w * .65) + ' ' + (t + d - 6) + ' Z', TONGUE);
+    }
+    if (!PB) return '<g transform="translate(0 9)">' + mouthShape(kind, M, lens) + '</g>';   // 다른 입도 눈이 내려온 만큼 아래로
+    return mouthShape(kind, M, lens);
+  }
+  function mouthShape(kind, M, lens) {
     if (kind === 'smile') return path('M104 117 H136 A16 15 0 0 1 104 117 Z', M) + lens;
     if (kind === 'big') return path('M100 115 H140 A20 19 0 0 1 100 115 Z', M) + lens;
     if (kind === 'o') return ell(120, 127, 7.5, 9, M);

@@ -1,8 +1,8 @@
 /* 파이보 캐릭터 장면 — 대문 카드 그림(코딩 · 도구 · AI 가르치기 · 대화 · 카드 코딩 · 로봇 놀이 · 키우기 · 설정 · 도움말)
    + 체험 앱 처음 화면 그림(도전 · 내 재주 · 조종하기 · 픽셀 그림, 261123) + 머리 캐릭터(face). PiBrain 은 머리가 보드(검은 화면 속 하늘색 얼굴 · 카메라 · 버튼 넷)인 같은 몸.
-   파이보·PiBrain 같은 파일(ide/static/v2/pibo-art.js). 그림 파일 없이 SVG 로 직접 그렸다(라이선스 걱정 없음). 실물(도구 [동작] 사진 pibo_body)을 따른다:
-   네모난 둥근 머리 · 하늘색 테 + 검은 눈 · 검은 반달 입(가운데 카메라) · 파란 고리 안테나(작은 고리 둘) ·
-   목 · 네모난 몸통(작은 화면 · 단추) · 큰 어깨 판 + 아래팔 · 네모 다리 · 둥근 장화 발 */
+   파이보·PiBrain 같은 파일(ide/static/v2/pibo-art.js). 그림 파일 없이 SVG 로 직접 그렸다(회사 캐릭터라 그대로 따라도 된다 — 사용자).
+   261124(사용자): 회사 캐릭터 컨셉으로 — 큰 공 모양 머리 · 동그란 안경 · 볼터치 · 벌린 입 · 파란 고리 안테나(작은 고리 둘) ·
+   짧은 몸(가슴 명찰) · 짧은 팔 + 동그란 손 · 짧은 다리 + 동그란 발. PiBrain 은 머리만 보드(원래 네모라 모서리만 조금 둥글게) */
 (function (root) {
   'use strict';
   var C = { line: '#aab4c3', w1: '#ffffff', w2: '#e3e9f0', dark: '#1d2127', cyan: '#1fb5d6', blue: '#2a9bd4',
@@ -11,64 +11,61 @@
   function f(v) { return Math.round(v * 100) / 100; }
   function rot(p, a) { var r = a * Math.PI / 180; return [p[0] * Math.cos(r) - p[1] * Math.sin(r), p[0] * Math.sin(r) + p[1] * Math.cos(r)]; }
   function W(id) { return 'fill="url(#' + id + 'g)" stroke="' + C.line + '" stroke-width="1.1"'; }
-  function rr(x, y, w, h, r, attr) { return '<rect x="' + f(x) + '" y="' + f(y) + '" width="' + f(w) + '" height="' + f(h) + '" rx="' + f(r) + '" ' + attr + '/>'; }
+  function rr(x, y, w, h, r, attr, ry) { return '<rect x="' + f(x) + '" y="' + f(y) + '" width="' + f(w) + '" height="' + f(h) + '" rx="' + f(r) + '"' + (ry ? ' ry="' + f(ry) + '"' : '') + ' ' + attr + '/>'; }
 
-  /* 팔 — 어깨(px,py)에서 아래로 늘어진 모양을 a 도 돌린다(+ 시계 방향). side: -1 왼쪽(화면 왼쪽) / 1 오른쪽 */
+  /* 팔 — 어깨(px,py)에서 아래로 늘어진 짧은 팔 + 동그란 손을 a 도 돌린다(+ 시계 방향). side: -1 왼쪽(화면 왼쪽) / 1 오른쪽 */
   function arm(id, px, py, a, side) {
     var s = '<g transform="translate(' + px + ' ' + py + ') rotate(' + a + ')">' +
-      rr(-4.6 + side * 0.6, 10, 9.2, 19, 4.6, W(id)) +                              // 아래팔
-      rr(-6.4 + side * 1.2, -4, 12.8, 19, 6.4, W(id)) +                             // 어깨 판
-      '<path d="M' + f(-3.4 + side * 1.2) + ' -1.2 Q' + f(side * 1.2) + ' -2.6 ' + f(3.4 + side * 1.2) + ' -1.2" stroke="#fff" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".9"/>' +
+      '<path d="M-4.4 2.4 A4.4 4.4 0 0 1 4.4 2.4 L4.4 10.63 A6.2 6.2 0 1 1 -4.4 10.63 Z" ' + W(id) + '/>' +   // 짧은 팔 + 동그란 손(경계 없이 한 덩어리)
+      '<path d="M-3 12.2 Q-1.2 10.6 1.2 10.8" stroke="#fff" stroke-width="1.3" fill="none" stroke-linecap="round" opacity=".9"/>' +
       '</g>';
-    var h = rot([side * 0.6, 27], a);
+    var h = rot([0, 15], a);
     return { svg: s, hand: [px + h[0], py + h[1]] };
   }
 
-  /* 파이보 — 기준 좌표(가운데 x=60, 발바닥 y=112). o.L/o.R 팔 각도, o.look 눈 x, o.tilt 머리 기울기, o.front(손, 몸 위에 그릴 것) */
+  /* 파이보 — 회사 캐릭터(261124, 사용자): 큰 공 모양 머리 · 동그란 안경 · 볼터치 · 벌린 입 · 파란 고리 안테나 · 짧은 몸(가슴 명찰) · 동그란 손발.
+     기준 좌표(가운데 x=60, 발바닥 y=112). o.L/o.R 팔 각도, o.look 눈 x, o.tilt 머리 기울기, o.front(손, 몸 위에 그릴 것) */
   function pibo(id, o) {
     o = o || {};
-    var L = arm(id, 38.5, 68, o.L == null ? 8 : o.L, -1), R = arm(id, 81.5, 68, o.R == null ? -8 : o.R, 1);
+    var L = arm(id, 45.5, 74, o.L == null ? 10 : o.L, -1), R = arm(id, 74.5, 74, o.R == null ? -10 : o.R, 1);
     var s = '';
-    // 다리 · 장화
-    s += rr(45, 94, 11, 12, 2.6, W(id)) + rr(64, 94, 11, 12, 2.6, W(id));
-    s += '<path d="M41.5 112 V108 Q41.5 103 47 103 H54 Q59 103 59 108 V112 Z" ' + W(id) + '/>' +
-         '<path d="M61 112 V108 Q61 103 66 103 H73 Q78.5 103 78.5 108 V112 Z" ' + W(id) + '/>';
+    // 다리 · 동그란 발
+    s += '<path d="M46 90 L46 102.44 A8.6 5.4 0 1 0 57.5 103.78 L57.5 90 Z" ' + W(id) + '/>' +          // 다리 + 동그란 발(한 덩어리)
+         '<path d="M74 90 L74 102.44 A8.6 5.4 0 1 1 62.5 103.78 L62.5 90 Z" ' + W(id) + '/>';
     // 팔(몸 뒤)
     if (!o.Lfront) s += L.svg; if (!o.Rfront) s += R.svg;
-    // 몸통 · 화면 · 단추
-    s += rr(38, 63, 44, 33, 9.5, W(id)) +
-         '<path d="M43 67 Q46 64.6 52 64.6" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round"/>' +
-         '<circle cx="60" cy="66.8" r=".55" fill="' + C.dark + '"/>' +
-         rr(54.2, 69.4, 11.6, 4.8, 1, 'fill="' + C.dark + '"') +
-         '<circle cx="60" cy="88" r="2.4" fill="#e8ecf1" stroke="' + C.line + '" stroke-width=".9"/>';
+    // 몸통 · 가슴 명찰
+    s += rr(42.5, 64, 35, 34, 16, W(id), 14) +
+         '<path d="M47.5 74 Q49.5 70.5 53 69.4" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/>' +
+         rr(53.4, 76.5, 13.2, 6, 1.8, 'fill="#3a3d43"');
     if (o.Lfront) s += L.svg; if (o.Rfront) s += R.svg;
-    // 목
-    s += rr(54, 59.5, 12, 5, 2, W(id));
     // 머리(살짝 기울일 수 있음)
     var h = '<g transform="rotate(' + (o.tilt || 0) + ' 60 60)">';
-    if (PB) return { svg: s + boardHead(id, o, h) + '</g>', L: L.hand, R: R.hand };
-    // 안테나(학사모를 쓰면 모자 위로 고리만)
-    if (!o.cap) h += '<path d="M60 23 V14.6" stroke="' + C.blue + '" stroke-width="2.2" stroke-linecap="round"/>' +
-         '<circle cx="60" cy="9.4" r="5.2" fill="none" stroke="' + C.blue + '" stroke-width="2.2"/>' +
-         '<circle cx="64.2" cy="5.6" r="1.7" fill="#fff" stroke="' + C.blue + '" stroke-width="1.3"/>' +
-         '<circle cx="55.8" cy="13.2" r="1.7" fill="#fff" stroke="' + C.blue + '" stroke-width="1.3"/>';
-    h += rr(35, 22, 50, 39, 11, W(id)) +
-         '<path d="M41 27.4 Q44 24.6 51 24.4" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>';
-    var lx = o.look || 0, ly = o.lookY || 0;
-    if (o.eyes === 'happy') [48.6, 71.4].forEach(function (cx) {
-      h += '<circle cx="' + cx + '" cy="38.5" r="6" fill="#f3f6f9" stroke="' + C.cyan + '" stroke-width="2.2"/>' +
-           '<path d="M' + f(cx - 3.6) + ' 40.2 Q' + cx + ' 34.6 ' + f(cx + 3.6) + ' 40.2" stroke="' + C.dark + '" stroke-width="2.4" fill="none" stroke-linecap="round"/>';
+    if (PB) { s += rr(54, 61.5, 12, 5, 2, W(id)); return { svg: s + boardHead(id, o, h) + '</g>', L: L.hand, R: R.hand }; }
+    // 안테나(학사모를 쓰면 안 보임)
+    if (!o.cap) h += rr(57.7, 11.5, 4.6, 8, 1.4, 'fill="' + C.blue + '"') +
+         '<circle cx="60" cy="8.2" r="5.4" fill="none" stroke="' + C.blue + '" stroke-width="2.6"/>' +
+         '<circle cx="65" cy="4.4" r="1.9" fill="#fff" stroke="' + C.blue + '" stroke-width="1.4"/>' +
+         '<circle cx="55" cy="12" r="1.9" fill="#fff" stroke="' + C.blue + '" stroke-width="1.4"/>';
+    h += '<path d="M60 17.5 C80.5 17.5 91 31 91.5 47 C92 60.5 80 68.5 60 68.5 C40 68.5 28 60.5 28.5 47 C29 31 39.5 17.5 60 17.5 Z" ' + W(id) + '/>' +   // 호빵 머리(위는 좁고 아래가 퍼짐)
+         '<path d="M39 32 Q44.5 23.6 55 21" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" opacity=".95"/>';
+    // 볼터치 · 눈 · 안경 · 입 — 회사 캐릭터 비율(머리 폭 63 기준: 안경 알 지름 35% · 눈 16% · 입 폭 20%, 261124)
+    h += '<ellipse cx="43.3" cy="58" rx="6" ry="4.6" fill="#f59ab0" opacity=".7"/><ellipse cx="76.7" cy="58" rx="6" ry="4.6" fill="#f59ab0" opacity=".7"/>';
+    var lx = (o.look || 0) * .7, ly = (o.lookY || 0) * .7;
+    [45.6, 74.4].forEach(function (cx, k) {
+      var happy = o.eyes === 'happy' || (o.eyes === 'wink' && k === 1);
+      h += happy ? '<path d="M' + f(cx - 5) + ' 47.8 Q' + cx + ' 41.6 ' + f(cx + 5) + ' 47.8" stroke="' + C.dark + '" stroke-width="2.6" fill="none" stroke-linecap="round"/>'
+        : '<circle cx="' + f(cx + lx) + '" cy="' + f(46.2 + ly) + '" r="5.46" fill="' + C.dark + '"/>' +
+          '<circle cx="' + f(cx + lx + 1.7) + '" cy="' + f(44.4 + ly) + '" r="1.9" fill="#fff"/>';
     });
-    else [48.6, 71.4].forEach(function (cx) {
-      h += '<circle cx="' + cx + '" cy="38.5" r="6.9" fill="' + C.cyan + '"/>' +
-           '<circle cx="' + f(cx + lx * .5) + '" cy="' + f(38.5 + ly * .5) + '" r="5.2" fill="' + C.dark + '"/>' +
-           '<circle cx="' + f(cx + lx - 1.7) + '" cy="' + f(36.6 + ly) + '" r="1.7" fill="#fff"/>' +
-           '<circle cx="' + f(cx + lx + 1.6) + '" cy="' + f(40.3 + ly) + '" r=".75" fill="#fff" opacity=".85"/>';
-    });
+    h += '<g fill="none" stroke="' + C.dark + '" stroke-width="1.7" stroke-linecap="round">' +
+         '<circle cx="45.6" cy="45.6" r="11"/><circle cx="74.4" cy="45.6" r="11"/>' +
+         '<path d="M56.6 44.6 Q60 42.8 63.4 44.6"/><path d="M34.6 44.6 Q31.5 44.8 28.8 46.8"/><path d="M85.4 44.6 Q88.5 44.8 91.2 46.8"/></g>';
     h += o.mouth === 'o'
-      ? '<ellipse cx="60" cy="51.2" rx="3.6" ry="3.4" fill="' + C.dark + '"/>'
-      : '<path d="M53.4 48 H66.6 A6.6 6 0 0 1 53.4 48 Z" fill="' + C.dark + '"/><circle cx="60" cy="50.6" r="1.5" fill="#3b4352"/><circle cx="59.5" cy="50.1" r=".45" fill="#9fb2c8"/>';
-    if (o.cap) h += capSvg();
+      ? '<ellipse cx="60" cy="58" rx="3.3" ry="3.8" fill="#5b1a1d"/>'
+      : '<path d="M53.6 54 Q60 53 66.4 54 Q65.6 62 60 62.4 Q54.4 62 53.6 54 Z" fill="#5b1a1d"/>' +
+        '<path d="M55.6 59.6 Q60 56.8 64.4 59.6 Q62.4 62.2 60 62.3 Q57.6 62.2 55.6 59.6 Z" fill="#f2737f"/>';
+    if (o.cap) h += '<g transform="translate(0 -3)">' + capSvg() + '</g>';
     h += '</g>';
     s += h;
     return { svg: s, L: L.hand, R: R.hand };
@@ -77,8 +74,8 @@
   /* PiBrain 머리 — 보드(검은 화면 속 하늘색 얼굴 · 카메라 · 버튼 넷 · 아래 연결부). 파이보 머리 자리에 같은 크기로 */
   function boardHead(id, o, h) {
     var lx = (o.look || 0) * .6, ly = (o.lookY || 0) * .6;
-    h += rr(23, 17, 74, 47, 9, W(id)) + '<path d="M29 22.4 Q32 19.8 39 19.6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>';
-    h += rr(29, 23, 46, 35, 4.5, 'fill="' + C.dark + '"');
+    h += rr(23, 17, 74, 47, 12, W(id)) + '<path d="M29 22.4 Q32 19.8 39 19.6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>';
+    h += rr(29, 23, 46, 35, 6, 'fill="' + C.dark + '"');
     if (o.eyes === 'happy') [43, 61].forEach(function (cx) {
       h += '<path d="M' + (cx - 4) + ' 39.5 Q' + cx + ' 33.5 ' + (cx + 4) + ' 39.5" stroke="' + C.cyan + '" stroke-width="2.4" fill="none" stroke-linecap="round"/>';
     });
@@ -148,8 +145,8 @@
   var SCENES = {
     // 코딩 — 블록 창의 빈자리에 초록 블록을 끼워 넣는 중. 눈은 창을 본다
     code: function (id) {
-      var tx = -14, ty = 7, sc = .86;
-      var p = pibo(id, { R: -116, L: 10, look: 1.8, lookY: .6, tilt: 4, Rfront: true });
+      var tx = -8, ty = 7, sc = .84;
+      var p = pibo(id, { R: -138, L: 10, look: 1.8, lookY: .6, tilt: 4, Rfront: true });
       var hand = place(p.R, tx, ty, sc);
       var s = '<ellipse cx="60" cy="114.5" rx="52" ry="3.4" fill="#000" opacity=".07"/>';
       // 블록 창(종이 카드 + 위 막대 + 점 셋)
@@ -397,7 +394,7 @@
   function face(product) {
     var id = 'pa' + (++n);
     PB = /brain/i.test(product || '');
-    var s = pibo(id, {}).svg, vb = PB ? '20 12 80 57' : '29 1 62 61';
+    var s = pibo(id, {}).svg, vb = PB ? '20 12 80 57' : '27 1 66 69';
     PB = false;
     return '<svg viewBox="' + vb + '" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' + defs(id) + s + '</svg>';
   }
