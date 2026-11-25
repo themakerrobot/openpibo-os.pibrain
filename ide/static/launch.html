@@ -140,7 +140,8 @@
   var $ = function (id) { return document.getElementById(id); };
   $('close').onclick = function () { location.href = 'http://' + HOST + '/'; };   // 대문에서 같은 탭으로 왔다(261123 — 전엔 새 탭이라 닫았다)
   var PRODUCT = document.documentElement.getAttribute('data-product') || '';
-  function setTitle(s) { $('title').textContent = s; document.title = PRODUCT ? s + ' · ' + PRODUCT : s; }   // 탭 제목은 '… · PiBrain' (다른 화면과 같은 꼴)
+  var IPEND = (/^\d+\.\d+\.\d+\.(\d+)$/.exec(location.hostname || '') || [])[1];
+  function setTitle(s) { $('title').textContent = s; document.title = PRODUCT ? PRODUCT + (IPEND ? ' .' + IPEND : '') + ' · ' + s : s; }   // 탭 제목은 'piBo .211 · …'(키트 fixTitle 과 같은 꼴, 261125)
   if (!S) { document.body.dataset.state = 'fail'; setTitle(t('bad')); $('icon').className = 'fa-solid fa-circle-exclamation'; return; }
 
   if (key === 'kids') key = 'play';

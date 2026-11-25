@@ -856,7 +856,7 @@ classifier 언어 토글, 검수 보고서 구조, Tools 서비스.
   - 캐릭터: 실제 로봇처럼 **흰 얼굴**(사용자) + 남색 얼굴판 · 하늘색 눈 깜빡임 · 안테나 흔들기 — 제품 마크를 바탕으로 SVG 로 직접 그림. **PiBrain 보드 색은 확인 필요**(흰색으로 그림)
   - [이어서 하기] 파일 → `/ide?open=<경로>`(`ide.js` 11 — init 을 놓치면 2.5초 보조 타이머)
 - **모든 앱의 [처음 화면](`#home_bt[data-pb-home]`)** → 대문(261123 — 예전 [IDE] `#ide_bt` 는 지웠다. 코딩(IDE)은 저장 안 했으면 묻는다). 체험 앱 안의 [처음]은 카드 코딩 [카드 처음](도형 아이콘) · 로봇 놀이 [놀이 처음](게임패드) — `#start_bt`
-- 대기 페이지 `launch.html`: `svc=hwtest`(50050) · `svc=cards|play[&go=make|pet|art]`(`svc=kids` 는 예전 이름 → play). `LAUNCH_VER` 261124v1. 체험 앱은 `?go=` 를 읽고 주소에서 지운다
+- 대기 페이지 `launch.html`: `svc=hwtest`(50050) · `svc=cards|play[&go=make|pet|art]`(`svc=kids` 는 예전 이름 → play). `LAUNCH_VER` 261125v1. 체험 앱은 `?go=` 를 읽고 주소에서 지운다
 - 미리보기 `design/preview.py` 와 검사 `design/audit/browser_check.js` 가 대문(`/`)·IDE(`/ide`)를 안다. `AUDIT.md` B2 예외에 대문·[처음 화면] 을 넣었다
 
 **학습지 층**: 파이보와 같은 키트·IDE CSS(색은 키트 토큰) — 설명은 파이보 CLAUDE.md '첫 화면(대문) · 학습지 층'. 대문 카드 그림·키우기 친구는 **PiBrain 캐릭터**(몸은 파이보와 같고 머리가 PiBrain 보드 — 검은 화면 속 하늘색 얼굴 · 카메라 · 버튼 넷, 261123 사용자). 파일은 파이보와 같다(`ide/static/v2/pibo-art.js` · `play/static/pet.js` — 제품을 보고 고른다). 상단바 아이콘은 작은 Font Awesome 기호(캐릭터 아이콘은 넣었다 뺐다).
