@@ -1,6 +1,6 @@
 # Software
 
-PiBrain's features are used through the **openpibo** Python package (the same package as piBo, with its own classes for PiBrain). Blocks also turn into
+piBrain's features are used through the **openpibo** Python package (the same package as piBo, with its own classes for piBrain). Blocks also turn into
 Python code that calls this package (see it with the [Python code] button). The source is on [GitHub](https://github.com/themakerrobot/openpibo-os.pibrain) (Apache-2.0).
 
 ## Package layout
@@ -9,9 +9,9 @@ Python code that calls this package (see it with the [Python code] button). The 
 openpibo
 ├── audio.py            play, stop and record sound
 ├── collect.py          Wikipedia, weather, news (internet, Korean edition)
-├── device.py           LED and buttons (DeviceByPiBrain on PiBrain)
-├── motion.py           motors and motions (for piBo — PiBrain has no motors)
-├── oled.py             Display — LCD on PiBrain (OledByPiBrain)
+├── device.py           LED and buttons (DeviceByPiBrain on piBrain)
+├── motion.py           motors and motions (for piBo — piBrain has no motors)
+├── oled.py             Display — LCD on piBrain (OledByPiBrain)
 ├── pibo_graphics.py    drawing tools for the screen
 ├── speech.py           voices (TTS), chat (LLM), speech recognition (STT, with a microphone attached)
 ├── usb_uart.py         USB serial
@@ -45,14 +45,14 @@ time.sleep(3)
 audio.stop()
 ```
 
-Example: make a voice inside PiBrain and speak (no internet; Korean and English are detected automatically).
+Example: make a voice inside piBrain and speak (no internet; Korean and English are detected automatically).
 
 ```python
 from openpibo.speech import SpeechOnDevice
 from openpibo.audio import Audio
 
 tts = SpeechOnDevice()
-tts.tts('Hello! I am PiBrain.', filename='/home/pi/hello.wav', voice='f1')
+tts.tts('Hello! I am piBrain.', filename='/home/pi/hello.wav', voice='f1')
 Audio().play('/home/pi/hello.wav', background=False)
 ```
 
@@ -87,5 +87,5 @@ camera.imwrite('/home/pi/result.jpg', img)
 ```
 
 ```{note}
-Code run from the IDE runs inside PiBrain as **root** (so it can use the camera, GPIO and other hardware).
+Code run from the IDE runs inside piBrain as **root** (so it can use the camera, GPIO and other hardware).
 ```

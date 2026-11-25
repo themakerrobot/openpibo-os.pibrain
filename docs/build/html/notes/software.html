@@ -3,11 +3,11 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="색인" href="../genindex.html"><link rel="search" title="검색" href="../search.html"><link rel="next" title="하드웨어" href="hardware.html"><link rel="prev" title="PiBrain 메이커" href="piboMaker.html">
+<link rel="index" title="색인" href="../genindex.html"><link rel="search" title="검색" href="../search.html"><link rel="next" title="하드웨어" href="hardware.html"><link rel="prev" title="piBrain 메이커" href="piboMaker.html">
         <link rel="canonical" href="https://themakerrobot.github.io/openpibo-os.pibrain/notes/software.html">
 
     <link rel="shortcut icon" href="../_static/icon.png"><!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
-        <title>소프트웨어 - 도움말 · PiBrain</title>
+        <title>소프트웨어 - 도움말 · piBrain</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -105,7 +105,7 @@
   </label>
   <a class="pb-topbar__brand" href="../index.html">
     <svg class="pb-topbar__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.5 3h13a4 4 0 0 1 4 4v8.5a4 4 0 0 1-4 4h-13a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zM5.2 5.8a.8.8 0 0 0-.8.8v9.3a.8.8 0 0 0 .8.8h6a.8.8 0 0 0 .8-.8V6.6a.8.8 0 0 0-.8-.8zM15.4 5.1499999999999995a1.45 1.45 0 1 0 0 2.9a1.45 1.45 0 1 0 0 -2.9zM18.9 5.3h1.6a0.5 0.5 0 0 1 0.5 0.5v1.6a0.5 0.5 0 0 1 -0.5 0.5h-1.6a0.5 0.5 0 0 1 -0.5 -0.5v-1.6a0.5 0.5 0 0 1 0.5 -0.5zM17.0 9.5a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0 -2.4zM14.6 11.9a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0 -2.4zM19.4 11.9a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0 -2.4zM17.0 14.3a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0 -2.4z"/><rect x="8.6" y="20.2" width="6.8" height="2.6" rx="1"/></svg>
-    <b>PiBrain</b><span class="pb-topbar__app">도움말</span>
+    <b>piBrain</b><span class="pb-topbar__app">도움말</span>
   </a>
   <div class="pb-topbar__right">
     <a class="pb-topbar__btn pb-topbar__home" href="/" title="처음 화면">
@@ -257,7 +257,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">도움말 · PiBrain</div></a>
+      <a href="../index.html"><div class="brand">도움말 · piBrain</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -278,7 +278,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
-  <span class="sidebar-brand-text">도움말 · PiBrain</span>
+  <span class="sidebar-brand-text">도움말 · piBrain</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="검색" name="q" aria-label="검색">
@@ -288,7 +288,7 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">시작하기</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="piboMaker.html">PiBrain 메이커</a></li>
+<li class="toctree-l1"><a class="reference internal" href="piboMaker.html">piBrain 메이커</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">소프트웨어</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hardware.html">하드웨어</a></li>
 </ul>
@@ -351,16 +351,16 @@
         <article role="main" id="furo-main-content">
           <section id="id1">
 <h1>소프트웨어<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
-<p>PiBrain 의 기능은 <strong>openpibo</strong> 파이썬 패키지로 씁니다(파이보와 같은 패키지이고, PiBrain 전용 클래스가 따로 있습니다). 블록도 이 패키지를 부르는 파이썬 코드로 바뀌어 실행됩니다
+<p>piBrain 의 기능은 <strong>openpibo</strong> 파이썬 패키지로 씁니다(파이보와 같은 패키지이고, piBrain 전용 클래스가 따로 있습니다). 블록도 이 패키지를 부르는 파이썬 코드로 바뀌어 실행됩니다
 ([파이썬 코드] 버튼으로 볼 수 있습니다). 소스는 <a class="reference external" href="https://github.com/themakerrobot/openpibo-os.pibrain">GitHub</a> 에 있습니다(Apache-2.0).</p>
 <section id="id2">
 <h2>패키지 구성<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>openpibo
 ├── audio.py            소리 재생·멈춤·녹음
 ├── collect.py          위키백과·날씨·뉴스 (인터넷 필요)
-├── device.py           LED·버튼 (PiBrain 은 DeviceByPiBrain)
-├── motion.py           모터·동작 (파이보용 — PiBrain 에는 모터가 없습니다)
-├── oled.py             화면 — PiBrain 은 LCD (OledByPiBrain)
+├── device.py           LED·버튼 (piBrain 은 DeviceByPiBrain)
+├── motion.py           모터·동작 (파이보용 — piBrain 에는 모터가 없습니다)
+├── oled.py             화면 — piBrain 은 LCD (OledByPiBrain)
 ├── pibo_graphics.py    화면용 그림 도구
 ├── speech.py           목소리 만들기(TTS)·대화(LLM)·음성 인식(STT, 마이크를 달면)
 ├── usb_uart.py         USB 시리얼
@@ -391,7 +391,7 @@
 <span class="n">audio</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>예) PiBrain 안에서 목소리를 만들어 말합니다(인터넷 불필요, 한국어·영어 자동).</p>
+<p>예) piBrain 안에서 목소리를 만들어 말합니다(인터넷 불필요, 한국어·영어 자동).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">openpibo.speech</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpeechOnDevice</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">openpibo.audio</span><span class="w"> </span><span class="kn">import</span> <span class="n">Audio</span>
 
@@ -428,7 +428,7 @@
 </div>
 <div class="admonition note">
 <p class="admonition-title">참고</p>
-<p>IDE 에서 실행한 코드는 PiBrain 안에서 <strong>root</strong> 권한으로 돕니다(카메라·GPIO 등 하드웨어를 쓰기 위해서입니다).</p>
+<p>IDE 에서 실행한 코드는 piBrain 안에서 <strong>root</strong> 권한으로 돕니다(카메라·GPIO 등 하드웨어를 쓰기 위해서입니다).</p>
 </div>
 </section>
 </section>
@@ -454,7 +454,7 @@
                   <span>이전</span>
                 </div>
                 
-                <div class="title">PiBrain 메이커</div>
+                <div class="title">piBrain 메이커</div>
                 
               </div>
             </a>

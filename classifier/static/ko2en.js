@@ -49,7 +49,7 @@ const translations = {
   cam_on:           { ko: "카메라 켜기",              en: "Camera on" },
   cam_off:          { ko: "카메라 끄기",              en: "Camera off" },
   cam_off_note:     { ko: "카메라가 꺼져 있어요.",    en: "The camera is off." },
-  cam_wait:         { ko: "PiBrain 카메라를 기다리는 중…", en: "Waiting for PiBrain's camera…" },
+  cam_wait:         { ko: "piBrain 카메라를 기다리는 중…", en: "Waiting for piBrain's camera…" },
   loading_model:    { ko: "AI 준비 중…", en: "Loading the AI…" },
   load_fail:        { ko: "AI를 불러오지 못했어요. 새로고침해 보세요.", en: "Could not load the AI. Try reloading the page." },
   ai_sees:          { ko: "AI가 보는 그림",           en: "What the AI sees" },
@@ -71,7 +71,7 @@ const translations = {
   live_title:       { ko: "지금 보이는 것",           en: "Live" },
 
   // 저장
-  save_title:       { ko: "PiBrain에 저장", en: "Save to PiBrain" },
+  save_title:       { ko: "piBrain에 저장", en: "Save to piBrain" },
   save_name_ph:     { ko: "모델 이름",                en: "Model name" },
   save_btn:         { ko: "저장",                     en: "Save" },
   save_exists:      { ko: (n) => `"${n}" 모델이 이미 있어요. 덮어쓸까요?`, en: (n) => `"${n}" already exists. Overwrite it?` },
@@ -80,9 +80,9 @@ const translations = {
   err_model_name:   { ko: "모델 이름에 쓸 수 없는 글자가 있어요. (/ \\ : * ? \" < > |, 40자까지)", en: "The model name has characters that can't be used. (/ \\ : * ? \" < > |, up to 40 characters)" },
   err_model_exists: { ko: "같은 이름의 모델이 있어요.", en: "A model with that name already exists." },
   err_model_bad:    { ko: "모델 파일이 올바르지 않아요.", en: "The model files are not valid." },
-  err_model_save:   { ko: "PiBrain에 저장하지 못했어요.", en: "Could not save on PiBrain." },
+  err_model_save:   { ko: "piBrain에 저장하지 못했어요.", en: "Could not save on piBrain." },
   err_model_missing:{ ko: "모델을 찾지 못했어요.",    en: "Model not found." },
-  err_net:          { ko: "PiBrain과 연결하지 못했어요.", en: "Could not reach PiBrain." },
+  err_net:          { ko: "piBrain과 연결하지 못했어요.", en: "Could not reach piBrain." },
 
   // 시험
   test_pick:        { ko: "시험할 모델",              en: "Model to test" },
@@ -95,7 +95,7 @@ const translations = {
   no_models:        { ko: "저장한 모델이 없어요.",    en: "No saved models." },
 
   // 보관함
-  store_hint:       { ko: "PiBrain에 저장된 모델이에요. 블록이나 파이썬에서 이름으로 불러 써요.", en: "Models saved on PiBrain. Load them by name in blocks or Python." },
+  store_hint:       { ko: "piBrain에 저장된 모델이에요. 블록이나 파이썬에서 이름으로 불러 써요.", en: "Models saved on piBrain. Load them by name in blocks or Python." },
   st_test:          { ko: "시험",                     en: "Test" },
   st_continue:      { ko: "이어서 배우기",            en: "Keep training" },
   st_rename:        { ko: "이름 바꾸기",              en: "Rename" },

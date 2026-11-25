@@ -354,7 +354,7 @@ if __name__ == "__main__":
         print("\nWARNING: One or more hardware components failed to initialize.")
         print("The API will run, but hardware-related endpoints may fail.")
 
-    print("\nStarting PiBrain H/W inspection server.")
+    print("\nStarting piBrain H/W inspection server.")
     print(f"Open http://<device-ip>:{PORT}/ in a browser.")
     print(f"Idle watchdog: shuts down after {IDLE_TIMEOUT}s without a heartbeat.")
 

@@ -3,11 +3,11 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Hardware" href="hardware.html"><link rel="prev" title="PiBrain Maker" href="piboMaker.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Hardware" href="hardware.html"><link rel="prev" title="piBrain Maker" href="piboMaker.html">
         <link rel="canonical" href="https://themakerrobot.github.io/openpibo-os.pibrain/notes/software.html">
 
     <link rel="shortcut icon" href="../_static/icon.png"><!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
-        <title>Software - Help · PiBrain</title>
+        <title>Software - Help · piBrain</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -105,7 +105,7 @@
   </label>
   <a class="pb-topbar__brand" href="../index.html">
     <svg class="pb-topbar__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.5 3h13a4 4 0 0 1 4 4v8.5a4 4 0 0 1-4 4h-13a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zM5.2 5.8a.8.8 0 0 0-.8.8v9.3a.8.8 0 0 0 .8.8h6a.8.8 0 0 0 .8-.8V6.6a.8.8 0 0 0-.8-.8zM15.4 5.1499999999999995a1.45 1.45 0 1 0 0 2.9a1.45 1.45 0 1 0 0 -2.9zM18.9 5.3h1.6a0.5 0.5 0 0 1 0.5 0.5v1.6a0.5 0.5 0 0 1 -0.5 0.5h-1.6a0.5 0.5 0 0 1 -0.5 -0.5v-1.6a0.5 0.5 0 0 1 0.5 -0.5zM17.0 9.5a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0 -2.4zM14.6 11.9a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0 -2.4zM19.4 11.9a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0 -2.4zM17.0 14.3a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0 -2.4z"/><rect x="8.6" y="20.2" width="6.8" height="2.6" rx="1"/></svg>
-    <b>PiBrain</b><span class="pb-topbar__app">Help</span>
+    <b>piBrain</b><span class="pb-topbar__app">Help</span>
   </a>
   <div class="pb-topbar__right">
     <a class="pb-topbar__btn pb-topbar__home" href="/" title="Home">
@@ -257,7 +257,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">Help · PiBrain</div></a>
+      <a href="../index.html"><div class="brand">Help · piBrain</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -278,7 +278,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
-  <span class="sidebar-brand-text">Help · PiBrain</span>
+  <span class="sidebar-brand-text">Help · piBrain</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -288,7 +288,7 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="piboMaker.html">PiBrain Maker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="piboMaker.html">piBrain Maker</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Software</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hardware.html">Hardware</a></li>
 </ul>
@@ -351,16 +351,16 @@
         <article role="main" id="furo-main-content">
           <section id="software">
 <h1>Software<a class="headerlink" href="#software" title="Link to this heading">¶</a></h1>
-<p>PiBrain’s features are used through the <strong>openpibo</strong> Python package (the same package as piBo, with its own classes for PiBrain). Blocks also turn into
+<p>piBrain’s features are used through the <strong>openpibo</strong> Python package (the same package as piBo, with its own classes for piBrain). Blocks also turn into
 Python code that calls this package (see it with the [Python code] button). The source is on <a class="reference external" href="https://github.com/themakerrobot/openpibo-os.pibrain">GitHub</a> (Apache-2.0).</p>
 <section id="package-layout">
 <h2>Package layout<a class="headerlink" href="#package-layout" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>openpibo
 ├── audio.py            play, stop and record sound
 ├── collect.py          Wikipedia, weather, news (internet, Korean edition)
-├── device.py           LED and buttons (DeviceByPiBrain on PiBrain)
-├── motion.py           motors and motions (for piBo — PiBrain has no motors)
-├── oled.py             Display — LCD on PiBrain (OledByPiBrain)
+├── device.py           LED and buttons (DeviceByPiBrain on piBrain)
+├── motion.py           motors and motions (for piBo — piBrain has no motors)
+├── oled.py             Display — LCD on piBrain (OledByPiBrain)
 ├── pibo_graphics.py    drawing tools for the screen
 ├── speech.py           voices (TTS), chat (LLM), speech recognition (STT, with a microphone attached)
 ├── usb_uart.py         USB serial
@@ -391,12 +391,12 @@ Python code that calls this package (see it with the [Python code] button). The 
 <span class="n">audio</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Example: make a voice inside PiBrain and speak (no internet; Korean and English are detected automatically).</p>
+<p>Example: make a voice inside piBrain and speak (no internet; Korean and English are detected automatically).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">openpibo.speech</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpeechOnDevice</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">openpibo.audio</span><span class="w"> </span><span class="kn">import</span> <span class="n">Audio</span>
 
 <span class="n">tts</span> <span class="o">=</span> <span class="n">SpeechOnDevice</span><span class="p">()</span>
-<span class="n">tts</span><span class="o">.</span><span class="n">tts</span><span class="p">(</span><span class="s1">'Hello! I am PiBrain.'</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">'/home/pi/hello.wav'</span><span class="p">,</span> <span class="n">voice</span><span class="o">=</span><span class="s1">'f1'</span><span class="p">)</span>
+<span class="n">tts</span><span class="o">.</span><span class="n">tts</span><span class="p">(</span><span class="s1">'Hello! I am piBrain.'</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">'/home/pi/hello.wav'</span><span class="p">,</span> <span class="n">voice</span><span class="o">=</span><span class="s1">'f1'</span><span class="p">)</span>
 <span class="n">Audio</span><span class="p">()</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="s1">'/home/pi/hello.wav'</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -428,7 +428,7 @@ Python code that calls this package (see it with the [Python code] button). The 
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Code run from the IDE runs inside PiBrain as <strong>root</strong> (so it can use the camera, GPIO and other hardware).</p>
+<p>Code run from the IDE runs inside piBrain as <strong>root</strong> (so it can use the camera, GPIO and other hardware).</p>
 </div>
 </section>
 </section>
@@ -454,7 +454,7 @@ Python code that calls this package (see it with the [Python code] button). The 
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">PiBrain Maker</div>
+                <div class="title">piBrain Maker</div>
                 
               </div>
             </a>

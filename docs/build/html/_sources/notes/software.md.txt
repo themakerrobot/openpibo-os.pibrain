@@ -1,6 +1,6 @@
 # 소프트웨어
 
-PiBrain 의 기능은 **openpibo** 파이썬 패키지로 씁니다(파이보와 같은 패키지이고, PiBrain 전용 클래스가 따로 있습니다). 블록도 이 패키지를 부르는 파이썬 코드로 바뀌어 실행됩니다
+piBrain 의 기능은 **openpibo** 파이썬 패키지로 씁니다(파이보와 같은 패키지이고, piBrain 전용 클래스가 따로 있습니다). 블록도 이 패키지를 부르는 파이썬 코드로 바뀌어 실행됩니다
 ([파이썬 코드] 버튼으로 볼 수 있습니다). 소스는 [GitHub](https://github.com/themakerrobot/openpibo-os.pibrain) 에 있습니다(Apache-2.0).
 
 ## 패키지 구성
@@ -9,9 +9,9 @@ PiBrain 의 기능은 **openpibo** 파이썬 패키지로 씁니다(파이보와
 openpibo
 ├── audio.py            소리 재생·멈춤·녹음
 ├── collect.py          위키백과·날씨·뉴스 (인터넷 필요)
-├── device.py           LED·버튼 (PiBrain 은 DeviceByPiBrain)
-├── motion.py           모터·동작 (파이보용 — PiBrain 에는 모터가 없습니다)
-├── oled.py             화면 — PiBrain 은 LCD (OledByPiBrain)
+├── device.py           LED·버튼 (piBrain 은 DeviceByPiBrain)
+├── motion.py           모터·동작 (파이보용 — piBrain 에는 모터가 없습니다)
+├── oled.py             화면 — piBrain 은 LCD (OledByPiBrain)
 ├── pibo_graphics.py    화면용 그림 도구
 ├── speech.py           목소리 만들기(TTS)·대화(LLM)·음성 인식(STT, 마이크를 달면)
 ├── usb_uart.py         USB 시리얼
@@ -45,7 +45,7 @@ time.sleep(3)
 audio.stop()
 ```
 
-예) PiBrain 안에서 목소리를 만들어 말합니다(인터넷 불필요, 한국어·영어 자동).
+예) piBrain 안에서 목소리를 만들어 말합니다(인터넷 불필요, 한국어·영어 자동).
 
 ```python
 from openpibo.speech import SpeechOnDevice
@@ -87,5 +87,5 @@ camera.imwrite('/home/pi/result.jpg', img)
 ```
 
 ```{note}
-IDE 에서 실행한 코드는 PiBrain 안에서 **root** 권한으로 돕니다(카메라·GPIO 등 하드웨어를 쓰기 위해서입니다).
+IDE 에서 실행한 코드는 piBrain 안에서 **root** 권한으로 돕니다(카메라·GPIO 등 하드웨어를 쓰기 위해서입니다).
 ```

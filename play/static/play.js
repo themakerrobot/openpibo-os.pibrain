@@ -648,9 +648,9 @@
     get('/api/content').then(function (c) {
       C = c;
       if (C.device === 'pibrain') {
-        document.documentElement.setAttribute('data-product', 'PiBrain');
+        document.documentElement.setAttribute('data-product', 'piBrain');
         $('brand_icon').className = 'fa-solid fa-brain';
-        $('brand_name').textContent = 'PiBrain';
+        $('brand_name').textContent = 'piBrain';
       }
       applyLanguage();
       show('home');

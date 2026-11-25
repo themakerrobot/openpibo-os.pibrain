@@ -3,18 +3,18 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-PiBrain Help
+piBrain Help
 ====================================
 
-How to use PiBrain Maker (Home, Coding, Tools, Teach AI, Chat, Card coding, Robot Play), the list of blocks, and the ``openpibo`` Python API.
+How to use piBrain Maker (Home, Coding, Tools, Teach AI, Chat, Card coding, Robot Play), the list of blocks, and the ``openpibo`` Python API.
 
 .. raw:: html
 
    <div class="pb-cards">
-     <a class="pb-card" href="notes/piboMaker.html"><b>PiBrain Maker</b><span>Home, Coding, Tools, Teach AI, Chat, play apps — how to use each screen</span></a>
+     <a class="pb-card" href="notes/piboMaker.html"><b>piBrain Maker</b><span>Home, Coding, Tools, Teach AI, Chat, play apps — how to use each screen</span></a>
      <a class="pb-card" href="blocks/guide.html"><b>Blocks</b><span>Every block by category, with what it does</span></a>
      <a class="pb-card" href="notes/software.html"><b>Python</b><span>The openpibo package and example code</span></a>
-     <a class="pb-card" href="notes/hardware.html"><b>Hardware</b><span>The parts of PiBrain</span></a>
+     <a class="pb-card" href="notes/hardware.html"><b>Hardware</b><span>The parts of piBrain</span></a>
    </div>
 
 .. toctree::

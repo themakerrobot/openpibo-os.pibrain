@@ -205,7 +205,7 @@ def main():
           '<h1>화면 미리보기 (로봇 없음)</h1><p>IDE · 도구 · 분류기는 화면만(실시간 값 없음), 로봇 놀이 · 대화는 가짜 로봇으로 움직입니다.',
           ' 언어는 각 화면 상단바에서 바꿉니다.</p>']
   for dev, links in rows:
-    page.append(f'<h2>{"piBo" if dev == "pibo" else "PiBrain"}</h2>' + ''.join(f'<a href="{u}" target="_blank">{n}</a>' for n, u in links))
+    page.append(f'<h2>{"piBo" if dev == "pibo" else "piBrain"}</h2>' + ''.join(f'<a href="{u}" target="_blank">{n}</a>' for n, u in links))
   with open(os.path.join(tmp, 'index.html'), 'w', encoding='utf-8') as f:
     f.write(''.join(page))
   static_server(tmp, None, LIST_PORT, LIST_PORT)

@@ -98,7 +98,7 @@
   }
   // 탭 제목 'piBo .211 · 도움말' — 키트 fixTitle 과 같은 꼴(제품 + IP 끝자리를 앞에, 261125). html_title 은 '도움말 · piBo'
   function fixTitle() {
-    var t = (document.title || '').trim(), m = / · (piBo|PiBrain)$/.exec(t);
+    var t = (document.title || '').trim(), m = / · (piBo|piBrain|PiBrain)$/.exec(t);
     if (!m) return;
     var ip = /^\d+\.\d+\.\d+\.(\d+)$/.exec(location.hostname || '');
     document.title = m[1] + (ip ? ' .' + ip[1] : '') + ' · ' + t.slice(0, m.index);

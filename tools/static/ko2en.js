@@ -38,10 +38,10 @@ const T = {
   preset_white:      { ko: "흰색",                 en: "White" },
 
   /* ── Camera / Vision tab ─────────────────────────────────── */
-  cam_off_msg:       { ko: "카메라를 켜면 PiBrain 화면에 나와요.", en: "Turn on the camera to see it on the PiBrain screen." },
+  cam_off_msg:       { ko: "카메라를 켜면 piBrain 화면에 나와요.", en: "Turn on the camera to see it on the piBrain screen." },
   cam_on_btn:        { ko: "카메라 켜기",        en: "Camera on" },
   cam_off_btn:       { ko: "카메라 끄기",        en: "Camera off" },
-  cam_streaming:     { ko: "PiBrain 화면에 보여 주는 중…", en: "Showing on the PiBrain screen…" },
+  cam_streaming:     { ko: "piBrain 화면에 보여 주는 중…", en: "Showing on the piBrain screen…" },
   capture_btn:       { ko: "여기에 보기", en: "Show here" },
   vision_title:      { ko: "비전 기능", en: "Vision features" },
 
@@ -128,10 +128,10 @@ const T = {
 
   /* ── 261027v4 — 화면 검토 때 더한 키 ────────────────────────── */
   // 말할 글자·LCD 글자 칸의 처음 글자(언어를 바꾸면 사용자가 고치지 않은 경우에만 따라 바뀐다)
-  tts_sample:        { ko: "안녕하세요! 저는 파이브레인이에요. 만나서 반가워요.", en: "Hello! I am PiBrain. Nice to meet you." },
-  lcd_sample:        { ko: "안녕하세요!\n파이브레인이에요.", en: "Hello!\nI am PiBrain." },
+  tts_sample:        { ko: "안녕하세요! 저는 파이브레인이에요. 만나서 반가워요.", en: "Hello! I am piBrain. Nice to meet you." },
+  lcd_sample:        { ko: "안녕하세요!\n파이브레인이에요.", en: "Hello!\nI am piBrain." },
   // 상단바 연결 칩(파이보 도구의 '로봇 연결됨' 과 같은 모양). /health 로 판단
-  conn_ready:        { ko: "PiBrain 연결됨", en: "PiBrain connected" },
+  conn_ready:        { ko: "piBrain 연결됨", en: "piBrain connected" },
   conn_wait:         { ko: "연결 중…", en: "Connecting…" },
 
   /* ── 261102 — 기기 그림 ──────────────────────────────────── */
@@ -139,7 +139,7 @@ const T = {
   dev_cam:           { ko: "카메라 화면", en: "Camera view" },
   dev_preview:       { ko: "미리보기", en: "Preview" },
   button_log_title:  { ko: "누른 기록", en: "Press log" },
-  button_hint:       { ko: "PiBrain 버튼을 누르면 그림에서도 그 버튼이 켜져요.", en: "Press a PiBrain button and it lights up in the picture too." },
+  button_hint:       { ko: "piBrain 버튼을 누르면 그림에서도 그 버튼이 켜져요.", en: "Press a piBrain button and it lights up in the picture too." },
   // 261113 — [카메라] 얼굴 구분 타일(파이보 도구와 같은 문구)
   v_face_id:          { ko: "얼굴 구분", en: "Face ID" },
   face_name_ph:       { ko: "이름 (최대 20자)", en: "Name (up to 20 characters)" },

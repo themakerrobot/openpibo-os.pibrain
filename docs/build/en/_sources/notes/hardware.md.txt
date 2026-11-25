@@ -1,6 +1,6 @@
 # Hardware
 
-Details of the parts of PiBrain.
+Details of the parts of piBrain.
 ![](../../source/notes/images/pibrain.png)
 
 - Camera

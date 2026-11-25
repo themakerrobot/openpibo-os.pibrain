@@ -2,7 +2,7 @@
     1) 화면 밝기(쿠키 pibo_theme)를 첫 페인트 전에 맞춘다(_static/pibotheme.js).
        html_js_files 는 Furo 가 본문 끝에 싣기 때문에 너무 늦다(먼저 밝게 그렸다가 어둡게 바뀐다)
     2) 다른 앱(코딩·도구·분류기)과 같은 48px 상단바(261028): 왼쪽 [제품 아이콘] 제품 · 도움말, 오른쪽 처음 화면 · 전체화면 · 밝기 · 언어(261120 — 다른 앱과 같은 순서·같은 글자, 999px 이하는 아이콘만).
-       제품 이름은 html_title('도움말 · piBo' / 'Help · PiBrain')에서 뗀다 — conf.py 를 두 리포가 같게 두려고.
+       제품 이름은 html_title('도움말 · piBo' / 'Help · piBrain')에서 뗀다 — conf.py 를 두 리포가 같게 두려고.
        밝기는 Furo 버튼 대신 키트와 같은 밝게 → 부드럽게 → 어둡게 버튼(pibotheme.js). [처음 화면](대문 80 /)·전체화면·밝기 아이콘은 다른 앱과 같은 Font Awesome Free 6.2.0 글리프(ide/webfonts/fa-solid-900.ttf 에서 뽑은 SVG — 8080 은 IDE 아이콘 글꼴을 못 받는다). 좁은 화면(63em 이하)에서는 Furo 의 모바일 머리줄을 숨기고 그 버튼(목록·목차)을 이 상단바로 옮긴다(mycss.css '상단바') -#}
 {% extends "!base.html" %}
 {%- block extrahead -%}
@@ -18,7 +18,7 @@
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
   </label>
   <a class="pb-topbar__brand" href="{{ pathto(master_doc) }}">
-    {%- if pb_product == 'PiBrain' %}
+    {%- if pb_product|lower == 'pibrain' %}
     <svg class="pb-topbar__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.5 3h13a4 4 0 0 1 4 4v8.5a4 4 0 0 1-4 4h-13a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zM5.2 5.8a.8.8 0 0 0-.8.8v9.3a.8.8 0 0 0 .8.8h6a.8.8 0 0 0 .8-.8V6.6a.8.8 0 0 0-.8-.8zM15.4 5.1499999999999995a1.45 1.45 0 1 0 0 2.9a1.45 1.45 0 1 0 0 -2.9zM18.9 5.3h1.6a0.5 0.5 0 0 1 0.5 0.5v1.6a0.5 0.5 0 0 1 -0.5 0.5h-1.6a0.5 0.5 0 0 1 -0.5 -0.5v-1.6a0.5 0.5 0 0 1 0.5 -0.5zM17.0 9.5a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0 -2.4zM14.6 11.9a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0 -2.4zM19.4 11.9a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0 -2.4zM17.0 14.3a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0 -2.4z"/><rect x="8.6" y="20.2" width="6.8" height="2.6" rx="1"/></svg>
     {%- else %}
     <svg class="pb-topbar__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M12 .9a2.4 2.4 0 1 0 0 4.8a2.4 2.4 0 1 0 0-4.8zm0 1.25a1.15 1.15 0 1 1 0 2.3a1.15 1.15 0 1 1 0-2.3zM11.15 5.65h1.7v1.2h-1.7zM3.4 15.45a8.6 8.6 0 1 0 17.2 0a8.6 8.6 0 1 0-17.2 0zM6.85 14.7a1.95 1.95 0 1 0 3.9 0a1.95 1.95 0 1 0-3.9 0zM13.25 14.7a1.95 1.95 0 1 0 3.9 0a1.95 1.95 0 1 0-3.9 0zM9.9 18.1h4.2a2.1 2.1 0 0 1-4.2 0z"/></svg>

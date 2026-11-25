@@ -23,7 +23,7 @@ msgid "pibo_graphics · Turtle graphics"
 msgstr ""
 
 msgid "Turtle package와 유사한 그래픽 위한 클래스 입니다. TEST 기준: 240x320 (파이브레인)"
-msgstr "A class for graphics similar to the Turtle package. Tested at: 240x320 (PiBrain)"
+msgstr "A class for graphics similar to the Turtle package. Tested at: 240x320 (piBrain)"
 
 msgid "Class: :obj:`~openpibo.pibo_graphics.PiboGraphics`"
 msgstr ""
