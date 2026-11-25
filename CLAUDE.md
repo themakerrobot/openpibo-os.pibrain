@@ -974,6 +974,7 @@ PiBrain 만: IMAGE.md 패키지 버전 확인 문구(이미 확인함)·마이�
 
 ## IDE 서버·블록 메모 (260924)
 
+- **IDE 가 띄우는 프로세스는 `bg(cmd)` 로**(261125, 사용자 — 기기 `ps` 에 `[python3] <defunct>`): `subprocess.Popen` 만 하면 끝난 프로세스(IP 화면을 그리고 끝난 `network_disp.py`·`systemctl`·`pkill`)가 IDE 가 다시 물을 때까지 좀비로 남았다. `bg()` 는 띄우고 스레드가 `wait()` 로 거둔다. 새로 띄울 때도 `bg()` 를 쓸 것(학생 프로그램은 asyncio 가 거둔다)
 - **첫 화면은 `FileResponse` 로 템플릿 파일을 그대로 보낸다** (`ide/run_ide.py` 의 `/`, `tools/run_tools.py` 의 `/`).
   템플릿에 Jinja 문법이 없어서다. 전에 쓰던 `TemplateResponse(이름, {"request": ...})` 는 starlette 1.0 부터
   받지 않아 첫 화면이 500 이 된다(컨테이너 starlette 1.7 에서 확인). 템플릿에 Jinja 를 쓰게 되면

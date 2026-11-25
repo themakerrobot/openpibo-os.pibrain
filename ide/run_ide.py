@@ -117,6 +117,13 @@ async def run_blocking(fn, *args):
   # 루프 안에서 돌리면 그동안 IDE 전체(실행 출력·저장·파일 목록)가 멈춘다
   return await asyncio.get_running_loop().run_in_executor(None, fn, *args)
 
+def bg(cmd, **kw):
+  """기다리지 않고 띄운다 — 끝나면 스레드가 거둔다(261125, 사용자). subprocess.Popen 만 하면 끝난 프로세스가
+  IDE 가 다시 물을 때까지 <defunct>(좀비)로 남았다(예: IP 화면을 그리고 끝난 network_disp.py)"""
+  p = subprocess.Popen(cmd, **kw)
+  threading.Thread(target=p.wait, daemon=True).start()
+  return p
+
 # 앱 끄기(stop_chat·stop_kids·stop_hwtest)는 프로세스가 끝날 때까지 최대 5~10초 기다린다. 핸들러에서는 늘
 # await asyncio.to_thread(stop_…) 로 부를 것 — 직접 부르면 그동안 IDE 서버 전체가 멈춰, 같은 서버가 주는 대문(처음 화면)이
 # 그만큼 늦게 열렸다(261124 — 대화에서 [처음 화면] 을 누르면 대화 웹이 끝날 때까지 기다렸다)
@@ -422,7 +429,7 @@ def stop_hwtest():
   hwtest_proc = None
   # 브라우저가 강제 종료돼 enable=off 를 못 받았거나 IDE 가 재시작돼 핸들을 잃은
   # 경우까지 정리한다. 전체 경로로 띄우므로 cmdline 에 HWTEST_PY 가 그대로 있다.
-  subprocess.Popen(['pkill', '-f', HWTEST_PY])
+  bg(['pkill', '-f', HWTEST_PY])
 
 @app.get('/hwtest')
 async def hwtest(enable: str):
@@ -430,13 +437,13 @@ async def hwtest(enable: str):
   print(f'[hwtest] enable={enable}')
   if enable == "on":
     # 검수 프로그램이 카메라·LCD(SPI)·GPIO·오디오를 독점해야 한다
-    subprocess.Popen(['systemctl', 'stop', 'tools.service'])
-    subprocess.Popen(['systemctl', 'stop', 'classify.service'])
-    subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
+    bg(['systemctl', 'stop', 'tools.service'])
+    bg(['systemctl', 'stop', 'classify.service'])
+    bg(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
     await asyncio.to_thread(stop_chat)
     await asyncio.to_thread(stop_kids)
     if hwtest_proc is None or hwtest_proc.poll() is not None:
-      hwtest_proc = subprocess.Popen([f'{ENV_PATH}/python3', HWTEST_PY], cwd=HWTEST_DIR)
+      hwtest_proc = bg([f'{ENV_PATH}/python3', HWTEST_PY], cwd=HWTEST_DIR)
     await asyncio.sleep(3)
   elif enable == "off":
     await asyncio.to_thread(stop_hwtest)
@@ -451,11 +458,11 @@ async def tools(enable: str):
     await asyncio.to_thread(stop_hwtest)   # 검수 서버가 카메라·오디오를 쥐고 있으면 tools 가 실패한다
     await asyncio.to_thread(stop_kids)     # 체험 앱도 모터·소리를 쓴다
     await asyncio.to_thread(stop_chat)     # 대화 웹이 카메라를 쥐고 있을 수 있다(find_objects)
-    subprocess.Popen(['systemctl', 'stop', 'classify.service'])
-    subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
-    subprocess.Popen(['systemctl', 'start', 'tools.service'])
+    bg(['systemctl', 'stop', 'classify.service'])
+    bg(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
+    bg(['systemctl', 'start', 'tools.service'])
   elif enable == "off":
-    subprocess.Popen(['systemctl', 'stop', 'tools.service'])
+    bg(['systemctl', 'stop', 'tools.service'])
   await asyncio.sleep(2)
   # 나가거나 다른 앱으로 옮기면 로봇 화면은 늘 IP 화면(261116). 도구는 켜질 때 스스로 IP 화면을 그리므로 켤 때는 그리지 않는다 —
   # 같이 그리면 화면이 두 번 깜빡이고, 예전엔 두 프로그램이 동시에 써서 PiBrain LCD 가 반전됐다(261120)
@@ -470,11 +477,11 @@ async def classifier(enable: str):
     await asyncio.to_thread(stop_hwtest)   # 〃 (classifier 는 카메라를 직접 쓴다)
     await asyncio.to_thread(stop_kids)     # 체험 앱도 모터·소리를 쓴다
     await asyncio.to_thread(stop_chat)     # 〃
-    subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
-    subprocess.Popen(['systemctl', 'stop', 'tools.service'])
-    subprocess.Popen(['systemctl', 'start', 'classify.service'])
+    bg(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
+    bg(['systemctl', 'stop', 'tools.service'])
+    bg(['systemctl', 'start', 'classify.service'])
   elif enable == "off":
-    subprocess.Popen(['systemctl', 'stop', 'classify.service'])
+    bg(['systemctl', 'stop', 'classify.service'])
   await asyncio.sleep(2)
   show_ip(keep='classify.service' if enable == "on" else None)   # 나가거나 다른 앱으로 옮기면 로봇 화면은 늘 IP 화면(261116)
   return HTMLResponse(content="", status_code=200)
@@ -498,7 +505,7 @@ def stop_chat():
       chat_proc.kill()
   chat_proc = None
   # 핸들을 잃은 경우(IDE 재시작)까지 정리한다. 전체 경로로 띄우므로 cmdline 에 CHAT_PY 가 그대로 들어간다
-  subprocess.Popen(['pkill', '-f', CHAT_PY])
+  bg(['pkill', '-f', CHAT_PY])
 
 # 체험 앱 둘(261123, 사용자 — 폴더·서버를 나눴다): 카드 코딩(cards/run_cards.py, 50060) · 로봇 놀이(play/run_play.py, 50070).
 # 대화 웹·H/W 검수처럼 IDE 가 직접 띄운다(유닛 파일은 리포 밖). 둘 다 모터·소리·화면을 쓰므로 한 번에 하나만 —
@@ -523,14 +530,14 @@ def stop_kids(only=None):
       except subprocess.TimeoutExpired:
         proc.kill()
     kids_procs[name] = None
-    subprocess.Popen(['pkill', '-f', KIDS_APPS[name]])   # 핸들을 잃은 경우(IDE 재시작·손으로 띄움)까지
-  subprocess.Popen(['pkill', '-f', f'{KIDS_ROOT}/kids/run_kids.py'])   # 261123 전 체험 앱(업데이트 직후 남아 있을 때)
+    bg(['pkill', '-f', KIDS_APPS[name]])   # 핸들을 잃은 경우(IDE 재시작·손으로 띄움)까지
+  bg(['pkill', '-f', f'{KIDS_ROOT}/kids/run_kids.py'])   # 261123 전 체험 앱(업데이트 직후 남아 있을 때)
 
 async def kids_app(name, enable):
   if enable == "on":
-    subprocess.Popen(['systemctl', 'stop', 'tools.service'])
-    subprocess.Popen(['systemctl', 'stop', 'classify.service'])
-    subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
+    bg(['systemctl', 'stop', 'tools.service'])
+    bg(['systemctl', 'stop', 'classify.service'])
+    bg(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
     await asyncio.to_thread(stop_hwtest)
     await asyncio.to_thread(stop_chat)
     for other in KIDS_APPS:
@@ -539,7 +546,7 @@ async def kids_app(name, enable):
     proc = kids_procs.get(name)
     if proc is None or proc.poll() is not None:
       py = KIDS_APPS[name]
-      kids_procs[name] = subprocess.Popen([f'{ENV_PATH}/python3', py, '--device', KIDS_DEVICE], cwd=os.path.dirname(py))
+      kids_procs[name] = bg([f'{ENV_PATH}/python3', py, '--device', KIDS_DEVICE], cwd=os.path.dirname(py))
   elif enable == "off":
     await asyncio.to_thread(stop_kids, name)
   show_ip(keep=KIDS_APPS[name] if enable == "on" else None)   # 나가거나 다른 앱으로 옮기면 로봇 화면은 늘 IP 화면(261116)
@@ -565,14 +572,14 @@ async def llm(enable: str):
   if enable == "on":
     await asyncio.to_thread(stop_hwtest)   # 〃
     await asyncio.to_thread(stop_kids)     # 체험 앱도 모터·소리를 쓴다
-    subprocess.Popen(['systemctl', 'stop', 'classify.service'])
-    subprocess.Popen(['systemctl', 'stop', 'tools.service'])
-    subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 모델은 대화 화면에서 고를 때 띄운다
+    bg(['systemctl', 'stop', 'classify.service'])
+    bg(['systemctl', 'stop', 'tools.service'])
+    bg(['systemctl', 'stop', 'llama-server@*'])   # 모델은 대화 화면에서 고를 때 띄운다
     if chat_proc is None or chat_proc.poll() is not None:
-      chat_proc = subprocess.Popen([f'{ENV_PATH}/python3', CHAT_PY, '--device', CHAT_DEVICE], cwd=CHAT_DIR)
+      chat_proc = bg([f'{ENV_PATH}/python3', CHAT_PY, '--device', CHAT_DEVICE], cwd=CHAT_DIR)
   elif enable == "off":
     await asyncio.to_thread(stop_chat)
-    subprocess.Popen(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
+    bg(['systemctl', 'stop', 'llama-server@*'])   # 대화 모델(템플릿 유닛)
   await asyncio.sleep(2)
   show_ip(keep=CHAT_PY if enable == "on" else None)   # 나가거나 다른 앱으로 옮기면 로봇 화면은 늘 IP 화면(261116)
   return HTMLResponse(content="", status_code=200)
@@ -585,7 +592,7 @@ def draw_ip():
   global screen_proc
   with screen_lock:
     if screen_proc is None or screen_proc.poll() is not None:   # 여러 번 불러도 하나만
-      screen_proc = subprocess.Popen([f'{ENV_PATH}/python3', '/home/pi/openpibo-os/system/network_disp.py'])
+      screen_proc = bg([f'{ENV_PATH}/python3', '/home/pi/openpibo-os/system/network_disp.py'])
 
 def show_ip(keep=None):
   """로봇 화면(파이보 OLED · PiBrain LCD)을 IP 화면으로 되돌린다(261116, 사용자 — 앱을 나가거나 다른 앱으로 옮기면 무조건).
@@ -616,14 +623,13 @@ async def screen_reset():
 @app.sio.on('reset_log')
 async def handle_reset_log(sid):
   record_reset(f'[{datetime.datetime.now()}]: \n\n')
-  subprocess.Popen([f'{ENV_PATH}/python3', '/home/pi/openpibo-os/system/network_disp.py'])
+  bg([f'{ENV_PATH}/python3', '/home/pi/openpibo-os/system/network_disp.py'])
 
 
 @app.sio.on('poweroff')
 async def handle_poweroff(sid):
   os.system(f'{ENV_PATH}/python3 /home/pi/openpibo-os/system/clear_disp.py')
-  subprocess.Popen(['shutdown', '-h', 'now'])
-  #subprocess.Popen(['echo', '"#11:!"', '>', '/dev/ttyS0'])
+  bg(['shutdown', '-h', 'now'])
 
 
 
@@ -872,7 +878,7 @@ async def handle_restore(sid):
         os.system("cp -rf /home/pi/openpibo-os/examples/* /home/pi/examples/")
         os.system("sudo /home/pi/openpibo-os/system/conwifi.sh wpa-psk 'pibo' '!pibo0314'")
         os.system(f'{ENV_PATH}/python3 /home/pi/openpibo-os/system/clear_disp.py')
-        subprocess.Popen(['shutdown', '-h', 'now'])
+        bg(['shutdown', '-h', 'now'])
     except Exception as e:
         await app.sio.emit('update', {'dialog': 'err_init', 'detail': str(e)}, to=sid)
 
@@ -1066,10 +1072,9 @@ async def handle_executeb(sid, d):
 # stop 핸들러 수정
 @app.sio.on('stop')
 async def handle_stop(sid):
-  subprocess.Popen(['pkill', 'play'])
-  subprocess.Popen(['pkill', 'llama-server'])
+  bg(['pkill', 'play'])
+  bg(['pkill', 'llama-server'])
   await asyncio.to_thread(stop_chat)
-  #subprocess.Popen(['servo', 'init'])
   kill_run()
   if ps and ps.returncode is None:
     await ps.wait()
