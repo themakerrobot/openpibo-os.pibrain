@@ -348,7 +348,7 @@
      (예전엔 IDE 상단바가 이름 붙인 새 탭으로 열었다 — openService·backToIDE. IDE 가 중심이던 시절의 것이라 뺐다) */
   // launch.html 은 ?ver 없이 열려 브라우저가 옛 판을 쓸 수 있다(포트가 바뀌면 옛 포트를 기다린다).
   // 대기 페이지를 고치면 이 번호를 올릴 것
-  var LAUNCH_VER = '261124v1';
+  var LAUNCH_VER = '261125v1';
   function launchUrl(svc, go) {
     return 'http://' + location.hostname + '/static/launch.html?svc=' +
            encodeURIComponent(svc) + (go ? '&go=' + encodeURIComponent(go) : '') + '&lang=' + curLang() + '&v=' + LAUNCH_VER;
@@ -470,16 +470,22 @@
     fsEnter();
   }, true);
 
-  /* ── 탭 제목 (261028) ───────────────────────────────────────────────────
-     모든 화면이 같은 꼴: "도구 · piBo", "Tools · PiBrain". 앱은 <title> 에 앱 이름만 넣고(번역은 data-key 로),
-     제품 이름은 <html data-product="piBo"> 에 둔다. 앱 JS 가 document.title 을 바꿔도(대화·대기 페이지) 여기서 뒤에 붙인다.
-     IDE 도 같다 — "코딩 · piBo"(261123 전엔 앞에 붙여 "piBo 메이커") */
+  /* ── 탭 제목 (261028, 261125 개정) ─────────────────────────────────────
+     모든 화면이 같은 꼴: "piBo .211 · 도구", "PiBrain .37 · Tools" — 제품 이름 + 로봇 IP 끝자리를 앞에(261125, 사용자 —
+     탭이 좁으면 앞만 보여 '처음 화면' 만 보이고 어느 로봇인지 몰랐다. 교실에 같은 제품이 여러 대여도 끝자리로 가른다).
+     앱은 <title> 에 앱 이름만 넣고(번역은 data-key 로), 제품 이름은 <html data-product="piBo"> 에 둔다.
+     앱 JS 가 document.title 을 바꿔도(대화·대기 페이지) 여기서 앞에 붙인다. 주소가 IP 가 아니면(이름으로 열면) 제품 이름만 */
+  function tabPrefix(product) {
+    var m = /^\d+\.\d+\.\d+\.(\d+)$/.exec(location.hostname || '');
+    return product + (m ? ' .' + m[1] : '');
+  }
   function fixTitle() {
     var root = document.documentElement, product = root.getAttribute('data-product');
     if (!product) return;
-    var t = (document.title || '').trim();
-    if (!t || t.indexOf(product) >= 0) return;
-    document.title = t + ' · ' + product;
+    var pre = tabPrefix(product), t = (document.title || '').trim();
+    if (!t || t.indexOf(pre) === 0) return;
+    t = t.split(' · ' + product).join('').trim();   // 예전 꼴('도구 · piBo')로 넣은 것도 받는다
+    document.title = t && t !== product ? pre + ' · ' + t : pre;
   }
   function watchTitle() {
     fixTitle();
@@ -547,7 +553,7 @@
 
   window.PiboUI = {
     toast: toast, banner: banner, hideBanner: hideBanner, watchSocket: watchSocket,
-    goHome: goHome, restartSelf: restartSelf, enterService: enterService,
+    tabPrefix: tabPrefix, goHome: goHome, restartSelf: restartSelf, enterService: enterService,
     busy: busy, text: tr, lang: curLang,
     getTheme: getTheme, setTheme: setTheme, ui: UI, countTo: countTo,
     fullscreen: fsToggle, screenReset: screenReset

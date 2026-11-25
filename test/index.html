@@ -457,8 +457,8 @@ async function fetchSystemInfo() {
     const safe = String(d.serial || '').replace(/[^A-Za-z0-9_.-]/g, '_');
     /* 화면 제목은 'H/W 검수 · PiBrain' 그대로 두고, 인쇄할 때만 제목(=PDF 파일 이름)을 일련번호로 바꾼다 */
     if (safe) {
-      const screenTitle = document.title;
-      window.addEventListener('beforeprint', () => { document.title = safe; });
+      let screenTitle = document.title;
+      window.addEventListener('beforeprint', () => { screenTitle = document.title; document.title = safe; });
       window.addEventListener('afterprint', () => { document.title = screenTitle; });
     }
   } catch (e) {
@@ -602,5 +602,7 @@ function haltSystem() {
 }
 </script>
 <script>(function(){var a=document.getElementById('hw_home');if(a)a.href='http://'+location.hostname+'/';})();</script>
+<script>/* 탭 제목 'piBo .211 · H/W 검수' — 키트 fixTitle 과 같은 꼴(261125). 인쇄 파일 이름은 위 beforeprint 가 따로 정한다 */
+(function(){var t0=document.title,i=t0.lastIndexOf(' · '),p=i>=0?t0.slice(i+3):'';var m=/^\d+\.\d+\.\d+\.(\d+)$/.exec(location.hostname||'');var t=document.title.split(' · '+p).join('').trim();if(p)document.title=p+(m?' .'+m[1]:'')+' · '+t;})();</script>
 </body>
 </html>

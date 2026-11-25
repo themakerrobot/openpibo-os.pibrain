@@ -696,7 +696,7 @@
     each('[data-title-key]', function (e) { var s = tr(e.getAttribute('data-title-key')); e.title = s; e.setAttribute('aria-label', s); });
     var name = tr('kids_title_cards');
     $('app_title').textContent = name;
-    document.title = name + ' · ' + (document.documentElement.getAttribute('data-product') || 'piBo');
+    document.title = name;   // 제품 이름 + IP 끝자리는 키트(fixTitle)가 앞에 붙인다(261125)
     $('start_label').textContent = tr('kids_home_cards');
     if (!C) return;
     if (S.view === 'make') { renderTask(); renderPalette(); renderRow(); }

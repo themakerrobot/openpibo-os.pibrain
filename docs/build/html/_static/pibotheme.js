@@ -6,7 +6,7 @@
    Furo 는 localStorage.theme 을 본문 맨 앞에서 읽으므로, 그보다 먼저(<head>, _templates/base.html) 넣는다.
    상단바의 밝기 버튼은 키트와 같이 누를 때마다 밝게 → 부드럽게 → 어둡게(261120 — 전엔 Furo 버튼이라 '부드럽게'를 고를 수 없었다).
    전체화면: 쿠키 pibo_fs=1 을 다른 앱과 같이 본다. 켜 둔 적이 있는데 전체화면이 아니면(탭을 바꿔 풀림) 처음 누를 때 다시 켠다.
-   상단바의 [처음 화면] 링크를 이 기기의 대문(80 /) 주소로 맞춘다 */
+   상단바의 [처음 화면] 링크를 이 기기의 대문(80 /) 주소로 맞춘다. 탭 제목은 'piBo .211 · 도움말'(아래 fixTitle) */
 (function () {
   'use strict';
   var THEMES = ['light', 'soft', 'dark'];
@@ -94,6 +94,14 @@
     if (fb) fb.addEventListener('click', function () { if (fsOn()) { fsLeaving = 0; fsExit(); } else fsEnter(); });
     syncTheme();
     fsSync();
+    fixTitle();
+  }
+  // 탭 제목 'piBo .211 · 도움말' — 키트 fixTitle 과 같은 꼴(제품 + IP 끝자리를 앞에, 261125). html_title 은 '도움말 · piBo'
+  function fixTitle() {
+    var t = (document.title || '').trim(), m = / · (piBo|PiBrain)$/.exec(t);
+    if (!m) return;
+    var ip = /^\d+\.\d+\.\d+\.(\d+)$/.exec(location.hostname || '');
+    document.title = m[1] + (ip ? ' .' + ip[1] : '') + ' · ' + t.slice(0, m.index);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setup); else setup();
 })();
