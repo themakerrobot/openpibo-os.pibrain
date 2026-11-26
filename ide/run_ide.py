@@ -1,4 +1,5 @@
 import os
+import glob
 import codecs
 import asyncio
 import shutil
@@ -55,11 +56,46 @@ codeExec = {
 
 protectList = [
   '/home/pi/openpibo-',
+  '/home/pi/.openpibo-',     # 작업본의 실제 클론(/home/pi/openpibo-os 는 링크) — 261126
+  '/home/pi/.model',         # 모델(TTS·STT·LLM·인식) — 지우면 기능이 통째로 죽는다
+  '/home/pi/.pyenv',
+  '/home/pi/.llama.cpp',
+  '/home/pi/.OS_VERSION',
   '/home/pi/node_modules',
   '/home/pi/package.json',
   '/home/pi/package-lock.json',
   '/home/pi/config.json',
 ]
+
+# IDE 가 파일을 읽고 쓰는 곳은 /home/pi 와 USB(/home/pi/usb → /media/usb) 안뿐이다(261126).
+# 전엔 소켓으로 받은 경로를 그대로 열어 '/etc/…' 같은 곳도 읽고 지울 수 있었다(서버는 root, 8080·80 은 로그인 없음)
+USER_ROOTS = ('/home/pi', '/media/usb')
+
+def user_path(p):
+  """화면이 보낸 경로가 쓸 수 있는 곳이면 그대로, 아니면 None. 링크는 따라가 실제 위치로 본다"""
+  if not isinstance(p, str) or not p.startswith('/') or '\x00' in p:
+    return None
+  real = os.path.realpath(p)
+  for r in USER_ROOTS:
+    if real == r or real.startswith(r + '/'):
+      return p
+  return None
+
+def usb_missing(p):
+  """USB 안에 쓰려는데 USB 가 안 꽂혀 있으면 True — /media/usb 가 SD 카드의 빈 폴더일 때 거기 쓰지 않게"""
+  real = os.path.realpath(p)
+  if not (real == '/media/usb' or real.startswith('/media/usb/')):
+    return False
+  try:
+    os.listdir('/media/usb')   # 자동 마운트를 깨운다
+    return os.stat('/media/usb').st_dev == os.stat('/home/pi').st_dev
+  except OSError:
+    return True
+
+def bad_name(name):
+  """파일·폴더 이름 하나로 쓸 수 없으면 True — 경로 구분(/ \\)·'..'·숨김(.으로 시작)·빈 이름"""
+  return (not isinstance(name, str) or not name.strip() or '/' in name or '\\' in name
+          or name.startswith('.') or '\x00' in name)
 
 ENV_PATH = '/home/pi/.pyenv/bin'
 # 실행 로그는 뒤쪽 RECORD_MAX 글자만 기억한다(261027). 전엔 record += text 로 끝없이 늘었고
@@ -142,9 +178,15 @@ def get_system_info():
   return subprocess.check_output(['/home/pi/openpibo-os/system/system.sh'], timeout=5).decode().strip().split(',')
 
 def is_protect(p):
-  for protected_path in protectList:
-    if protected_path in p:
-      return True
+  # 적힌 경로와 링크를 따라간 실제 경로를 둘 다 본다(261126) — /home/pi/code/x 가 작업본을 가리키는 링크여도 막게
+  try:
+    cands = (p, os.path.realpath(p))
+  except (TypeError, ValueError):
+    return True
+  for c in cands:
+    for protected_path in protectList:
+      if protected_path in c:
+        return True
   return False
 
 def read_directory(d):
@@ -307,6 +349,9 @@ async def home_info():
 
 # ── 예제 갤러리 · 로봇 정보 (261126) ─────────────────────────────────────────────
 EXAMPLES_DIR = '/home/pi/examples'
+LOAD_MAX = 1 * 1024 * 1024    # 편집기로 여는 글자 파일(261126)
+VIEW_MAX = 10 * 1024 * 1024   # 그림 보기
+PLAY_MAX = 20 * 1024 * 1024   # 소리 듣기
 
 @app.get('/examples_list')
 def examples_list():
@@ -392,7 +437,11 @@ def zip_folder(src, zip_path):
 
 @app.get("/download")
 async def download_item(filename: str):
+  if bad_name(filename):
+    return JSONResponse(content={'error': 'err_invalid_path'}, status_code=403)
   full_path = os.path.join(PATH, filename)
+  if user_path(full_path) is None:
+    return JSONResponse(content={'error': 'err_invalid_path'}, status_code=403)
 
   # 보호 디렉토리 체크
   if is_protect(full_path):
@@ -430,11 +479,29 @@ async def upload_file(files: List[UploadFile] = File(...)):
   if is_protect(PATH):
     await socket_manager.emit('update', {'dialog': 'err_upload_protected'})
     return JSONResponse(content={'error': 'err_upload_protected'}, status_code=403)
+  if user_path(PATH) is None:
+    return JSONResponse(content={'error': 'err_invalid_path'}, status_code=403)
+  if usb_missing(PATH):
+    return JSONResponse(content={'error': 'err_copy_no_usb'}, status_code=400)
   for file in files:
-    file_location = os.path.join(PATH, file.filename)
-    with open(file_location, "wb") as f:
-      content = await file.read()
-      f.write(content)
+    # 이름에 경로가 섞여 오면 마지막 부분만, 같은 이름이 있으면 이름_1 로(261126 — 전엔 말없이 덮어썼다)
+    name = os.path.basename((file.filename or '').replace('\\', '/'))
+    if bad_name(name):
+      return JSONResponse(content={'error': 'err_invalid_path'}, status_code=400)
+    file_location = os.path.join(PATH, _free_name(PATH, name))
+    # 통째로 메모리에 읽지 않고 조금씩 옮긴다(큰 모델 파일에서 램 1.8GB 가 모자라지 않게, 이벤트 루프도 안 멈추게)
+    def _write(src=file.file, dst=file_location):
+      with open(dst, "wb") as f:
+        shutil.copyfileobj(src, f, 1024 * 1024)
+    try:
+      await run_blocking(_write)
+    except OSError as err:
+      try:
+        os.remove(file_location)
+      except OSError:
+        pass
+      return JSONResponse(content={'error': 'err_copy_space' if err.errno == 28 else 'err_upload_save'}, status_code=500)
+    _chown_pi(file_location)
   # Update file manager
   directory_data = read_directory(PATH)
   await socket_manager.emit('update_file_manager', {'data': directory_data})
@@ -699,6 +766,9 @@ async def screen_reset():
 @app.sio.on('reset_log')
 async def handle_reset_log(sid):
   record_reset(f'[{datetime.datetime.now()}]: \n\n')
+  # 실행 중에 [지우기]를 누르면 출력만 지운다(261126) — 전엔 로봇 화면·모터도 처음으로 돌려 돌고 있는 프로그램을 건드렸다
+  if is_running():
+    return
   bg([f'{ENV_PATH}/python3', '/home/pi/openpibo-os/system/network_disp.py'])
 
 
@@ -712,7 +782,7 @@ async def handle_poweroff(sid):
 @app.sio.on('load_directory')
 async def handle_load_directory(sid, p):
   global PATH
-  res = read_directory(p)
+  res = read_directory(p) if user_path(p) else False
   if res is not False:
     PATH = p
   else:
@@ -722,6 +792,11 @@ async def handle_load_directory(sid, p):
 @app.sio.on('view')
 async def handle_view(sid, p):
   try:
+    if user_path(p) is None:
+      raise ValueError('invalid path')
+    if os.path.getsize(p) > VIEW_MAX:   # 소켓으로 base64 를 보내므로 큰 그림은 화면도 공유기도 버겁다(261126)
+      await app.sio.emit('update', {'dialog': 'err_file_big', 'detail': f'{VIEW_MAX // 1048576}MB'}, to=sid)
+      return
     with open(p, 'rb') as f:
       data = f.read()
       encoded_image = base64.b64encode(data).decode('utf-8')
@@ -733,6 +808,11 @@ async def handle_view(sid, p):
 @app.sio.on('play')
 async def handle_play(sid, p):
   try:
+    if user_path(p) is None:
+      raise ValueError('invalid path')
+    if os.path.getsize(p) > PLAY_MAX:
+      await app.sio.emit('update', {'dialog': 'err_file_big', 'detail': f'{PLAY_MAX // 1048576}MB'}, to=sid)
+      return
     with open(p, 'rb') as f:
       data = f.read()
       encoded_audio = base64.b64encode(data).decode('utf-8')
@@ -744,32 +824,71 @@ async def handle_play(sid, p):
 @app.sio.on('load')
 async def handle_load(sid, p):
   global codeText, codePath
+  if user_path(p) is None:
+    await app.sio.emit('update', {'dialog': 'err_invalid_path'}, to=sid)
+    return
   if is_protect(p) :
     await app.sio.emit('update', {'dialog': 'err_load_protected'}, to=sid)
     return
+  # 편집기로 여는 것은 글자 파일만, 1MB 까지(261126) — 전엔 모델·압축 파일을 누르면 통째로 읽다가 알 수 없는 오류가 났다
   try:
-    with open(p, 'r') as f:
-      codeText = f.read()
-      codePath = p
-      await app.sio.emit('update', {'code': codeText, 'filepath': codePath}, to=sid)
+    if os.path.getsize(p) > LOAD_MAX:
+      await app.sio.emit('update', {'dialog': 'err_file_big', 'detail': f'{LOAD_MAX // 1048576}MB'}, to=sid)
+      return
+    with open(p, 'rb') as f:
+      raw = f.read()
+    try:
+      text = raw.decode('utf-8')
+    except UnicodeDecodeError:
+      text = None
+    if text is None or '\x00' in text:
+      await app.sio.emit('update', {'dialog': 'err_load_binary'}, to=sid)
+      return
+    codeText = text.replace('\r\n', '\n').replace('\r', '\n')   # 예전 open(p, 'r') 처럼 줄 끝을 \n 으로
+    codePath = p
+    await app.sio.emit('update', {'code': codeText, 'filepath': codePath}, to=sid)
   except Exception as err:
     await app.sio.emit('update', {'dialog': 'err_load', 'detail': str(err)}, to=sid)
+
+
+@app.sio.on('load_example')
+async def handle_load_example(sid, name):
+  """예제 갤러리에서 고른 예제를 code 폴더의 새 이름으로 연다(261126) — 저장해야 그 파일이 생기고 원본 예제는 그대로다.
+  전엔 /home/pi/examples 의 원본을 바로 열어, 고쳐 저장하면 다음 학생이 바뀐 예제를 받았다(공장 초기화 때만 돌아왔다)"""
+  global codeText, codePath
+  src = os.path.join(EXAMPLES_DIR, name) if not bad_name(name) else ''
+  if not src or not os.path.isfile(src):
+    await app.sio.emit('update', {'dialog': 'err_not_found'}, to=sid)
+    return
+  try:
+    with open(src, 'r') as f:
+      codeText = f.read()
+  except Exception as err:
+    await app.sio.emit('update', {'dialog': 'err_load', 'detail': str(err)}, to=sid)
+    return
+  codePath = os.path.join('/home/pi/code', _free_name('/home/pi/code', name))
+  await app.sio.emit('update', {'code': codeText, 'filepath': codePath, 'example': name}, to=sid)
 
 
 @app.sio.on('delete')
 async def handle_delete(sid, d):
   global codeText, codePath
+  if user_path(d) is None or os.path.realpath(d) in ('/home/pi', '/media/usb'):
+    await app.sio.emit('update', {'dialog': 'err_invalid_path'}, to=sid)
+    return
   if is_protect(d):
     await app.sio.emit('update', {'dialog': 'err_delete_protected'}, to=sid)
     return
   if d == codePath:
     codePath = ""
     codeText = ""
-  try:
-    if os.path.isdir(d):
+  def _rm():
+    if os.path.isdir(d) and not os.path.islink(d):
       shutil.rmtree(d)
     else:
       os.remove(d)
+  try:
+    await run_blocking(_rm)   # 큰 폴더는 오래 걸린다 — 그동안 IDE 전체가 멈추지 않게(261126)
   except Exception as err:
     print(err)
     await app.sio.emit('update', {'dialog': 'err_delete_parse'}, to=sid)
@@ -783,8 +902,16 @@ async def handle_rename(sid, d):
   global codeText, codePath
   oldpath = d['oldpath']
   newpath = d['newpath']
+  if user_path(oldpath) is None or user_path(os.path.dirname(newpath) if isinstance(newpath, str) else None) is None \
+     or bad_name(os.path.basename(newpath)) or os.path.dirname(newpath) != os.path.dirname(oldpath):
+    await app.sio.emit('update', {'dialog': 'err_rename_parse'}, to=sid)
+    return
   if is_protect(oldpath) or is_protect(newpath):
     await app.sio.emit('update', {'dialog': 'err_rename_protected'}, to=sid)
+    return
+  # 같은 이름이 있으면 바꾸지 않는다(261126 — 전엔 os.rename 이 그 파일을 말없이 덮어썼다). 대소문자만 바꾸는 것은 된다
+  if os.path.lexists(newpath) and os.path.realpath(newpath) != os.path.realpath(oldpath):
+    await app.sio.emit('update', {'dialog': 'err_rename_exists', 'detail': os.path.basename(newpath)}, to=sid)
     return
   try:
     os.rename(oldpath, newpath)
@@ -944,6 +1071,29 @@ def reset_user_dir(p):
   except Exception as e:
     print(f'[restore] {p}: {e}')
 
+def reset_extra():
+  """공장 초기화: 사용자 폴더 밖에 남는 기록·임시 파일도 지운다(261126). 전엔 카드 코딩·로봇 놀이 기록(/home/pi/.kids)과
+  카메라 사진·임시 파일이 남아 다음 반이 앞 반의 재주·키우기 친구·그림첩을 봤다. 미리 만든 로봇 말(.kids/voice)은 남긴다"""
+  kids = '/home/pi/.kids'
+  try:
+    for n in os.listdir(kids):
+      if n == 'voice':
+        continue
+      p = os.path.join(kids, n)
+      if os.path.isdir(p) and not os.path.islink(p):
+        shutil.rmtree(p, ignore_errors=True)
+      else:
+        os.remove(p)
+  except OSError as e:
+    print(f'[restore] {kids}: {e}')
+  for p in (glob.glob('/home/pi/mymotion.json*') + ['/home/pi/custom_motion.json', '/home/pi/.motion.json', '/home/pi/capture.jpg',
+            '/home/pi/.tmp.py', '/home/pi/.tmp.jpg', '/home/pi/.tmp_tools.wav', '/home/pi/tmp.mp3']):
+    try:
+      if os.path.isfile(p) or os.path.islink(p):
+        os.remove(p)
+    except OSError as e:
+      print(f'[restore] {p}: {e}')
+
 @app.sio.on('restore')
 async def handle_restore(sid):
     try:
@@ -951,6 +1101,7 @@ async def handle_restore(sid):
         # 폴더가 없으면 아래 예제 cp 가 조용히 실패했다(os.system)
         for d in ('code', 'myimage', 'mymodel', 'myaudio', 'examples'):
             reset_user_dir(f'/home/pi/{d}')
+        reset_extra()   # 체험 앱 기록·임시 파일
         os.system("cp -rf /home/pi/openpibo-os/examples/* /home/pi/examples/")
         os.system("sudo /home/pi/openpibo-os/system/conwifi.sh wpa-psk 'pibo' '!pibo0314'")
         os.system(f'{ENV_PATH}/python3 /home/pi/openpibo-os/system/clear_disp.py')
@@ -961,8 +1112,14 @@ async def handle_restore(sid):
 @app.sio.on('add_file')
 async def handle_add_file(sid, p):
   global codeText, codePath
-  if is_protect(PATH):
+  if user_path(p) is None or bad_name(os.path.basename(p)):
+    await app.sio.emit('update', {'dialog': 'err_invalid_path'}, to=sid)
+    return
+  if is_protect(PATH) or is_protect(p):
     await app.sio.emit('update', {'dialog': 'err_create_protected'}, to=sid)
+    return
+  if usb_missing(p):
+    await app.sio.emit('update', {'dialog': 'err_copy_no_usb'}, to=sid)
     return
   if not os.path.exists(p):
     try:
@@ -984,8 +1141,14 @@ async def handle_add_file(sid, p):
 
 @app.sio.on('add_directory')
 async def handle_add_directory(sid, p):
-  if is_protect(PATH):
+  if user_path(p) is None or bad_name(os.path.basename(p)):
+    await app.sio.emit('update', {'dialog': 'err_invalid_path'}, to=sid)
+    return
+  if is_protect(PATH) or is_protect(p):
     await app.sio.emit('update', {'dialog': 'err_mkdir_protected'}, to=sid)
+    return
+  if usb_missing(p):
+    await app.sio.emit('update', {'dialog': 'err_copy_no_usb'}, to=sid)
     return
   try:
     os.makedirs(p, exist_ok=True)
@@ -999,8 +1162,14 @@ async def handle_add_directory(sid, p):
 async def handle_save(sid, d):
   global codeText, codePath
   try:
+    if user_path(d['codepath']) is None:
+      await app.sio.emit('update', {'dialog': 'err_invalid_path'}, to=sid)
+      return
     if is_protect(d['codepath']) or is_protect(os.path.dirname(d['codepath'])):
       await app.sio.emit('update', {'dialog': 'err_save_protected'}, to=sid)
+      return
+    if usb_missing(d['codepath']):
+      await app.sio.emit('update', {'dialog': 'err_copy_no_usb'}, to=sid)
       return
     codeText = d['codetext']
     codePath = d['codepath']
@@ -1101,16 +1270,52 @@ async def execute(EXEC, codepath):
     if directory_data != files_before:
       await app.sio.emit('update_file_manager', {'data': directory_data})
 
+run_gen = 0     # 새 실행·[정지] 마다 늘린다(261126)
+preparing = 0   # 준비(서비스 끄기) 중인 실행 수 — 다시 붙은 화면에 '실행 중' 을 알리려고
+
+async def prepare_run():
+  """코드 실행 전 준비 — 카메라·마이크·모터를 쥔 앱이 다 내려갈 때까지 기다린다(길면 몇 초).
+  그동안 화면은 '준비 중' 이고, [정지]를 누르면 이 실행은 띄우지 않는다(261126 — 전엔 준비가 끝나면 정지와 상관없이 실행됐다)"""
+  global run_gen, preparing
+  run_gen += 1
+  gen = run_gen
+  preparing += 1
+  await app.sio.emit('update', {'preparing': True})
+  try:
+    await asyncio.to_thread(stop_hwtest)   # 사용자 코드가 카메라·LCD 를 쓰므로 검수 서버를 먼저 내린다
+    await asyncio.to_thread(stop_kids)     # 체험 앱도 모터·소리를 쓴다
+    await asyncio.to_thread(stop_chat)
+    await run_blocking(stop_units_wait)   # 도구·분류기·대화 모델이 카메라 등을 놓을 때까지
+  finally:
+    preparing -= 1
+  if gen != run_gen:   # 그사이 [정지] 또는 다른 실행
+    if not preparing and not (ps and ps.returncode is None):
+      await app.sio.emit('update', {'exit': True})
+    return False
+  return True
+
+def is_running():
+  return bool(preparing) or bool(ps and ps.returncode is None)
+
+@app.sio.on('run_state')
+async def handle_run_state(sid):
+  # 다시 붙은 화면(WiFi 가 잠깐 끊김 등)이 실행 상태를 맞춘다(261126) — 끊긴 사이에 끝난 실행은 [exit] 를 못 받아
+  # 화면이 '실행 중' 에 멈춰 있었다
+  if ps and ps.returncode is None:
+    await app.sio.emit('update', {'record': record_text()}, to=sid)
+  elif preparing:
+    await app.sio.emit('update', {'preparing': True}, to=sid)
+  else:
+    await app.sio.emit('update', {'exit': True}, to=sid)
+
 # execute 핸들러 수정
 @app.sio.on('execute')
 async def handle_execute(sid, d):
   global codeText, codePath
-  await asyncio.to_thread(stop_hwtest)   # 사용자 코드가 카메라·LCD 를 쓰므로 검수 서버를 먼저 내린다
-  await asyncio.to_thread(stop_kids)     # 체험 앱도 모터·소리를 쓴다
-  await asyncio.to_thread(stop_chat)
-  await run_blocking(stop_units_wait)   # 도구·분류기·대화 모델이 카메라 등을 놓을 때까지
+  if not await prepare_run():
+    return
   try:
-    if is_protect(d['codepath']) or is_protect(os.path.dirname(d['codepath'])):
+    if user_path(d['codepath']) is None or is_protect(d['codepath']) or is_protect(os.path.dirname(d['codepath'])):
       await app.sio.emit('update', {'dialog': 'err_run_protected', 'exit': True})
       return
     codeText = d['codetext']
@@ -1129,11 +1334,12 @@ async def handle_execute(sid, d):
 # executeb 핸들러 수정
 @app.sio.on('executeb')
 async def handle_executeb(sid, d):
-  await asyncio.to_thread(stop_hwtest)   # 〃
-  await asyncio.to_thread(stop_kids)     # 체험 앱도 모터·소리를 쓴다
-  await asyncio.to_thread(stop_chat)
-  await run_blocking(stop_units_wait)   # 도구·분류기·대화 모델이 카메라 등을 놓을 때까지
+  if not await prepare_run():
+    return
   try:
+    if user_path(d['codepath']) is None or is_protect(d['codepath']):
+      await app.sio.emit('update', {'dialog': 'err_run_protected', 'exit': True})
+      return
     kill_run()
     if ps and ps.returncode is None:
       await ps.wait()
@@ -1148,12 +1354,17 @@ async def handle_executeb(sid, d):
 # stop 핸들러 수정
 @app.sio.on('stop')
 async def handle_stop(sid):
+  global run_gen
+  run_gen += 1   # 준비 중인 실행은 띄우지 않는다
+  was_running = bool(ps and ps.returncode is None)
   bg(['pkill', 'play'])
   bg(['pkill', 'llama-server'])
   await asyncio.to_thread(stop_chat)
   kill_run()
   if ps and ps.returncode is None:
     await ps.wait()
+  if not was_running and not preparing:
+    await app.sio.emit('update', {'exit': True}, to=sid)   # 돌던 것이 없으면 [exit] 가 안 오므로 화면을 여기서 풀어 준다
   show_ip()   # 코드 [정지] 뒤에도 IP 화면(261116)
 
 @app.sio.on('prompt')

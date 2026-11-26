@@ -201,6 +201,7 @@
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'pb-btn pb-btn--sm';
       b.textContent = tr(k);
+      b.disabled = st.warm !== 'ready';
       b.addEventListener('click', function () { send(b.textContent); });
       box.appendChild(b);
     });
@@ -365,6 +366,8 @@
     $('retry_bt').hidden = key !== 'chat_st_failed';
     el.hidden = !key;
     sendBt.disabled = !waiting && st.warm !== 'ready';
+    // 해 볼 말도 준비될 때까지 못 누르게(261126 — 전엔 눌러도 아무 일이 없었다)
+    Array.prototype.forEach.call($('try').querySelectorAll('button'), function (b) { b.disabled = st.warm !== 'ready'; });
   }
   function refreshStatus() {
     var asked = Date.now();
@@ -383,7 +386,7 @@
         if (++failCount === 3 && window.PiboUI) {
           PiboUI.banner('svc', { text: PiboUI.text('svc_stopped'), kind: 'warn', actions: [
             { label: PiboUI.text('restart'), primary: true, onClick: function () { PiboUI.restartSelf('llm'); } },
-            { label: PiboUI.text('close'), onClick: function () { PiboUI.goHome(); } }] });
+            { label: PiboUI.text('home'), onClick: function () { PiboUI.goHome(); } }] });
         }
       });
   }

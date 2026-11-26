@@ -308,6 +308,10 @@ def switch_model(model):
   with model_lock:
     _switching[0] = True
     try:
+      if state['warm'] == 'warming':
+        # 미리 읽기(도구 모델은 파이보에서 약 30초)가 잠금을 쥐고 있으면 옛 서버를 먼저 끈다 — 그 요청이 바로 끊겨
+        # 잠금이 풀린다(261126). 전엔 미리 읽기가 끝날 때까지 바꾸기가 기다렸다
+        systemctl('stop', 'llama-server@*')
       with turn_lock:                      # 받던 대답이 있으면 끝난 뒤에
         voice_stop()
         history.clear()
@@ -343,6 +347,9 @@ def warm_loop():
       continue
     if state['warm'] in ('idle', 'error'):
       with turn_lock:
+        if _switching[0]:
+          continue
+        warm_model = state['model']
         state['warm'], state['error'] = 'warming', ''
         t = time.time()
         try:
@@ -354,10 +361,11 @@ def warm_loop():
             with post({'messages': with_system([{'role': 'user', 'content': '안녕'}]),
                        'max_tokens': 1}, timeout=900) as r:
               r.read()
-          state['warm'], state['warm_sec'] = 'ready', round(time.time() - t, 1)
-          history.clear()
-        except OSError as exc:
-          state['warm'], state['error'] = 'error', str(exc)
+          if state['model'] == warm_model:   # 그사이 모델을 바꿨으면 준비됨으로 치지 않는다
+            state['warm'], state['warm_sec'] = 'ready', round(time.time() - t, 1)
+            history.clear()
+        except Exception as exc:   # OSError 밖의 오류(응답 모양 등)로 이 스레드가 죽으면 다시는 준비되지 않았다(261126)
+          state['warm'], state['error'] = 'error', str(exc) or exc.__class__.__name__
     time.sleep(3)
 
 

@@ -24,6 +24,8 @@
     empty:   { ko: '예제가 없어요. [폴더에서 보기]로 열어 보세요.', en: 'No examples found. Try [Show folder].' },
     loading: { ko: '예제를 읽는 중…', en: 'Loading examples…' },
     other:   { ko: '예제 파일', en: 'Example file' },
+    copy:    { ko: function (n) { return '예제를 code 폴더의 ' + n + ' (으)로 열었어요. 저장하면 파일이 생기고, 원래 예제는 그대로예요.'; },
+               en: function (n) { return 'Opened the example as ' + n + ' in the code folder. Save to create the file — the original example stays the same.'; } },
   };
 
   // 필요한 것: 아이콘 + 이름
@@ -218,9 +220,14 @@
         socket.emit('save', { codepath: cur, codetext: code });
       }
       if (/\.json$/i.test(file)) blockMode();
-      socket.emit('load', path);
+      // 원본(/home/pi/examples)을 바로 열면 학생이 고쳐 저장할 때 예제가 바뀌었다(261126).
+      // 서버가 내용만 읽어 code 폴더의 새 이름(같은 이름이 있으면 이름_1)으로 연다 — 저장해야 파일이 생긴다
+      socket.emit('load_example', file);
     });
   }
+  if (typeof socket !== 'undefined') socket.on('update', function (d) {
+    if (d && d.example && window.PiboUI && PiboUI.toast) PiboUI.toast(ui('copy')(d.filepath.split('/').pop()), 'info');
+  });
 
   // [⋯] 메뉴의 [예제 열기] — 파일을 연 뒤에도 갤러리를 연다
   var mb = document.getElementById('ex_menu_bt');

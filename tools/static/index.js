@@ -574,7 +574,7 @@ async function sendLcdText() {
     `/oled_text?text=${encodedText}&x=${x}&y=${y}&size=${size}` +
     `&r=${fg.r}&g=${fg.g}&b=${fg.b}&bg_r=${bg.r}&bg_g=${bg.g}&bg_b=${bg.b}`;
 
-  const res = await fetch(url).then(r => r.json());
+  const res = await fetch(url).then(r => r.json()).catch(() => ({ ok: false, error: 'net_fail' }));   // 연결이 끊겨도 '보내는 중…' 에 멈추지 않게(261126)
   if (res.ok) {
     updateLcdPreview();
     sentCanvas.getContext('2d').drawImage(lcdCanvas, 0, 0);
@@ -587,7 +587,7 @@ async function sendLcdText() {
 async function clearLcd() {
   const bg = hexToRgb(document.getElementById('lcd-bg').value);
   document.getElementById('lcd-status').textContent = t('lcd_clearing');
-  const res = await fetch(`/oled_clear?bg_r=${bg.r}&bg_g=${bg.g}&bg_b=${bg.b}`).then(r => r.json());
+  const res = await fetch(`/oled_clear?bg_r=${bg.r}&bg_g=${bg.g}&bg_b=${bg.b}`).then(r => r.json()).catch(() => ({ ok: false, error: 'net_fail' }));   // 연결이 끊겨도 '보내는 중…' 에 멈추지 않게(261126)
   if (res.ok) { devClearBg = document.getElementById('lcd-bg').value; lcdDirty = false; devSetScreen('clear'); }
   document.getElementById('lcd-status').textContent =
     res.ok ? t('lcd_cleared') : `${t('error_prefix')}${t(res.error || '')}`;
@@ -596,7 +596,7 @@ async function clearLcd() {
 
 async function resetOled() {
   document.getElementById('oled-reset-status').textContent = t('lcd_resetting');
-  const res = await fetch('/oled_reset').then(r => r.json());
+  const res = await fetch('/oled_reset').then(r => r.json()).catch(() => ({ ok: false, error: 'net_fail' }));   // 연결이 끊겨도 '보내는 중…' 에 멈추지 않게(261126)
   if (res.ok) { lcdDirty = false; devSetScreen('ip'); }
   document.getElementById('oled-reset-status').textContent =
     res.ok ? t('lcd_reset_done') : `${t('error_prefix')}${t(res.error || '')}`;
@@ -663,7 +663,7 @@ function syncConn() {
         text: PiboUI.text('svc_stopped'), kind: 'warn',
         actions: [
           { label: PiboUI.text('restart'), primary: true, onClick: () => PiboUI.restartSelf('tools') },
-          { label: PiboUI.text('close'), onClick: () => PiboUI.goHome() }
+          { label: PiboUI.text('home'), onClick: () => PiboUI.goHome() }
         ]
       });
     }

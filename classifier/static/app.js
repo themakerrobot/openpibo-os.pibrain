@@ -303,7 +303,7 @@ function addSample(i, vec, thumb) {
   if (c.vecs.length >= MAX_SAMPLES) { stopCollect(); toast(t('max_samples', c.name), 'warn'); return; }
   c.vecs.push(vec);
   c.thumbs.push(thumb);
-  if (S.trained) S.trained.stale = true;
+  markChanged();
   renderClassCard(i);
   renderLearnRight();
 }
@@ -524,6 +524,7 @@ async function continueModel(name) {
     });
     S.trained = null;
     S.saveName = name;
+    S.clean = true;
     setTab('learn');
     toast(t('continue_ok', name), 'ok');
   } catch (e) {
@@ -840,13 +841,13 @@ clsList.addEventListener('click', async e => {
     const c = S.classes[i];
     if (c.vecs.length && !(await confirmDlg(t('confirm_del_class', c.name), true))) return;
     S.classes.splice(i, 1);
-    if (S.trained) S.trained.stale = true;
+    markChanged();
     renderLearnLeft(); renderLearnRight();
   } else if (clr) {
     const c = S.classes[+clr.dataset.i];
     if (!(await confirmDlg(t('confirm_clear_class', c.name), true))) return;
     c.vecs = []; c.thumbs = [];
-    if (S.trained) S.trained.stale = true;
+    markChanged();
     renderLearnLeft(); renderLearnRight();
   }
 });
@@ -856,7 +857,7 @@ clsList.addEventListener('change', e => {
     const v = e.target.value.trim();
     if (!v || S.classes.some(o => o !== c && o.name === v)) { e.target.value = c.name; toast(t('name_dup'), 'warn'); return; }
     c.name = v;
-    if (S.trained) S.trained.stale = true;
+    markChanged();
     renderLearnRight();
   } else if (e.target.type === 'file') {
     const files = [...e.target.files];
@@ -957,10 +958,27 @@ language.addEventListener('change', () => { setLanguage(language.value); renderA
 // 전체화면 버튼(#fullscreen_bt)은 pibo-ui.js 가 맡는다(260930)
 
 
-// 탭을 닫으면 IDE 에 이 서비스를 끄라고 알린다. keepalive 가 없으면 언로드 중에 취소된다
-window.addEventListener('beforeunload', () => {
-  fetch(`http://${location.hostname}/classifier?enable=off`, { method: 'GET', keepalive: true }).catch(() => {});
+// 모은 예시·학습한 모델은 브라우저에만 있다 — 저장하지 않았으면 떠나기 전에 묻는다(261126).
+// 저장(samples.json 포함)한 뒤 예시를 바꾸지 않았으면 묻지 않는다
+// 예시를 바꿀 때마다 부른다 — 학습한 모델은 다시 가르쳐야 하고, 보관함에서 이어 온 것도 저장 안 한 상태가 된다
+function markChanged() {
+  S.clean = false;
+  if (S.trained) S.trained.stale = true;
+}
+function hasUnsaved() {
+  if (S.clean || !S.classes.some((c) => c.vecs.length)) return false;   // clean: 보관함에서 이어 온 뒤 그대로
+  return !(S.trained && S.trained.saved && !S.trained.stale);
+}
+// 탭을 닫으면 IDE 에 이 서비스를 끄라고 알린다. keepalive 가 없으면 언로드 중에 취소된다.
+// 물을 때는 실제로 떠날 때(pagehide) 끈다 — 확인창에서 [취소]하면 계속 쓰게
+const stopSelf = () => fetch(`http://${location.hostname}/classifier?enable=off`, { method: 'GET', keepalive: true }).catch(() => {});
+let askedLeave = false;
+window.addEventListener('beforeunload', (e) => {
+  askedLeave = hasUnsaved();
+  if (!askedLeave) { stopSelf(); return; }
+  e.preventDefault(); e.returnValue = ''; return '';
 });
+window.addEventListener('pagehide', (e) => { if (askedLeave && !e.persisted) stopSelf(); });
 
 // ═══════════════════════════════════════════════════════════
 // PiBrain 연결
@@ -972,9 +990,18 @@ socket.on('connect', () => {
 });
 // 탭이 가려지면 PiBrain 이 그림 보내기를 쉰다(카메라는 켜 둔다). 수업에서 방치된 탭이 공유기 대역을 쓰지 않게(260929)
 document.addEventListener('visibilitychange', () => socket.emit('camera_visible', !document.hidden));
-socket.on('camera_image', showFrame);
-// 카메라를 못 켰을 때(도구가 아직 놓지 않음 등). 다시 켜면 서버가 다시 시도한다
-socket.on('camera_error', (d) => toast(t('cam_fail'), 'warn'));
+// 카메라를 못 켰을 때(앞 앱이 아직 카메라를 놓지 않음 등) 3초 뒤 스스로 두 번까지 다시 켠다(261126). 그래도 안 되면 안내 —
+// [카메라 끄기]→[켜기] 로 다시 시도할 수 있다. 그림이 한 장이라도 오면 다시 센다
+let camRetry = 0;
+socket.on('camera_image', (d) => { camRetry = 0; showFrame(d); });
+socket.on('camera_error', () => {
+  if (S.camWanted && camRetry < 2) {
+    camRetry++;
+    setTimeout(() => { if (S.camWanted) socket.emit('control_cam', true); }, 3000);
+    return;
+  }
+  toast(t('cam_fail'), 'warn');
+});
 
 /* 카메라 고르기(261120): 보드 카메라 + 꽂혀 있는 USB 카메라(이름은 카메라가 알려 준 값).
    목록은 고르는 칸을 누를 때 새로 묻는다(실행 중에 꽂은 카메라도 잡히게). 켜져 있으면 서버가 새 카메라를 먼저
@@ -1021,8 +1048,8 @@ PiboUI.watchSocket(socket, {
     text: PiboUI.text('svc_stopped'),
     kind: 'warn',
     actions: [
-      { label: PiboUI.text('restart'), primary: true, onClick: () => PiboUI.restartSelf('classifier') },
-      { label: PiboUI.text('close'), onClick: () => PiboUI.goHome() },
+      { label: PiboUI.text('restart'), primary: true, onClick: () => PiboUI.restartInPlace('classifier', socket) },   // 모은 예시가 그대로 남게(261126)
+      { label: PiboUI.text('home'), onClick: () => PiboUI.goHome() },
     ],
   }),
 });

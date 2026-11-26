@@ -10,7 +10,10 @@ MEM_TOTAL=$(free | grep Mem: | awk '{ print $2 }')
 MEM_AVAIL=$(free | grep Mem: | awk '{ print $7 }')
 OS_VERSION=$(cat /home/pi/.OS_VERSION)
 RPI_SERIAL=$(grep "Serial" /proc/cpuinfo | awk '{print $3}')
+# 유선 IP — 파이보는 USB 랜 어댑터(eth1)만, PiBrain 은 보드의 eth0 이 있다(261126). eth1 을 먼저 보고 없으면 eth0
+# (8번째 칸 이름은 예전 그대로 ETH1 — booting.py·network_disp.py·IDE 가 이 칸을 유선 IP 로 읽는다)
 ETH1=$(ifconfig eth1 2>/dev/null| grep "inet " | awk '{ print $2 }')
+[ -z "$ETH1" ] && ETH1=$(ifconfig eth0 2>/dev/null| grep "inet " | awk '{ print $2 }')
 WLAN0=$(ifconfig wlan0 | grep "inet " | awk '{ print $2 }')
 SSID=$(cat /etc/NetworkManager/system-connections/pibo-wifi.nmconnection 2>/dev/null|grep ssid= | sed 's/ssid=//g')
 SSID=${SSID:-""}

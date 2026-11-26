@@ -184,6 +184,7 @@ const T = {
                         en: (e) => { const m = String(e).match(/^(.*[가-힣].*?) \/ ([^가-힣]+)$/); return `Could not switch the camera. (${m ? m[2] : e})`; } },
   cam_on_fail:        { ko: (e) => { const m = String(e).match(/^(.*[가-힣].*?) \/ ([^가-힣]+)$/); return `카메라를 켜지 못했어요. (${m ? m[1] : e})`; },
                         en: (e) => { const m = String(e).match(/^(.*[가-힣].*?) \/ ([^가-힣]+)$/); return `Could not turn on the camera. (${m ? m[2] : e})`; } },
+  net_fail:          { ko: "로봇과 연결이 안 돼요.", en: "Cannot reach the robot." },   // 261126
 };
 
 /**
