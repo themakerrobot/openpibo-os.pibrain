@@ -114,7 +114,7 @@ body.v2-app a { color: inherit; text-decoration: none; cursor: pointer; }
 
 /* ── 상단바 ───────────────────────────────────────────────────────────── */
 .v2-app .pb-header.v2-top {
-  display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(max-content, 1fr);   /* 오른쪽 버튼 칸은 적어도 제 폭 — 좁으면 가운데 [블록|파이썬]이 왼쪽으로 비킨다(261126, [사용법] 이 늘어 1024 에서 넘쳤다) */
   align-items: center; gap: 12px;
   height: 48px; min-height: 48px; padding: 0 8px 0 6px;
   background: var(--c-brand); color: var(--c-brand-ink); border-bottom: 1px solid var(--v2-frame-line);   /* 도구·분류기와 같은 아래 선 */

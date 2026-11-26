@@ -646,6 +646,23 @@
     if (sel) sel.addEventListener('change', function () { setTimeout(function () { label(); if (helpPop) helpOpen(b); }, 0); });
   }
 
+  /* 글자가 좁은 화면에서 숨는 버튼(아이콘만)에 이름을 남긴다(261126 — Lighthouse 폰 폭 'button-name').
+     title·aria-label 이 없으면 안의 글자를 title 로. 언어를 바꾸면 다시 */
+  function nameButtons() {
+    Array.prototype.forEach.call(document.querySelectorAll('.pb-header button, .pb-header a, [role="tab"], [role="radio"], #send_bt'), function (b) {
+      if (b.getAttribute('aria-label') && !b.hasAttribute('data-pb-named')) return;
+      if (b.title && !b.hasAttribute('data-pb-named')) return;
+      var txt = (b.textContent || '').replace(/\s+/g, ' ').trim();
+      if (!txt) return;
+      b.title = txt; b.setAttribute('data-pb-named', '');
+    });
+  }
+  function initNames() {
+    nameButtons(); setTimeout(nameButtons, 800); setTimeout(nameButtons, 2500);
+    var sel = document.getElementById('language') || document.getElementById('lang_sel');
+    if (sel) sel.addEventListener('change', function () { setTimeout(nameButtons, 50); });
+  }
+
   window.PiboUI = {
     toast: toast, banner: banner, hideBanner: hideBanner, watchSocket: watchSocket,
     tabPrefix: tabPrefix, goHome: goHome, restartSelf: restartSelf, enterService: enterService,
@@ -654,7 +671,7 @@
     fullscreen: fsToggle, screenReset: screenReset
   };
 
-  function initAll() { initShell(); addThemeButton(); syncThemeButtons(); initFullscreen(); watchTitle(); markAlerts(); initBrand(); initHomeButton(); addHelpButton(); }
+  function initAll() { initShell(); addThemeButton(); syncThemeButtons(); initFullscreen(); watchTitle(); markAlerts(); initBrand(); initHomeButton(); addHelpButton(); initNames(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAll);
   else initAll();
 })();
