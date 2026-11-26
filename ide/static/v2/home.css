@@ -272,20 +272,18 @@ html[data-theme="dark"] .home-li:hover { background: rgba(255, 255, 255, .06); }
 
 /* 로봇 정보(261126) — 이름 · 값 두 칸, 저장 공간 막대, 모델 판 */
 .home-info { margin: 0 0 4px; border: 1px solid var(--v2-line); border-radius: 8px; overflow: hidden; background: var(--v2-surface); }
-.home-info > div:not(.home-info__bar):not(.home-info__sub):not(.home-info__msg) { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 10px; padding: 9px 12px; border-top: 1px solid var(--v2-line); }
+.home-info > div:not(.home-info__bar):not(.home-info__sub):not(.home-info__msg) { display: grid; grid-template-columns: 168px minmax(0, 1fr); gap: 10px; padding: 9px 12px; border-top: 1px solid var(--v2-line); }
 .home-info > div:first-child { border-top: 0 !important; }
 .home-info dt { font-size: 13px; color: var(--v2-ink-3); }
 .home-info dd { margin: 0; font-size: 14px; color: var(--v2-ink); overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
-.home-info > .home-info__m { grid-template-columns: 180px minmax(0, 1fr) !important; }
 .home-info__m dt { font-family: var(--pb-mono, monospace); font-size: 12px; overflow-wrap: anywhere; }
-.home-info__m dd { font-size: 13px; }
-.home-info__bar { height: 6px; margin: -2px 12px 10px 142px; border-radius: 3px; background: var(--v2-line); overflow: hidden; }
+.home-info__bar { height: 6px; margin: -2px 12px 10px 190px;   /* 값 칸 시작(12 + 168 + 10)에 맞춤 */ border-radius: 3px; background: var(--v2-line); overflow: hidden; }
 .home-info__bar > i { display: block; height: 100%; background: var(--pen-blue); }
 .home-info__bar > i[data-hot] { background: var(--pen-red); }
 .home-info__sub { padding: 10px 12px 2px; border-top: 1px solid var(--v2-line); font-size: 13px; font-weight: 700; color: var(--v2-ink-2); }
 .home-info__msg { padding: 14px 12px; font-size: 14px; color: var(--v2-ink-3); }
 .home-info__msg[data-err] { color: var(--v2-red-ink); }
-@media (max-width: 520px) { .home-info > div:not(.home-info__bar):not(.home-info__sub):not(.home-info__msg) { grid-template-columns: 1fr; gap: 2px; } .home-info__bar { margin-left: 12px; } .home-info > .home-info__m { grid-template-columns: 1fr !important; } }
+@media (max-width: 520px) { .home-info > div:not(.home-info__bar):not(.home-info__sub):not(.home-info__msg) { grid-template-columns: 1fr; gap: 2px; } .home-info__bar { margin-left: 12px; } }
 
 /* 꼬리말(261126) */
 .home-foot { max-width: 1340px; margin: -20px auto 0; padding: 0 40px 28px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 18px;

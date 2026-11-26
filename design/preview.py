@@ -61,9 +61,9 @@ def fake_robot_info(dev):
   return {'version': ('piBo' if dev == 'pibo' else 'piBrain') + '_261126v1', 'serial': '10000000a1b2c3d4',
           'updated': int(time.time()) - 86400 * 2, 'source_date': '2026-11-26 1a2b3c4', 'os': 'Debian GNU/Linux 12 (bookworm)',
           'disk': {'total': 31 * 2**30, 'used': 12 * 2**30, 'free': 19 * 2**30},
-          'models': [{'name': 'llm/general.gguf', 'value': 'gemma-3-1b-it-Q4_K_M.gguf'},
-                     {'name': 'llm/themaker-ko.gguf', 'value': 'themaker-ko-v2-0.8b-Q4_K_M.gguf'},
-                     {'name': 'object/ed-s-320.onnx', 'value': 'easydetect ed-s-320 (8bit)'}]}
+          'models': [{'name': 'llm/general.gguf', 'value': 'gemma-3-1b-it-Q4_K_M'},
+                     {'name': 'llm/themaker-ko.gguf', 'value': 'themaker-ko-v2-0.8b-Q4_K_M'},
+                     {'name': 'llm/themaker-en.gguf', 'value': 'themaker-en-v2-0.8b-Q4_K_M'}]}
 
 
 def static_server(root, page, port, ide_port, routes=None, info=None, json_routes=None):
