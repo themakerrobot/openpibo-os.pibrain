@@ -48,7 +48,25 @@ def fake_home_info(dev):
           'models': [{'name': '가위바위보', 'source': 'hand', 'classes': 3, 'mtime': now - 7200}]}
 
 
-def static_server(root, page, port, ide_port, routes=None, info=None):
+def fake_examples(root):
+  """IDE 예제 갤러리의 GET /examples_list (261126) — 기기는 /home/pi/examples, 미리보기는 리포 examples/"""
+  try:
+    return {'files': sorted(n for n in os.listdir(os.path.join(root, 'examples')) if n.endswith(('.json', '.py')))}
+  except OSError:
+    return {'files': []}
+
+
+def fake_robot_info(dev):
+  """대문 [설정] → 로봇 정보의 GET /robot_info (261126)"""
+  return {'version': ('piBo' if dev == 'pibo' else 'piBrain') + '_261126v1', 'serial': '10000000a1b2c3d4',
+          'updated': int(time.time()) - 86400 * 2, 'source_date': '2026-11-26 1a2b3c4', 'os': 'Debian GNU/Linux 12 (bookworm)',
+          'disk': {'total': 31 * 2**30, 'used': 12 * 2**30, 'free': 19 * 2**30},
+          'models': [{'name': 'llm/general.gguf', 'value': 'gemma-3-1b-it-Q4_K_M.gguf'},
+                     {'name': 'llm/themaker-ko.gguf', 'value': 'themaker-ko-v2-0.8b-Q4_K_M.gguf'},
+                     {'name': 'object/ed-s-320.onnx', 'value': 'easydetect ed-s-320 (8bit)'}]}
+
+
+def static_server(root, page, port, ide_port, routes=None, info=None, json_routes=None):
   """root 폴더를 그대로 보낸다. / 는 page(routes 가 있으면 그 표대로). 글꼴·아이콘 글꼴은 기기처럼 IDE 포트로 넘긴다.
   info 가 있으면 GET /home_info 에 그 JSON 을 돌려준다(대문)"""
   class H(http.server.SimpleHTTPRequestHandler):
@@ -66,8 +84,9 @@ def static_server(root, page, port, ide_port, routes=None, info=None):
         self.send_header('Location', f'http://{host}:{ide_port}/{m.group(1)}')
         self.end_headers()
         return
-      if info is not None and p == '/home_info':
-        body = json.dumps(info()).encode()
+      js = info() if (info is not None and p == '/home_info') else (json_routes[p]() if json_routes and p in json_routes else None)
+      if js is not None:
+        body = json.dumps(js).encode()
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
         self.send_header('Content-Length', str(len(body)))
@@ -164,7 +183,8 @@ def main():
           # 대문(261123): / 는 첫 화면, IDE 는 /ide (기기의 run_ide.py 와 같다)
           static_server(folder, None, base + off, ide,
                         routes={'/': 'templates/home.html', '/ide': 'templates/index.html', '/index.html': 'templates/index.html'},
-                        info=lambda d=dev: fake_home_info(d))
+                        info=lambda d=dev: fake_home_info(d),
+                        json_routes={'/examples_list': lambda r=root: fake_examples(r), '/robot_info': lambda d=dev: fake_robot_info(d)})
           links.append(('처음 화면', f'http://{host}:{base + off}/'))
           links.append((name, f'http://{host}:{base + off}/ide'))
           continue

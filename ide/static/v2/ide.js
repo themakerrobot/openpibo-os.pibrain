@@ -33,6 +33,7 @@
     sideBtn.setAttribute('aria-pressed', open ? 'true' : 'false');
   }
   setSide(true);
+  window.PiboIDE = { setSide: setSide };   // 예제 갤러리(examples.js)의 [폴더에서 보기]
   sideBtn.addEventListener('click', function () { setSide(document.body.getAttribute('data-side') !== 'open'); });
   $id('v2_drawer_close').addEventListener('click', function () { setSide(false); });
   $id('v2_file').addEventListener('click', function () { setSide(true); });
@@ -162,7 +163,8 @@
         var add = $id('add_file');   // 서랍 [추가] 의 새 파일과 같은 처리(이름 묻기 → 지금 폴더에 만들기)
         if (add) add.click();
       } else if (k === 'example') {
-        // 예제는 블록 파일이라 블록 모드로 바꾸고 예제 폴더를 연다
+        // 예제 갤러리(examples.js, 261126) — 카드에서 고르면 블록으로 연다. 못 읽었으면 예전처럼 예제 폴더를 서랍에
+        if (window.PiboExamples) { window.PiboExamples.open(); return; }
         var blk = document.querySelector('div[name=codetype] button[name=block]');
         if (blk && !blk.classList.contains('checked')) blk.click();
         if (typeof socket !== 'undefined') socket.emit('load_directory', '/home/pi/examples');

@@ -303,3 +303,23 @@ body.pet-sleeping .kids-petstage { filter: brightness(.85); }
   .kids *, .kids *:before, .kids *:after { animation: none !important; transition: none !important; }
 }
 
+
+/* ── 처음 화면 머리말 · 요약 띠(261126) — 제목 · 한 줄 설명 + 지금 상태 칸(cards: 차시·별·재주 / play: 친구·그림첩·동작) ── */
+.kids-head { width: 100%; max-width: 960px; margin: 8px auto 4px; padding: 0 8px; box-sizing: border-box;
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; }
+.kids-head[data-n="2"] { max-width: 720px; }
+.kids-head__tx { min-width: 0; }
+.kids-head__t { margin: 0; font-family: var(--serif, inherit); font-size: 28px; font-weight: 700; line-height: 1.25; color: var(--v2-ink); }
+.kids-head__d { margin: 4px 0 0; font-size: 15px; line-height: 1.45; color: var(--v2-ink-3); word-break: keep-all; }
+.kids-head__sum { display: flex; flex-wrap: wrap; gap: 8px; }
+.kids-stat { display: flex; align-items: center; gap: 10px; min-width: 0; padding: 8px 14px 8px 10px; border: 1px solid var(--v2-line); border-radius: 10px; background: var(--v2-surface); }
+.kids-stat > i { width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; font-size: 15px; background: var(--app-t, var(--v2-sunken)); color: var(--app, var(--v2-accent)); flex: none; }
+.kids-stat > span { display: flex; flex-direction: column; min-width: 0; }
+.kids-stat small { font-size: 12px; color: var(--v2-ink-3); white-space: nowrap; }
+.kids-stat b { font-size: 15px; font-weight: 700; color: var(--v2-ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 220px; }
+@media (max-width: 600px) { .kids-head__t { font-size: 24px; } .kids-head__sum { width: 100%; } .kids-stat { flex: 1 1 140px; } }
+body.kids[data-app="cards"] .kids-head { --app: var(--app-kids); --app-t: var(--app-kids-t); }
+body.kids[data-app="play"] .kids-head { --app: var(--app-play); --app-t: var(--app-play-t); }
+#v_home { justify-content: center; }
+#v_home > .kids-home { flex: 0 0 auto; margin-top: 14px; }   /* 머리말과 카드를 한 덩어리로 가운데에(261126) */
+@media (max-width: 900px) { #v_home { justify-content: flex-start; } }

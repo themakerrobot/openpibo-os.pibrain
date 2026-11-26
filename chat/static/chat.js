@@ -284,6 +284,8 @@
     var cards = !st.model && modelList.length > 0;
     $('empty_txt').textContent = tr(st.model ? 'chat_empty' : cards ? 'chat_pick_title' : 'chat_pick_model');
     $('empty').classList.toggle('is-pick', cards);
+    // 카드로 고르는 동안은 위 [대화 모델] 칸을 숨긴다(같은 것이 두 번 보였다, 261126). 고른 뒤에 나타나 거기서 바꾼다
+    $('model_bar').hidden = cards;
     renderCards(cards);
     $('try').hidden = !st.model;
     renderTry();   // 모델에 따라 예시가 바뀐다

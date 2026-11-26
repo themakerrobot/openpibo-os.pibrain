@@ -305,6 +305,77 @@ def home_info_sync():
 async def home_info():
   return JSONResponse(await run_blocking(home_info_sync), headers={'Cache-Control': 'no-store'})
 
+# ── 예제 갤러리 · 로봇 정보 (261126) ─────────────────────────────────────────────
+EXAMPLES_DIR = '/home/pi/examples'
+
+@app.get('/examples_list')
+def examples_list():
+  # IDE [예제 열기] 갤러리(v2/examples.js)가 카드로 보여 줄 예제 파일 이름. 공장 초기화 때 리포 examples/ 가 여기로 복사된다
+  try:
+    names = sorted(n for n in os.listdir(EXAMPLES_DIR)
+                   if not n.startswith('.') and n.lower().endswith(('.json', '.py')) and os.path.isfile(os.path.join(EXAMPLES_DIR, n)))
+  except OSError:
+    names = []
+  return JSONResponse({'files': names}, headers={'Cache-Control': 'no-store'})
+
+def model_versions(limit=20):
+  # /home/pi/.model/VERSION 의 '## sha256' 위쪽 `이름 = 판` 줄(대화 모델 판 등 — IMAGE.md). 모양이 다르면 건너뛴다
+  out = []
+  try:
+    with open('/home/pi/.model/VERSION', encoding='utf-8') as f:
+      lines = f.read().splitlines()
+  except OSError:
+    return out
+  for line in lines:
+    if line.startswith('## sha256'):
+      break
+    k, sep, v = line.partition('=')
+    k = k.strip().lstrip('#-* ').strip('` ')
+    v = v.strip().strip('`').strip()
+    if sep and k and v and len(k) <= 60 and len(v) <= 120:
+      out.append({'name': k, 'value': v})
+      if len(out) >= limit:
+        break
+  return out
+
+def robot_info_sync():
+  # 대문 [설정] → 로봇 정보. WiFi 비밀번호 같은 것은 보내지 않는다
+  info = {'version': '', 'serial': '', 'updated': None, 'source_date': '', 'disk': None, 'os': '', 'models': model_versions()}
+  try:
+    with open('/home/pi/.OS_VERSION', encoding='utf-8') as f:
+      info['version'] = f.read().strip()[:60]
+    # 올린 때: 업데이트 명령이 .OS_VERSION 을 쓴 시각. 그때는 인터넷에 붙어 있었으므로(git clone) 기기 시계가 맞았다고 본다
+    info['updated'] = int(os.path.getmtime('/home/pi/.OS_VERSION'))
+  except OSError:
+    pass
+  try:
+    info['serial'] = get_system_info()[0]
+  except Exception:
+    pass
+  try:   # 소스 날짜: 받은 커밋의 날짜(기기 시계와 상관없다). 서비스는 root, 작업본은 pi 소유라 safe.directory 를 준다
+    r = subprocess.run(['git', '-c', 'safe.directory=*', '-C', '/home/pi/openpibo-os', 'log', '-1', '--format=%cs %h'],
+                       stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, timeout=5)
+    info['source_date'] = r.stdout.strip()[:40]
+  except Exception:
+    pass
+  try:
+    du = shutil.disk_usage('/home/pi')
+    info['disk'] = {'total': du.total, 'used': du.used, 'free': du.free}
+  except OSError:
+    pass
+  try:
+    with open('/etc/os-release', encoding='utf-8') as f:
+      for line in f:
+        if line.startswith('PRETTY_NAME='):
+          info['os'] = line.split('=', 1)[1].strip().strip('"')[:80]
+  except OSError:
+    pass
+  return info
+
+@app.get('/robot_info')
+async def robot_info():
+  return JSONResponse(await run_blocking(robot_info_sync), headers={'Cache-Control': 'no-store'})
+
 def zip_folder(src, zip_path):
   # shutil.make_archive 는 파이썬 버전에 따라 root_dir 로 os.chdir 를 한다 — 스레드에서 돌리면
   # 서버 전체의 현재 폴더가 바뀌어(static 등 상대 경로) 위험하므로 직접 묶는다

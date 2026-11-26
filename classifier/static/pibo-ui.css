@@ -1753,3 +1753,35 @@ html[data-theme="dark"] {
 body.kids[data-app="play"] #start_bt > i { color: var(--app-play); }
 body.kids[data-app="cards"] #start_bt > i { color: var(--app-kids); }
 
+
+/* ── [?] 사용법(261126) — pibo-ui.js addHelpButton. 상단바 [처음 화면] 앞 버튼을 누르면 아래로 뜨는 종이 한 장 ── */
+.pb-help { position: fixed; z-index: 1200; width: min(360px, calc(100vw - 16px)); box-sizing: border-box; padding: 14px 16px 12px;
+  border: 1px solid var(--v2-line-2); border-radius: var(--r-card, 12px); background: var(--v2-raise); color: var(--v2-ink);
+  box-shadow: 0 12px 32px var(--v2-shadow); font: 400 14px/1.5 var(--font-ui, inherit); animation: pb-rise .22s ease backwards; }
+.pb-help__t { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font-weight: 700; font-size: 15px; font-family: var(--serif, inherit); }
+.pb-help__t > i { color: var(--v2-accent); }
+.pb-help__t > span { flex: 1; }
+.pb-help__x { width: 28px; height: 28px; border: 0; border-radius: 6px; background: transparent; color: var(--v2-ink-3); cursor: pointer; }
+.pb-help__x:hover { background: var(--v2-hover); }
+.pb-help ol { margin: 0 0 10px; padding: 0 0 0 20px; }
+.pb-help li { margin: 4px 0; word-break: keep-all; color: var(--v2-ink-2); }
+.pb-help li::marker { color: var(--v2-accent); font-weight: 700; }
+.pb-help__more { display: inline-flex; align-items: center; gap: 6px; padding-top: 8px; width: 100%; border-top: 1px dashed var(--v2-line); font-weight: 700; color: var(--v2-accent-ink); text-decoration: none; }
+.pb-help__more:hover { text-decoration: underline; }
+.pb-help__more > i { font-size: 12px; }
+@media (prefers-reduced-motion: reduce) { .pb-help { animation: none; } }
+.pb-help:focus { outline: none; }
+/* 좁은 폰(≤520px): 상단바에 [사용법]이 늘어 칸이 모자라 연결 칩은 점만(글자는 title 로 — 261126) */
+@media (max-width: 520px) {
+  body.pb-v2 #onoff_val[data-label]::after, .pb-conn[data-label]::after { display: none; }
+  body.pb-v2 #onoff_val[data-label], .pb-conn[data-label] { padding-left: 8px; padding-right: 8px; }
+}
+/* 폰 폭(≤520px, 261126): 상단바가 넘쳐 언어 칸이 잘렸다(261126 전부터) — 전체화면 버튼은 숨기고(폰 브라우저는 대부분 못 쓴다) 언어 칸을 좁힌다 */
+@media (max-width: 520px) {
+  .pb-header #fullscreen_bt, .pb-header [data-pb-fs] { display: none !important; }
+  .pb-header select { max-width: 76px !important; min-width: 0 !important; padding-left: 6px !important; padding-right: 18px !important; }
+  .pb-header .pb-iconbar, .pb-header .tl-actions { gap: 0; }
+}
+@media (max-width: 400px) {
+  .pb-header .pb-header__app, .pb-header .v2-brand > .pb-header__app { display: none; }   /* 앱 이름표는 탭 제목·화면 제목에 있다 */
+}
