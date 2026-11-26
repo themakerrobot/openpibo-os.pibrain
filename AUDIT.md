@@ -81,7 +81,7 @@ PY=<파이썬> bash design/audit/run.sh ../openpibo-os.pibrain --quick    # 폭 
 | M6 | 업체·제품 이름 | S7 목록이 없으면 대화에서 거론한 이름을 리포 전체에서 찾아본다(라이선스 고지·Circulus 는 예외) |
 | M7 | 외부 통신 | 새 코드가 인터넷·자사 서버를 쓰지 않는지(로봇은 오프라인 전용 — 모델을 내려받지 않는다) |
 | M8 | 하드웨어 값 | 전압·전류·핀·타이밍을 추측해 쓴 곳이 없는지 — 확인 안 된 것은 '확인 필요' |
-| M9 | Lighthouse | 화면을 크게 바꾸면 Chrome Lighthouse(데스크톱)로 대문·코딩·도구·AI 가르치기·대화·카드 코딩·로봇 놀이를 본다. **접근성·SEO 100**(261124 두 제품 전 화면 100). Best Practices 는 HTTPS 2항목(기기가 LAN http — 구조상 못 씀)과 미리보기 서버에만 있는 404(socket.io·`/ez_lists`)만 남아야 한다. 자주 걸리는 것: `aria-pressed`·`aria-selected` 는 버튼·탭에만(`<a>`·`div` 면 role), 입력칸 이름(`data-aria-key`), 꺼진 단추는 `disabled` 속성까지, 글자 대비 4.5:1(앱 색 글자는 대비가 모자라 펜 색), `user-scalable=no` 쓰지 않음(두 번 눌러 확대는 키트 `touch-action`) |
+| M9 | Lighthouse | 화면을 크게 바꾸면 Chrome Lighthouse(데스크톱)로 대문·코딩·도구·AI 가르치기·대화·카드 코딩·로봇 놀이를 본다. **접근성·SEO 100**(261124 두 제품 전 화면 100). Best Practices 는 HTTPS 2항목(기기가 LAN http — 구조상 못 씀)과 미리보기 서버에만 있는 404(socket.io·`/ez_lists`)만 남아야 한다. 자주 걸리는 것: `aria-pressed`·`aria-selected` 는 버튼·탭에만(`<a>`·`div` 면 role), 입력칸 이름(`data-aria-key`), 꺼진 단추는 `disabled` 속성까지, 글자 대비 4.5:1(앱 색 글자는 대비가 모자라 펜 색), `user-scalable=no` 쓰지 않음(두 번 눌러 확대는 키트 `touch-action`) · **코딩 화면은 파일 목록이 찬 상태로도**(기기, 또는 가짜 `/home/pi` 에 띄운 실제 `run_ide.py` — 미리보기는 목록이 비어 내려받기 링크·파일 표 문제를 못 잡는다, 261126) · 개발자 스타일(`/home/pi/.pibo_style`)로 한 번 더 |
 
 ## D — 기기에서만 (컨테이너로는 못 본다 — 보고에 '실기기 확인 필요' 로)
 

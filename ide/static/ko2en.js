@@ -562,6 +562,7 @@ const translations = {
   fm_copy:          { ko: "복사", en: "Copy" },
   fm_move:          { ko: "옮기기", en: "Move" },
   fm_copy_tip:      { ko: "다른 폴더로 복사·옮기기", en: "Copy or move to another folder" },
+  fm_download_tip:  { ko: "내려받기", en: "Download" },
   fm_copy_msg:      { ko: (n) => `'${n}' — 받을 폴더를 고르세요.`, en: (n) => `'${n}' — choose a folder.` },
   fm_here:          { ko: "지금 폴더", en: "This folder" },
   copy_done:        { ko: (p) => `복사했어요.\n${p}`, en: (p) => `Copied.\n${p}` },
