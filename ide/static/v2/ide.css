@@ -800,3 +800,8 @@ html[data-style="dev"] .cm-s-pibo-dark span.cm-variable, html[data-style="dev"] 
 html[data-style="dev"] .cm-s-pibo-dark span.cm-operator, html[data-style="dev"] .cm-s-pibo-dark span.cm-punctuation { color: #d4d4d4; }
 /* 출력 칸 — 터미널처럼 */
 html[data-style="dev"] #result.result { font-family: var(--mono); font-size: 13px; }
+/* 빈 작업판 카드 — 학습지의 어긋난 그림자·둥근 칸을 끈다(261126) */
+html[data-style="dev"] .v2-start__card { border-radius: 6px; border-width: 1px; }
+html[data-style="dev"] .v2-start__card:hover { box-shadow: none; transform: none; }
+html[data-style="dev"] .v2-start__ic, html[data-style="dev"] .v2-start__ic--ex, html[data-style="dev"] .v2-start__ic--open { border-radius: 6px; box-shadow: none; }
+html[data-style="dev"] .v2-start__title { font-family: var(--font-ui); }

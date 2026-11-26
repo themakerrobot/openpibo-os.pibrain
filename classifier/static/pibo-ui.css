@@ -1813,6 +1813,7 @@ html[data-style="dev"], html[data-style="dev"][data-theme="dark"] {
   --pb-sheet-sh: none; --pb-grid: transparent;
 }
 html[data-style="dev"][data-theme="light"], html[data-style="dev"][data-theme="soft"] {
+  --v2-yellow-t: #fdf3d6; --v2-yellow-ink: #6b4e00; --v2-red-t2: #f6d9d9; --v2-meter: #e5e5e5; --v2-seg-on-sh: none;
   --v2-frame: #f8f8f8; --v2-frame-2: rgba(0,0,0,.05); --v2-frame-3: rgba(0,0,0,.09); --v2-frame-line: #e5e5e5;
   --v2-frame-ink: #3b3b3b; --v2-frame-dim: #616161;
   --v2-seg-on: #005fb8; --v2-seg-on-ink: #ffffff; --v2-seg-sh: 0 0 0 1px #cecece;

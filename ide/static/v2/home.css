@@ -314,3 +314,4 @@ html[data-style="dev"] .home-run { transform: none !important; font-family: var(
 html[data-style="dev"] .act__grid--list .home-run { transform: translateY(-50%) !important; }
 html[data-style="dev"] .memo { transform: none; background: var(--v2-surface); background-image: none; border: 1px solid var(--v2-line); border-radius: 6px; box-shadow: none; padding-top: 14px; }
 html[data-style="dev"] .home-side > * { border-radius: 6px; box-shadow: none; }
+html[data-style="dev"] .home-app__ic, html[data-style="dev"] .act__grid--list .home-app__ic { border-radius: 6px; box-shadow: none; }
