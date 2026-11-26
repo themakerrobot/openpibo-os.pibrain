@@ -201,6 +201,7 @@ html[data-theme="dark"] .home-li:hover { background: rgba(255, 255, 255, .06); }
 .home-seg button { height: 40px; border: 0; border-left: 1px solid var(--v2-line); background: var(--v2-surface); color: var(--v2-ink-2); font-size: 14px; font-weight: 700; cursor: pointer;
   display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
 .home-seg button:first-child { border-left: 0; }
+.home-seg--2 { grid-template-columns: repeat(2, 1fr); }   /* 화면 스타일 — 둘이라 반씩(261126) */
 .home-seg button[aria-checked="true"] { background: var(--v2-accent-t); color: var(--v2-accent-ink); }
 .home-set__row { display: flex; align-items: center; gap: 12px; width: 100%; box-sizing: border-box; padding: 11px 12px; margin-top: 8px; border: 1px solid var(--v2-line); border-radius: 8px;
   cursor: pointer; text-align: left; background: var(--v2-surface); color: var(--v2-ink); }
