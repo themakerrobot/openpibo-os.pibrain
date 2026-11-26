@@ -160,8 +160,8 @@
     var recent = s.recent || [], models = s.models || [];
     // 바뀐 게 없으면 목록을 그대로 둔다(261126) — 10초마다 새로 만들면 누르는 사이에 버튼이 바뀌어 눌림이 사라질 수 있었다
     var lkey = JSON.stringify([typeof lang !== 'undefined' ? lang : '', recent.map(function (f) { return [f.path, ago(f.mtime)]; }), models]);
-    if (lkey === list.getAttribute('data-key')) return;
-    list.setAttribute('data-key', lkey);
+    if (lkey === list.getAttribute('data-sig')) return;
+    list.setAttribute('data-sig', lkey);
     list.innerHTML = '';
     if (!recent.length && !models.length) { list.innerHTML = '<div class="home-empty">' + esc(t('home_none')) + '</div>'; return; }
     recent.forEach(function (f) {
@@ -220,7 +220,7 @@
         return '<button type="button" data-theme-pick="' + x[0] + '" aria-checked="' + (th === x[0]) + '"><i class="fa-solid ' + x[1] + '"></i>' + esc(t('v2_theme_' + x[0])) + '</button>';
       }).join('') + '</div></div>' +
       // 화면 스타일(261126) — 로봇에 저장(POST /ui_style), 이 로봇에 붙는 모든 기기에 같이
-      '<div class="home-set"><div class="home-set__lbl">' + esc(t('home_set_style')) + '</div><div class="home-seg" role="radiogroup">' +
+      '<div class="home-set"><div class="home-set__lbl">' + esc(t('home_set_style')) + '</div><div class="home-seg home-seg--2" role="radiogroup">' +
       [['paper', 'fa-file-lines'], ['dev', 'fa-terminal']].map(function (x) {
         var cur = (window.PiboUI && PiboUI.getStyle) ? PiboUI.getStyle() : 'paper';
         return '<button type="button" data-style-pick="' + x[0] + '" aria-checked="' + (cur === x[0]) + '"><i class="fa-solid ' + x[1] + '"></i>' + esc(t('home_style_' + x[0])) + '</button>';
