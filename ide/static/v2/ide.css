@@ -781,3 +781,22 @@ body[data-stage="closed"] .pb-resizer[data-target="v2_stage"] { display: none; }
 .v2-ex__need { display: flex; flex-wrap: wrap; gap: 2px 10px; }
 @media (max-width: 560px) { .v2-ex__grid { grid-template-columns: 1fr; } .v2-ex__card { min-height: 0; } }
 @media (prefers-reduced-motion: reduce) { .v2-ex__card { transition: none; } .v2-ex__card:hover { transform: none; } }
+
+/* 개발자 스타일(261126) — 파이썬 편집기는 VS Code Dark+ 계열 문법 색, 출력은 고정폭(기기 글꼴: 윈도 Consolas 등) */
+html[data-style="dev"] .CodeMirror { font-family: var(--mono); font-size: 14px; }
+html[data-style="dev"] .cm-s-pibo-dark.CodeMirror, html[data-style="dev"] .cm-s-pibo-dark .CodeMirror-gutters { background: #1f1f1f !important; }
+html[data-style="dev"] .cm-s-pibo-dark .CodeMirror-gutters { border-right: 0; }
+html[data-style="dev"] .cm-s-pibo-dark .CodeMirror-linenumber { color: #6e7681; }
+html[data-style="dev"] .cm-s-pibo-dark .CodeMirror-cursor { border-left: 2px solid #aeafad; }
+html[data-style="dev"] .cm-s-pibo-dark div.CodeMirror-selected { background: #264f78; }
+html[data-style="dev"] .cm-s-pibo-dark span.cm-keyword { color: #c586c0; font-weight: 400; }
+html[data-style="dev"] .cm-s-pibo-dark span.cm-def { color: #dcdcaa; font-weight: 400; }
+html[data-style="dev"] .cm-s-pibo-dark span.cm-builtin { color: #4ec9b0; }
+html[data-style="dev"] .cm-s-pibo-dark span.cm-property { color: #9cdcfe; }
+html[data-style="dev"] .cm-s-pibo-dark span.cm-string, html[data-style="dev"] .cm-s-pibo-dark span.cm-string-2 { color: #ce9178; }
+html[data-style="dev"] .cm-s-pibo-dark span.cm-number { color: #b5cea8; }
+html[data-style="dev"] .cm-s-pibo-dark span.cm-comment { color: #6a9955; font-style: normal; }
+html[data-style="dev"] .cm-s-pibo-dark span.cm-variable, html[data-style="dev"] .cm-s-pibo-dark span.cm-variable-2 { color: #9cdcfe; }
+html[data-style="dev"] .cm-s-pibo-dark span.cm-operator, html[data-style="dev"] .cm-s-pibo-dark span.cm-punctuation { color: #d4d4d4; }
+/* 출력 칸 — 터미널처럼 */
+html[data-style="dev"] #result.result { font-family: var(--mono); font-size: 13px; }

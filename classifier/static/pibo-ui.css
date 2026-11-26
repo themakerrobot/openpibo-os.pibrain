@@ -1786,3 +1786,49 @@ body.kids[data-app="cards"] #start_bt > i { color: var(--app-kids); }
 @media (max-width: 400px) {
   .pb-header .pb-header__app, .pb-header .v2-brand > .pb-header__app { display: none; }   /* 앱 이름표는 탭 제목·화면 제목에 있다 */
 }
+
+/* ==========================================================================
+   개발자 스타일 (261126, 사용자 — 특성화고 납품용, '누가 봐도 개발자가 쓰는 툴'. 배치는 그대로, 색·모서리·장식만)
+   html[data-style="dev"] — 대문 [설정] → 화면 스타일(학습지 · 개발자). 로봇에 저장(/home/pi/.pibo_style)하고 IDE(80)가 쿠키 pibo_style 로 내려 준다.
+   각 화면 첫머리 스크립트가 쿠키를 읽어 붙인다. 밝기는 그대로 브라우저마다: 어둡게 = 어두운 판, 밝게·부드럽게 = 밝은 판.
+   체험 앱(카드 코딩·로봇 놀이)·H/W 검수는 붙이지 않는다(학습지 그대로). 공장 초기화하면 학습지.
+   학습지 층을 지우지 않고 그 위에 덮는다 — 학습지가 기본이라 지금 화면은 한 글자도 안 바뀐다
+   ========================================================================== */
+html[data-style="dev"], html[data-style="dev"][data-theme="dark"] {
+  --serif: var(--font-ui);
+  --v2-frame: #181818; --v2-frame-2: rgba(255,255,255,.06); --v2-frame-3: rgba(255,255,255,.1); --v2-frame-line: #2b2b2b;
+  --v2-frame-ink: #cccccc; --v2-frame-dim: #9d9d9d;
+  --v2-seg-on: #0078d4; --v2-seg-on-ink: #ffffff; --v2-seg-on-sh: none; --v2-seg-sh: 0 0 0 1px #3c3c3c;
+  --v2-rail: #181818;
+  --v2-dark: #0078d4; --v2-dark-hov: #026ec1; --v2-on-dark: #ffffff;
+  --v2-canvas: #1f1f1f; --v2-top: #181818; --v2-surface: #181818; --v2-raise: #1f1f1f; --v2-sunken: #141414;
+  --v2-hover: #2a2d2e; --v2-press: #37373d; --v2-line: #2b2b2b; --v2-line-2: #454545;
+  --v2-ink: #cccccc; --v2-ink-2: #b8b8b8; --v2-ink-3: #9d9d9d;
+  --v2-accent: #3794ff; --v2-accent-t: #04395e; --v2-accent-t2: #094771; --v2-accent-ink: #9fd0ff; --v2-on-accent: #ffffff;
+  --v2-ring: rgba(0,120,212,.45); --v2-ring-soft: rgba(0,120,212,.3); --v2-focus: #0078d4;
+  --v2-red: #f14c4c; --v2-red-t: #3a1d1d; --v2-red-t2: #4b2222; --v2-red-ink: #f48771; --v2-on-red: #1a0b0b;
+  --v2-green: #89d185; --v2-green-t: #1e3323; --v2-green-ink: #a6e0a2;
+  --v2-yellow-t: #3b3420; --v2-meter: #3c3c3c; --v2-shadow: rgba(0,0,0,.5);
+  --r-chip: 3px; --r-ctl: 4px; --r-card: 6px; --r-dlg: 6px;
+  --pb-sheet-sh: none; --pb-grid: transparent;
+}
+html[data-style="dev"][data-theme="light"], html[data-style="dev"][data-theme="soft"] {
+  --v2-frame: #f8f8f8; --v2-frame-2: rgba(0,0,0,.05); --v2-frame-3: rgba(0,0,0,.09); --v2-frame-line: #e5e5e5;
+  --v2-frame-ink: #3b3b3b; --v2-frame-dim: #616161;
+  --v2-seg-on: #005fb8; --v2-seg-on-ink: #ffffff; --v2-seg-sh: 0 0 0 1px #cecece;
+  --v2-rail: #f8f8f8;
+  --v2-dark: #005fb8; --v2-dark-hov: #0258a8; --v2-on-dark: #ffffff;
+  --v2-canvas: #ffffff; --v2-top: #f8f8f8; --v2-surface: #f8f8f8; --v2-raise: #ffffff; --v2-sunken: #f3f3f3;
+  --v2-hover: #e8e8e8; --v2-press: #dcdcdc; --v2-line: #e5e5e5; --v2-line-2: #cecece;
+  --v2-ink: #3b3b3b; --v2-ink-2: #474747; --v2-ink-3: #616161;
+  --v2-accent: #005fb8; --v2-accent-t: #e4eefb; --v2-accent-t2: #cfe1f7; --v2-accent-ink: #004a8f; --v2-on-accent: #ffffff;
+  --v2-red: #c72e2e; --v2-red-t: #fbe8e8; --v2-red-ink: #a32424; --v2-on-red: #ffffff;
+  --v2-green: #2f7d32; --v2-green-t: #e8f3e8; --v2-green-ink: #2f7d32;
+  --v2-shadow: rgba(0,0,0,.16);
+}
+/* 학습지 장식 끄기 — 명조·이름표 알약·모눈·종이 그림자 */
+html[data-style="dev"] .pb-header__brand b, html[data-style="dev"] .v2-brand b { font-family: var(--font-ui); font-size: 15px; font-weight: 700; }
+html[data-style="dev"] .pb-header__app, html[data-style="dev"] .v2-app .v2-brand > span { border: 0; border-radius: 0; background: transparent; padding: 0 0 0 8px;
+  margin-left: 6px; border-left: 1px solid var(--v2-line-2); color: var(--v2-frame-dim); font-weight: 400; font-size: 13px; }
+html[data-style="dev"] body.pb-v2 .pb-panes { background-image: none; }
+html[data-style="dev"] .pb-btn, html[data-style="dev"] .v2-btn, html[data-style="dev"] .pb .popup-buttons button { border-radius: 2px !important; }

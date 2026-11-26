@@ -196,6 +196,7 @@ html[data-theme="dark"] .home-li:hover { background: rgba(255, 255, 255, .06); }
 .home-set { margin: 0 0 10px; }
 .home-set__lbl { font-size: 13px; font-weight: 700; color: var(--v2-ink-3); margin: 6px 2px 8px; }
 .home-set__lbl--red { color: var(--pen-red); margin-top: 16px; }
+.home-set__note { display: block; margin: 6px 2px 0; font-size: 12px; color: var(--v2-ink-3); line-height: 1.5; word-break: keep-all; }   /* 화면 스타일 안내(261126) */
 .home-seg { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--v2-line-2); border-radius: 8px; overflow: hidden; }
 .home-seg button { height: 40px; border: 0; border-left: 1px solid var(--v2-line); background: var(--v2-surface); color: var(--v2-ink-2); font-size: 14px; font-weight: 700; cursor: pointer;
   display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
@@ -293,3 +294,23 @@ html[data-theme="dark"] .home-li:hover { background: rgba(255, 255, 255, .06); }
 .home-foot a:hover { color: var(--pen-blue); text-decoration: underline; }
 @media (max-width: 1100px) { .home-foot { margin-top: -12px; padding: 0 24px 24px; } }
 @media (max-width: 600px) { .home-foot { padding: 0 12px 20px; gap: 4px 12px; } }
+
+/* 개발자 스타일(261126) — 활동지 장식 끄기(철 구멍·여백선·형광펜·도장 기울기·메모지·캐릭터 그림). 제목 문구는 home.js 가 바꾼다 */
+html[data-style="dev"] .home { --grid: transparent; --hl: transparent; --pen: var(--v2-accent); --pen-t: var(--v2-accent-t); --pen-t2: var(--v2-line); --pen-ink: var(--v2-accent-ink); }
+html[data-style="dev"] .act--play, html[data-style="dev"] .act--admin { --pen: var(--v2-accent); --pen-t: var(--v2-accent-t); --pen-t2: var(--v2-line); --pen-ink: var(--v2-accent-ink); }
+html[data-style="dev"] .sheet { border-radius: 6px; padding: 20px 24px 24px; box-shadow: none !important; }
+html[data-style="dev"] .sheet::before, html[data-style="dev"] .sheet__holes, html[data-style="dev"] .sheet__head::after,
+html[data-style="dev"] .home-pal, html[data-style="dev"] .sheet__eyebrow, html[data-style="dev"] .act__h::after,
+html[data-style="dev"] .memo__tape, html[data-style="dev"] .home-app__art { display: none !important; }
+html[data-style="dev"] .sheet__head { border-bottom: 1px solid var(--v2-line); padding-bottom: 14px; }
+html[data-style="dev"] .sheet__title h1, html[data-style="dev"] .act__h b, html[data-style="dev"] .act__no, html[data-style="dev"] .sheet__date b { font-family: var(--font-ui); }
+html[data-style="dev"] .sheet__title h1 { font-size: 22px; }
+html[data-style="dev"] .sheet__date { transform: none; border-radius: 4px; border: 1px solid var(--v2-line); }
+html[data-style="dev"] .act__no { width: 22px; height: 22px; border-radius: 4px; font-size: 13px; }
+html[data-style="dev"] .act__h b { font-size: 15px; }
+html[data-style="dev"] .home-app { border-radius: 6px !important; box-shadow: none !important; }
+html[data-style="dev"] .home-app__nic { font-size: 18px; color: var(--v2-accent) !important; }
+html[data-style="dev"] .home-run { transform: none !important; font-family: var(--font-ui); border-radius: 3px; }
+html[data-style="dev"] .act__grid--list .home-run { transform: translateY(-50%) !important; }
+html[data-style="dev"] .memo { transform: none; background: var(--v2-surface); background-image: none; border: 1px solid var(--v2-line); border-radius: 6px; box-shadow: none; padding-top: 14px; }
+html[data-style="dev"] .home-side > * { border-radius: 6px; box-shadow: none; }

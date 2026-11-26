@@ -74,6 +74,18 @@
     syncThemeButtons();
     try { window.dispatchEvent(new CustomEvent('pibo-theme', { detail: t })); } catch (e) { /* 무시 */ }
   }
+  /* 화면 스타일(261126) — 학습지(기본) · 개발자. 값은 로봇에 저장되고(IDE POST /ui_style) 쿠키 pibo_style 로 온다.
+     각 화면 첫머리 스크립트가 붙이므로 여기서는 바꿀 때만 쓴다(대문 [설정]) */
+  function getStyle() {
+    try { return /(?:^|;\s*)pibo_style=dev(?:;|$)/.test(document.cookie) ? 'dev' : 'paper'; } catch (e) { return 'paper'; }
+  }
+  function setStyle(s) {
+    s = s === 'dev' ? 'dev' : 'paper';
+    try { document.cookie = 'pibo_style=' + s + '; path=/; max-age=31536000; SameSite=Lax'; } catch (e) { /* 무시 */ }
+    if (s === 'dev') document.documentElement.setAttribute('data-style', 'dev');
+    else document.documentElement.removeAttribute('data-style');
+    try { window.dispatchEvent(new CustomEvent('pibo-style', { detail: s })); } catch (e) { /* 무시 */ }
+  }
   var THEME_ICON = { light: 'fa-sun', soft: 'fa-circle-half-stroke', dark: 'fa-moon' };
   var THEME_TEXT = { light: { ko: '밝게', en: 'Light' }, soft: { ko: '부드럽게', en: 'Soft' }, dark: { ko: '어둡게', en: 'Dark' } };
   function syncThemeButtons() {
@@ -353,7 +365,7 @@
      (예전엔 IDE 상단바가 이름 붙인 새 탭으로 열었다 — openService·backToIDE. IDE 가 중심이던 시절의 것이라 뺐다) */
   // launch.html 은 ?ver 없이 열려 브라우저가 옛 판을 쓸 수 있다(포트가 바뀌면 옛 포트를 기다린다).
   // 대기 페이지를 고치면 이 번호를 올릴 것
-  var LAUNCH_VER = '261126v2';
+  var LAUNCH_VER = '261126v3';
   function launchUrl(svc, go) {
     return 'http://' + location.hostname + '/static/launch.html?svc=' +
            encodeURIComponent(svc) + (go ? '&go=' + encodeURIComponent(go) : '') + '&lang=' + curLang() + '&v=' + LAUNCH_VER;
@@ -691,7 +703,7 @@
     toast: toast, banner: banner, hideBanner: hideBanner, watchSocket: watchSocket,
     tabPrefix: tabPrefix, goHome: goHome, restartSelf: restartSelf, restartInPlace: restartInPlace, enterService: enterService,
     busy: busy, text: tr, lang: curLang,
-    getTheme: getTheme, setTheme: setTheme, ui: UI, countTo: countTo,
+    getTheme: getTheme, setTheme: setTheme, getStyle: getStyle, setStyle: setStyle, ui: UI, countTo: countTo,
     fullscreen: fsToggle, screenReset: screenReset
   };
 

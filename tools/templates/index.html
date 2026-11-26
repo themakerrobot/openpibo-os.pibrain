@@ -14,12 +14,13 @@
   <meta name="description" content="piBrain — 블록·파이썬 코딩 · 도구 · AI 가르치기 / Block and Python coding, tools, teach AI" />
   <link rel="shortcut icon" href="/static/icon.png?ver=261124v1" type="image/png"/>
   <link rel="stylesheet" href="/static/all.min.css"/>
-  <link rel="stylesheet" href="/static/pibo-ui.css?ver=261126v4"/>
+  <link rel="stylesheet" href="/static/pibo-ui.css?ver=261126v5"/>
   <link rel="stylesheet" href="/static/index.css?ver=261120v2"/>
   <title data-key="title">도구</title>
   <script>/* 화면 밝기를 첫 페인트 전에 (쿠키 pibo_theme, 기본 soft) */
     (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
-      document.documentElement.setAttribute('data-theme', m ? m[1] : 'soft'); } catch (e) {} })();</script>
+      document.documentElement.setAttribute('data-theme', m ? m[1] : 'soft');
+    if (/(?:^|;\s*)pibo_style=dev(?:;|$)/.test(document.cookie)) document.documentElement.setAttribute('data-style', 'dev'); } catch (e) {} })();</script>
 </head>
 <body data-pb-help="tools" class="pb v2-app tl">
 
@@ -277,8 +278,8 @@
     </div>
   </div>
 </div>
-<script src="/static/ko2en.js?ver=261126v4"></script>
-<script src="/static/pibo-ui.js?ver=261126v4"></script>
+<script src="/static/ko2en.js?ver=261126v5"></script>
+<script src="/static/pibo-ui.js?ver=261126v5"></script>
 <script src="/static/index.js?ver=261126v4"></script>
 <script>/* 언어 select 를 지금 언어에 맞춘다(바꾸는 건 toggleLang → applyLang) */
   (function () { var sel = document.getElementById('lang_sel'); if (!sel) return;

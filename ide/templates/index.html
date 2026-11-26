@@ -19,14 +19,15 @@
 
   <script>/* 화면 밝기(pibo-ui.js 와 같은 규칙): 쿠키 → OS 어두운 모드 → 부드럽게. 첫 페인트 전에 정해 번쩍임을 막는다 */
     (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
-      document.documentElement.setAttribute('data-theme', m ? m[1] : 'soft'); } catch (e) {} })();</script>
+      document.documentElement.setAttribute('data-theme', m ? m[1] : 'soft');
+    if (/(?:^|;\s*)pibo_style=dev(?:;|$)/.test(document.cookie)) document.documentElement.setAttribute('data-style', 'dev'); } catch (e) {} })();</script>
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
   <link rel="stylesheet" href="../static/codemirror.css" />
-  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261126v4" />
-  <link rel="stylesheet" href="../static/v2/ide.css?ver=261126v2" />
+  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261126v5" />
+  <link rel="stylesheet" href="../static/v2/ide.css?ver=261126v5" />
   <link rel="shortcut icon" href="../static/icon.png?ver=261124v1" type="image/png" />
 
-  <script src="../static/ko2en.js?ver=261126v4"></script>
+  <script src="../static/ko2en.js?ver=261126v5"></script>
   <script src="../static/blockly_compressed.js?ver=240319v1"></script>
   <script src="../static/blocks_compressed.js?ver=240319v1"></script>
   <script src="../static/python_compressed.js?ver=240319v1"></script>
@@ -257,7 +258,7 @@
   </div>
 
 
-  <script src="../static/pibo-ui.js?ver=261126v4"></script>
+  <script src="../static/pibo-ui.js?ver=261126v5"></script>
   <script src="../static/index.js?ver=261126v4"></script>
   <script src="../static/v2/errhelp.js?ver=261120v1"></script>
   <script src="../static/v2/examples.js?ver=261126v4"></script>

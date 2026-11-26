@@ -6,11 +6,12 @@
 <meta name="description" content="piBrain — 블록·파이썬 코딩 · 도구 · AI 가르치기 / Block and Python coding, tools, teach AI" />
 <title>piBrain</title>
 <link rel="stylesheet" href="all.min.css">
-<link rel="stylesheet" href="pibo-ui.css?ver=261126v4">
+<link rel="stylesheet" href="pibo-ui.css?ver=261126v5">
 <link rel="shortcut icon" href="icon.png?ver=261124v1" type="image/png">
 <script>/* 화면 밝기를 첫 페인트 전에 (pibo-ui.js 의 getTheme 과 같은 규칙. 고른 적 없으면 soft) */
 (function () { try { var m = document.cookie.match(/(?:^|;\s*)pibo_theme=(light|soft|dark)/);
-  document.documentElement.setAttribute('data-theme', m ? m[1] : 'soft'); } catch (e) {} })();</script>
+  document.documentElement.setAttribute('data-theme', m ? m[1] : 'soft');
+    if (/(?:^|;\s*)pibo_style=dev(?:;|$)/.test(document.cookie) && !/svc=(cards|play|kids)/.test(location.search)) document.documentElement.setAttribute('data-style', 'dev'); } catch (e) {} })();</script>
 <style>
   /* 대문(/)에서 앱을 고르면 같은 탭으로 거치는 대기 페이지(261123 — 전엔 IDE 상단바가 이름 붙인 새 탭으로 열었다).
      여기서 서비스를 켜고, 실제로 응답할 때까지 기다린 뒤 스스로 그 주소로 이동한다. */

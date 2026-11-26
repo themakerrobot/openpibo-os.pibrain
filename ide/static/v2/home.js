@@ -47,6 +47,9 @@
     Array.prototype.forEach.call(document.querySelectorAll('[data-key]'), function (el) { el.textContent = t(el.getAttribute('data-key')); });
     Array.prototype.forEach.call(document.querySelectorAll('[data-title-key]'), function (el) { el.title = t(el.getAttribute('data-title-key')); });
     var sel = $('language'); if (sel) sel.value = curLang();
+    // 개발자 스타일이면 제목도 개발 도구처럼(261126) — '안녕! 무엇을 해 볼까요?' 대신 'piBo 개발 환경'
+    var hl = document.querySelector('.sheet__title h1 .hl');
+    if (hl && window.PiboUI && PiboUI.getStyle && PiboUI.getStyle() === 'dev') hl.textContent = t('home_hello_dev', PRODUCT);
   }
 
   function urlFor(a) {
@@ -216,6 +219,12 @@
       [['light', 'fa-sun'], ['soft', 'fa-circle-half-stroke'], ['dark', 'fa-moon']].map(function (x) {
         return '<button type="button" data-theme-pick="' + x[0] + '" aria-checked="' + (th === x[0]) + '"><i class="fa-solid ' + x[1] + '"></i>' + esc(t('v2_theme_' + x[0])) + '</button>';
       }).join('') + '</div></div>' +
+      // 화면 스타일(261126) — 로봇에 저장(POST /ui_style), 이 로봇에 붙는 모든 기기에 같이
+      '<div class="home-set"><div class="home-set__lbl">' + esc(t('home_set_style')) + '</div><div class="home-seg" role="radiogroup">' +
+      [['paper', 'fa-file-lines'], ['dev', 'fa-terminal']].map(function (x) {
+        var cur = (window.PiboUI && PiboUI.getStyle) ? PiboUI.getStyle() : 'paper';
+        return '<button type="button" data-style-pick="' + x[0] + '" aria-checked="' + (cur === x[0]) + '"><i class="fa-solid ' + x[1] + '"></i>' + esc(t('home_style_' + x[0])) + '</button>';
+      }).join('') + '</div><small class="home-set__note">' + esc(t('home_style_note')) + '</small></div>' +
       '<button type="button" class="home-set__row" id="set_wifi"><i class="fa-solid fa-wifi home-set__ic"></i><span><b>' + esc(t('home_set_wifi')) + '</b><small>' + esc(t('home_set_wifi_d')) + '</small></span><i class="fa-solid fa-chevron-right"></i></button>' +
       '<button type="button" class="home-set__row" id="set_screen"><i class="fa-solid fa-display home-set__ic"></i><span><b>' + esc(t('home_set_screen')) + '</b><small>' + esc(t('home_set_screen_d')) + '</small></span><i class="fa-solid fa-rotate-left"></i></button>' +
       '<button type="button" class="home-set__row" id="set_info"><i class="fa-solid fa-circle-info home-set__ic"></i><span><b>' + esc(t('home_info')) + '</b><small>' + esc(t('home_info_d')) + '</small></span><i class="fa-solid fa-chevron-right"></i></button>' +
@@ -229,6 +238,19 @@
       b.addEventListener('click', function () {
         if (window.PiboUI) PiboUI.setTheme(b.getAttribute('data-theme-pick'));
         Array.prototype.forEach.call(box.querySelectorAll('[data-theme-pick]'), function (x) { x.setAttribute('aria-checked', String(x === b)); });
+      });
+    });
+    Array.prototype.forEach.call(box.querySelectorAll('[data-style-pick]'), function (b) {
+      b.addEventListener('click', function () {
+        var s = b.getAttribute('data-style-pick');
+        fetch(location.origin + '/ui_style', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ style: s }) })
+          .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+          .then(function () {
+            if (window.PiboUI) PiboUI.setStyle(s);
+            Array.prototype.forEach.call(box.querySelectorAll('[data-style-pick]'), function (x) { x.setAttribute('aria-checked', String(x === b)); });
+            applyText();
+          })
+          .catch(function () { if (window.PiboUI) PiboUI.toast(t('home_style_fail'), 'error', 3000); });
       });
     });
     $('set_wifi').addEventListener('click', openWifi);
