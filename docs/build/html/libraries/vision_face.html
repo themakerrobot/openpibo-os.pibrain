@@ -456,6 +456,17 @@ dlib 은 쓰지 않습니다(261104).</p>
 </div>
 </div></blockquote>
 <dl class="py method">
+<dt class="sig sig-object py" id="openpibo.vision_face.Face.preload">
+<span class="sig-name descname"><span class="pre">preload</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_face.html#Face.preload"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_face.Face.preload" title="Link to this definition">¶</a></dt>
+<dd><p>얼굴 모델을 모두 미리 올립니다(처음 쓸 때 기다리지 않게). 보통은 부를 필요가 없습니다 —
+각 기능을 처음 쓸 때 그 기능에 필요한 모델만 올립니다.</p>
+<p>example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">face</span><span class="o">.</span><span class="n">preload</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="openpibo.vision_face.Face.detect_face">
 <span class="sig-name descname"><span class="pre">detect_face</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openpibo/vision_face.html#Face.detect_face"><span class="viewcode-link"><span class="pre">[소스]</span></span></a><a class="headerlink" href="#openpibo.vision_face.Face.detect_face" title="Link to this definition">¶</a></dt>
 <dd><p>얼굴을 탐색합니다.</p>
@@ -824,6 +835,7 @@ dlib 은 쓰지 않습니다(261104).</p>
 <li><a class="reference internal" href="#openpibo.vision_face.MEAN68"><code class="docutils literal notranslate"><span class="pre">MEAN68</span></code></a></li>
 <li><a class="reference internal" href="#openpibo.vision_face.putTextPIL"><code class="docutils literal notranslate"><span class="pre">putTextPIL()</span></code></a></li>
 <li><a class="reference internal" href="#openpibo.vision_face.Face"><code class="docutils literal notranslate"><span class="pre">Face</span></code></a><ul>
+<li><a class="reference internal" href="#openpibo.vision_face.Face.preload"><code class="docutils literal notranslate"><span class="pre">Face.preload()</span></code></a></li>
 <li><a class="reference internal" href="#openpibo.vision_face.Face.detect_face"><code class="docutils literal notranslate"><span class="pre">Face.detect_face()</span></code></a></li>
 <li><a class="reference internal" href="#openpibo.vision_face.Face.detect_face_vis"><code class="docutils literal notranslate"><span class="pre">Face.detect_face_vis()</span></code></a></li>
 <li><a class="reference internal" href="#openpibo.vision_face.Face.landmark_face"><code class="docutils literal notranslate"><span class="pre">Face.landmark_face()</span></code></a></li>

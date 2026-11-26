@@ -9,12 +9,26 @@ Class:
 dlib 은 쓰지 않습니다(261104).
 """
 import cv2
-import os, json, math
+import os, json, math, threading, importlib
 import numpy as np
-import mediapipe as mp
-from mediapipe.tasks import python as mp_python
-from mediapipe.tasks.python import vision as mp_vision
 from openvino.runtime import Core
+
+
+class _LazyModule:
+  """(내부) 처음 쓸 때 불러오는 모듈 — mediapipe 는 불러오는 데만 1초 안팎이 걸려서(파이) 얼굴 점을 쓸 때까지 미룬다(261126)"""
+  def __init__(self, name):
+    self._name = name
+    self._mod = None
+
+  def __getattr__(self, attr):
+    if self._mod is None:
+      self._mod = importlib.import_module(self._name)
+    return getattr(self._mod, attr)
+
+
+mp = _LazyModule('mediapipe')
+mp_python = _LazyModule('mediapipe.tasks.python')
+mp_vision = _LazyModule('mediapipe.tasks.python.vision')
 from PIL import Image,ImageDraw,ImageFont
 import openpibo_models
 
@@ -171,36 +185,121 @@ Functions:
       if not os.path.isfile(path):
         raise FileNotFoundError(f'얼굴 모델 파일이 없어요 / Face model file not found: {path}')
 
-    # OpenVINO 모델
-    ie = Core()
-    self.face_detection_compiled = ie.compile_model(ie.read_model(DETECT_XML), "CPU")
-    self.age_gender_compiled = ie.compile_model(ie.read_model(AGE_GENDER_XML), "CPU")
-    self.emotion_compiled = ie.compile_model(ie.read_model(EMOTION_XML), "CPU")
-    self.reid_compiled = ie.compile_model(ie.read_model(REID_XML), "CPU")
-
-    self.face_output_name = self.face_detection_compiled.output(0).any_name
-    self.gender_output_name = list(self.age_gender_compiled.outputs)[0].any_name
-    self.age_output_name = list(self.age_gender_compiled.outputs)[1].any_name
-    self.emotion_output_name = self.emotion_compiled.output(0).any_name
-    self.reid_output = self.reid_compiled.output(0)
+    # 모델은 처음 쓰는 기능이 불릴 때 올린다(261126). 전엔 Face() 가 다섯 개를 한꺼번에 올려(파이 약 3.3초)
+    # 얼굴 찾기만 쓰는 프로그램도 다 기다렸다. 파일 검사는 예전처럼 여기서 해 오류 줄이 바뀌지 않게 둔다
+    # detect_face → 찾기 · analyze_face → 나이·성별·감정 · 얼굴 점·방향·구분 → MediaPipe 얼굴 점 · train_face/recognize → 구분
+    self._lock = threading.RLock()
+    self._core = None
+    self._det = self._age_gender = self._emotion = self._reid = self._mesh = None
     self.emotions = ['neutral', 'happy', 'sad', 'surprise', 'anger']
-
-    # MediaPipe 얼굴 점(478개) — 얼굴 점·정렬·방향·거리에 같이 쓴다
-    self.mesh_detector = mp_vision.FaceLandmarker.create_from_options(
-      mp_vision.FaceLandmarkerOptions(
-        base_options=mp_python.BaseOptions(model_asset_path=LANDMARK_TASK),
-        running_mode=mp_vision.RunningMode.IMAGE,
-        num_faces=2,
-        min_face_detection_confidence=0.5,
-        min_face_presence_confidence=0.5,
-        min_tracking_confidence=0.5,
-        output_face_blendshapes=True,
-        )
-    )
     self.mask_session = None
     self.IRIS_REAL_DIAMETER_MM = 11.7
     self.FOCAL_LENGTH_MM = 3.6
     self.PIXEL_PITCH_MM = 0.0014 * 2592 / 640
+
+  # ── 모델 — 처음 쓸 때 올린다(261126). preload() 는 한꺼번에(도구처럼 미리 올려 둘 때) ──
+  def _compile(self, xml):
+    with self._lock:
+      if self._core is None:
+        self._core = Core()
+      return self._core.compile_model(self._core.read_model(xml), "CPU")
+
+  @property
+  def face_detection_compiled(self):
+    if self._det is None:
+      with self._lock:
+        if self._det is None:
+          m = self._compile(DETECT_XML)
+          self._face_output_name = m.output(0).any_name
+          self._det = m
+    return self._det
+
+  @property
+  def face_output_name(self):
+    self.face_detection_compiled
+    return self._face_output_name
+
+  @property
+  def age_gender_compiled(self):
+    if self._age_gender is None:
+      with self._lock:
+        if self._age_gender is None:
+          m = self._compile(AGE_GENDER_XML)
+          outs = list(m.outputs)
+          self._gender_output_name = outs[0].any_name
+          self._age_output_name = outs[1].any_name
+          self._age_gender = m
+    return self._age_gender
+
+  @property
+  def gender_output_name(self):
+    self.age_gender_compiled
+    return self._gender_output_name
+
+  @property
+  def age_output_name(self):
+    self.age_gender_compiled
+    return self._age_output_name
+
+  @property
+  def emotion_compiled(self):
+    if self._emotion is None:
+      with self._lock:
+        if self._emotion is None:
+          m = self._compile(EMOTION_XML)
+          self._emotion_output_name = m.output(0).any_name
+          self._emotion = m
+    return self._emotion
+
+  @property
+  def emotion_output_name(self):
+    self.emotion_compiled
+    return self._emotion_output_name
+
+  @property
+  def reid_compiled(self):
+    if self._reid is None:
+      with self._lock:
+        if self._reid is None:
+          m = self._compile(REID_XML)
+          self._reid_output = m.output(0)
+          self._reid = m
+    return self._reid
+
+  @property
+  def reid_output(self):
+    self.reid_compiled
+    return self._reid_output
+
+  @property
+  def mesh_detector(self):
+    # MediaPipe 얼굴 점(478개) — 얼굴 점·정렬·방향·거리에 같이 쓴다
+    if self._mesh is None:
+      with self._lock:
+        if self._mesh is None:
+          self._mesh = mp_vision.FaceLandmarker.create_from_options(
+            mp_vision.FaceLandmarkerOptions(
+              base_options=mp_python.BaseOptions(model_asset_path=LANDMARK_TASK),
+              running_mode=mp_vision.RunningMode.IMAGE,
+              num_faces=2,
+              min_face_detection_confidence=0.5,
+              min_face_presence_confidence=0.5,
+              min_tracking_confidence=0.5,
+              output_face_blendshapes=True,
+              )
+          )
+    return self._mesh
+
+  def preload(self):
+    """
+    얼굴 모델을 모두 미리 올립니다(처음 쓸 때 기다리지 않게). 보통은 부를 필요가 없습니다 —
+    각 기능을 처음 쓸 때 그 기능에 필요한 모델만 올립니다.
+
+    example::
+
+      face.preload()
+    """
+    self.face_detection_compiled; self.age_gender_compiled; self.emotion_compiled; self.reid_compiled; self.mesh_detector
 
   @staticmethod
   def _check(img, item=None):
