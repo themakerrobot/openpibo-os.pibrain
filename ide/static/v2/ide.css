@@ -114,7 +114,7 @@ body.v2-app a { color: inherit; text-decoration: none; cursor: pointer; }
 
 /* ── 상단바 ───────────────────────────────────────────────────────────── */
 .v2-app .pb-header.v2-top {
-  display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(max-content, 1fr);   /* 오른쪽 버튼 칸은 적어도 제 폭 — 좁으면 가운데 [블록|파이썬]이 왼쪽으로 비킨다(261126, [사용법] 이 늘어 1024 에서 넘쳤다) */
   align-items: center; gap: 12px;
   height: 48px; min-height: 48px; padding: 0 8px 0 6px;
   background: var(--c-brand); color: var(--c-brand-ink); border-bottom: 1px solid var(--v2-frame-line);   /* 도구·분류기와 같은 아래 선 */
@@ -564,6 +564,11 @@ body[data-side="closed"] .pb-resizer[data-target="v2_side"] { display: none; }
 }
 @media (max-width: 560px) {
   .v2-brand { display: none; }
+  /* 폰 폭(261126): 가운데 정렬 칸이 오른쪽 버튼 칸을 눌러 밝기·언어가 밖으로 나갔다 */
+  .v2-app .pb-header.v2-top { grid-template-columns: auto auto minmax(0, 1fr); gap: 4px; padding: 0 4px; }
+  .v2-app .v2-top .pb-iconbtn { padding: 0 7px; }
+  .v2-top .v2-seg > button { padding: 0 9px; }
+  .v2-top .v2-pop--right { position: fixed; top: 52px; left: 8px; right: 8px; min-width: 0; }   /* [⋯] 메뉴가 화면 왼쪽 밖으로 나갔다 */
 }
 @media (prefers-reduced-motion: reduce) {
   .v2-app *, .v2-app *::before, .v2-app *::after { animation: none !important; transition: none !important; }
@@ -736,3 +741,43 @@ body[data-stage="closed"] .pb-resizer[data-target="v2_stage"] { display: none; }
 .v2-start__card:hover { box-shadow: 4px 5px 0 var(--v2-accent-t2); }
 .v2-btn--run, .v2-btn--stop { border-radius: 10px; }
 .v2-app .blocklyTreeRow .customIcon { border-radius: 6px; }
+
+/* ══ 예제 갤러리 (261126) — examples.js ════════════════════════════════════════
+   카드: 아이콘(앱 색) · 난이도 별 · 제목 · 한 줄 · 배우는 것 · 시간 · 필요한 것. 꽉 찬 버튼은 없다(고르기만) */
+.v2-ex__box { width: min(960px, calc(100vw - 32px)); max-height: calc(100vh - 48px); }
+.v2-ex__body { padding: 16px 20px 20px; background: var(--c-work); }
+.v2-ex__lead { margin: 0 0 14px; font-size: var(--fs-md); color: var(--c-ink-2); }
+.v2-ex__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(212px, 1fr)); gap: 12px; }
+.v2-ex__msg { grid-column: 1 / -1; margin: 24px 0; text-align: center; color: var(--c-ink-3); }
+.v2-ex__card {
+  --ex: var(--app-code); --ex-t: var(--app-code-t);
+  display: flex; flex-direction: column; align-items: stretch; gap: 6px; min-height: 196px; padding: 14px 14px 12px;
+  border: 1px solid var(--c-line); border-radius: 12px; background: var(--c-card); color: var(--c-ink);
+  box-shadow: 0 1px 2px rgba(16, 24, 40, .06); text-align: left; font: inherit; cursor: pointer;
+  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+.v2-ex__card[data-col="chat"] { --ex: var(--app-llm); --ex-t: var(--app-llm-t); }
+.v2-ex__card[data-col="tools"] { --ex: var(--app-tools); --ex-t: var(--app-tools-t); }
+.v2-ex__card[data-col="play"] { --ex: var(--app-play); --ex-t: var(--app-play-t); }
+.v2-ex__card[data-col="kids"] { --ex: var(--app-kids); --ex-t: var(--app-kids-t); }
+.v2-ex__card[data-col="cls"] { --ex: var(--app-classifier); --ex-t: var(--app-classifier-t); }
+.v2-ex__card[data-col="help"] { --ex: var(--app-guide); --ex-t: var(--app-guide-t); }
+.v2-ex__card:hover { transform: translateY(-2px); border-color: var(--ex); box-shadow: 0 6px 18px rgba(16, 24, 40, .10); }
+.v2-ex__card:focus { outline: none; border-color: var(--ex); box-shadow: 0 0 0 3px var(--c-ring); }
+.v2-ex__top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+.v2-ex__ic { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-size: 18px; background: var(--ex-t); color: var(--ex); flex: none; }
+.v2-ex__lv { display: inline-flex; align-items: center; gap: 2px; font-size: 11px; color: var(--v2-yellow-ink, #8a6100); }
+.v2-ex__lv > i[data-off] { opacity: .22; }
+.v2-ex__lv > small { margin-left: 4px; font-size: var(--fs-xs); color: var(--c-ink-3); }
+.v2-ex__t { font-size: var(--fs-lg); font-weight: 700; line-height: 1.3; font-family: var(--serif, inherit); }
+.v2-ex__d { font-size: var(--fs-sm); line-height: 1.45; color: var(--c-ink-2); word-break: keep-all; }
+.v2-ex__learn { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 2px; }
+.v2-ex__learn > em { font-style: normal; font-size: var(--fs-xs); color: var(--c-ink-3); margin-right: 2px; }
+.v2-ex__learn > span { padding: 1px 7px; border-radius: 999px; background: var(--ex-t); color: var(--c-ink); font-size: var(--fs-xs); }
+.v2-ex__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin-top: auto; padding-top: 8px;
+  border-top: 1px dashed var(--c-line); font-size: var(--fs-xs); color: var(--c-ink-3); }
+.v2-ex__foot i { margin-right: 4px; }
+.v2-ex__min { white-space: nowrap; }
+.v2-ex__need { display: flex; flex-wrap: wrap; gap: 2px 10px; }
+@media (max-width: 560px) { .v2-ex__grid { grid-template-columns: 1fr; } .v2-ex__card { min-height: 0; } }
+@media (prefers-reduced-motion: reduce) { .v2-ex__card { transition: none; } .v2-ex__card:hover { transform: none; } }

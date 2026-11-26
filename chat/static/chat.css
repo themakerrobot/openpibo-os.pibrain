@@ -7,6 +7,7 @@ main.chat {
 }
 
 /* 대화 모델 고르기(261029) — 들어와서 고르면 그때 올린다 */
+.chat-model[hidden] { display: none; }
 .chat-model { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 12px 0 0; }
 .chat-model__label { font-size: var(--fs-sm); font-weight: var(--fw-b); color: var(--v2-ink-2); }
 .chat-model select { min-width: 9em; }

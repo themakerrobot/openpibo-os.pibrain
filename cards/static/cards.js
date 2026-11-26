@@ -69,7 +69,27 @@
       { id: 'tricks', art: 'tricks', icon: 'fa-wand-magic-sparkles', name: 'kids_tricks', sub: tr('kids_n_tricks', S.tricks.length), open: function () { show('tricks'); } }
     ];
   }
+  // 머리말 · 요약 띠(261126) — 오늘 차시 · 모은 별(지금 차시까지의 도전) · 내 재주
+  function stat(ic, label, val) {
+    var d = el('div', 'kids-stat');
+    d.innerHTML = icon(ic) + '<span><small></small><b></b></span>';
+    d.querySelector('small').textContent = label; d.querySelector('b').textContent = val; d.title = label + ' · ' + val;
+    return d;
+  }
+  function renderHead(n) {
+    $('home_head').setAttribute('data-n', n);
+    $('home_t').textContent = tr('home_cards');
+    $('home_d').textContent = tr('kids_head_cards_d');
+    var sum = $('home_sum'); sum.innerHTML = '';
+    var l = lessonOf(lessonNow());
+    sum.appendChild(stat('fa-book-open', tr('kids_sum_lesson'), S.settings.lesson ? tr('kids_lesson_n', l.n, txt(l)) : tr('kids_sum_free')));
+    var chs = C.challenges.filter(function (c) { return c.lesson <= lessonNow(); }), got = 0;
+    chs.forEach(function (c) { got += S.progress.stars[c.id] || 0; });
+    sum.appendChild(stat('fa-star', tr('kids_sum_stars'), tr('kids_sum_of', got, chs.length * 3)));
+    sum.appendChild(stat('fa-wand-magic-sparkles', tr('kids_sum_tricks'), tr('kids_sum_of', S.tricks.length, C.max_tricks)));
+  }
   function renderHome() {
+    renderHead(homeItems().length);
     var grid = $('home_grid');
     grid.innerHTML = '';
     grid.setAttribute('data-n', homeItems().length);

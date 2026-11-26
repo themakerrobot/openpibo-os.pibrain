@@ -59,6 +59,14 @@
   .msg { min-height: 20px; font: 14px/1.5 var(--font-ui); color: var(--v2-ink-2); margin: 0 0 14px; }
   .msg.err { color: var(--v2-ink); }   /* 실패는 제목·빨간 단계·막대가 알린다. 여기는 할 일만 */
   body[data-state="fail"] .ring > i { color: var(--v2-red); }
+  /* 기다리는 동안 한 줄 팁(261126) — 6초마다 바뀐다. 실패하면 숨긴다 */
+  .tip { display: flex; align-items: flex-start; gap: 8px; min-height: 40px; margin: 0 0 14px; padding: 9px 12px; border-radius: var(--r-ctl);
+         background: var(--v2-sunken); font: 13px/1.5 var(--font-ui); color: var(--v2-ink-2); word-break: keep-all; }
+  .tip > i { margin-top: 3px; color: var(--app-guide, var(--v2-accent)); }
+  .tip > span { transition: opacity .25s; }
+  .tip[data-fade] > span { opacity: 0; }
+  body[data-state="fail"] .tip { display: none; }
+  @media (prefers-reduced-motion: reduce) { .tip > span { transition: none; } }
   .acts { display: flex; justify-content: flex-end; gap: 8px; }
   .acts [hidden] { display: none; }
 </style>
@@ -77,6 +85,7 @@
     </ol>
     <div class="bar"><div id="bar"></div></div>
     <p class="msg" id="msg"></p>
+    <p class="tip" id="tip_box"><i class="fa-solid fa-lightbulb" aria-hidden="true"></i><span id="tip"></span></p>
     <div class="acts">
       <button type="button" class="pb-btn" id="close"><i class="fa-solid fa-house"></i> <span data-t="close"></span></button>
       <button type="button" class="pb-btn pb-btn--accent" id="retry" hidden><i class="fa-solid fa-rotate-right"></i><span data-t="retry"></span></button>
@@ -234,6 +243,35 @@
       }, 1000);
     });
   }
+  // 한 줄 팁(261126) — 앱마다 둘 + 모두에게 둘. 6초마다 다음 것
+  var BRAIN = /brain/i.test(PRODUCT);
+  var TIPS = {
+    all:   [{ ko: '탭을 닫으면 이 앱이 꺼져요. 다른 앱은 처음 화면에서 골라요.', en: 'Closing the tab turns this app off. Pick other apps on the home screen.' },
+            { ko: '왼쪽 위 로고를 누르면 로봇 화면이 IP 정보로 돌아가요.', en: 'Tap the logo at the top left to show the IP information on the robot screen.' }],
+    tools: [{ ko: '[카메라] 탭이 가려져 있으면 화면을 보내지 않아 WiFi를 아껴요.', en: 'The camera stops sending while its tab is hidden, saving WiFi.' },
+            BRAIN ? { ko: '[화면]에 쓴 글자는 로봇 화면에 바로 나와요.', en: 'Text you write in Screen shows on the robot screen right away.' }
+                  : { ko: '[동작]에서 번호 점의 숫자를 눌러 바로 각도를 넣을 수 있어요.', en: 'In Motion, tap the number on a dot to type the angle directly.' }],
+    classifier: [{ ko: '종류마다 예시를 여러 각도·밝기로 모으면 더 잘 배워요.', en: 'Collect examples from different angles and lighting for better results.' },
+                 { ko: '저장한 모델은 코딩 블록에서 불러와 쓸 수 있어요.', en: 'Saved models can be loaded in code blocks.' }],
+    llm:   [{ ko: '더메이커 모델은 말로 부탁하면 ' + (BRAIN ? '불빛·보기' : '불빛·보기·움직이기') + '를 직접 해요.',
+             en: 'The maker models can ' + (BRAIN ? 'use the lights and camera' : 'use the lights, camera and motions') + ' when you ask.' },
+            { ko: '[소리로 말하기]를 켜면 로봇이 대답을 소리로 말해요.', en: 'Turn on Speak out loud to hear the robot say its answers.' }],
+    cards: [{ ko: '저장한 재주는 다음 시간에 카드가 되어 다시 쓸 수 있어요.', en: 'Tricks you save become cards you can use next time.' },
+            { ko: '[설정]에서 오늘 차시를 고르면 그 차시의 카드만 보여요.', en: 'Pick today\'s lesson in Settings to show only its cards.' }],
+    play:  [{ ko: '키우기 친구는 밥·놀기·재우기·씻기로 돌봐요.', en: 'Care for your pet with food, play, sleep and wash.' },
+            BRAIN ? { ko: '픽셀 그림은 칠하는 대로 로봇 화면에 바로 나와요.', en: 'Pixel art shows on the robot screen as you paint.' }
+                  : { ko: '조종하기는 넓고 평평한 바닥에서 해요.', en: 'Use remote control on a wide, flat floor.' }],
+    hwtest: [{ ko: '검수가 끝나면 결과를 인쇄해 둘 수 있어요.', en: 'You can print the results when the check is done.' }]
+  };
+  var tips = (TIPS[key] || []).concat(TIPS.all), ti = 0;
+  function showTip() {
+    if (!tips.length) { $('tip_box').hidden = true; return; }
+    var box = $('tip_box');
+    box.setAttribute('data-fade', '');
+    setTimeout(function () { $('tip').textContent = tips[ti % tips.length][L]; ti++; box.removeAttribute('data-fade'); }, ti ? 250 : 0);
+  }
+  showTip();
+  setInterval(function () { if (document.body.dataset.state === 'busy') showTip(); }, 6000);
   $('retry').onclick = start;
   start();
 })();

@@ -22,11 +22,11 @@
       document.documentElement.setAttribute('data-theme', m ? m[1] : 'soft'); } catch (e) {} })();</script>
   <link rel="stylesheet" href="../static/all.min.css" type="text/css" />
   <link rel="stylesheet" href="../static/codemirror.css" />
-  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261124v3" />
-  <link rel="stylesheet" href="../static/v2/ide.css?ver=261124v1" />
+  <link rel="stylesheet" href="../static/pibo-ui.css?ver=261126v1" />
+  <link rel="stylesheet" href="../static/v2/ide.css?ver=261126v2" />
   <link rel="shortcut icon" href="../static/icon.png?ver=261124v1" type="image/png" />
 
-  <script src="../static/ko2en.js?ver=261125v2"></script>
+  <script src="../static/ko2en.js?ver=261126v1"></script>
   <script src="../static/blockly_compressed.js?ver=240319v1"></script>
   <script src="../static/blocks_compressed.js?ver=240319v1"></script>
   <script src="../static/python_compressed.js?ver=240319v1"></script>
@@ -44,7 +44,7 @@
   <script src="../static/socket.io.min.js?ver=240319v3"></script>
 </head>
 
-<body class="pb pb-shell v2-app">
+<body data-pb-help="code" class="pb pb-shell v2-app">
   <!-- ── 상단바 ─────────────────────────────────────────────────────────── -->
   <header class="pb-header v2-top">
     <div class="v2-top__left">
@@ -64,6 +64,8 @@
       <details class="v2-menu" id="more_menu">
         <summary class="pb-iconbtn" data-title-key="v2_more"><i class="fa-solid fa-ellipsis"></i></summary>
         <div class="v2-pop v2-pop--right" role="menu">
+          <button type="button" class="v2-pop__item" id="ex_menu_bt"><i class="fa-solid fa-lightbulb"></i><span data-key="v2_start_ex"></span></button>
+          <hr />
           <div class="v2-pop__row">
             <span class="v2-pop__lbl"><i class="fa-solid fa-text-height"></i><span data-key="v2_fontsize"></span></span>
             <span class="v2-stepper">
@@ -80,8 +82,8 @@
         </div>
       </details>
       <div class="pb-iconbar v2-apps">
-        <a class="pb-iconbtn" id="home_bt" data-title-key="home_title"><i class="fa-solid fa-house"></i><span class="pb-iconbtn__label" data-key="home_title"></span></a>
-        <a class="pb-iconbtn" id="fullscreen_bt" data-title-key="nav_fullscreen"><span id="fullscreen_txt"></span><span class="pb-iconbtn__label" data-key="nav_fullscreen"></span></a>
+        <a class="pb-iconbtn" id="home_bt" role="button" data-title-key="home_title"><i class="fa-solid fa-house"></i><span class="pb-iconbtn__label" data-key="home_title"></span></a>
+        <a class="pb-iconbtn" id="fullscreen_bt" role="button" data-title-key="nav_fullscreen"><span id="fullscreen_txt"></span><span class="pb-iconbtn__label" data-key="nav_fullscreen"></span></a>
         <select class="pb-field pb-field--sm" id="language" aria-label="Language" data-aria-key="v2_language">
           <option value="ko">한국어</option>
           <option value="en">English</option>
@@ -255,11 +257,12 @@
   </div>
 
 
-  <script src="../static/pibo-ui.js?ver=261125v2"></script>
+  <script src="../static/pibo-ui.js?ver=261126v2"></script>
   <script src="../static/index.js?ver=261124v3"></script>
   <script src="../static/v2/errhelp.js?ver=261120v1"></script>
+  <script src="../static/v2/examples.js?ver=261126v1"></script>
   <script src="../static/v2/vendor/toolbox-search.js?ver=1.2.11"></script>
-  <script src="../static/v2/ide.js?ver=261124v3"></script>
+  <script src="../static/v2/ide.js?ver=261126v1"></script>
 </body>
 
 </html>

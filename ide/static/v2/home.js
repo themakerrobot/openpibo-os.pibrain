@@ -117,6 +117,14 @@
     return t('home_ago_day', Math.floor(d / 86400));
   }
 
+  function renderFoot(s) {
+    var f = $('home_foot'); if (!f) return;
+    f.innerHTML = '<span><b>' + esc(PRODUCT) + '</b>' + (s.version ? ' · ' + esc(s.version) : '') + '</span>' +
+      '<span>© Circulus</span>' +
+      '<a href="' + esc(urlFor(APPS[7])) + '"><i class="fa-solid fa-circle-question"></i>' + esc(t('nav_guide')) + '</a>' +
+      '<a href="' + esc(sourceUrl()) + '" target="_blank" rel="noopener"><i class="fa-solid fa-scale-balanced"></i>' + esc(t('home_foot_license')) + '</a>';
+  }
+
   function renderSide() {
     var s = info || {};
     var ip = s.wifi_ip || s.wired_ip || HOST;
@@ -125,6 +133,7 @@
     sub.innerHTML = esc(PRODUCT) + ' · ' + esc(ip) + ' · <span class="home-dot"></span>' + esc(t(offline ? 'v2_disconnected' : 'v2_connected'));
 
     $('st_ver').textContent = s.version || '';
+    renderFoot(s);
     $('home_date').innerHTML = uptimeText(s.uptime);
     var rows = [];
     // 261123: IDE 아래 상태 줄을 빼면서 거기 있던 것(어댑터 · 유선 IP · 시리얼)도 여기로
@@ -200,6 +209,7 @@
       }).join('') + '</div></div>' +
       '<button type="button" class="home-set__row" id="set_wifi"><i class="fa-solid fa-wifi home-set__ic"></i><span><b>' + esc(t('home_set_wifi')) + '</b><small>' + esc(t('home_set_wifi_d')) + '</small></span><i class="fa-solid fa-chevron-right"></i></button>' +
       '<button type="button" class="home-set__row" id="set_screen"><i class="fa-solid fa-display home-set__ic"></i><span><b>' + esc(t('home_set_screen')) + '</b><small>' + esc(t('home_set_screen_d')) + '</small></span><i class="fa-solid fa-rotate-left"></i></button>' +
+      '<button type="button" class="home-set__row" id="set_info"><i class="fa-solid fa-circle-info home-set__ic"></i><span><b>' + esc(t('home_info')) + '</b><small>' + esc(t('home_info_d')) + '</small></span><i class="fa-solid fa-chevron-right"></i></button>' +
       '<button type="button" class="home-set__row" id="set_hw"><i class="fa-solid fa-stethoscope home-set__ic"></i><span><b>' + esc(t('home_hw')) + '</b><small>' + esc(t('home_hw_d')) + '</small></span><i class="fa-solid fa-chevron-right"></i></button>' +
       '<div class="home-set__lbl home-set__lbl--red">' + esc(t('home_set_danger')) + '</div>' +
       '<button type="button" class="home-set__row home-set__row--red" id="set_restore"><i class="fa-solid fa-eraser home-set__ic"></i><span><b>' + esc(t('nav_restore')) + '</b><small></small></span></button>' +
@@ -213,6 +223,7 @@
       });
     });
     $('set_wifi').addEventListener('click', openWifi);
+    $('set_info').addEventListener('click', openRobotInfo);
     $('set_screen').addEventListener('click', function () { if (window.PiboUI) PiboUI.screenReset(); });
     // H/W 검수는 켜진 앱을 다 끄므로 한 번 묻는다(IDE 와 같은 문구)
     $('set_hw').addEventListener('click', function () { ask(t('confirm_hwtest'), t('home_hw_go'), false, function () { enter(HWTEST, null); }); });
@@ -226,6 +237,65 @@
         b.querySelector('small').textContent = t(x[1]) + '\n' + t('home_set_sure');
       });
     });
+  }
+
+  /* ── 로봇 정보(261126) — 버전 · 시리얼 · 올린 때 · 저장 공간 · 모델 판. IDE GET /robot_info.
+     문의할 때 그대로 보낼 수 있게 [복사](http 라 clipboard API 가 없을 수 있어 textarea 로도) ── */
+  function size(b) { return b >= 1073741824 ? (b / 1073741824).toFixed(1) + ' GB' : Math.round(b / 1048576) + ' MB'; }
+  function ymd(sec) {
+    var d = new Date(sec * 1000), p = function (n) { return (n < 10 ? '0' : '') + n; };
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+  }
+  function copyText(txt) {
+    var done = function () { if (window.PiboUI) PiboUI.toast(t('home_info_copied'), 'ok', 2000); };
+    if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(txt).then(done, function () { fallback(); }); return; }
+    fallback();
+    function fallback() {
+      var ta = document.createElement('textarea'); ta.value = txt; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { if (document.execCommand('copy')) done(); } catch (e) { /* 무시 */ }
+      document.body.removeChild(ta);
+    }
+  }
+  function openRobotInfo() {
+    box.innerHTML = head('fa-circle-info', 'home-c-set', t('home_info')) +
+      '<dl class="home-info" id="ri_list"><div class="home-info__msg">' + esc(t('home_info_loading')) + '</div></dl>' +
+      '<div class="home-modal__btns"><button type="button" class="home-btn" id="ri_back"><i class="fa-solid fa-arrow-left"></i> ' + esc(t('kids_back')) + '</button>' +
+      '<button type="button" class="home-btn" id="ri_copy" disabled><i class="fa-solid fa-copy"></i> ' + esc(t('copy')) + '</button></div>';
+    wireClose(); modal.hidden = false;
+    $('ri_back').addEventListener('click', openSettings);
+    var lines = [];
+    fetch(location.origin + '/robot_info', { cache: 'no-store' }).then(function (r) { if (!r.ok) throw r.status; return r.json(); }).then(function (d) {
+      var rows = [
+        ['home_info_product', PRODUCT],
+        ['home_info_ver', d.version || '—'],
+        ['home_info_updated', d.updated ? ymd(d.updated) : '—'],
+        ['home_info_src', d.source_date || '—'],
+        ['home_info_serial', d.serial || '—'],
+        ['home_info_os', d.os || '—'],
+        ['home_info_disk', d.disk ? t('home_info_disk_v', size(d.disk.free), size(d.disk.total)) : '—']
+      ];
+      var html = rows.map(function (r) {
+        lines.push(t(r[0]) + ': ' + r[1]);
+        return '<div><dt>' + esc(t(r[0])) + '</dt><dd>' + esc(r[1]) + '</dd></div>';
+      }).join('');
+      if (d.disk && d.disk.total) {
+        var pct = Math.round(d.disk.used / d.disk.total * 100);
+        html += '<div class="home-info__bar" aria-hidden="true"><i style="width:' + Math.max(2, Math.min(100, pct)) + '%"' + (pct >= 90 ? ' data-hot' : '') + '></i></div>';
+      }
+      if (d.models && d.models.length) {
+        lines.push(t('home_info_models') + ':');
+        html += '<div class="home-info__sub">' + esc(t('home_info_models')) + '</div>' + d.models.map(function (m) {
+          lines.push('  ' + m.name + ' = ' + m.value);
+          return '<div class="home-info__m"><dt>' + esc(m.name) + '</dt><dd>' + esc(m.value) + '</dd></div>';
+        }).join('');
+      }
+      $('ri_list').innerHTML = html;
+      $('ri_copy').disabled = false;
+    }).catch(function () {
+      $('ri_list').innerHTML = '<div class="home-info__msg" data-err>' + esc(t('home_info_fail')) + '</div>';
+    });
+    $('ri_copy').addEventListener('click', function () { if (lines.length) copyText(lines.join('\n')); });
   }
 
   /* 소스 코드 · 라이선스(261123 — 예전 IDE [더보기] 에 있었다). 기기가 돌리는 태그(piBo_260930v2 → 260930v2)의 GitHub 트리, 모르면 리포 첫 화면 */

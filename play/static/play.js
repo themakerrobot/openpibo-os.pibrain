@@ -50,7 +50,38 @@
     if (feature() === 'art') a.push({ id: 'art', art: 'art', icon: 'fa-palette', name: 'play_art', sub: tr('play_art_sub') });
     return a;
   }
+  // 머리말 · 요약 띠(261126) — 내 친구(이름 · 지금 기분) · 파이보 할 수 있는 동작 / piBrain 그림첩
+  function stat(ic, label, val) {
+    var d = el('div', 'kids-stat');
+    d.innerHTML = icon(ic) + '<span><small></small><b></b></span>';
+    d.querySelector('small').textContent = label; d.querySelector('b').textContent = val; d.title = label + ' · ' + val;
+    return d;
+  }
+  function renderHead(n) {
+    $('home_head').setAttribute('data-n', n);
+    $('home_t').textContent = tr('home_play');
+    $('home_d').textContent = tr('kids_head_play_d');
+    var sum = $('home_sum'); sum.innerHTML = '';
+    var fr = stat('fa-heart', tr('kids_sum_friend'), '…'); sum.appendChild(fr);
+    var extra = null;
+    if (feature() === 'drive') {
+      var dv = (C.drive || {}), cnt = (dv.move || []).length + (dv.motion || []).length;
+      sum.appendChild(stat('fa-gamepad', tr('kids_sum_drive'), tr('kids_sum_drive_v', cnt)));
+    } else if (feature() === 'art') {
+      extra = stat('fa-palette', tr('kids_sum_art'), '…'); sum.appendChild(extra);
+      get('/api/art').then(function (r) {
+        var v = tr('kids_sum_of', (r.items || []).length, C.art_max || 30);
+        extra.querySelector('b').textContent = v; extra.title = tr('kids_sum_art') + ' · ' + v;
+      }).catch(function () { extra.querySelector('b').textContent = '—'; });
+    }
+    get('/api/pet').then(function (p) {
+      var prof = (p && p.profile) || {}, face = p && p.face;
+      var v = p && p.stats ? ((prof.name ? prof.name + ' · ' : '') + tr('kids_face_' + (face || 'normal'))) : tr('kids_sum_nofriend');
+      fr.querySelector('b').textContent = v; fr.title = tr('kids_sum_friend') + ' · ' + v;
+    }).catch(function () { fr.querySelector('b').textContent = tr('kids_sum_nofriend'); });
+  }
   function renderHome() {
+    renderHead(homeItems().length);
     var grid = $('home_grid');
     grid.innerHTML = '';
     grid.setAttribute('data-n', homeItems().length);

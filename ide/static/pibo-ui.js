@@ -34,6 +34,9 @@
     close:         { ko: '닫기', en: 'Close' },
     fs_tap:        { ko: '화면을 한 번 누르면 전체화면으로 돌아가요.', en: 'Tap the screen once to return to full screen.' },
     scr_tip:       { ko: '로봇 화면을 처음(IP)으로', en: 'Reset the robot screen (IP)' },
+    help:          { ko: '사용법', en: 'How to' },
+    help_title:    { ko: '이 화면에서 할 수 있는 것', en: 'What you can do here' },
+    help_more:     { ko: '도움말에서 더 보기', en: 'More in Help' },
     scr_done:      { ko: '로봇 화면을 처음으로 돌렸어요.', en: 'The robot screen is reset.' },
     scr_fail:      { ko: '로봇 화면을 돌리지 못했어요.', en: 'Could not reset the robot screen.' },
     home:          { ko: '처음 화면', en: 'Home' }
@@ -348,7 +351,7 @@
      (예전엔 IDE 상단바가 이름 붙인 새 탭으로 열었다 — openService·backToIDE. IDE 가 중심이던 시절의 것이라 뺐다) */
   // launch.html 은 ?ver 없이 열려 브라우저가 옛 판을 쓸 수 있다(포트가 바뀌면 옛 포트를 기다린다).
   // 대기 페이지를 고치면 이 번호를 올릴 것
-  var LAUNCH_VER = '261125v2';
+  var LAUNCH_VER = '261126v1';
   function launchUrl(svc, go) {
     return 'http://' + location.hostname + '/static/launch.html?svc=' +
            encodeURIComponent(svc) + (go ? '&go=' + encodeURIComponent(go) : '') + '&lang=' + curLang() + '&v=' + LAUNCH_VER;
@@ -551,6 +554,115 @@
     });
   }
 
+  /* ── [?] 사용법(261126) ───────────────────────────────────────────────
+     <body data-pb-help="code|tools|classifier|llm|cards|play"> 이면 상단바 [처음 화면] 바로 앞에 [사용법] 을 끼운다(모든 앱 같은 자리 — AUDIT B2).
+     누르면 '이 화면에서 할 수 있는 것' 3~4줄 + 도움말(8080)의 그 절로 가는 링크. 문구는 여기 한 곳(파이보·PiBrain 은 data-product 로 가른다) */
+  var HELP = {
+    code: { a: 'app-ide', ko: ['왼쪽 위 [파일]에서 파일을 열거나 새로 만들어요.', '블록을 끌어다 놓고 [실행]을 눌러요. 결과는 오른쪽 실행 화면에 나와요.',
+                               '[블록 | 파이썬]으로 같은 프로그램을 파이썬 코드로 볼 수 있어요.', '[⋯] → [예제 열기]로 만들어 둔 예제부터 시작해요.'],
+                          en: ['Open or create a file with [Files] at the top left.', 'Drag blocks and press [Run]. Results show on the right.',
+                               'Switch [Blocks | Python] to see the same program as Python code.', 'Start from an example with [⋯] → [Open an example].'] },
+    tools: { a: 'app-tools',
+             ko: ['[동작] 번호 점을 눌러 모터 각도를 맞추고 [추가·수정]으로 표에 넣어요.', '[카메라] 타일을 골라 얼굴·사물·손 인식을 바로 봐요.',
+                  '[음성] 목소리를 골라 말하게 하거나, [말해 보기]로 말을 글자로 받아요.'],
+             en: ['In [Motion], tap a numbered dot to set the angle, then [Add or update] to put it in the table.', 'In [Camera], pick a tile to see face, object or hand recognition.',
+                  'In [Speech], pick a voice to speak, or use [Try speaking] to turn speech into text.'],
+             kob: ['[버튼]을 누르면 어떤 버튼인지 기록에 나와요.', '[LED]에서 색을 고르면 불빛이 바로 바뀌어요.',
+                   '[카메라] 타일을 골라 얼굴·사물·손 인식을 바로 봐요.', '[음성]·[화면]으로 말하게 하거나 로봇 화면에 글자를 띄워요.'],
+             enb: ['Press a button and [Buttons] shows which one.', 'Pick a colour in [LED] to change the light.',
+                   'In [Camera], pick a tile to see face, object or hand recognition.', 'Use [Speech] and [Screen] to talk or show text on the robot screen.'] },
+    classifier: { a: 'app-classifier',
+                  ko: ['① 종류를 만들고 [꾹 눌러 모으기]로 예시를 모아요.', '② [AI 가르치기]를 누르면 태블릿에서 배워요.',
+                       '③ [저장]한 뒤 [시험]에서 맞히는지 봐요. 저장한 모델은 코딩 블록에서 써요.'],
+                  en: ['① Add classes and collect examples with [Hold to collect].', '② Press [Teach the AI] to train on this tablet.',
+                       '③ [Save], then check it in [Test]. Saved models work in code blocks.'] },
+    llm: { a: 'app-chat',
+           ko: ['처음에 대화 모델을 골라요. 위 [대화 모델]에서 언제든 바꿀 수 있어요.', '글을 쓰고 [보내기]. 대답하는 동안 [정지]로 멈춰요.',
+                '[소리로 말하기]를 켜면 로봇이 대답을 말해요.'],
+           en: ['Pick a chat model first. You can change it anytime in [Chat model].', 'Type and press [Send]. Press [Stop] to stop an answer.',
+                'Turn on [Speak out loud] to hear the robot say its answers.'] },
+    cards: { a: '',
+             ko: ['[도전]은 차시마다 문제를 풀고 별을 모아요.', '[만들기]에서 카드를 줄에 놓고 ▶로 로봇에게 시켜요.',
+                  '저장한 재주는 [내 재주]에 모이고 다음에 카드로 다시 써요.', '[설정]에서 오늘 차시·목소리·소리 크기를 바꿔요.'],
+             en: ['[Challenges]: solve tasks for each lesson and collect stars.', '[Make]: put cards in a row and press ▶ to run them on the robot.',
+                  'Saved tricks go to [My tricks] and become cards next time.', 'Change today\'s lesson, voice and volume in [Settings].'] },
+    play: { a: '',
+            ko: ['[키우기]에서 밥·놀기·재우기·씻기로 친구를 돌봐요.', '친구 모습은 [꾸미기]에서 바꿔요.', '[조종하기]는 넓고 평평한 바닥에서 버튼으로 움직여요.'],
+            en: ['In [Pet], care for your friend with food, play, sleep and wash.', 'Change how your friend looks in [Customize].', 'Use [Remote control] on a wide, flat floor.'],
+            kob: ['[키우기]에서 밥·놀기·재우기·씻기로 친구를 돌봐요. 로봇 버튼 네 개로도 돼요.', '친구 모습은 [꾸미기]에서 바꿔요.',
+                  '[픽셀 그림]은 칠하는 대로 로봇 화면에 나와요. [내 그림첩]에 저장해요.'],
+            enb: ['In [Pet], care for your friend with food, play, sleep and wash — the four robot buttons work too.', 'Change how your friend looks in [Customize].',
+                  '[Pixel art] shows on the robot screen as you paint. Save it to [My sketchbook].'] }
+  };
+  var helpPop = null;
+  function helpClose() { if (helpPop) { helpPop.remove(); helpPop = null; var b = document.getElementById('pb_help_bt'); if (b) b.setAttribute('aria-expanded', 'false'); } }
+  function helpOpen(btn) {
+    var key = document.body.getAttribute('data-pb-help'), h = HELP[key];
+    if (!h) return;
+    helpClose();
+    var brain = /brain/i.test(document.documentElement.getAttribute('data-product') || '');
+    var L = curLang() === 'en' ? 'en' : 'ko';
+    var lines = (brain && h[L + 'b']) || h[L];
+    var url = 'http://' + location.hostname + ':8080/build/' + (L === 'en' ? 'en' : 'html') + '/notes/piboMaker.html' + (h.a ? '#' + h.a : '');
+    var pop = document.createElement('div');
+    pop.className = 'pb-help'; pop.id = 'pb_help'; pop.setAttribute('role', 'dialog'); pop.setAttribute('aria-labelledby', 'pb_help_t');
+    pop.innerHTML = '<div class="pb-help__t" id="pb_help_t"><i class="fa-solid fa-circle-question"></i><span></span>' +
+      '<button type="button" class="pb-help__x" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div><ol></ol>' +
+      '<a class="pb-help__more" target="_blank" rel="noopener"><span></span><i class="fa-solid fa-arrow-up-right-from-square"></i></a>';
+    pop.querySelector('.pb-help__t span').textContent = tr('help_title');
+    var ol = pop.querySelector('ol');
+    lines.forEach(function (x) { var li = document.createElement('li'); li.textContent = x; ol.appendChild(li); });
+    var a = pop.querySelector('a'); a.href = url; a.querySelector('span').textContent = tr('help_more');
+    pop.querySelector('.pb-help__x').addEventListener('click', helpClose);
+    document.body.appendChild(pop);
+    var r = btn.getBoundingClientRect();
+    pop.style.top = Math.round(r.bottom + 8) + 'px';
+    var pw = pop.offsetWidth, vw = document.documentElement.clientWidth || window.innerWidth;   // 버튼 오른쪽 끝에 맞추되 화면 안으로
+    pop.style.left = Math.round(Math.max(8, Math.min(vw - pw - 8, r.right + 40 - pw))) + 'px';
+    btn.setAttribute('aria-expanded', 'true');
+    helpPop = pop;
+    pop.tabIndex = -1; pop.focus();   // 링크에 바로 포커스를 주면 큰 테두리가 떠서 상자에(Tab 으로 링크·닫기)
+  }
+  function addHelpButton() {
+    var key = document.body.getAttribute('data-pb-help');
+    if (!key || !HELP[key] || document.getElementById('pb_help_bt')) return;
+    var home = document.querySelector('.pb-header #home_bt, .pb-header [data-pb-home]');
+    var bar = home ? home.parentNode : document.querySelector('.pb-header .pb-iconbar');
+    if (!bar) return;
+    var b = document.createElement('button');
+    b.type = 'button'; b.id = 'pb_help_bt';
+    b.className = home ? home.className : 'pb-iconbtn';
+    b.setAttribute('aria-haspopup', 'dialog'); b.setAttribute('aria-expanded', 'false');
+    var lblCls = home && home.querySelector('.pb-iconbtn__label') ? 'pb-iconbtn__label' : (home ? '' : 'pb-iconbtn__label');
+    b.innerHTML = '<i class="fa-solid fa-circle-question"></i><span' + (lblCls ? ' class="' + lblCls + '"' : '') + '></span>';
+    function label() { b.lastChild.textContent = tr('help'); b.title = tr('help'); }
+    label();
+    b.addEventListener('click', function (e) { e.stopPropagation(); if (helpPop) helpClose(); else helpOpen(b); });
+    bar.insertBefore(b, home && home.parentNode === bar ? home : bar.firstChild);
+    document.addEventListener('click', function (e) { if (helpPop && !helpPop.contains(e.target)) helpClose(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && helpPop) { helpClose(); b.focus(); } });
+    window.addEventListener('resize', helpClose);
+    var sel = document.getElementById('language') || document.getElementById('lang_sel');
+    if (sel) sel.addEventListener('change', function () { setTimeout(function () { label(); if (helpPop) helpOpen(b); }, 0); });
+  }
+
+  /* 글자가 좁은 화면에서 숨는 버튼(아이콘만)에 이름을 남긴다(261126 — Lighthouse 폰 폭 'button-name').
+     title·aria-label 이 없으면 안의 글자를 title 로. 언어를 바꾸면 다시 */
+  function nameButtons() {
+    Array.prototype.forEach.call(document.querySelectorAll('.pb-header button, .pb-header a, [role="tab"], [role="radio"], #send_bt'), function (b) {
+      if (b.getAttribute('aria-label') && !b.hasAttribute('data-pb-named')) return;
+      if (b.title && !b.hasAttribute('data-pb-named')) return;
+      var txt = (b.textContent || '').replace(/\s+/g, ' ').trim();
+      if (!txt) return;
+      b.title = txt; b.setAttribute('data-pb-named', '');
+    });
+  }
+  function initNames() {
+    nameButtons(); setTimeout(nameButtons, 800); setTimeout(nameButtons, 2500);
+    var sel = document.getElementById('language') || document.getElementById('lang_sel');
+    if (sel) sel.addEventListener('change', function () { setTimeout(nameButtons, 50); });
+  }
+
   window.PiboUI = {
     toast: toast, banner: banner, hideBanner: hideBanner, watchSocket: watchSocket,
     tabPrefix: tabPrefix, goHome: goHome, restartSelf: restartSelf, enterService: enterService,
@@ -559,7 +671,7 @@
     fullscreen: fsToggle, screenReset: screenReset
   };
 
-  function initAll() { initShell(); addThemeButton(); syncThemeButtons(); initFullscreen(); watchTitle(); markAlerts(); initBrand(); initHomeButton(); }
+  function initAll() { initShell(); addThemeButton(); syncThemeButtons(); initFullscreen(); watchTitle(); markAlerts(); initBrand(); initHomeButton(); addHelpButton(); initNames(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAll);
   else initAll();
 })();

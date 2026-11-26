@@ -6,8 +6,8 @@ as piBrain, type **piBrain's IP address** (shown on the piBrain screen at startu
 The address opens the **home screen** (a worksheet page). Tap a big picture button to enter an app, and use [Home] (house button) in an app's top bar to come back.
 Row 1 **Make** (Coding · Tools · Teach AI · Chat), row 2 **Play & learn** (Card coding · Robot Play), row 3 **Settings and help** (Settings · Help).
 The app that is running now gets a red 'Running' stamp and the one you used last gets a yellow tag; on the right are the robot status and [Continue] (recent files, AI you taught).
-[Settings] has screen brightness, WiFi settings (pick and join a WiFi right there), reset robot screen, H/W check, factory reset, power off and the source code and license.
-The robot status (battery, temperature, memory, WiFi, serial, uptime) is on the home screen too. Every app has the same top bar — the app name on the left, and (app actions) · [Home] · [Full screen] · [Brightness] · language on the right.
+[Settings] has screen brightness, WiFi settings (pick and join a WiFi right there), reset robot screen, H/W check, **robot info** (version, install date, storage and model versions — [Copy] it when you contact support), factory reset, power off and the source code and license. The bottom of the home screen shows the product, version, Help and license.
+The robot status (battery, temperature, memory, WiFi, serial, uptime) is on the home screen too. Every app has the same top bar — the app name on the left, and (app actions) · **[How to]** · [Home] · [Full screen] · [Brightness] · language on the right. [How to] shows a few lines on what you can do on that screen and a link to the matching part of this help.
 
 | Screen | What it does | Where to open it |
 |---|---|---|
@@ -15,7 +15,7 @@ The robot status (battery, temperature, memory, WiFi, serial, uptime) is on the 
 | **Tools** | Try the buttons, LED, camera, voice and screen right away, without code | Home screen [Tools] |
 | **Chat** | Chat in text with the language model (LLM) running inside piBrain | Home screen [Chat] |
 | **Teach AI** | Collect examples with the camera and teach your own AI | Home screen [Teach AI] |
-| **Card coding** | Elementary students teach the robot friend tricks with cards (no coding) — Challenges · Make · My tricks | Home screen [Card coding] |
+| **Card coding** | Elementary students teach the robot friend tricks with cards (no coding) — Challenges · Make · My tricks. The top of its start screen shows today's lesson, stars and tricks | Home screen [Card coding] |
 | **Robot Play** | **Pet** (look after your robot friend) and **Pixel art** (color squares on the tablet and they appear on the LCD; animations, drawing replay and a sketchbook) | Home screen [Robot Play] |
 | **Help** | This document | Home screen [Help] |
 
@@ -24,16 +24,17 @@ Everything runs **inside piBrain** (voices, chat and the classifier included). O
 [Collect] category (Wikipedia, weather, news) need the internet, and that category is only in the Korean edition.
 ```
 
+(app-ide)=
 ## Coding (IDE)
 
 ![Coding with blocks](images/ide_block.png)
 
-- **Top bar**: the folder button on the far left opens the **file drawer**. [Blocks | Python] in the middle switches the editor. On the right are [⋯] (font size · Python editor theme) · [Home] · [Full screen] · [Brightness] · language, the same as every other app
+- **Top bar**: the folder button on the far left opens the **file drawer**. [Blocks | Python] in the middle switches the editor. On the right are [⋯] (font size · Python editor theme · open an example) · [How to] · [Home] · [Full screen] · [Brightness] · language, the same as every other app
 - **File drawer**: the file list, [Add] (new file / new folder / upload) and a preview for pictures and sounds. It is open at first and closes when you open a file or tap the editor.
   Tapping the file name in the editor bar opens it again. The icons on each file download, rename, **copy or move** and delete it.
   To copy or move, choose a folder (code · myimage · myaudio · mymodel · usb) and tap [Copy] or [Move]. It works between a USB drive and the robot too.
   If the name is already taken, the copy gets a new name like `name_1`
-- **Start screen**: before you open a file, the workspace shows **[New file] · [Open an example] · [Open my file]**. [Open an example] switches to blocks and opens the examples folder.
+- **Start screen**: before you open a file, the workspace shows **[New file] · [Open an example] · [Open my file]**. [Open an example] shows the examples as **cards** (title, what you learn, level ★, time, what you need); tap a card to open it in blocks. After a file is open, use [⋯] → [Open an example] at the top ([Show folder] opens the examples folder in the drawer).
   Once a file is open, the editor bar shows the folder and name, like `code › hand.json` (hover to see the full path)
 - **Run panel on the right**: **[Run] [Stop]** with the run status, screen output (pictures sent with the `Show image … on the monitor` block), program output and sending input to the program.
   The button at the right end of the editor bar hides or shows it, and it opens again when you run a program. Hide both the drawer and the run panel to give the blocks the whole width
@@ -49,6 +50,7 @@ Everything runs **inside piBrain** (voices, chat and the classifier included). O
   See **Python** on the left for the API
 - Programs run inside piBrain. Press [Stop] to stop one
 
+(app-tools)=
 ## Tools
 
 Try piBrain's features one at a time, without code. Pick [Buttons], [LED], [Camera], [Speech] or [Screen] in the tabs at the top right.
@@ -73,6 +75,7 @@ The piBrain picture on the left follows along: a pressed button lights up, the w
 
 - **Screen**: choose the text, size, position and color and show it on the screen (LCD, 240×320). [Home screen] goes back to the first screen with the IP address
 
+(app-classifier)=
 ## Teach AI (classifier)
 
 ![Teach AI: Train](images/classifier_learn.jpg)
@@ -96,9 +99,10 @@ Teach AI downloads its AI files (about 10 MB) the first time it opens. Open it o
 will start right away during class.
 ```
 
+(app-chat)=
 ## Chat
 
-Chat in text with the language model (LLM) that runs inside piBrain. Choose a model from the **model cards** on the start screen (or **[Chat model]** at the top), and the model loads then
+Chat in text with the language model (LLM) that runs inside piBrain. Choose a model from the **model cards** on the start screen, and the model loads then. After that, **[Chat model]** appears at the top so you can switch
 (the first time takes several tens of seconds). Changing the model starts the chat over.
 
 | Model | What it is |
