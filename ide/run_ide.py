@@ -13,7 +13,7 @@ import time
 import threading
 from typing import List
 
-from fastapi import FastAPI, Request, UploadFile, File
+from fastapi import FastAPI, Request, UploadFile, File, Body
 from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -257,7 +257,36 @@ def page_response(page):
   # 템플릿은 Jinja 문법을 안 쓴다. 파일을 그대로 보내면 starlette 버전과 무관하다.
   # 전에 쓰던 TemplateResponse(이름, {"request": ...}) 는 starlette 1.0 에서 받지 않아 첫 화면이 500 이 됐다
   # no-cache: FileResponse 는 Last-Modified 를 붙여 브라우저가 페이지를 그냥 캐시할 수 있다. 그러면 올린 ?ver 가 안 보인다
-  return FileResponse(os.path.join(TEMPLATE_DIR, page), media_type="text/html", headers={"Cache-Control": "no-cache"})
+  resp = FileResponse(os.path.join(TEMPLATE_DIR, page), media_type="text/html", headers={"Cache-Control": "no-cache"})
+  # 화면 스타일(학습지 · 개발자, 261126)은 로봇에 저장하고 페이지를 줄 때마다 쿠키로 내려 준다 — 같은 로봇 주소면 포트가 달라도
+  # 쿠키를 같이 보므로 도구·AI 가르치기·대화도 그 값으로 뜬다(각 화면 첫머리 스크립트가 읽는다). 다른 태블릿에서 바꿔도 다음에 열 때 따라간다
+  resp.set_cookie('pibo_style', ui_style(), max_age=31536000, path='/', samesite='lax')
+  return resp
+
+STYLE_FILE = '/home/pi/.pibo_style'   # 'dev' 면 개발자 스타일. 없으면 학습지(공장 초기화가 지운다). 납품 이미지에 미리 넣어 기본값을 정할 수 있다
+
+def ui_style():
+  try:
+    with open(STYLE_FILE) as f:
+      return 'dev' if f.read().strip() == 'dev' else 'paper'
+  except OSError:
+    return 'paper'
+
+@app.post('/ui_style')
+async def set_ui_style(data: dict = Body(...)):
+  style = 'dev' if data.get('style') == 'dev' else 'paper'
+  try:
+    if style == 'dev':
+      with open(STYLE_FILE, 'w') as f:
+        f.write('dev\n')
+      _chown_pi(STYLE_FILE)
+    elif os.path.exists(STYLE_FILE):
+      os.remove(STYLE_FILE)
+  except OSError as err:
+    return JSONResponse(content={'ok': False, 'error': str(err)}, status_code=500)
+  resp = JSONResponse(content={'ok': True, 'style': style})
+  resp.set_cookie('pibo_style', style, max_age=31536000, path='/', samesite='lax')
+  return resp
 
 @app.get('/', response_class=HTMLResponse)
 async def read_root(request: Request):
@@ -1087,7 +1116,8 @@ def reset_extra():
   except OSError as e:
     print(f'[restore] {kids}: {e}')
   for p in (glob.glob('/home/pi/mymotion.json*') + ['/home/pi/custom_motion.json', '/home/pi/.motion.json', '/home/pi/capture.jpg',
-            '/home/pi/.tmp.py', '/home/pi/.tmp.jpg', '/home/pi/.tmp_tools.wav', '/home/pi/tmp.mp3']):
+            '/home/pi/.tmp.py', '/home/pi/.tmp.jpg', '/home/pi/.tmp_tools.wav', '/home/pi/tmp.mp3',
+            '/home/pi/.pibo_style']):   # 화면 스타일 → 학습지(261126)
     try:
       if os.path.isfile(p) or os.path.islink(p):
         os.remove(p)
