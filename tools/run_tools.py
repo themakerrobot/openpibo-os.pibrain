@@ -341,11 +341,13 @@ async def lifespan(app: FastAPI):
     if device:
         try: device.led_off()
         except: pass
-    if oled:
-        try:
-            with oled_lock:
-                oled.clear()
-        except: pass
+    # 끝날 때 LCD 를 검게 지우지 않고 IP 화면을 그리고 끝낸다(261126 — 체험 앱과 같게). 전엔 oled.clear() 라
+    # IDE 가 IP 화면을 그린 뒤에 검게 지워지거나(꺼지는 중을 '꺼짐' 으로 봄), 코드 실행 뒤 화면을 안 쓰는 프로그램이면 검은 채 남았다
+    try:
+        with oled_lock:
+            subprocess.run([f'{ENV_PATH}/python3', NETWORK_DISP], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=15)
+    except Exception as e:
+        print(f'[network_disp] exit draw failed: {e}')
 
 # ── App ──────────────────────────────────────────────────────
 # 글꼴은 IDE(80) 한 벌을 세 앱이 같이 쓴다(260929). 이 서버의 글꼴 주소는 IDE 주소로 영구 이동시킨다.

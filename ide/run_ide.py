@@ -594,6 +594,13 @@ def draw_ip():
     if screen_proc is None or screen_proc.poll() is not None:   # 여러 번 불러도 하나만
       screen_proc = bg([f'{ENV_PATH}/python3', '/home/pi/openpibo-os/system/network_disp.py'])
 
+def unit_busy(u):
+  """서비스가 아직 내려가지 않았는가 — 켜져 있거나 켜지는 중·꺼지는 중이면 True(261126).
+  is-active 의 끝 코드만 보면 꺼지는 중(deactivating)도 '꺼짐' 이라, 내려가는 앱이 마지막에 화면을 지우기 전에 IP 화면을 그렸다
+  (PiBrain 도구가 꺼질 때 LCD 를 지우던 것과 겹쳐 화면이 검게 남았다)"""
+  r = subprocess.run(['systemctl', 'is-active', u], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, timeout=5)
+  return r.stdout.strip() not in ('inactive', 'failed', 'unknown', '')
+
 def show_ip(keep=None):
   """로봇 화면(파이보 OLED · PiBrain LCD)을 IP 화면으로 되돌린다(261116, 사용자 — 앱을 나가거나 다른 앱으로 옮기면 무조건).
   끄이는 앱(도구·분류기·대화 웹·체험 앱·검수)이 다 내려간 뒤에 그린다 — 내려가는 앱이 마지막에 화면을 덮어쓰지 않게.
@@ -604,7 +611,7 @@ def show_ip(keep=None):
     end = time.time() + 20
     while time.time() < end:
       try:
-        busy = any(subprocess.run(['systemctl', 'is-active', '--quiet', u], timeout=5).returncode == 0 for u in units) or \
+        busy = any(unit_busy(u) for u in units) or \
                any(subprocess.run(['pgrep', '-f', x], stdout=subprocess.DEVNULL, timeout=5).returncode == 0 for x in procs)
       except Exception:  # noqa: BLE001 — 못 물어보면 기다리지 않고 그린다
         busy = False
