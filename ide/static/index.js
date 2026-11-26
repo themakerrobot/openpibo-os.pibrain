@@ -1112,10 +1112,15 @@ $(document).keydown(async (evt) => {
 
 // WiFi 설정 창은 대문(/) [설정] 으로 옮겼다(261123 — home.js)
 
-// 떠날 때 실행 중인 프로그램을 멈춘다. beforeunload 가 아니라 pagehide — 저장 안 한 작업이 있으면 ide.js 가
-// beforeunload 에서 '나가시겠어요?' 를 묻는데(261126), 거기서 [취소] 해도 프로그램이 멈추던 것을 막으려고
+// 떠날 때 실행 중인 프로그램을 멈춘다(261126 개정).
+// - 묻지 않고 떠날 때(저장할 것 없음): beforeunload 에서 바로(예전과 같음)
+// - 저장 안 한 작업이 있어 ide.js 가 '나가시겠어요?' 를 물을 때: [취소]하면 멈추면 안 되므로 beforeunload 에선 안 보내고,
+//   실제로 떠날 때 뜨는 pagehide 에서 보낸다. persisted(뒤로-앞으로 캐시에 들어감·일부 태블릿의 앱 전환)는 떠난 게 아니라 건너뛴다
+window.addEventListener('beforeunload', (evt) => {
+  if (!(window.PiboIDE && window.PiboIDE.willAsk && window.PiboIDE.willAsk())) socket.emit("stop");
+});
 window.addEventListener('pagehide', (evt) => {
-  socket.emit("stop");
+  if (!evt.persisted) socket.emit("stop");
 });
 
 $("#prompt").on("keypress", (evt) => {

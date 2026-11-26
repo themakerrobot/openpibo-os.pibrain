@@ -436,10 +436,10 @@
   /* 13) 저장 안 한 작업을 지킨다 · Ctrl+Enter 실행 (261126) ─────────────────── */
   /* 탭을 닫거나 새로 고치거나 뒤로 가면 전엔 묻지 않고 사라졌다([처음 화면] 만 물었다). 저장 표시(●)가 있을 때만
      브라우저 기본 확인창을 띄운다(문구는 브라우저가 정한다). 실행 중인 프로그램 멈추기는 index.js 가 pagehide 에서 */
+  function willAsk() { var cc = $id('codecheck'); return !leavingOk && !!(cc && cc.innerHTML); }
+  if (window.PiboIDE) window.PiboIDE.willAsk = willAsk;   // index.js 가 '묻지 않을 때만' 바로 멈추게
   window.addEventListener('beforeunload', function (e) {
-    if (leavingOk) return;
-    var cc = $id('codecheck');
-    if (!cc || !cc.innerHTML) return;
+    if (!willAsk()) return;
     e.preventDefault();
     e.returnValue = '';
     return '';
