@@ -262,6 +262,7 @@ async def ensure_face():
             if face: return
             from openpibo.vision_face import Face
             f = Face()
+            f.preload()   # 라이브러리는 처음 쓸 때 올리지만(261126) 도구는 타일을 고른 뒤 바로 결과가 나오게 미리
             global face_tool
             try:
                 import openpibo_models

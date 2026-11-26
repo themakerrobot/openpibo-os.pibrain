@@ -448,14 +448,12 @@ async def upload_file(files: List[UploadFile] = File(...)):
 @app.post('/show')
 async def show_file(data: UploadFile = File(...)):
   try:
+    # 받은 그림을 그대로 보낸다(261126). 전엔 /home/pi/.tmp.jpg 에 썼다가 다시 읽어서, [계속 반복] 안이면
+    # 초당 수십 번 SD 카드에 썼다. 경로는 화면이 '실행 결과 그림' 으로 알아보는 이름표로만 쓴다(ide.js LIVE_PATH)
     tmp_path = '/home/pi/.tmp.jpg'
-    with open(tmp_path, 'wb') as f:
-      content = await data.read()
-      f.write(content)
-    with open(tmp_path, 'rb') as f:
-      image_data = f.read()
-      encoded_image = base64.b64encode(image_data).decode('utf-8')
-      await socket_manager.emit('update', {'image': encoded_image, 'filepath': tmp_path})
+    content = await data.read()
+    encoded_image = base64.b64encode(content).decode('utf-8')
+    await socket_manager.emit('update', {'image': encoded_image, 'filepath': tmp_path})
   except Exception as err:
     print(err)
     await socket_manager.emit('update', {'dialog': 'err_view', 'detail': str(err)})

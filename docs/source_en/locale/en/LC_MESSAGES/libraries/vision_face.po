@@ -103,6 +103,9 @@ msgstr "It can also be saved to a file so the face information is kept after the
 msgid "example::"
 msgstr ""
 
+msgid "얼굴 모델을 모두 미리 올립니다(처음 쓸 때 기다리지 않게). 보통은 부를 필요가 없습니다 — 각 기능을 처음 쓸 때 그 기능에 필요한 모델만 올립니다."
+msgstr "Loads all face models in advance (so the first use does not wait). You usually do not need to call it — each feature loads only the models it needs the first time you use it."
+
 msgid "Returns"
 msgstr ""
 
@@ -244,4 +247,7 @@ msgstr "List of {face distance, direction, landmarks} (up to 2 faces)"
 
 #~ msgid "오차도가 ``face.threshold`` (기본 0.4) 보다 낮을 때 동일인으로 판정합니다."
 #~ msgstr "Judged to be the same person when the error is lower than ``face.threshold`` (default 0.4)."
+
+#~ msgid "MediaPipe 얼굴 점(478개) — 얼굴 점·정렬·방향·거리에 같이 쓴다"
+#~ msgstr ""
 
