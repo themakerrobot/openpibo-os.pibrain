@@ -28,10 +28,12 @@
     conn_lost:     { ko: '로봇과 연결이 끊겼어요. 다시 연결하는 중…', en: 'Connection lost. Reconnecting…' },
     conn_back:     { ko: '다시 연결됐어요.', en: 'Reconnected.' },
     // 도구·분류기·대화가 같이 쓴다(파이보·PiBrain 공통이라 제품 이름을 넣지 않는다)
-    svc_stopped:   { ko: '이 창이 꺼졌어요. IDE에서 도구·대화·분류기 중 다른 것을 켜거나 코드를 실행하면 꺼져요.',
-                     en: 'This window has stopped. It stops when Tools, Chat or Classifier is opened from the IDE, or when code runs.' },
+    svc_stopped:   { ko: '이 앱이 꺼졌어요. 처음 화면에서 다른 앱을 켜거나 코딩에서 코드를 실행하면 꺼져요.',
+                     en: 'This app has stopped. It stops when another app is opened from Home, or when code runs.' },
     restart:       { ko: '다시 켜기', en: 'Restart' },
-    close:         { ko: '닫기', en: 'Close' },
+    restarting:    { ko: '다시 켜는 중… 이 화면의 내용은 그대로 둬요.', en: 'Restarting… Your work on this page is kept.' },
+    restart_fail:  { ko: '다시 켜지 못했어요. 잠시 뒤 다시 해 보세요.', en: 'Could not restart. Try again in a moment.' },
+    retry:         { ko: '다시 시도', en: 'Try again' },
     fs_tap:        { ko: '화면을 한 번 누르면 전체화면으로 돌아가요.', en: 'Tap the screen once to return to full screen.' },
     scr_tip:       { ko: '로봇 화면을 처음(IP)으로', en: 'Reset the robot screen (IP)' },
     help:          { ko: '사용법', en: 'How to' },
@@ -351,7 +353,7 @@
      (예전엔 IDE 상단바가 이름 붙인 새 탭으로 열었다 — openService·backToIDE. IDE 가 중심이던 시절의 것이라 뺐다) */
   // launch.html 은 ?ver 없이 열려 브라우저가 옛 판을 쓸 수 있다(포트가 바뀌면 옛 포트를 기다린다).
   // 대기 페이지를 고치면 이 번호를 올릴 것
-  var LAUNCH_VER = '261126v1';
+  var LAUNCH_VER = '261126v2';
   function launchUrl(svc, go) {
     return 'http://' + location.hostname + '/static/launch.html?svc=' +
            encodeURIComponent(svc) + (go ? '&go=' + encodeURIComponent(go) : '') + '&lang=' + curLang() + '&v=' + LAUNCH_VER;
@@ -362,6 +364,28 @@
   }
   function restartSelf(svc) {
     location.href = launchUrl(svc);
+  }
+  /* 페이지를 옮기지 않고 서비스만 다시 켠다(261126) — 분류기처럼 모은 것이 브라우저에만 있는 앱용.
+     restartSelf 는 대기 페이지로 옮겨 가 모은 예시·학습한 모델이 사라졌다. 켜기 요청을 5초마다 보내고(대기 페이지와 같다)
+     소켓이 다시 붙으면 watchSocket 이 배너를 내린다. 1분 안에 안 붙으면 [다시 시도] */
+  function restartInPlace(svc, sock) {
+    var url = 'http://' + location.hostname + '/' + svc + '?enable=on', tries = 0, timer = null;
+    function done() { clearInterval(timer); timer = null; }
+    function ask() {
+      if (sock && sock.connected) { done(); return; }
+      if (++tries > 12) {
+        done();
+        banner('conn', { text: tr('restart_fail'), kind: 'error', actions: [
+          { label: tr('retry'), primary: true, onClick: function () { restartInPlace(svc, sock); } },
+          { label: tr('home'), onClick: goHome }] });
+        return;
+      }
+      fetch(url, { method: 'GET', mode: 'no-cors' }).catch(function () { /* 다음에 다시 */ });
+    }
+    banner('conn', { text: tr('restarting'), kind: 'info' });
+    if (sock && sock.once) sock.once('connect', done);
+    ask();
+    timer = setInterval(ask, 5000);
   }
   function enterService(svc, go) {
     fsLeaving = Date.now();
@@ -665,7 +689,7 @@
 
   window.PiboUI = {
     toast: toast, banner: banner, hideBanner: hideBanner, watchSocket: watchSocket,
-    tabPrefix: tabPrefix, goHome: goHome, restartSelf: restartSelf, enterService: enterService,
+    tabPrefix: tabPrefix, goHome: goHome, restartSelf: restartSelf, restartInPlace: restartInPlace, enterService: enterService,
     busy: busy, text: tr, lang: curLang,
     getTheme: getTheme, setTheme: setTheme, ui: UI, countTo: countTo,
     fullscreen: fsToggle, screenReset: screenReset

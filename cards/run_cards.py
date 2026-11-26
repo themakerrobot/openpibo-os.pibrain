@@ -273,6 +273,8 @@ def trace_of(program, card_of, tricks, depth=0):
   out = []
   for n in program:
     card = card_of(n['c'])
+    if card is None:   # 재주 안의 카드가 없어졌다(도구에서 지운 내 동작 등) — 실행 중에 멈추지 않게 미리 막는다(261126)
+      raise ValueError('missing card')
     if card['kind'] == 'repeat':
       for _ in range(card['arg']):
         out += trace_of(n.get('body') or [], card_of, tricks, depth)

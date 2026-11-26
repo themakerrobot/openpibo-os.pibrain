@@ -405,7 +405,7 @@
     if (S.running) return;
     if (!program.length) { toast(tr('kids_row_empty')); return; }
     post('/api/run', { program: program, challenge: ch && ch.on === 'run' ? ch.id : null, lang: L() }).then(function (r) {
-      if (r._status !== 200) { toast(tr(r._status === 409 ? 'kids_busy' : r.error === 'too long' ? 'kids_too_long' : 'kids_err')); return; }
+      if (r._status !== 200) { toast(tr(r._status === 409 ? 'kids_busy' : r.error === 'too long' ? 'kids_too_long' : r.error === 'missing card' ? 'kids_err_missing' : 'kids_err')); return; }
       setRunning(true);
       S.warned = false;
       poll();
@@ -613,9 +613,34 @@
 
   /* IDE 와 연결(261028) — [처음 화면] 은 대문으로 간다(261123). 탭이 닫히면 IDE 가 체험 앱을 끈다(keepalive 가 있어야 언로드 중에도 간다).
      손으로 띄운 경우(IDE 없이 시험)엔 /cards 가 없어 실패해도 상관없다 */
-  window.addEventListener('beforeunload', function () {
+  /* 서버가 꺼졌는지 본다(261126) — 다른 앱을 켜거나 코드를 실행하면 IDE 가 이 앱을 끈다. 전엔 누를 때마다 '연결 안 됨' 알림만 떴다.
+     5초마다(화면이 보일 때만) 가볍게 묻고, 두 번 연달아 안 되면 배너 + [다시 켜기](페이지는 그대로 — 늘어놓은 카드가 남는다) */
+  var alive = { connected: true }, missed = 0;
+  function beat() {
+    if (document.hidden) return;
+    fetch('/api/content', { method: 'HEAD', cache: 'no-store' }).then(function () {
+      missed = 0;
+      if (!alive.connected) { alive.connected = true; if (window.PiboUI) { PiboUI.hideBanner('conn'); PiboUI.toast(PiboUI.text('conn_back'), 'ok'); } }
+    }).catch(function () {
+      if (++missed < 2 || !alive.connected || !window.PiboUI) return;
+      alive.connected = false;
+      PiboUI.banner('conn', { text: PiboUI.text('svc_stopped'), kind: 'warn', actions: [
+        { label: PiboUI.text('restart'), primary: true, onClick: function () { PiboUI.restartInPlace('cards', alive); } },
+        { label: PiboUI.text('home'), onClick: function () { PiboUI.goHome(); } }] });
+    });
+  }
+  setInterval(beat, 5000);
+  function stopSelf() {
     try { fetch('http://' + location.hostname + '/cards?enable=off', { method: 'GET', keepalive: true }).catch(function () {}); } catch (e) { /* 무시 */ }
+  }
+  // [만들기]에서 늘어놓은 카드는 저장(재주로 저장)하지 않으면 사라진다 — 떠나기 전에 묻는다(261126). 물을 때는 실제로 떠날 때(pagehide) 끈다
+  var askedLeave = false;
+  window.addEventListener('beforeunload', function (e) {
+    askedLeave = S.view === 'make' && !S.ch && S.program.length > 0;
+    if (!askedLeave) { stopSelf(); return; }
+    e.preventDefault(); e.returnValue = ''; return '';
   });
+  window.addEventListener('pagehide', function (e) { if (askedLeave && !e.persisted) stopSelf(); });
 
   function lessonHelp() {
     var n = Number($('t_lesson').value), box = $('t_lesson_help');

@@ -11,6 +11,11 @@ def run():
       wip, ssid, sn = v[6], v[8], v[0][-8:]
     else:
       wip, ssid, sn = "", "", v[0][-8:]
+      # AP 모드(학교 WiFi 를 못 잡아 로봇이 스스로 WiFi 를 켬)면 접속할 이름·주소를 보인다(261126) — 전엔 빈칸이라
+      # 태블릿을 어디에 붙일지 몰랐다. 이름·주소는 hotspot.sh 의 AP_SSID(pibo-시리얼 끝 8자리)·STATIC_IP 와 같다
+      ap_ip = os.popen("ifconfig ap0 2>/dev/null | grep 'inet ' | awk '{ print $2 }'").read().strip()
+      if ap_ip:
+        wip, ssid = ap_ip, f'pibo-{sn}'
     o = Oled()
 
     o.set_font(size = 20)

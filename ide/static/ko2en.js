@@ -12,6 +12,7 @@ const translations = {
   pycode_title:     { ko: "블록이 만드는 파이썬 코드",      en: "Python code made by the blocks" },
   copy:             { ko: "복사",                        en: "Copy" },
   close:            { ko: "닫기",                        en: "Close" },
+  run_preparing:          { ko: "실행 준비 중… (켜져 있던 앱을 끄는 중)", en: "Getting ready… (closing other apps)" },
   run_running:      { ko: "실행 중",                     en: "Running" },
   run_done:         { ko: "끝남",                        en: "Done" },
   run_error:        { ko: "오류로 끝남",                  en: "Stopped with an error" },
@@ -88,8 +89,8 @@ const translations = {
     en: (oldname, newname) => `Rename "${oldname}" to "${newname}"?`
   },
   confirm_restore: {
-    ko: "공장 초기화를 할까요?\n내 코드·사진·소리·분류기 모델이 모두 지워지고, WiFi가 기본값(pibo)으로 돌아간 뒤 전원이 꺼져요.\n되돌릴 수 없어요.",
-    en: "Factory reset?\nAll your code, pictures, sounds and classifier models will be deleted, the WiFi goes back to the default (pibo), and the power turns off.\nThis cannot be undone."
+    ko: "공장 초기화를 할까요?\n내 코드·사진·소리·AI 가르치기 모델과 카드 코딩·로봇 놀이 기록이 모두 지워지고, WiFi가 기본값(pibo)으로 돌아간 뒤 전원이 꺼져요.\n되돌릴 수 없어요.",
+    en: "Factory reset?\nAll your code, pictures, sounds, Teach AI models and the Card coding and Robot play records will be deleted, the WiFi goes back to the default (pibo), and the power turns off.\nThis cannot be undone."
   },
   confirm_hwtest: {
     ko: "하드웨어 검수를 시작할까요?\n켜져 있는 도구·대화·분류기는 꺼지고, 검수 창을 닫으면 검수도 끝나요.",
@@ -162,6 +163,11 @@ const translations = {
   err_load_protected:     { ko: "보호된 파일이라 열 수 없어요.", en: "This file is protected and can't be opened." },
   err_delete_protected:   { ko: "보호된 파일이라 지울 수 없어요.", en: "This file is protected and can't be deleted." },
   err_delete_parse:       { ko: "파일 이름이 올바르지 않아 지우지 못했어요.", en: "Could not delete. The file name is not valid." },
+  err_file_big:           { ko: (n) => `파일이 너무 커서 열지 않았어요(${n}까지).`, en: (n) => `The file is too large to open (up to ${n}).` },
+  err_load_binary:        { ko: "글자로 된 파일이 아니라 편집기로 열 수 없어요. 내려받아 쓰거나, 블록·파이썬에서 경로로 불러 주세요.", en: "This is not a text file, so the editor can't open it. Download it, or load it by its path in your program." },
+  err_bad_name:           { ko: "이름에 / 나 \\ 를 쓰거나 . 으로 시작할 수 없어요.", en: "A name can't contain / or \\, or start with a dot." },
+  err_rename_exists:      { ko: (n) => `같은 이름(${n})이 이미 있어요. 다른 이름을 써 주세요.`, en: (n) => `"${n}" already exists. Use another name.` },
+  err_upload_save:        { ko: "파일을 저장하지 못했어요.", en: "Could not save the file." },
   err_rename_protected:   { ko: "보호된 파일이라 이름을 바꿀 수 없어요.", en: "This file is protected and can't be renamed." },
   err_rename_parse:       { ko: "이름이 올바르지 않아 바꾸지 못했어요.", en: "Could not rename. The name is not valid." },
   err_create_protected:   { ko: "보호된 폴더라 파일을 만들 수 없어요.", en: "This folder is protected. You can't create files here." },
@@ -241,6 +247,7 @@ const translations = {
   chat_tool_stop:   { ko: "멈춤", en: "Stop" },
   wifi_err_ssid:    { ko: "WiFi 이름(SSID)을 적어 주세요. 32바이트(영문 32자, 한글 10자)까지 돼요.", en: "Enter the WiFi name (SSID), up to 32 bytes." },
   wifi_err_psk:     { ko: "비밀번호는 8~63자로 적어 주세요.", en: "The password must be 8 to 63 characters." },
+  wifi_err_id:      { ko: "학교·회사 계정(EAP) WiFi는 아이디를 적어 주세요.", en: "Enter the user ID for this account (EAP) WiFi." },
   wifi_err_connect: { ko: "WiFi에 연결하지 못했어요. 이름과 비밀번호를 확인해 주세요.", en: "Could not connect to the WiFi. Check the name and password." },
   // 261028 — 말투 정리 때 더한 키(대화 화면·접근성 이름 포함)
   wifi_connect:     { ko: "연결", en: "Connect" },
@@ -375,6 +382,7 @@ const translations = {
   kids_busy:        { ko: "로봇이 아직 움직이는 중이에요.", en: "The robot is still busy." },
   kids_too_long:    { ko: "너무 길어요. 반복이나 재주를 조금 줄여 볼까요?", en: "That's too long. Try fewer repeats or tricks." },
   kids_err:         { ko: "잠깐 문제가 생겼어요.", en: "Something went wrong." },
+  kids_err_missing: { ko: "재주 안에 없어진 카드가 있어요(지운 내 동작 등). [내 재주]에서 그 재주를 고쳐 주세요.", en: "A trick uses a card that no longer exists (such as a deleted motion). Fix that trick in [My tricks]." },
   kids_err_conn:    { ko: "로봇에 연결하지 못했어요.", en: "Could not reach the robot." },
   kids_voice_loading: { ko: "목소리 준비 중…", en: "Getting the voice ready…" },
   kids_tricks_full: { ko: "재주가 꽉 찼어요. 안 쓰는 재주를 지워 주세요.", en: "Too many tricks. Delete one you don't use." },

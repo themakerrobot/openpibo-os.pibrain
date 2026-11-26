@@ -698,12 +698,37 @@
   }
   /* IDE 와 연결 — [처음 화면] 은 대문으로 간다(261123). 탭이 닫히면 IDE 가 로봇 놀이를 끈다(keepalive 가 있어야 언로드 중에도 간다).
      손으로 띄운 경우(IDE 없이 시험)엔 /play 가 없어 실패해도 상관없다 */
-  window.addEventListener('beforeunload', function (e) {
+  /* 서버가 꺼졌는지 본다(261126) — 다른 앱을 켜거나 코드를 실행하면 IDE 가 이 앱을 끈다. 전엔 누를 때마다 '연결 안 됨' 알림만 떴다.
+     5초마다(화면이 보일 때만) 가볍게 묻고, 두 번 연달아 안 되면 배너 + [다시 켜기](페이지는 그대로 — 늘어놓은 카드가 남는다) */
+  var alive = { connected: true }, missed = 0;
+  function beat() {
+    if (document.hidden) return;
+    fetch('/api/content', { method: 'HEAD', cache: 'no-store' }).then(function () {
+      missed = 0;
+      if (!alive.connected) { alive.connected = true; if (window.PiboUI) { PiboUI.hideBanner('conn'); PiboUI.toast(PiboUI.text('conn_back'), 'ok'); } }
+    }).catch(function () {
+      if (++missed < 2 || !alive.connected || !window.PiboUI) return;
+      alive.connected = false;
+      PiboUI.banner('conn', { text: PiboUI.text('svc_stopped'), kind: 'warn', actions: [
+        { label: PiboUI.text('restart'), primary: true, onClick: function () { PiboUI.restartInPlace('play', alive); } },
+        { label: PiboUI.text('home'), onClick: function () { PiboUI.goHome(); } }] });
+    });
+  }
+  setInterval(beat, 5000);
+  function stopSelf() {
     try { fetch('http://' + location.hostname + '/play?enable=off', { method: 'GET', keepalive: true }).catch(function () {}); } catch (x) { /* 무시 */ }
     var url = S.view === 'pet' ? '/api/pet/mode' : S.view === 'art' ? '/api/art/mode' : null;
     if (url) {
       try { fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{"on":false}', keepalive: true }); } catch (x) { /* 무시 */ }
     }
+  }
+  // 저장하지 않은 픽셀 그림이 있으면 떠나기 전에 묻는다(261126). 물을 때는 실제로 떠날 때(pagehide) 끈다
+  var askedLeave = false;
+  window.addEventListener('beforeunload', function (e) {
+    askedLeave = S.view === 'art' && AR.dirty;
+    if (!askedLeave) { stopSelf(); return; }
+    e.preventDefault(); e.returnValue = ''; return '';
   });
+  window.addEventListener('pagehide', function (e) { if (askedLeave && !e.persisted) stopSelf(); });
   start();
 })();

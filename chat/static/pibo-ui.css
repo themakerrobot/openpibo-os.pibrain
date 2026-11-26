@@ -1137,6 +1137,7 @@ body.pb-v2 #onoff_val[data-label]::before, .pb-conn[data-label]::before { conten
 body.pb-v2 #onoff_val[data-label]::after, .pb-conn[data-label]::after { content: attr(data-label); }
 body.pb-v2 #onoff_val[data-state="on"]::before, .pb-conn[data-state="on"]::before { background: var(--v2-green); box-shadow: 0 0 0 2px rgba(31, 157, 98, .25); }
 body.pb-v2 #onoff_val[data-state="off"]::before, .pb-conn[data-state="off"]::before { animation: pb-conn-blink 1.2s ease-in-out infinite; }
+body.pb-v2 #onoff_val[data-state="error"]::before, .pb-conn[data-state="error"]::before { background: var(--v2-red); animation: none; }   /* 준비 실패(261126) */
 @keyframes pb-conn-blink { 50% { opacity: .25; } }
 
 /* 왼쪽 윗줄: 떠 있던 [원래자세] 와 float 두 덩이를 한 줄로 */

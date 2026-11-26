@@ -174,10 +174,26 @@ const MAX_FILENAME_LENGTH = 50;
 const RESULT_MAX = 200 * 1024;   // 실행 출력 칸에 남기는 글자 수
 // 열린 파일이 바로 그 경로이거나 그 폴더 안에 있는지(이름 바꾸기·지우기 때). 전엔 includes 라
 // 'a' 를 지우면 열려 있던 'abc.py' 까지 비웠다(261027)
+let runPreparing = false;   // 실행 준비 중(서버 'preparing') — 실행 칩이 '준비 중' 을 보인다
 function isPathOrInside(path, target) {
   return path === target || path.startsWith(target + "/");
 }
+// 열린 파일에 저장 안 한 것이 있으면 저장할지 묻는다(261126). 새 파일을 만들거나, 열린 파일의 이름을 바꾸거나 옮기기 전에 —
+// 전엔 파이썬 모드의 새 파일만 물었고, 이름 바꾸기·옮기기는 고친 것을 묻지 않고 편집기를 비웠다
+async function askSaveOpen() {
+  const p = $("#codepath").text();
+  if (!p) return;
+  const block = [...codeTypeBtns].some((el) => el.classList.contains("checked") && el.name == "block");
+  const now = block ? JSON.stringify(Blockly.serialization.workspaces.save(workspace)) : codeEditor.getValue();
+  if (now == (block ? saveBlock : saveCode)) return;
+  if (await confirm_popup(translations['confirm_save_file'][lang](p)))
+    socket.emit("save", { codepath: p, codetext: now });
+}
 const MAX_FILE_NUMBER = 10;
+// 파일·폴더 이름 하나로 쓸 수 없는 것(261126 — 서버 bad_name 과 같은 규칙): 경로 구분 / \ , 숨김(. 으로 시작)
+function badName(n) {
+  return /[\/\\]/.test(n) || n.startsWith(".");
+}
 const codeEditor = CodeMirror.fromTextArea(
   document.getElementById("codemirror-code"),
   {
@@ -293,12 +309,24 @@ socket.on("update", async (data) => {
     $("#audio").prop("src", `data:audio/mpeg;charset=utf-8;base64,${data["audio"]}`);
   }
 
+  // 실행 준비(카메라 등을 쥔 앱 끄기) 중 — 실행 상태로 바꾸고 칩에 '준비 중'(261126). [정지]를 누르면 서버가 그 실행을 띄우지 않는다
+  if ("preparing" in data) {
+    runPreparing = true;
+    execute.classList.add("disabled");
+    stop.classList.remove("disabled");
+    execute.disabled = true;
+    stop.disabled = false;
+    if (window.PiboRunChip) PiboRunChip.refresh();
+  }
   // 서버는 시작할 때 전체(record)를 한 번 보내고, 그 뒤로는 늘어난 부분(record_add)만 보낸다
   if ("record" in data || "record_add" in data) {
+    if (runPreparing) { runPreparing = false; if (window.PiboRunChip) PiboRunChip.refresh(); }
     // 라이브러리 로그의 터미널 색 코드(ESC[1;31m 등)는 글자 칸에 그대로 보이므로 지운다(261119)
     const noAnsi = (s) => String(s).replace(/\x1b\[[0-9;?]*[A-Za-z]/g, "");
     if ("record" in data) data["record"] = noAnsi(data["record"]);
     if ("record_add" in data) data["record_add"] = noAnsi(data["record_add"]);
+    // 위로 올려 읽는 중이면 아래로 끌어내리지 않는다(261126) — 맨 아래 근처일 때만 따라간다
+    const follow = "record" in data || result.scrollHeight - result.scrollTop - result.clientHeight < 40;
     if ("record" in data) result.value = data["record"];
     else {
       // 뒤쪽 RESULT_MAX 글자만 둔다(서버 RECORD_MAX 와 같다, 261027). 전엔 끝없이 늘어 무한 반복 print 면 화면이 점점 느려졌다.
@@ -306,7 +334,7 @@ socket.on("update", async (data) => {
       const v = result.value + data["record_add"];
       result.value = v.length > RESULT_MAX * 2 ? v.slice(-RESULT_MAX) : v;
     }
-    result.scrollTop = result.scrollHeight;
+    if (follow) result.scrollTop = result.scrollHeight;
     execute.classList.add("disabled");
     stop.classList.remove("disabled");
     execute.disabled = true;
@@ -321,6 +349,7 @@ socket.on("update", async (data) => {
   }
 
   if ("exit" in data) {
+    runPreparing = false;
     execute.classList.remove("disabled");
     stop.classList.add("disabled");
     execute.disabled = false;
@@ -659,12 +688,14 @@ socket.on("update_file_manager", (d) => {
                   await alert_popup(translations['name_size_limit'][lang](MAX_FILENAME_LENGTH));
                   return;
                 }
+                if (badName(newname)) { await alert_popup(t("err_bad_name")); return; }
               }
               else {
                 return;
               }
 
               if (!await confirm_popup(translations['confirm_rename'][lang](name, newname))) return;
+              if (isPathOrInside($("#codepath").text(), CURRENT_DIR.join("/") + "/" + name)) await askSaveOpen();
 
               if (isPathOrInside($("#codepath").text(), CURRENT_DIR.join("/") + "/" + name)) {
                 $("#codepath").text("");
@@ -692,8 +723,9 @@ socket.on("update_file_manager", (d) => {
               const src = CURRENT_DIR.join("/") + "/" + name;
               const r = await copy_popup(name, CURRENT_DIR.join("/"));
               if (r == null) return;
-              if (r.move) {   // 열려 있던 파일을 옮기면 이름 바꾸기처럼 편집기를 비운다
+              if (r.move) {   // 열려 있던 파일을 옮기면 이름 바꾸기처럼 편집기를 비운다(고친 게 있으면 먼저 저장할지 묻는다)
                 if (isPathOrInside($("#codepath").text(), src)) {
+                  await askSaveOpen();
                   $("#codepath").text("");
                 }
                 if (isPathOrInside(CODE_PATH, src)) {
@@ -760,6 +792,7 @@ $("#add_directory").on("click", async function () {
       await alert_popup(translations['name_size_limit'][lang](MAX_FILENAME_LENGTH));
       return;
     }
+    if (badName(name)) { await alert_popup(t("err_bad_name")); return; }
 
     socket.emit('add_directory', CURRENT_DIR.join("/") + "/" + name);
   }
@@ -782,10 +815,10 @@ $("#add_file").on("click", async function () {
       await alert_popup(translations['name_size_limit'][lang](MAX_FILENAME_LENGTH));
       return;
     }
-    if (saveCode != codeEditor.getValue()) {
-      if (await confirm_popup(translations['confirm_save_file'][lang]($("#codepath").text())))
-        socket.emit("save", { codepath: $("#codepath").text(), codetext: codeEditor.getValue() });
-    }
+    if (badName(name)) { await alert_popup(t("err_bad_name")); return; }
+    // 확장자가 없으면 지금 모드에 맞춰 붙인다(261126) — 블록 .json · 파이썬 .py. 처음 화면의 [이어서 하기]·예제 목록이 확장자로 고른다
+    if (!/\.[A-Za-z0-9]+$/.test(name)) name += [...codeTypeBtns].some((el) => el.classList.contains("checked") && el.name == "block") ? ".json" : ".py";
+    await askSaveOpen();
     socket.emit('add_file', CURRENT_DIR.join("/") + "/" + name);
   }
 });
@@ -1284,9 +1317,11 @@ function onSaveFailed() {
   const chip = document.getElementById("run_status");
   if (!chip) return;
   let t0 = 0, timer = null, running = false;
+  window.PiboRunChip = { refresh: () => { if (running) { t0 = Date.now(); tick(); } } };
   const mmss = (s) => String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
   const set = (kind, text) => { chip.className = "pb-runstat pb-runstat--" + kind; chip.textContent = text; chip.hidden = false; };
-  const tick = () => set("running", t("run_running") + " " + mmss(Math.floor((Date.now() - t0) / 1000)));
+  const tick = () => runPreparing ? set("running", t("run_preparing"))
+    : set("running", t("run_running") + " " + mmss(Math.floor((Date.now() - t0) / 1000)));
   function begin() {
     running = true; t0 = Date.now();
     document.body.setAttribute("data-running", "1");
@@ -1320,7 +1355,8 @@ function onSaveFailed() {
    끊긴 동안은 로봇에 보내는 버튼(data-needs-robot)을 못 누르게 한다.
    ========================================================================== */
 [execute, stop, save_btn].forEach((el) => el && el.setAttribute("data-needs-robot", ""));
-PiboUI.watchSocket(socket);
+// 다시 붙으면 실행 상태를 맞춘다(261126) — 끊긴 사이에 끝난 실행은 [exit] 를 못 받아 '실행 중' 에 멈춰 있었다
+PiboUI.watchSocket(socket, { onUp: () => socket.emit("run_state") });
 
 /* ==========================================================================
    파일 목록에서 지금 연 파일 강조

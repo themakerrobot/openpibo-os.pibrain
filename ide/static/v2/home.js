@@ -76,6 +76,11 @@
     APPS.forEach(function (a) { if (running && (a.svc || a.id) === running && !a.go && !runApp) runApp = a.id; });
     // data-ring = 켜진 앱(빨간 도장 '켜져 있음'), 켜진 게 없으면 마지막에 쓴 앱(노란 꼬리표 '지난번')
     var ring = runApp || store.get(LAST) || '';
+    // 10초마다 상태를 받을 때 바뀐 게 없으면 그대로 둔다(261126) — 전엔 매번 카드 8장을 새로 만들어
+    // 등장 움직임이 다시 돌고(깜빡임) 키보드 포커스가 풀렸다
+    var key = [typeof lang !== 'undefined' ? lang : '', ring, runApp].join('|');
+    if (key === renderApps.key) return;
+    renderApps.key = key;
     ['make', 'play', 'admin'].forEach(function (sec) {
       var box = $('apps_' + sec);
       box.innerHTML = '';
@@ -149,8 +154,12 @@
     }).join('');
 
     var list = $('recent');
-    list.innerHTML = '';
     var recent = s.recent || [], models = s.models || [];
+    // 바뀐 게 없으면 목록을 그대로 둔다(261126) — 10초마다 새로 만들면 누르는 사이에 버튼이 바뀌어 눌림이 사라질 수 있었다
+    var lkey = JSON.stringify([typeof lang !== 'undefined' ? lang : '', recent.map(function (f) { return [f.path, ago(f.mtime)]; }), models]);
+    if (lkey === list.getAttribute('data-key')) return;
+    list.setAttribute('data-key', lkey);
+    list.innerHTML = '';
     if (!recent.length && !models.length) { list.innerHTML = '<div class="home-empty">' + esc(t('home_none')) + '</div>'; return; }
     recent.forEach(function (f) {
       var rel = String(f.path).replace(/^\/home\/pi\//, '');
@@ -384,6 +393,8 @@
       var key = sec;
       if (key === 'custom' || !key) key = identity && psk ? 'wpa-eap' : (psk ? 'wpa-psk' : 'none');
       if (!ssid || bytes(ssid) > 32) { say(t('wifi_err_ssid'), true); return; }
+      // EAP(학교·회사 계정) WiFi 인데 아이디를 비우면 WPA 비밀번호로 보내 엉뚱하게 실패했다(261126)
+      if (/eap/i.test(key) && !identity) { say(t('wifi_err_id'), true); return; }
       if (psk && !identity && !((bytes(psk) >= 8 && bytes(psk) <= 63) || /^[0-9a-fA-F]{64}$/.test(psk))) { say(t('wifi_err_psk'), true); return; }
       if (!armed) {   // 첫 번째: 무엇에 연결하는지 보여 준다(연결하면 로봇이 다시 켜진다)
         armed = true; go.setAttribute('data-armed', '');
@@ -398,7 +409,7 @@
           go.disabled = false;
           if (res && res.result === 'fail') {
             var why = String(res.reason || '');
-            say(t(why.indexOf('ssid') >= 0 ? 'wifi_err_ssid' : why.indexOf('psk') >= 0 ? 'wifi_err_psk' : 'wifi_err_connect'), true);
+            say(t(why.indexOf('ssid') >= 0 ? 'wifi_err_ssid' : why.indexOf('psk') >= 0 ? 'wifi_err_psk' : why.indexOf('_id') >= 0 ? 'wifi_err_id' : 'wifi_err_connect'), true);
             return;
           }
           say(t('wifi_sent'));
@@ -421,7 +432,7 @@
       .then(function () { renderApps(); renderSide(); timer = setTimeout(poll, 10000); });
   }
   document.addEventListener('visibilitychange', function () { if (!document.hidden) poll(); });
-  window.addEventListener('pageshow', function () { document.body.removeAttribute('data-going'); render(); poll(); });
+  window.addEventListener('pageshow', function () { document.body.removeAttribute('data-going'); renderApps.key = ''; render(); poll(); });   // 뒤로 오면 누른 카드 표시(data-go)를 지우려 새로 그린다
 
   var sel = $('language');
   if (sel) sel.addEventListener('change', function () {

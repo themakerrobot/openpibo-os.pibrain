@@ -55,11 +55,14 @@ async def f(data: dict = Body(...)):
   ssid = str(data.get('ssid', ''))
   psk = str(data.get('psk', ''))
   identity = str(data.get('identity', ''))
+  key_mgmt = str(data.get('key_mgmt', ''))
   print(f"[wifi] ssid={ssid!r} identity={identity!r} psk={'set' if psk else 'none'}")
   # conwifi.sh 는 쓰던 연결을 먼저 지우므로 못 붙을 값은 여기서 거른다(261027).
   # SSID 는 1~32 바이트(UTF-8), WPA-PSK 비밀번호는 8~63 바이트. 실패하면 재부팅하지 않는다
   if not 1 <= len(ssid.encode('utf-8')) <= 32:
     return JSONResponse(content={'result':'fail', 'reason':'wifi_err_ssid', 'data':'ssid must be 1-32 bytes.'}, status_code=200)   # 전엔 정의 안 된 ex 를 불러 500
+  if 'eap' in key_mgmt.lower() and identity == "":
+    return fail('wifi_err_id', 'identity is required for eap.')   # 아이디 없이 오면 WPA 로 잘못 보냈다(261126)
   if psk == "":                 # open
     args = ['open', ssid]
   elif identity == "":          # wpa
@@ -107,9 +110,10 @@ def wifi_update():
     tmp = os.popen('/home/pi/openpibo-os/system/system.sh').read().strip('\n').split(',')
     has_ip = (tmp[6] != '' and tmp[6][0:3] != '169') or (tmp[7] != '' and tmp[7][0:3] != '169')
     # 전엔 IP 가 한 번만 없어도 바로 AP 로 넘어갔다 → 판단은 netwatch 가 한다(저장된 SSID 가 보이면 90초 기다림 등, 261102 파이보와 같게)
+    was_ap = apmode
     nw.step(has_ip)
     apmode = nw.apmode
-    if winfo != tmp[6:12]:
+    if winfo != tmp[6:12] or was_ap != apmode:   # AP 를 켜고 끌 때도 화면을 다시 그린다(261126 — AP 이름·주소가 보이게)
       _hide = lambda w: [x if i != 3 else ('***' if x else '') for i, x in enumerate(w)]   # 비밀번호(3번 칸)는 로그에 남기지 않는다(261124)
       print(f'Network Change {_hide(winfo)} -> {_hide(tmp[6:12])}')
       network_disp.run()
