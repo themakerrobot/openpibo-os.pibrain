@@ -433,6 +433,35 @@
     }).catch(function (e) { console.warn('block font', e); });
   }
 
+  /* 13) 저장 안 한 작업을 지킨다 · Ctrl+Enter 실행 (261126) ─────────────────── */
+  /* 탭을 닫거나 새로 고치거나 뒤로 가면 전엔 묻지 않고 사라졌다([처음 화면] 만 물었다). 저장 표시(●)가 있을 때만
+     브라우저 기본 확인창을 띄운다(문구는 브라우저가 정한다). 실행 중인 프로그램 멈추기는 index.js 가 pagehide 에서 */
+  window.addEventListener('beforeunload', function (e) {
+    if (leavingOk) return;
+    var cc = $id('codecheck');
+    if (!cc || !cc.innerHTML) return;
+    e.preventDefault();
+    e.returnValue = '';
+    return '';
+  });
+  // Ctrl+Enter(맥은 ⌘+Enter) = [실행]. 입력칸·대화상자에서는 그 칸의 Enter 를 그대로 둔다
+  var execBt = $id('execute');
+  function execTitle() { if (execBt) execBt.title = t('execute') + ' (Ctrl+Enter)'; }
+  if (execBt) {
+    execBt.setAttribute('aria-keyshortcuts', 'Control+Enter');
+    execTitle();
+    var langSel = $id('language');
+    if (langSel) langSel.addEventListener('change', function () { setTimeout(execTitle, 0); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' || !(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey) return;
+      var tg = e.target;
+      if (tg && (tg.id === 'prompt' || (tg.closest && tg.closest('.confirm-popup, .prompt-popup, .alert-popup, .pb-modal, #home_modal')))) return;
+      if (execBt.disabled || execBt.offsetParent === null) return;
+      e.preventDefault();
+      execBt.click();
+    }, true);
+  }
+
   /* 11) 대문에서 들어오기 (261123) ─────────────────────────────────────────── */
   /* 대문(/)의 [이어서 하기]는 /ide?open=<경로> 로 온다. 서버가 보낸 init(지난번 파일)을 받은 뒤
      확장자로 모드를 맞추고(파일 서랍에서 여는 것과 같은 load) 주소에서 ?open 을 지운다 */
@@ -462,9 +491,10 @@
 
   /* 12) [처음 화면] (261123) ────────────────────────────────────────────────── */
   /* 같은 탭으로 대문에 간다. 저장 안 한 게 있으면 묻는다(떠나면 실행 중인 프로그램도 멈춘다 — index.js beforeunload) */
+  var leavingOk = false;   // [처음 화면] 에서 이미 물었으면 브라우저가 또 묻지 않게(13)
   var homeBt = document.getElementById('home_bt');
   if (homeBt) homeBt.addEventListener('click', function () {
-    var go = function () { location.href = location.origin + '/'; };
+    var go = function () { leavingOk = true; location.href = location.origin + '/'; };
     var dirty = !!$('#codecheck').html();
     if (!dirty) { go(); return; }
     Promise.resolve(confirm_popup(t('home_unsaved'), { okLabel: t('home_go') })).then(function (ok) { if (ok) go(); });

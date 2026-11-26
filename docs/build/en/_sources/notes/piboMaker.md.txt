@@ -48,6 +48,7 @@ Everything runs **inside piBrain** (voices, chat and the classifier included). O
 
 - **Python**: the `openpibo` package gives you every piBrain feature. `print` goes to [Output] on the right and `input` reads from the input box below it.
   See **Python** on the left for the API
+- **Shortcuts**: Ctrl+S saves · Ctrl+Enter runs (⌘ on a Mac). If you close or reload the tab without saving, the browser asks once
 - Programs run inside piBrain. Press [Stop] to stop one
 
 (app-tools)=

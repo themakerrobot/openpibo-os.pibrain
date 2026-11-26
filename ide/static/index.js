@@ -1112,7 +1112,9 @@ $(document).keydown(async (evt) => {
 
 // WiFi 설정 창은 대문(/) [설정] 으로 옮겼다(261123 — home.js)
 
-window.addEventListener('beforeunload', (evt) => {
+// 떠날 때 실행 중인 프로그램을 멈춘다. beforeunload 가 아니라 pagehide — 저장 안 한 작업이 있으면 ide.js 가
+// beforeunload 에서 '나가시겠어요?' 를 묻는데(261126), 거기서 [취소] 해도 프로그램이 멈추던 것을 막으려고
+window.addEventListener('pagehide', (evt) => {
   socket.emit("stop");
 });
 
