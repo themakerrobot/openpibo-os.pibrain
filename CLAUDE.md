@@ -998,6 +998,7 @@ PiBrain 만: IMAGE.md 패키지 버전 확인 문구(이미 확인함)·마이�
 ## IDE 서버·블록 메모 (260924)
 
 - **`/show`([모니터 화면에 보여주기])는 받은 그림을 그대로 보낸다(261126)** — 전엔 `/home/pi/.tmp.jpg` 에 썼다가 다시 읽어 [계속 반복] 안이면 초당 수십 번 SD 카드에 썼다. 경로는 화면 이름표로만 남는다. 보내는 횟수는 막지 않는다(학생이 `sleep` 으로 — 사용자)
+- **저장 안 한 작업 지키기 · Ctrl+Enter 실행(261126, 사용자)** — `ide.js` 13): 저장 표시(●, `#codecheck`)가 있으면 탭 닫기·새로 고침·뒤로 때 브라우저 기본 확인창(`beforeunload`). [처음 화면]에서 이미 물었으면 다시 안 묻는다(`leavingOk`). 그래서 실행 중인 프로그램 멈추기(`socket.emit('stop')`)는 `index.js` 가 `beforeunload` 대신 **`pagehide`** 에서 한다 — 확인창에서 [취소]해도 프로그램이 멈추던 것을 막으려고. Ctrl+Enter(⌘+Enter) = [실행](`#execute` 클릭, title 에 단축키), 프로그램 입력칸·대화상자에서는 안 함
 - **IDE 가 띄우는 프로세스는 `bg(cmd)` 로**(261125, 사용자 — 기기 `ps` 에 `[python3] <defunct>`): `subprocess.Popen` 만 하면 끝난 프로세스(IP 화면을 그리고 끝난 `network_disp.py`·`systemctl`·`pkill`)가 IDE 가 다시 물을 때까지 좀비로 남았다. `bg()` 는 띄우고 스레드가 `wait()` 로 거둔다. 새로 띄울 때도 `bg()` 를 쓸 것(학생 프로그램은 asyncio 가 거둔다)
 - **첫 화면은 `FileResponse` 로 템플릿 파일을 그대로 보낸다** (`ide/run_ide.py` 의 `/`, `tools/run_tools.py` 의 `/`).
   템플릿에 Jinja 문법이 없어서다. 전에 쓰던 `TemplateResponse(이름, {"request": ...})` 는 starlette 1.0 부터
